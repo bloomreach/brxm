@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -54,7 +53,7 @@ public class ValueFileMapperProviderTest extends AbstractBaseTest {
         GroupImpl group = new GroupImpl("dummyGroup");
         ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
-        SourceImpl source = new ConfigSourceImpl("somePath", module);
+        ConfigSourceImpl source = new ConfigSourceImpl("somePath", module);
         ConfigDefinitionImpl definition = new ConfigDefinitionImpl(source);
         DefinitionNodeImpl definitionNode = new DefinitionNodeImpl("/path/to/", "dummyNode", definition);
 
@@ -80,7 +79,7 @@ public class ValueFileMapperProviderTest extends AbstractBaseTest {
                     "            value: !!binary xxxx\n" +
                     "          jcr:mimeType: text/css";
         final List<AbstractDefinitionImpl> defs = ModelTestUtils.parseNoSort(yaml);
-        final DefinitionNodeImpl node = ((ContentDefinitionImpl) defs.get(0)).getNode()
+        final DefinitionNodeImpl node = ((ConfigDefinitionImpl) defs.get(0)).getNode()
                 .resolveNode("bootstrap.css/jcr:content");
         final DefinitionPropertyImpl property = node.getProperty("jcr:data");
         assertEquals("/css/bootstrap.css",

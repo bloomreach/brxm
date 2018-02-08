@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,8 +75,9 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                 final ConfigDefinitionImpl def;
                 if (isTranslationMode()) {
                     Optional<ConfigDefinitionImpl> first = source.getDefinitions().stream()
-                            .filter(d -> ((ConfigDefinitionImpl)d).getNode() != null)
-                            .map(d -> (ConfigDefinitionImpl)d).filter(d -> bundlePath.equals(d.getNode().getJcrPath())).findFirst();
+                            .map(ConfigDefinitionImpl.class::cast)
+                            .filter(d -> d.getNode() != null)
+                            .filter(d -> d.getNode().getJcrPath().equals(bundlePath)).findFirst();
                     def = first.orElseGet(source::addConfigDefinition);
                 } else {
                     def = source.addConfigDefinition();

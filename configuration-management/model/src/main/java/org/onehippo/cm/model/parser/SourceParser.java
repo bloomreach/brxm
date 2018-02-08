@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +29,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
@@ -37,7 +39,7 @@ import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.yaml.snakeyaml.constructor.Construct;
@@ -47,6 +49,8 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
@@ -119,7 +123,7 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     protected abstract void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException;
 
-    protected void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) throws ParserException {
+    protected void constructDefinitionNode(final String path, final Node value, final TreeDefinitionImpl definition) throws ParserException {
         final String name = StringUtils.substringAfterLast(path, "/");
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
         definition.setNode(definitionNode);
@@ -177,7 +181,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 validateJcrTypePropertyOperations(property,
                         new PropertyOperation[]{PropertyOperation.REPLACE, PropertyOperation.OVERRIDE}, value);
                 validateJcrTypePropertyValueType(property, value);
-                validateJcrTypePropertyType(property, PropertyType.SINGLE, value);
+                validateJcrTypePropertyType(property, PropertyKind.SINGLE, value);
                 break;
             default:
                 throw new ParserException("Property value for 'jcr:primaryType' must be scalar or mapping", value);
@@ -196,7 +200,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                         new PropertyOperation[]{PropertyOperation.ADD, PropertyOperation.REPLACE, PropertyOperation.OVERRIDE},
                         value);
                 validateJcrTypePropertyValueType(property, value);
-                validateJcrTypePropertyType(property, PropertyType.LIST, value);
+                validateJcrTypePropertyType(property, PropertyKind.LIST, value);
                 break;
             default:
                 throw new ParserException("Property value for 'jcr:mixinTypes' must be sequence or mapping", value);
@@ -215,10 +219,10 @@ public abstract class SourceParser extends AbstractBaseParser {
         }
     }
 
-    protected void validateJcrTypePropertyType(final DefinitionPropertyImpl property, final PropertyType expectedPropertyType, final Node node) throws ParserException {
-        if (property.getType() != expectedPropertyType) {
+    protected void validateJcrTypePropertyType(final DefinitionPropertyImpl property, final PropertyKind expectedPropertyKind, final Node node) throws ParserException {
+        if (property.getKind() != expectedPropertyKind) {
             throw new ParserException("Property '" + property.getName() + "' must be property type '"
-                    + expectedPropertyType.toString() + "'", node);
+                    + expectedPropertyKind.toString() + "'", node);
         }
     }
 
@@ -234,12 +238,12 @@ public abstract class SourceParser extends AbstractBaseParser {
     }
 
     protected void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        final ValueImpl[] values = constructValuesFromSequence(value);
+        final List<ValueImpl> values = asList(constructValuesFromSequence(value));
 
-        if (values.length == 0) {
+        if (values.size() == 0) {
             parent.addProperty(name, ValueType.STRING, values);
         } else {
-            parent.addProperty(name, values[0].getType(), values);
+            parent.addProperty(name, values.get(0).getType(), values);
         }
     }
 
@@ -263,7 +267,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                     throw new ParserException("Property '"+ META_CATEGORY_KEY +": "+ category +
                             "' requires specifying replacement/overriding value(s)", value);
                 }
-                property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
+                property = parent.addProperty(name, defaultValueType, emptyList());
                 property.setCategory(category);
                 return property;
             }
@@ -280,7 +284,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                     throw new ParserException("Property map cannot contain '" + OPERATION_KEY + ": "
                             + PropertyOperation.DELETE.toString() + "' and other keys", value);
                 }
-                property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
+                property = parent.addProperty(name, defaultValueType, emptyList());
                 property.setOperation(operation);
                 return property;
             }
@@ -317,7 +321,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                     value);
         }
 
-        if (operation == PropertyOperation.ADD && property.getType() == PropertyType.SINGLE) {
+        if (operation == PropertyOperation.ADD && property.getKind() == PropertyKind.SINGLE) {
             throw new ParserException(
                     "Property map with operation 'add' must have a sequence for '" + VALUE_KEY + "', '" + RESOURCE_KEY
                             + "' or '" + PATH_KEY + "'",
@@ -350,8 +354,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 final ValueImpl propertyValue = constructValueFromScalar(node, valueType);
                 return parent.addProperty(name, propertyValue);
             case sequence:
-                final ValueImpl[] propertyValues = constructValuesFromSequence(node, valueType);
-                return parent.addProperty(name, valueType, propertyValues);
+                return parent.addProperty(name, valueType, constructValuesFromSequence(node, valueType));
             default:
                 throw new ParserException(
                         "Property value in map must be scalar or sequence, found '" + node.getNodeId() + "'", node);
@@ -522,11 +525,11 @@ public abstract class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value} array
      * @throws ParserException in case a value cannot be parsed or it is not of the expected type
      */
-    protected ValueImpl[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
+    protected List<ValueImpl> constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
         final List<Node> valueNodes = asSequence(node);
-        final ValueImpl[] values = new ValueImpl[valueNodes.size()];
-        for (int i = 0; i < valueNodes.size(); i++) {
-            values[i] = constructValueFromScalar(valueNodes.get(i), expectedValueType);
+        final List<ValueImpl> values = new ArrayList<>(valueNodes.size());
+        for (final Node valueNode : valueNodes) {
+            values.add(constructValueFromScalar(valueNode, expectedValueType));
         }
         return values;
     }
@@ -541,8 +544,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 final ValueImpl propertyValue = constructPathValueFromScalar(node, valueType);
                 return parent.addProperty(name, propertyValue);
             case sequence:
-                final ValueImpl[] propertyValues = constructPathValuesFromSequence(node, valueType);
-                return parent.addProperty(name, valueType, propertyValues);
+                return parent.addProperty(name, valueType, asList(constructPathValuesFromSequence(node, valueType)));
             default:
                 throw new ParserException(
                         "Path value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
@@ -577,7 +579,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 return parent.addProperty(name, propertyValue);
             case sequence:
                 final ValueImpl[] propertyValues = constructResourceValuesFromSequence(node, valueType, parent);
-                return parent.addProperty(name, valueType, propertyValues);
+                return parent.addProperty(name, valueType, asList(propertyValues));
             default:
                 throw new ParserException(
                         "Resource value must be scalar or sequence, found '" + node.getNodeId() + "'", node);

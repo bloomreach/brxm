@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -143,10 +143,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
             if (node.getResidualChildNodeCategory() != null) {
                 children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
             }
-            for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+            for (DefinitionPropertyImpl childProperty : node.getProperties()) {
                 children.add(representProperty(childProperty));
             }
-            for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+            for (DefinitionNodeImpl childNode : node.getNodes()) {
                 children.add(representDefinitionNode(childNode));
             }
         }
@@ -212,7 +212,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                     key = VALUE_KEY;
                 }
 
-                if (property.getType() == PropertyType.SINGLE) {
+                if (property.getKind() == PropertyKind.SINGLE) {
 
                     final ValueImpl value = property.getValue();
                     final Node valueNode = representValue(value);
@@ -223,7 +223,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                         processSingleResource(value, valueNode);
                     }
                 } else {
-                    final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+                    final List<Node> valueNodes = new ArrayList<>(property.getValues().size());
                     for (ValueImpl value : property.getValues()) {
                         final Node valueNode = representValue(value);
                         valueNodes.add(valueNode);
@@ -256,17 +256,17 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected boolean isBinaryProperty(final DefinitionPropertyImpl property) {
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             return property.getValueType() == ValueType.BINARY;
         }
-        return Arrays.stream(property.getValues()).anyMatch(value -> value.getType() == ValueType.BINARY);
+        return property.getValues().stream().anyMatch(value -> value.getType() == ValueType.BINARY);
     }
 
     protected NodeTuple representPropertyUsingScalarOrSequence(final DefinitionPropertyImpl property) {
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             return new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue()));
         } else {
-            final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+            final List<Node> valueNodes = new ArrayList<>(property.getValues().size());
             for (ValueImpl value : property.getValues()) {
                 valueNodes.add(representValue(value));
             }
@@ -293,7 +293,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case DATE:
             case LONG:
                 // these types are auto-detected by the parser, except when they are empty sequences
-                return property.getType() != PropertyType.SINGLE && property.getValues().length == 0;
+                return property.getKind() != PropertyKind.SINGLE && property.getValues().size() == 0;
             case STRING:
                 return shouldHaveExplicitType(property);
             case BINARY:
@@ -303,7 +303,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected boolean shouldHaveExplicitType(final DefinitionPropertyImpl property) {
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             final String propertyValue = property.getValue().getString();
             return !StreamReader.isPrintable(propertyValue);
         } else {
@@ -312,11 +312,11 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected boolean allElementsArePrintable(DefinitionPropertyImpl property) {
-        return Arrays.stream(property.getValues()).map(Value::getString).allMatch(StreamReader::isPrintable);
+        return property.getValues().stream().map(Value::getString).allMatch(StreamReader::isPrintable);
     }
 
     protected boolean hasResourceValues(final DefinitionPropertyImpl property) {
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             return property.getValue().isResource();
         }
 
@@ -328,7 +328,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected boolean hasPathValues(final DefinitionPropertyImpl property) {
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             return property.getValue().isPath();
         }
 

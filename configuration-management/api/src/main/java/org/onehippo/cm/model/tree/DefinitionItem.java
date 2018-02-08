@@ -15,22 +15,21 @@
  */
 package org.onehippo.cm.model.tree;
 
-import org.onehippo.cm.model.definition.ContentDefinition;
+import org.onehippo.cm.model.definition.TreeDefinition;
+import org.onehippo.cm.model.source.Source;
 
 /**
  * Represents the (potential) state of a JCR Node or Property as specified in a DefinitionItem tree.
  */
 public interface DefinitionItem extends ModelItem {
-    /**
-     * @return the parent node for this item
-     */
+
     @Override
     DefinitionNode getParent();
 
     /**
      * @return the ContentDefinition (or ConfigDefinition) in which this item is defined
      */
-    ContentDefinition getDefinition();
+    TreeDefinition<? extends Source> getDefinition();
 
     /**
      * @return an object representing a precise position in a Source where this item is defined
@@ -41,4 +40,5 @@ public interface DefinitionItem extends ModelItem {
      * @return the category of this item, or null if no specific category has been specified for this item
      */
     ConfigurationItemCategory getCategory();
+
 }

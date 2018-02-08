@@ -1,5 +1,5 @@
 /*
- * Copyright 2017,2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,19 +102,18 @@ public class ConfigurationModelUtils {
         ConfigurationNode modelNode = model.getConfigurationRootNode();
         for (int i = 0; i < itemPath.getSegmentCount(); i++) {
             final JcrPathSegment childSegment = itemPath.getSegment(i);
-            final String childName = childSegment.toString();
-            final String indexedChildName = childSegment.forceIndex().toString();
+            final JcrPathSegment indexedChildSegment = childSegment.forceIndex();
             if (i == itemPath.getSegmentCount() - 1) {
                 final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
                 return propertyPath
-                        ? modelNode.getChildPropertyCategory(childName)
-                        : modelNode.getChildNodeCategory(indexedChildName, override);
+                        ? modelNode.getChildPropertyCategory(childSegment)
+                        : modelNode.getChildNodeCategory(indexedChildSegment, override);
             } else {
-                if (modelNode.getNode(indexedChildName) != null) {
-                    modelNode = modelNode.getNode(indexedChildName);
+                if (modelNode.getNode(indexedChildSegment) != null) {
+                    modelNode = modelNode.getNode(indexedChildSegment);
                 } else {
                     final ConfigurationItemCategory override = residualNodeCategoryOverrideResolver.apply(parent.toString());
-                    return modelNode.getChildNodeCategory(indexedChildName, override);
+                    return modelNode.getChildNodeCategory(indexedChildSegment, override);
                 }
             }
             parent = parent.resolve(childSegment);

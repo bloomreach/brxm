@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
 import org.onehippo.cm.model.tree.DefinitionNode;
@@ -54,7 +55,28 @@ public interface ConfigurationModel extends Closeable {
     /**
      * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
      */
-    ConfigurationNode<? extends DefinitionNode> getConfigurationRootNode();
+    ConfigurationNode getConfigurationRootNode();
+
+    /**
+     * Find a ConfigurationNode by its absolute path.
+     * @param path the path of a node
+     * @return a ConfigurationNode or null, if no node exists with this path
+     */
+    ConfigurationNode resolveNode(JcrPath path);
+
+    /**
+     * Find a ConfigurationProperty by its absolute path.
+     * @param path the path of a property
+     * @return a ConfigurationProperty or null, if no property exists with this path
+     */
+    ConfigurationProperty resolveProperty(JcrPath path);
+
+    /**
+     * @param path a JCR path
+     * @return the ContentDefinition defined in this model with the longest starting subpath match with path, or null if
+     *      no content definition has a starting subpath match with its root path
+     */
+    ContentDefinition getNearestContentDefinition(JcrPath path);
 
     /**
      * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
@@ -69,19 +91,5 @@ public interface ConfigurationModel extends Closeable {
      * ResourceInputProviders to access raw data streams from underlying storage.
      */
     void close();
-
-    /**
-     * Find a ConfigurationNode by its absolute path.
-     * @param path the path of a node
-     * @return a ConfigurationNode or null, if no node exists with this path
-     */
-    ConfigurationNode<? extends DefinitionNode> resolveNode(String path);
-
-    /**
-     * Find a ConfigurationProperty by its absolute path.
-     * @param path the path of a property
-     * @return a ConfigurationProperty or null, if no property exists with this path
-     */
-    ConfigurationProperty<? extends DefinitionProperty> resolveProperty(String path);
 
 }

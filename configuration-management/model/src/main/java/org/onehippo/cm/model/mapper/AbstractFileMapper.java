@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
 
     static final String PATH_DELIMITER = "/";
     static final String NS_DELIMITER = ":";
-    public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";
-    public static final String JCR_MIME_TYPE = "jcr:mimeType";
+    public static final JcrPathSegment JCR_PRIMARY_TYPE = JcrPaths.getSegment("jcr:primaryType");
+    public static final JcrPathSegment JCR_MIME_TYPE = JcrPaths.getSegment("jcr:mimeType");
     public static final String DEFAULT_EXTENSION = "bin";
     public static final String DOT_SEPARATOR = ".";
 
@@ -61,10 +61,9 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
         return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
     }
 
-    protected boolean isType(DefinitionNode node, String nodeType) {
-        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && node.getProperty(JCR_PRIMARY_TYPE).getValue().getString().equals(nodeType);
+    protected boolean isType(DefinitionNode node, JcrPathSegment nodeType) {
+        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && nodeType.equals(node.getProperty(JCR_PRIMARY_TYPE).getValue().getString());
     }
-
 
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
         return new AbstractMap.SimpleEntry<>(key, value);

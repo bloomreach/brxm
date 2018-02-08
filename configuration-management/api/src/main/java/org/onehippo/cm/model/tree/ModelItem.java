@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.onehippo.cm.model.path.JcrPathSegment;
  * DefinitionItem tree.
  */
 public interface ModelItem {
+
     /**
      * @return the name of this node or property -- not expected to be JCR encoded
      */
@@ -58,4 +59,5 @@ public interface ModelItem {
      * @return a String describing the source of this item for error-reporting purposes
      */
     String getOrigin();
+
 }

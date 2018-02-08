@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model.mapper;
 
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.Value;
@@ -34,7 +35,7 @@ public class NtFileMapper extends AbstractFileMapper {
         }
 
         final DefinitionNode fileNode = resourceNode.getParent();
-        if (!isType(fileNode, NT_FILE)) {
+        if (!isType(fileNode, JcrPaths.getSegment(NT_FILE))) {
             return null;
         }
 

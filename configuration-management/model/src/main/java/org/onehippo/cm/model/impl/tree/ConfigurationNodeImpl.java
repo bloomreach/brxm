@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.path.JcrPathSegment;
@@ -30,14 +33,14 @@ import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeImpl>
-        implements ConfigurationNode<DefinitionNodeImpl> {
+        implements ConfigurationNode {
 
     // Nodes names must always be indexed names, e.g. node[1]
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
-    private final Map<String, ConfigurationNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
-
     private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
-    private final Map<String, ConfigurationPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
+
+    private final Collection<ConfigurationNodeImpl> nodes = Collections.unmodifiableCollection(modifiableNodes.values());
+    private final Collection<ConfigurationPropertyImpl> properties = Collections.unmodifiableCollection(modifiableProperties.values());
 
     private Boolean ignoreReorderedChildren;
 
@@ -48,24 +51,6 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     private ConfigurationItemCategory residualNodeCategory;
 
     @Override
-    public Map<String, ConfigurationNodeImpl> getNodes() {
-        return nodes;
-    }
-
-    public Map<String, ConfigurationNodeImpl> getModifiableNodes() {
-        return modifiableNodes;
-    }
-
-    @Override
-    public ConfigurationNodeImpl getNode(final String name) {
-        return getNode(JcrPaths.getSegment(name));
-    }
-
-    public ConfigurationNodeImpl getNode(final JcrPathSegment name) {
-        return modifiableNodes.get(name.forceIndex().toString());
-    }
-
-    @Override
     public void setName(final String name) {
         super.setName(JcrPaths.getSegment(name).forceIndex());
     }
@@ -73,6 +58,24 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
     @Override
     public void setName(final JcrPathSegment name) {
         super.setName(name.forceIndex());
+    }
+
+    @Override
+    public Collection<ConfigurationNodeImpl> getNodes() {
+        return nodes;
+    }
+
+    public Set<String> getNodeNames() {
+        return modifiableNodes.keySet();
+    }
+
+    public ConfigurationNodeImpl getNode(final String name) {
+        return getNode(JcrPaths.getSegment(name));
+    }
+
+    @Override
+    public ConfigurationNodeImpl getNode(final JcrPathSegment name) {
+        return modifiableNodes.get(name.forceIndex().toString());
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
@@ -138,21 +141,18 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         modifiableNodes.clear();
     }
 
-    /**
-     * @return true iff no nodes or normal JCR properties are defined here; note that this excludes from consideration
-     *     any .meta properties, such as .meta:delete or category-related properties
-     */
-    public boolean hasNoJcrNodesOrProperties() {
-        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
-    }
-
     @Override
-    public Map<String, ConfigurationPropertyImpl> getProperties() {
+    public Collection<ConfigurationPropertyImpl> getProperties() {
         return properties;
     }
 
-    public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
-        return modifiableProperties;
+    public Set<String> getPropertyNames() {
+        return modifiableProperties.keySet();
+    }
+
+    @Override
+    public ConfigurationPropertyImpl getProperty(final JcrPathSegment name) {
+        return getProperty(name.toString());
     }
 
     @Override
@@ -172,6 +172,14 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         modifiableProperties.clear();
     }
 
+    /**
+     * @return true iff no nodes or normal JCR properties are defined here; note that this excludes from consideration
+     *     any .meta properties, such as .meta:delete or category-related properties
+     */
+    public boolean hasNoJcrNodesOrProperties() {
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
+    }
+
     @Override
     public Boolean getIgnoreReorderedChildren() {
         return ignoreReorderedChildren;
@@ -181,22 +189,27 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         this.ignoreReorderedChildren = ignoreReorderedChildren;
     }
 
+    protected ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName) {
+        return getChildNodeCategory(JcrPaths.getSegment(indexedNodeName), null);
+    }
+
+
     @Override
-    public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName) {
+    public ConfigurationItemCategory getChildNodeCategory(final JcrPathSegment indexedNodeName) {
         return getChildNodeCategory(indexedNodeName, null);
     }
 
     @Override
-    public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName,
+    public ConfigurationItemCategory getChildNodeCategory(final JcrPathSegment indexedNodeName,
                                                           final ConfigurationItemCategory residualNodeCategoryOverride) {
         final ConfigurationItemCategory effectiveResidualNodeCategory
                 = residualNodeCategoryOverride != null ? residualNodeCategoryOverride : residualNodeCategory;
 
-        if (modifiableNodes.containsKey(indexedNodeName)) {
+        if (modifiableNodes.containsKey(indexedNodeName.forceIndex().toString())) {
             return ConfigurationItemCategory.CONFIG;
         }
 
-        final String unindexedName = SnsUtils.getUnindexedName(indexedNodeName);
+        final String unindexedName = indexedNodeName.getName();
         if (childNodeCategorySettings.containsKey(unindexedName)) {
             return childNodeCategorySettings.get(unindexedName).getLeft();
         }
@@ -208,10 +221,14 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         return ConfigurationItemCategory.CONFIG;
     }
 
-    @Override
     public ConfigurationItemCategory getChildPropertyCategory(final String propertyName) {
-        if (childPropertyCategorySettings.containsKey(propertyName)) {
-            return childPropertyCategorySettings.get(propertyName).getLeft();
+        return getChildPropertyCategory(JcrPaths.getSegment(propertyName));
+    }
+
+    @Override
+    public ConfigurationItemCategory getChildPropertyCategory(final JcrPathSegment propertyName) {
+        if (childPropertyCategorySettings.containsKey(propertyName.toString())) {
+            return childPropertyCategorySettings.get(propertyName.toString()).getLeft();
         }
 
         return ConfigurationItemCategory.CONFIG;

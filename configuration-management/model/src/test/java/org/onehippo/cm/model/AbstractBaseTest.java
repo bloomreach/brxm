@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -170,7 +170,7 @@ public abstract class AbstractBaseTest {
         return node;
     }
 
-    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
+    protected DefinitionNodeImpl assertNode(final TreeDefinitionImpl parent,
                               final String path,
                               final String name,
                               final AbstractDefinitionImpl definition,
@@ -180,7 +180,7 @@ public abstract class AbstractBaseTest {
         return assertNode(parent, path, name, definition, false, null, nodeCount, propertyCount);
     }
 
-    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
+    protected DefinitionNodeImpl assertNode(final TreeDefinitionImpl parent,
                               final String path,
                               final String name,
                               final AbstractDefinitionImpl definition,
@@ -325,9 +325,9 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        assertEquals(values.length, property.getValues().length);
+        assertEquals(values.length, property.getValues().size());
         for (int i = 0; i < values.length; i++) {
-            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property, property.getValues()[i]);
+            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property, property.getValues().get(i));
         }
         return property;
     }

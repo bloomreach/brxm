@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,13 +54,13 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
@@ -604,8 +604,8 @@ public class Esv2Yaml {
         // visit all node definitions and sort properties
         module.getModifiableSources().stream().flatMap(source -> source.getDefinitions().stream())
                 .filter(def -> DefinitionType.CONFIG.isOfType(def) || DefinitionType.CONTENT.isOfType(def))
-                .map(ContentDefinitionImpl.class::cast)
-                .map(ContentDefinitionImpl::getNode)
+                .map(TreeDefinitionImpl.class::cast)
+                .map(TreeDefinitionImpl::getNode)
                 .forEach(DefinitionNodeImpl::recursiveSortProperties);
 
         ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath(), migrationMode);

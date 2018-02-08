@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class ConfigurationTreeBuilder {
         final ConfigurationPropertyImpl uuidProperty = new ConfigurationPropertyImpl();
         uuidProperty.setName(JCR_UUID);
         uuidProperty.setParent(root);
-        uuidProperty.setType(PropertyType.SINGLE);
+        uuidProperty.setKind(PropertyKind.SINGLE);
         uuidProperty.setValueType(ValueType.STRING);
         uuidProperty.setValue(new ValueImpl("cafebabe-cafe-babe-cafe-babecafebabe", ValueType.STRING, false, false));
         root.addProperty(JCR_UUID, uuidProperty);
@@ -80,7 +80,7 @@ public class ConfigurationTreeBuilder {
         final ConfigurationPropertyImpl primaryTypeProperty = new ConfigurationPropertyImpl();
         primaryTypeProperty.setName(JCR_PRIMARYTYPE);
         primaryTypeProperty.setParent(root);
-        primaryTypeProperty.setType(PropertyType.SINGLE);
+        primaryTypeProperty.setKind(PropertyKind.SINGLE);
         primaryTypeProperty.setValueType(ValueType.NAME);
         primaryTypeProperty.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
         root.addProperty(JCR_PRIMARYTYPE, primaryTypeProperty);
@@ -89,9 +89,9 @@ public class ConfigurationTreeBuilder {
         final ConfigurationPropertyImpl mixinTypesProperty = new ConfigurationPropertyImpl();
         mixinTypesProperty.setName(JCR_MIXINTYPES);
         mixinTypesProperty.setParent(root);
-        mixinTypesProperty.setType(PropertyType.LIST);
+        mixinTypesProperty.setKind(PropertyKind.LIST);
         mixinTypesProperty.setValueType(ValueType.NAME);
-        mixinTypesProperty.setValues(new ValueImpl[]{new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)});
+        mixinTypesProperty.setValues(Collections.singletonList(new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)));
         root.addProperty(JCR_MIXINTYPES, mixinTypesProperty);
     }
 
@@ -104,7 +104,7 @@ public class ConfigurationTreeBuilder {
     }
 
     /**
-     * Call after all calls to {@link #push(ContentDefinitionImpl)} have been completed for a particular Module.
+     * Call after all calls to {@link #push(ConfigDefinitionImpl)} have been completed for a particular Module.
      * This checks for error conditions that must be validated in the context of a complete set of a Module's definitions.
      * (Currently, this includes only .meta:order-before directives that may span multiple source files.
      * @return this
@@ -129,7 +129,7 @@ public class ConfigurationTreeBuilder {
         return root;
     }
 
-    public ConfigurationTreeBuilder push(final ContentDefinitionImpl definition) {
+    public ConfigurationTreeBuilder push(final ConfigDefinitionImpl definition) {
         final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
         if (rootForDefinition != null) {
@@ -158,7 +158,7 @@ public class ConfigurationTreeBuilder {
             }
 
             final String indexedName = createIndexedName(definitionNode.getName());
-            if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
+            if (SnsUtils.hasSns(indexedName, node.getParent().getNodeNames())) {
                 node.addDefinition(definitionNode);
                 node.getParent().removeNode(indexedName, true);
             } else {
@@ -231,7 +231,7 @@ public class ConfigurationTreeBuilder {
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
                     // delay reporting an error for a missing sibling until after the module is done processing
-                    delayedOrdering.put(definitionNode.getJcrPath().resolveSibling(orderBeforeIndexedName).toFullyIndexedPath(),
+                    delayedOrdering.put(definitionNode.getJcrPath().resolveSibling(orderBeforeIndexedName).forceIndices(),
                             definitionNode);
                 }
             }
@@ -239,7 +239,7 @@ public class ConfigurationTreeBuilder {
             node.addDefinition(definitionNode);
         }
 
-        final JcrPath indexedPath = definitionNode.getJcrPath().toFullyIndexedPath();
+        final JcrPath indexedPath = definitionNode.getJcrPath().forceIndices();
         if (delayedOrdering.containsKey(indexedPath)) {
             // this node was referenced in a delayed ordering, so we need to apply that ordering now
             // apply node ordering from the perspective of the other, saved node
@@ -255,12 +255,10 @@ public class ConfigurationTreeBuilder {
 
         requirePrimaryType(node, definitionNode);
 
-        final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
             final String indexedName = createIndexedName(definitionChild.getName());
-            final ConfigurationNodeImpl child;
-            if (children.containsKey(indexedName)) {
-                child = children.get(indexedName);
+            ConfigurationNodeImpl child = node.getNode(indexedName);
+            if (child != null) {
                 if (child.isDeleted()) {
                     logger.warn("{} tries to modify already deleted node '{}', skipping.",
                             child.getOrigin(), child.getJcrPath());
@@ -284,7 +282,7 @@ public class ConfigurationTreeBuilder {
     private void applyNodeOrdering(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl parent, final String orderBefore, final boolean orderFirst, final String orderBeforeIndexedName) {
         boolean first = true;
         boolean prevIsSrc = false;
-        for (String name : parent.getNodes().keySet()) {
+        for (final String name : parent.getNodeNames()) {
             if (name.equals(node.getName())) {
                 // current == src
                 if (first && orderFirst) {
@@ -318,10 +316,10 @@ public class ConfigurationTreeBuilder {
     }
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
-        if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
+        if (SnsUtils.hasSns(indexedName, node.getNodeNames())) {
             final JcrPathSegment nameAndIndex = JcrPaths.getSegment(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
-            for (String siblingIndexedName : node.getNodes().keySet()) {
+            for (String siblingIndexedName : node.getNodeNames()) {
                 final JcrPathSegment siblingNameAndIndex = JcrPaths.getSegment(siblingIndexedName);
                 if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
@@ -354,7 +352,7 @@ public class ConfigurationTreeBuilder {
         return this;
     }
 
-    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
+    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ConfigDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getNode();
         final JcrPath definitionRootPath = definitionNode.getJcrPath();
         final JcrPathSegment[] pathSegments = definitionRootPath.toArray();
@@ -420,7 +418,7 @@ public class ConfigurationTreeBuilder {
         if (definitionNode.getCategory() != null) {
             if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIG) {
                 parent.clearChildNodeCategorySettings(name);
-                if (definitionNode.getNodes().size() == 0 && definitionNode.getProperties().size() == 0) {
+                if (definitionNode.getNodes().isEmpty() && definitionNode.getProperties().isEmpty()) {
                     return null;
                 }
             } else {
@@ -453,7 +451,6 @@ public class ConfigurationTreeBuilder {
         // a node should have a back-reference to any definition that changes its properties
         parent.addDefinition(definitionProperty.getParent());
 
-        final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = definitionProperty.getName();
         final PropertyOperation op = definitionProperty.getOperation();
 
@@ -464,10 +461,9 @@ public class ConfigurationTreeBuilder {
         // 4. a config node may have a config property that is redefined to system -- in this case, the previous value
         //    will be treated as an initial value unless an explicit operation: delete is specified
 
-        ConfigurationPropertyImpl property;
+        ConfigurationPropertyImpl property = parent.getProperty(name);
         final ConfigurationItemCategory category = definitionProperty.getCategory();
-        if (properties.containsKey(name)) {
-            property = properties.get(name);
+        if (property != null) {
             final ConfigurationItemCategory configCategory = parent.getChildPropertyCategory(name);
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
@@ -518,7 +514,7 @@ public class ConfigurationTreeBuilder {
                 deleteProperty.setParent(parentNode);
                 deleteProperty.setName(property.getName());
                 deleteProperty.setDeleted(true);
-                deleteProperty.setType(property.getType());
+                deleteProperty.setKind(property.getKind());
                 deleteProperty.setValueType(property.getValueType());
                 property.getDefinitions().forEach(deleteProperty::addDefinition);
 
@@ -530,8 +526,8 @@ public class ConfigurationTreeBuilder {
                 return this;
             }
 
-            if (property.getType() != definitionProperty.getType()) {
-                handleTypeConflict(property, definitionProperty, op == OVERRIDE);
+            if (property.getKind() != definitionProperty.getKind()) {
+                handleKindConflict(property, definitionProperty, op == OVERRIDE);
             }
 
             if (property.getValueType() != definitionProperty.getValueType()) {
@@ -577,7 +573,7 @@ public class ConfigurationTreeBuilder {
 
             property.setName(name);
             property.setParent(parent);
-            property.setType(definitionProperty.getType());
+            property.setKind(definitionProperty.getKind());
             property.setValueType(definitionProperty.getValueType());
         }
 
@@ -588,7 +584,7 @@ public class ConfigurationTreeBuilder {
         // a property should have a back-reference to any def that affects it
         property.addDefinition(definitionProperty);
 
-        if (PropertyType.SINGLE == definitionProperty.getType()) {
+        if (PropertyKind.SINGLE == definitionProperty.getKind()) {
             property.setValue(definitionProperty.getValue());
         } else {
             if (op == ADD) {
@@ -603,16 +599,16 @@ public class ConfigurationTreeBuilder {
         return this;
     }
 
-    private void handleTypeConflict(final ConfigurationPropertyImpl property,
+    private void handleKindConflict(final ConfigurationPropertyImpl property,
                                     final DefinitionPropertyImpl definitionProperty, boolean isOverride) {
         if (isOverride) {
-            property.setType(definitionProperty.getType());
+            property.setKind(definitionProperty.getKind());
             property.setValue(null);
             property.setValues(null);
         } else {
             final String msg = String.format("Property %s already exists with type '%s', as determined by %s, "
                             + "but type '%s' is requested in %s.",
-                    property.getJcrPath(), property.getType(), property.getOrigin(), definitionProperty.getType(),
+                    property.getJcrPath(), property.getKind(), property.getOrigin(), definitionProperty.getKind(),
                     definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
@@ -650,10 +646,10 @@ public class ConfigurationTreeBuilder {
                                                        final ConfigurationPropertyImpl property,
                                                        final PropertyOperation op) {
         if (property.getName().equals(JCR_MIXINTYPES) && op != ADD) {
-            final List<String> replacedMixins = Arrays.stream(definitionProperty.getValues())
+            final List<String> replacedMixins = definitionProperty.getValues().stream()
                     .map(ValueImpl::getString)
                     .collect(Collectors.toList());
-            final List<String> missingMixins = Arrays.stream(property.getValues())
+            final List<String> missingMixins = property.getValues().stream()
                     .map(ValueImpl::getString)
                     .filter(mixin -> !replacedMixins.contains(mixin))
                     .collect(Collectors.toList());
@@ -679,7 +675,7 @@ public class ConfigurationTreeBuilder {
     private void addValues(final DefinitionPropertyImpl definitionProperty, final ConfigurationPropertyImpl property) {
         // TODO: need to handle PropertyType.SET?
 
-        final ValueImpl[] existingValues = property.getValues();
+        final List<ValueImpl> existingValues = property.getValues();
         if (existingValues == null) {
             // suppress warning if adding to a system property, since we can't tell the difference between
             // explicit empty and not-specified in this common case
@@ -689,9 +685,9 @@ public class ConfigurationTreeBuilder {
             }
             property.setValues(definitionProperty.getValues());
         } else {
-            List<ValueImpl> values = Arrays.stream(existingValues).collect(Collectors.toList());
-            values.addAll(Arrays.asList(definitionProperty.getValues()));
-            property.setValues(values.toArray(new ValueImpl[values.size()]));
+            List<ValueImpl> values = new ArrayList<>(existingValues);
+            values.addAll(definitionProperty.getValues());
+            property.setValues(values);
         }
     }
 
@@ -703,7 +699,7 @@ public class ConfigurationTreeBuilder {
             return;
         }
 
-        if (PropertyType.SINGLE == property.getType()) {
+        if (PropertyKind.SINGLE == property.getKind()) {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())
@@ -714,15 +710,11 @@ public class ConfigurationTreeBuilder {
                 }
             }
         } else {
-            final ValueImpl[] existingValues = property.getValues();
+            final List<ValueImpl> existingValues = property.getValues();
             if (existingValues != null) {
-                final ValueImpl[] definitionValues = definitionProperty.getValues();
-                if (existingValues.length == definitionValues.length) {
-                    for (int i = 0; i < existingValues.length; i++) {
-                        if (!existingValues[i].equals(definitionValues[i])) {
-                            return;
-                        }
-                    }
+                final List<ValueImpl> definitionValues = definitionProperty.getValues();
+                if (existingValues.size() == definitionValues.size()
+                        && existingValues.equals(definitionValues)) {
                     logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property, defined in '{}'.",
                             definitionProperty.getJcrPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
@@ -736,15 +728,13 @@ public class ConfigurationTreeBuilder {
             return;
         }
 
-        final Map<String, ConfigurationPropertyImpl> propertyMap = node.getModifiableProperties();
-        final List<String> deletedProperties = propertyMap.keySet().stream()
-                .filter(propertyName -> propertyMap.get(propertyName).isDeleted())
+        final List<String> deletedProperties = node.getPropertyNames().stream()
+                .filter(propertyName -> node.getProperty(propertyName).isDeleted())
                 .collect(Collectors.toList());
         deletedProperties.forEach(node::removeProperty);
 
-        final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
-        final List<String> children = new ArrayList<>(childMap.keySet());
-        children.forEach(name -> pruneDeletedItems(childMap.get(name)));
+        final List<String> children = new ArrayList<>(node.getNodeNames());
+        children.forEach(name -> pruneDeletedItems(node.getNode(name)));
     }
 
 }

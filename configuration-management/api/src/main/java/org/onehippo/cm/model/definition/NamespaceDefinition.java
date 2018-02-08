@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cm.model.definition;
 
 import java.net.URI;
 
+import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.Value;
@@ -25,7 +26,8 @@ import org.onehippo.cm.model.tree.Value;
  * Represents the definition of a JCR node type namespace and (potentially) an associated CND resource defining JCR node
  * types in a {@link Source} of type {@link SourceType#CONFIG}.
  */
-public interface NamespaceDefinition extends Definition {
+public interface NamespaceDefinition<S extends ConfigSource> extends Definition<S> {
+
     /**
      * @return the JCR name prefix for this namespace
      */
@@ -41,4 +43,5 @@ public interface NamespaceDefinition extends Definition {
      *     associated with any node type definitions (e.g. if it is only used for property names)
      */
     Value getCndPath();
+
 }

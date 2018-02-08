@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,23 +15,26 @@
  */
 package org.onehippo.cm.migration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
@@ -42,7 +45,8 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.InjectResidualMatchers;
 import org.onehippo.cm.model.util.OverrideResidualMatchers;
 
-import static org.onehippo.cm.model.tree.PropertyType.SINGLE;
+import static java.util.Collections.emptyList;
+import static org.onehippo.cm.model.tree.PropertyKind.SINGLE;
 
 public class ContentInitializeInstruction extends InitializeInstruction {
 
@@ -68,7 +72,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         return path.equals("") ? "/" : path;
     }
 
-    public void processContentInstruction(final SourceImpl source,
+    public void processContentInstruction(final ConfigSourceImpl source,
                                           final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                           Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final String nodePath = getNodePath();
@@ -140,7 +144,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 + " defined at " + getInstructionNode().getSourceLocation()
                                 + ": node not found in this module, manual conversion required");
                     }
-                    ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
+                    ConfigDefinitionImpl def = source.addConfigDefinition();
                     node = new DefinitionNodeImpl(nodePath, name, def);
                     def.setNode(node);
                     node.setDelete(true);
@@ -220,7 +224,8 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 }
                 if (node != null) {
-                    DefinitionPropertyImpl prop = node.addProperty(name, ValueType.STRING, new ValueImpl[0]);
+                    // use empty list as stand-in for "no value defined"
+                    DefinitionPropertyImpl prop = node.addProperty(name, ValueType.STRING, emptyList());
                     prop.setOperation(PropertyOperation.DELETE);
                     prop.getSourceLocation().copy(getInstructionNode().getSourceLocation());
                 }
@@ -252,7 +257,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                             " at " + property.getSourceLocation() + " (from " + prop.getValueType().toString() +
                                             " at " + prop.getSourceLocation() + ")");
                                 }
-                                if ((prop.getType() == SINGLE && property.isMultiple()) || (prop.getType() != SINGLE && !property.isMultiple())) {
+                                if ((prop.getKind() == SINGLE && property.isMultiple()) || (prop.getKind() != SINGLE && !property.isMultiple())) {
                                     throw new EsvParseException("Unsupported " + getType().getPropertyName() + " " + prop.getJcrPath() +
                                             " multiplicity change to " + property.isMultiple() + " at " + property.getSourceLocation() +
                                             " (from " + !property.isMultiple() + " at " + prop.getSourceLocation() + ")");
@@ -304,9 +309,8 @@ public class ContentInitializeInstruction extends InitializeInstruction {
             throws EsvParseException {
         DefinitionPropertyImpl prop;
         ValueType valueType = isPathReference ? ValueType.REFERENCE : ValueType.fromJcrType(property.getType());
-        ValueImpl[] newValues = property.isMultiple() ? new ValueImpl[property.getValues().size()] : new ValueImpl[1];
-        for (int i = 0; i < newValues.length; i++) {
-            EsvValue value = property.getValues().get(i);
+        List<ValueImpl> newValues = property.isMultiple() ? new ArrayList<>(property.getValues().size()) : new ArrayList<>(1);
+        for (final EsvValue value : property.getValues()) {
             Object valueObject = value.getValue();
             if (isPathReference) {
                 final String referencePath = (String)valueObject;
@@ -319,19 +323,19 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     valueObject = StringUtils.substringBeforeLast(getContentPath(), "/") + "/" + referencePath;
                 }
             }
-            newValues[i] = new ValueImpl(valueObject, valueType, value.isResourcePath(), isPathReference);
+            newValues.add(new ValueImpl(valueObject, valueType, value.isResourcePath(), isPathReference));
         }
         if (current != null && PropertyOperation.ADD == op) {
-            ValueImpl[] oldValues = cloneValues(current.getValues());
-            ValueImpl[] values = new ValueImpl[oldValues.length + newValues.length];
-            System.arraycopy(oldValues, 0, values, 0, oldValues.length);
-            System.arraycopy(newValues, 0, values, oldValues.length, newValues.length);
+            List<ValueImpl> oldValues = cloneValues(current.getValues());
+            List<ValueImpl> values = new ArrayList<>(oldValues.size() + newValues.size());
+            values.addAll(oldValues);
+            values.addAll(newValues);
             newValues = values;
         }
-        if (property.isMultiple() || newValues.length > 1) {
+        if (property.isMultiple() || newValues.size() > 1) {
             prop = node.addProperty(propertyName, valueType, newValues);
         } else {
-            prop = node.addProperty(propertyName, newValues[0]);
+            prop = node.addProperty(propertyName, newValues.get(0));
         }
         if (current != null) {
             prop.setOperation(current.getOperation());
@@ -343,11 +347,10 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         return prop;
     }
 
-    private ValueImpl[] cloneValues(final Value[] values) {
-        final ValueImpl[] result = new ValueImpl[values.length];
-        for (int i = 0; i < values.length; i++) {
-            final Value value = values[i];
-            result[i] = new ValueImpl(value.getObject(), value.getType(), value.isResource(), value.isPath());
+    private List<ValueImpl> cloneValues(final List<ValueImpl> values) {
+        final List<ValueImpl> result = new ArrayList<>(values.size());
+        for (final Value value : values) {
+            result.add(new ValueImpl(value.getObject(), value.getType(), value.isResource(), value.isPath()));
         }
         return result;
     }
@@ -411,9 +414,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         }
     }
 
-    protected void deleteDefinition(final Definition definition) {
+    protected void deleteDefinition(final TreeDefinitionImpl definition) {
         // remove definition from source
-        SourceImpl defSource = (SourceImpl) definition.getSource();
+        SourceImpl defSource = definition.getSource();
         for (Iterator<AbstractDefinitionImpl> defIterator = defSource.getModifiableDefinitions().iterator(); defIterator.hasNext(); ) {
             if (defIterator.next() == definition) {
                 defIterator.remove();

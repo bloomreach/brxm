@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
@@ -36,7 +36,7 @@ import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.PropertyOperation;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 
 import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
@@ -181,7 +181,7 @@ public class ModuleContext {
                 switch (definition.getType()) {
                     case CONFIG:
                     case CONTENT:
-                        collectResourcePathsForNode(resourceNameResolver, ((ContentDefinitionImpl)definition).getNode());
+                        collectResourcePathsForNode(resourceNameResolver, ((TreeDefinitionImpl)definition).getNode());
                         break;
                     case NAMESPACE:
                         collectResourcePathForNamespace(resourceNameResolver, (NamespaceDefinitionImpl)definition);
@@ -192,11 +192,11 @@ public class ModuleContext {
     }
 
     protected void collectResourcePathsForNode(final ResourceNameResolver resourceNameResolver, final DefinitionNodeImpl node) {
-        for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
+        for (DefinitionPropertyImpl childProperty : node.getProperties()) {
             collectResourcePathsForProperty(resourceNameResolver, childProperty);
         }
 
-        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+        for (DefinitionNodeImpl childNode : node.getNodes()) {
             collectResourcePathsForNode(resourceNameResolver, childNode);
         }
     }
@@ -207,7 +207,7 @@ public class ModuleContext {
             return;
         }
 
-        if (property.getType() == PropertyType.SINGLE) {
+        if (property.getKind() == PropertyKind.SINGLE) {
             final ValueImpl value = property.getValue();
             if (value.isResource() && !value.isNewResource()) {
                 resourceNameResolver.seedName(value.getString());

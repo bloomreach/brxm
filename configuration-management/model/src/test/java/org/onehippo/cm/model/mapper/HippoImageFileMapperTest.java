@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.tree.ValueType;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -81,7 +82,7 @@ public class HippoImageFileMapperTest {
         GroupImpl group = new GroupImpl("dummyGroup");
         ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
-        SourceImpl source = new ConfigSourceImpl("somePath", module);
+        ConfigSourceImpl source = new ConfigSourceImpl("somePath", module);
         ConfigDefinitionImpl definition = new ConfigDefinitionImpl(source);
         DefinitionNodeImpl parentNode = new DefinitionNodeImpl("/path/to/", "parentNode", definition);
 
@@ -89,7 +90,7 @@ public class HippoImageFileMapperTest {
         value = new ValueImpl("Dummy value");
         childNode1.addProperty("dummyProperty", value);
         childNode1.addProperty(AbstractFileMapper.JCR_MIME_TYPE, new ValueImpl("image/png"));
-        ValueImpl jcrTypeValue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE);
+        ValueImpl jcrTypeValue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE.getName());
         childNode1.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, jcrTypeValue);
 
         DefinitionNodeImpl childNode2 = new DefinitionNodeImpl("jpgImageNode", parentNode);
@@ -98,15 +99,16 @@ public class HippoImageFileMapperTest {
         ValueImpl arrValue0 = new ValueImpl("v1".getBytes());
         ValueImpl arrValue1 = new ValueImpl("v2".getBytes());
         arrValue2 = new ValueImpl("v3".getBytes());
-        childNode2.addProperty("dataProperty", ValueType.BINARY, new ValueImpl[]{arrValue0, arrValue1, arrValue2});
+        childNode2.addProperty("dataProperty", ValueType.BINARY, asList(arrValue0, arrValue1, arrValue2));
 
         DefinitionNodeImpl imageSetNode = new DefinitionNodeImpl("imageSetNode", parentNode);
-        ValueImpl imageSetTypevalue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGESET);
+        ValueImpl imageSetTypevalue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGESET.getName());
         imageSetNode.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, imageSetTypevalue);
 
         DefinitionNodeImpl galleryImage = new DefinitionNodeImpl("galleryImage", imageSetNode);
         galleryImage.addProperty(AbstractFileMapper.JCR_MIME_TYPE, new ValueImpl("image/gif"));
-        galleryImage.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE));
+        galleryImage.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE,
+                new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE.getName()));
 
         giValue = new ValueImpl("dummy");
         galleryImage.addProperty("dummy", giValue);
@@ -115,6 +117,6 @@ public class HippoImageFileMapperTest {
         ValueImpl garrValue1 = new ValueImpl("v2".getBytes());
         ValueImpl garrValue2 = new ValueImpl("v3".getBytes());
 
-        galleryImage.addProperty("dataProperty", ValueType.BINARY, new ValueImpl[]{garrValue0, garrValue1, garrValue2});
+        galleryImage.addProperty("dataProperty", ValueType.BINARY, asList(garrValue0, garrValue1, garrValue2));
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,20 +20,16 @@ import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 
-public class ConfigDefinitionImpl extends ContentDefinitionImpl implements ConfigDefinition {
+public class ConfigDefinitionImpl extends TreeDefinitionImpl<ConfigSourceImpl>
+        implements ConfigDefinition<ConfigSourceImpl> {
 
-    public ConfigDefinitionImpl(final SourceImpl source) {
+    public ConfigDefinitionImpl(final ConfigSourceImpl source) {
         super(source);
     }
 
     @Override
     public DefinitionType getType() {
         return DefinitionType.CONFIG;
-    }
-
-    @Override
-    public ConfigSourceImpl getSource() {
-        return (ConfigSourceImpl) super.getSource();
     }
 
 }

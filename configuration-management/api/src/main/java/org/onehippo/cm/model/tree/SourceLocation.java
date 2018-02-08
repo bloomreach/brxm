@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cm.model.tree;
  * Represents a precise position in a Source where a particular {@link DefinitionItem} is defined.
  */
 public interface SourceLocation {
+
     /**
      * @return a path where the Source might be found (as defined by the context in which this class is used)
      */
@@ -35,4 +36,5 @@ public interface SourceLocation {
      * or zero if this information is not available
      */
     int getColumnNumber();
+
 }
