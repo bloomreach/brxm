@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
-import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
@@ -78,10 +78,10 @@ public class JcrContentProcessor {
         }
 
         try {
-            modelNode.getDefinition().setRootPath(constructNodePath(parentNode.getPath(), modelNode.getName()));
+            modelNode.getDefinition().setRootPath(JcrPaths.getPath(parentNode.getPath()).resolve(modelNode.getJcrName()));
 
             final Session session = parentNode.getSession();
-            validateAppendAction(modelNode.getDefinition().getRootPath(), actionType, session, false);
+            validateAppendAction(modelNode.getDefinition().getRootPath().toString(), actionType, session, false);
 
             final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
             applyNode(modelNode, parentNode, actionType, unprocessedReferences);
@@ -226,8 +226,7 @@ public class JcrContentProcessor {
     private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType,
                                  final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences) throws RepositoryException, IOException {
         log.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
-        for (final String name : modelNode.getNodes().keySet()) {
-            final DefinitionNode modelChild = modelNode.getNode(name);
+        for (final DefinitionNode modelChild : modelNode.getNodes()) {
             applyNode(modelChild, jcrNode, actionType, unprocessedReferences);
         }
     }
@@ -279,7 +278,7 @@ public class JcrContentProcessor {
             throws RepositoryException, IOException {
         applyPrimaryAndMixinTypes(source, targetNode);
 
-        for (DefinitionProperty modelProperty : source.getProperties().values()) {
+        for (final DefinitionProperty modelProperty : source.getProperties()) {
             if (isReferenceTypeProperty(modelProperty)) {
                 unprocessedReferences.add(Pair.of(modelProperty, targetNode));
             } else {
@@ -296,7 +295,7 @@ public class JcrContentProcessor {
         final List<String> modelMixinTypes = new ArrayList<>();
         final DefinitionProperty modelProperty = source.getProperty(JCR_MIXINTYPES);
         if (modelProperty != null) {
-            for (Value value : modelProperty.getValues()) {
+            for (final Value value : modelProperty.getValues()) {
                 modelMixinTypes.add(value.getString());
             }
         }
@@ -332,7 +331,7 @@ public class JcrContentProcessor {
         }
 
         final List<Value> modelValues = new ArrayList<>();
-        if (modelProperty.getType() == PropertyType.SINGLE) {
+        if (modelProperty.getKind() == PropertyKind.SINGLE) {
             collectVerifiedValue(modelProperty, modelProperty.getValue(), modelValues, jcrNode.getSession());
         } else {
             for (Value value : modelProperty.getValues()) {
@@ -341,7 +340,7 @@ public class JcrContentProcessor {
         }
 
         try {
-            if (modelProperty.getType() == PropertyType.SINGLE) {
+            if (modelProperty.getKind() == PropertyKind.SINGLE) {
                 if (modelValues.size() > 0) {
                     jcrNode.setProperty(modelProperty.getName(), valueFrom(modelValues.get(0), jcrNode.getSession()));
                 }

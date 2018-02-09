@@ -30,6 +30,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +173,7 @@ public class IsolatedRepository {
         }
     }
 
-    public ConfigurationModel getRuntimeConfigurationModel() throws Exception {
+    public ConfigurationModelImpl getRuntimeConfigurationModel() throws Exception {
         final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
@@ -181,7 +182,7 @@ public class IsolatedRepository {
             final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
                     .getMethod("getService", Class.class)
                     .invoke(null, configurationServiceClass);
-            return (ConfigurationModel) configurationServiceClass.getMethod("getRuntimeConfigurationModel").invoke(service);
+            return (ConfigurationModelImpl) configurationServiceClass.getMethod("getRuntimeConfigurationModel").invoke(service);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }

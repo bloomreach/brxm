@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.ModelItem;
@@ -247,21 +248,21 @@ public abstract class ValueProcessor {
     }
 
     public static boolean propertyIsIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
-        return p1.getType() == p2.getType()
+        return p1.getKind() == p2.getKind()
                 && p1.getValueType() == p2.getValueType()
                 && valuesAreIdentical(p1, p2);
     }
 
     public static boolean valuesAreIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
         if (p1.isMultiple()) {
-            final Value[] v1 = p1.getValues();
-            final Value[] v2 = p2.getValues();
+            final List<? extends Value> v1 = p1.getValues();
+            final List<? extends Value> v2 = p2.getValues();
 
-            if (v1.length != v2.length) {
+            if (v1.size() != v2.size()) {
                 return false;
             }
-            for (int i = 0; i < v1.length; i++) {
-                if (!valueIsIdentical(v1[i], v2[i])) {
+            for (int i = 0; i < v1.size(); i++) {
+                if (!valueIsIdentical(v1.get(i), v2.get(i))) {
                     return false;
                 }
             }
@@ -284,11 +285,11 @@ public abstract class ValueProcessor {
         return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
-    public static ValueImpl[] valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+    public static List<ValueImpl> valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
         final javax.jcr.Value[] jcrValues = property.getValues();
-        final ValueImpl[] values = new ValueImpl[jcrValues.length];
+        final List<ValueImpl> values = new ArrayList<>(jcrValues.length);
         for (int i = 0; i < jcrValues.length; i++) {
-            values[i] = valueFrom(property, jcrValues[i], i, definitionNode);
+            values.add(valueFrom(property, jcrValues[i], i, definitionNode));
         }
         return values;
     }
@@ -345,12 +346,12 @@ public abstract class ValueProcessor {
         try {
             Node jcrNode = property.getSession().getNodeByIdentifier(uuid);
             path = jcrNode.getPath();
-            final String rootPath = definitionNode.getDefinition().getRootPath();
-            if (!"/".equals(rootPath)) {
-                if (path.equals(rootPath)) {
+            final JcrPath rootPath = definitionNode.getDefinition().getRootPath();
+            if (!rootPath.isRoot()) {
+                if (rootPath.equals(path)) {
                     path = "";
                 } else if (path.startsWith(rootPath+"/")) {
-                    path = path.substring(rootPath.length()+1);
+                    path = path.substring(rootPath.toString().length()+1);
                 }
             }
         } catch (ItemNotFoundException e) {
@@ -400,10 +401,10 @@ public abstract class ValueProcessor {
             String nodePath = identifier;
             if (!nodePath.startsWith("/")) {
                 // path reference is relative to content definition root path
-                final String rootPath = modelValue.getParent().getDefinition().getRootPath();
-                final StringBuilder pathBuilder = new StringBuilder(rootPath);
+                final JcrPath rootPath = modelValue.getParent().getDefinition().getRootPath();
+                final StringBuilder pathBuilder = new StringBuilder(rootPath.toString());
                 if (!StringUtils.EMPTY.equals(nodePath)) {
-                    if (!"/".equals(rootPath)) {
+                    if (!rootPath.isRoot()) {
                         pathBuilder.append("/");
                     }
                     pathBuilder.append(nodePath);
