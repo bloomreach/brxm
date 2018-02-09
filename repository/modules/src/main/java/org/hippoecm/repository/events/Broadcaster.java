@@ -44,56 +44,6 @@ class Broadcaster implements Runnable {
 
     private static final String HIPPOLOG_TIMESTAMP = "hippolog:timestamp";
 
-    private class JobRunner {
-
-        private final BroadcastJob job;
-        private boolean possiblyEventsLeftToProcess = false;
-
-        private JobRunner(BroadcastJob job) {
-            this.job = job;
-        }
-
-        private void run() {
-            try {
-                final long globalLastProcessedItem = job.getGlobalLastProcessed();
-
-                final List<Node> logItems = getNextLogNodes(globalLastProcessedItem);
-                final long timeStamp = processEvents(job, logItems);
-
-                if (timeStamp > -1L) {
-                    job.setLastProcessed(timeStamp);
-                }
-                // if number of log items processed is equal to query limit, some more might need processing
-                possiblyEventsLeftToProcess = logItems.size() == queryLimit;
-            } catch (Exception e) {
-                log.warn("Error during running thread", e);
-            }
-        }
-
-        private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
-            Long timeStamp = DEFAULT_TIMESTAMP;
-            if (logItems.isEmpty()) {
-                log.debug("No pending log items to process");
-                return DEFAULT_TIMESTAMP;
-            }
-            for (Node logItem : logItems) {
-                try {
-                    log.debug("Publishing event {}", JcrUtils.getNodePathQuietly(logItem));
-                    final HippoEvent event = createEvent(logItem);
-                    job.publish(event);
-                    timeStamp = event.timestamp();
-                } catch (RepositoryException | RuntimeException re) {
-                    log.warn("Unable to process logItem at {}", JcrUtils.getNodePathQuietly(logItem), re);
-                }
-            }
-            return timeStamp;
-        }
-
-        private boolean isPossiblyEventsLeftToProcess() {
-            return possiblyEventsLeftToProcess;
-        }
-    }
-
     private final Session session;
     private final BroadcastService broadcastService;
     private final ValueGetter<Property,?> propertyValueGetter;
@@ -122,14 +72,39 @@ class Broadcaster implements Runnable {
             log.debug("Polling");
             final BroadcastJob job = broadcastService.getNextJob();
             if (job != null) {
-                JobRunner runner = new JobRunner(job);
-                runner.run();
-                if (!runner.isPossiblyEventsLeftToProcess()) {
-                    break;
+                try {
+                    final long globalLastProcessedItem = job.getGlobalLastProcessed();
+
+                    final List<Node> logItems = new LinkedList<>();
+                    boolean possiblyEventsLeftToProcess = getNextLogNodes(globalLastProcessedItem, logItems);
+
+                    if (logItems.isEmpty()) {
+                        log.debug("No pending log items to process");
+                    } else {
+                        long timeStamp = DEFAULT_TIMESTAMP;
+                        for (Node logItem : logItems) {
+                            try {
+                                log.debug("Publishing event {}", JcrUtils.getNodePathQuietly(logItem));
+                                final HippoEvent event = createEvent(logItem);
+                                job.publish(event);
+                                timeStamp = event.timestamp();
+                            } catch (RepositoryException | RuntimeException re) {
+                                log.warn("Unable to process logItem at {}", JcrUtils.getNodePathQuietly(logItem), re);
+                            }
+                        }
+                        if (timeStamp > DEFAULT_TIMESTAMP) {
+                            job.setLastProcessed(timeStamp);
+                        }
+                    }
+                    if (possiblyEventsLeftToProcess) {
+                        // unless stopped (keepRunning==false), continue while loop
+                        continue;
+                    }
+                } catch (Exception e) {
+                    log.warn("Error during execution of Broadcast Job", e);
                 }
-            } else {
-                break;
             }
+            break;
         }
     }
 
@@ -137,11 +112,10 @@ class Broadcaster implements Runnable {
         keepRunning = false;
     }
 
-    private List<Node> getNextLogNodes(long lastItem) throws RepositoryException {
+    private boolean getNextLogNodes(long lastItem, List<Node> nodes) throws RepositoryException {
         log.debug("lastItem processed item: {}", lastItem);
 
         try {
-            LinkedList<Node> nodes = new LinkedList<Node>();
 
             if (maxEventAgeHours > -1) {
                 final long maxEventAgeTimestamp = System.currentTimeMillis() - maxEventAgeHours * 60 * 60 * 1000;
@@ -159,12 +133,15 @@ class Broadcaster implements Runnable {
                 query.setLimit(queryLimit);
             }
 
+            long resultCount = 0;
+
             QueryResult queryResult = query.execute();
             NodeIterator nodeIterator = queryResult.getNodes();
 
             // iterate through results (which are in reverse chronological order)
             // until timestamp is older than what we are interested in
             for (Node logNode : new NodeIterable(nodeIterator)) {
+                resultCount++;
                 // add log node if valid and has timestamp higher than lastItem (which should always be the case since
                 // we query on hippolog:timestamp > " + lastItem + "
                 if (logNode.hasProperty(HIPPOLOG_TIMESTAMP)) {
@@ -177,7 +154,8 @@ class Broadcaster implements Runnable {
                 }
             }
 
-            return nodes;
+            // return true if there are possibly Events Left To Process
+            return queryLimit > -1 && resultCount == queryLimit;
 
         } catch (Exception e) {
             session.refresh(false);
