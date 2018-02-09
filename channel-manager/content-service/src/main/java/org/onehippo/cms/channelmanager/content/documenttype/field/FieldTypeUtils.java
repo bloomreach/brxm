@@ -184,16 +184,19 @@ public class FieldTypeUtils {
             final FieldsInformation fieldInfo = fieldType.init(context);
             if (fieldType.isValid()) {
                 allFieldsInfo.add(fieldInfo);
-            } else if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnknownField(context.getContentTypeItem());
-                result = Optional.empty();
+                return result;
             }
+
+            if (fieldType.hasUnsupportedValidator()) {
+                allFieldsInfo.addUnknownField(context.getContentTypeItem());
+            }
+            // Else the field is a known one, but still invalid (example: an empty compound). Don't include
+            // the field is the list of "unknown" fields, but don't include it in the document type either.
         } else {
             allFieldsInfo.addUnknownField(context.getContentTypeItem());
-            result = Optional.empty();
         }
 
-        return result;
+        return Optional.empty();
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {

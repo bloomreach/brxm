@@ -541,7 +541,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void populateFieldsInvalidCompoundField() {
+    public void populateFieldsEmptyCompoundField() {
         final List<FieldType> fields = new ArrayList<>();
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
@@ -572,9 +572,7 @@ public class FieldTypeUtilsTest {
         assertTrue(fieldsInfo.isAllFieldsIncluded());
         assertTrue(fieldsInfo.getCanCreateAllRequiredFields());
         assertTrue(fieldsInfo.getUnsupportedFieldTypes().isEmpty());
-
-        assertThat(fields.size(), equalTo(1));
-        assertThat(fields.get(0), equalTo(fieldType));
+        assertTrue(fields.isEmpty());
         verifyAll();
     }
 
