@@ -182,8 +182,10 @@ public class FieldTypeUtils {
         if (result.isPresent()) {
             final FieldType fieldType = result.get();
             final FieldsInformation fieldInfo = fieldType.init(context);
+
+            allFieldsInfo.add(fieldInfo);
+
             if (fieldType.isValid()) {
-                allFieldsInfo.add(fieldInfo);
                 return result;
             }
 
