@@ -34,12 +34,12 @@ public class StringCodecMigrator implements ConfigurationMigrator {
 
     private static final Logger log = LoggerFactory.getLogger(StringCodecMigrator.class);
 
-    private static final String OLD_CODECS_CONFIGURATION_LOCATION = "/hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs";
-    private static final String NEW_CODECS_CONFIGURATION_LOCATION = "/hippo:configuration/hippo:modules/stringcodec/hippo:moduleconfig";
+    private static final String OLD_CODECS_CONFIGURATION_LOCATION =
+            "/hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs";
+    private static final String NEW_CODECS_CONFIGURATION_LOCATION =
+            "/hippo:configuration/hippo:modules/stringcodec/hippo:moduleconfig";
     private static final String NODE_CONFIGURATION_PARAMETER_PATTERN = "encoding.node*";
     private static final String DISPLAY_CONFIGURATION_PARAMETER = "encoding.display";
-    private static final String HIPPO_CONFIGURATION = "/hippo:configuration";
-    private static final String HIPPO_MODULECONFIG = "hippo:moduleconfig";
 
     @Override
     public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
@@ -62,7 +62,6 @@ public class StringCodecMigrator implements ConfigurationMigrator {
         }
 
         session.save();
-
         return true;
     }
 
