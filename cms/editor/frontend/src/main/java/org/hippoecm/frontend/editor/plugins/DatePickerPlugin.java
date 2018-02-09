@@ -18,53 +18,35 @@ package org.hippoecm.frontend.editor.plugins;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.datetime.DateLabel;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimeLabel;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
-import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class DatePickerPlugin extends RenderPlugin<Date> {
 
-    /**
-     * @deprecated use {@link Mode#EDIT} instead.
-     */
-    @Deprecated
-    public static final String EDIT = "edit";
-
-    /***
-     * @deprecated use {@link Mode#VIEW} instead.
-     */
-    @Deprecated
-    public static final String VIEW = "view";
-
-    public static final String MODE = "mode";
     public static final String VALUE = "value";
 
-    public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
+    public DatePickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         final IModel<Date> model = new MapEmptyDateToNullModel(getModel());
-        final Mode mode = Mode.fromString(config.getString(MODE), Mode.VIEW);
+        final Mode mode = Mode.fromConfig(config, Mode.VIEW);
         if (mode == Mode.EDIT) {
-            add(newDateFieldWidget(context, config, model));
+            add(new DateFieldWidget(VALUE, model, context, config));
         } else {
-            add(newLabel(model));
+            final boolean dateOnly = config.getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
+            if (dateOnly) {
+                add(new DateLabel(VALUE, model, FormatStyle.LONG));
+            } else {
+                add(new DateTimeLabel(VALUE, model, FormatStyle.LONG, FormatStyle.SHORT));
+            }
         }
         setOutputMarkupId(true);
     }
-
-    private DateFieldWidget newDateFieldWidget(final IPluginContext context, final IPluginConfig config, final IModel<Date> valueModel) {
-        return new DateFieldWidget(VALUE, valueModel, context, config);
-    }
-
-    private Label newLabel(final IModel<Date> valueModel) {
-        final boolean dateOnly = getPluginConfig().getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
-        return  new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT, dateOnly);
-    }
-
 }
