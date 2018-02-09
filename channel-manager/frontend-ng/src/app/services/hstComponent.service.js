@@ -21,6 +21,7 @@ class HstComponentService {
     'ngInject';
 
     this.$q = $q;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.HstService = HstService;
 
@@ -48,15 +49,12 @@ class HstComponentService {
   setPathParameter(componentId, componentVariant, parameterName, parameterValue, basePath = '') {
     let path = parameterValue.startsWith('/') ? parameterValue : `/${parameterValue}`;
 
-    if (basePath && path.length > basePath.length) {
+    if (basePath && path.length > basePath.length && path.startsWith(basePath)) {
       path = path.substring(basePath.length);
       if (path.startsWith('/')) {
         path = path.substring(1);
       }
     }
-
-    const params = {};
-    params[parameterName] = path;
 
     return this.setParameter(componentId, componentVariant, parameterName, path);
   }
@@ -69,7 +67,8 @@ class HstComponentService {
     // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
     const encodedVariant = encodeURIComponent(componentVariant);
 
-    return this.HstService.doPutForm(params, componentId, encodedVariant);
+    return this.HstService.doPutForm(params, componentId, encodedVariant)
+      .then(() => this.ChannelService.recordOwnChange());
   }
 }
 

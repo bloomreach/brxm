@@ -240,7 +240,6 @@ describe('DocumentLocationField', () => {
   });
 
   describe('without root path', () => {
-
     describe('and without default path', () => {
       describe('$onInit', () => {
         it('sets the initialPickerPath to the channel content root', () => {

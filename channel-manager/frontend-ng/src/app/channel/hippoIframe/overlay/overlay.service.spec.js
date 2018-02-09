@@ -214,13 +214,13 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(27);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(11);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(15);
       done();
     });
   });
@@ -569,7 +569,6 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
-    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
@@ -585,7 +584,6 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'component B',
       });
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
@@ -622,7 +620,6 @@ describe('OverlayService', () => {
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
-    spyOn(ChannelService, 'recordOwnChange');
 
     loadIframeFixture(() => {
       const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
@@ -638,7 +635,6 @@ describe('OverlayService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'Component with experiment',
       });
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
 
       done();
     });
@@ -676,7 +672,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(23);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(27);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -689,7 +685,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(22);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
@@ -894,12 +890,92 @@ describe('OverlayService', () => {
           done();
         });
       });
+
+      describe('shows disabled buttons when locked by another user', () => {
+        function eventHandlerCount(jqueryElement, event) {
+          const eventHandlers = $._data(jqueryElement[0], 'events');
+          return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
+        }
+
+        it('Scenario 4', (done) => {
+          manageContentScenario(10, (mainButton, optionButtons) => {
+            expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+            expect(eventHandlerCount(mainButton, 'click')).toEqual(1);
+
+            mainButton.trigger('mouseenter');
+            expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+            expect(optionButtons.children().length).toBe(1);
+
+            const firstButton = $(optionButtons.children()[0]);
+            expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(firstButton.hasClass('disabled')).toBe(true);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+
+            done();
+          });
+        });
+
+        it('Scenario 5', (done) => {
+          manageContentScenario(11, (mainButton, optionButtons) => {
+            expect(mainButton.hasClass('disabled')).toBe(true);
+            expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(eventHandlerCount(mainButton, 'click')).toEqual(0);
+
+            mainButton.trigger('mouseenter');
+            expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(optionButtons.children().length).toBe(1);
+
+            const firstButton = $(optionButtons.children()[0]);
+            expect(firstButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
+            expect(firstButton.hasClass('disabled')).toBe(true);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+
+            done();
+          });
+        });
+
+        it('Scenario 6', (done) => {
+          manageContentScenario(12, (mainButton, optionButtons) => {
+            expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+
+            mainButton.trigger('mouseenter');
+            expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
+            expect(optionButtons.children().length).toBe(2);
+
+            const firstButton = $(optionButtons.children()[0]);
+            expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(firstButton.hasClass('disabled')).toBe(true);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+
+            const secondButton = $(optionButtons.children()[1]);
+            expect(secondButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
+            expect(secondButton.hasClass('disabled')).toBe(true);
+            expect(eventHandlerCount(secondButton, 'click')).toEqual(0);
+
+            done();
+          });
+        });
+
+        it('Scenario 7', (done) => {
+          manageContentScenario(13, (mainButton, optionButtons) => {
+            expect(mainButton.hasClass('disabled')).toBe(true);
+            expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+
+            mainButton.trigger('mouseenter');
+            expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(optionButtons.children().length).toBe(0);
+
+            done();
+          });
+        });
+
+      });
     });
 
     describe('when button is on a template of a component that is not a container item', () => {
       it('does not fail on checks for locks on a surrounding element when by mistake a parameterName is used',
         (done) => {
-          manageContentScenario(11, (mainButton) => {
+          manageContentScenario(15, (mainButton) => {
             expect(mainButton.hasClass('qa-add-content')).toBe(true);
             done();
           });

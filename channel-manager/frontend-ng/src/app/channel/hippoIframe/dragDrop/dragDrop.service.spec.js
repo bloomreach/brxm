@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,9 +125,9 @@ describe('DragDropService', () => {
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`);
   }
 
-  function boundEventHandlerCount(jqueryElement, event) {
+  function eventHandlerCount(jqueryElement, event) {
     const eventHandlers = $._data(jqueryElement[0], 'events');
-    return eventHandlers && {}.hasOwnProperty.call(eventHandlers, event) ? eventHandlers[event].length : 0;
+    return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
   }
 
   it('is not dragging initially', () => {
@@ -237,13 +237,13 @@ describe('DragDropService', () => {
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
 
       expect(DragDropService.isDraggingOrClicking()).toEqual(true);
-      expect(boundEventHandlerCount(componentElement1, 'mouseup')).toEqual(1);
-      expect(boundEventHandlerCount(componentElement1, 'mouseout')).toEqual(1);
+      expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(1);
+      expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(1);
 
       componentElement1.one('mouseout.test', () => {
         expect(DragDropService.isDraggingOrClicking()).toEqual(false);
-        expect(boundEventHandlerCount(componentElement1, 'mouseup')).toEqual(0);
-        expect(boundEventHandlerCount(componentElement1, 'mouseout')).toEqual(0);
+        expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(0);
+        expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(0);
         done();
       });
 
