@@ -591,6 +591,33 @@ public class HstManageContentTagTest {
                 + "} -->"));
     }
 
+    @Test
+    public void pickerRootPathTest() throws Exception {
+        tag.setParameterName("absPath");
+        tag.setRootPath("relative/path");
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+        hstRequestContext.setSiteContentBasePath("my/channel/path");
+        Node folderNode = createMock(Node.class);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)).andReturn(false);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
+        expect(jcrSession.getNode("/my/channel/path/relative/path")).andReturn(folderNode);
+
+        replay(jcrSession, folderNode);
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"rootPath\":\"relative/path\","
+                + "\"parameterName\":\"absPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path/relative/path\""
+                + "} -->"));
+    }
+
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
         assertThat("expected log message '" + expectedMessage + "'", listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)), is(true));
         assertThat(listener.getEvents().size(), is(1));
