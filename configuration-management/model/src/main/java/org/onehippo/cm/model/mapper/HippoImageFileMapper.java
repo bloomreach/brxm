@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cms7.utilities.io.FilePathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,10 @@ public class HippoImageFileMapper extends AbstractFileMapper {
             final DefinitionNode imageSetNode = imageNode.getParent();
             if (isType(imageSetNode, HIPPOGALLERY_IMAGESET)) {
                 final DefinitionProperty fileNameProperty = imageSetNode.getProperty(HIPPOGALLERY_FILENAME);
-                final String fileName = fileNameProperty != null ? fileNameProperty.getValue().getString() : mapNodeNameToFileName(imageSetNode.getName());
+                final String fileName =
+                        fileNameProperty != null
+                                ? FilePathUtils.cleanFileName(fileNameProperty.getValue().getString())
+                                : mapNodeNameToFileName(imageSetNode.getName());
                 final String baseName = StringUtils.substringBeforeLast(fileName, DOT_SEPARATOR);
                 final String suffix = mapNodeNameToFileName(imageNode.getName());
                 final String extension = fileName.contains(DOT_SEPARATOR) ? StringUtils.substringAfterLast(fileName, DOT_SEPARATOR) : getFileExtension(imageNode);

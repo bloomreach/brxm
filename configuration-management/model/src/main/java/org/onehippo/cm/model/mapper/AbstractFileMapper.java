@@ -26,6 +26,7 @@ import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cms7.utilities.io.FilePathUtils;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIMETYPE;
@@ -58,8 +59,9 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
         return jcrPath.stream().map(JcrPathSegment::toString).map(AbstractFileMapper::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER, "/", ""));
     }
 
-    protected static String mapNodeNameToFileName(String name) {
-        return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
+    public static String mapNodeNameToFileName(String name) {
+        name = name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
+        return FilePathUtils.cleanFileName(name);
     }
 
     protected boolean isType(DefinitionNode node, String nodeType) {
