@@ -892,19 +892,24 @@ describe('OverlayService', () => {
       });
 
       describe('shows disabled buttons when locked by another user', () => {
+        function eventHandlerCount(jqueryElement, event) {
+          const eventHandlers = $._data(jqueryElement[0], 'events');
+          return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
+        }
+
         it('Scenario 4', (done) => {
           manageContentScenario(10, (mainButton, optionButtons) => {
             expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-            expect(boundEventHandlerCount(mainButton, 'click')).toEqual(1);
+            expect(eventHandlerCount(mainButton, 'click')).toEqual(1);
 
             mainButton.trigger('mouseenter');
             expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
             expect(optionButtons.children().length).toBe(1);
 
-            let firstButton = $(optionButtons.children()[0]);
+            const firstButton = $(optionButtons.children()[0]);
             expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
             expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(boundEventHandlerCount(firstButton, 'click')).toEqual(0);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
 
             done();
           });
@@ -914,16 +919,16 @@ describe('OverlayService', () => {
           manageContentScenario(11, (mainButton, optionButtons) => {
             expect(mainButton.hasClass('disabled')).toBe(true);
             expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
-            expect(boundEventHandlerCount(mainButton, 'click')).toEqual(0);
+            expect(eventHandlerCount(mainButton, 'click')).toEqual(0);
 
             mainButton.trigger('mouseenter');
             expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
             expect(optionButtons.children().length).toBe(1);
 
-            let firstButton = $(optionButtons.children()[0]);
+            const firstButton = $(optionButtons.children()[0]);
             expect(firstButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
             expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(boundEventHandlerCount(firstButton, 'click')).toEqual(0);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
 
             done();
           });
@@ -937,15 +942,15 @@ describe('OverlayService', () => {
             expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
             expect(optionButtons.children().length).toBe(2);
 
-            let firstButton = $(optionButtons.children()[0]);
+            const firstButton = $(optionButtons.children()[0]);
             expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
             expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(boundEventHandlerCount(firstButton, 'click')).toEqual(0);
+            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
 
-            let secondButton = $(optionButtons.children()[1]);
+            const secondButton = $(optionButtons.children()[1]);
             expect(secondButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
             expect(secondButton.hasClass('disabled')).toBe(true);
-            expect(boundEventHandlerCount(secondButton, 'click')).toEqual(0);
+            expect(eventHandlerCount(secondButton, 'click')).toEqual(0);
 
             done();
           });
@@ -966,11 +971,6 @@ describe('OverlayService', () => {
 
       });
     });
-
-    function boundEventHandlerCount(jqueryElement, event) {
-      const eventHandlers = $._data(jqueryElement[0], 'events');
-      return eventHandlers && {}.hasOwnProperty.call(eventHandlers, event) ? eventHandlers[event].length : 0;
-    }
 
     describe('when button is on a template of a component that is not a container item', () => {
       it('does not fail on checks for locks on a surrounding element when by mistake a parameterName is used',
