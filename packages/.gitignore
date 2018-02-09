@@ -14,4 +14,5 @@ package-cms-dependencies/.project
 package-cms-dependencies/.settings
 package-cms-dependencies/hippo-package-cms-dependencies.iml
 package-cms-dependencies/target
+package-shared-dependencies/target
 /target
