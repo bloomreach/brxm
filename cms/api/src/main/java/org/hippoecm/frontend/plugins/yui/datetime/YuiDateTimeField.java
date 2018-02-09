@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -30,6 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 import org.joda.time.DateTimeFieldType;
@@ -37,10 +42,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Semi-fork of YUI DateTimeField from Wicket extensions. Replaces Wicket extensions YUI behaviors with a {@link YuiDatePicker}
@@ -52,29 +53,22 @@ import java.util.TimeZone;
  */
 public class YuiDateTimeField extends DateTimeField {
 
+    private static final String CURRENT_DATE_TIME_TOOLTIP = "set-to-current-date-tooltip";
+    private static final String CURRENT_DATE_TIME_LABEL = "set-to-current-date";
     public static final String DATE_LABEL = "date-label";
     public static final String HOURS_LABEL = "hours-label";
     public static final String MINUTES_LABEL = "minutes-label";
-    public static final String CURRENT_DATE_TIME_TOOLTIP = "set-to-current-date-tooltip";
-    public static final String CURRENT_DATE_TIME_LABEL = "set-to-current-date";
-    public static final String CURRENT_DATE_TOOLTIP = "set-to-current-date-only-tooltip";
-    public static final String CURRENT_DATE_LABEL = "set-to-current-date-only";
-    private final YuiDatePickerSettings settings;
-    private boolean todayLinkVisible = true;
-    private final boolean hideTime;
 
+    private final YuiDatePickerSettings settings;
+    private boolean currentDateLinkVisible = true;
 
     public YuiDateTimeField(final String id, final IModel<Date> model) {
         this(id, model, null);
     }
 
     public YuiDateTimeField(final String id, final IModel<Date> model, final YuiDatePickerSettings settings) {
-        this(id, model, settings, false);
-    }
-
-    public YuiDateTimeField(final String id, final IModel<Date> model, final YuiDatePickerSettings settings, final boolean hideTime) {
         super(id, model);
-        this.hideTime = hideTime;
+
         if (settings != null) {
             this.settings = settings;
         }
@@ -105,9 +99,9 @@ public class YuiDateTimeField extends DateTimeField {
         final TextField minutesField = (TextField) get("minutes");
         minutesField.setLabel(Model.of(getString(MINUTES_LABEL)));
 
-        //add "Now" link
-        final AjaxLink<Date> today;
-        add(today = new AjaxLink<Date>("today") {
+        //add "current-date" link
+        final AjaxLink<Date> currentDateLink;
+        add(currentDateLink = new AjaxLink<Date>("current-date") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 YuiDateTimeField.this.setDefaultModelObject(new Date());
@@ -121,17 +115,13 @@ public class YuiDateTimeField extends DateTimeField {
 
             @Override
             public boolean isVisible() {
-                return todayLinkVisible;
+                return currentDateLinkVisible;
             }
         });
 
-        today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
-        // add tooltip:
-        final Model<String> dateTooltip = hideTime ? Model.of(getString(CURRENT_DATE_TOOLTIP)) : Model.of(getString(CURRENT_DATE_TIME_TOOLTIP));
-        today.add(new AttributeModifier("title", dateTooltip));
-        // add text:
-        final Model<String> dateLabel = hideTime ? Model.of(getString(CURRENT_DATE_LABEL)): Model.of(getString(CURRENT_DATE_TIME_LABEL));
-        today.add(new Label("current-date-label", dateLabel));
+        currentDateLink.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
+        currentDateLink.add(new Label("current-date-label", getTodayLinkLabel()));
+        currentDateLink.add(TitleAttribute.set(getTodayLinkTooltip()));
 
         //Add change behavior to super fields
         for (final String name : new String[]{"date", "hours", "minutes", "amOrPmChoice"}) {
@@ -150,14 +140,14 @@ public class YuiDateTimeField extends DateTimeField {
                 }
             });
         }
+    }
 
-        if (hideTime) {
-            // hiding the "hours" component hides the entire "hours" wicket:enclosure
-            get(HOURS).setVisibilityAllowed(false);
-            // hide the minutes field to prevent wicket.ajax javascript errors
-            get(MINUTES).setVisibilityAllowed(false);
-        }
+    String getTodayLinkLabel() {
+        return getString(CURRENT_DATE_TIME_LABEL);
+    }
 
+    String getTodayLinkTooltip() {
+        return getString(CURRENT_DATE_TIME_TOOLTIP);
     }
 
     private int calculateDateLength() {
@@ -167,31 +157,31 @@ public class YuiDateTimeField extends DateTimeField {
     private void updateDateTime() {
         final Date date = getDate();
         if (date != null) {
-            final MutableDateTime datetime = new MutableDateTime(date);
+            final MutableDateTime dateTime = new MutableDateTime(date);
             try {
                 final TimeZone zone = getClientTimeZone();
                 if (zone != null) {
-                    datetime.setZone(DateTimeZone.forTimeZone(zone));
+                    dateTime.setZone(DateTimeZone.forTimeZone(zone));
                 }
 
-                if (hideTime) {
-                    datetime.set(DateTimeFieldType.hourOfDay(), 0);
-                    datetime.setMinuteOfHour(0);
-                } else {
-                    final Integer hours = getHours();
-                    if (hours != null) {
-                        datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
-                        final Integer minutes = getMinutes();
-                        datetime.setMinuteOfHour(minutes != null ? minutes : 0);
-                    }
-                }
+                setHourAndMinutes(dateTime);
+
                 // the date will be in the server's timezone
-                setDate(datetime.toDate());
-                setModelObject(datetime.toDate());
+                setDate(dateTime.toDate());
+                setModelObject(dateTime.toDate());
             } catch (final RuntimeException e) {
                 error(e.getMessage());
                 invalid();
             }
+        }
+    }
+
+    void setHourAndMinutes(final MutableDateTime dateTime) {
+        final Integer hours = getHours();
+        if (hours != null) {
+            dateTime.set(DateTimeFieldType.hourOfDay(), hours % 24);
+            final Integer minutes = getMinutes();
+            dateTime.setMinuteOfHour(minutes != null ? minutes : 0);
         }
     }
 
@@ -200,8 +190,16 @@ public class YuiDateTimeField extends DateTimeField {
         return false;
     }
 
+    /**
+     * @deprecated As of 5.2.0 replaced by {@link #setCurrentDateLinkVisible}
+     */
+    @Deprecated
     public void setTodayLinkVisible(final boolean todayLinkVisible) {
-        this.todayLinkVisible = todayLinkVisible;
+        setCurrentDateLinkVisible(todayLinkVisible);
+    }
+
+    public void setCurrentDateLinkVisible(final boolean currentDateLinkVisible) {
+        this.currentDateLinkVisible = currentDateLinkVisible;
     }
 
     protected String getDatePattern() {
