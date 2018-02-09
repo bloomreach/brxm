@@ -91,7 +91,7 @@ describe('HstComponentService', () => {
       expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('id', 'variant', 'name', 'selected-path', 'basePath');
     });
 
-    it('return a promise that is resolved after the picked path is set', (done) => {
+    it('returns a promise that is resolved after the picked path is set', (done) => {
       spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
 
       expect(pickPathPromise).toBeDefined();
@@ -103,7 +103,7 @@ describe('HstComponentService', () => {
       $rootScope.$digest();
     });
 
-    it('return a promise that is rejected if setting the picked path fails', (done) => {
+    it('returns a promise that is rejected if setting the picked path fails', (done) => {
       spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject());
 
       pickPathPromise.catch(() => {
