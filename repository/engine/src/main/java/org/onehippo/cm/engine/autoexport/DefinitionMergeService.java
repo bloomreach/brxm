@@ -107,6 +107,7 @@ import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.model.tree.PropertyOperation.REPLACE;
+import static org.onehippo.cms7.utilities.io.FilePathUtils.cleanFilePath;
 
 public class DefinitionMergeService {
 
@@ -1111,7 +1112,7 @@ public class DefinitionMergeService {
         if (xmlFile == null) {
             return "main.yaml";
         }
-        return StringUtils.removeEnd(xmlFile, ".xml") + YAML_EXT;
+        return cleanFilePath(StringUtils.removeEnd(xmlFile, ".xml")) + YAML_EXT;
     }
 
     /**

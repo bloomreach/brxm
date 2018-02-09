@@ -270,7 +270,7 @@ public class StringCodecFactory {
                             break; // )
                         case 0x2A:
                             appendSpace = true;
-                            break;
+                            break; // *
                         case 0x2B:
                             appendSpace = true;
                             break; // +

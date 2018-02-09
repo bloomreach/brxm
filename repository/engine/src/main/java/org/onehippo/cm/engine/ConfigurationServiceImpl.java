@@ -381,7 +381,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         final ModuleContext moduleContext = new ExportModuleContext(module, modulePath);
         try {
             new ModuleWriter().writeModule(module, moduleContext);
-            File file = File.createTempFile("export", "zip");
+            File file = File.createTempFile("export", ".zip");
             final ZipCompressor zipCompressor = new ZipCompressor();
             zipCompressor.zipDirectory(dirToZip.toPath(), file.getAbsolutePath());
             return file;
@@ -615,17 +615,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private boolean storeBaselineModel(final ConfigurationModelImpl model) {
-        try {
-            baselineService.storeBaseline(model, session);
-            // session.save() isn't necessary here, because storeBaseline() already does it
-            return true;
-        } catch (Exception e) {
-            log.error("Failed to store the Configuration baseline", e);
-            return false;
-        }
-    }
-
     /**
      * Run all migrators. The session is expected to be clean (no pending changes) when this method is called
      * and after it returns. Failure of one migrator is not expected to prevent any other from running unless the
@@ -658,6 +647,17 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.error("Exception attempting to refresh session after failed migration", e2);
                 }
             }
+        }
+    }
+
+    private boolean storeBaselineModel(final ConfigurationModelImpl model) {
+        try {
+            baselineService.storeBaseline(model, session);
+            // session.save() isn't necessary here, because storeBaseline() already does it
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to store the Configuration baseline", e);
+            return false;
         }
     }
 

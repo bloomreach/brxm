@@ -50,6 +50,7 @@ import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
+import static org.onehippo.cm.model.mapper.AbstractFileMapper.mapNodeNameToFileName;
 
 /**
  * Node export
@@ -85,10 +86,6 @@ public class JcrContentExporter {
         exportNode(node, contentDefinition, false, null, Collections.emptySet());
 
         return module;
-    }
-
-    private String mapNodeNameToFileName(String part) {
-        return part.contains(":") ? part.replace(":", "-") : part;
     }
 
     public void exportNode(final Node node,
