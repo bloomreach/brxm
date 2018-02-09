@@ -49,15 +49,12 @@ class HstComponentService {
   setPathParameter(componentId, componentVariant, parameterName, parameterValue, basePath = '') {
     let path = parameterValue.startsWith('/') ? parameterValue : `/${parameterValue}`;
 
-    if (basePath && path.length > basePath.length) {
+    if (basePath && path.length > basePath.length && path.startsWith(basePath)) {
       path = path.substring(basePath.length);
       if (path.startsWith('/')) {
         path = path.substring(1);
       }
     }
-
-    const params = {};
-    params[parameterName] = path;
 
     return this.setParameter(componentId, componentVariant, parameterName, path);
   }

@@ -195,4 +195,11 @@ describe('NameUrlFields', () => {
       });
     });
   });
+
+  describe('setManualUrlEditMode', () => {
+    it('(re)generates the document url when set to false', () => {
+      component.setManualUrlEditMode(false);
+      expect(spies.setDocumentUrlByName).toHaveBeenCalled();
+    });
+  });
 });
