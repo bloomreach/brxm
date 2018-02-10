@@ -157,7 +157,7 @@ public class HstManageContentTag extends TagSupport {
             return null;
         }
 
-        final String absoluteRootPath = getAbsoluteRootPath(requestContext);
+        String absoluteRootPath = getAbsoluteRootPath(requestContext);
 
         try {
             final Node rootPathNode = requestContext.getSession().getNode(absoluteRootPath);
@@ -165,11 +165,13 @@ public class HstManageContentTag extends TagSupport {
                 log.error("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath are ignored.", rootPath);
                 rootPath = null;
                 defaultPath = null;
+                absoluteRootPath = null;
             }
-        } catch (PathNotFoundException e) {
-            log.error("Rootpath '{}' does not exist. Parameters rootPath and defaultPath are ignored.", rootPath);
+        } catch (final PathNotFoundException e) {
+            log.error("Rootpath '{}' does not exist. Parameters rootPath and defaultPath are ignored.", rootPath, e);
             rootPath = null;
             defaultPath = null;
+            absoluteRootPath = null;
         }
         return absoluteRootPath;
     }
