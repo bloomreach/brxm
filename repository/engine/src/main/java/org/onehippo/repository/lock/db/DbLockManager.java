@@ -43,7 +43,7 @@ public class DbLockManager extends AbstractLockManager {
     private final static String TABLE_NAME_LOCK = "HIPPO_LOCK";
 
     private final static String CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
-            "lockKey VARCHAR(256) NOT NULL, " +
+            "lockKey VARCHAR(190) NOT NULL, " +
             "lockOwner VARCHAR(256), " +
             "lockThread VARCHAR(256)," +
             "status VARCHAR(256) NOT NULL," +
