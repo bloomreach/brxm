@@ -81,6 +81,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setAllFieldsIncluded(fieldsInformation.isAllFieldsIncluded());
         docType.setCanCreateAllRequiredFields(fieldsInformation.getCanCreateAllRequiredFields());
         docType.setUnsupportedFieldTypes(fieldsInformation.getUnsupportedFieldTypes());
+        docType.setUncreatableFieldTypes(fieldsInformation.getUncreatableFieldTypes());
 
         return docType;
     }

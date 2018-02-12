@@ -37,6 +37,7 @@ public class FieldsInformation {
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
     private final SortedSet<String> unsupportedFieldTypes;
+    private final SortedSet<String> uncreatableFieldTypes;
 
     public static FieldsInformation allSupported() {
         return new FieldsInformation(true, true);
@@ -54,6 +55,7 @@ public class FieldsInformation {
 
     public FieldsInformation() {
         unsupportedFieldTypes = new TreeSet<>();
+        uncreatableFieldTypes = new TreeSet<>();
     }
 
     public boolean isAllFieldsIncluded() {
@@ -76,31 +78,41 @@ public class FieldsInformation {
         return unsupportedFieldTypes;
     }
 
+    public Set<String> getUncreatableFieldTypes() {
+        return uncreatableFieldTypes;
+    }
+
     public void add(final FieldsInformation fieldInfo) {
         allFieldsIncluded &= fieldInfo.allFieldsIncluded;
         canCreateAllRequiredFields &= fieldInfo.canCreateAllRequiredFields;
         unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
+        uncreatableFieldTypes.addAll(fieldInfo.uncreatableFieldTypes);
     }
 
     public void addUnsupportedField(final ContentTypeItem item) {
-        this.addUnsupportedField(item.getItemType());
+        final String fieldTypeName = item.getItemType();
+
+        this.addUnsupportedField(fieldTypeName);
 
         // Unsupported fields cannot be created, so only when the unsupported field is not required
         // it may still be possible to create all required fields
         final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
         canCreateAllRequiredFields &= !isRequired;
+
+        if (isRequired) {
+            // unsupported required fields cannot be created
+            uncreatableFieldTypes.add(reportedFieldTypeName(fieldTypeName));
+        }
     }
 
     public void addUnsupportedField(final String fieldTypeName) {
         // The unsupported field is not included, so not all fields are included
         allFieldsIncluded = false;
 
-        // Add the name of the field to the list of unsupported types
-        final String reportedFieldTypeName = mapFieldTypeName(fieldTypeName);
-        unsupportedFieldTypes.add(reportedFieldTypeName);
+        unsupportedFieldTypes.add(reportedFieldTypeName(fieldTypeName));
     }
 
-    private static String mapFieldTypeName(final String name) {
+    private static String reportedFieldTypeName(final String name) {
         if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
                 || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
             return name;
@@ -118,13 +130,14 @@ public class FieldsInformation {
             return false;
         }
         final FieldsInformation that = (FieldsInformation) o;
-        return allFieldsIncluded == that.allFieldsIncluded &&
-                canCreateAllRequiredFields == that.canCreateAllRequiredFields &&
-                Objects.equals(unsupportedFieldTypes, that.unsupportedFieldTypes);
+        return allFieldsIncluded == that.allFieldsIncluded
+                && canCreateAllRequiredFields == that.canCreateAllRequiredFields
+                && Objects.equals(unsupportedFieldTypes, that.unsupportedFieldTypes)
+                && Objects.equals(uncreatableFieldTypes, that.uncreatableFieldTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(allFieldsIncluded, canCreateAllRequiredFields, unsupportedFieldTypes);
+        return Objects.hash(allFieldsIncluded, canCreateAllRequiredFields, unsupportedFieldTypes, uncreatableFieldTypes);
     }
 }
