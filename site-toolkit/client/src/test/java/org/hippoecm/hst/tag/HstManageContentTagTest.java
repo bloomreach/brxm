@@ -618,6 +618,29 @@ public class HstManageContentTagTest {
                 + "} -->"));
     }
 
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPath() throws Exception {
+        tag.setParameterName("docPathParameter");
+        window.setComponent(new TestComponentWithoutPickerRootPath());
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+        hstRequestContext.setSiteContentBasePath("my/channel/path");
+
+        replay(jcrSession);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"docPathParameter\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
         assertThat("expected log message '" + expectedMessage + "'", listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)), is(true));
         assertThat(listener.getEvents().size(), is(1));
@@ -655,6 +678,34 @@ public class HstManageContentTagTest {
                 isRelative = true,
                 pickerInitialPath = "initial-path",
                 pickerRootPath = "root-path",
+                pickerConfiguration = "picker-config",
+                pickerRemembersLastVisited = false,
+                pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
+        )
+        String getPickerPath();
+
+        @Parameter(name = "string")
+        String getString();
+    }
+
+    @ParametersInfo(type = TestComponentInfoWithoutPickerRootPath.class)
+    public class TestComponentWithoutPickerRootPath extends GenericHstComponent {
+    }
+
+    private interface TestComponentInfoWithoutPickerRootPath {
+
+        @Parameter(name = "docPathParameter")
+        @JcrPath
+        String getAbsPath();
+
+        @Parameter(name = "relPath")
+        @JcrPath(isRelative = true)
+        String getRelPath();
+
+        @Parameter(name = "pickerPath")
+        @JcrPath(
+                isRelative = true,
+                pickerInitialPath = "initial-path",
                 pickerConfiguration = "picker-config",
                 pickerRemembersLastVisited = false,
                 pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
