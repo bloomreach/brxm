@@ -27,6 +27,10 @@ class EditContentMainCtrl {
     this.closing = false;
   }
 
+  notAllFieldsShown() {
+    return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
+  }
+
   save() {
     this.HippoIframeService.reload();
     this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');

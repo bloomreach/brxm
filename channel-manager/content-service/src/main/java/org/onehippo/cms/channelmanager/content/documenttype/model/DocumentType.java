@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 
 
 /**
@@ -36,7 +36,10 @@ public class DocumentType {
     private String displayName;
     private boolean readOnlyDueToUnknownValidator;
     private boolean allFieldsIncluded;
+    private boolean canCreateAllRequiredFields;
     private final List<FieldType> fields; // ordered list of fields
+
+    @JsonInclude(Include.NON_EMPTY)
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
     public DocumentType() {
@@ -85,5 +88,13 @@ public class DocumentType {
 
     public void setUnsupportedFieldTypes(final Set<String> unsupportedFieldTypes) {
         this.unsupportedFieldTypes = unsupportedFieldTypes;
+    }
+
+    public boolean getCanCreateAllRequiredFields() {
+        return canCreateAllRequiredFields;
+    }
+
+    public void setCanCreateAllRequiredFields(final boolean canCreateAllRequiredFields) {
+        this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 }

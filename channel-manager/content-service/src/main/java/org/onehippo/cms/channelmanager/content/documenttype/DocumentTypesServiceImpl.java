@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -76,10 +77,10 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setId(id);
         LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
 
-        docType.setUnsupportedFieldTypes(FieldTypeUtils.getUnsupportedFieldTypes(context));
-
-        final boolean allFieldsIncluded = FieldTypeUtils.populateFields(docType.getFields(), context);
-        docType.setAllFieldsIncluded(allFieldsIncluded);
+        final FieldsInformation fieldsInformation = FieldTypeUtils.populateFields(docType.getFields(), context);
+        docType.setAllFieldsIncluded(fieldsInformation.isAllFieldsIncluded());
+        docType.setCanCreateAllRequiredFields(fieldsInformation.getCanCreateAllRequiredFields());
+        docType.setUnsupportedFieldTypes(fieldsInformation.getUnsupportedFieldTypes());
 
         return docType;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,16 +52,17 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public boolean isValid() {
-        return super.isValid() && !fields.isEmpty();
+    public boolean isSupported() {
+        return super.isSupported() && !fields.isEmpty();
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
         super.init(fieldContext);
 
-        fieldContext.createContextForCompound()
-                .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
+        return fieldContext.createContextForCompound()
+                .map(context -> FieldTypeUtils.populateFields(fields, context))
+                .orElse(FieldsInformation.noneSupported());
     }
 
     void initProviderBasedChoice(final FieldTypeContext fieldContext, final String choiceId) {

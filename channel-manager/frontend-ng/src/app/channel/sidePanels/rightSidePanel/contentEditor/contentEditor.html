@@ -20,12 +20,10 @@
             layout="column"
             class="rightSidePanel-content">
 
-  <md-subheader class="md-no-sticky"
-                ng-if="$ctrl.notAllFieldsShown()"
+  <md-subheader ng-if="$ctrl.showMessage"
+                class="md-no-sticky"
                 md-colors="{background: 'hippo-grey-200'}">
-    <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
-    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+    <ng-transclude></ng-transclude>
   </md-subheader>
 
   <div ng-if="$ctrl.getError()"

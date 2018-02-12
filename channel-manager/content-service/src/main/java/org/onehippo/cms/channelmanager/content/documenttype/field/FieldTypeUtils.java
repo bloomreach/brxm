@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,12 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -42,6 +39,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundF
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
@@ -55,6 +53,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +79,6 @@ public class FieldTypeUtils {
 
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
-
-    private static final List<String> REPORTABLE_MISSING_FIELD_TYPES;
-    private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES;
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -113,11 +109,6 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
-
-        REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList("Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown",
-                "Reference", "StaticDropdown");
-        REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList("hippo:", "hippogallerypicker:", "hippostd:", "hipposys:",
-                "hippotaxonomy:", "poll:", "selection:");
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
@@ -138,7 +129,7 @@ public class FieldTypeUtils {
      * unknown validator'.
      *
      * @param fieldType  Specification of a field type
-     * @param docType The document type the field is a part of
+     * @param docType    The document type the field is a part of
      * @param validators List of 0 or more validators specified at JCR level
      */
     public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
@@ -157,38 +148,68 @@ public class FieldTypeUtils {
 
     /**
      * Populate the list of fields of a content type, in the context of assembling a Document Type.
+     * Note that compound fields use this method recursively to populate their fields.
      *
-     * @param fields      list of fields to populate
-     * @param context     determines which fields are available
+     * @param fields  list of fields to populate
+     * @param context determines which fields are available
      * @return whether all fields in the document type have been included.
      */
-    public static boolean populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+    public static FieldsInformation populateFields(final List<FieldType> fields, final ContentTypeContext context) {
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(sorter -> sortValidateAndAddFields(sorter, context, fields))
-                .orElse(false);
+                .orElse(FieldsInformation.noneSupported());
     }
 
-    private static boolean sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
-                                                 final List<FieldType> fields) {
+    private static FieldsInformation sortValidateAndAddFields(final FieldSorter sorter,
+                                                              final ContentTypeContext context,
+                                                              final List<FieldType> fields) {
+        // start positive: assume all fields at this level are supported and will be included
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
 
-        fieldTypeContexts.forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+        fieldTypeContexts.forEach(field -> createAndInit(field, fieldsInformation).ifPresent(fields::add));
 
-        return fieldTypeContexts.size() == fields.size();
+        return fieldsInformation;
     }
 
-    private static Optional<FieldType> validateCreateAndInit(final FieldTypeContext context) {
-        return determineDescriptor(context)
-                .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
-                .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
-                .map(fieldType -> {
-                    fieldType.init(context);
-                    return fieldType.isValid() ? fieldType : null;
-                });
+    private static Optional<FieldType> createAndInit(final FieldTypeContext context,
+                                                     final FieldsInformation allFieldsInfo) {
+        Optional<FieldType> optionalFieldType = determineDescriptor(context)
+                .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
+                .flatMap(FieldTypeFactory::createFieldType);
+
+        if (optionalFieldType.isPresent()) {
+            final FieldType fieldType = optionalFieldType.get();
+            final FieldsInformation fieldInfo = fieldType.init(context);
+
+            allFieldsInfo.add(fieldInfo);
+
+            if (fieldType.isSupported()) {
+                return optionalFieldType;
+            }
+
+            if (fieldType.hasUnsupportedValidator()) {
+                allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+            }
+            // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
+            // the field in the list of unsupported fields, but don't include it in the document type either.
+        } else {
+            allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+        }
+
+        return Optional.empty();
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
         return Optional.ofNullable(FIELD_TYPE_MAP.get(determineFieldType(context)));
+    }
+
+    private static Optional<Class<? extends FieldType>> determineFieldTypeClass(final FieldTypeContext context, final TypeDescriptor descriptor) {
+        if (usesDefaultFieldPlugin(context, descriptor)) {
+            return Optional.of(descriptor.fieldTypeClass);
+        }
+        return Optional.empty();
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
@@ -200,11 +221,25 @@ public class FieldTypeUtils {
         }
 
         if (item.isProperty()) {
-            // Unsupported type
-            return "";
+            // All supported property fields are part of the FIELD_TYPE_MAP, so this one is unsupported
+            return null;
         }
 
-        return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
+        if (ChoiceFieldUtils.isChoiceField(context)) {
+            return FIELD_TYPE_CHOICE;
+        }
+
+        if (isCompound(item)) {
+            return FIELD_TYPE_COMPOUND;
+        }
+
+        return null;
+    }
+
+    private static boolean isCompound(final ContentTypeItem item) {
+        return ContentTypeContext.getContentType(item.getItemType())
+                .map(ContentType::isCompoundType)
+                .orElse(false);
     }
 
     private static boolean usesDefaultFieldPlugin(final FieldTypeContext context, final TypeDescriptor descriptor) {
@@ -214,28 +249,9 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> determinePluginClass(final FieldTypeContext context) {
-        return context.getEditorConfigNode()
+        Optional<String> result = context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
-    }
-
-    public static Set<String> getUnsupportedFieldTypes(final ContentTypeContext context) {
-        return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
-                .map(fieldSorter -> fieldSorter.sortFields(context).stream()
-                        .filter(fieldTypeContext -> determineFieldType(fieldTypeContext).isEmpty())
-                        .map(FieldTypeUtils::mapFieldTypeName)
-                        .collect(Collectors.toCollection(TreeSet::new))
-                )
-                .orElse(null);
-    }
-
-    private static String mapFieldTypeName(final FieldTypeContext fieldTypeContext) {
-        final String name = fieldTypeContext.getContentTypeItem().getItemType();
-        if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
-                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
-            return name;
-        } else {
-            return "Custom";
-        }
+        return result;
     }
 
     /**
@@ -255,14 +271,13 @@ public class FieldTypeUtils {
 
     /**
      * Write the values of a set of fields to a (JCR) node, facilitated by a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> list of field values mappings. Values are not checked yet.
      * @param fields   set of field type definitions, specifying how to interpret the corresponding field values
      * @param node     the JCR node to write the field values to.
-     * @throws ErrorWithPayloadException
-     *                 if fieldType#writeTo() bumps into an error.
+     * @throws ErrorWithPayloadException if fieldType#writeTo() bumps into an error.
      */
     public static void writeFieldValues(final Map<String, List<FieldValue>> valueMap,
                                         final List<FieldType> fields,
@@ -326,12 +341,12 @@ public class FieldTypeUtils {
 
     /**
      * Validate the values of a set of fields against a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
-     * @return         true if all checked field values are valid, false otherwise.
+     * @return true if all checked field values are valid, false otherwise.
      */
     public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
         boolean isValid = true;
