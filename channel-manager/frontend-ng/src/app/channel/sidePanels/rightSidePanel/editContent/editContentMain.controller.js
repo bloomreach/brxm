@@ -15,14 +15,25 @@
  */
 
 class EditContentMainCtrl {
-  constructor($q, $translate, CmsService, ContentEditor, EditContentService, HippoIframeService) {
+  constructor(
+    $q,
+    $translate,
+    CmsService,
+    ConfigService,
+    ContentEditor,
+    EditContentService,
+    HippoIframeService,
+    ProjectService,
+  ) {
     'ngInject';
 
     this.$q = $q;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
+    this.ProjectService = ProjectService;
 
     this.closing = false;
   }
@@ -68,6 +79,15 @@ class EditContentMainCtrl {
           this.HippoIframeService.reload();
         }
       });
+  }
+
+  showAddToProject() {
+    if (!this.ConfigService.projectsEnabled) {
+      return false;
+    }
+
+    const id = this.EditContentService.documentId;
+    return this.ProjectService.showAddToProjectForDocument(id);
   }
 }
 

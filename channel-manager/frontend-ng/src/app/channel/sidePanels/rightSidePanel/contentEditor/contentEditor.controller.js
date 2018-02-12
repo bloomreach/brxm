@@ -15,11 +15,20 @@
  */
 
 class ContentEditorCtrl {
-  constructor($scope, $translate, ContentEditor) {
+  constructor(
+    $scope,
+    $translate,
+    ContentEditor,
+    ConfigService,
+    ProjectService,
+  ) {
     'ngInject';
 
     this.$scope = $scope;
     this.ContentEditor = ContentEditor;
+    this.ConfigService = ConfigService;
+    this.ProjectService = ProjectService;
+
     this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }

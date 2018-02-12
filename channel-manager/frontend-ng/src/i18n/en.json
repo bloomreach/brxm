@@ -1,5 +1,6 @@
 {
   "ADDING_COMPONENT": "Adding {{component}}",
+  "ADD_TO_PROJECT": "Add to project",
   "ADVANCED_SETTINGS": "Advanced settings",
   "CANCEL": "Cancel",
   "CHANGE": "Change",
@@ -33,6 +34,8 @@
   "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
   "DELETE": "Delete",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
+  "DOCUMENT_ADDED_TO_PROJECT": "Document added to project '{{name}}'",
+  "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project to be able to edit it here.",
   "DISCARD": "Discard",
   "DISCARD_ALL": "Discard all",
   "DISCARD_DOCUMENT": "Discard '{{documentName}}'?",

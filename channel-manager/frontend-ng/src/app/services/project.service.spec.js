@@ -73,7 +73,9 @@ describe('ProjectService', () => {
     spyOn(ConfigService, 'getCmsContextPath').and.returnValue('/test/');
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
+    $httpBackend.expectGET('/test/ws/projects').respond(200, projects);
     $httpBackend.expectGET('/test/ws/channels/').respond(200, channels);
+
 
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${currentProject.id}`).respond(200, currentProject.id);
 
@@ -88,6 +90,7 @@ describe('ProjectService', () => {
 
   it('loads projects and sets the current project', () => {
     expect(ProjectService.projects).toEqual(projects);
+    expect(ProjectService.allProjects).toEqual(projects);
     expect(ProjectService.selectedProject).toEqual(currentProject);
   });
 

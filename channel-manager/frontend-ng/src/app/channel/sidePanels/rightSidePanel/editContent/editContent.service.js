@@ -58,6 +58,7 @@ class EditContentService {
     this.RightSidePanelService.startLoading();
     this.ContentEditor.open(documentId)
       .then(() => {
+        this.documentId = documentId;
         this._showDocumentTitle();
         this.RightSidePanelService.stopLoading();
       });

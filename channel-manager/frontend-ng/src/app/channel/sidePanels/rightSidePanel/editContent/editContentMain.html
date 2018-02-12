@@ -14,7 +14,10 @@
   ~ limitations under the License.
   -->
 
-<content-editor flex="grow"
+<add-to-project ng-if="$ctrl.showAddToProject()" on-close="$ctrl.close()"></add-to-project>
+
+<content-editor ng-show="!$ctrl.showAddToProject()"
+                flex="grow"
                 layout="column"
                 on-save="$ctrl.save()"
                 on-close="$ctrl.close()"
