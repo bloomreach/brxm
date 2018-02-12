@@ -18,6 +18,7 @@
                 layout="column"
                 show-message="$ctrl.notAllFieldsShown()"
                 allow-save="true"
+                on-switch-editor="$ctrl.switchEditor()"
                 on-save="$ctrl.save()"
                 on-close="$ctrl.close()">
   <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>

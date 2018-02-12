@@ -34,6 +34,7 @@
                   cancel-label="{{ ::'DISCARD' | translate }}"
                   close-label="{{ ::'DISCARD' | translate }}"
                   allow-save="$ctrl.allMandatoryFieldsShown()"
+                  on-switch-editor="$ctrl.switchEditor()"
                   on-save="$ctrl.save()"
                   on-close="$ctrl.close()">
     <div>{{ ::'NOT_ALL_MANDATORY_FIELDS_SHOWN' | translate }}</div>

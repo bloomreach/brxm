@@ -28,6 +28,7 @@ const contentEditorComponent = {
     closeLabel: '@',
     onClose: '&',
     onSave: '&',
+    onSwitchEditor: '&',
     showMessage: '<',
   },
 };
