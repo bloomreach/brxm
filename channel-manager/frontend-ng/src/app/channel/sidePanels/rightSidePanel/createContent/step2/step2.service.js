@@ -60,17 +60,20 @@ class Step2Service {
         // Mark the document dirty; this will trigger the discard dialog and enable the save button
         this.ContentEditor.markDocumentDirty();
 
-        this._reportUncreatableFieldTypes(documentType);
+        this._reportUnsupportedRequiredFieldTypes(documentType);
 
         return documentType;
       });
   }
 
-  _reportUncreatableFieldTypes(documentType) {
-    if (documentType.uncreatableFieldTypes) {
+  _reportUnsupportedRequiredFieldTypes(documentType) {
+    if (documentType.unsupportedRequiredFieldTypes) {
+      const unsupportedMandatoryFieldTypes = documentType.unsupportedRequiredFieldTypes.join(',');
+      const unsupportedFieldTypes = documentType.unsupportedFieldTypes ? documentType.unsupportedFieldTypes.join(',') : '';
+
       this.CmsService.reportUsageStatistic(
         'CreateContentUnsupportedFields',
-        { unsupportedFieldTypes: documentType.uncreatableFieldTypes.join(',') },
+        { unsupportedFieldTypes, unsupportedMandatoryFieldTypes },
       );
     }
   }

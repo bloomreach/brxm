@@ -127,15 +127,17 @@ describe('Step2Service', () => {
       $rootScope.$digest();
     });
 
-    it('reports uncreatable field types in the document type', (done) => {
+    it('reports unsupported field types in the document type', (done) => {
       const documentType = {
-        uncreatableFieldTypes: ['One', 'Two', 'Three'],
+        unsupportedFieldTypes: ['One', 'Two', 'Three'],
+        unsupportedRequiredFieldTypes: ['Two', 'Three'],
       };
       spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
       Step2Service.open().then((docType) => {
         expect(docType).toBe(documentType);
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContentUnsupportedFields', {
           unsupportedFieldTypes: 'One,Two,Three',
+          unsupportedMandatoryFieldTypes: 'Two,Three',
         });
         done();
       });
