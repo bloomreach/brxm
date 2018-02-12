@@ -52,8 +52,8 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public boolean isValid() {
-        return super.isValid() && !fields.isEmpty();
+    public boolean isSupported() {
+        return super.isSupported() && !fields.isEmpty();
     }
 
     @Override

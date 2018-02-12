@@ -352,7 +352,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
-        expect(fieldType.isValid()).andReturn(false);
+        expect(fieldType.isSupported()).andReturn(false);
         expect(fieldType.hasUnsupportedValidator()).andReturn(true);
         replayAll();
 
@@ -384,7 +384,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isSupported()).andReturn(true);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -430,13 +430,13 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField2));
 
         expect(stringField1.init(fieldContext1)).andReturn(FieldsInformation.allSupported());
-        expect(stringField1.isValid()).andReturn(true);
+        expect(stringField1.isSupported()).andReturn(true);
 
         expect(multilineStringField.init(fieldContext2)).andReturn(FieldsInformation.allSupported());
-        expect(multilineStringField.isValid()).andReturn(true);
+        expect(multilineStringField.isSupported()).andReturn(true);
 
         expect(stringField2.init(fieldContext3)).andReturn(FieldsInformation.allSupported());
-        expect(stringField2.isValid()).andReturn(true);
+        expect(stringField2.isSupported()).andReturn(true);
 
         replayAll();
 
@@ -484,10 +484,10 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(RichTextFieldType.class)).andReturn(Optional.of(richTextField));
 
         expect(formattedTextField.init(fieldContext1)).andReturn(FieldsInformation.allSupported());
-        expect(formattedTextField.isValid()).andReturn(true);
+        expect(formattedTextField.isSupported()).andReturn(true);
 
         expect(richTextField.init(fieldContext2)).andReturn(FieldsInformation.allSupported());
-        expect(richTextField.isValid()).andReturn(true);
+        expect(richTextField.isSupported()).andReturn(true);
 
         replayAll();
 
@@ -527,7 +527,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isSupported()).andReturn(true);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -564,7 +564,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
-        expect(fieldType.isValid()).andReturn(false);
+        expect(fieldType.isSupported()).andReturn(false);
         expect(fieldType.hasUnsupportedValidator()).andReturn(false);
         replayAll();
 
@@ -600,7 +600,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.noneSupported());
-        expect(fieldType.isValid()).andReturn(false);
+        expect(fieldType.isSupported()).andReturn(false);
         expect(fieldType.hasUnsupportedValidator()).andReturn(false);
         replayAll();
 
@@ -633,7 +633,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(CHOICE_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(ChoiceFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
-        expect(fieldType.isValid()).andReturn(true);
+        expect(fieldType.isSupported()).andReturn(true);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);

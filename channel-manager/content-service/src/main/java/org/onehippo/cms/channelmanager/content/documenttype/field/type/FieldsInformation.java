@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
@@ -83,17 +82,17 @@ public class FieldsInformation {
         unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
     }
 
-    public void addUnknownField(final ContentTypeItem item) {
-        this.addUnknownField(item.getItemType());
+    public void addUnsupportedField(final ContentTypeItem item) {
+        this.addUnsupportedField(item.getItemType());
 
-        // Unknown fields cannot be created, so only when the unknown field is not required
+        // Unsupported fields cannot be created, so only when the unsupported field is not required
         // it may still be possible to create all required fields
         final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
         canCreateAllRequiredFields &= !isRequired;
     }
 
-    public void addUnknownField(final String fieldTypeName) {
-        // The unknown field is not included, so not all fields are included
+    public void addUnsupportedField(final String fieldTypeName) {
+        // The unsupported field is not included, so not all fields are included
         allFieldsIncluded = false;
 
         // Add the name of the field to the list of unsupported types

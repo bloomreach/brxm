@@ -83,14 +83,14 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void isValid() {
-        assertTrue(fieldType.isValid());
+    public void isSupported() {
+        assertTrue(fieldType.isSupported());
 
         CompoundFieldType empty = new CompoundFieldType();
-        assertFalse(empty.isValid());
+        assertFalse(empty.isSupported());
 
         fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.isValid());
+        assertFalse(fieldType.isSupported());
     }
 
     @Test

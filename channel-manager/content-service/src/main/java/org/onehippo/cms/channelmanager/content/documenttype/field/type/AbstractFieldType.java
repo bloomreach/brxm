@@ -163,7 +163,7 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isSupported() {
         return !hasUnsupportedValidator();
     }
 

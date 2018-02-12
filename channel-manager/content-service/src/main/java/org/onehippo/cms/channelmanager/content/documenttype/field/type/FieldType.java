@@ -82,11 +82,11 @@ public interface FieldType {
     boolean isRequired();
 
     /**
-     * Check if an initialized field is "valid", i.e. should be present in a document type.
+     * Check if an initialized field is supported, i.e. should be present in a document type.
      *
      * @return true or false
      */
-    boolean isValid();
+    boolean isSupported();
 
     /**
      * Initialize a {@link FieldType}, given a field context.

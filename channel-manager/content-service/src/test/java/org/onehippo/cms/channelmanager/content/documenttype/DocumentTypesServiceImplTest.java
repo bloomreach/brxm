@@ -216,7 +216,7 @@ public class DocumentTypesServiceImplTest {
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(false);
         fieldsInfo.setCanCreateAllRequiredFields(true);
-        fieldsInfo.addUnknownField("Test");
+        fieldsInfo.addUnsupportedField("Test");
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));

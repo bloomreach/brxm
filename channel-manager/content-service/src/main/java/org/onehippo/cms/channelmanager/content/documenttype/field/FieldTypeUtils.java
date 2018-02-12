@@ -163,7 +163,7 @@ public class FieldTypeUtils {
     private static FieldsInformation sortValidateAndAddFields(final FieldSorter sorter,
                                                               final ContentTypeContext context,
                                                               final List<FieldType> fields) {
-        // start positive: assume all fields at this level are known and will be included
+        // start positive: assume all fields at this level are supported and will be included
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
@@ -175,27 +175,27 @@ public class FieldTypeUtils {
 
     private static Optional<FieldType> createAndInit(final FieldTypeContext context,
                                                      final FieldsInformation allFieldsInfo) {
-        Optional<FieldType> result = determineDescriptor(context)
+        Optional<FieldType> optionalFieldType = determineDescriptor(context)
                 .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
                 .flatMap(FieldTypeFactory::createFieldType);
 
-        if (result.isPresent()) {
-            final FieldType fieldType = result.get();
+        if (optionalFieldType.isPresent()) {
+            final FieldType fieldType = optionalFieldType.get();
             final FieldsInformation fieldInfo = fieldType.init(context);
 
             allFieldsInfo.add(fieldInfo);
 
-            if (fieldType.isValid()) {
-                return result;
+            if (fieldType.isSupported()) {
+                return optionalFieldType;
             }
 
             if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnknownField(context.getContentTypeItem());
+                allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
             }
-            // Else the field is a known one, but still invalid (example: an empty compound). Don't include
-            // the field is the list of "unknown" fields, but don't include it in the document type either.
+            // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
+            // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
-            allFieldsInfo.addUnknownField(context.getContentTypeItem());
+            allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
         }
 
         return Optional.empty();
@@ -221,7 +221,7 @@ public class FieldTypeUtils {
         }
 
         if (item.isProperty()) {
-            // All known property fields are part of the FIELD_TYPE_MAP, so this one is unknown
+            // All supported property fields are part of the FIELD_TYPE_MAP, so this one is unsupported
             return null;
         }
 

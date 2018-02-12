@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipse.jetty.util.Fields;
 import org.junit.Test;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
@@ -70,7 +69,7 @@ public class FieldsInformationTest {
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
         replayAll();
 
-        info.addUnknownField(contentTypeItem);
+        info.addUnsupportedField(contentTypeItem);
 
         assertFalse(info.isAllFieldsIncluded());
         assertTrue(info.getCanCreateAllRequiredFields());
@@ -86,7 +85,7 @@ public class FieldsInformationTest {
         expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("required"));
         replayAll();
 
-        info.addUnknownField(contentTypeItem);
+        info.addUnsupportedField(contentTypeItem);
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -102,7 +101,7 @@ public class FieldsInformationTest {
         expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("required"));
         replayAll();
 
-        info.addUnknownField(contentTypeItem);
+        info.addUnsupportedField(contentTypeItem);
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -123,8 +122,8 @@ public class FieldsInformationTest {
 
         replayAll();
 
-        info.addUnknownField(optionalStaticDropdown);
-        info.addUnknownField(optionalDynamicDropdown);
+        info.addUnsupportedField(optionalStaticDropdown);
+        info.addUnsupportedField(optionalDynamicDropdown);
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -138,7 +137,7 @@ public class FieldsInformationTest {
         final FieldsInformation info = FieldsInformation.allSupported();
 
         final FieldsInformation compoundWithUnknownRequiredField = FieldsInformation.noneSupported();
-        compoundWithUnknownRequiredField.addUnknownField("Test");
+        compoundWithUnknownRequiredField.addUnsupportedField("Test");
         info.add(compoundWithUnknownRequiredField);
 
         assertFalse(info.isAllFieldsIncluded());
@@ -153,7 +152,7 @@ public class FieldsInformationTest {
         assertFalse(FieldsInformation.allSupported().equals(FieldsInformation.noneSupported()));
 
         FieldsInformation unknown = new FieldsInformation();
-        unknown.addUnknownField("Test");
+        unknown.addUnsupportedField("Test");
 
         assertFalse(unknown.equals(new FieldsInformation()));
 
@@ -168,7 +167,7 @@ public class FieldsInformationTest {
         assertTrue(FieldsInformation.allSupported().hashCode() != FieldsInformation.noneSupported().hashCode());
 
         FieldsInformation unknown = new FieldsInformation();
-        unknown.addUnknownField("Test");
+        unknown.addUnsupportedField("Test");
 
         assertTrue(unknown.hashCode() != new FieldsInformation().hashCode());
     }

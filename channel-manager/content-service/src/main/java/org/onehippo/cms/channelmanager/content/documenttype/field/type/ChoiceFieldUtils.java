@@ -116,7 +116,7 @@ public class ChoiceFieldUtils {
                     choices.put(choiceId, choice);
                 } else {
                     // not all available choices are supported
-                    fieldsInfo.addUnknownField(item);
+                    fieldsInfo.addUnsupportedField(item);
                 }
             });
         }
@@ -172,7 +172,7 @@ public class ChoiceFieldUtils {
                     choices.put(id, choice);
                 } else {
                     // not all available choices are supported
-                    fieldsInfo.addUnknownField(choiceName);
+                    fieldsInfo.addUnsupportedField(choiceName);
                 }
             });
         }
