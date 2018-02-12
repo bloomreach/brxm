@@ -42,6 +42,9 @@ public class DocumentType {
     @JsonInclude(Include.NON_EMPTY)
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
+    @JsonInclude(Include.NON_EMPTY)
+    private Set<String> unsupportedRequiredFieldTypes = null; // for reporting purposes
+
     public DocumentType() {
         fields = new ArrayList<>();
     }
@@ -96,5 +99,13 @@ public class DocumentType {
 
     public void setCanCreateAllRequiredFields(final boolean canCreateAllRequiredFields) {
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
+    }
+
+    public Set<String> getUnsupportedRequiredFieldTypes() {
+        return unsupportedRequiredFieldTypes;
+    }
+
+    public void setUnsupportedRequiredFieldTypes(final Set<String> unsupportedRequiredFieldTypes) {
+        this.unsupportedRequiredFieldTypes = unsupportedRequiredFieldTypes;
     }
 }

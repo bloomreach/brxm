@@ -18,6 +18,7 @@ describe('Step2Service', () => {
   let $q;
   let $rootScope;
   let $translate;
+  let CmsService;
   let ContentEditor;
   let ContentService;
   let DialogService;
@@ -44,6 +45,7 @@ describe('Step2Service', () => {
       _$q_,
       _$rootScope_,
       _$translate_,
+      _CmsService_,
       _ContentEditor_,
       _DialogService_,
       _FeedbackService_,
@@ -53,6 +55,7 @@ describe('Step2Service', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $translate = _$translate_;
+      CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
@@ -63,6 +66,7 @@ describe('Step2Service', () => {
     spyOn($translate, 'instant').and.callThrough();
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showNotification');
+    spyOn(CmsService, 'reportUsageStatistic');
 
     Step2Service.componentInfo = {
       parameterName: 'componentParameterName',
@@ -91,7 +95,8 @@ describe('Step2Service', () => {
     });
 
     it('saves locale and url values when documentTypes are loaded', () => {
-      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve());
+      const documentType = {};
+      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
 
       Step2Service.open({}, 'test-url', 'test-locale');
       $rootScope.$digest();
@@ -101,7 +106,8 @@ describe('Step2Service', () => {
     });
 
     it('marks ContentEditor.document as dirty when documentTypes are loaded', () => {
-      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve());
+      const documentType = {};
+      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
       spyOn(ContentEditor, 'markDocumentDirty');
 
       Step2Service.open();
@@ -111,9 +117,28 @@ describe('Step2Service', () => {
     });
 
     it('resolves the document type', (done) => {
-      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve('document-type'));
+      const documentType = {};
+      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
       Step2Service.open().then((docType) => {
-        expect(docType).toBe('document-type');
+        expect(docType).toBe(documentType);
+        expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports unsupported field types in the document type', (done) => {
+      const documentType = {
+        unsupportedFieldTypes: ['One', 'Two', 'Three'],
+        unsupportedRequiredFieldTypes: ['Two', 'Three'],
+      };
+      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
+      Step2Service.open().then((docType) => {
+        expect(docType).toBe(documentType);
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContentUnsupportedFields', {
+          unsupportedFieldTypes: 'One,Two,Three',
+          unsupportedMandatoryFieldTypes: 'Two,Three',
+        });
         done();
       });
       $rootScope.$digest();

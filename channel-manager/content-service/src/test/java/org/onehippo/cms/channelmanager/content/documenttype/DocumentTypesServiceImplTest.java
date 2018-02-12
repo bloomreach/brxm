@@ -34,6 +34,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -153,6 +154,9 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.emptySet());
         expectLastCall();
 
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
+        expectLastCall();
+
         replayAll();
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
@@ -191,6 +195,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         docType.setUnsupportedFieldTypes(Collections.emptySet());
+        expectLastCall();
+
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
@@ -241,8 +248,62 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.singleton("Custom"));
         expectLastCall();
 
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
+        expectLastCall();
+
         replayAll();
 
+        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
+
+        verifyAll();
+    }
+
+    @Test
+    public void getDocumentTypeWithUnsupportedRequiredField() throws Exception {
+        final String id = "document:type";
+        final Session session = createMock(Session.class);
+        final Locale locale = new Locale("en");
+        final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final ContentType contentType = createMock(ContentType.class);
+        final List<FieldType> fields = new ArrayList<>();
+
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+                .andReturn(Optional.of(context));
+        expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
+
+        docType.setId(id);
+        expectLastCall();
+
+        expect(docType.getFields()).andReturn(fields);
+
+        final ContentTypeItem unknownRequired = createMock(ContentTypeItem.class);
+        expect(unknownRequired.getItemType()).andReturn("Test");
+        expect(unknownRequired.getValidators()).andReturn(Collections.singletonList("required"));
+
+        final FieldsInformation fieldsInfo = new FieldsInformation();
+
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
+
+        expect(context.getContentType()).andReturn(contentType);
+        expect(context.getResourceBundle()).andReturn(Optional.empty());
+        expect(contentType.isDocumentType()).andReturn(true);
+
+        docType.setAllFieldsIncluded(false);
+        expectLastCall();
+
+        docType.setCanCreateAllRequiredFields(false);
+        expectLastCall();
+
+        docType.setUnsupportedFieldTypes(Collections.singleton("Custom"));
+        expectLastCall();
+
+        docType.setUnsupportedRequiredFieldTypes(Collections.singleton("Custom"));
+        expectLastCall();
+
+        replayAll();
+
+        fieldsInfo.addUnsupportedField(unknownRequired);
         assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
 
         verifyAll();

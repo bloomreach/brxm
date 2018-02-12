@@ -39,6 +39,7 @@ public class FieldsInformationTest {
         assertTrue(info.isAllFieldsIncluded());
         assertTrue(info.getCanCreateAllRequiredFields());
         assertTrue(info.getUnsupportedFieldTypes().isEmpty());
+        assertTrue(info.getUnsupportedRequiredFieldTypes().isEmpty());
     }
 
     @Test
@@ -47,6 +48,7 @@ public class FieldsInformationTest {
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
         assertTrue(info.getUnsupportedFieldTypes().isEmpty());
+        assertTrue(info.getUnsupportedRequiredFieldTypes().isEmpty());
     }
 
     @Test
@@ -74,6 +76,7 @@ public class FieldsInformationTest {
         assertFalse(info.isAllFieldsIncluded());
         assertTrue(info.getCanCreateAllRequiredFields());
         assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("Custom")));
+        assertTrue(info.getUnsupportedRequiredFieldTypes().isEmpty());
     }
 
     @Test
@@ -90,6 +93,7 @@ public class FieldsInformationTest {
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
         assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("Custom")));
+        assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("Custom")));
     }
 
     @Test
@@ -106,6 +110,7 @@ public class FieldsInformationTest {
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
         assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("DynamicDropdown")));
+        assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("DynamicDropdown")));
     }
 
     @Test
@@ -130,19 +135,27 @@ public class FieldsInformationTest {
 
         final Set<String> expectedUnsupportedTypes = new LinkedHashSet<>(Arrays.asList("DynamicDropdown", "StaticDropdown"));
         assertThat(info.getUnsupportedFieldTypes(), equalTo(expectedUnsupportedTypes));
+
+        assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("DynamicDropdown")));
     }
 
     @Test
     public void addCompoundWithUnknownRequiredField() {
         final FieldsInformation info = FieldsInformation.allSupported();
+        final ContentTypeItem unknownRequired = createMock(ContentTypeItem.class);
+        expect(unknownRequired.getItemType()).andReturn("Test");
+        expect(unknownRequired.getValidators()).andReturn(Collections.singletonList("required"));
+
+        replayAll();
 
         final FieldsInformation compoundWithUnknownRequiredField = FieldsInformation.noneSupported();
-        compoundWithUnknownRequiredField.addUnsupportedField("Test");
+        compoundWithUnknownRequiredField.addUnsupportedField(unknownRequired);
         info.add(compoundWithUnknownRequiredField);
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
         assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("Custom")));
+        assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("Custom")));
     }
 
     @Test
