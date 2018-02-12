@@ -37,7 +37,7 @@ describe('NameUrlFields', () => {
     });
 
     $rootScope.$new();
-    element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" id="nameInputElement"></form>');
+    element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" class="name-input-element"></form>');
     component = $componentController('nameUrlFields', {
       $element: element,
     });
