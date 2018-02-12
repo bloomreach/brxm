@@ -20,7 +20,6 @@ import java.net.URI;
 import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 
 public class NamespaceDefinitionImpl extends AbstractDefinitionImpl<ConfigSourceImpl>

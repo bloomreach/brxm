@@ -16,7 +16,6 @@
 package org.onehippo.cm.model.serializer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.onehippo.cm.model.definition.DefinitionType;

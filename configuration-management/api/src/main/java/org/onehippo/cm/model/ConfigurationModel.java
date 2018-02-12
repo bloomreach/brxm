@@ -24,8 +24,6 @@ import org.onehippo.cm.model.definition.WebFileBundleDefinition;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.DefinitionNode;
-import org.onehippo.cm.model.tree.DefinitionProperty;
 
 /**
  * Represents a combined representation of configuration data from multiple groups, projects, modules, and sources.

@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.onehippo.cm.model.tree.ConfigurationProperty;

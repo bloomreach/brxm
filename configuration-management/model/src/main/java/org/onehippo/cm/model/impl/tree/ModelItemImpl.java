@@ -19,7 +19,6 @@ import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ModelItem;
-import org.onehippo.cm.model.tree.ModelNode;
 
 public abstract class ModelItemImpl implements ModelItem {
 

@@ -19,7 +19,6 @@ package org.onehippo.cm.model.impl.definition;
 import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.source.SourceImpl;
 
 public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl<ConfigSourceImpl>
         implements WebFileBundleDefinition<ConfigSourceImpl> {

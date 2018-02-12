@@ -16,9 +16,7 @@
 package org.onehippo.cm.model.impl.tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionProperty;
@@ -27,7 +25,6 @@ import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
 
-import static java.util.Arrays.asList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;

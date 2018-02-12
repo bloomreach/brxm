@@ -32,7 +32,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;

@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;

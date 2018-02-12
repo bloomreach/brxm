@@ -16,7 +16,6 @@
 package org.onehippo.cm.model.tree;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import org.onehippo.cm.model.path.JcrPathSegment;
 
