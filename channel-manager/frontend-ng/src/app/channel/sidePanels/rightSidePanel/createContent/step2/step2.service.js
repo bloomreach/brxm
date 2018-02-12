@@ -21,6 +21,7 @@ class Step2Service {
   constructor(
     $q,
     $translate,
+    CmsService,
     ContentEditor,
     ContentService,
     DialogService,
@@ -31,6 +32,7 @@ class Step2Service {
 
     this.$q = $q;
     this.$translate = $translate;
+    this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.ContentEditor = ContentEditor;
     this.DialogService = DialogService;
@@ -51,14 +53,26 @@ class Step2Service {
     this.componentInfo = componentInfo;
 
     return this.ContentEditor.loadDocumentType(document)
-      .then((docType) => {
+      .then((documentType) => {
         this.documentLocale = locale;
         this.documentUrl = url;
+
         // Mark the document dirty; this will trigger the discard dialog and enable the save button
         this.ContentEditor.markDocumentDirty();
 
-        return docType;
+        this._reportUncreatableFieldTypes(documentType);
+
+        return documentType;
       });
+  }
+
+  _reportUncreatableFieldTypes(documentType) {
+    if (documentType.uncreatableFieldTypes) {
+      this.CmsService.reportUsageStatistic(
+        'CreateContentUnsupportedFields',
+        { unsupportedFieldTypes: documentType.uncreatableFieldTypes.join(',') },
+      );
+    }
   }
 
   openEditNameUrlDialog() {
