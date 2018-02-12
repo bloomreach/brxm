@@ -24,6 +24,11 @@ name-url-fields {
     right: 0;
     top: -2px;
   }
+
+  // Hide the 'clear field' icon in Edge because it overlaps with the edit/regenerate icon
+  .url-input-element::-ms-clear { //sass-lint:disable-line no-vendor-prefixes
+    display: none;
+  }
 }
 
 .name-url-fields-dialog {
