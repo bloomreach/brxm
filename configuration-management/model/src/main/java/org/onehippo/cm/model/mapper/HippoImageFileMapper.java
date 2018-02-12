@@ -18,8 +18,6 @@ package org.onehippo.cm.model.mapper;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.path.JcrPathSegment;
-import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.Value;
@@ -35,9 +33,9 @@ public class HippoImageFileMapper extends AbstractFileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HippoImageFileMapper.class);
 
-    static final JcrPathSegment HIPPOGALLERY_IMAGE = JcrPaths.getSegment("hippogallery:image");
-    static final JcrPathSegment HIPPOGALLERY_IMAGESET = JcrPaths.getSegment("hippogallery:imageset");
-    private static final JcrPathSegment HIPPOGALLERY_FILENAME = JcrPaths.getSegment("hippogallery:filename");
+    static final String HIPPOGALLERY_IMAGE = "hippogallery:image";
+    static final String HIPPOGALLERY_IMAGESET = "hippogallery:imageset";
+    private static final String HIPPOGALLERY_FILENAME = "hippogallery:filename";
 
     private static final String IMAGE_NAME_ARRAY_PATTERN = "%s[%s].%s";
     private static final String GALLERY_IMAGE_ARRAY_NAME_PATTERN = "%s_" + IMAGE_NAME_ARRAY_PATTERN;

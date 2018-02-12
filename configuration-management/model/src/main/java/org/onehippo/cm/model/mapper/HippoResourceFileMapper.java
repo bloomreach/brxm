@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.model.path.JcrPathSegment;
-import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.Value;
@@ -32,9 +30,9 @@ public class HippoResourceFileMapper extends AbstractFileMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(HippoResourceFileMapper.class);
 
-    static final JcrPathSegment HIPPO_RESOURCE = JcrPaths.getSegment("hippo:resource");
+    private static final String HIPPO_RESOURCE = "hippo:resource";
     private static final String DEFAULT_FILENAME = "data.bin";
-    private static final JcrPathSegment HIPPO_FILENAME = JcrPaths.getSegment("hippo:filename");
+    private static final String HIPPO_FILENAME = "hippo:filename";
 
     @Override
     public String apply(Value value) {

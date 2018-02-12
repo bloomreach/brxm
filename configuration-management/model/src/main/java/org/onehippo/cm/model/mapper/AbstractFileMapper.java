@@ -27,12 +27,13 @@ import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_MIMETYPE;
+
 public abstract class AbstractFileMapper implements ValueFileMapper {
 
     static final String PATH_DELIMITER = "/";
     static final String NS_DELIMITER = ":";
-    public static final JcrPathSegment JCR_PRIMARY_TYPE = JcrPaths.getSegment("jcr:primaryType");
-    public static final JcrPathSegment JCR_MIME_TYPE = JcrPaths.getSegment("jcr:mimeType");
     public static final String DEFAULT_EXTENSION = "bin";
     public static final String DOT_SEPARATOR = ".";
 
@@ -48,7 +49,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
             .collect(entriesToMap()));
 
     protected String getFileExtension(DefinitionNode node) {
-        return node.getProperty(JCR_MIME_TYPE) != null ? mimeTypesToExtMap.getOrDefault(node.getProperty(JCR_MIME_TYPE).getValue().getString(), DEFAULT_EXTENSION)
+        return node.getProperty(JCR_MIMETYPE) != null ? mimeTypesToExtMap.getOrDefault(node.getProperty(JCR_MIMETYPE).getValue().getString(), DEFAULT_EXTENSION)
                 : DEFAULT_EXTENSION;
     }
 
@@ -61,8 +62,8 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
         return name.contains(NS_DELIMITER) ? name.substring(name.indexOf(NS_DELIMITER) + 1) : name;
     }
 
-    protected boolean isType(DefinitionNode node, JcrPathSegment nodeType) {
-        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && nodeType.equals(node.getProperty(JCR_PRIMARY_TYPE).getValue().getString());
+    protected boolean isType(DefinitionNode node, String nodeType) {
+        return node != null && node.getProperty(JCR_PRIMARYTYPE) != null && node.getProperty(JCR_PRIMARYTYPE).getValue().getString().equals(nodeType);
     }
 
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
