@@ -25,6 +25,12 @@ import java.util.TreeSet;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
+/**
+ * Maintains information about fields in a content type. Used while parsing all fields in a document type.
+ * Fields information is typically built up for one 'level' in a document type (e.g. a single field, all fields in
+ * a compound field, or all fields in a document type). Fields information of sub-fields can be added via
+ * {@link #add(FieldsInformation)}.
+ */
 public class FieldsInformation {
 
     private static final List<String> REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList(
@@ -39,10 +45,16 @@ public class FieldsInformation {
     private final SortedSet<String> unsupportedFieldTypes;
     private final SortedSet<String> unsupportedRequiredFieldTypes;
 
+    /**
+     * @return information saying all fields are supported
+     */
     public static FieldsInformation allSupported() {
         return new FieldsInformation(true, true);
     }
 
+    /**
+     * @return information saying none of the fields are supported
+     */
     public static FieldsInformation noneSupported() {
         return new FieldsInformation(false, false);
     }
@@ -53,11 +65,17 @@ public class FieldsInformation {
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 
+    /**
+     * Creates information saying none of the fields are supported
+     */
     public FieldsInformation() {
         unsupportedFieldTypes = new TreeSet<>();
         unsupportedRequiredFieldTypes = new TreeSet<>();
     }
 
+    /**
+     * @return whether all fields will be included in the returned document type.
+     */
     public boolean isAllFieldsIncluded() {
         return allFieldsIncluded;
     }
@@ -66,6 +84,9 @@ public class FieldsInformation {
         this.allFieldsIncluded = allFieldsIncluded;
     }
 
+    /**
+     * @return whether all required fields can be created
+     */
     public boolean getCanCreateAllRequiredFields() {
         return canCreateAllRequiredFields;
     }
@@ -74,14 +95,26 @@ public class FieldsInformation {
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 
+    /**
+     * @return a set of JCR type names for all fields that are not supported (yet) by this implementation.
+     */
     public Set<String> getUnsupportedFieldTypes() {
         return unsupportedFieldTypes;
     }
 
+    /**
+     * @return a set of JCR type names of all required fields that are not supported (yet) by this implementation.
+     */
     public Set<String> getUnsupportedRequiredFieldTypes() {
         return unsupportedRequiredFieldTypes;
     }
 
+    /**
+     * Adds more information about fields. This is typically information about a single field, or information
+     * about several fields in a compound field.
+     *
+     * @param fieldInfo the information about field(s) to add.
+     */
     public void add(final FieldsInformation fieldInfo) {
         allFieldsIncluded &= fieldInfo.allFieldsIncluded;
         canCreateAllRequiredFields &= fieldInfo.canCreateAllRequiredFields;
@@ -89,6 +122,12 @@ public class FieldsInformation {
         unsupportedRequiredFieldTypes.addAll(fieldInfo.unsupportedRequiredFieldTypes);
     }
 
+    /**
+     * Adds an unsupported field, i.e. a field of a type that is not (yet) implemented.
+     * The information about fields will be updated accordingly.
+     *
+     * @param item the content type item for the unsupported field
+     */
     public void addUnsupportedField(final ContentTypeItem item) {
         final String fieldTypeName = item.getItemType();
 
@@ -104,6 +143,12 @@ public class FieldsInformation {
         }
     }
 
+    /**
+     * Adds an unsupported field, i.e. a field of a type that is not (yet) implemented.
+     * The information about fields will be updated accordingly.
+     *
+     * @param fieldTypeName the JCR type name of the unsupported field
+     */
     public void addUnsupportedField(final String fieldTypeName) {
         // The unsupported field is not included, so not all fields are included
         allFieldsIncluded = false;
