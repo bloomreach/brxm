@@ -138,7 +138,6 @@ public class HstManageContentTag extends TagSupport {
                 log.error("Exception while checking rootPath parameter.", e);
                 return EVAL_PAGE;
             }
-
             final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
 
             try {
@@ -150,6 +149,11 @@ public class HstManageContentTag extends TagSupport {
         } finally {
             cleanup();
         }
+    }
+
+    private String getChannelRootPath() {
+        final ResolvedMount resolvedMount = RequestContextProvider.get().getResolvedMount();
+        return resolvedMount.getMount().getContentPath();
     }
 
     private String checkRootPath(final HstRequestContext requestContext) throws RepositoryException {
@@ -196,9 +200,7 @@ public class HstManageContentTag extends TagSupport {
         final String componentValue = window.getParameter(prefixedParameterName);
 
         if (componentValue != null && isRelativePathParameter) {
-            final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-            final String contentRoot = resolvedMount.getMount().getContentPath();
-            return contentRoot + "/" + componentValue;
+            return getChannelRootPath() + "/" + componentValue;
         }
         return componentValue;
     }
@@ -242,7 +244,7 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private Map<String, Object> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
-                                      final boolean isRelativePathParameter, final String absoluteRootPath) {
+                                                final boolean isRelativePathParameter, final String absoluteRootPath) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
@@ -260,7 +262,7 @@ public class HstManageContentTag extends TagSupport {
             writeToMap(result, "pickerConfiguration", jcrPath.pickerConfiguration());
             writeToMap(result, "pickerInitialPath", jcrPath.pickerInitialPath());
             writeToMap(result, "pickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
-            writeToMap(result, "pickerRootPath", absoluteRootPath != null ? absoluteRootPath : jcrPath.pickerRootPath());
+            writeToMap(result, "pickerRootPath", getFirstNonBlankString(absoluteRootPath, jcrPath.pickerRootPath(), getChannelRootPath()));
 
             final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
             writeToMap(result, "pickerSelectableNodeTypes", nodeTypes);
@@ -273,6 +275,16 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.isNotEmpty(value)) {
             result.put(key, value);
         }
+    }
+
+    /**
+     * Get the first String that is not blank from a number of Strings.
+     *
+     * @param strings variable list of Strings
+     * @return first non-null and not empty String or null if all are blank
+     */
+    private String getFirstNonBlankString(final String ... strings) {
+        return Arrays.stream(strings).filter(StringUtils::isNotBlank).findFirst().orElse(null);
     }
 
     /*
