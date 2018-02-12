@@ -968,7 +968,6 @@ describe('OverlayService', () => {
             done();
           });
         });
-
       });
     });
 
