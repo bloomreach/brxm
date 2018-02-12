@@ -37,7 +37,7 @@ public class FieldsInformation {
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
     private final SortedSet<String> unsupportedFieldTypes;
-    private final SortedSet<String> uncreatableFieldTypes;
+    private final SortedSet<String> unsupportedRequiredFieldTypes;
 
     public static FieldsInformation allSupported() {
         return new FieldsInformation(true, true);
@@ -55,7 +55,7 @@ public class FieldsInformation {
 
     public FieldsInformation() {
         unsupportedFieldTypes = new TreeSet<>();
-        uncreatableFieldTypes = new TreeSet<>();
+        unsupportedRequiredFieldTypes = new TreeSet<>();
     }
 
     public boolean isAllFieldsIncluded() {
@@ -78,15 +78,15 @@ public class FieldsInformation {
         return unsupportedFieldTypes;
     }
 
-    public Set<String> getUncreatableFieldTypes() {
-        return uncreatableFieldTypes;
+    public Set<String> getUnsupportedRequiredFieldTypes() {
+        return unsupportedRequiredFieldTypes;
     }
 
     public void add(final FieldsInformation fieldInfo) {
         allFieldsIncluded &= fieldInfo.allFieldsIncluded;
         canCreateAllRequiredFields &= fieldInfo.canCreateAllRequiredFields;
         unsupportedFieldTypes.addAll(fieldInfo.unsupportedFieldTypes);
-        uncreatableFieldTypes.addAll(fieldInfo.uncreatableFieldTypes);
+        unsupportedRequiredFieldTypes.addAll(fieldInfo.unsupportedRequiredFieldTypes);
     }
 
     public void addUnsupportedField(final ContentTypeItem item) {
@@ -100,8 +100,7 @@ public class FieldsInformation {
         canCreateAllRequiredFields &= !isRequired;
 
         if (isRequired) {
-            // unsupported required fields cannot be created
-            uncreatableFieldTypes.add(reportedFieldTypeName(fieldTypeName));
+            unsupportedRequiredFieldTypes.add(reportedFieldTypeName(fieldTypeName));
         }
     }
 
@@ -133,11 +132,11 @@ public class FieldsInformation {
         return allFieldsIncluded == that.allFieldsIncluded
                 && canCreateAllRequiredFields == that.canCreateAllRequiredFields
                 && Objects.equals(unsupportedFieldTypes, that.unsupportedFieldTypes)
-                && Objects.equals(uncreatableFieldTypes, that.uncreatableFieldTypes);
+                && Objects.equals(unsupportedRequiredFieldTypes, that.unsupportedRequiredFieldTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(allFieldsIncluded, canCreateAllRequiredFields, unsupportedFieldTypes, uncreatableFieldTypes);
+        return Objects.hash(allFieldsIncluded, canCreateAllRequiredFields, unsupportedFieldTypes, unsupportedRequiredFieldTypes);
     }
 }

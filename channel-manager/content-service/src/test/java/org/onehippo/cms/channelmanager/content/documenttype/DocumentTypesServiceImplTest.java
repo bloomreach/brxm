@@ -154,7 +154,7 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.emptySet());
         expectLastCall();
 
-        docType.setUncreatableFieldTypes(Collections.emptySet());
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
 
         replayAll();
@@ -197,7 +197,7 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.emptySet());
         expectLastCall();
 
-        docType.setUncreatableFieldTypes(Collections.emptySet());
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
@@ -248,7 +248,7 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.singleton("Custom"));
         expectLastCall();
 
-        docType.setUncreatableFieldTypes(Collections.emptySet());
+        docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
 
         replayAll();
@@ -259,7 +259,7 @@ public class DocumentTypesServiceImplTest {
     }
 
     @Test
-    public void getDocumentTypeWithUncreatableFields() throws Exception {
+    public void getDocumentTypeWithUnsupportedRequiredField() throws Exception {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
@@ -298,7 +298,7 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedFieldTypes(Collections.singleton("Custom"));
         expectLastCall();
 
-        docType.setUncreatableFieldTypes(Collections.singleton("Custom"));
+        docType.setUnsupportedRequiredFieldTypes(Collections.singleton("Custom"));
         expectLastCall();
 
         replayAll();

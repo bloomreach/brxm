@@ -43,7 +43,7 @@ public class DocumentType {
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
     @JsonInclude(Include.NON_EMPTY)
-    private Set<String> uncreatableFieldTypes = null; // for reporting purposes
+    private Set<String> unsupportedRequiredFieldTypes = null; // for reporting purposes
 
     public DocumentType() {
         fields = new ArrayList<>();
@@ -101,11 +101,11 @@ public class DocumentType {
         this.canCreateAllRequiredFields = canCreateAllRequiredFields;
     }
 
-    public Set<String> getUncreatableFieldTypes() {
-        return uncreatableFieldTypes;
+    public Set<String> getUnsupportedRequiredFieldTypes() {
+        return unsupportedRequiredFieldTypes;
     }
 
-    public void setUncreatableFieldTypes(final Set<String> uncreatableFieldTypes) {
-        this.uncreatableFieldTypes = uncreatableFieldTypes;
+    public void setUnsupportedRequiredFieldTypes(final Set<String> unsupportedRequiredFieldTypes) {
+        this.unsupportedRequiredFieldTypes = unsupportedRequiredFieldTypes;
     }
 }
