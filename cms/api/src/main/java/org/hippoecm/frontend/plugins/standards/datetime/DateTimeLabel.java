@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,50 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.standards.datetime;
 
-import java.io.Serializable;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 
 public class DateTimeLabel extends Label {
 
     public DateTimeLabel(final String id, final IModel<Date> model) {
-        super(id, new DateTimePrinterModel(model, DateTimePrinter::print));
+        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print()));
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle style) {
-        super(id, new DateTimePrinterModel(model, printer -> printer.print(style)));
+        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(style)));
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final FormatStyle dateStyle, final FormatStyle timeStyle) {
-        super(id, new DateTimePrinterModel(model, printer -> printer.print(dateStyle, timeStyle)));
+        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(dateStyle, timeStyle)));
     }
 
     public DateTimeLabel(final String id, final IModel<Date> model, final String pattern) {
-        super(id, new DateTimePrinterModel(model, printer -> printer.print(pattern)));
-    }
-
-    private interface Printer extends Serializable {
-        String print(DateTimePrinter printer);
-    }
-
-    private static class DateTimePrinterModel extends AbstractReadOnlyModel<String> {
-
-        private final IModel<Date> dateModel;
-        private final Printer printer;
-
-        private DateTimePrinterModel(final IModel<Date> dateModel, final Printer printer) {
-            this.dateModel = dateModel;
-            this.printer = printer;
-        }
-
-        @Override
-        public String getObject() {
-            final Date date = dateModel.getObject();
-            return printer.print(DateTimePrinter.of(date));
-        }
+        super(id, ReadOnlyModel.of(() -> DateTimePrinter.of(model.getObject()).print(pattern)));
     }
 }

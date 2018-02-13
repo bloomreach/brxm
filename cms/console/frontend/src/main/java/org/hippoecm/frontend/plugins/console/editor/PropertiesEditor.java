@@ -48,8 +48,6 @@ import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.DefinitionNode;
-import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.ModelItem;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
