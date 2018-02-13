@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class DbLockManager extends AbstractLockManager {
     private final static String TABLE_NAME_LOCK = "HIPPO_LOCK";
 
     private final static String CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
-            "lockKey VARCHAR(256) NOT NULL, " +
+            "lockKey VARCHAR(190) NOT NULL, " +
             "lockOwner VARCHAR(256), " +
             "lockThread VARCHAR(256)," +
             "status VARCHAR(256) NOT NULL," +
@@ -142,32 +142,36 @@ public class DbLockManager extends AbstractLockManager {
                                     final String ... uniqueIndexes) throws RuntimeException {
         try {
             if (schemaCheckEnabled && !connectionHelper.tableExists(tableName)) {
-                try (Connection connection = dataSource.getConnection()) {
-                    log.info("Creating table {} ", tableName);
-                    try (Statement statement = connection.createStatement()) {
-                        statement.addBatch(String.format(createTableStatement, tableName));
-                        int index = 1;
-                        for (String uniqueIndex : uniqueIndexes) {
-                            statement.addBatch("CREATE UNIQUE INDEX " + tableName + "_idx_"+index+" on " + tableName + "("+uniqueIndex+")");
-                            index++;
-                        }
-                        statement.setQueryTimeout(10);
-                        statement.executeBatch();
-                    } catch (SQLException e) {
-                        if (connectionHelper.tableExists(tableName)) {
-                            log.debug("Table {} already created by another cluster node", tableName);
-                        } else {
-                            final String errm = "Failed to create table "+ tableName;
-                            log.error(errm + ": {}", e.getMessage());
-                            throw new RuntimeException(errm, e);
-                        }
-                    }
-                }
+                createTable(dataSource, connectionHelper, createTableStatement, tableName, uniqueIndexes);
             }
         } catch (SQLException e) {
             final RuntimeException re = new RuntimeException("Could not get a connection or could not (check to) create table", e);
             log.error(re.getMessage());
             throw re;
+        }
+    }
+
+    protected void createTable(final DataSource dataSource, final ConnectionHelper connectionHelper, final String createTableStatement, final String tableName, final String[] uniqueIndexes) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            log.info("Creating table {} ", tableName);
+            try (Statement statement = connection.createStatement()) {
+                statement.addBatch(String.format(createTableStatement, tableName));
+                int index = 1;
+                for (String uniqueIndex : uniqueIndexes) {
+                    statement.addBatch("CREATE UNIQUE INDEX " + tableName + "_idx_"+index+" on " + tableName + "("+uniqueIndex+")");
+                    index++;
+                }
+                statement.setQueryTimeout(10);
+                statement.executeBatch();
+            } catch (SQLException e) {
+                if (connectionHelper.tableExists(tableName)) {
+                    log.debug("Table {} already created by another cluster node", tableName);
+                } else {
+                    final String errm = "Failed to create table "+ tableName;
+                    log.error(errm + ": {}", e.getMessage());
+                    throw new RuntimeException(errm, e);
+                }
+            }
         }
     }
 

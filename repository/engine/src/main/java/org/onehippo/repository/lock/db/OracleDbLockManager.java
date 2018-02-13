@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 public class OracleDbLockManager extends DbLockManager {
 
     private final static String ORACLE_CREATE_LOCK_TABLE_STATEMENT = "CREATE TABLE %s (" +
-            "lockKey VARCHAR(256) NOT NULL, " +
+            "lockKey VARCHAR(190) NOT NULL, " +
             "lockOwner VARCHAR(256), " +
             "lockThread VARCHAR(256)," +
             "status VARCHAR(256) NOT NULL," +
