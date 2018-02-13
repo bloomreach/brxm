@@ -67,5 +67,12 @@
                ng-disabled="!$ctrl.isSaveAllowed()">
       {{ ::'SAVE' | translate }}
     </md-button>
+
+    <md-button class="qa-continue"
+               ng-click="$ctrl.onSwitchEditor()"
+               ng-if="!$ctrl.isSaveAllowed()">
+      {{ 'CONTINUE' | translate }}
+    </md-button>
+
   </div>
 </md-toolbar>
