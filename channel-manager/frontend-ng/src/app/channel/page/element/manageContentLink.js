@@ -34,7 +34,7 @@ class ManageContentLink extends EmbeddedLink {
   }
 
   isParameterValueRelativePath() {
-    return this.metaData.parameterValueIsRelativePath;
+    return this.metaData.parameterValueIsRelativePath === 'true';
   }
 
   getPickerConfig() {
@@ -44,7 +44,7 @@ class ManageContentLink extends EmbeddedLink {
     return {
       configuration: this.metaData.pickerConfiguration,
       initialPath: this.metaData.pickerInitialPath,
-      isRelativePath: this.metaData.parameterValueIsRelativePath === 'true',
+      isRelativePath: false, // the path is made relative in HstComponentService#saveParameter, and not by the picker
       remembersLastVisited: this.metaData.pickerRemembersLastVisited === 'true',
       rootPath: this.metaData.pickerRootPath,
       selectableNodeTypes: this.metaData.pickerSelectableNodeTypes ?

@@ -239,7 +239,6 @@ describe('PageStructureService', () => {
   it('registers manage content links', () => {
     registerEmbeddedLink('#manage-content-in-page');
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
-    expect(manageContentLinks.length).toBe(1);
     const manageContentLink = manageContentLinks[0];
     expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
@@ -249,11 +248,32 @@ describe('PageStructureService', () => {
     expect(manageContentLink.getPickerConfig()).toEqual({
       configuration: 'test-component-picker configuration',
       initialPath: 'test-component-picker-initial-path',
-      isRelativePath: true,
+      isRelativePath: false,
       remembersLastVisited: false,
       rootPath: 'test-component-picker-root-path',
       selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
     });
+    expect(manageContentLink.isParameterValueRelativePath()).toBe(true);
+  });
+
+  it('recognizes a manage content link for a parameter that stores an absolute path', () => {
+    registerEmbeddedLink('#manage-content-with-absolute-path');
+    const manageContentLinks = PageStructureService.getEmbeddedLinks();
+    const manageContentLink = manageContentLinks[0];
+    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
+    expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
+    expect(manageContentLink.getRootPath()).toBe('test-root-path');
+    expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
+    expect(manageContentLink.getParameterValue()).toBe('test-component-value');
+    expect(manageContentLink.getPickerConfig()).toEqual({
+      configuration: 'test-component-picker configuration',
+      initialPath: 'test-component-picker-initial-path',
+      isRelativePath: false,
+      remembersLastVisited: false,
+      rootPath: 'test-component-picker-root-path',
+      selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
+    });
+    expect(manageContentLink.isParameterValueRelativePath()).toBe(false);
   });
 
   it('registers processed and unprocessed head contributions', () => {
