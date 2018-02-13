@@ -131,17 +131,17 @@ public class HstManageContentTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
+            String absoluteRootPath;
             try {
-                checkRootPath(requestContext);
+                absoluteRootPath = checkRootPath(requestContext);
             } catch (final RepositoryException e) {
                 log.error("Exception while checking rootPath parameter.", e);
                 return EVAL_PAGE;
             }
-
             final String componentValue = getComponentValue(requestContext, isRelativePathParameter);
 
             try {
-                write(documentId, componentValue, jcrPath, isRelativePathParameter);
+                write(documentId, componentValue, jcrPath, isRelativePathParameter, absoluteRootPath);
             } catch (final IOException ignore) {
                 throw new JspException("Manage content tag exception: cannot write to the output writer.");
             }
@@ -151,29 +151,40 @@ public class HstManageContentTag extends TagSupport {
         }
     }
 
-    private void checkRootPath(final HstRequestContext requestContext) throws RepositoryException {
+    private String getChannelRootPath() {
+        final ResolvedMount resolvedMount = RequestContextProvider.get().getResolvedMount();
+        return resolvedMount.getMount().getContentPath();
+    }
+
+    private String checkRootPath(final HstRequestContext requestContext) throws RepositoryException {
         if (rootPath == null) {
-            return;
+            return null;
         }
 
-        String checkPath;
-        if (StringUtils.startsWith(rootPath, "/")) {
-            checkPath = rootPath;
-        } else {
-            checkPath = "/" + requestContext.getSiteContentBasePath() + "/" + rootPath;
-        }
+        String absoluteRootPath = getAbsoluteRootPath(requestContext);
 
         try {
-            final Node rootPathNode = requestContext.getSession().getNode(checkPath);
+            final Node rootPathNode = requestContext.getSession().getNode(absoluteRootPath);
             if (!rootPathNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !rootPathNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
                 log.error("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath are ignored.", rootPath);
                 rootPath = null;
                 defaultPath = null;
+                absoluteRootPath = null;
             }
-        } catch (PathNotFoundException e) {
-            log.error("Rootpath '{}' does not exist. Parameters rootPath and defaultPath are ignored.", rootPath);
+        } catch (final PathNotFoundException e) {
+            log.error("Rootpath '{}' does not exist. Parameters rootPath and defaultPath are ignored.", rootPath, e);
             rootPath = null;
             defaultPath = null;
+            absoluteRootPath = null;
+        }
+        return absoluteRootPath;
+    }
+
+    private String getAbsoluteRootPath(final HstRequestContext requestContext) {
+        if (StringUtils.startsWith(rootPath, "/")) {
+            return rootPath;
+        } else {
+            return "/" + requestContext.getSiteContentBasePath() + "/" + rootPath;
         }
     }
 
@@ -189,9 +200,7 @@ public class HstManageContentTag extends TagSupport {
         final String componentValue = window.getParameter(prefixedParameterName);
 
         if (componentValue != null && isRelativePathParameter) {
-            final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-            final String contentRoot = resolvedMount.getMount().getContentPath();
-            return contentRoot + "/" + componentValue;
+            return getChannelRootPath() + "/" + componentValue;
         }
         return componentValue;
     }
@@ -227,15 +236,15 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
-                       final boolean isRelativePathParameter) throws IOException {
+                       final boolean isRelativePathParameter, final String absoluteRootPath) throws IOException {
         final JspWriter writer = pageContext.getOut();
-        final Map<String, Object> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter);
+        final Map<String, Object> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter, absoluteRootPath);
         final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
         writer.print(comment);
     }
 
     private Map<String, Object> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
-                                      final boolean isRelativePathParameter) {
+                                                final boolean isRelativePathParameter, final String absoluteRootPath) {
         final Map<String, Object> result = new LinkedHashMap<>();
         writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
         writeToMap(result, "uuid", documentId);
@@ -253,7 +262,7 @@ public class HstManageContentTag extends TagSupport {
             writeToMap(result, "pickerConfiguration", jcrPath.pickerConfiguration());
             writeToMap(result, "pickerInitialPath", jcrPath.pickerInitialPath());
             writeToMap(result, "pickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
-            writeToMap(result, "pickerRootPath", jcrPath.pickerRootPath());
+            writeToMap(result, "pickerRootPath", getFirstNonBlankString(absoluteRootPath, jcrPath.pickerRootPath(), getChannelRootPath()));
 
             final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
             writeToMap(result, "pickerSelectableNodeTypes", nodeTypes);
@@ -266,6 +275,16 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.isNotEmpty(value)) {
             result.put(key, value);
         }
+    }
+
+    /**
+     * Get the first String that is not blank from a number of Strings.
+     *
+     * @param strings variable list of Strings
+     * @return first non-null and not empty String or null if all are blank
+     */
+    private String getFirstNonBlankString(final String ... strings) {
+        return Arrays.stream(strings).filter(StringUtils::isNotBlank).findFirst().orElse(null);
     }
 
     /*
