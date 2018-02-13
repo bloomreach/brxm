@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 /**
  * Interface that represents an editor for a particular document.
@@ -27,8 +28,14 @@ import org.apache.wicket.util.io.IClusterable;
  */
 public interface IEditor<T> extends IClusterable {
 
+    String MODE = "mode";
+
     enum Mode {
         VIEW, EDIT, COMPARE;
+
+        public static Mode fromConfig(final IPluginConfig config, final Mode defaultValue) {
+            return Mode.fromString(config.getString(MODE), defaultValue);
+        }
 
         public static Mode fromString(final String mode) {
             final Mode result = fromStringOrNull(mode);
@@ -61,7 +68,6 @@ public interface IEditor<T> extends IClusterable {
         public String toString() {
             return name().toLowerCase();
         }
-
     }
 
     Mode getMode();
@@ -77,7 +83,7 @@ public interface IEditor<T> extends IClusterable {
      * Model of the Editor.
      *
      * @return The model that can be used to identify the editor.  For publishable documents,
-     *         this is the parent handle.
+     * this is the parent handle.
      */
     IModel<T> getModel();
 
@@ -89,8 +95,6 @@ public interface IEditor<T> extends IClusterable {
      * The {@link Form} that wraps the editor.
      */
     Form getForm();
-
-
 
     /**
      * Saves the document, and keeps the editor in its current mode (EDIT).
@@ -107,7 +111,6 @@ public interface IEditor<T> extends IClusterable {
      *                         the document is not in Edit mode.
      */
     void done() throws EditorException;
-
 
     /**
      * Reverts the current document to last saved state and should keep the editor in its current mode (EDIT).
@@ -132,6 +135,4 @@ public interface IEditor<T> extends IClusterable {
      * @throws EditorException when the editor is in a state where it cannot be closed.
      */
     void close() throws EditorException;
-
-
 }
