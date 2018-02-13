@@ -15,7 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.updater;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -49,6 +53,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -68,6 +73,15 @@ public class UpdaterEditor extends Panel {
     private static final long DEFAULT_THOTTLE = 1000l;
     private static final String DEFAULT_METHOD = "path";
 
+    @SuppressWarnings("unchecked")
+    private static final Map<String, String> LOG_LEVELS_MAP = Collections.unmodifiableMap(new LinkedHashMap() {
+        {
+            put(Level.TRACE.toString(), Level.TRACE.toString());
+            put(Level.DEBUG.toString(), Level.DEBUG.toString());
+            put(Level.INFO.toString(), Level.INFO.toString());
+        }
+    });
+
     protected final IPluginContext context;
     protected final Panel container;
     protected final Form form;
@@ -83,6 +97,7 @@ public class UpdaterEditor extends Panel {
     protected String batchSize = String.valueOf(DEFAULT_BATCH_SIZE);
     protected String throttle = String.valueOf(DEFAULT_THOTTLE);
     protected boolean dryRun = false;
+    protected String logLevel = Level.DEBUG.toString();
 
     public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super("updater-editor", model);
@@ -355,6 +370,22 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(throttleField);
 
+        final LabelledDropDownFieldTableRow logLevelField = new LabelledDropDownFieldTableRow("log-level",
+                new Model<>("Log Level"), new PropertyModel<>(this, "logLevel"), LOG_LEVELS_MAP) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return isLogLevelFieldEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isLogLevelFieldVisible();
+            }
+        };
+        radios.add(logLevelField);
+
         final LabelledCheckBoxTableRow dryRunCheckBox = new LabelledCheckBoxTableRow("dryrun", new Model<>("Dry run"), new PropertyModel<>(this, "dryRun")) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -418,6 +449,7 @@ public class UpdaterEditor extends Panel {
         } else {
             method = "custom";
         }
+        logLevel = getStringProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, Level.DEBUG.toString());
         dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
 
@@ -531,6 +563,7 @@ public class UpdaterEditor extends Panel {
             }
             node.setProperty(HippoNodeType.HIPPOSYS_DESCRIPTION, StringUtils.defaultString(description));
             node.setProperty(HippoNodeType.HIPPOSYS_PARAMETERS, StringUtils.defaultString(parameters));
+            node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {
@@ -836,6 +869,14 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isRadioVisible() {
+        return true;
+    }
+
+    protected boolean isLogLevelFieldEnabled() {
+        return false;
+    }
+
+    protected boolean isLogLevelFieldVisible() {
         return true;
     }
 

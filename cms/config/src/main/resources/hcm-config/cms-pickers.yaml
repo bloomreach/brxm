@@ -4,8 +4,9 @@ definitions:
       jcr:primaryType: frontend:clusterfolder
       /images:
         jcr:primaryType: frontend:plugincluster
-        frontend:properties: [root.paths]
+        frontend:properties: [root.path, root.paths]
         frontend:services: [wicket.id, wicket.model, model.folder]
+        root.path: /content/gallery
         root.paths: [/content/gallery]
         /navigator:
           jcr:primaryType: frontend:plugin
@@ -90,8 +91,9 @@ definitions:
             workflow.enabled: false
       /folders:
         jcr:primaryType: frontend:plugincluster
-        frontend:properties: [root.paths]
+        frontend:properties: [root.path, root.paths]
         frontend:services: [wicket.id, wicket.model, model.folder]
+        root.path: /content/documents
         root.paths: [/content/documents, /content/gallery, /content/assets]
         /navigator:
           jcr:primaryType: frontend:plugin

@@ -8,10 +8,6 @@ definitions:
       /settingsService:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.service.settings.SettingsStorePlugin
-        /codecs:
-          jcr:primaryType: frontend:pluginconfig
-          encoding.display: org.hippoecm.repository.api.StringCodecFactory$IdentEncoding
-          encoding.node: org.hippoecm.repository.api.StringCodecFactory$UriEncoding
       /ajaxPopupService:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.service.popup.AjaxPopupService

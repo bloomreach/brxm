@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,22 +15,13 @@
  */
 package org.hippoecm.frontend.service.settings;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ISettingsService;
-import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SettingsStorePlugin extends Plugin implements ISettingsService {
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(SettingsStorePlugin.class);
 
     transient StringCodecFactory stringCodecFactory;
 
@@ -42,19 +33,7 @@ public class SettingsStorePlugin extends Plugin implements ISettingsService {
 
     public StringCodecFactory getStringCodecFactory() {
         if (stringCodecFactory == null) {
-            IPluginConfig codecsConfig = getPluginConfig().getPluginConfig("codecs");
-            Map<String, StringCodec> codecs = new HashMap<>();
-            for (String codecName : codecsConfig.keySet()) {
-                try {
-                    String className = codecsConfig.getString(codecName);
-                    Class<? extends StringCodec> clazz = Thread.currentThread().getContextClassLoader().loadClass(className).asSubclass(StringCodec.class);
-                    codecs.put(codecName, clazz.newInstance());
-                } catch (InstantiationException | ClassNotFoundException | ClassCastException | IllegalAccessException ex) {
-                    log.error("unable to create " + codecName, ex);
-                }
-            }
-            codecs.put(null, new StringCodecFactory.IdentEncoding());
-            stringCodecFactory = new StringCodecFactory(codecs);
+            stringCodecFactory = new ServicedStringCodecFactory();
         }
         return stringCodecFactory;
     }
