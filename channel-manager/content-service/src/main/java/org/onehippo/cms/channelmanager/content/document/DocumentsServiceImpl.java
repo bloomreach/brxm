@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,11 +261,10 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             session.save();
-
             return getDraft(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
-                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery);
+                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }

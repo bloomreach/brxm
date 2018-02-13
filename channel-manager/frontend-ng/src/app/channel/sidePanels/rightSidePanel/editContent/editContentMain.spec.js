@@ -33,7 +33,8 @@ describe('EditContentMainCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'isDocumentDirty',
+        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId',
+        'getDocumentType', 'isDocumentDirty', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -45,6 +46,16 @@ describe('EditContentMainCtrl', () => {
         ContentEditor,
         EditContentService,
         HippoIframeService,
+      });
+    });
+  });
+
+  it('knows when not all fields are shown', () => {
+    [true, false].forEach((editing) => {
+      [true, false].forEach((allFieldsIncluded) => {
+        ContentEditor.isEditing.and.returnValue(editing);
+        ContentEditor.getDocumentType.and.returnValue({ allFieldsIncluded });
+        expect($ctrl.notAllFieldsShown()).toBe(editing && !allFieldsIncluded);
       });
     });
   });

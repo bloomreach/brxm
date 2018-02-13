@@ -23,7 +23,7 @@ class NameUrlFieldsController {
     this.createContentService = CreateContentService;
     this.isManualUrlMode = false;
     this.isUrlUpdating = false;
-    this.nameInputField = $element.find('#nameInputElement');
+    this.nameInputField = $element.find('.name-input-element');
     this.updateUrlThrottle = throttle(() => this.updateUrl(), URL_UPDATE_DELAY, true);
   }
 

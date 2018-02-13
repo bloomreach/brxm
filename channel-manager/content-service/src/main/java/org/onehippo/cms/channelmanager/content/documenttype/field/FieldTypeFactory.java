@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class FieldTypeFactory {
     private static final Logger log = LoggerFactory.getLogger(FieldTypeFactory.class);
 
-    public static <T extends FieldType> Optional<T> createFieldType(Class<T> clazz) {
+    public static Optional<FieldType> createFieldType(Class<? extends FieldType> clazz) {
         try {
             return Optional.of(clazz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {

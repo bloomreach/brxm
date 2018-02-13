@@ -75,6 +75,31 @@ describe('Create content step 2 controller', () => {
     });
   });
 
+  it('knows when all mandatory fields are shown', () => {
+    spyOn(ContentEditor, 'isEditing');
+    spyOn(ContentEditor, 'getDocumentType');
+
+    [true, false].forEach((editing) => {
+      [true, false].forEach((canCreateAllRequiredFields) => {
+        ContentEditor.isEditing.and.returnValue(editing);
+        ContentEditor.getDocumentType.and.returnValue({ canCreateAllRequiredFields });
+        expect($ctrl.allMandatoryFieldsShown()).toBe(editing && canCreateAllRequiredFields);
+      });
+    });
+  });
+
+  it('can switch the editor', () => {
+    spyOn(CmsService, 'publish');
+    spyOn(ContentEditor, 'close');
+    spyOn(CreateContentService, 'stop');
+
+    $ctrl.switchEditor();
+
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', testDocument.id, 'edit');
+    expect(ContentEditor.close).toHaveBeenCalled();
+    expect(CreateContentService.stop).toHaveBeenCalled();
+  });
+
   it('saves the contentEditor and finishes create-content', () => {
     spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
@@ -115,6 +140,12 @@ describe('Create content step 2 controller', () => {
 
     it('allows ui-exit without dialog if document is already saved', () => {
       $ctrl.documentIsSaved = true;
+      expect($ctrl.uiCanExit()).toBe(true);
+      expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
+    });
+
+    it('allows ui-exit without dialog when switching editor', () => {
+      $ctrl.switchingEditor = true;
       expect($ctrl.uiCanExit()).toBe(true);
       expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
     });

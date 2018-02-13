@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,11 +97,11 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
-    public void isValid() {
-        assertTrue(fieldType.isValid());
+    public void isSupported() {
+        assertTrue(fieldType.isSupported());
 
         fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.isValid());
+        assertFalse(fieldType.isSupported());
     }
 
     @Test
@@ -275,13 +275,14 @@ public class AbstractFieldTypeTest {
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);
 
-        fieldType.init(fieldContext);
+        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
         assertThat(fieldType.getId(), equalTo("field:id"));
         assertNull(fieldType.getDisplayName());
         assertNull(fieldType.getHint());
         assertThat(fieldType.getMinValues(), equalTo(0));
         assertThat(fieldType.getMaxValues(), equalTo(1));
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
         verify(fieldContext, parentContext, item);
         PowerMock.verifyAll();
@@ -317,13 +318,14 @@ public class AbstractFieldTypeTest {
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);
 
-        fieldType.init(fieldContext);
+        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
         assertThat(fieldType.getId(), equalTo("field:id"));
         assertThat(fieldType.getDisplayName(), equalTo("Field Display Name"));
         assertThat(fieldType.getHint(), equalTo("Hint"));
         assertThat(fieldType.getMinValues(), equalTo(0));
         assertThat(fieldType.getMaxValues(), equalTo(Integer.MAX_VALUE));
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
         verify(fieldContext, parentContext, item);
         PowerMock.verifyAll();
@@ -359,13 +361,14 @@ public class AbstractFieldTypeTest {
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);
 
-        fieldType.init(fieldContext);
+        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
         assertThat(fieldType.getId(), equalTo("field:id"));
         assertNull(fieldType.getDisplayName());
         assertNull(fieldType.getHint());
         assertThat(fieldType.getMinValues(), equalTo(1));
         assertThat(fieldType.getMaxValues(), equalTo(1));
+        assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
         verify(fieldContext, parentContext, item);
         PowerMock.verifyAll();

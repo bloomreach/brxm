@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,8 @@ public class FormattedTextFieldType extends StringFieldType {
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
+        final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         final String overlayedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
         final String appendedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_APPENDED_JSON).orElse("");
@@ -75,6 +75,8 @@ public class FormattedTextFieldType extends StringFieldType {
 
         final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
         processorFactory = HtmlProcessorFactory.of(processorId);
+
+        return fieldsInfo;
     }
 
     public ObjectNode getConfig() {

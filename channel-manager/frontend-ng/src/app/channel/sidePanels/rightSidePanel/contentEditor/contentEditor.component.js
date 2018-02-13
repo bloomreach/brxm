@@ -21,12 +21,15 @@ import template from './contentEditor.html';
 const contentEditorComponent = {
   controller,
   template,
+  transclude: true,
   bindings: {
+    allowSave: '<',
     cancelLabel: '@',
     closeLabel: '@',
     onClose: '&',
     onSave: '&',
     onSwitchEditor: '&',
+    showMessage: '<',
   },
 };
 

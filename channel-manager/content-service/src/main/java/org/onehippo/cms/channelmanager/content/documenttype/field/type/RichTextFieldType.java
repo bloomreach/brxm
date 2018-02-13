@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,12 +116,14 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
+        final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
         initInternalLinkPicker(fieldContext, hippoPickerConfig);
         initImagePicker(fieldContext, hippoPickerConfig);
+
+        return fieldsInfo;
     }
 
     private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
