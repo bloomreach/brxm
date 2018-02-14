@@ -20,6 +20,7 @@ class ProjectService {
     $http,
     $q,
     ConfigService,
+    FeedbackService,
     HippoGlobal,
   ) {
     'ngInject';
@@ -28,6 +29,7 @@ class ProjectService {
     this.$q = $q;
 
     this.ConfigService = ConfigService;
+    this.FeedbackService = FeedbackService;
     this.HippoGlobal = HippoGlobal;
   }
 
@@ -72,6 +74,29 @@ class ProjectService {
     this.updateListeners.push(cb);
   }
 
+  associateToProject(documentId) {
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
+    return this.$http
+      .post(url)
+      .then(() => {
+        this._getAllProjects();
+        this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
+          name: this.selectedProject.name,
+        });
+      });
+  }
+
+  showAddToProjectForDocument(documentId) {
+    const associatedProject = this._getProjectByDocumentId(documentId);
+    return this.selectedProject && !associatedProject;
+  }
+
+  _getProjectByDocumentId(documentId) {
+    // returns undefined if document is not part of any project
+    // and therefore is part of core
+    return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
+  }
+
   _callListeners(listeners, ...args) {
     listeners.forEach(listener => listener(...args));
   }
@@ -80,6 +105,7 @@ class ProjectService {
     return this.$q
       .all([
         this._getProjects(),
+        this._getAllProjects(),
         this._getChannels(),
       ])
       .then(() => {
@@ -97,6 +123,17 @@ class ProjectService {
       .then(result => result.data)
       .then((projects) => {
         this.projects = projects;
+      });
+  }
+
+  _getAllProjects() {
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects`;
+
+    return this.$http
+      .get(url)
+      .then(result => result.data)
+      .then((projects) => {
+        this.allProjects = projects;
       });
   }
 
