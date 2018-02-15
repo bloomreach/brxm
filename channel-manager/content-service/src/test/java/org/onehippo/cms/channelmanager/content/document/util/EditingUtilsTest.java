@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -317,7 +318,11 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(EditingUtils.createDraft(workflow, session).get(), equalTo(draft));
+        final Optional<Node> draftOptional = EditingUtils.createDraft(workflow, session);
+        assertThat("There should be a draft", draftOptional.isPresent());
+        if (draftOptional.isPresent()) {
+            assertThat(draftOptional.get(), equalTo(draft));
+        }
 
         verify(workflow, document);
     }
@@ -362,7 +367,11 @@ public class EditingUtilsTest {
         expect(document.getNode(session)).andReturn(draft);
         replay(workflow, document);
 
-        assertThat(EditingUtils.copyToPreviewAndKeepEditing(workflow, session).get(), equalTo(draft));
+        final Optional<Node> draftOptional = EditingUtils.copyToPreviewAndKeepEditing(workflow, session);
+        assertThat("Draft should be present", draftOptional.isPresent());
+        if (draftOptional.isPresent()) {
+            assertThat(draftOptional.get(), equalTo(draft));
+        }
 
         verify(workflow, document);
     }
