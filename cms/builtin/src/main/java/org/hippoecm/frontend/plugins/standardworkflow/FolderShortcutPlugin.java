@@ -454,8 +454,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
             // when switching between translated and non-translated root folders
             if (!languageVisible) {
                 language = null;
+            }
         }
-     }
 
         public IModel<String> getTitle() {
             return new StringResourceModel("new-document-label", this, null);
