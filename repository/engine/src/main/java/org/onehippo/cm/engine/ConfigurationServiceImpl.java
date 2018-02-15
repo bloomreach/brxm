@@ -46,6 +46,7 @@ import org.onehippo.cm.engine.migrator.MigrationException;
 import org.onehippo.cm.engine.migrator.PostMigrator;
 import org.onehippo.cm.engine.migrator.PreMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConsoleExportModuleContext;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.definition.ActionType;
@@ -438,7 +439,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         final ModuleImpl module = contentService.exportNode(nodeToExport);
 
-        final ModuleContext moduleContext = new ExportModuleContext(module);
+        final ModuleContext moduleContext = new ConsoleExportModuleContext(module);
         final ContentSourceSerializer contentSourceSerializer = new ContentSourceSerializer(moduleContext, module.getContentSources().iterator().next(), false);
 
         final org.yaml.snakeyaml.nodes.Node node = contentSourceSerializer.representSource();
