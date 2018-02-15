@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,6 @@ import org.onehippo.cm.model.serializer.ModuleContext;
  * Module Context export implementation. Omits generating hcm-content folder.
  */
 public class ExportModuleContext extends ModuleContext {
-
-    public ExportModuleContext(ModuleImpl module) throws IOException {
-        super(module, null);
-    }
 
     public ExportModuleContext(ModuleImpl module, Path moduleDescriptorPath) throws IOException {
         super(module, moduleDescriptorPath);
