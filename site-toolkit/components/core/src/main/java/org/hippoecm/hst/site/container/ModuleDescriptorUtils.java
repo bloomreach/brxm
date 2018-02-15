@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class ModuleDescriptorUtils {
                 try {
                     log.info("Loading module descriptor from {}", moduleDescriptorURL);
                     ModuleDefinition moduleDefinition = loadModuleDefinition(moduleDescriptorURL);
-                    moduleDefinitions.add(moduleDefinition);
+                    addActualModuleDefinitions(moduleDefinition, moduleDefinitions);
                 } catch (Exception e) {
                     log.warn("Failed to load module descriptor, " + moduleDescriptorURL + ", which will be just ignored.", e);
                 }
@@ -71,7 +71,22 @@ public class ModuleDescriptorUtils {
         
         return moduleDefinitions;
     }
-    
+
+    private static void addActualModuleDefinitions(final ModuleDefinition moduleDefinition, final List<ModuleDefinition> moduleDefinitions) {
+        if (moduleDefinition.getName() != null) {
+            // real module
+            moduleDefinitions.add(moduleDefinition);
+            return;
+        }
+        if (moduleDefinition.getModuleDefinitions() == null) {
+            return;
+        }
+        // only a container <module> : Pick the actual real modules
+        for (ModuleDefinition child : moduleDefinition.getModuleDefinitions()) {
+            addActualModuleDefinitions(child, moduleDefinitions);
+        }
+    }
+
     private static ModuleDefinition loadModuleDefinition(URL url) throws JAXBException, IOException {
         ModuleDefinition moduleDefinition = null;
         

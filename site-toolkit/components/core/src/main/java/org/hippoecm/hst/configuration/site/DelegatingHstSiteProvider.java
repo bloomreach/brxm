@@ -21,9 +21,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class DelegatingHstSiteProvider  {
 
 
-    private HstSiteProvider channelManagerHstSiteProvider;
+    private HstSiteProvider channelManagerHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
     private HstSiteProvider websiteHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
 
+    /**
+     * this setter can be used by enterprise / end project modules to inject a custom HstSiteProvider for the channel mngr
+     */
     public void setChannelManagerHstSiteProvider(final HstSiteProvider channelManagerHstSiteProvider) {
         this.channelManagerHstSiteProvider = channelManagerHstSiteProvider;
     }

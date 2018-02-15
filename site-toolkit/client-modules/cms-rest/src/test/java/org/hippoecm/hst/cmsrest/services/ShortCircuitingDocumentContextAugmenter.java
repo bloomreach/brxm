@@ -13,14 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.site;
+package org.hippoecm.hst.cmsrest.services;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.onehippo.cms7.services.hst.Channel;
 
-@FunctionalInterface
-public interface HstSiteProvider {
+public class ShortCircuitingDocumentContextAugmenter implements  DocumentContextAugmenter {
 
-    HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
+    public static final String SHORT_CIRCUITING_DOCUMENT_CONTEXT_AUGMENTER_IS_WORKING = "ShortCircuitingDocumentContextAugmenter is working";
 
+    @Override
+    public void apply(final HstRequestContext requestContext, final String uuid) {
+        throw new IllegalStateException(SHORT_CIRCUITING_DOCUMENT_CONTEXT_AUGMENTER_IS_WORKING);
+    }
 }
