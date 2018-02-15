@@ -16,7 +16,6 @@
 package org.hippoecm.repository.ext;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -27,13 +26,16 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
-public abstract class WorkflowImpl implements Remote, Workflow
+public abstract class WorkflowImpl implements Remote, Workflow, WorkflowContextAware
 {
     private Node node;
 
@@ -53,7 +55,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * @param context the new context that should be used
      */
-    final public void setWorkflowContext(WorkflowContext context) {
+    public final void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
 
@@ -66,9 +68,18 @@ public abstract class WorkflowImpl implements Remote, Workflow
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public Map<String,Serializable> hints() throws WorkflowException {
+        Map<String,Serializable> map = new TreeMap<>();
+        map.put("hints", TRUE);
+        return map;
+    }
+
+    /**
      * @return the backing Node of this workflow
      */
-    protected Node getNode() {
+    public Node getNode() {
         return node;
     }
 
@@ -82,17 +93,9 @@ public abstract class WorkflowImpl implements Remote, Workflow
         return node;
     }
 
-    final protected WorkflowContext getWorkflowContext() {
+    public final WorkflowContext getWorkflowContext() {
         return context;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String,Serializable> hints() throws WorkflowException {
-        Map<String,Serializable> map = new TreeMap<>();
-        map.put("hints", new Boolean(true));
-        return map;
-    }
 
 }

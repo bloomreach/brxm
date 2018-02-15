@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,5 +60,6 @@ public interface Workflow extends Remote, Serializable {
      * @throws javax.jcr.RepositoryException                 a generic error communicating with the repository
      */
     @WorkflowAction(loggable = false, mutates = false)
-    public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
+    Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
+
 }

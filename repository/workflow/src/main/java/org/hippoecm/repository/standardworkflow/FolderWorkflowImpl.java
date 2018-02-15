@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +29,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
-import java.util.Date;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -114,6 +114,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
+    public static final String ATTIC = "attic";
+    public static final String COPY_OF = "Copy of ";
+    public static final String USER_LACKS_PERMISSION_TO_WRITE_IN_DESTINATION_FOLDER = "User lacks permission to write in destination folder";
 
     private final Session userSession;
     private final Session rootSession;
@@ -129,7 +132,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Map<String,Serializable> info = new TreeMap<String,Serializable>();
+        Map<String,Serializable> info = new TreeMap<>();
         final Session subjectSession = workflowContext.getSubjectSession();
         final boolean hasSubjectWritePermission = subjectSession.hasPermission(subject.getPath(), JCR_WRITE);
         if (hasSubjectWritePermission) {
@@ -162,32 +165,30 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     /**
      * @deprecated
      */
+    @Deprecated
     public Map<String, Set<String>> list() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         return prototypes();
     }
 
     protected Map<String, Set<String>> prototypes() throws RepositoryException {
-        Map<String, Set<String>> types = new LinkedHashMap<String, Set<String>>();
+        Map<String, Set<String>> types = new LinkedHashMap<>();
         try {
             QueryManager qmgr = userSession.getWorkspace().getQueryManager();
-            Vector<Node> foldertypes = new Vector<Node>();
+            Vector<Node> foldertypes = new Vector<>();
             Node templates = userSession.getNode(TEMPLATES_PATH);
             Value[] foldertypeRefs = null;
             if (subject.hasProperty("hippostd:foldertype")) {
                 try {
                     foldertypeRefs = subject.getProperty("hippostd:foldertype").getValues();
-                    for (int i = 0; i < foldertypeRefs.length; i++) {
-                        String foldertype = foldertypeRefs[i].getString();
+                    for (final Value foldertypeRef : foldertypeRefs) {
+                        String foldertype = foldertypeRef.getString();
                         if (templates.hasNode(foldertype)) {
                             foldertypes.add(templates.getNode(foldertype));
                         } else {
-                            log.warn("Unknown folder type " + foldertype);
+                            log.warn("Unknown folder type {}", foldertype);
                         }
                     }
-                } catch (PathNotFoundException ex) {
-                    foldertypeRefs = null;
-                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                } catch (ValueFormatException ex) {
+                } catch (PathNotFoundException | ValueFormatException ex) {
                     foldertypeRefs = null;
                     log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 }
@@ -204,7 +205,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
             for (Node foldertype : foldertypes) {
                 try {
-                    Set<String> prototypes = new TreeSet<String>();
+                    Set<String> prototypes = new TreeSet<>();
                     if (foldertype.isNodeType("nt:query")) {
                         Query query = qmgr.getQuery(foldertype);
                         query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
@@ -304,7 +305,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public String add(String category, String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Map<String,String> arguments = new TreeMap<String,String>();
+        Map<String,String> arguments = new TreeMap<>();
         arguments.put("name", name);
         return add(category, template, arguments);
     }
@@ -325,7 +326,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
         Node result = null;
         final Node target = rootSession.getNodeByIdentifier(subject.getIdentifier());
-        Map<String, String[]> renames = new TreeMap<String, String[]>();
+        Map<String, String[]> renames = new TreeMap<>();
         if (templateQuery.hasProperty("hippostd:modify")) {
             Value[] values = templateQuery.getProperty("hippostd:modify").getValues();
             String[] params = new String[values.length];
@@ -444,8 +445,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
-        if(config.exists() && config.get("attic") instanceof String) {
-            atticPath = (String) config.get("attic");
+        if(config.exists() && config.get(ATTIC) instanceof String) {
+            atticPath = (String) config.get(ATTIC);
         }
         if (atticPath == null) {
             throw new WorkflowException("No attic for archivation defined");
@@ -475,8 +476,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public void archive(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String atticPath = null;
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
-        if(config.exists() && config.get("attic") instanceof String) {
-            atticPath = (String) config.get("attic");
+        if(config.exists() && config.get(ATTIC) instanceof String) {
+            atticPath = (String) config.get(ATTIC);
         }
         if (atticPath == null) {
             throw new WorkflowException("No attic for archivation defined");
@@ -518,7 +519,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = rootSession.getNodeByIdentifier(subject.getIdentifier());
         Session session = folder.getSession();
 
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         for (String nodeName : newOrder) {
             Node node = folder.getNode(nodeName);
             list.addFirst(node.getIdentifier());
@@ -585,11 +586,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             JcrUtils.ensureIsCheckedOut(documentNode);
             for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
                 Node child = children.nextNode();
-                if (child != null) {
-                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        JcrUtils.ensureIsCheckedOut(child);
-                        documentNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
-                    }
+                if (child != null && child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    JcrUtils.ensureIsCheckedOut(child);
+                    documentNode.getSession().move(child.getPath(), documentNode.getPath() + "/" + documentNode.getName());
                 }
             }
         }
@@ -663,19 +662,19 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Document duplicate(String relPath)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = subject.getNode(relPath);
-        return duplicate(source, "Copy of "+source.getName());
+        return duplicate(source, COPY_OF +source.getName());
     }
 
     public Document duplicate(Document offspring)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = offspring.getNode(rootSession);
-        return duplicate(source, "Copy of "+source.getName());
+        return duplicate(source, COPY_OF +source.getName());
     }
 
     public Document duplicate(String relPath, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = subject.getNode(relPath);
-        return duplicate(source, "Copy of "+arguments.get("name"));
+        return duplicate(source, COPY_OF +arguments.get("name"));
     }
 
     public Document duplicate(Document offspring, Map<String,String> arguments)
@@ -688,7 +687,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private Document duplicate(Node source, String targetName) throws WorkflowException, RepositoryException {
         final Session subjectSession = workflowContext.getSubjectSession();
         if (!subjectSession.hasPermission(subject.getPath(), JcrConstants.JCR_WRITE)) {
-            throw new AccessDeniedException("User lacks permission to write in destination folder");
+            throw new AccessDeniedException(USER_LACKS_PERMISSION_TO_WRITE_IN_DESTINATION_FOLDER);
         }
         if (subject.hasNode(targetName)) {
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
@@ -697,7 +696,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             Node handle = subject.addNode(targetName, NT_HANDLE);
             handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
-            Node document = copyDocument(targetName, Collections.<String,String>emptyMap(), source, handle);
+            Node document = copyDocument(targetName, Collections.emptyMap(), source, handle);
 
             renameChildDocument(handle);
             rootSession.save();
@@ -730,11 +729,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(NT_HANDLE)) {
             throw new MappingException("copied item is not a document");
         }
-        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
+        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf('/')));
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/") + 1), arguments);
+        return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf('/') + 1), arguments);
     }
     public Document copy(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -755,11 +754,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!source.isNodeType(HippoNodeType.NT_DOCUMENT) && !source.isNodeType(NT_HANDLE)) {
             throw new MappingException("copied item is not a document");
         }
-        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf("/")));
+        Node target = subject.getSession().getRootNode().getNode(absPath.substring(1, absPath.lastIndexOf('/')));
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return moveFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/") + 1), arguments);
+        return moveFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf('/') + 1), arguments);
     }
     public Document move(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -806,7 +805,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             Node handle = folder.addNode(targetName, NT_HANDLE);
             handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
-            Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
+            Node document = copyDocument(targetName, (arguments == null ? Collections.emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
 
             folder.save();
@@ -822,7 +821,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throws WorkflowException, ValueFormatException, RepositoryException {
         RepositoryMap config = workflowContext.getWorkflowConfiguration();
         Object modifyOnCopy = config.get("modify-on-copy");
-        Map<String, String[]> renames = new TreeMap<String, String[]>();
+        Map<String, String[]> renames = new TreeMap<>();
         if (arguments.containsKey("name")) {
             log.warn("Arguments key 'name' ({}) is ignored, using targetName ({}) instead", arguments.get("name"), targetName);
         }

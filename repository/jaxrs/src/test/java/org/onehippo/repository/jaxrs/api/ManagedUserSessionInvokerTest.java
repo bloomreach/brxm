@@ -135,9 +135,13 @@ public class ManagedUserSessionInvokerTest {
         userSession.logout();
         EasyMock.expectLastCall();
 
+        EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
+
         EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
         servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
         EasyMock.expectLastCall();
+
+        EasyMock.expect(servletRequest.getAttribute(EasyMock.eq(ManagedUserSessionInvoker.class.getName() + ".SystemSession"))).andReturn(null).anyTimes();
 
         EasyMock.replay(servletRequest, httpSession, context, systemSession, repository, userSession);
 
@@ -192,7 +196,7 @@ public class ManagedUserSessionInvokerTest {
         final Repository repository = EasyMock.createMock(Repository.class);
         final Session userSession = EasyMock.createMock(Session.class);
 
-        EasyMock.expect(servletRequest.getSession(false)).andReturn(httpSession);
+        EasyMock.expect(servletRequest.getSession(false)).andReturn(httpSession).anyTimes();
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         EasyMock.expect(context.getRepositoryCredentials()).andReturn(credentials);
         EasyMock.expect(context.getLocale()).andReturn(locale);
@@ -203,11 +207,14 @@ public class ManagedUserSessionInvokerTest {
         EasyMock.expectLastCall();
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         EasyMock.expectLastCall();
+        EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
         userSession.logout();
         EasyMock.expectLastCall();
         EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
         servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
         EasyMock.expectLastCall();
+
+        EasyMock.expect(servletRequest.getAttribute(EasyMock.eq(ManagedUserSessionInvoker.class.getName() + ".SystemSession"))).andReturn(null).anyTimes();
 
         EasyMock.replay(servletRequest, httpSession, context, systemSession, repository, userSession);
 

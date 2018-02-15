@@ -26,12 +26,14 @@ import java.util.SortedMap;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
-import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
@@ -42,7 +44,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
  * <p> The -Request- and VersionWorkflows operations have been re-defined to be able to use different parameters
  * (and methodNames) as needed to be functional on Document handle level </p>
  */
-public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow {
+public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkflow, WorkflowContextAware {
 
     /**
      * <p>
@@ -72,9 +74,9 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @WorkflowAction(loggable = false, mutates = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     @Override
-    public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
+    Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 
     // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
 
@@ -88,7 +90,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestDeletion()
+    void requestDeletion()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -101,7 +103,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestDepublication()
+    void requestDepublication()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -116,7 +118,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestDepublication(Date depublicationDate)
+    void requestDepublication(Date depublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -129,7 +131,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestPublication()
+    void requestPublication()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -144,7 +146,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestPublication(Date publicationDate)
+    void requestPublication(Date publicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -163,7 +165,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @deprecated Deprecated since 5.0.0, use {@link DocumentWorkflow#requestPublicationDepublication(Date, Date)}
      */
     @Deprecated
-    public void requestPublication(Date publicationDate, Date depublicationDate)
+    void requestPublication(Date publicationDate, Date depublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 
@@ -181,7 +183,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void requestPublicationDepublication(Date publicationDate, Date depublicationDate)
+    void requestPublicationDepublication(Date publicationDate, Date depublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 
@@ -197,7 +199,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void delete()
+    void delete()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -212,7 +214,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void rename(String newName)
+    void rename(String newName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -228,7 +230,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void copy(Document destination, String newName)
+    void copy(Document destination, String newName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -244,7 +246,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void move(Document destination, String newName)
+    void move(Document destination, String newName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -257,7 +259,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void depublish()
+    void depublish()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -272,7 +274,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void depublish(Date depublicationDate)
+    void depublish(Date depublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -285,7 +287,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void publish()
+    void publish()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -300,7 +302,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void publish(Date publicationDate)
+    void publish(Date publicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
@@ -317,7 +319,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public void publish(Date publicationDate, Date unpublicationDate)
+    void publish(Date publicationDate, Date unpublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 
@@ -443,7 +445,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    public Document versionRestoreTo(Calendar historic, Document target)
+    Document versionRestoreTo(Calendar historic, Document target)
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
@@ -462,7 +464,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     SortedMap<Calendar, Set<String>> listVersions()
             throws WorkflowException, RepositoryException, RemoteException;
 
@@ -479,7 +481,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     Document retrieveVersion(Calendar historic)
             throws WorkflowException, RepositoryException, RemoteException;
 
@@ -498,4 +500,18 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      */
     void unlock()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}
+     *
+     * @param action {@link org.hippoecm.repository.api.WorkflowAction} instance
+     * @return The object result of this action. The type of object depends on the type of action. It can be {@code null}, a {@link Document} instance,
+     * but for example in case of the action {@link DocumentWorkflowAction#listVersions} the returned object is a SortedMap
+     * @throws WorkflowException
+     */
+    // Note we use WorkflowAction instead of DocumentWorkflowAction here because in the future we might want to move this method to Workflow
+    // (so all workflow impls need to implement #triggerAction but of course not with argument DocumentWorkflowAction
+    default Object triggerAction(final WorkflowAction action) throws WorkflowException {
+        throw new UnsupportedOperationException("Action has not been defined for this instance.");
+    }
 }

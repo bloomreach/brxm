@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
@@ -36,6 +38,7 @@ public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
     }
 
     public Map<String,Serializable> hints() {
-        return new TreeMap<String,Serializable>();
+        return new TreeMap<>();
     }
+
 }

@@ -60,6 +60,7 @@ public class MockSession implements HippoSession {
 
     private final MockNode root;
     private final MockWorkspace workspace;
+    private MockRepository mockRepository;
 
     protected MockSession(MockNode root, QueryManager queryManager) {
         this.root = root;
@@ -259,7 +260,10 @@ public class MockSession implements HippoSession {
 
     @Override
     public Repository getRepository() {
-        throw new UnsupportedOperationException();
+        if (mockRepository == null) {
+            mockRepository = new MockRepository();
+        }
+        return mockRepository;
     }
 
     @Override

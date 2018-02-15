@@ -249,7 +249,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-   </plugins>
+    </plugins>
   </build>
 
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,7 @@ import org.onehippo.cms7.event.HippoEvent;
 
 public interface BroadcastJob {
 
-    String getEventCategory();
-
-    String getChannelName();
-
-    long getLastProcessed();
+    long getGlobalLastProcessed();
 
     void setLastProcessed(long time);
 

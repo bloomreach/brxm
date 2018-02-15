@@ -42,11 +42,11 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.api.WorkflowContextAware;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.api.annotation.WorkflowAction;
@@ -292,10 +292,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } else {
             throw new RepositoryException("Class is not of type Workflow [" + clazz.getName() + "]");
         }
-        if (WorkflowImpl.class.isAssignableFrom(clazz)) {
+        if (WorkflowContextAware.class.isAssignableFrom(clazz)) {
             Node rootSessionNode = workflowSession.getNodeByIdentifier(uuid);
-            ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextImpl(workflowDefinition, item.getSession(), item));
-            ((WorkflowImpl) workflow).setNode(rootSessionNode);
+            ((WorkflowContextAware)workflow).setWorkflowContext(new WorkflowContextImpl(workflowDefinition, item.getSession(), item));
+            ((WorkflowContextAware)workflow).setNode(rootSessionNode);
         }
         return workflow;
     }
@@ -346,7 +346,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.upstream = upstream;
             this.subjectId = subject.getIdentifier();
             this.subjectPath = subject.getPath();
-            this.objectPersist = upstream instanceof WorkflowImpl;
+            this.objectPersist = upstream instanceof WorkflowContextAware;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

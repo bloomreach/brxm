@@ -145,6 +145,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             requests.clear();
             requestPending = false;
             initialized = false;
+            //Do NOT clear initialPayload
         }
     }
 
@@ -173,4 +174,5 @@ public class DocumentHandle implements SCXMLWorkflowData {
         }
         return count > 1;
     }
+
 }

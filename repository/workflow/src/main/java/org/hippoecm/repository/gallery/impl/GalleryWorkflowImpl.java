@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow {
     }
 
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException {
-        List<String> list = new LinkedList<String>();
+        List<String> list = new LinkedList<>();
         Value[] values = subject.getProperty(HIPPOSTD_GALLERYTYPE).getValues();
         for (final Value value : values) {
             list.add(value.getString());

@@ -37,11 +37,12 @@ import org.slf4j.LoggerFactory;
  * The name of the logged in user is read from the HTTP session attribute 'hippo:username'.
  * Returns a 403 forbidden error when invoked while no user is logged in.
  */
-public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDataProvider {
+public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRequestContextProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ManagedUserSessionInvoker.class);
 
-    private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_USER_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_SYSTEM_SESSION = ManagedUserSessionInvoker.class.getName() + ".SystemSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
     static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";;
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
@@ -54,7 +55,23 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
 
     @Override
     public Session getJcrSession(final HttpServletRequest servletRequest) {
-        return (Session)servletRequest.getAttribute(ATTRIBUTE_SESSION);
+        return (Session) servletRequest.getAttribute(ATTRIBUTE_USER_SESSION);
+    }
+
+    @Override
+    public Session getSystemSession(final HttpServletRequest servletRequest) {
+        Session system = (Session) servletRequest.getAttribute(ATTRIBUTE_SYSTEM_SESSION);
+        if (system != null && system.isLive()) {
+            return system;
+        }
+        try {
+            system = systemSession.impersonate(new SimpleCredentials("system", new char[]{}));
+            servletRequest.setAttribute(ATTRIBUTE_SYSTEM_SESSION, system);
+        } catch (RepositoryException e) {
+            log.error("Could not create system session", e);
+            throw new IllegalStateException(e);
+        }
+        return system;
     }
 
     @Override
@@ -85,11 +102,21 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
         try {
             final Session userSession = systemSession.getRepository().login(credentials);
             try {
-                servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
+                servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
                 servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
                 servletRequest.setAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST, getFarthestRequestHostInternal(servletRequest));
                 return invokeSuper(exchange, requestParams);
             } finally {
+                final Session system = (Session) servletRequest.getAttribute(ATTRIBUTE_SYSTEM_SESSION);
+                if (system != null && system.isLive()) {
+                    if (system.hasPendingChanges()) {
+                        log.warn("Logging out system session that has pending changes.");
+                    }
+                    system.logout();
+                }
+                if (userSession.hasPendingChanges()) {
+                    log.warn("Logging out user session that has pending changes.");
+                }
                 userSession.logout();
             }
         } catch (RepositoryException e) {
