@@ -254,7 +254,6 @@ public class ChannelPropertyMapper {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
             }
         }
-        // TODO (meggermont): save channel.branches somewhere
     }
 
     static Map<HstPropertyDefinition, Object> loadProperties(HstNode channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) {

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,6 +81,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
 
@@ -234,16 +237,33 @@ public class MountResource extends AbstractConfigResource {
             if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
-            createPreviewConfiguration();
-            ChannelEvent event = new ChannelEvent(
-                    ChannelEvent.ChannelEventType.PREVIEW_CREATION,
-                    Collections.emptyList(),
-                    pageComposerContextService.getEditingMount(),
-                    pageComposerContextService.getEditingPreviewSite(),
-                    requestContext);
 
-            publishSynchronousEvent(event);
-            HstConfigurationUtils.persistChanges(session);
+            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+            createPreviewConfiguration(liveConfigurationPath, requestContext, false);
+
+            final Node liveConfigurationNode = session.getNode(liveConfigurationPath);
+            final String liveConfigurationNodeName = liveConfigurationNode.getName();
+            for (Node configurationNode : new NodeIterable(liveConfigurationNode.getParent().getNodes())) {
+                final String configurationNodeName = configurationNode.getName();
+                if (configurationNodeName.endsWith("-preview") || !configurationNode.isNodeType(MIXINTYPE_HST_BRANCH)) {
+                    continue;
+                }
+                if (!configurationNode.hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
+                    log.warn("Node has mixin {}, but expected property {} not found on node {}", MIXINTYPE_HST_BRANCH, BRANCH_PROPERTY_BRANCH_ID, configurationNodeName);
+                    continue;
+                }
+                if (!configurationNode.hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
+                    log.warn("Node has mixin {}, but expected property {} not found on node {}", MIXINTYPE_HST_BRANCH, BRANCH_PROPERTY_BRANCH_OF, configurationNodeName);
+                    continue;
+                }
+                final String branchOf = JcrUtils.getStringProperty(configurationNode, BRANCH_PROPERTY_BRANCH_OF, null);
+                if (branchOf.equals(liveConfigurationNodeName)) {
+                    log.debug("Preview config for branch '{}' does not exist, creating it now", configurationNodeName);
+                    final String branchConfigurationPath = configurationNode.getPath();
+                    createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                }
+            }
+
             log.info("Site '{}' can be edited now", editingPreviewSite.getConfigurationPath());
             return ok("Site can be edited now");
         } catch (IllegalStateException e) {
@@ -261,10 +281,29 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void createPreviewConfiguration() throws RepositoryException, ClientException {
-        String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+    private void createPreviewConfiguration(final String configurationPath, final HstRequestContext requestContext, boolean isBranch) throws RepositoryException, ClientException {
         Session session = getPageComposerContextService().getRequestContext().getSession();
-        HstConfigurationUtils.createPreviewConfiguration(liveConfigurationPath, session);
+        HstConfigurationUtils.createPreviewConfiguration(configurationPath, session);
+
+        if (isBranch) {
+            final Node branchConfigurationNode = session.getNode(configurationPath);
+            final Node branchPreviewConfigurationNode = session.getNode(configurationPath + "-preview");
+            branchPreviewConfigurationNode.addMixin(MIXINTYPE_HST_BRANCH);
+            final String branchOf = JcrUtils.getStringProperty(branchConfigurationNode, BRANCH_PROPERTY_BRANCH_OF, null);
+            branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, branchOf);
+            final String branchId = JcrUtils.getStringProperty(branchConfigurationNode, BRANCH_PROPERTY_BRANCH_ID, null);
+            branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
+        }
+
+        ChannelEvent event = new ChannelEvent(
+                ChannelEvent.ChannelEventType.PREVIEW_CREATION,
+                Collections.emptyList(),
+                getPageComposerContextService().getEditingMount(),
+                getPageComposerContextService().getEditingPreviewSite(),
+                requestContext);
+
+        publishSynchronousEvent(event);
+        HstConfigurationUtils.persistChanges(session);
     }
 
     /**
