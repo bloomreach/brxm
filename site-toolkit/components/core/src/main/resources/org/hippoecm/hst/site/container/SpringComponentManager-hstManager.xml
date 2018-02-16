@@ -111,10 +111,7 @@
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider">
-    <property name="channelManagerHstSiteProvider" ref="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider"/>
-  </bean>
+  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider"/>
 
-  <bean id="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider" class="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider"/>
 </beans>
 

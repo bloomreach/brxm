@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +31,12 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -49,8 +44,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -69,6 +62,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -82,13 +76,16 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
-import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -189,60 +186,6 @@ public class MountResource extends AbstractConfigResource {
         return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
 
-    @GET
-    @Path("/currentbranch")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response currentBranch(@Context HttpServletRequest servletRequest) {
-        final Mount mount = getPageComposerContextService().getEditingMount();
-        final HttpSession session = servletRequest.getSession();
-        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-        if (mountToBranchIdMap == null || mountToBranchIdMap.get(mount.getIdentifier()) == null) {
-            return ok("No current branch", null);
-        }
-        return ok("Current branch id:", mountToBranchIdMap.get(mount.getIdentifier()));
-    }
-
-    @IgnoreLock
-    @PUT
-    @Path("/selectbranch/{branchId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
-        final Mount editingMount = getPageComposerContextService().getEditingMount();
-        setMountToBranchId(servletRequest, branchId, editingMount);
-        log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
-        return ok("Branch selected successfully");
-    }
-
-    @IgnoreLock
-    @PUT
-    @Path("/selectmaster")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response selectMaster(@Context HttpServletRequest servletRequest) {
-        final Mount editingMount = getPageComposerContextService().getEditingMount();
-        clearMountToBranchId(servletRequest, editingMount);
-
-        log.debug("Selected master of channel:{}", editingMount.getChannel());
-        return ok("Master branch selected successfully");
-    }
-
-    private void clearMountToBranchId(final HttpServletRequest servletRequest, final Mount mount) {
-        final HttpSession session = servletRequest.getSession();
-        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-        if (mountToBranchIdMap != null) {
-            mountToBranchIdMap.remove(mount.getIdentifier());
-        }
-    }
-
-    private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
-        HttpSession session = servletRequest.getSession();
-        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-        if (mountToBranchIdMap == null) {
-            mountToBranchIdMap = new HashMap<>();
-            session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
-        }
-        mountToBranchIdMap.put(mount.getIdentifier(), branchId);
-    }
-
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
                 true, getPageComposerContextService());
@@ -275,8 +218,8 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will
-     * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will be created. If
+     * it already has a preview configuration, just an ok {@link Response} is returned.
      *
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
@@ -294,16 +237,33 @@ public class MountResource extends AbstractConfigResource {
             if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
-            createPreviewConfiguration();
-            ChannelEvent event = new ChannelEvent(
-                    ChannelEvent.ChannelEventType.PREVIEW_CREATION,
-                    Collections.emptyList(),
-                    pageComposerContextService.getEditingMount(),
-                    pageComposerContextService.getEditingPreviewSite(),
-                    requestContext);
 
-            publishSynchronousEvent(event);
-            HstConfigurationUtils.persistChanges(session);
+            String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+            createPreviewConfiguration(liveConfigurationPath, requestContext, false);
+
+            final Node liveConfigurationNode = session.getNode(liveConfigurationPath);
+            final String liveConfigurationNodeName = liveConfigurationNode.getName();
+            for (Node configurationNode : new NodeIterable(liveConfigurationNode.getParent().getNodes())) {
+                final String configurationNodeName = configurationNode.getName();
+                if (configurationNodeName.endsWith("-preview") || !configurationNode.isNodeType(MIXINTYPE_HST_BRANCH)) {
+                    continue;
+                }
+                if (!configurationNode.hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
+                    log.warn("Node has mixin {}, but expected property {} not found on node {}", MIXINTYPE_HST_BRANCH, BRANCH_PROPERTY_BRANCH_ID, configurationNodeName);
+                    continue;
+                }
+                if (!configurationNode.hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
+                    log.warn("Node has mixin {}, but expected property {} not found on node {}", MIXINTYPE_HST_BRANCH, BRANCH_PROPERTY_BRANCH_OF, configurationNodeName);
+                    continue;
+                }
+                final String branchOf = JcrUtils.getStringProperty(configurationNode, BRANCH_PROPERTY_BRANCH_OF, null);
+                if (branchOf.equals(liveConfigurationNodeName)) {
+                    log.debug("Preview config for branch '{}' does not exist, creating it now", configurationNodeName);
+                    final String branchConfigurationPath = configurationNode.getPath();
+                    createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                }
+            }
+
             log.info("Site '{}' can be edited now", editingPreviewSite.getConfigurationPath());
             return ok("Site can be edited now");
         } catch (IllegalStateException e) {
@@ -321,10 +281,29 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void createPreviewConfiguration() throws RepositoryException, ClientException {
-        String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+    private void createPreviewConfiguration(final String configurationPath, final HstRequestContext requestContext, boolean isBranch) throws RepositoryException, ClientException {
         Session session = getPageComposerContextService().getRequestContext().getSession();
-        HstConfigurationUtils.createPreviewConfiguration(liveConfigurationPath, session);
+        HstConfigurationUtils.createPreviewConfiguration(configurationPath, session);
+
+        if (isBranch) {
+            final Node branchConfigurationNode = session.getNode(configurationPath);
+            final Node branchPreviewConfigurationNode = session.getNode(configurationPath + "-preview");
+            branchPreviewConfigurationNode.addMixin(MIXINTYPE_HST_BRANCH);
+            final String branchOf = JcrUtils.getStringProperty(branchConfigurationNode, BRANCH_PROPERTY_BRANCH_OF, null);
+            branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, branchOf);
+            final String branchId = JcrUtils.getStringProperty(branchConfigurationNode, BRANCH_PROPERTY_BRANCH_ID, null);
+            branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
+        }
+
+        ChannelEvent event = new ChannelEvent(
+                ChannelEvent.ChannelEventType.PREVIEW_CREATION,
+                Collections.emptyList(),
+                getPageComposerContextService().getEditingMount(),
+                getPageComposerContextService().getEditingPreviewSite(),
+                requestContext);
+
+        publishSynchronousEvent(event);
+        HstConfigurationUtils.persistChanges(session);
     }
 
     /**
@@ -352,8 +331,8 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will
-     * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will be created. If
+     * it already has a preview configuration, just an ok {@link Response} is returned.
      *
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
@@ -440,8 +419,8 @@ public class MountResource extends AbstractConfigResource {
 
 
     /**
-     * Creates a document in the repository using the WorkFlowManager
-     * The post parameters should contain the 'path', 'docType' and 'name' of the document.
+     * Creates a document in the repository using the WorkFlowManager The post parameters should contain the 'path',
+     * 'docType' and 'name' of the document.
      *
      * @param params The POST parameters
      * @return response JSON with the status of the result
@@ -560,9 +539,9 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * reverts the changes for the current cms user for the channel he is working on.
-     * reverting changes need to be done directly on JCR level as for the hst model it get very complex as the
-     * hst model has an enhanced model on top of jcr, with for example inheritance and referencing resolved
+     * reverts the changes for the current cms user for the channel he is working on. reverting changes need to be done
+     * directly on JCR level as for the hst model it get very complex as the hst model has an enhanced model on top of
+     * jcr, with for example inheritance and referencing resolved
      */
     private Response discardChangesOfCurrentUser() {
         try {
@@ -620,8 +599,10 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
-     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
+     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
+     * remove for CMS 13
+     *
      * @deprecated Since CMS 12
      */
     @Deprecated
@@ -652,8 +633,10 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
-     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
+     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
+     * remove for CMS 13
+     *
      * @deprecated Since CMS 12
      */
     @Deprecated
@@ -686,8 +669,10 @@ public class MountResource extends AbstractConfigResource {
     }
 
     /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
-     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
+     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
+     * remove for CMS 13
+     *
      * @deprecated Since CMS 12
      */
     @Deprecated

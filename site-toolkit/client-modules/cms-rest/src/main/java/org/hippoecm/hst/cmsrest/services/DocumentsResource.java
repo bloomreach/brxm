@@ -16,7 +16,6 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -42,9 +41,15 @@ public class DocumentsResource extends BaseResource implements DocumentService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
     private HstLinkCreator hstLinkCreator;
+    // default no context augmenters
+    private List<DocumentContextAugmenter> documentContextAugmenters = new ArrayList<>();
 
     public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
         this.hstLinkCreator = hstLinkCreator;
+    }
+
+    public void addDocumentContextAugmenter(final DocumentContextAugmenter documentContextAugmenter) {
+        documentContextAugmenters.add(documentContextAugmenter);
     }
 
     public ChannelDocumentDataset getChannels(String uuid) {
@@ -52,6 +57,8 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         final ChannelDocumentDataset dataset = new ChannelDocumentDataset();
 
         HstRequestContext requestContext = RequestContextProvider.get();
+
+        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
@@ -78,6 +85,8 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             ChannelDocument document = new ChannelDocument();
             document.setChannelId(channel.getId());
             document.setChannelName(channel.getName());
+            document.setBranchId(channel.getBranchId());
+            document.setBranchOf(channel.getBranchOf());
             if (StringUtils.isNotEmpty(link.getPath())) {
                 document.setPathInfo("/" + link.getPath());
             } else {
@@ -155,7 +164,6 @@ public class DocumentsResource extends BaseResource implements DocumentService {
         if (handle == null) {
             return null;
         }
-
         final String hostGroupNameForCmsHost = getHostGroupNameForCmsHost();
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, type, hostGroupNameForCmsHost);
 

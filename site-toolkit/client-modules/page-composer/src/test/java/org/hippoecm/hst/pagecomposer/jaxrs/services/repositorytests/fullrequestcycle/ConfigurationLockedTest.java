@@ -289,20 +289,4 @@ public class ConfigurationLockedTest extends MountResourceTest {
             forbiddenAssertions(e);
         }
     }
-
-    @Test
-    @Override
-    public void select_branch_and_select_master_again() throws Exception {
-        // regardless the channel being locked, the select branch should STILL work although it is a PUT method. It works
-        // because of the IgnoreLock annotation, also see org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor
-        super.select_branch_and_select_master_again();
-    }
-
-    @Test
-    @Override
-    public void select_non_existing_branch_does_not_return_error() throws Exception {
-        // regardless the channel being locked, the select non existing branch should STILL work although it is a PUT method. It works
-        // because of the IgnoreLock annotation, also see org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor
-        super.select_non_existing_branch_does_not_return_error();
-    }
 }
