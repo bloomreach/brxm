@@ -18,6 +18,7 @@ const PICKER_CALLBACK_ID = 'document-location-callback-id';
 
 class DocumentLocationFieldController {
   constructor(
+    $element,
     ChannelService,
     CmsService,
     Step1Service,
@@ -25,6 +26,7 @@ class DocumentLocationFieldController {
   ) {
     'ngInject';
 
+    this.$element = $element;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.Step1Service = Step1Service;
@@ -57,6 +59,14 @@ class DocumentLocationFieldController {
       const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
       this.setPath(path);
     }
+
+    this.CmsService.subscribe('path-picked', this.onPathPicked, this);
+    this.CmsService.subscribe('path-cancelled', this.onPathCancelled, this);
+  }
+
+  $onDestroy() {
+    this.CmsService.unsubscribe('path-picked', this.onPathPicked, this);
+    this.CmsService.unsubscribe('path-cancelled', this.onPathCancelled, this);
   }
 
   setPath(path) {
@@ -85,7 +95,6 @@ class DocumentLocationFieldController {
   }
 
   openPicker() {
-    this.CmsService.subscribeOnce('path-picked', this.onPathPicked, this);
     this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.pickerPath, this.pickerConfig);
     this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
   }
@@ -103,6 +112,13 @@ class DocumentLocationFieldController {
         }
         this.setPath(path);
       }
+    }
+  }
+
+  onPathCancelled(callbackId) {
+    if (callbackId === PICKER_CALLBACK_ID) {
+      // focus this field again so keypresses will reach Angular Material instead of the parent window
+      this.$element.find('.input-overlay').focus();
     }
   }
 }

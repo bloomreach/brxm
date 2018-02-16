@@ -24,6 +24,7 @@ describe('DocumentLocationField', () => {
   let Step1Service;
   let component;
   let getFolderSpy;
+  let inputOverlaySpy;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
@@ -55,11 +56,37 @@ describe('DocumentLocationField', () => {
       Step1Service = _Step1Service_;
     });
 
-    component = $componentController('documentLocationField');
+
+    const $element = jasmine.createSpyObj('$element', ['find']);
+
+    inputOverlaySpy = jasmine.createSpyObj('input-overlay', ['focus']);
+    $element.find.and.returnValue(inputOverlaySpy);
+
+    component = $componentController('documentLocationField', {
+      $element,
+    });
     getFolderSpy = spyOn(Step1Service, 'getFolders').and.returnValue($q.resolve());
     spyOn(CmsService, 'reportUsageStatistic');
 
     component.changeLocale = () => angular.noop();
+  });
+
+  describe('$onInit', () => {
+    it('subscribes to the "path-picked" and "path-cancelled" events of the CMS', () => {
+      spyOn(CmsService, 'subscribe');
+      component.$onInit();
+      expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
+      expect(CmsService.subscribe).toHaveBeenCalledWith('path-cancelled', component.onPathCancelled, component);
+    });
+  });
+
+  describe('$onDestroy', () => {
+    it('unsubscribes from the "path-picked" and "path-cancelled" events of the CMS', () => {
+      spyOn(CmsService, 'unsubscribe');
+      component.$onDestroy();
+      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
+      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-cancelled', component.onPathCancelled, component);
+    });
   });
 
   describe('with root path', () => {
@@ -186,13 +213,6 @@ describe('DocumentLocationField', () => {
     });
 
     describe('openPicker', () => {
-      it('subscribes once to the "path-picked" event of the CMS before opening the picker', () => {
-        spyOn(CmsService, 'subscribeOnce');
-        component.openPicker();
-        expect(CmsService.subscribeOnce).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
-        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('DocumentLocationPicker (create content panel)');
-      });
-
       it('opens the picker by publishing the "show-path-picker" event', () => {
         spyOn(CmsService, 'publish');
         const pickerConfig = {};
@@ -334,6 +354,18 @@ describe('DocumentLocationField', () => {
           expect(component.setPath).toHaveBeenCalled();
         });
       });
+    });
+  });
+
+  describe('onPathCancelled', () => {
+    it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+      spyOn(component, 'setPath');
+
+      component.onPathCancelled('some-id');
+      expect(inputOverlaySpy.focus).not.toHaveBeenCalled();
+
+      component.onPathCancelled('document-location-callback-id');
+      expect(inputOverlaySpy.focus).toHaveBeenCalled();
     });
   });
 });
