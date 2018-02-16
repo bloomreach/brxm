@@ -30,16 +30,31 @@
 
   <content-editor flex="grow"
                   layout="column"
-                  show-message="!$ctrl.allMandatoryFieldsShown()"
                   cancel-label="{{ ::'DISCARD' | translate }}"
                   close-label="{{ ::'DISCARD' | translate }}"
                   allow-save="$ctrl.allMandatoryFieldsShown()"
                   on-switch-editor="$ctrl.switchEditor()"
                   on-save="$ctrl.save()"
                   on-close="$ctrl.close()">
-    <div>{{ ::'NOT_ALL_MANDATORY_FIELDS_SHOWN' | translate }}</div>
-    <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-    <div translate="NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+
+    <content-editor-message>
+      <md-subheader ng-if="!$ctrl.allMandatoryFieldsShown()"
+                    class="md-no-sticky"
+                    md-colors="{background: 'hippo-grey-200'}">
+        <div>{{ ::'NOT_ALL_MANDATORY_FIELDS_SHOWN' | translate }}</div>
+        <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+        <div translate="NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+      </md-subheader>
+    </content-editor-message>
+
+    <content-editor-extra-button>
+      <md-button class="qa-continue"
+                 ng-click="$ctrl.switchEditor()"
+                 ng-if="!$ctrl.allMandatoryFieldsShown()">
+        {{ 'CONTINUE' | translate }}
+      </md-button>
+    </content-editor-extra-button>
+
   </content-editor>
 
 </div>
