@@ -89,7 +89,7 @@ public class HstManageContentTag extends TagSupport {
             }
 
             if (templateQuery == null && hippoBean == null && parameterName == null) {
-                log.debug("Skipping manageContent tag because neither 'templateQuery', 'hippoBean' or 'parameterName' attribute specified.");
+                log.debug("Skipping manageContent tag because neither 'templateQuery', 'hippobean' or 'parameterName' attribute specified.");
                 return EVAL_PAGE;
             }
 
