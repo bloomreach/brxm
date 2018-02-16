@@ -144,7 +144,7 @@
   "NOT_ALL_FIELDS_SHOWN": "Not all fields of this document are shown.",
   "NOT_ALL_FIELDS_SHOWN_LINK": "To see all fields <a href='#' ng-click='{{clickAction}}'>switch to the content editor</a>",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN": "Not all mandatory fields of this document are shown.",
-  "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "To fill out the mandatory fields and then save the document <a href='#' ng-click='{{clickAction}}'>switch to the content editor</a>",
+  "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "To fill out the mandatory fields and then save the document <a href='#' ng-click='{{clickAction}}'>continue in the content editor</a>",
   "NOTIFICATION_DOCUMENT_SAVED": "Document saved",
   "NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT": "Document selected for '{{componentName}}'",
   "OK": "OK",
