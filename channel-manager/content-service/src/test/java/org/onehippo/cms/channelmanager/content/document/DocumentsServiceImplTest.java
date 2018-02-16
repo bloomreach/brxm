@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,8 +46,8 @@ import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
+import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
@@ -65,6 +68,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static java.util.Collections.emptyMap;
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -74,12 +78,12 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
-import static org.hamcrest.Matchers.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -128,7 +132,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -148,7 +152,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -168,7 +172,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -219,7 +223,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -273,7 +277,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -304,7 +308,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -336,7 +340,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -395,7 +399,7 @@ public class DocumentsServiceImplTest {
             documentsService.createDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -502,7 +506,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -551,7 +555,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -642,7 +646,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -672,7 +676,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -742,7 +746,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraft(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -918,7 +922,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -969,7 +973,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1063,7 +1067,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1094,7 +1098,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -1224,7 +1228,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -1242,7 +1246,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
         }
 
         verifyAll();
@@ -1320,7 +1324,7 @@ public class DocumentsServiceImplTest {
             documentsService.deleteDraft(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -2094,6 +2098,37 @@ public class DocumentsServiceImplTest {
         documentsService.deleteDocument(uuid, session, locale);
 
         verifyAll();
+    }
+
+    @Test
+    public void cannotCreateDraftNoHintsFromWorkflow() throws ErrorWithPayloadException, RepositoryException, RemoteException, WorkflowException {
+
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
+
+        final EditableWorkflow workflow = createMock(DocumentWorkflow.class);
+        expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(EditableWorkflow.class))).andReturn(Optional.of(workflow));
+        expect(workflow.hints()).andReturn(emptyMap());
+
+        final Map<String, Serializable> contextPayload = new HashMap<>();
+        contextPayload.put("some-key", "some value");
+        expect(hintsInspector.canCreateDraft(contextPayload)).andReturn(false);
+
+        final Optional<ErrorInfo> errorInfo = Optional.of(new ErrorInfo(Reason.INVALID_DATA, contextPayload));
+        expect(hintsInspector.determineEditingFailure(contextPayload, session)).andReturn(errorInfo);
+
+        replayAll(handle, workflow, hintsInspector);
+
+        try {
+            documentsService.createDraft(uuid, session, locale, contextPayload);
+        } catch (ForbiddenException e) {
+            final ErrorInfo payload = (ErrorInfo) e.getPayload();
+            assertThat(payload.getReason(), is(Reason.INVALID_DATA));
+            assertThat(payload.getParams(), is(contextPayload));
+        }
     }
 
     private DocumentType provideDocumentType(final Node handle) throws Exception {

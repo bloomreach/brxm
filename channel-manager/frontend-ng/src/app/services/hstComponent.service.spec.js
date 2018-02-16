@@ -104,9 +104,11 @@ describe('HstComponentService', () => {
     });
 
     it('returns a promise that is rejected if setting the picked path fails', (done) => {
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject());
+      const errorResponse = {};
+      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject(errorResponse));
 
-      pickPathPromise.catch(() => {
+      pickPathPromise.catch((response) => {
+        expect(response).toEqual(errorResponse);
         done();
       });
 

@@ -65,7 +65,6 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.emptyMap;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
@@ -443,14 +442,15 @@ public class DocumentsServiceImpl implements DocumentsService {
     private Map<String, Serializable> getHints(Workflow workflow, Map<String, Serializable> contextPayload) {
         try {
             return Optional.of(workflow.hints()).map(hints -> {
+                final Map<String, Serializable> hintsCopy = new HashMap<>(hints);
                 if (contextPayload != null) {
-                    hints.putAll(contextPayload);
+                    hintsCopy.putAll(contextPayload);
                 }
-                return hints;
-            }).orElse(emptyMap());
+                return hintsCopy;
+            }).orElse(new HashMap<>());
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             log.warn("Failed reading hints from workflow", e);
         }
-        return emptyMap();
+        return new HashMap<>();
     }
 }

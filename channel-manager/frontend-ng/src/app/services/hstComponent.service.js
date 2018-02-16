@@ -40,7 +40,7 @@ class HstComponentService {
     this.pathPickedHandler = (path) => {
       this.setPathParameter(componentId, componentVariant, parameterName, path, basePath)
         .then(() => deferred.resolve())
-        .catch(() => deferred.reject());
+        .catch(err => deferred.reject(err));
     };
     this.CmsService.publish('show-path-picker', PATH_PICKER_CALLBACK_ID, parameterValue, pickerConfig);
     return deferred.promise;

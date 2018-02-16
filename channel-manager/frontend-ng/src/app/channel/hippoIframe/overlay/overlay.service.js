@@ -591,8 +591,12 @@ class OverlayService {
         this.PageStructureService.renderComponent(component.getId());
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
-      .catch(() => {
-        this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      .catch((response) => {
+        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+        const defaultErrorParams = { componentName };
+        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+
+        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
 
         // probably the container got locked by another user, so reload the page to show new locked containers
         this.HippoIframeService.reload();
