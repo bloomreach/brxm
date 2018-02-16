@@ -17,6 +17,8 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -36,6 +38,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
+import org.hippoecm.hst.mock.core.request.MockComponentConfiguration;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
@@ -56,6 +59,7 @@ import static javax.servlet.jsp.tagext.Tag.EVAL_PAGE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.junit.Assert.assertThat;
@@ -78,7 +82,12 @@ public class HstManageContentTagTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         window = new MockHstComponentWindow();
-        window.setComponent(new TestComponent());
+
+        final TestComponent component = new TestComponent();
+        final MockComponentConfiguration componentConfig = new MockComponentConfiguration();
+        componentConfig.setRenderPath("webfile:/freemarker/test.ftl");
+        component.init(servletContext, componentConfig);
+        window.setComponent(component);
         request.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
 
         response = new MockHttpServletResponse();
@@ -106,7 +115,7 @@ public class HstManageContentTagTest {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Cannot create a manage content button outside the hst request.");
+            assertLogged(listener, "Cannot create a manageContent button outside the hst request.");
         }
     }
 
@@ -117,7 +126,7 @@ public class HstManageContentTagTest {
         try (Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(HstManageContentTag.class).build()) {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Skipping manage content tag because not in cms preview.");
+            assertLogged(listener, "Skipping manageContent tag because not in cms preview.");
         }
     }
 
@@ -302,9 +311,10 @@ public class HstManageContentTagTest {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Ignoring manage content tag for component parameter 'relPath': the @JcrPath annotation of the parameter"
+            assertLogged(listener, "Ignoring manageContent tag in template 'webfile:/freemarker/test.ftl'"
+                    + " for component parameter 'relPath': the @JcrPath annotation of the parameter"
                     + " makes it store a relative path to the content root of the channel while the 'rootPath'"
-                    + " attribute of the manage content tag points to the absolute path '/some/absolute/path'."
+                    + " attribute of the manageContent tag points to the absolute path '/some/absolute/path'."
                     + " Either make the root path relative to the channel content root,"
                     + " or make the component parameter store an absolute path.");
         }
@@ -538,8 +548,9 @@ public class HstManageContentTagTest {
             tag.setParameterName(null);
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to 'null'." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to 'null'."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -549,8 +560,9 @@ public class HstManageContentTagTest {
             tag.setParameterName("");
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to ''." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to ''."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -560,8 +572,9 @@ public class HstManageContentTagTest {
             tag.setParameterName("  ");
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to '  '." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to '  '."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -571,7 +584,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery(null);
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to 'null'." +
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to 'null'." +
                     " Expected the name of a template query instead.");
         }
     }
@@ -582,8 +596,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery("");
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to ''." +
-                    " Expected the name of a template query instead.");
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to ''. Expected the name of a template query instead.");
         }
     }
 
@@ -593,8 +607,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery("  ");
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to '  '." +
-                    " Expected the name of a template query instead.");
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to '  '. Expected the name of a template query instead.");
         }
     }
 
@@ -701,8 +715,9 @@ public class HstManageContentTagTest {
     }
 
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
-        assertThat("expected log message '" + expectedMessage + "'", listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)), is(true));
-        assertThat(listener.getEvents().size(), is(1));
+        final List<String> messages = listener.messages().collect(Collectors.toList());
+        assertThat(messages.size(), is(1));
+        assertThat(messages.get(0), equalTo(expectedMessage));
     }
 
     private static class BrokenPageContext extends MockPageContext {
