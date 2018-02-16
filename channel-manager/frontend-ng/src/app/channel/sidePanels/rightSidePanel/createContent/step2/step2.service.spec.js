@@ -64,7 +64,6 @@ describe('Step2Service', () => {
     });
 
     spyOn($translate, 'instant').and.callThrough();
-    spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showNotification');
     spyOn(CmsService, 'reportUsageStatistic');
 
@@ -179,6 +178,7 @@ describe('Step2Service', () => {
     });
 
     it('handles errors by showing a feedback message', () => {
+      spyOn(FeedbackService, 'showError');
       ContentEditor.document = { id: 'test-document-id' };
       const dialogData = { name: 'name', url: 'url' };
       spyOn(DialogService, 'show').and.returnValue($q.resolve(dialogData));
@@ -237,12 +237,15 @@ describe('Step2Service', () => {
     });
 
     it('shows an error if path parameter can not be set', () => {
+      spyOn(FeedbackService, 'showErrorResponse');
       spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject());
       Step2Service.saveComponentParameter();
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith(
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(
+        undefined,
         'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+        jasmine.any(Object),
         { componentName: 'componentName' },
       );
     });

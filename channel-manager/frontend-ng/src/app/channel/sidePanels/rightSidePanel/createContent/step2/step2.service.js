@@ -128,8 +128,12 @@ class Step2Service {
       .then(() => {
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
-      .catch(() => {
-        this.FeedbackService.showError('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      .catch((response) => {
+        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+        const defaultErrorParams = { componentName };
+        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+
+        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
       });
   }
 
