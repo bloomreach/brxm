@@ -56,6 +56,23 @@ const ERROR_MAP = {
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
+  PART_OF_PROJECT: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_PART_OF_PROJECT_MESSAGE',
+    hasUser: true,
+  },
+  CORE_PROJECT: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
+  },
+  PROJECT_INVALID_STATE: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_PROJECT_INVALID_STATE',
+  },
+  PROJECT_NOT_FOUND: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_PROJECT_NOT_FOUND',
+  },
 };
 
 class ContentEditorService {
@@ -244,6 +261,12 @@ class ContentEditorService {
       delete params.userId;
       delete params.userName;
     }
+
+    if (errorInfo.reason === 'PART_OF_PROJECT') {
+      params.projectName = errorInfo.params.projectName;
+      params.projectState = errorInfo.params.projectState;
+    }
+
     return params;
   }
 

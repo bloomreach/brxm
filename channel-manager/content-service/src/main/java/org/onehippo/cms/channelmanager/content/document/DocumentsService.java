@@ -16,8 +16,10 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Session;
 
@@ -32,10 +34,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
  */
 public interface DocumentsService {
 
-    static DocumentsService get() {
-        return DocumentsServiceImpl.getInstance();
-    }
-
     /**
      * Creates a draft version of a document and locks it for editing by the current CMS user.
      * <p>
@@ -47,7 +45,7 @@ public interface DocumentsService {
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If creation of the draft failed
      */
-    Document createDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document createDraft(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Update the draft version of a document, and keep it locked for further editing.
@@ -60,10 +58,11 @@ public interface DocumentsService {
      * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
      *                 pending.
      * @param locale   Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
      * @return JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException If updating the draft failed
      */
-    Document updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document updateDraft(String uuid, Document document, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Update a single field value in the draft version of a document.
@@ -77,9 +76,10 @@ public interface DocumentsService {
      * @param session     user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
      *                    pending.
      * @param locale      Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
      * @throws ErrorWithPayloadException If updating the draft failed
      */
-    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale) throws ErrorWithPayloadException;
+    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.
@@ -87,9 +87,10 @@ public interface DocumentsService {
      * @param uuid    UUID of the document for which to delete the draft
      * @param session user-authenticated, invocation-scoped JCR session
      * @param locale  Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
      * @throws ErrorWithPayloadException If deleting the draft failed
      */
-    void deleteDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    void deleteDraft(String uuid, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Read the published variant of a document

@@ -16,8 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +48,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
-import org.onehippo.repository.jaxrs.api.SessionDataProvider;
+import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces("application/json")
 @Path("/")
@@ -57,17 +60,21 @@ public class ContentResource {
         NO_CACHE.setNoCache(true);
     }
 
-    private final SessionDataProvider sessionDataProvider;
+    private final SessionRequestContextProvider sessionRequestContextProvider;
+    private final DocumentsService documentService;
+    private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
-    public ContentResource(final SessionDataProvider userSessionProvider) {
-        sessionDataProvider = userSessionProvider;
+    public ContentResource(final SessionRequestContextProvider userSessionProvider, final DocumentsService documentsService, final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
+        this.sessionRequestContextProvider = userSessionProvider;
+        this.documentService = documentsService;
+        this.contextPayloadService = contextPayloadService;
     }
 
     @POST
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> DocumentsService.get().createDraft(id, session, locale));
+                (session, locale) -> documentService.createDraft(id, session, locale, getPayload(servletRequest)));
     }
 
     @PUT
@@ -75,7 +82,7 @@ public class ContentResource {
     public Response updateDraftDocument(@PathParam("id") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> DocumentsService.get().updateDraft(id, document, session, locale));
+                (session, locale) -> documentService.updateDraft(id, document, session, locale, getPayload(servletRequest)));
     }
 
     @PUT
@@ -85,7 +92,7 @@ public class ContentResource {
                                      final List<FieldValue> fieldValues,
                                      @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            DocumentsService.get().updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
+            documentService.updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getPayload(servletRequest));
             return null;
         });
     }
@@ -94,7 +101,7 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response deleteDraftDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            DocumentsService.get().deleteDraft(id, session, locale);
+            documentService.deleteDraft(id, session, locale, getPayload(servletRequest));
             return null;
         });
     }
@@ -104,7 +111,7 @@ public class ContentResource {
     @Path("documents/{id}")
     public Response getPublishedDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> DocumentsService.get().getPublished(id, session, locale));
+                (session, locale) -> documentService.getPublished(id, session, locale));
     }
 
     @GET
@@ -140,7 +147,7 @@ public class ContentResource {
     @Path("documents")
     public Response createDocument(final NewDocumentInfo newDocumentInfo, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> DocumentsService.get().createDocument(newDocumentInfo, session, locale));
+                (session, locale) -> documentService.createDocument(newDocumentInfo, session, locale));
     }
 
     @PUT
@@ -148,14 +155,14 @@ public class ContentResource {
     public Response updateDocumentNames(@PathParam("id") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> DocumentsService.get().updateDocumentNames(id, document, session));
+                (session, locale) -> documentService.updateDocumentNames(id, document, session));
     }
 
     @DELETE
     @Path("documents/{id}")
     public Response deleteDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            DocumentsService.get().deleteDocument(id, session, locale);
+            documentService.deleteDocument(id, session, locale);
             return null;
         });
     }
@@ -180,14 +187,18 @@ public class ContentResource {
                                  final Status successStatus,
                                  final CacheControl cacheControl,
                                  final EndPointTask task) {
-        final Session session = sessionDataProvider.getJcrSession(servletRequest);
-        final Locale locale = sessionDataProvider.getLocale(servletRequest);
+        final Session session = sessionRequestContextProvider.getJcrSession(servletRequest);
+        final Locale locale = sessionRequestContextProvider.getLocale(servletRequest);
         try {
             final Object result = task.execute(session, locale);
             return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
         } catch (final ErrorWithPayloadException e) {
             return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
         }
+    }
+
+    private Map<String, Serializable> getPayload(HttpServletRequest servletRequest) {
+        return contextPayloadService.apply(servletRequest);
     }
 
     @FunctionalInterface

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.onehippo.cms7.channelmanager.plugins.channelactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -31,6 +30,7 @@ import java.util.concurrent.Future;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -153,12 +153,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
             final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
-            restProxyJobs.add(new Callable<List<ChannelDocument>>() {
-                @Override
-                public List<ChannelDocument> call() throws Exception {
-                    return documentService.getChannels(documentUuid).getChannelDocuments();
-                }
-            });
+            restProxyJobs.add(() -> documentService.getChannels(documentUuid).getChannelDocuments());
         }
 
         final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
@@ -174,9 +169,9 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                 }
             }
         }
-        Collections.sort(combinedChannelDocuments, getChannelDocumentComparator());
+        combinedChannelDocuments.sort(getChannelDocumentComparator());
 
-        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<>();
         for (final ChannelDocument channelDocument : combinedChannelDocuments) {
             idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
         }
@@ -188,7 +183,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                 if (!idToChannelMap.isEmpty()) {
                     return new ArrayList<>(idToChannelMap.keySet());
                 } else {
-                    return Arrays.asList("<empty>");
+                    return Collections.singletonList("<empty>");
                 }
             }
 
@@ -264,7 +259,12 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         @Override
         protected void invoke() {
             if (channelManagerService != null) {
-                channelManagerService.viewChannel(channelDocument.getChannelId(), channelDocument.getPathInfo());
+                final String branchId = channelDocument.getBranchId();
+                if (StringUtils.isNotBlank(branchId)) {
+                    channelManagerService.viewChannel(channelDocument.getBranchOf(), channelDocument.getPathInfo(), branchId);
+                } else {
+                    channelManagerService.viewChannel(channelDocument.getChannelId(), channelDocument.getPathInfo());
+                }
             } else {
                 log.info("Cannot view channel, no channel manager service available");
             }
