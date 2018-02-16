@@ -103,6 +103,6 @@
     <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
   </div>
   <div class="has-new-content-button">
-    <hst:manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+    <hst:manageContent templateQuery="new-banner-document" parameterName="document1" rootPath="banners"/>
   </div>
 </c:if>
