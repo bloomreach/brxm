@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 public class LinkPickerDialog extends Dialog<String> {
 
-    static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
+
     private static final String EMPTY_FRAGMENT_ID = "empty-fragment";
 
     private final IPluginContext context;
@@ -46,7 +47,7 @@ public class LinkPickerDialog extends Dialog<String> {
     private final NodePickerController controller;
     private final NodeBreadcrumbWidget breadcrumbs;
 
-    public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel<String> model) {
+    public LinkPickerDialog(final IPluginContext context, final IPluginConfig config, final IModel<String> model) {
         super(model);
 
         this.context = context;
@@ -66,17 +67,17 @@ public class LinkPickerDialog extends Dialog<String> {
                     if (StringUtils.isNotEmpty(uuid)) {
                         return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(uuid));
                     }
-                } catch (ItemNotFoundException e) {
+                } catch (final ItemNotFoundException e) {
                     // valid case, node does not exist
                     return null;
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
                 }
                 return null;
             }
 
             @Override
-            protected void onSelect(boolean isValid) {
+            protected void onSelect(final boolean isValid) {
                 setOkEnabled(isValid);
             }
 
@@ -103,6 +104,7 @@ public class LinkPickerDialog extends Dialog<String> {
         super.onInitialize();
         add(createTopFragment("top-fragment"));
     }
+
     /**
      * Override this method to customize the top section in the link-picker dialog
      */
@@ -117,7 +119,7 @@ public class LinkPickerDialog extends Dialog<String> {
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (controller.getRenderer() != null) {
             controller.getRenderer().render(target);
         }
@@ -140,10 +142,10 @@ public class LinkPickerDialog extends Dialog<String> {
         super.onDetach();
     }
 
-    protected void saveNode(Node node) {
+    protected void saveNode(final Node node) {
         try {
             getModel().setObject(node.getIdentifier());
-        } catch (RepositoryException ex) {
+        } catch (final RepositoryException ex) {
             error(ex.getMessage());
         }
     }
