@@ -21,7 +21,10 @@ import template from './contentEditor.html';
 const contentEditorComponent = {
   controller,
   template,
-  transclude: true,
+  transclude: {
+    message: '?contentEditorMessage',
+    extraButton: '?contentEditorExtraButton',
+  },
   bindings: {
     allowSave: '<',
     cancelLabel: '@',
@@ -29,7 +32,6 @@ const contentEditorComponent = {
     onClose: '&',
     onSave: '&',
     onSwitchEditor: '&',
-    showMessage: '<',
   },
 };
 
