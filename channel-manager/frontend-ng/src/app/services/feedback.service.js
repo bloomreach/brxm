@@ -40,16 +40,16 @@ class FeedbackService {
     this._showText(text, hideDelay);
   }
 
-  showErrorResponse(response, defaultKey, errorMap = {}) {
+  showErrorResponse(response, defaultKey, errorMap = {}, defaultParams = {}) {
     if (!response) {
-      this.showError(defaultKey);
+      this.showError(defaultKey, defaultParams);
       return;
     }
 
     // Handle plain error message or fallback to ExtResponse
     const responseDebugMessage = (response.parameterMap && response.parameterMap.errorReason) || response.message;
     const responseErrorCode = response.error || response.errorCode;
-    const responseParams = response.parameterMap || response.data;
+    const responseParams = Object.assign(defaultParams, response.parameterMap || response.data);
 
     if (responseDebugMessage) {
       this.$log.info(responseDebugMessage);
