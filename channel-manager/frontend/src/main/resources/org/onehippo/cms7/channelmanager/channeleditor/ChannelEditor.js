@@ -227,11 +227,20 @@
 
     _showPathPicker: function(field, value, pickerConfig) {
       this.pathPickerField = field;
-      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPathPicked.bind(this));
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
+        value,
+        pickerConfig,
+        this._onPathPicked.bind(this),
+        this._onPathCancelled.bind(this)
+      );
     },
 
     _onPathPicked: function(path, displayValue) {
       this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
+    },
+
+    _onPathCancelled: function() {
+      this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
     },
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
