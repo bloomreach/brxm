@@ -56,7 +56,6 @@ describe('DocumentLocationField', () => {
       Step1Service = _Step1Service_;
     });
 
-
     const $element = jasmine.createSpyObj('$element', ['find']);
 
     inputOverlaySpy = jasmine.createSpyObj('input-overlay', ['focus']);
