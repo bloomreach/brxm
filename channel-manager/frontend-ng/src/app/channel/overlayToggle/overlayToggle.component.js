@@ -28,7 +28,6 @@ const modeToggleComponent = {
     iconName: '@?',
     iconSvg: '@?',
     tooltip: '@?',
-    isConfigurationLocked: '<',
   },
 };
 

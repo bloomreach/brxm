@@ -20,11 +20,7 @@
             layout="column"
             class="rightSidePanel-content">
 
-  <md-subheader ng-if="$ctrl.showMessage"
-                class="md-no-sticky"
-                md-colors="{background: 'hippo-grey-200'}">
-    <ng-transclude></ng-transclude>
-  </md-subheader>
+  <div ng-transclude="message"></div>
 
   <div ng-if="$ctrl.getError()"
        class="md-padding feedback qa-feedback"
@@ -67,5 +63,8 @@
                ng-disabled="!$ctrl.isSaveAllowed()">
       {{ ::'SAVE' | translate }}
     </md-button>
+
+    <div ng-transclude="extraButton"></div>
+
   </div>
 </md-toolbar>

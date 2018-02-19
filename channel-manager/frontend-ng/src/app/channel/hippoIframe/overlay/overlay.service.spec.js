@@ -592,7 +592,7 @@ describe('OverlayService', () => {
   it('can pick a path but fail to update the component', (done) => {
     ChannelService.isEditable = () => true;
     spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'reload');
 
     loadIframeFixture(() => {
@@ -605,9 +605,8 @@ describe('OverlayService', () => {
         'manage-content-component-parameter', undefined, jasmine.any(Object), '');
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'component B',
-      });
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+        jasmine.any(Object), { componentName: 'component B' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
 
       done();
