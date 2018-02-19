@@ -119,7 +119,7 @@
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
 
-    <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
+    <drewnoakes-extractor.version>2.11.0</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
