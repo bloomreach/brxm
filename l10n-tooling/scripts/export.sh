@@ -19,7 +19,6 @@ release="12.2.0"
 
 git clone git@code.onehippo.org:cms-community/hippo-cms-translations.git
 git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git
-git clone git@code.onehippo.org:cms-community/hippo-cms-l10n-tooling.git
 
 modules="hippo-cms-translations hippo-cms-enterprise-translations"
 
