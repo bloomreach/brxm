@@ -50,7 +50,7 @@
     <hippo.hst.version>5.1.0</hippo.hst.version>
 
     <jsp-api.version>2.2</jsp-api.version>
-    <taglibs.version>1.2.1</taglibs.version>
+    <taglibs.version>1.2.5</taglibs.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>

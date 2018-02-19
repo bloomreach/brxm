@@ -74,7 +74,7 @@
 
     <essentials.version>4.1.0</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
-    <taglibs.version>1.2.1</taglibs.version>
+    <taglibs.version>1.2.5</taglibs.version>
     <xalan.version>2.7.2</xalan.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
