@@ -15,11 +15,11 @@
  */
 package org.hippoecm.hst.core.component;
 
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.ModelContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * 
  * @version $Id$
  */
-public interface HstRequest extends HttpServletRequest {
+public interface HstRequest extends HttpServletRequest, ModelContributable {
     
     /**
      * String identifier for the HST action lifecycle phase.
@@ -76,60 +76,6 @@ public interface HstRequest extends HttpServletRequest {
      * @param referenceNamespace
      */
     Map<String, String []> getParameterMap(String referenceNamespace);
-
-    /**
-     * Returns the model object associated with the given {@code name},
-     * or <code>null</code> if no model object of the given {@code name} exists.
-     *
-     * @param name the name of the model object
-     * @return the model object associated with the {@code name}, or
-     *         <tt>null</tt> if the model object does not exist.
-     */
-    <T> T getModel(String name);
-
-    /**
-     * Returns an <code>Enumeration</code> containing the
-     * names of the model objects available to this request. 
-     * This method returns an empty <code>Enumeration</code>
-     * if the request has no model object available to it.
-     *
-     * @return an <code>Enumeration</code> of strings containing the names 
-     * of the request's model objects
-     */
-    Enumeration<String> getModelNames();
-
-    /**
-     * Returns an unmodifiable map of model objects available to this request.
-     * @return an unmodifiable map of model objects available to this request
-     */
-    Map<String, Object> getModelsMap();
-
-    /**
-     * Stores a model object in this request.
-     * <p>
-     * Model objects are contributed by a controller component to this request, in general.
-     * And, the contributed model objects may be accessed in view rendering or special model
-     * aggregation / serialization request pipeline processing.
-     * </p>
-     * <p>
-     * If the model object passed in is null, the effect is the same as
-     * calling {@link #removeModel}.
-     *
-     * </p>
-     * @param name the name of the model object
-     * @param model the model object to be stored
-     * @return the previous model object associated with <tt>name</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>name</tt>.
-     */
-    Object setModel(String name, Object model);
-
-    /**
-     * Removes a model object from this request.
-     *
-     * @param name a <code>String</code> specifying 
-     * the name of the model object to remove
-     */
-   void removeModel(String name);
 
     /**
      * Returns the attribute map of this component window.

@@ -36,6 +36,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.core.ModelContributable;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -57,7 +58,7 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  * 
  * @version $Id$
  */
-public interface HstRequestContext {
+public interface HstRequestContext extends ModelContributable {
     
 	/** 
 	 * Returns the ServletContext for this request 
@@ -177,60 +178,6 @@ public interface HstRequestContext {
      * @return the {@link HstParameterInfoProxyFactory} 
      */
     HstParameterInfoProxyFactory getParameterInfoProxyFactory();
-
-    /**
-     * Returns the model object associated with the given {@code name},
-     * or <code>null</code> if no model object of the given {@code name} exists.
-     *
-     * @param name the name of the model object
-     * @return the model object associated with the {@code name}, or
-     *         <tt>null</tt> if the model object does not exist.
-     */
-    <T> T getModel(String name);
-
-    /**
-     * Returns an <code>Enumeration</code> containing the
-     * names of the model objects available to this request context. 
-     * This method returns an empty <code>Enumeration</code>
-     * if the request context has no model object available to it.
-     *
-     * @return an <code>Enumeration</code> of strings containing the names 
-     * of the request's model objects
-     */
-    Enumeration<String> getModelNames();
-
-    /**
-     * Returns an unmodifiable map of model objects available to this request context.
-     * @return an unmodifiable map of model objects available to this request context
-     */
-    Map<String, Object> getModelsMap();
-
-    /**
-     * Stores a model object in this request context.
-     * <p>
-     * Model objects can be contributed by components to this request context.
-     * And, the contributed model objects may be accessed in view rendering or special model
-     * aggregation / serialization request pipeline processing.
-     * </p>
-     * <p>
-     * If the model object passed in is null, the effect is the same as
-     * calling {@link #removeModel}.
-     *
-     * </p>
-     * @param name the name of the model object
-     * @param model the model object to be stored
-     * @return the previous model object associated with <tt>name</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>name</tt>.
-     */
-    Object setModel(String name, Object model);
-
-    /**
-     * Removes a model object from this request.
-     *
-     * @param name a <code>String</code> specifying 
-     * the name of the model object to remove
-     */
-   void removeModel(String name);
 
     /**
      * Set an attribute to be shared among each HstComponent windows.
