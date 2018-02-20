@@ -691,8 +691,7 @@ public class HstManageContentTagTest {
 
     @Test
     public void supplyChannelContentRootAsDefaultPickerRootPath() throws Exception {
-        tag.setParameterName("docPathParameter");
-        window.setComponent(new TestComponentWithoutPickerRootPath());
+        tag.setParameterName("absPath");
 
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
         final Mount mount = createMock(Mount.class);
@@ -706,7 +705,7 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"parameterName\":\"docPathParameter\","
+                + "\"parameterName\":\"absPath\","
                 + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
@@ -716,8 +715,7 @@ public class HstManageContentTagTest {
 
     @Test
     public void supplyChannelContentRootAsDefaultPickerRootPathAndPickerInitialPath() throws Exception {
-        tag.setParameterName("pickerPath");
-        window.setComponent(new TestComponentWithoutPickerRootPath());
+        tag.setParameterName("pickerNoRootPath");
 
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
         final Mount mount = createMock(Mount.class);
@@ -731,13 +729,37 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"parameterName\":\"pickerPath\","
-                + "\"parameterValueIsRelativePath\":\"true\","
-                + "\"pickerConfiguration\":\"picker-config\","
+                + "\"parameterName\":\"pickerNoRootPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerInitialPath\":\"/my/channel/path/initial-path\","
-                + "\"pickerRemembersLastVisited\":\"false\","
-                + "\"pickerRootPath\":\"/my/channel/path\","
-                + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPathAndAbsolutePickerInitialPath() throws Exception {
+        tag.setParameterName("pickerAbsoluteInitialPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"pickerAbsoluteInitialPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerInitialPath\":\"/initial-path\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
@@ -785,33 +807,17 @@ public class HstManageContentTagTest {
         )
         String getPickerPath();
 
-        @Parameter(name = "string")
-        String getString();
-    }
-
-    @ParametersInfo(type = TestComponentInfoWithoutPickerRootPath.class)
-    public class TestComponentWithoutPickerRootPath extends GenericHstComponent {
-    }
-
-    private interface TestComponentInfoWithoutPickerRootPath {
-
-        @Parameter(name = "docPathParameter")
-        @JcrPath
-        String getAbsPath();
-
-        @Parameter(name = "relPath")
-        @JcrPath(isRelative = true)
-        String getRelPath();
-
-        @Parameter(name = "pickerPath")
+        @Parameter(name = "pickerNoRootPath")
         @JcrPath(
-                isRelative = true,
-                pickerInitialPath = "initial-path",
-                pickerConfiguration = "picker-config",
-                pickerRemembersLastVisited = false,
-                pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
+                pickerInitialPath = "initial-path"
         )
-        String getPickerPath();
+        String getPickerNoRootPath();
+
+        @Parameter(name = "pickerAbsoluteInitialPath")
+        @JcrPath(
+                pickerInitialPath = "/initial-path"
+        )
+        String getPickerAbsoluteInitialPath();
 
         @Parameter(name = "string")
         String getString();
