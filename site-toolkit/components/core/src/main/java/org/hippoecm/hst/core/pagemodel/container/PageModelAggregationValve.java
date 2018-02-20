@@ -85,7 +85,7 @@ public class PageModelAggregationValve extends AggregationValve {
     /**
      * Content JSON Pointer prefix.
      */
-    private static final String CONTENT_JSON_POINTER_PREFIX = "#/content/";
+    private static final String CONTENT_JSON_POINTER_PREFIX = "/content/";
 
     /**
      * JSON property name prefix for a UUID-based identifier.
