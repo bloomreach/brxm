@@ -26,13 +26,7 @@ class HstCommentsProcessorService {
     if (!document) {
       throw new Error('DOM document is empty');
     }
-    // IE doesn't support 'evaluate', see
-    // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
-    if (document.evaluate) {
-      this.processCommentsWithXPath(document, callback);
-    } else {
-      this.processCommentsWithDomWalking(document, callback);
-    }
+    this.processCommentsWithXPath(document, callback);
   }
 
   processFragment(jQueryNodeCollection, callback) {
@@ -128,8 +122,7 @@ class HstCommentsProcessorService {
       nextSibling = nextSibling.nextSibling;
     }
 
-    const exception = `No component end marker found for '${id}'.`;
-    throw exception;
+    throw new Error(`No component end marker found for '${id}'.`);
   }
 
   _isEndMarker(domElement, id) {
