@@ -118,6 +118,10 @@
     <property name="channelFilter" ref="channelFilter"/>
   </bean>
 
+  <bean id="org.hippoecm.hst.rest.DocumentService" class="org.hippoecm.hst.cmsrest.services.DocumentsResource" parent="baseResource">
+    <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
+  </bean>
+
   <bean id="jaxrsCmsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/" />
     <property name="providers">
@@ -130,9 +134,7 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.DocumentsResource" parent="baseResource">
-              <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
-            </bean>
+            <ref bean="org.hippoecm.hst.rest.DocumentService"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

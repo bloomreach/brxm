@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.hst.Channel;
 
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
@@ -52,7 +53,11 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
         populatingAttributesMap.put("url", url.toString());
         populatingAttributesMap.put("refNS", window.getReferenceNamespace());
-        if (compConfig instanceof ConfigurationLockInfo) {
+        final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
+        if (channel != null && channel.isConfigurationLocked()) {
+            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "system");
+            populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");
+        } else if (compConfig instanceof ConfigurationLockInfo) {
             ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
             if (lockInfo.getLockedBy() != null) {
                 String cmsUserId = (String) request.getAttribute(ContainerConstants.CMS_REQUEST_USER_ID_ATTR);

@@ -85,7 +85,7 @@ definitions:
           /2013-harvest:
             jcr:primaryType: hippo:handle
             jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
-            jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908937
+            jcr:uuid: f439bd7e-13f9-434c-b554-540440dfac22
             hippo:name: 2013 harvest
             /2013-harvest:
               jcr:primaryType: myhippoproject:newsdocument
@@ -195,7 +195,7 @@ definitions:
                   hippo:values: []
                 /2013-harvest:
                   jcr:primaryType: hippo:facetselect
-                  hippo:docbase: 30092f4e-2ef7-4c72-86a5-8ce895908937
+                  hippo:docbase: f439bd7e-13f9-434c-b554-540440dfac22
                   hippo:facets: []
                   hippo:modes: []
                   hippo:values: []

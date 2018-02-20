@@ -17,6 +17,8 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -36,6 +38,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.container.MockHstComponentWindow;
+import org.hippoecm.hst.mock.core.request.MockComponentConfiguration;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
@@ -56,6 +59,7 @@ import static javax.servlet.jsp.tagext.Tag.EVAL_PAGE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.junit.Assert.assertThat;
@@ -78,7 +82,12 @@ public class HstManageContentTagTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         window = new MockHstComponentWindow();
-        window.setComponent(new TestComponent());
+
+        final TestComponent component = new TestComponent();
+        final MockComponentConfiguration componentConfig = new MockComponentConfiguration();
+        componentConfig.setRenderPath("webfile:/freemarker/test.ftl");
+        component.init(servletContext, componentConfig);
+        window.setComponent(component);
         request.setAttribute(ContainerConstants.HST_COMPONENT_WINDOW, window);
 
         response = new MockHttpServletResponse();
@@ -106,7 +115,7 @@ public class HstManageContentTagTest {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Cannot create a manage content button outside the hst request.");
+            assertLogged(listener, "Cannot create a manageContent button outside the hst request.");
         }
     }
 
@@ -117,7 +126,7 @@ public class HstManageContentTagTest {
         try (Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(HstManageContentTag.class).build()) {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Skipping manage content tag because not in cms preview.");
+            assertLogged(listener, "Skipping manageContent tag because not in cms preview.");
         }
     }
 
@@ -226,9 +235,17 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void componentParameterWithAbsoluteJcrPath() throws Exception {
+    public void parameterWithAbsoluteJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("absPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -236,16 +253,25 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
     @Test
-    public void componentParameterWithRelativeJcrPath() throws Exception {
+    public void parameterWithRelativeJcrPath() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("relPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -253,14 +279,15 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"relPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
     @Test
-    public void componentParameterWithoutJcrPathIsAbsolute() throws Exception {
+    public void parameterWithoutJcrPathIsAbsolute() throws Exception {
         tag.setTemplateQuery("new-document");
         tag.setParameterName("string");
 
@@ -270,7 +297,7 @@ public class HstManageContentTagTest {
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"string\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
@@ -284,16 +311,17 @@ public class HstManageContentTagTest {
             assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
             assertThat(response.getContentAsString(), is(""));
-            assertLogged(listener, "Ignoring manage content tag for component parameter 'relPath': the @JcrPath annotation of the parameter"
+            assertLogged(listener, "Ignoring manageContent tag in template 'webfile:/freemarker/test.ftl'"
+                    + " for component parameter 'relPath': the @JcrPath annotation of the parameter"
                     + " makes it store a relative path to the content root of the channel while the 'rootPath'"
-                    + " attribute of the manage content tag points to the absolute path '/some/absolute/path'."
+                    + " attribute of the manageContent tag points to the absolute path '/some/absolute/path'."
                     + " Either make the root path relative to the channel content root,"
                     + " or make the component parameter store an absolute path.");
         }
     }
 
     @Test
-    public void componentParameterWithoutDocumentOrTemplateQuery() throws Exception {
+    public void parameterWithoutDocumentOrTemplateQuery() throws Exception {
         tag.setParameterName("test");
 
         tag.doEndTag();
@@ -301,12 +329,12 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"parameterName\":\"test\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
     @Test
-    public void componentValueAbsolutePath() throws Exception {
+    public void parameterValueAbsolutePath() throws Exception {
         window.setParameter("absPath", "/absolute/path");
 
         tag.setParameterName("absPath");
@@ -316,7 +344,14 @@ public class HstManageContentTagTest {
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
         expect(document.getNode()).andReturn(handle);
-        replay(document);
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(document, resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -324,15 +359,16 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
     @Test
-    public void componentValueRelativePath() throws Exception {
+    public void parameterValueRelativePath() throws Exception {
         final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
         final Mount mount = createMock(Mount.class);
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
@@ -357,15 +393,16 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"relPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentValue\":\"/mount/path/relative/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"parameterValue\":\"/mount/path/relative/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/mount/path\""
                 + "} -->"));
     }
 
     @Test
-    public void prefixedComponentValue() throws Exception {
+    public void prefixedParameterValue() throws Exception {
         final String prefixedParameterName = ConfigurationUtils.createPrefixedParameterName("prefix", "absPath");
         window.setParameter(prefixedParameterName, "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "prefix");
@@ -377,7 +414,14 @@ public class HstManageContentTagTest {
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
         expect(document.getNode()).andReturn(handle);
-        replay(document);
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(document, resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -385,15 +429,16 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
     @Test
-    public void emptyPrefixComponentValue() throws Exception {
+    public void emptyPrefixParameterValue() throws Exception {
         window.setParameter("absPath", "/absolute/path");
         window.setAttribute(RENDER_VARIANT, "");
 
@@ -404,7 +449,14 @@ public class HstManageContentTagTest {
         final MockNode root = MockNode.root();
         final MockNode handle = root.addNode("document", HippoNodeType.NT_HANDLE);
         expect(document.getNode()).andReturn(handle);
-        replay(document);
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(document, resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
@@ -412,28 +464,37 @@ public class HstManageContentTagTest {
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"componentParameterIsRelativePath\":\"false\","
-                + "\"componentValue\":\"/absolute/path\","
-                + "\"componentPickerConfiguration\":\"cms-pickers/documents\","
-                + "\"componentPickerRemembersLastVisited\":\"true\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"parameterValue\":\"/absolute/path\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
                 + "} -->"));
     }
 
     @Test
-    public void componentPickerConfiguration() throws Exception {
+    public void pickerConfiguration() throws Exception {
         tag.setParameterName("pickerPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"parameterName\":\"pickerPath\","
-                + "\"componentParameterIsRelativePath\":\"true\","
-                + "\"componentPickerConfiguration\":\"picker-config\","
-                + "\"componentPickerInitialPath\":\"initial-path\","
-                + "\"componentPickerRemembersLastVisited\":\"false\","
-                + "\"componentPickerRootPath\":\"root-path\","
-                + "\"componentPickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"pickerConfiguration\":\"picker-config\","
+                + "\"pickerInitialPath\":\"/root-path/initial-path\","
+                + "\"pickerRemembersLastVisited\":\"false\","
+                + "\"pickerRootPath\":\"/root-path\","
+                + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
                 + "} -->"));
     }
 
@@ -470,7 +531,7 @@ public class HstManageContentTagTest {
                 + "\"rootPath\":\"news/amsterdam\","
                 + "\"defaultPath\":\"2018/09/23\","
                 + "\"parameterName\":\"newsDocument\","
-                + "\"componentParameterIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\""
                 + "} -->"));
     }
 
@@ -487,8 +548,9 @@ public class HstManageContentTagTest {
             tag.setParameterName(null);
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to 'null'." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to 'null'."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -498,8 +560,9 @@ public class HstManageContentTagTest {
             tag.setParameterName("");
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to ''." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to ''."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -509,8 +572,9 @@ public class HstManageContentTagTest {
             tag.setParameterName("  ");
             tag.doEndTag();
 
-            assertLogged(listener, "The parameterName attribute of a manageContent tag is set to '  '." +
-                    " Expected the name of an HST component parameter instead.");
+            assertLogged(listener, "The parameterName attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to '  '."
+                    + " Expected the name of an HST component parameter instead.");
         }
     }
 
@@ -520,7 +584,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery(null);
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to 'null'." +
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to 'null'." +
                     " Expected the name of a template query instead.");
         }
     }
@@ -531,8 +596,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery("");
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to ''." +
-                    " Expected the name of a template query instead.");
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to ''. Expected the name of a template query instead.");
         }
     }
 
@@ -542,8 +607,8 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery("  ");
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag is set to '  '." +
-                    " Expected the name of a template query instead.");
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to '  '. Expected the name of a template query instead.");
         }
     }
 
@@ -591,9 +656,117 @@ public class HstManageContentTagTest {
                 + "} -->"));
     }
 
+    @Test
+    public void pickerRootPathTest() throws Exception {
+        tag.setParameterName("absPath");
+        tag.setRootPath("relative/path");
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+        hstRequestContext.setSiteContentBasePath("my/channel/path");
+        Node folderNode = createMock(Node.class);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)).andReturn(false);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
+        expect(jcrSession.getNode("/my/channel/path/relative/path")).andReturn(folderNode);
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(jcrSession, folderNode, resolvedMount, mount);
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"rootPath\":\"relative/path\","
+                + "\"parameterName\":\"absPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path/relative/path\""
+                + "} -->"));
+    }
+
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPath() throws Exception {
+        tag.setParameterName("absPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"absPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPathAndPickerInitialPath() throws Exception {
+        tag.setParameterName("pickerNoRootPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"pickerNoRootPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerInitialPath\":\"/my/channel/path/initial-path\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPathAndAbsolutePickerInitialPath() throws Exception {
+        tag.setParameterName("pickerAbsoluteInitialPath");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"pickerAbsoluteInitialPath\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerInitialPath\":\"/initial-path\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
-        assertThat("expected log message '" + expectedMessage + "'", listener.messages().anyMatch((msg) -> msg.equals(expectedMessage)), is(true));
-        assertThat(listener.getEvents().size(), is(1));
+        final List<String> messages = listener.messages().collect(Collectors.toList());
+        assertThat(messages.size(), is(1));
+        assertThat(messages.get(0), equalTo(expectedMessage));
     }
 
     private static class BrokenPageContext extends MockPageContext {
@@ -627,12 +800,24 @@ public class HstManageContentTagTest {
         @JcrPath(
                 isRelative = true,
                 pickerInitialPath = "initial-path",
-                pickerRootPath = "root-path",
+                pickerRootPath = "/root-path",
                 pickerConfiguration = "picker-config",
                 pickerRemembersLastVisited = false,
                 pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
         )
         String getPickerPath();
+
+        @Parameter(name = "pickerNoRootPath")
+        @JcrPath(
+                pickerInitialPath = "initial-path"
+        )
+        String getPickerNoRootPath();
+
+        @Parameter(name = "pickerAbsoluteInitialPath")
+        @JcrPath(
+                pickerInitialPath = "/initial-path"
+        )
+        String getPickerAbsoluteInitialPath();
 
         @Parameter(name = "string")
         String getString();

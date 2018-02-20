@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for resource classes.
  */
-class ResourceUtil {
+public class ResourceUtil {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
 
@@ -46,7 +46,7 @@ class ResourceUtil {
      *
      * @return the node with the given UUID, or null if no such node could be found.
      */
-    static Node getNode(final HstRequestContext requestContext, final String uuidParam) {
+    public static Node getNode(final HstRequestContext requestContext, final String uuidParam) {
         if (uuidParam == null) {
             log.info("UUID is null, returning null", uuidParam);
             return null;

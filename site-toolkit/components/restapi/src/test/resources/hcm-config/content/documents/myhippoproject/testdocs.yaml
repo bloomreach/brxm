@@ -10,7 +10,7 @@ definitions:
       /test_document_unpublished:
         jcr:primaryType: hippo:handle
         jcr:mixinTypes: ['mix:referenceable']
-        jcr:uuid: a62a34ae-5f42-4482-a27a-7f39459ec8ee
+        jcr:uuid: fa679b1c-b9d9-4a6e-b921-a76fe7d715fe
         /test_document_unpublished[1]:
           jcr:primaryType: myhippoproject:TestDocumentType
           jcr:mixinTypes: ['mix:referenceable']
