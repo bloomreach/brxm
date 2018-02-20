@@ -431,8 +431,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     @Override
-    public Enumeration<String> getModelNames() {
-        return Collections.enumeration(getModelsMap().keySet());
+    public Iterable<String> getModelNames() {
+        return Collections.unmodifiableSet(getModelsMap().keySet());
     }
 
     @Override

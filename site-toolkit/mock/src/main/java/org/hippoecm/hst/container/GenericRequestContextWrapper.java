@@ -286,7 +286,7 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
-    public Enumeration<String> getModelNames() {
+    public Iterable<String> getModelNames() {
         return context.getModelNames();
     }
 

@@ -20,6 +20,8 @@ import java.util.Map;
 import org.apache.commons.collections.EnumerationUtils;
 import org.junit.Test;
 
+import com.google.common.collect.Iterables;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -59,8 +61,8 @@ public class TestHstRequestContextImpl {
         assertEquals("value1", requestContext.getAttributes().get("attr1"));
         assertEquals("modelValue1", requestContext.getAttributes().get("model1"));
 
-        assertTrue(EnumerationUtils.toList(requestContext.getModelNames()).contains("model1"));
-        assertFalse(EnumerationUtils.toList(requestContext.getModelNames()).contains("attr1"));
+        assertTrue(Iterables.contains(requestContext.getModelNames(), "model1"));
+        assertFalse(Iterables.contains(requestContext.getModelNames(), "attr1"));
         assertTrue(EnumerationUtils.toList(requestContext.getAttributeNames()).contains("attr1"));
         assertTrue(EnumerationUtils.toList(requestContext.getAttributeNames()).contains("model1"));
 

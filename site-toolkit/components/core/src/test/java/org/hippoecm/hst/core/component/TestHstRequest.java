@@ -42,6 +42,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.common.collect.Iterables;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -117,16 +119,16 @@ public class TestHstRequest extends AbstractSpringTestCase {
         hstRequestForHeadWindow.setAttribute("name", "head");
         hstRequestForBodyWindow.setAttribute("name", "body");
 
-        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("nameModel1"));
-        assertTrue(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("nameModel2"));
-        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("nameModel1"));
-        assertTrue(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("nameModel2"));
-        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("nameModel1"));
-        assertTrue(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("nameModel2"));
+        assertTrue(Iterables.contains(hstRequestForRootWindow.getModelNames(), "nameModel1"));
+        assertTrue(Iterables.contains(hstRequestForRootWindow.getModelNames(), "nameModel2"));
+        assertTrue(Iterables.contains(hstRequestForHeadWindow.getModelNames(), "nameModel1"));
+        assertTrue(Iterables.contains(hstRequestForHeadWindow.getModelNames(), "nameModel2"));
+        assertTrue(Iterables.contains(hstRequestForBodyWindow.getModelNames(), "nameModel1"));
+        assertTrue(Iterables.contains(hstRequestForBodyWindow.getModelNames(), "nameModel2"));
 
-        assertFalse(EnumerationUtils.toList(hstRequestForRootWindow.getModelNames()).contains("name"));
-        assertFalse(EnumerationUtils.toList(hstRequestForHeadWindow.getModelNames()).contains("name"));
-        assertFalse(EnumerationUtils.toList(hstRequestForBodyWindow.getModelNames()).contains("name"));
+        assertFalse(Iterables.contains(hstRequestForRootWindow.getModelNames(), "name"));
+        assertFalse(Iterables.contains(hstRequestForHeadWindow.getModelNames(), "name"));
+        assertFalse(Iterables.contains(hstRequestForBodyWindow.getModelNames(), "name"));
 
         assertEquals("rootValue1", hstRequestForRootWindow.getModel("nameModel1"));
         assertEquals("rootValue2", hstRequestForRootWindow.getModel("nameModel2"));

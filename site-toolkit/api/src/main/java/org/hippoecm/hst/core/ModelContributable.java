@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core;
 
-import java.util.Enumeration;
 import java.util.Map;
 
 /**
@@ -34,15 +33,15 @@ public interface ModelContributable {
     <T> T getModel(String name);
 
     /**
-     * Returns an <code>Enumeration</code> containing the
+     * Returns an unmodifiable <code>Iterable</code> containing the
      * names of the model objects available to this.
-     * This method returns an empty <code>Enumeration</code>
+     * This method returns an empty <code>Iterable</code>
      * if this has no model object available to it.
      *
-     * @return an <code>Enumeration</code> of strings containing the names 
+     * @return an <code>Iterable</code> of strings containing the names 
      * of model objects of this.
      */
-    Enumeration<String> getModelNames();
+    Iterable<String> getModelNames();
 
     /**
      * Returns an unmodifiable map of model objects available to this.
