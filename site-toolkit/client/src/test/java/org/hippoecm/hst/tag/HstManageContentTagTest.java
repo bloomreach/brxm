@@ -491,7 +491,7 @@ public class HstManageContentTagTest {
                 + "\"parameterName\":\"pickerPath\","
                 + "\"parameterValueIsRelativePath\":\"true\","
                 + "\"pickerConfiguration\":\"picker-config\","
-                + "\"pickerInitialPath\":\"initial-path\","
+                + "\"pickerInitialPath\":\"/root-path/initial-path\","
                 + "\"pickerRemembersLastVisited\":\"false\","
                 + "\"pickerRootPath\":\"/root-path\","
                 + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
@@ -711,6 +711,33 @@ public class HstManageContentTagTest {
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
                 + "\"pickerRootPath\":\"/my/channel/path\""
+                + "} -->"));
+    }
+
+    @Test
+    public void supplyChannelContentRootAsDefaultPickerRootPathAndPickerInitialPath() throws Exception {
+        tag.setParameterName("pickerPath");
+        window.setComponent(new TestComponentWithoutPickerRootPath());
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, mount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"parameterName\":\"pickerPath\","
+                + "\"parameterValueIsRelativePath\":\"true\","
+                + "\"pickerConfiguration\":\"picker-config\","
+                + "\"pickerInitialPath\":\"/my/channel/path/initial-path\","
+                + "\"pickerRemembersLastVisited\":\"false\","
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
                 + "} -->"));
     }
 
