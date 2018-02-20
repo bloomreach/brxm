@@ -121,11 +121,15 @@ public abstract class BreadcrumbWidget<T> extends GenericPanel<List<IModel<T>>> 
                     // last item is a label
                     crumbsAndChevrons.add(newLabel(CRUMB_ID, name, model));
                 } else {
-                    crumbsAndChevrons.add(newLink(CRUMB_ID, name, model));
+                    crumbsAndChevrons.add(newLinkOrLabel(CRUMB_ID, name, model));
                     crumbsAndChevrons.add(newSeparator(CRUMB_ID));
                 }
             }
             return crumbsAndChevrons;
         }
+    }
+
+    protected Breadcrumb newLinkOrLabel(final String crumbId, final IModel<String> name, final IModel<T> model) {
+        return newLink(crumbId, name, model);
     }
 }
