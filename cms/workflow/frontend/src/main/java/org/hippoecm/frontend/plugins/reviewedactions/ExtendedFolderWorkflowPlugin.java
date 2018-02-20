@@ -251,6 +251,6 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             affectedComponent.setDefaultModel(new Model<>(Integer.toString(processed)));
             affectedComponent.setVisible(true);
             RequestCycle.get().find(AjaxRequestTarget.class).add(this);
-       }
+        }
     }
 }

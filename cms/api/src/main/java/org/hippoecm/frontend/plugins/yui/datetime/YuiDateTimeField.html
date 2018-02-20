@@ -1,5 +1,5 @@
 <!--
- * Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@
         </div>
       </wicket:enclosure>
       <div class="hippo-global-clearer"/>
-      <a wicket:id="today" class=" hippo-datepicker-reset btn btn-default btn-sm" wicket:message="title:set-to-current-date-tooltip">
+      <a wicket:id="current-date" class=" hippo-datepicker-reset btn btn-default btn-sm">
         <span wicket:id="current-date-icon"/>
-        <span class="button-label"><wicket:message key="set-to-current-date"></wicket:message></span>
+        <span class="button-label" wicket:id="current-date-label"></span>
       </a>
       <div class="hippo-global-clearer"/>
     </div>

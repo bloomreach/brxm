@@ -33,6 +33,8 @@ import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
+import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -45,6 +47,8 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class PluginTest extends RepositoryTestCase {
@@ -123,11 +127,13 @@ public abstract class PluginTest extends RepositoryTestCase {
     protected Home home;
     protected IPluginContext context;
 
+    protected CmsEventDispatcherService cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
+
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        
+        HippoServiceRegistry.registerService(cmsEventDispatcherService, new Class[]{CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class});
         while (session.getRootNode().hasNode("config")) {
             session.getRootNode().getNode("config").remove();
             session.save();
@@ -148,6 +154,8 @@ public abstract class PluginTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
+        HippoServiceRegistry.unregisterService(cmsEventDispatcherService, CmsEventDispatcherService.class);
+
         if(tester != null) {
             tester.destroy();
         }

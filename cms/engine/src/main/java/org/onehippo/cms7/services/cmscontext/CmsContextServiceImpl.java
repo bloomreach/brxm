@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.cmscontext;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -47,6 +48,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
+            dataMap.put(CMS_SESSION_CONTEXT_PAYLOAD_KEY, new ConcurrentHashMap<>());
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
@@ -85,8 +87,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                         iter.remove();
                         ctx.detach();
                     }
-                }
-                else {
+                } else {
                     // will already be removed in case cmsCtx itself is being detached
                     sharedContextsMap.remove(id);
                     removeDeprecatedHSTSessionAttributes();
@@ -144,8 +145,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         public void valueBound(final HttpSessionBindingEvent event) {
             if (session == null && SESSION_KEY.equals(event.getName())) {
                 session = event.getSession();
-            }
-            else {
+            } else {
                 // don't allow storing this instance under any other session attribute and/or any other session
                 event.getSession().removeAttribute(event.getName());
             }

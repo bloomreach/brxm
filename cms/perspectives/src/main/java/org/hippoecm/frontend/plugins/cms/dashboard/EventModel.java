@@ -74,8 +74,10 @@ public class EventModel implements IComponentAssignedModel<String> {
             this.time = node.getProperty("hippolog:timestamp").getLong();
             this.timeKey = getRelativeTimeKey(time);
 
-            final String action = JcrUtils.getStringProperty(node, "hippolog:action", "");
-            methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", action);
+            methodName = JcrUtils.getStringProperty(node, "hippolog:action", "");
+            if (StringUtils.isBlank(methodName)) {
+                methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", methodName);
+            }
             final String className = JcrUtils.getStringProperty(node, "hippolog:className", "");
             // add className to resolve workflow resource bundle
             this.method = methodName + ",class=" + className;
