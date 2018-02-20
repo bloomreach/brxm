@@ -24,66 +24,57 @@ import org.hippoecm.frontend.service.render.AbstractRenderService;
 public class NodePickerControllerSettings implements IClusterable {
 
     //IPluginconfig keys
-    private static final String SELECTION_SERVICE_KEY   = "wicket.model";
-    private static final String FOLDER_SERVICE_KEY      = "model.folder";
-
-    public static final String BASE_UUID                = "base.uuid";
-    public static final String BASE_PATH                = "base.path";
-    public static final String SELECTABLE_NODETYPES     = "nodetypes";
-
-    public static final String LAST_VISITED_KEY         = "last.visited.key";
-    public static final String LAST_VISITED_ENABLED     = "last.visited.enabled";
-    public static final String LAST_VISITED_NODETYPES   = "last.visited.nodetypes";
+    public static final String BASE_UUID = "base.uuid";
+    public static final String BASE_PATH = "base.path";
+    public static final String CLUSTER_NAME = "cluster.name";
+    public static final String CLUSTER_OPTIONS = "cluster.options";
+    public static final String FOLDER_SERVICE_KEY = "folder.service.key";
+    public static final String LAST_VISITED_KEY = "last.visited.key";
+    public static final String LAST_VISITED_ENABLED = "last.visited.enabled";
+    public static final String LAST_VISITED_NODETYPES = "last.visited.nodetypes";
+    public static final String SELECTABLE_NODETYPES = "nodetypes";
+    public static final String SELECTION_SERVICE_KEY = "selection.service.key";
 
     //Default values
     private static final String DEFAULT_CLUSTER = "cms-pickers/documents";
+    private static final String DEFAULT_FOLDER_SERVICE_KEY = "model.folder";
     private static final String DEFAULT_LAST_VISITED_KEY = "node-picker-controller";
     private static final boolean DEFAULT_LAST_VISITED_ENABLED = true;
+    private static final String DEFAULT_SELECTION_SERVICE_KEY = "wicket.model";
 
     private String clusterName;
     private IPluginConfig clusterOptions;
-
-    private String selectionServiceKey;
+    private String defaultModelUUID;
     private String folderServiceKey;
-
-    private String[] selectableNodeTypes;
-
+    private boolean lastVisitedEnabled;
     private String lastVisitedKey;
     private String[] lastVisitedNodeTypes;
-    private boolean lastVisitedEnabled;
-
-    private String defaultModelUUID;
+    private String[] selectableNodeTypes;
+    private String selectionServiceKey;
 
     public NodePickerControllerSettings() {
-        selectionServiceKey = SELECTION_SERVICE_KEY;
-        folderServiceKey = FOLDER_SERVICE_KEY;
-
         clusterName = DEFAULT_CLUSTER;
-        lastVisitedKey = DEFAULT_LAST_VISITED_KEY;
+        folderServiceKey = DEFAULT_FOLDER_SERVICE_KEY;
         lastVisitedEnabled = DEFAULT_LAST_VISITED_ENABLED;
+        lastVisitedKey = DEFAULT_LAST_VISITED_KEY;
+        selectionServiceKey = DEFAULT_SELECTION_SERVICE_KEY;
     }
 
     public static NodePickerControllerSettings fromPluginConfig(final IPluginConfig config) {
+        final JavaPluginConfig clusterOptions = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
+        clusterOptions.remove(AbstractRenderService.WICKET_ID); // enforce a unique ID for this node picker
+
         final NodePickerControllerSettings settings = new NodePickerControllerSettings();
-
-        settings.setClusterName(config.getString("cluster.name", DEFAULT_CLUSTER));
-        settings.setClusterOptions(new JavaPluginConfig(config.getPluginConfig("cluster.options")));
-
-        // enforce a unique ID for this node picker
-        settings.getClusterOptions().remove(AbstractRenderService.WICKET_ID);
-
-        settings.setSelectionServiceKey(
-                config.getString("selection.service.key", SELECTION_SERVICE_KEY));
-        settings.setFolderServiceKey(
-                config.getString("folder.service.key", FOLDER_SERVICE_KEY));
-
+        settings.setClusterName(config.getString(CLUSTER_NAME, DEFAULT_CLUSTER));
+        settings.setClusterOptions(clusterOptions);
+        settings.setSelectionServiceKey(config.getString(SELECTION_SERVICE_KEY, DEFAULT_SELECTION_SERVICE_KEY));
+        settings.setFolderServiceKey(config.getString(FOLDER_SERVICE_KEY, DEFAULT_FOLDER_SERVICE_KEY));
         settings.setSelectableNodeTypes(config.getStringArray(SELECTABLE_NODETYPES));
-
         settings.setLastVisitedNodeTypes(config.getStringArray(LAST_VISITED_NODETYPES));
         settings.setLastVisitedKey(config.getString(LAST_VISITED_KEY, DEFAULT_LAST_VISITED_KEY));
         settings.setLastVisitedEnabled(config.getAsBoolean(LAST_VISITED_ENABLED, DEFAULT_LAST_VISITED_ENABLED));
-
         settings.setDefaultModelUUID(config.getString(BASE_UUID, null));
+
         return settings;
     }
 

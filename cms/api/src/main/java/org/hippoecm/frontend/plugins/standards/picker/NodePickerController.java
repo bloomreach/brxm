@@ -46,7 +46,9 @@ public abstract class NodePickerController implements IDetachable {
     private static final Logger log = LoggerFactory.getLogger(NodePickerController.class);
 
     private static final String LAST_VISITED = "last.visited";
+    private static final String ROOT_PATH = "root.path";
     private static final String ROOT_PATHS = "root.paths";
+    private static final String STRICT_ROOT_PATH = "strict.root.path";
 
     private final IPluginContext context;
     private final NodePickerControllerSettings settings;
@@ -88,8 +90,8 @@ public abstract class NodePickerController implements IDetachable {
 
         final IClusterConfig template = pluginConfigService.getCluster(settings.getClusterName());
         final IPluginConfig parameters = settings.getClusterOptions();
-        control = context.newCluster(template, parameters);
 
+        control = context.newCluster(template, parameters);
         control.start();
 
         final IClusterConfig clusterConfig = control.getClusterConfig();
@@ -395,11 +397,27 @@ public abstract class NodePickerController implements IDetachable {
         return null;
     }
 
+    public String getRootPath() {
+        if (control != null) {
+            final IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getString(ROOT_PATH);
+        }
+        return null;
+    }
+
     public String[] getRootPaths() {
         if (control != null) {
             final IClusterConfig clusterConfig = control.getClusterConfig();
             return clusterConfig.getStringArray(ROOT_PATHS);
         }
         return null;
+    }
+
+    public boolean isStrictRootPath() {
+        if (control != null) {
+            final IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getBoolean(STRICT_ROOT_PATH);
+        }
+        return false;
     }
 }
