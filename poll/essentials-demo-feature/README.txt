@@ -6,4 +6,8 @@ namespace with a title and the poll compound. It also adds a rendering template 
 To use this feature, add a dependency to this artifact to the Essentials module of a Hippo project. After a (re)build it
 will show up in the Feature Library.
 
-This Poll Demo feature will only work correctly if the Poll feature is installed BEFORE this feature.
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-poll-essentials-demo-feature</artifactId>
+      <version>${hippo.plugin.poll.version}</version>
+    </dependency>
