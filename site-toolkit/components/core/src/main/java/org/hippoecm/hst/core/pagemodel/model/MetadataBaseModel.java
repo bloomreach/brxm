@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Metabase base model.
  */
-public class MetadataBaseModel {
+public class MetadataBaseModel implements MetadataContributable {
 
     private Map<String, Object> metadataMap;
 

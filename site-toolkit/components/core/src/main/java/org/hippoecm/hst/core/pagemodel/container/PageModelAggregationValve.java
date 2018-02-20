@@ -18,18 +18,25 @@ package org.hippoecm.hst.core.pagemodel.container;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
+import org.hippoecm.hst.core.channelmanager.ContentManagementLinkUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.AggregationValve;
@@ -44,12 +51,14 @@ import org.hippoecm.hst.core.pagemodel.model.ComponentContainerWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.HippoBeanWrapperModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
-import org.hippoecm.hst.core.pagemodel.model.MetadataBaseModel;
+import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.pagemodel.model.NodeSpan;
 import org.hippoecm.hst.core.pagemodel.model.ReferenceMetadataBaseModel;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.EncodingUtils;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -97,17 +106,118 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private static final String PARAMETERNS_METADATA = "params";
 
-    /**
-     * Container's or component's begin Node (HTML Comment) span metadata.
-     */
-    private static final String BEGIN_NODE_SPAN_METADATA = "beginNodeSpan";
-
-    /**
-     * Container's or component's end Node (HTML Comment) span metadata.
-     */
-    private static final String END_NODE_SPAN_METADATA = "endNodeSpan";
-
     private ObjectMapper objectMapper;
+
+    private List<MetadataDecorator> metadataDecorators;
+
+    public PageModelAggregationValve() {
+        super();
+
+        // TODO: Move this decorator out of HST to a separate add-on module.
+        addMetadataDecorator(new MetadataDecorator() {
+
+            /**
+             * Container's or component's begin Node (HTML Comment) span metadata.
+             */
+            private static final String BEGIN_NODE_SPAN_METADATA = "beginNodeSpan";
+
+            /**
+             * Container's or component's end Node (HTML Comment) span metadata.
+             */
+            private static final String END_NODE_SPAN_METADATA = "endNodeSpan";
+
+            private static final String CONTENT_LINK_TYPE = "CONTENT_LINK";
+            private static final String CONTENT_UUID = "uuid";
+            private static final String CONTENT_EDIT_URL = "url";
+
+            @Override
+            public void decorateComponentWindowMetadata(HstRequest hstRequest, HstResponse hstResponse,
+                    MetadataContributable model) {
+                if (model instanceof ComponentWindowModel || model instanceof ComponentContainerWindowModel) {
+                    // Add preamble and epilogue comment metadata to the model.
+                    final Comment preambleComment = getPreambleComment(hstRequest, hstResponse);
+                    final Comment epilogueComment = getEpilogueComment(hstRequest, hstResponse);
+
+                    if (preambleComment != null) {
+                        model.putMetadata(BEGIN_NODE_SPAN_METADATA, new NodeSpan(preambleComment));
+                    }
+
+                    if (epilogueComment != null) {
+                        model.putMetadata(END_NODE_SPAN_METADATA, new NodeSpan(epilogueComment));
+                    }
+                }
+            }
+
+            @Override
+            public void decorateContentMetadata(final HstRequest hstRequest, final HstResponse hstResponse, HippoBean contentBean,
+                    MetadataContributable model) {
+                final Comment contentLinkComment = getContentLinkComment(hstRequest, hstResponse, contentBean);
+
+                if (contentLinkComment != null) {
+                    model.putMetadata(BEGIN_NODE_SPAN_METADATA, new NodeSpan(contentLinkComment));
+                }
+            }
+
+            private Comment getPreambleComment(final HstRequest hstRequest, final HstResponse hstResponse) {
+                List<Node> preambles = hstResponse.getPreambleNodes();
+
+                if (preambles == null || preambles.isEmpty()) {
+                    return null;
+                }
+
+                for (Node preamble : preambles) {
+                    if (preamble.getNodeType() == Node.COMMENT_NODE) {
+                        return (Comment) preamble;
+                    }
+                }
+
+                return null;
+            }
+
+            private Comment getEpilogueComment(final HstRequest hstRequest, final HstResponse hstResponse) {
+                List<Node> epilogues = hstResponse.getEpilogueNodes();
+
+                if (epilogues == null || epilogues.isEmpty()) {
+                    return null;
+                }
+
+                for (Node epilogue : epilogues) {
+                    if (epilogue.getNodeType() == Node.COMMENT_NODE) {
+                        return (Comment) epilogue;
+                    }
+                }
+
+                return null;
+            }
+
+            private Comment getContentLinkComment(final HstRequest hstRequest, final HstResponse hstResponse,
+                    final HippoBean contentBean) {
+                try {
+                    final String cmsBaseURL = ContentManagementLinkUtils.getCmsBaseURL();
+                    final javax.jcr.Node editableNode = ContentManagementLinkUtils
+                            .getCmsEditableNode((HippoNode) contentBean.getNode());
+    
+                    if (editableNode != null) {
+                        final String nodeId = editableNode.getIdentifier();
+                        final String nodeLocation = editableNode.getPath();
+                        final String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, hstRequest);
+                        final String cmsEditLink = cmsBaseURL + "?path=" + encodedPath;
+    
+                        final Map<String, Object> result = new HashMap<>();
+                        result.put(ChannelManagerConstants.HST_TYPE, CONTENT_LINK_TYPE);
+                        result.put(CONTENT_UUID, nodeId);
+                        result.put(CONTENT_EDIT_URL, cmsEditLink);
+    
+                        return hstResponse.createComment(ContentManagementLinkUtils.toJSONMap(result));
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Failed to generate content link comment.", e);
+                }
+
+                return null;
+            }
+        });
+    }
 
     public ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
@@ -119,6 +229,24 @@ public class PageModelAggregationValve extends AggregationValve {
 
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    public List<MetadataDecorator> getMetadataDecorators() {
+        if (metadataDecorators == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(metadataDecorators);
+    }
+
+    public void setMetadataDecorators(List<MetadataDecorator> metadataDecorators) {
+        this.metadataDecorators = metadataDecorators;
+    }
+
+    public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
+        if (metadataDecorators == null) {
+            metadataDecorators = new ArrayList<>();
+        }
+        metadataDecorators.add(metadataDecorator);
     }
 
     /**
@@ -201,7 +329,7 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
-                addPreambleEpilogueMetadata(hstResponse, curContainerWindowModel);
+                decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.isContainerItemWindow()) {
                 if (curContainerWindowModel == null) {
@@ -214,7 +342,7 @@ public class PageModelAggregationValve extends AggregationValve {
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
-                addPreambleEpilogueMetadata(hstResponse, componentWindowModel);
+                decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
 
                 for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
                     final String name = entry.getKey();
@@ -225,7 +353,9 @@ public class PageModelAggregationValve extends AggregationValve {
                         final HippoBean bean = (HippoBean) model;
                         final String contentId = getContentId(bean);
                         final String jsonPointerContentId = contentIdToJsonName(contentId);
-                        addContentModelToPageModel(pageModel, bean, contentId, jsonPointerContentId);
+                        HippoBeanWrapperModel beanWrapperModel = addContentModelToPageModel(pageModel, bean, contentId,
+                                jsonPointerContentId);
+                        decorateContentMetadata(hstRequest, hstResponse, bean, beanWrapperModel);
                         referenceModel = new ReferenceMetadataBaseModel(
                                 CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
                     }
@@ -237,19 +367,21 @@ public class PageModelAggregationValve extends AggregationValve {
             } else {
                 curContainerWindowModel = null;
             }
+
         }
 
         return pageModel;
     }
 
     /**
-     * Add a content model to the page model's content section.
+     * Add and return a content model to the page model's content section.
      * @param pageModel
      * @param bean
      * @param contentId
      * @param jsonPointerContentId
+     * @return wrapperBeanModel added content wrapper model
      */
-    private void addContentModelToPageModel(final AggregatedPageModel pageModel, final HippoBean bean,
+    private HippoBeanWrapperModel addContentModelToPageModel(final AggregatedPageModel pageModel, final HippoBean bean,
             final String contentId, final String jsonPointerContentId) {
         final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(contentId, bean);
 
@@ -269,6 +401,8 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
+
+        return wrapperBeanModel;
     }
 
     /**
@@ -299,7 +433,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param window
      * @param model
      */
-    private void addParameterMapMetadata(HstComponentWindow window, MetadataBaseModel model) {
+    private void addParameterMapMetadata(HstComponentWindow window, MetadataContributable model) {
         final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
 
         if (compConfig == null) {
@@ -340,62 +474,37 @@ public class PageModelAggregationValve extends AggregationValve {
     }
 
     /**
-     * Add preamble and epilogue comment metadata to the {@code model}.
-     * @param hstResponse
-     * @param model
+     * Invoke custom metadata decorators to give a chance to add more metadata for the component window.
+     * @param hstRequest HstRequest object
+     * @param hstResponse HstResponse object
+     * @param model MetadataContributable model
      */
-    private void addPreambleEpilogueMetadata(HstResponse hstResponse, MetadataBaseModel model) {
-        final Comment preambleComment = getPreambleComment(hstResponse);
-        final Comment epilogueComment = getEpilogueComment(hstResponse);
-
-        if (preambleComment != null) {
-            model.putMetadata(BEGIN_NODE_SPAN_METADATA, new NodeSpan(preambleComment));
+    private void decorateComponentWindowMetadata(final HstRequest hstRequest, final HstResponse hstResponse,
+            MetadataContributable model) {
+        if (CollectionUtils.isEmpty(metadataDecorators)) {
+            return;
         }
 
-        if (epilogueComment != null) {
-            model.putMetadata(END_NODE_SPAN_METADATA, new NodeSpan(epilogueComment));
+        for (MetadataDecorator decorator : metadataDecorators) {
+            decorator.decorateComponentWindowMetadata(hstRequest, hstResponse, model);
         }
     }
 
     /**
-     * Get the preamble commend node from the {@code response}.
-     * @param response
-     * @return
+     * Invoke custom metadata decorators to give a chance to add more metadata for the content bean.
+     * @param hstRequest HstRequest object
+     * @param hstResponse HstResponse object
+     * @param HippoBean content bean
+     * @param model MetadataContributable model
      */
-    private Comment getPreambleComment(final HstResponse response) {
-        List<Node> preambles = response.getPreambleNodes();
-
-        if (preambles == null || preambles.isEmpty()) {
-            return null;
+    private void decorateContentMetadata(final HstRequest hstRequest, final HstResponse hstResponse,
+            final HippoBean contentBean, MetadataContributable model) {
+        if (CollectionUtils.isEmpty(metadataDecorators)) {
+            return;
         }
 
-        for (Node preamble : preambles) {
-            if (preamble.getNodeType() == Node.COMMENT_NODE) {
-                return (Comment) preamble;
-            }
+        for (MetadataDecorator decorator : metadataDecorators) {
+            decorator.decorateContentMetadata(hstRequest, hstResponse, contentBean, model);
         }
-
-        return null;
-    }
-
-    /**
-     * Get the epilogue commend node from the {@code response}.
-     * @param response
-     * @return
-     */
-    private Comment getEpilogueComment(final HstResponse response) {
-        List<Node> epilogues = response.getEpilogueNodes();
-
-        if (epilogues == null || epilogues.isEmpty()) {
-            return null;
-        }
-
-        for (Node epilogue : epilogues) {
-            if (epilogue.getNodeType() == Node.COMMENT_NODE) {
-                return (Comment) epilogue;
-            }
-        }
-
-        return null;
     }
 }
