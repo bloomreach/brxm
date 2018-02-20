@@ -113,7 +113,7 @@ describe('DocumentLocationField', () => {
         component.$onInit();
         expect(component.pickerPath).toBe('/');
         expect(component.pickerConfig).toEqual({
-          configuration: 'cms-pickers/folders',
+          configuration: 'cms-pickers/documents-folders-only',
           rootPath: '/root',
           selectableNodeTypes: ['hippostd:folder'],
         });
@@ -275,7 +275,7 @@ describe('DocumentLocationField', () => {
           component.$onInit();
           expect(component.pickerPath).toBe('/');
           expect(component.pickerConfig).toEqual({
-            configuration: 'cms-pickers/folders',
+            configuration: 'cms-pickers/documents-folders-only',
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
           });
@@ -303,7 +303,7 @@ describe('DocumentLocationField', () => {
           component.$onInit();
           expect(component.pickerPath).toBe('/');
           expect(component.pickerConfig).toEqual({
-            configuration: 'cms-pickers/folders',
+            configuration: 'cms-pickers/documents-folders-only',
             rootPath: '/channel/content',
             selectableNodeTypes: ['hippostd:folder'],
           });
