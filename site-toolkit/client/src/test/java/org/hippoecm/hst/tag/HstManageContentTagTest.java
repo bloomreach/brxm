@@ -493,7 +493,7 @@ public class HstManageContentTagTest {
                 + "\"pickerConfiguration\":\"picker-config\","
                 + "\"pickerInitialPath\":\"initial-path\","
                 + "\"pickerRemembersLastVisited\":\"false\","
-                + "\"pickerRootPath\":\"root-path\","
+                + "\"pickerRootPath\":\"/root-path\","
                 + "\"pickerSelectableNodeTypes\":\"node-type-1,node-type-2\""
                 + "} -->"));
     }
@@ -751,7 +751,7 @@ public class HstManageContentTagTest {
         @JcrPath(
                 isRelative = true,
                 pickerInitialPath = "initial-path",
-                pickerRootPath = "root-path",
+                pickerRootPath = "/root-path",
                 pickerConfiguration = "picker-config",
                 pickerRemembersLastVisited = false,
                 pickerSelectableNodeTypes = {"node-type-1", "node-type-2"}
