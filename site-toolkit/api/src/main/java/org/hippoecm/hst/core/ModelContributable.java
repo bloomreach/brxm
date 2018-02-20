@@ -17,6 +17,9 @@ package org.hippoecm.hst.core;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
  * Interface for abstraction that allows to contribute, retrieve and remove model objects.
  */
@@ -44,8 +47,15 @@ public interface ModelContributable {
     Iterable<String> getModelNames();
 
     /**
-     * Returns an unmodifiable map of model objects available to this.
-     * @return an unmodifiable map of model objects available to this
+     * Returns an unmodifiable map of model objects contributed by {@link #setModel(String, Object)}.
+     * <P>
+     * Note that the returned map contains only the pairs of model name and value objects contributed by {@link #setModel(String, Object)},
+     * but it does not contain attributes set by <code>#setAttribute(String,Object)</code> API calls, whereas most
+     * implementations of this interface (such as {@link HstRequest} and {@link HstRequestContext}) provides a
+     * combined view for both <code>models</code> and other <code>attributes</code> through <code>#getAttribute(String)</code>,
+     * <code>#getAttributeNames()</code> or <code>#getAttributeMap</code>.
+     * </P>
+     * @return an unmodifiable map of model objectscontributed by {@link #setModel(String, Object)}
      */
     Map<String, Object> getModelsMap();
 
