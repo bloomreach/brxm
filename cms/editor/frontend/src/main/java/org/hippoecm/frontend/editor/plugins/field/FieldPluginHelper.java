@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,12 +86,9 @@ public class FieldPluginHelper implements IDetachable {
 
             if (documentType == null) {
                 log.warn("No documentType found for type name {} or node model {}", typeName, getNodeModel());
-            }
-            else if (fieldName == null) {
+            } else if (fieldName == null) {
                 log.debug("No field was specified for type {} in the configuration {}", documentType.getName(), config);
-            }
-            else {
-
+            } else {
                 field = documentType.getField(fieldName);
                 if (field == null) {
                     log.warn("Could not find field with name {} in type {}; has the field been added " +
@@ -181,8 +178,7 @@ public class FieldPluginHelper implements IDetachable {
             if (caption == null && !captionKey.isEmpty()) {
                 caption = StringUtils.capitalize(captionKey);
             }
-        }
-        else {
+        } else {
             final String key = getPluginConfig().getString("captionKey");
             if ((key != null) && !key.isEmpty()) {
                 captionKey = key;
@@ -194,8 +190,7 @@ public class FieldPluginHelper implements IDetachable {
                 if (caption == null) {
                     caption = StringUtils.capitalize(captionKey);
                 }
-            }
-            else {
+            } else {
                 captionKey = StringUtils.lowerCase(caption);
             }
         }
