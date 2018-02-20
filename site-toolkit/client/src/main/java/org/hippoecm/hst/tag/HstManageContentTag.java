@@ -283,10 +283,11 @@ public class HstManageContentTag extends TagSupport {
         }
 
         if (jcrPath != null) {
+            final String pickerRootPath = getFirstNonBlankString(absoluteRootPath, jcrPath.pickerRootPath(), getChannelRootPath());
             writeToMap(result, "pickerConfiguration", jcrPath.pickerConfiguration());
-            writeToMap(result, "pickerInitialPath", jcrPath.pickerInitialPath());
+            writeToMap(result, "pickerInitialPath", getPickerInitialPath(jcrPath.pickerInitialPath(), pickerRootPath));
             writeToMap(result, "pickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
-            writeToMap(result, "pickerRootPath", getFirstNonBlankString(absoluteRootPath, jcrPath.pickerRootPath(), getChannelRootPath()));
+            writeToMap(result, "pickerRootPath", pickerRootPath);
 
             final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
             writeToMap(result, "pickerSelectableNodeTypes", nodeTypes);
@@ -309,6 +310,14 @@ public class HstManageContentTag extends TagSupport {
      */
     private String getFirstNonBlankString(final String ... strings) {
         return Arrays.stream(strings).filter(StringUtils::isNotBlank).findFirst().orElse(null);
+    }
+
+    private String getPickerInitialPath(final String pickerInitialPath, final String prependRootPath) {
+        if ("".equals(pickerInitialPath) || pickerInitialPath.startsWith("/")) {
+            return pickerInitialPath;
+        } else {
+            return prependRootPath + (prependRootPath.endsWith("/") ? "" : "/") + pickerInitialPath;
+        }
     }
 
     /*
