@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 
+import static org.onehippo.cms7.utilities.io.FilePathUtils.cleanFileName;
+
 public class DownloadExportYamlLink extends DownloadLink<Node> {
 
     private static final long serialVersionUID = 1L;
@@ -45,7 +47,7 @@ public class DownloadExportYamlLink extends DownloadLink<Node> {
     @Override
     protected String getFilename() {
         try {
-            return NodeNameCodec.decode(getModel().getObject().getName()) + ".zip";
+            return cleanFileName(NodeNameCodec.decode(getModel().getObject().getName())) + ".zip";
         } catch (RepositoryException e) {
             error("Unable to get node name for file name, using default");
         }
