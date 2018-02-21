@@ -378,7 +378,7 @@ class OverlayService {
     if (config.documentUuid) {
       const editContentButton = {
         mainIcon: contentLinkSvg,
-        dialIcon: '', // edit button should never be a dial button
+        optionIcon: '', // edit button should never be a option button
         callback: () => this._editContent(config.documentUuid),
         tooltip: this.$translate.instant('EDIT_CONTENT'),
       };
@@ -388,7 +388,7 @@ class OverlayService {
     if (config.parameterName) {
       const selectDocumentButton = {
         mainIcon: searchWhiteSvg,
-        dialIcon: searchSvg,
+        optionIcon: searchSvg,
         callback: () => this._pickPath(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
@@ -399,7 +399,7 @@ class OverlayService {
     if (config.templateQuery) {
       const createContentButton = {
         mainIcon: plusWhiteSvg,
-        dialIcon: plusSvg,
+        optionIcon: plusSvg,
         callback: () => this._createContent(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
@@ -424,88 +424,70 @@ class OverlayService {
       return;
     }
 
-    const buttonElement = $(`<button title="${buttons[0].tooltip}"
-                 class="hippo-fab-btn qa-manage-content-link">${buttons[0].mainIcon}</button>`);
+    const mainButton = buttons[0];
+    const optionButtons = buttons.slice(1);
+
+    const mainButtonElement = this._createMainButton(mainButton, config);
+    const optionsButtonsElement = $('<div class="hippo-fab-options"></div>');
 
     overlayElement
-      .addClass('hippo-overlay-element-link hippo-bottom hippo-fab-dial-container')
-      .addClass('is-left') // mouse never entered yet
-      .append(buttonElement)
-      .append('<div class="hippo-fab-dial-options"></div>');
+      .addClass('hippo-overlay-element-link')
+      .append(mainButtonElement)
+      .append(optionsButtonsElement);
 
-    const fabBtn = overlayElement.find('.hippo-fab-btn');
-    const optionButtonsContainer = overlayElement.find('.hippo-fab-dial-options');
-
-    if (config.documentUuid) {
-      fabBtn.addClass('qa-edit-content');
-    }
-    if (config.templateQuery) {
-      fabBtn.addClass('qa-add-content');
-    }
-    if (config.parameterName) {
-      fabBtn.addClass('qa-manage-parameters');
-    }
-
-    if (buttons[0].isDisabled) {
-      fabBtn.addClass('disabled');
-    } else {
-      this._addClickHandler(fabBtn, () => buttons[0].callback());
-    }
-
-    const adjustOptionsPosition = () => {
-      const boxElement = structureElement.prepareBoxElement();
-      const position = this._getElementPositionObject(boxElement);
-
-      if (position.scrollTop > (position.top - 80)) {
-        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
-      } else if (position.scrollBottom < (position.top + 130)) {
-        overlayElement.addClass('hippo-top').removeClass('hippo-bottom');
-      } else {
-        overlayElement.addClass('hippo-bottom').removeClass('hippo-top');
+    const openOptions = () => {
+      if (optionsButtonsElement.children().length === 0) {
+        optionsButtonsElement.html(this._createOptionButtons(optionButtons));
       }
+      const openAbove = this._openOptionsAboveMainButton(structureElement, optionButtons.length);
+      optionsButtonsElement.toggleClass('hippo-fab-options-above-main-button', openAbove);
     };
 
-    const showOptions = () => {
-      adjustOptionsPosition();
-      if (!overlayElement.hasClass('is-showing-options')) {
-        optionButtonsContainer.html(this._createButtonsHtml(buttons.slice(1)));
-        fabBtn.addClass('hippo-fab-btn-open');
-        overlayElement.addClass('is-showing-options');
-        return true;
-      }
-      return false;
-    };
-    const hideOptions = () => {
-      fabBtn.removeClass('hippo-fab-btn-open');
-      overlayElement.removeClass('is-showing-options');
-    };
-    const showOptionsIfLeft = () => {
-      if (overlayElement.hasClass('is-left')) {
-        showOptions();
-      }
-      overlayElement.removeClass('is-left');
-    };
-    const hideOptionsAndLeave = () => {
-      hideOptions();
-      overlayElement.addClass('is-left');
+    const closeOptions = () => {
+      optionsButtonsElement.empty();
     };
 
     if (buttons.length > 1) {
-      overlayElement.on('mouseenter', showOptionsIfLeft);
-      overlayElement.on('mouseleave', hideOptionsAndLeave);
+      overlayElement.on('mouseenter', openOptions);
+      overlayElement.on('mouseleave', closeOptions);
     }
   }
 
-  _createButtonsHtml(buttons) {
-    return buttons.map((button, index) => this._createButtonTemplate(button, index));
-  }
+  _createMainButton(button, manageContentConfig) {
+    const mainButton = $(`<button title="${button.tooltip}">${button.mainIcon}</button>`);
 
-  _createButtonTemplate(button, index) {
-    const optionButton = $(`<button title="${button.tooltip}">${button.dialIcon}</button>`)
-      .addClass(`hippo-fab-option-btn hippo-fab-option-${index}`);
+    mainButton.addClass('hippo-fab-main qa-manage-content-link');
 
     if (button.isDisabled) {
-      optionButton.addClass('disabled');
+      mainButton.addClass('hippo-fab-main-disabled');
+    } else {
+      this._addClickHandler(mainButton, button.callback);
+    }
+
+    if (manageContentConfig.documentUuid) {
+      mainButton.addClass('qa-edit-content');
+    }
+    if (manageContentConfig.templateQuery) {
+      mainButton.addClass('qa-add-content');
+    }
+    if (manageContentConfig.parameterName) {
+      mainButton.addClass('qa-manage-parameters');
+    }
+
+    return mainButton;
+  }
+
+  _createOptionButtons(buttons) {
+    return buttons.map((button, index) => this._createOptionButton(button, index));
+  }
+
+  _createOptionButton(button, index) {
+    const optionButton = $(`<button title="${button.tooltip}">${button.optionIcon}</button>`);
+
+    optionButton.addClass(`hippo-fab-option hippo-fab-option-${index}`);
+
+    if (button.isDisabled) {
+      optionButton.addClass('hippo-fab-option-disabled');
     } else {
       optionButton.on('click', button.callback);
     }
@@ -513,7 +495,20 @@ class OverlayService {
     return optionButton;
   }
 
-  _getElementPositionObject(boxElement) {
+  _openOptionsAboveMainButton(manageContentStructureElement, optionsCount) {
+    const boxElement = manageContentStructureElement.prepareBoxElement();
+    const elementPosition = this._getElementPosition(boxElement);
+    const viewportPosition = this._getViewportPosition();
+
+    const optionsHeight = optionsCount * (32 + 5); // 32px button height plus 5px margin between buttons
+
+    const enoughRoomBelow = () => (elementPosition.top + elementPosition.height + optionsHeight) <= viewportPosition.bottom;
+    const enoughRoomAbove = () => (elementPosition.top - optionsHeight) >= viewportPosition.top;
+
+    return !enoughRoomBelow() && enoughRoomAbove();
+  }
+
+  _getElementPosition(boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
 
     let top = rect.top;
@@ -526,18 +521,22 @@ class OverlayService {
     left += this.iframeWindow.pageXOffset;
     top += this.iframeWindow.pageYOffset;
 
-    const scrollTop = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
-    const viewHeight = $(this.iframeWindow).height();
-    const scrollBottom = viewHeight + scrollTop;
-
     return {
       top,
       left,
       width,
       height,
-      scrollTop,
-      scrollBottom,
-      viewHeight,
+    };
+  }
+
+  _getViewportPosition() {
+    const top = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const bottom = top + viewHeight;
+
+    return {
+      top,
+      bottom,
     };
   }
 
@@ -678,7 +677,7 @@ class OverlayService {
   }
 
   _syncPosition(overlayElement, boxElement) {
-    const position = this._getElementPositionObject(boxElement);
+    const position = this._getElementPosition(boxElement);
 
     overlayElement.css('top', `${position.top}px`);
     overlayElement.css('left', `${position.left}px`);
