@@ -324,6 +324,49 @@ class OverlayService {
     overlayElement.append(svg);
   }
 
+  _initManageContentLink(structureElement, overlayElement) {
+    const config = this._initManageContentConfig(structureElement);
+
+    if (Object.keys(config).length === 0) {
+      // config is empty, no buttons to render
+      return;
+    }
+
+    const buttons = this._getButtons(config);
+    if (buttons.length === 0) {
+      // no buttons to render
+      return;
+    }
+
+    const mainButton = buttons[0];
+    const optionButtons = buttons.slice(1);
+
+    const mainButtonElement = this._createMainButton(mainButton, config);
+    const optionsButtonsElement = $('<div class="hippo-fab-options"></div>');
+
+    overlayElement
+      .addClass('hippo-overlay-element-link')
+      .append(mainButtonElement)
+      .append(optionsButtonsElement);
+
+    const openOptions = () => {
+      if (optionsButtonsElement.children().length === 0) {
+        optionsButtonsElement.html(this._createOptionButtons(optionButtons));
+      }
+      const openAbove = this._openOptionsAboveMainButton(structureElement, optionButtons.length);
+      optionsButtonsElement.toggleClass('hippo-fab-options-above-main-button', openAbove);
+    };
+
+    const closeOptions = () => {
+      optionsButtonsElement.empty();
+    };
+
+    if (buttons.length > 1) {
+      overlayElement.on('mouseenter', openOptions);
+      overlayElement.on('mouseleave', closeOptions);
+    }
+  }
+
   _initManageContentConfig(structureElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
@@ -408,49 +451,6 @@ class OverlayService {
     }
 
     return buttons;
-  }
-
-  _initManageContentLink(structureElement, overlayElement) {
-    const config = this._initManageContentConfig(structureElement);
-
-    if (Object.keys(config).length === 0) {
-      // config is empty, no buttons to render
-      return;
-    }
-
-    const buttons = this._getButtons(config);
-    if (buttons.length === 0) {
-      // no buttons to render
-      return;
-    }
-
-    const mainButton = buttons[0];
-    const optionButtons = buttons.slice(1);
-
-    const mainButtonElement = this._createMainButton(mainButton, config);
-    const optionsButtonsElement = $('<div class="hippo-fab-options"></div>');
-
-    overlayElement
-      .addClass('hippo-overlay-element-link')
-      .append(mainButtonElement)
-      .append(optionsButtonsElement);
-
-    const openOptions = () => {
-      if (optionsButtonsElement.children().length === 0) {
-        optionsButtonsElement.html(this._createOptionButtons(optionButtons));
-      }
-      const openAbove = this._openOptionsAboveMainButton(structureElement, optionButtons.length);
-      optionsButtonsElement.toggleClass('hippo-fab-options-above-main-button', openAbove);
-    };
-
-    const closeOptions = () => {
-      optionsButtonsElement.empty();
-    };
-
-    if (buttons.length > 1) {
-      overlayElement.on('mouseenter', openOptions);
-      overlayElement.on('mouseleave', closeOptions);
-    }
   }
 
   _createMainButton(button, manageContentConfig) {
