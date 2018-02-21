@@ -276,7 +276,7 @@
     background-color: $white;
     border: 0;
     fill: $overlay-link-shadow-color;
-    padding-top: 7px;
+    padding: 0; // reset user-agent specific padding around buttons
 
     &:hover {
       background-color: darken($white, 10%);
@@ -285,6 +285,10 @@
     &:active {
       background-color: darken($white, 10%);
       box-shadow: $overlay-link-shadow-active !important;
+    }
+
+    svg {
+      margin-top: 5px;
     }
   }
   .hippo-fab-btn {
@@ -301,17 +305,8 @@
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-active !important;
     }
-    &-open {
-      svg { fill: $white;}
-      // Different fab buttons are using different .svg files (among default ones provided by AngularJS Material).
-      // Therefore, we need to adjust the padding of each button type.
-      &[title='Cancel'] {
-        padding: 7px 0 0;
-      }
-
-      &[title='Edit content'] {
-        padding: 8px 0 0 5px;
-      }
+    &-open svg {
+      fill: $white;
     }
 
     &.disabled {
@@ -324,16 +319,24 @@
       box-shadow: $overlay-link-shadow-active !important;
     }
     .hippo-fab-dial-options {
+      align-items: center;
       display: flex;
+
       button {
         animation-duration: .2s;
         animation-fill-mode: forwards;
         animation-name: enter;
         display: block;
+        height: 32px;
         transform-origin: bottom center;
+        width: 32px;
 
         &.disabled {
           @include disabled-fab-button;
+        }
+
+        svg {
+          transform: scale(.8);
         }
       }
 
@@ -358,11 +361,16 @@
   }
   &.hippo-bottom .hippo-fab-dial-options {
     bottom: initial;
-    padding-top: 5px;
     top: 100%;
+
+    .hippo-fab-option-btn {
+      margin-top: 5px;
+    }
   }
   &.hippo-top .hippo-fab-dial-options {
-    padding-bottom: 15px;
+    .hippo-fab-option-btn {
+      margin-bottom: 5px;
+    }
   }
   .hippo-fab-dial-options button {
     display: none;
@@ -376,7 +384,7 @@
   }
 
   to {
-    transform: scale(.8);
+    transform: scale(1);
   }
 }
 
