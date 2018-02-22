@@ -31,6 +31,7 @@ import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -478,10 +479,17 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     private boolean isSiteMapItemAndComponentConfigCacheable(final ResolvedSiteMapItem resolvedSitemapItem,
             final ValveContext context) throws ContainerException {
-        if (!resolvedSitemapItem.getHstSiteMapItem().isCacheable()) {
+        final HstSiteMapItem hstSiteMapItem = resolvedSitemapItem.getHstSiteMapItem();
+        if (!hstSiteMapItem.isCacheable()) {
             log.debug("'{}' is not cacheable because hst sitemapitem '{}' is not cacheable.", context
-                    .getServletRequest(), resolvedSitemapItem.getHstSiteMapItem().getId());
+                    .getServletRequest(), hstSiteMapItem.getId());
             return false;
+        }
+
+        if (resolvedSitemapItem.getHstComponentConfiguration() == null) {
+            log.debug("Matched sitemap item '{}' does not have a (resolvable) component configuration (for example because " +
+                    "the request might be a rest request). Return if the sitemap item is cacheable.", hstSiteMapItem.getId());
+            return hstSiteMapItem.isCacheable();
         }
 
         // check whether component rendering is true: For component rendering, we need to check whether the specific sub
