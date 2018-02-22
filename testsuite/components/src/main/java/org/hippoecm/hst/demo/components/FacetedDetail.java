@@ -35,7 +35,7 @@ public class FacetedDetail extends AbstractFacetedComponnent {
         
         ProductBean product = ContentBeanUtils.getFacetedNavigationResultDocument(hstQuery, ProductBean.class);
         
-        request.setAttribute("document", product);
+        request.setModel("document", product);
         
     }
 

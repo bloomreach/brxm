@@ -30,7 +30,7 @@ public class Right extends BaseHstComponent{
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        request.setAttribute("crBean", request.getRequestContext().getContentBean());
+        request.setModel("crBean", request.getRequestContext().getContentBean());
         
     }
 
