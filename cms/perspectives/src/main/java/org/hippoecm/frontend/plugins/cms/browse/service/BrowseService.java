@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,24 +57,21 @@ import org.slf4j.LoggerFactory;
  * not supported.
  */
 public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable {
-    private static final long serialVersionUID = 1L;
 
-
-    static final Logger log = LoggerFactory.getLogger(BrowseService.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowseService.class);
 
     private class DocumentModelService extends ModelReference<Node> {
-        private static final long serialVersionUID = 1L;
 
-        DocumentModelService(IPluginConfig config) {
+        DocumentModelService(final IPluginConfig config) {
             super(config.getString("model.document"), new JcrNodeModel((Node) null));
         }
 
-        public void updateModel(IModel<Node> model) {
+        public void updateModel(final IModel<Node> model) {
             super.setModel(model);
         }
 
         @Override
-        public void setModel(IModel<Node> model) {
+        public void setModel(final IModel<Node> model) {
             if (model == null) {
                 throw new IllegalArgumentException("invalid model null");
             }
@@ -87,18 +84,17 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     }
 
     private class FolderModelService extends ModelReference<Node> {
-        private static final long serialVersionUID = 1L;
 
-        FolderModelService(IPluginConfig config) {
+        FolderModelService(final IPluginConfig config) {
             super(config.getString("model.folder"), new JcrNodeModel((Node) null));
         }
 
-        public void updateModel(IModel<Node> model) {
+        public void updateModel(final IModel<Node> model) {
             super.setModel(model);
         }
 
         @Override
-        public void setModel(IModel<Node> model) {
+        public void setModel(final IModel<Node> model) {
             if (model == null) {
                 throw new IllegalArgumentException("invalid model null");
             }
@@ -110,16 +106,17 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
     }
 
-    private DocumentModelService documentService;
+    private final DocumentCollectionModel collectionModel;
+    private final DocumentModelService documentService;
+    private final BrowserSections sections;
     private FolderModelService folderService;
-    private DocumentCollectionModel collectionModel;
-    private BrowserSections sections;
 
-    public BrowseService(final IPluginContext context, final IPluginConfig config, JcrNodeModel document) {
+    public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
         documentService = new DocumentModelService(config);
         documentService.init(context);
 
-        this.collectionModel = new DocumentCollectionModel(null);
+        collectionModel = new DocumentCollectionModel(null);
+
         if (config.containsKey("model.folder")) {
             folderService = new FolderModelService(config);
             folderService.init(context);
@@ -129,8 +126,8 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                     return collectionModel;
                 }
 
-                public void onEvent(Iterator events) {
-                    if (collectionModel != null && collectionModel.getObject() != null) {
+                public void onEvent(final Iterator events) {
+                    if (collectionModel.getObject() != null) {
                         folderService.updateModel(collectionModel.getObject().getFolder());
                     }
                 }
@@ -139,30 +136,25 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
 
         this.sections = new BrowserSections();
-        sections.addListener(new IChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onChange() {
-                IBrowserSection active = sections.getActiveSection();
-                if (active != null) {
-                    collectionModel.setObject(active.getCollection());
-                }
+        sections.addListener((IChangeListener) () -> {
+            final IBrowserSection active = sections.getActiveSection();
+            if (active != null) {
+                collectionModel.setObject(active.getCollection());
             }
         });
 
-        List<String> extensions = Arrays.asList(config.getStringArray("sections"));
+        final List<String> extensions = Arrays.asList(config.getStringArray("sections"));
         for (final String extension : extensions) {
             context.registerTracker(new ServiceTracker<IBrowserSection>(IBrowserSection.class) {
-                private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onServiceAdded(IBrowserSection service, String name) {
+                protected void onServiceAdded(final IBrowserSection service, final String name) {
                     sections.addSection(extension, service);
                     super.onServiceAdded(service, name);
                 }
 
                 @Override
-                protected void onRemoveService(IBrowserSection service, String name) {
+                protected void onRemoveService(final IBrowserSection service, final String name) {
                     super.onRemoveService(service, name);
                     sections.removeSection(extension);
                 }
@@ -186,32 +178,32 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      * Use the supplied model of a Node (or Version) to set folder and document models.
      * When a Version is supplied from the version storage, the physical node is used.
      */
-    public void browse(IModel<Node> model) {
-        IModel<Node> document = getHandleOrFolder(model);
+    public void browse(final IModel<Node> model) {
+        final IModel<Node> document = getHandleOrFolder(model);
         if (document.getObject() == null) {
             return;
         }
         Match closestMatch = null;
         String closestName = null;
         // Get the match for the active section
-        IBrowserSection activeSection = sections.getActiveSection();
+        final IBrowserSection activeSection = sections.getActiveSection();
         if (activeSection != null) {
-            Match match = activeSection.contains(document);
+            final Match match = activeSection.contains(document);
             if (match != null) {
                 closestMatch = match;
                 closestName = sections.getActiveSectionName();
             }
         }
-        for (String name : sections.getSections()) {
-            IBrowserSection section = sections.getSection(name);
-            Match match = section.contains(document);
+        for (final String name : sections.getSections()) {
+            final IBrowserSection section = sections.getSection(name);
+            final Match match = section.contains(document);
             if (match != null && (closestMatch == null || match.getDistance() < closestMatch.getDistance())) {
                 closestMatch = match;
                 closestName = name;
             }
         }
         if (closestName != null) {
-            IBrowserSection section = sections.getSection(closestName);
+            final IBrowserSection section = sections.getSection(closestName);
             section.select(document);
             sections.setActiveSectionByName(closestName);
         }
@@ -220,7 +212,9 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             if (model.getObject().isNodeType(JcrConstants.NT_VERSION)) {
                 version = model;
             }
-        } catch (RepositoryException ignore) {}
+        } catch (final RepositoryException ignore) {
+        }
+
         if (collectionModel.getObject() != null
                 && collectionModel.getObject().getType() == DocumentCollectionType.FOLDER) {
             if (collectionModel.getObject().getFolder().equals(document)) {
@@ -237,7 +231,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     protected void onBrowse() {
     }
 
-    public void selectSection(IModel<IBrowserSection> model) {
+    public void selectSection(final IModel<IBrowserSection> model) {
         documentService.updateModel(model.getObject().getCollection().getFolder());
     }
 
@@ -247,41 +241,41 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
 
     // retrieve the (unversioned) handle when the node is versioned,
     // the handle when the node is a document variant or the folder otherwise.
-    private IModel<Node> getHandleOrFolder(IModel<Node> model) {
-        Node node = model.getObject();
+    private IModel<Node> getHandleOrFolder(final IModel<Node> model) {
+        final Node node = model.getObject();
         if (node != null) {
             try {
-                if (node.isNodeType("nt:version")) {
-                    Node frozen = node.getNode("jcr:frozenNode");
-                    String uuid = frozen.getProperty("jcr:frozenUuid").getString();
+                if (node.isNodeType(JcrConstants.NT_VERSION)) {
+                    final Node frozen = node.getNode(JcrConstants.JCR_FROZEN_NODE);
+                    String uuid = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
                     try {
-                        Node docNode = node.getSession().getNodeByIdentifier(uuid);
+                        final Node docNode = node.getSession().getNodeByIdentifier(uuid);
                         if (docNode.getDepth() > 0) {
-                            Node parent = docNode.getParent();
+                            final Node parent = docNode.getParent();
                             if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                                 return new JcrNodeModel(parent);
                             }
                         }
                         return new JcrNodeModel(docNode);
-                    } catch (ItemNotFoundException infe) {
+                    } catch (final ItemNotFoundException infe) {
                         // node doesn't exist anymore.  If it's a document, the handle
                         // should still be available though.
                         if (frozen.hasProperty(HippoNodeType.HIPPO_PATHS)) {
-                            Value[] ancestors = frozen.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
+                            final Value[] ancestors = frozen.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
                             if (ancestors.length > 1) {
                                 uuid = ancestors[1].getString();
-                                return new JcrNodeModel(node.getSession().getNodeByUUID(uuid));
+                                return new JcrNodeModel(node.getSession().getNodeByIdentifier(uuid));
                             }
                         }
                         throw infe;
                     }
                 } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    Node parent = node.getParent();
+                    final Node parent = node.getParent();
                     if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                         return new JcrNodeModel(parent);
                     }
                 }
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error(ex.getMessage());
             }
         }
