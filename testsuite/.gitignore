@@ -8,6 +8,7 @@ api/.classpath
 api/.project
 api/.settings
 api/target
+api-docs/target/
 cms/.classpath
 cms/.project
 cms/.settings
