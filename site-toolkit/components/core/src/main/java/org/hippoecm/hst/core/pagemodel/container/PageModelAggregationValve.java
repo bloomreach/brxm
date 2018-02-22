@@ -396,6 +396,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
         for (int i = 1; i < sortedComponentWindowsLen; i++) {
             final HstComponentWindow window = sortedComponentWindows[i];
+            ComponentWindowModel componentWindowModel = null;
             final HstRequest hstRequest = requestMap.get(window);
             final HstResponse hstResponse = responseMap.get(window);
 
@@ -412,36 +413,36 @@ public class PageModelAggregationValve extends AggregationValve {
                     continue;
                 }
 
-                final ComponentWindowModel componentWindowModel = new ComponentWindowModel(
+                componentWindowModel = new ComponentWindowModel(
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
-
-                for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
-                    final String name = entry.getKey();
-                    final Object model = entry.getValue();
-                    ReferenceMetadataBaseModel referenceModel = null;
-
-                    if (model instanceof HippoBean) {
-                        final HippoBean bean = (HippoBean) model;
-                        final String contentId = getContentId(bean);
-                        final String jsonPointerContentId = contentIdToJsonName(contentId);
-                        HippoBeanWrapperModel beanWrapperModel = addContentModelToPageModel(pageModel, bean, contentId,
-                                jsonPointerContentId);
-                        decorateContentMetadata(hstRequest, hstResponse, bean, beanWrapperModel);
-                        referenceModel = new ReferenceMetadataBaseModel(
-                                CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
-                    }
-
-                    componentWindowModel.putModel(name, (referenceModel != null) ? referenceModel : model);
-                }
-
                 curContainerWindowModel.addComponentWindowSet(componentWindowModel);
             } else {
                 curContainerWindowModel = null;
             }
 
+            for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
+                final String name = entry.getKey();
+                final Object model = entry.getValue();
+                ReferenceMetadataBaseModel referenceModel = null;
+
+                if (model instanceof HippoBean) {
+                    final HippoBean bean = (HippoBean) model;
+                    final String contentId = getContentId(bean);
+                    final String jsonPointerContentId = contentIdToJsonName(contentId);
+                    HippoBeanWrapperModel beanWrapperModel = addContentModelToPageModel(pageModel, bean, contentId,
+                            jsonPointerContentId);
+                    decorateContentMetadata(hstRequest, hstResponse, bean, beanWrapperModel);
+                    referenceModel = new ReferenceMetadataBaseModel(
+                            CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
+                }
+
+                if (componentWindowModel != null) {
+                    componentWindowModel.putModel(name, (referenceModel != null) ? referenceModel : model);
+                }
+            }
         }
 
         return pageModel;
