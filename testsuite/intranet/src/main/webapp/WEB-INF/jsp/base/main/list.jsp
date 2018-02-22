@@ -27,7 +27,7 @@
       <c:forEach var="item" items="${result.hippoBeans}" varStatus="status">
         <hst:link var="link" hippobean="${item}"/>
         <article class="well well-large" style="background-color:${info.bgColor};">
-          <hst:cmseditlink hippobean="${item}"/>
+          <hst:manageContent hippobean="${item}"/>
           <c:if test="${status.first and hst:isReadable(item, 'image.thumbnail')}">
             <hst:link var="img" hippobean="${item.image.thumbnail}"/>
             <figure style="float:left;margin:0 10px 0 0;">

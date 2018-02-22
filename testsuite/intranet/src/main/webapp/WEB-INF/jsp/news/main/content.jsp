@@ -28,7 +28,7 @@
     </c:if>
 
     <article class="well well-large">
-      <hst:cmseditlink hippobean="${document}"/>
+      <hst:manageContent hippobean="${document}"/>
       <header>
         <h2>${fn:escapeXml(document.title)}</h2>
         <c:if test="${hst:isReadable(document, 'date.time')}">

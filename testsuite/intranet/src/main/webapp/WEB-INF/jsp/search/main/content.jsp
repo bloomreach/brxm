@@ -39,7 +39,7 @@
     <c:forEach var="item" items="${result.hippoBeans}">
       <hst:link var="link" hippobean="${item}"/>
       <article class="well well-large">
-        <hst:cmseditlink hippobean="${item}"/>
+        <hst:manageContent hippobean="${item}"/>
         <h3><a href="${link}">${fn:escapeXml(item.title)}</a></h3>
         <c:if test="${hst:isReadable(item, 'date.time')}">
           <p class="badge badge-info">
