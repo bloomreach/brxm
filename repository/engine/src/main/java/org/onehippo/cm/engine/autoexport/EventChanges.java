@@ -22,6 +22,9 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.RevisionEvent;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
 /**
@@ -106,9 +109,11 @@ class EventChanges {
                         recordAddedNode(paths, eventPath);
                     } else if (deletedNode) {
                         recordDeletedNode(paths, eventPath);
-                        // Note: if a *config* path is deleted, it also may have *content* children, but we don't need to consider those here
-                        // as the AutoExportConfigExporter (handling the config delete) will also *then* check and register such deleted content subpaths
+                        // Note: if a *config* path is deleted, it also may have *content* children, so we need to check and register such deleted content subpaths
                         // to be thereafter processed by the DefinitionMergeService
+                        if (category == ConfigurationItemCategory.CONFIG) {
+                            checkDeletedContentChildren(JcrPaths.getPath(eventPath));
+                        }
                     }
                     final String parentPath = eventPath.substring(0, eventPath.lastIndexOf('/') == 0 ? 1 : eventPath.lastIndexOf('/'));
                     if (category == ConfigurationItemCategory.CONFIG) {
@@ -119,6 +124,22 @@ class EventChanges {
                         recordChangedNode(paths, isPropertyEvent ? parentPath : eventPath, false);
                     }
                 }
+            }
+        }
+    }
+
+    /*
+     * When a config node is deleted (in jcr), check if there were child nodes which mapped to *content* definitions,
+     * and if so record these as 'to be deleted' content paths for the DefinitionMergeService to handle later.
+     */
+    protected void checkDeletedContentChildren(final JcrPath deletedConfig) throws RepositoryException {
+        for (final ContentDefinitionImpl contentDefinition : model.getContentDefinitions()) {
+            final JcrPath contentRootPath = contentDefinition.getNode().getJcrPath();
+            final String contentRoot = contentRootPath.suppressIndices().toString();
+            if (contentRootPath.startsWith(deletedConfig) && !contentPaths.deleted.matches(contentRoot)) {
+                // content root found as child of a deleted config path, which itself, or a parent path, hasn't been recorded as deleted yet
+                contentPaths.deleted.removeChildren(contentRoot);
+                contentPaths.deleted.add(contentRoot);
             }
         }
     }

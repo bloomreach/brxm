@@ -35,8 +35,6 @@ import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
@@ -72,15 +70,13 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
     private ConfigurationModelImpl configurationModel;
     private PathsMap addedContent;
-    private PathsMap deletedContent;
 
     AutoExportConfigExporter(final ConfigurationModelImpl configurationModel, final AutoExportConfig exportConfig,
-                                    final PathsMap addedContent, final PathsMap deletedContent) {
+                                    final PathsMap addedContent) {
         super(exportConfig);
         this.exportConfig = exportConfig;
         this.configurationModel = configurationModel;
         this.addedContent = addedContent;
-        this.deletedContent = deletedContent;
     }
 
     protected boolean shouldExcludeProperty(Property property) throws RepositoryException {
@@ -465,7 +461,6 @@ public class AutoExportConfigExporter extends JcrContentExporter {
                             new IllegalStateException());
                 }
                 else {
-                    checkDeletedContentChildren(childNode.getJcrPath());
                     childNode.delete();
                 }
             }
@@ -473,22 +468,6 @@ public class AutoExportConfigExporter extends JcrContentExporter {
 
         if (orderingIsRelevant) {
             updateOrdering(indexedJcrChildNodeNames, configNode, configSource);
-        }
-    }
-
-    /*
-     * When a config node is deleted (in jcr), check if there were child nodes which mapped to *content* definitions,
-     * and if so record these as 'to be deleted' content paths for the DefinitionMergeService to handle later.
-     */
-    protected void checkDeletedContentChildren(final JcrPath deletedConfig) throws RepositoryException {
-        for (final ContentDefinitionImpl contentDefinition : configurationModel.getContentDefinitions()) {
-            final JcrPath contentRootPath = contentDefinition.getNode().getJcrPath();
-            final String contentRoot = contentRootPath.suppressIndices().toString();
-            if (contentRootPath.startsWith(deletedConfig) && !deletedContent.matches(contentRoot)) {
-                // content root found as child of a deleted config path, which itself, or a parent path, hasn't been recorded as deleted yet
-                deletedContent.removeChildren(contentRoot);
-                deletedContent.add(contentRoot);
-            }
         }
     }
 

@@ -539,7 +539,7 @@ public class EventJournalProcessor {
         }
 
         final AutoExportConfigExporter autoExportConfigExporter =
-                new AutoExportConfigExporter(currentModel, autoExportConfig, addedContent, deletedContent);
+                new AutoExportConfigExporter(currentModel, autoExportConfig, addedContent);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
             autoExportConfigExporter.exportConfigNode(eventProcessorSession, path, configSource);
