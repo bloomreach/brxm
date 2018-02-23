@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <inceptionYear>2010</inceptionYear>
@@ -49,9 +49,9 @@
   </issueManagement>
 
   <properties>
-    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.plugin.selections.version>5.2.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.repository.version>5.3.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.3.0-SNAPSHOT</hippo.cms.version>
+    <hippo.plugin.selections.version>5.3.0-SNAPSHOT</hippo.plugin.selections.version>
 
     <testng.version>6.0.1</testng.version>
   </properties>
