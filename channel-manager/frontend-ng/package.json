@@ -42,7 +42,7 @@
     "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "7.1.1",
+    "@bloomreach/frontend-build": "7.1.2",
     "angular-mocks": "1.5.11",
     "gulp": "4.0.0",
     "gulp-hub": "4.2.0"
