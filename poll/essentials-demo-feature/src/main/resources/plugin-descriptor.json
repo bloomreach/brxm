@@ -3,7 +3,7 @@
   "type": "feature",
   "name": "Polls Demo",
   "icon": "",
-  "introduction": "This plugin shows how you can extend the Poll plugin and use it in a custom document. NOTE: the Poll feature must be installed BEFORE this one for this feature to work.",
+  "introduction": "This plugin shows how you can extend the Poll plugin and use it in a custom document. NOTE: the Poll feature will be installed before this one for this feature to work.",
   "vendor" : {
     "name" : "BloomReach",
     "url" : "https://www.bloomreach.com"
