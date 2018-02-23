@@ -87,7 +87,7 @@ public class FolderUtilsTest {
         root.addNode("a", "nt:unstructured");
         root.addNode("b", "nt:unstructured").setProperty("hippo:name", "Not a folder");
         root.addNode("c", "hippostd:folder");
-        root.addNode("d", "hippostd:folder").setProperty("hippo:name", "Folder");;
+        root.addNode("d", "hippostd:folder").setProperty("hippo:name", "Folder");
         root.addNode("e", "hippo:handle").setProperty("hippo:name", "Document");
 
         // wrong type
@@ -204,7 +204,7 @@ public class FolderUtilsTest {
         expect(mockNode.getPath()).andThrow(new RepositoryException());
         replayAll();
 
-        FolderUtils.getOrCreateFolder(mockNode,"test", session);
+        FolderUtils.getOrCreateFolder(mockNode, "test", session);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -217,7 +217,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        FolderUtils.getOrCreateFolder(root,"test", session);
+        FolderUtils.getOrCreateFolder(root, "test", session);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -233,13 +233,13 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        FolderUtils.getOrCreateFolder(root,"test", session);
+        FolderUtils.getOrCreateFolder(root, "test", session);
     }
 
     @Test
     public void createNewFolder() throws Exception {
         root.setPrimaryType("hippostd:folder");
-        root.setProperty("hippostd:foldertype", new String[] { "new-folder" });
+        root.setProperty("hippostd:foldertype", new String[]{"new-folder"});
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         session.getWorkspace().setWorkflowManager(workflowManager);
@@ -252,7 +252,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node test = FolderUtils.getOrCreateFolder(root,"test", session);
+        final Node test = FolderUtils.getOrCreateFolder(root, "test", session);
 
         verifyAll();
         assertSingleChild(root);
@@ -263,7 +263,7 @@ public class FolderUtilsTest {
     @Test
     public void createNewDirectory() throws Exception {
         root.setPrimaryType("hippostd:directory");
-        root.setProperty("hippostd:foldertype", new String[] { "new-folder" });
+        root.setProperty("hippostd:foldertype", new String[]{"new-folder"});
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         session.getWorkspace().setWorkflowManager(workflowManager);
@@ -287,7 +287,7 @@ public class FolderUtilsTest {
     @Test
     public void createNewFolderWithMultipleFolderTypes() throws Exception {
         root.setPrimaryType("hippostd:folder");
-        root.setProperty("hippostd:foldertype", new String[] { "new-folder", "new-other-folder" });
+        root.setProperty("hippostd:foldertype", new String[]{"new-folder", "new-other-folder"});
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         root.getSession().getWorkspace().setWorkflowManager(workflowManager);
@@ -300,7 +300,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder(root,"test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "test", session);
 
         verifyAll();
         assertSingleChild(root);
@@ -316,7 +316,7 @@ public class FolderUtilsTest {
     public void createNewTranslatedFolder() throws Exception {
         final MockNode translatedNode = root.addNode("translated", "hippostd:folder");
         translatedNode.addMixin("hippotranslation:translated");
-        translatedNode.setProperty("hippostd:foldertype", new String[] { "new-translated-folder" });
+        translatedNode.setProperty("hippostd:foldertype", new String[]{"new-translated-folder"});
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         root.getSession().getWorkspace().setWorkflowManager(workflowManager);
@@ -329,7 +329,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder(root,"translated/test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "translated/test", session);
 
         verifyAll();
         assertSingleChild(translatedNode);
@@ -360,7 +360,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder(root,"one/two", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two", session);
 
         verifyAll();
 
@@ -395,7 +395,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder(root,"one/two/three", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two/three", session);
 
         verifyAll();
 
