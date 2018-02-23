@@ -420,6 +420,7 @@ class OverlayService {
 
     if (config.documentUuid) {
       const editContentButton = {
+        id: 'edit-content',
         mainIcon: contentLinkSvg,
         optionIcon: '', // edit button should never be a option button
         callback: () => this._editContent(config.documentUuid),
@@ -430,6 +431,7 @@ class OverlayService {
 
     if (config.parameterName) {
       const selectDocumentButton = {
+        id: 'select-document',
         mainIcon: searchWhiteSvg,
         optionIcon: searchSvg,
         callback: () => this._pickPath(config),
@@ -441,6 +443,7 @@ class OverlayService {
 
     if (config.templateQuery) {
       const createContentButton = {
+        id: 'create-content',
         mainIcon: plusWhiteSvg,
         optionIcon: plusSvg,
         callback: () => this._createContent(config),
@@ -456,7 +459,7 @@ class OverlayService {
   _createMainButton(button, manageContentConfig) {
     const mainButton = $(`<button title="${button.tooltip}">${button.mainIcon}</button>`);
 
-    mainButton.addClass('hippo-fab-main qa-manage-content-link');
+    mainButton.addClass(`hippo-fab-main hippo-fab-main-${button.id} qa-manage-content-link`);
 
     if (button.isDisabled) {
       mainButton.addClass('hippo-fab-main-disabled');
@@ -484,7 +487,7 @@ class OverlayService {
   _createOptionButton(button, index) {
     const optionButton = $(`<button title="${button.tooltip}">${button.optionIcon}</button>`);
 
-    optionButton.addClass(`hippo-fab-option hippo-fab-option-${index}`);
+    optionButton.addClass(`hippo-fab-option hippo-fab-option-${button.id} hippo-fab-option-${index}`);
 
     if (button.isDisabled) {
       optionButton.addClass('hippo-fab-option-disabled');

@@ -276,8 +276,9 @@
     @extend %hippo-material-btn;
 
     border: 0;
+    display: flex;
     height: 100%;
-    padding: 8px 0 0 5px;
+    padding: 0; // reset user-agent specific padding around buttons
     width: 100%;
 
     &:hover:not(.hippo-fab-main-disabled) {
@@ -288,6 +289,18 @@
     &:active {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-active !important;
+    }
+
+    &-edit-content {
+      // center icon visually
+      padding-left: 6px;
+      padding-top: 2px;
+    }
+
+    &-select-document {
+      // center icon visually
+      padding-left: 3px;
+      padding-top: 3px;
     }
 
     &-open svg {
@@ -328,7 +341,7 @@
     animation-name: enter;
     background-color: $white;
     border: 0;
-    display: block;
+    display: flex;
     fill: $overlay-link-shadow-color;
     height: 32px;
     margin-top: 4px;
@@ -351,8 +364,13 @@
       @include disabled-fab;
     }
 
+    &-select-document {
+      // center icon visually
+      padding-left: 3px;
+      padding-top: 3px;
+    }
+
     svg {
-      margin-top: 5px;
       transform: scale(.8);
     }
   }

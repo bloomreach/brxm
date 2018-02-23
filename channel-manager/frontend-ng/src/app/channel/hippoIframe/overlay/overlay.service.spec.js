@@ -705,7 +705,7 @@ describe('OverlayService', () => {
       const buttons = OverlayService._getButtons(config);
 
       expect(buttons.length).toEqual(3);
-      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'optionIcon', 'callback', 'tooltip']);
+      expect(Object.keys(buttons[0])).toEqual(['id', 'mainIcon', 'optionIcon', 'callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
