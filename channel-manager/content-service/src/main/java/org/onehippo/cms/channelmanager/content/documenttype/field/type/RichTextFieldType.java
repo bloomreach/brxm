@@ -176,6 +176,11 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
         trimToMaxValues(values);
 
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
+
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
@@ -188,11 +193,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
                 if (value.hasValue()) {
                     values.add(value);
                 }
-            }
-
-            if (values.size() < getMinValues()) {
-                log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
-                        "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
             }
 
             return values;

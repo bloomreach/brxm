@@ -240,12 +240,14 @@ public class RichTextFieldTypeTest {
     @Test
     public void readOptionalEmptyValue() throws Exception {
         final RichTextFieldType field = initField();
+        field.setMinValues(0);
         assertNoWarningsLogged(() -> assertFalse(field.readFrom(document).isPresent()));
     }
 
     @Test
     public void exceptionWhileReading() throws Exception {
         final RichTextFieldType field = initField();
+        field.setMinValues(0);
         // make hippostd:content property multi-valued so reading it will throw an exception
         final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
