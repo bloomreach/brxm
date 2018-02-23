@@ -29,7 +29,7 @@
   <description>Hippo Plugin Content Blocks</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-blocks</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
@@ -39,8 +39,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>5.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.3.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.3.0-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <repositories>
