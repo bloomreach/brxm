@@ -29,9 +29,9 @@ hippo-iframe {
 
   background-color: $canvas-bgcolor;
 
-  // ensure a horizontal scrollbar in Safari for constrained viewport widths
+  // ensure a horizontal scrollbar for constrained viewport widths
   height: 100%;
-  overflow: hidden;
+  overflow-y: hidden;
   user-select: none;
 
   &.hippo-dragging {
