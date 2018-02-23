@@ -552,7 +552,7 @@ describe('OverlayService', () => {
 
     loadIframeFixture(() => {
       const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
-      const createContentButton = $(overlayElementScenario2).find('.hippo-fab-btn');
+      const createContentButton = $(overlayElementScenario2).find('.hippo-fab-main');
 
       expectNoPropagatedClicks();
       createContentButton.click();
@@ -572,7 +572,7 @@ describe('OverlayService', () => {
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
-      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
       pickPathButton.click();
 
@@ -597,7 +597,7 @@ describe('OverlayService', () => {
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
-      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-btn');
+      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
       pickPathButton.click();
 
@@ -622,7 +622,7 @@ describe('OverlayService', () => {
 
     loadIframeFixture(() => {
       const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
-      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-btn');
+      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-main');
       expectNoPropagatedClicks();
       pickPathButton.click();
 
@@ -705,7 +705,7 @@ describe('OverlayService', () => {
       const buttons = OverlayService._getButtons(config);
 
       expect(buttons.length).toEqual(3);
-      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'dialIcon', 'callback', 'tooltip']);
+      expect(Object.keys(buttons[0])).toEqual(['mainIcon', 'optionIcon', 'callback', 'tooltip']);
     });
 
     describe('_initManageContentConfig', () => {
@@ -767,7 +767,7 @@ describe('OverlayService', () => {
     function manageContentScenario(scenarioNumber, callback) {
       loadIframeFixture(() => {
         const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
-        callback($(container).find('.hippo-fab-btn'), $(container).find('.hippo-fab-dial-options'));
+        callback($(container).find('.hippo-fab-main'), $(container).find('.hippo-fab-options'));
       });
     }
 
@@ -905,10 +905,10 @@ describe('OverlayService', () => {
             expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
             expect(optionButtons.children().length).toBe(1);
 
-            const firstButton = $(optionButtons.children()[0]);
-            expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
-            expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+            const firstOption = $(optionButtons.children()[0]);
+            expect(firstOption.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(firstOption.hasClass('hippo-fab-option-disabled')).toBe(true);
+            expect(eventHandlerCount(firstOption, 'click')).toEqual(0);
 
             done();
           });
@@ -916,7 +916,7 @@ describe('OverlayService', () => {
 
         it('Scenario 5', (done) => {
           manageContentScenario(11, (mainButton, optionButtons) => {
-            expect(mainButton.hasClass('disabled')).toBe(true);
+            expect(mainButton.hasClass('hippo-fab-main-disabled')).toBe(true);
             expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
             expect(eventHandlerCount(mainButton, 'click')).toEqual(0);
 
@@ -924,10 +924,10 @@ describe('OverlayService', () => {
             expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
             expect(optionButtons.children().length).toBe(1);
 
-            const firstButton = $(optionButtons.children()[0]);
-            expect(firstButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
-            expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+            const firstOption = $(optionButtons.children()[0]);
+            expect(firstOption.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
+            expect(firstOption.hasClass('hippo-fab-option-disabled')).toBe(true);
+            expect(eventHandlerCount(firstOption, 'click')).toEqual(0);
 
             done();
           });
@@ -941,15 +941,15 @@ describe('OverlayService', () => {
             expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
             expect(optionButtons.children().length).toBe(2);
 
-            const firstButton = $(optionButtons.children()[0]);
-            expect(firstButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
-            expect(firstButton.hasClass('disabled')).toBe(true);
-            expect(eventHandlerCount(firstButton, 'click')).toEqual(0);
+            const firstOption = $(optionButtons.children()[0]);
+            expect(firstOption.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
+            expect(firstOption.hasClass('hippo-fab-option-disabled')).toBe(true);
+            expect(eventHandlerCount(firstOption, 'click')).toEqual(0);
 
-            const secondButton = $(optionButtons.children()[1]);
-            expect(secondButton.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
-            expect(secondButton.hasClass('disabled')).toBe(true);
-            expect(eventHandlerCount(secondButton, 'click')).toEqual(0);
+            const secondOption = $(optionButtons.children()[1]);
+            expect(secondOption.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
+            expect(secondOption.hasClass('hippo-fab-option-disabled')).toBe(true);
+            expect(eventHandlerCount(secondOption, 'click')).toEqual(0);
 
             done();
           });
@@ -957,7 +957,7 @@ describe('OverlayService', () => {
 
         it('Scenario 7', (done) => {
           manageContentScenario(13, (mainButton, optionButtons) => {
-            expect(mainButton.hasClass('disabled')).toBe(true);
+            expect(mainButton.hasClass('hippo-fab-main-disabled')).toBe(true);
             expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
 
             mainButton.trigger('mouseenter');
