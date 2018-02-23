@@ -6,6 +6,10 @@
     "grunt": "grunt",
     "build": "grunt build"
   },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
+  },
   "dependencies": {
     "font-awesome": "4.7.0"
   },
