@@ -222,6 +222,8 @@ public class FolderUtilsTest {
 
     @Test(expected = InternalServerErrorException.class)
     public void createNewFolderAndWorkflowFails() throws Exception {
+        root.setPrimaryType("hippostd:folder");
+
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         root.getSession().getWorkspace().setWorkflowManager(workflowManager);
 
@@ -236,6 +238,7 @@ public class FolderUtilsTest {
 
     @Test
     public void createNewFolder() throws Exception {
+        root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", new String[] { "new-folder" });
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
@@ -258,7 +261,32 @@ public class FolderUtilsTest {
     }
 
     @Test
+    public void createNewDirectory() throws Exception {
+        root.setPrimaryType("hippostd:directory");
+        root.setProperty("hippostd:foldertype", new String[] { "new-folder" });
+
+        final WorkflowManager workflowManager = createMock(WorkflowManager.class);
+        session.getWorkspace().setWorkflowManager(workflowManager);
+
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+        expect(workflowManager.getWorkflow(eq("internal"), eq(root))).andReturn(folderWorkflow);
+        expect(folderWorkflow.add("new-folder", "hippostd:directory", "test")).andAnswer(
+                () -> root.addNode("test", "hippostd:directory").getPath()
+        );
+
+        replayAll();
+
+        final Node test = FolderUtils.getOrCreateFolder(root, "test", session);
+
+        verifyAll();
+        assertSingleChild(root);
+        assertThat(test, equalTo(test));
+        assertFolderTypes(test, "new-folder");
+    }
+
+    @Test
     public void createNewFolderWithMultipleFolderTypes() throws Exception {
+        root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", new String[] { "new-folder", "new-other-folder" });
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
@@ -312,6 +340,7 @@ public class FolderUtilsTest {
     @Test
     public void createAllNewFolders() throws Exception {
         final String[] folderTypes = {"new-folder"};
+        root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", folderTypes);
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
