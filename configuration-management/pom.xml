@@ -30,16 +30,16 @@
 
   <groupId>org.onehippo.cms</groupId>
   <artifactId>hippo-configuration-management</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
-    <hippo.testutils.version>1.2.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.services.version>4.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.testutils.version>1.3.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.services.version>4.3.0-SNAPSHOT</hippo.services.version>
     <hippo.jackrabbit.version>2.14.0-h1</hippo.jackrabbit.version>
-    <hippo.utilities.version>4.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.utilities.version>4.3.0-SNAPSHOT</hippo.utilities.version>
     <snakeyaml.version>1.18</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
