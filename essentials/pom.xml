@@ -27,7 +27,7 @@
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -37,7 +37,7 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
-    <hippo.essentials-components.version>4.2.0-create-content-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.essentials-components.version>4.3.0-SNAPSHOT</hippo.essentials-components.version>
 
     <jsp-api.version>2.2</jsp-api.version>
     <commons-lang.version>2.6</commons-lang.version>
