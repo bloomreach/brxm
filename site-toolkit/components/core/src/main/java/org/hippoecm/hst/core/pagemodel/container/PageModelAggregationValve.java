@@ -32,7 +32,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.AggregationValve;
@@ -269,7 +268,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
                 if (model instanceof HippoBean) {
                     final HippoBean bean = (HippoBean) model;
-                    final String contentId = getContentId(bean);
+                    final String contentId = bean.getCanonicalUUID();
                     final String jsonPointerContentId = contentIdToJsonName(contentId);
                     HippoBeanWrapperModel beanWrapperModel = addContentModelToPageModel(pageModel, bean, contentId,
                             jsonPointerContentId);
@@ -317,19 +316,6 @@ public class PageModelAggregationValve extends AggregationValve {
         pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
 
         return wrapperBeanModel;
-    }
-
-    /**
-     * Get content identifier for a {@link HippoBean}.
-     * @param bean Hippo content bean instance
-     * @return content identifier for a {@link HippoBean}
-     */
-    private String getContentId(final HippoBean bean) {
-        if (bean instanceof HippoDocumentBean) {
-            return ((HippoDocumentBean) bean).getCanonicalHandleUUID();
-        }
-
-        return bean.getCanonicalUUID();
     }
 
     /**
