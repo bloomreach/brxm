@@ -15,11 +15,25 @@
  */
 package org.hippoecm.hst.content.beans.support.jackson;
 
-import org.hippoecm.hst.core.component.HstURL;
+public class HstURLRepresentation {
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+    private String type;
+    private String url;
 
-@JsonSerialize(converter = HstURLConverter.class)
-public interface HstURLMixin extends HstURL {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
 }

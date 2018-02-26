@@ -15,34 +15,20 @@
  */
 package org.hippoecm.hst.content.beans.support.jackson;
 
-import java.io.IOException;
-
 import org.hippoecm.hst.core.component.HstURL;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.databind.util.StdConverter;
 
-public class HstURLSerializer extends StdSerializer<HstURL> {
-
-    private static final long serialVersionUID = 1L;
-
-    public HstURLSerializer() {
-        this(null);
-    }
-
-    public HstURLSerializer(Class<HstURL> type) {
-        super(type);
-    }
+public class HstURLConverter extends StdConverter<HstURL, HstURLRepresentation> {
 
     @Override
-    public void serialize(HstURL value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeStartObject();
+    public HstURLRepresentation convert(HstURL value) {
+        HstURLRepresentation representation = new HstURLRepresentation();
 
-        gen.writeStringField("type", value.getType());
-        gen.writeStringField("url", value.toString());
+        representation.setType(value.getType());
+        representation.setUrl(value.toString());
 
-        gen.writeEndObject();
+        return representation;
     }
 
 }

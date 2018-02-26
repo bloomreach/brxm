@@ -19,7 +19,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(using = HstLinkSerializer.class)
+@JsonSerialize(converter = HstLinkConverter.class)
 public interface HstLinkMixin extends HstLink {
 
 }
