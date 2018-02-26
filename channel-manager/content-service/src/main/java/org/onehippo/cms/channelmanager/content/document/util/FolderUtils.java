@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class FolderUtils {
             final NodeIterator children = parentNode.getNodes();
             while (children.hasNext()) {
                 final Node child = children.nextNode();
-                if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (isFolder(child) || isHandle(child)) {
                     final String childName = ((HippoNode) child).getDisplayName();
                     if (StringUtils.equals(childName, displayName)) {
                         return true;
@@ -86,6 +86,14 @@ public class FolderUtils {
                     displayName, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private static boolean isFolder(final Node node) throws RepositoryException {
+        return node.isNodeType(HippoStdNodeType.NT_FOLDER) || node.isNodeType(HippoStdNodeType.NT_DIRECTORY);
+    }
+
+    private static boolean isHandle(final Node child) throws RepositoryException {
+        return child.isNodeType(HippoNodeType.NT_HANDLE);
     }
 
     public static String getLocale(final Node folderNode) {
@@ -148,7 +156,7 @@ public class FolderUtils {
     private static Node getExistingFolder(final String absPath, final Session session) throws BadRequestException, RepositoryException {
         final Node folderNode = session.getNode(absPath);
 
-        if (!folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)) {
+        if (!isFolder(folderNode)) {
             throw new BadRequestException(new ErrorInfo(Reason.NOT_A_FOLDER, "path", absPath));
         }
 
@@ -204,12 +212,13 @@ public class FolderUtils {
 
     private static Node createFolder(final String name, final Node parentNode, final FolderWorkflow workflow) throws RepositoryException, InternalServerErrorException {
         final String category = getNewFolderWorkflowCategory(parentNode);
+        final String parentNodeType = parentNode.getPrimaryNodeType().getName();
         try {
-            workflow.add(category, HippoStdNodeType.NT_FOLDER, name);
+            workflow.add(category, parentNodeType, name);
             return parentNode.getNode(name);
         } catch (RemoteException | WorkflowException e) {
             log.warn("Failed to execute 'add' with category '{}', type '{}' and relPath '{}' in folder workflow {}",
-                    category, HippoStdNodeType.NT_FOLDER, name, workflow.getClass().getCanonicalName(), e);
+                    category, parentNodeType, name, workflow.getClass().getCanonicalName(), e);
             throw new InternalServerErrorException();
         }
     }

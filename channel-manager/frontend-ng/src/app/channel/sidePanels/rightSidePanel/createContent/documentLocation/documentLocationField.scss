@@ -48,7 +48,7 @@ document-location-field {
     }
 
     // hide the text of the input
-    &+.md-input {
+    & + .md-input {
       &[disabled] {
         color: transparent;
       }

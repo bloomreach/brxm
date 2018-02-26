@@ -86,10 +86,11 @@ class RightSidePanelCtrl {
   }
 
   _closePanel() {
+    this.$element.removeClass('sidepanel-open');
+    this.$element.css('max-width', '0px');
+
     this.SidePanelService.close('right')
       .finally(() => {
-        this.$element.removeClass('sidepanel-open');
-        this.$element.css('max-width', '0px');
         this.setFullWidth(false);
       });
   }

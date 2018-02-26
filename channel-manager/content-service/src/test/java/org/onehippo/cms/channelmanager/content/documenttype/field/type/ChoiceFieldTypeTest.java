@@ -39,6 +39,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -51,9 +52,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -206,6 +207,7 @@ public class ChoiceFieldTypeTest {
         final Node node = createMock(Node.class);
 
         expect(node.getNodes("choice")).andThrow(new RepositoryException());
+        expect(node.getPath()).andReturn("path/location");
 
         replay(node);
 
@@ -214,6 +216,23 @@ public class ChoiceFieldTypeTest {
         verify(node);
     }
 
+    @Test
+    public void readFromWithError() throws Exception {
+        final Node node = MockNode.root();
+        final Node choiceNode1 = node.addNode("choice", "compound1");
+
+        replayAll();
+
+        try (Log4jInterceptor listener = Log4jInterceptor.onError().trap(ChoiceFieldType.class).build()) {
+            try {
+                choice.readFrom(choiceNode1);
+            } finally {
+                assertEquals(listener.messages().count(), 1L);
+            }
+        }
+
+        verifyAll();
+    }
 
     @Test
     public void writeToSingleValue() throws Exception {
@@ -270,7 +289,7 @@ public class ChoiceFieldTypeTest {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
             fail("No exception");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
 
         verifyAll();
@@ -291,7 +310,7 @@ public class ChoiceFieldTypeTest {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
             fail("No exception");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
 
         verifyAll();
@@ -313,7 +332,7 @@ public class ChoiceFieldTypeTest {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
             fail("No exception");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
 
         verifyAll();
@@ -335,7 +354,7 @@ public class ChoiceFieldTypeTest {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
             fail("No exception");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
 
         verifyAll();
@@ -381,7 +400,7 @@ public class ChoiceFieldTypeTest {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
             fail("No Exception");
         } catch (BadRequestException e) {
-            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
         verifyAll();

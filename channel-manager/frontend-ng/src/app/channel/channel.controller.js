@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './channel.scss';
+
 class ChannelCtrl {
   constructor(
     $log,

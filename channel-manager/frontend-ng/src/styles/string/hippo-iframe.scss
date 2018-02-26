@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@mixin disabled-fab-button {
+@mixin disabled-fab {
   background-color: $grey-300;
   cursor: not-allowed;
 
@@ -173,6 +173,7 @@
 
 .hippo-overlay-element-link-button {
   @extend %hippo-material-btn;
+
   &:hover {
     background-color: $overlay-link-hover-bgcolor;
   }
@@ -270,103 +271,114 @@
   }
 }
 
-.hippo-fab-dial-container {
-  .hippo-fab-option-btn {
+.hippo-overlay-element-manage-content-link {
+  .hippo-fab-main {
     @extend %hippo-material-btn;
+
+    border: 0;
+    display: flex;
+    height: 100%;
+    padding: 0; // reset user-agent specific padding around buttons
+    width: 100%;
+
+    &:hover:not(.hippo-fab-main-disabled) {
+      background-color: darken($overlay-link-bgcolor, 12%);
+      box-shadow: $overlay-link-shadow-hover !important;
+    }
+
+    &:active {
+      background-color: darken($overlay-link-bgcolor, 12%);
+      box-shadow: $overlay-link-shadow-active !important;
+    }
+
+    &-edit-content {
+      // center icon visually
+      padding-left: 6px;
+      padding-top: 2px;
+    }
+
+    &-select-document {
+      // center icon visually
+      padding-left: 3px;
+      padding-top: 3px;
+    }
+
+    &-open svg {
+      fill: $white;
+    }
+
+    &-disabled {
+      @include disabled-fab;
+    }
+  }
+
+  .hippo-fab-options {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%; // below the main button
+    width: 100%;
+    z-index: $z-index-overlay-manage-content-options;
+
+    &.hippo-fab-options-above-main-button {
+      bottom: 100%;
+      flex-direction: column-reverse;
+      top: initial;
+
+      .hippo-fab-option {
+        margin-bottom: 4px;
+        margin-top: 0;
+      }
+    }
+  }
+
+  .hippo-fab-option {
+    @extend %hippo-material-btn;
+
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+    animation-name: enter;
     background-color: $white;
     border: 0;
+    display: flex;
     fill: $overlay-link-shadow-color;
-    padding-top: 7px;
+    height: 32px;
+    margin-top: 4px;
+    padding: 0; // reset user-agent specific padding around buttons
+    transform: scale(0);
+    transform-origin: bottom center;
+    width: 32px;
 
     &:hover {
       background-color: darken($white, 10%);
       box-shadow: $overlay-link-shadow-hover !important;
     }
+
     &:active {
       background-color: darken($white, 10%);
       box-shadow: $overlay-link-shadow-active !important;
     }
-  }
-  .hippo-fab-btn {
-    @extend %hippo-material-btn;
-    border: 0;
-    height: 100%;
-    padding: 8px 0 0 5px;
-    width: 100%;
-    &:hover:not(.disabled) {
-      background-color: darken($overlay-link-bgcolor, 12%);
-      box-shadow: $overlay-link-shadow-hover !important;
-    }
-    &:active {
-      background-color: darken($overlay-link-bgcolor, 12%);
-      box-shadow: $overlay-link-shadow-active !important;
-    }
-    &-open {
-      svg { fill: $white;}
-      // Different fab buttons are using different .svg files (among default ones provided by AngularJS Material).
-      // Therefore, we need to adjust the padding of each button type.
-      &[title='Cancel'] {
-        padding: 7px 0 0;
-      }
 
-      &[title='Edit content'] {
-        padding: 8px 0 0 5px;
-      }
+    &-disabled {
+      @include disabled-fab;
     }
 
-    &.disabled {
-      @include disabled-fab-button;
+    &-select-document {
+      // center icon visually
+      padding-left: 3px;
+      padding-top: 3px;
     }
-  }
-  &.is-showing-options {
-    .hippo-fab-btn:not(.disabled) {
-      background-color: darken($overlay-link-bgcolor, 12%);
-      box-shadow: $overlay-link-shadow-active !important;
-    }
-    .hippo-fab-dial-options {
-      display: flex;
-      button {
-        animation-duration: .2s;
-        animation-fill-mode: forwards;
-        animation-name: enter;
-        display: block;
-        transform-origin: bottom center;
 
-        &.disabled {
-          @include disabled-fab-button;
-        }
-      }
-
-      @for $i from 0 to 3 {
-        .hippo-fab-option-#{$i} {
-          animation-delay: #{.15 * $i}s;
-        }
-      }
+    svg {
+      transform: scale(.8);
     }
   }
-  &.hippo-bottom.is-showing-options .hippo-fab-dial-options {
-    flex-direction: column;
-  }
-  &.hippo-top.is-showing-options .hippo-fab-dial-options {
-    flex-direction: column-reverse;
-  }
-  .hippo-fab-dial-options {
-    bottom: 100%;
-    position: absolute;
-    width: 100%;
-    z-index: $z-index-overlay-dial-options;
-  }
-  &.hippo-bottom .hippo-fab-dial-options {
-    bottom: initial;
-    padding-top: 5px;
-    top: 100%;
-  }
-  &.hippo-top .hippo-fab-dial-options {
-    padding-bottom: 15px;
-  }
-  .hippo-fab-dial-options button {
-    display: none;
-    transform: scale(0);
+
+  @for $i from 0 to 3 {
+    .hippo-fab-option-#{$i} {
+      animation-delay: #{.15 * $i}s;
+    }
   }
 }
 
@@ -376,7 +388,6 @@
   }
 
   to {
-    transform: scale(.8);
+    transform: scale(1);
   }
 }
-

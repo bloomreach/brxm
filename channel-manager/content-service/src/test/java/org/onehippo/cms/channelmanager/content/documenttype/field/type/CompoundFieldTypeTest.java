@@ -193,6 +193,7 @@ public class CompoundFieldTypeTest {
         final Node node = createMock(Node.class);
 
         expect(node.getNodes(NODE_NAME)).andThrow(new RepositoryException());
+        expect(node.getPath()).andReturn("node/location");
         replay(node);
 
         assertFalse(fieldType.readFrom(node).isPresent());

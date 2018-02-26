@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -80,6 +81,11 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
         List<FieldValue> values = readValues(node);
 
         trimToMaxValues(values);
+
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
 
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }

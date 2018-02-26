@@ -344,14 +344,14 @@ describe('DocumentLocationField', () => {
           root: '/channel/content',
           path: '/flowers/tulip',
         });
+      });
 
-        it('it is allowed to subsequently choose a shorter path', () => {
-          // the path check is done on the original picker path, not on the last selected rootpath
-          spyOn(component, 'setPath');
-          component.onPathPicked('document-location-callback-id', '/channel/content/folder1/folder2');
-          component.onPathPicked('document-location-callback-id', '/channel/content/folder1');
-          expect(component.setPath).toHaveBeenCalled();
-        });
+      it('it is allowed to subsequently choose a shorter path', () => {
+        // the path check is done on the original picker path, not on the last selected rootpath
+        spyOn(component, 'setPath');
+        component.onPathPicked('document-location-callback-id', '/channel/content/folder1/folder2');
+        component.onPathPicked('document-location-callback-id', '/channel/content/folder1');
+        expect(component.setPath).toHaveBeenCalled();
       });
     });
   });
