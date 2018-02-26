@@ -16,7 +16,6 @@
 package org.onehippo.repository.lock.db;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,10 +46,9 @@ public class MySqlDbLockManager extends DbLockManager {
             if (schemaCheckEnabled && !connectionHelper.tableExists(tableName)) {
                 createTable(dataSource, connectionHelper, createTableStatement, tableName, uniqueIndexes);
             } else {
-                try (Connection connection = dataSource.getConnection()) {
-                    final Statement indicesStatement = connection.createStatement();
-
-                    final ResultSet resultSet = indicesStatement.executeQuery(String.format("SHOW INDEX FROM %s", tableName));
+                try (final Connection connection = dataSource.getConnection();
+                     final Statement indicesStatement = connection.createStatement();
+                     final ResultSet resultSet = indicesStatement.executeQuery(String.format("SHOW INDEX FROM %s", tableName))) {
                     boolean lockKeyIndexExists = false;
                     while (resultSet.next()) {
                         final String columnName = resultSet.getString("Column_name");
@@ -60,6 +58,7 @@ public class MySqlDbLockManager extends DbLockManager {
                             break;
                         }
                     }
+                    // explicit early close to release resources
                     resultSet.close();
                     if (!lockKeyIndexExists) {
                         // Incorrectly the lockKey does not have an index! This is a bug typically manifesting itself with

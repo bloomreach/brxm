@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,15 +45,15 @@ public class DbLockRefresher implements Runnable {
             connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement refreshStatement = connection.prepareStatement(dbLockManager.getRefreshLockStatement());
-            long currentTime = System.currentTimeMillis();
-            refreshStatement.setLong(1, currentTime);
-            refreshStatement.setString(2, dbLockManager.getClusterNodeId());
-            // select all rows that have less than 20 seconds to live
-            refreshStatement.setLong(3, currentTime + 20000);
-            int updated = refreshStatement.executeUpdate();
-            log.info("Refreshed {} locks", updated);
-            refreshStatement.close();
+            try (final PreparedStatement refreshStatement = connection.prepareStatement(dbLockManager.getRefreshLockStatement())) {
+                long currentTime = System.currentTimeMillis();
+                refreshStatement.setLong(1, currentTime);
+                refreshStatement.setString(2, dbLockManager.getClusterNodeId());
+                // select all rows that have less than 20 seconds to live
+                refreshStatement.setLong(3, currentTime + 20000);
+                int updated = refreshStatement.executeUpdate();
+                log.info("Refreshed {} locks", updated);
+            }
         } catch (SQLException e) {
             log.error("Error while trying to refresh locks", e);
         } finally {

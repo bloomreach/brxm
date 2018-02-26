@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,12 +45,12 @@ public class DbLockCleanupJanitor implements Runnable {
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
 
-            final PreparedStatement removeStatement = connection.prepareStatement(dbLockManager.getRemoveOutdatedStatement());
-            long dayAgoTime = System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
-            removeStatement.setLong(1, dayAgoTime);
-            int updated = removeStatement.executeUpdate();
-            log.info("Removed {} outdated locks", updated);
-            removeStatement.close();
+            try (final PreparedStatement removeStatement = connection.prepareStatement(dbLockManager.getRemoveOutdatedStatement())) {
+                long dayAgoTime = System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+                removeStatement.setLong(1, dayAgoTime);
+                int updated = removeStatement.executeUpdate();
+                log.info("Removed {} outdated locks", updated);
+            }
         } catch (SQLException e) {
             log.error("Error while trying remove outdated locks", e);
         } finally {

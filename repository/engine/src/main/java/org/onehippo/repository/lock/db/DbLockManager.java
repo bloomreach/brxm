@@ -270,31 +270,33 @@ public class DbLockManager extends AbstractLockManager {
 
             final long lockTime = System.currentTimeMillis();
             final long expirationTime = lockTime + REFRESH_RATE_SECONDS * 1000;
-            final PreparedStatement lockStatement = connection.prepareStatement(getLockStatement());
-            lockStatement.setLong(1, lockTime);
-            lockStatement.setLong(2, lockTime);
-            lockStatement.setLong(3, expirationTime);
-            lockStatement.setString(4, clusterNodeId);
-            lockStatement.setString(5, threadName);
-            lockStatement.setString(6, key);
-            int changed = lockStatement.executeUpdate();
-            lockStatement.close();
+            try (final PreparedStatement lockStatement = connection.prepareStatement(getLockStatement())) {
+                lockStatement.setLong(1, lockTime);
+                lockStatement.setLong(2, lockTime);
+                lockStatement.setLong(3, expirationTime);
+                lockStatement.setString(4, clusterNodeId);
+                lockStatement.setString(5, threadName);
+                lockStatement.setString(6, key);
+                int changed = lockStatement.executeUpdate();
+                // explicit early close to release resources
+                lockStatement.close();
 
-            if (changed == 0) {
-                log.debug("Either there is already a row entry for key '{}' which is not free OR the entry is not yet " +
-                        "present. Trying to add it now. If that fails, another cluster already contains the lock");
-                final PreparedStatement createStatement = connection.prepareStatement(getCreateStatement());
-                createStatement.setString(1, key);
-                createStatement.setString(2, clusterNodeId);
-                createStatement.setString(3, threadName);
-                createStatement.setLong(4, lockTime);
-                createStatement.setLong(5, expirationTime);
-                createStatement.setLong(6, lockTime);
-                try {
-                    createStatement.execute();
-                    createStatement.close();
-                } catch (SQLException e) {
-                    throw new AlreadyLockedException(String.format("Lock for '%s' is already taken", key), e);
+                if (changed == 0) {
+                    log.debug("Either there is already a row entry for key '{}' which is not free OR the entry is not yet " +
+                            "present. Trying to add it now. If that fails, another cluster already contains the lock");
+                    try (final PreparedStatement createStatement = connection.prepareStatement(getCreateStatement())) {
+                        createStatement.setString(1, key);
+                        createStatement.setString(2, clusterNodeId);
+                        createStatement.setString(3, threadName);
+                        createStatement.setLong(4, lockTime);
+                        createStatement.setLong(5, expirationTime);
+                        createStatement.setLong(6, lockTime);
+                        try {
+                            createStatement.execute();
+                        } catch (SQLException e) {
+                            throw new AlreadyLockedException(String.format("Lock for '%s' is already taken", key), e);
+                        }
+                    }
                 }
             }
             log.debug("Obtained a lock for '{}'", key);
@@ -320,30 +322,31 @@ public class DbLockManager extends AbstractLockManager {
             connection = dataSource.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement resetLockStatement = connection.prepareStatement(getResetLockStatement());
-            resetLockStatement.setLong(1, System.currentTimeMillis());
-            resetLockStatement.setString(2, key);
-            resetLockStatement.setString(3, clusterNodeId);
-            resetLockStatement.setString(4, threadName);
-            int changed = resetLockStatement.executeUpdate();
-            resetLockStatement.close();
-            if (changed == 0) {
-                final PreparedStatement selectStatement = connection.prepareStatement(getSelectStatement());
-                selectStatement.setString(1, key);
-                ResultSet resultSet = selectStatement.executeQuery();
-                if (!resultSet.next()) {
-                    log.error("Database Lock '{}' cannot be released by '{}' and cluster '{}' because lock does not exist",
-                            key, threadName, clusterNodeId);
-                    selectStatement.close();
-                    return;
+            try (final PreparedStatement resetLockStatement = connection.prepareStatement(getResetLockStatement())) {
+                resetLockStatement.setLong(1, System.currentTimeMillis());
+                resetLockStatement.setString(2, key);
+                resetLockStatement.setString(3, clusterNodeId);
+                resetLockStatement.setString(4, threadName);
+                int changed = resetLockStatement.executeUpdate();
+                // explicit early close to release resources
+                resetLockStatement.close();
+                if (changed == 0) {
+                    try (final PreparedStatement selectStatement = connection.prepareStatement(getSelectStatement())) {
+                        selectStatement.setString(1, key);
+                        try (final ResultSet resultSet = selectStatement.executeQuery()) {
+                            if (!resultSet.next()) {
+                                log.error("Database Lock '{}' cannot be released by '{}' and cluster '{}' because lock does not exist",
+                                        key, threadName, clusterNodeId);
+                            } else {
+                                log.error("Database Lock '{}' cannot be released for thread '{}' and cluster '{}' because lock is not owned.",
+                                        key, threadName, clusterNodeId);
+                            }
+                        }
+                    }
                 } else {
-                    log.error("Database Lock '{}' cannot be released for thread '{}' and cluster '{}' because lock is not owned.",
-                            key, threadName, clusterNodeId);
-                    selectStatement.close();
-                    return;
+                    log.info("Successfully released '{}'", key);
                 }
             }
-            log.info("Successfully released '{}'", key);
         } catch (SQLException e) {
             final String msg = String.format("Unlocking Database Lock '%s' for thread '%s' and cluster '%s' failed.", key, threadName, clusterNodeId, e);
             log.error(msg);
@@ -363,19 +366,18 @@ public class DbLockManager extends AbstractLockManager {
             connection = dataSource.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement abortStatement = connection.prepareStatement(getAbortStatement());
-            abortStatement.setLong(1, System.currentTimeMillis());
-            abortStatement.setString(2, key);
-            int changed = abortStatement.executeUpdate();
-            abortStatement.close();
-
-            if (changed == 0) {
-                // can happen because by another Thread or cluster node already stopped in the meantime
-                log.info("Cannot set status to abort for '{}' because no such lock present or already aborted or not runnning.",
-                        key);
-                return;
+            try (final PreparedStatement abortStatement = connection.prepareStatement(getAbortStatement())) {
+                abortStatement.setLong(1, System.currentTimeMillis());
+                abortStatement.setString(2, key);
+                int changed = abortStatement.executeUpdate();
+                if (changed == 0) {
+                    // can happen because by another Thread or cluster node already stopped in the meantime
+                    log.info("Cannot set status to abort for '{}' because no such lock present or already aborted or not runnning.",
+                            key);
+                } else {
+                    log.info("Successfully changed status to abort for '{}'", key);
+                }
             }
-            log.info("Successfully changed status to abort for '{}'", key);
         } catch (SQLException e) {
             final String msg = String.format("Aborting Database Lock '%s' failed.", key);
             log.error(msg, e);
@@ -387,21 +389,20 @@ public class DbLockManager extends AbstractLockManager {
 
     @Override
     protected synchronized boolean containsLock(final String key) throws LockManagerException {
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement selectStatement = connection.prepareStatement(getSelectStatement());
+        try (final Connection connection = dataSource.getConnection();
+             final PreparedStatement selectStatement = connection.prepareStatement(getSelectStatement())) {
             selectStatement.setString(1, key);
-            ResultSet resultSet = selectStatement.executeQuery();
-            if (!resultSet.next()) {
-                log.debug("No database row found for lockKey '{}'", key);
-                selectStatement.close();
-                return false;
-            }
-            final String status = resultSet.getString("status");
-            selectStatement.close();
+            try (final ResultSet resultSet = selectStatement.executeQuery()) {
+                if (!resultSet.next()) {
+                    log.debug("No database row found for lockKey '{}'", key);
+                    return false;
+                }
+                final String status = resultSet.getString("status");
 
-            boolean locked = "RUNNING".equals(status) || "ABORT".equals(status);
-            log.debug("Found database row for '{}' with locked = {}", key, locked);
-            return locked;
+                boolean locked = "RUNNING".equals(status) || "ABORT".equals(status);
+                log.debug("Found database row for '{}' with locked = {}", key, locked);
+                return locked;
+            }
         } catch (SQLException e) {
             final String msg = String.format("Exception while checking lock for '%s'. Return false.", key);
             log.error(msg, e);
@@ -411,9 +412,9 @@ public class DbLockManager extends AbstractLockManager {
 
     @Override
     protected synchronized List<Lock> retrieveLocks() throws LockManagerException {
-        try (Connection connection = dataSource.getConnection()) {
-            final PreparedStatement selectStatement = connection.prepareStatement(getAllLockedStatement());
-            ResultSet resultSet = selectStatement.executeQuery();
+        try (final Connection connection = dataSource.getConnection();
+             final PreparedStatement selectStatement = connection.prepareStatement(getAllLockedStatement());
+             final ResultSet resultSet = selectStatement.executeQuery()) {
             final List<Lock> locks = new ArrayList<>();
             while (resultSet.next()) {
                 final String lockKey = resultSet.getString("lockKey");
@@ -425,7 +426,6 @@ public class DbLockManager extends AbstractLockManager {
                 log.debug("Adding lock : {}", lock.toString());
                 locks.add(lock);
             }
-            resultSet.close();
 
             if (locks.size() == 0) {
                 log.debug("No locks found");

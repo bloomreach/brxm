@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,13 +43,13 @@ public class DbResetExpiredLocksJanitor implements Runnable {
             connection = dbLockManager.getConnection();
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(true);
-            final PreparedStatement resetStatement = connection.prepareStatement(dbLockManager.getResetExpiredStatement());
-            long currentTime = System.currentTimeMillis();
-            resetStatement.setLong(1, currentTime);
-            resetStatement.setLong(2, currentTime);
-            int updated = resetStatement.executeUpdate();
-            log.info("Expired {} locks", updated);
-            resetStatement.close();
+            try (final PreparedStatement resetStatement = connection.prepareStatement(dbLockManager.getResetExpiredStatement())) {
+                long currentTime = System.currentTimeMillis();
+                resetStatement.setLong(1, currentTime);
+                resetStatement.setLong(2, currentTime);
+                int updated = resetStatement.executeUpdate();
+                log.info("Expired {} locks", updated);
+            }
         } catch (SQLException e) {
             log.error("Error while trying to reset locks", e);
         } finally {
