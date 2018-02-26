@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ package org.hippoecm.repository;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.Calendar;
 
 import javax.jcr.Node;
@@ -30,9 +28,10 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.value.BinaryImpl;
+import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -156,7 +155,7 @@ public class PdfExtractedTextWithLineBreaksAreIndexedCorrectlyTest extends Repos
         {
             InputStream pdf = this.getClass().getResourceAsStream(WORDS_ON_NEW_LINE_WITHOUT_SPACES);
             try {
-                PDFParser parser = new PDFParser(new BufferedInputStream(pdf));
+                PDFParser parser = new PDFParser(new RandomAccessBuffer(pdf));
                 PDDocument pdDocument = null;
                 try {
                     parser.parse();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,6 +88,7 @@ import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 import org.hippoecm.repository.query.lucene.util.SetDocIdSetBuilder;
+import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -647,6 +647,9 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         QueryHandlerContext context = getContext();
         HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
         stateMgr.repository.setFacetedNavigationEngine(this);
+        if (getTikaConfigPath() == null) {
+            setTikaConfigPath(TikaFactory.getTikaConfigPath());
+        }
         super.doInit();
     }
 
