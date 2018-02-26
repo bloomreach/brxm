@@ -87,11 +87,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-parsers</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
