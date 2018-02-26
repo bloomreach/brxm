@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
@@ -70,6 +72,14 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     public void setComponentWindowResponseAppenders(List<ComponentWindowResponseAppender> componentWindowResponseAppenders) {
         this.componentWindowResponseAppenders = componentWindowResponseAppenders;
+    }
+
+    public void addComponentWindowResponseAppender(ComponentWindowResponseAppender componentWindowResponseAppender) {
+        if (componentWindowResponseAppenders == null) {
+            componentWindowResponseAppenders = new ArrayList<>();
+        }
+
+        componentWindowResponseAppenders.add(componentWindowResponseAppender);
     }
 
     @Override
@@ -432,10 +442,11 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                 break;
             }
 
-            for (ComponentWindowResponseAppender componentWindowResponseAppender : componentWindowResponseAppenders) {
-                componentWindowResponseAppender.process(rootWindow, rootRenderingWindow, window, request, response);
+            if (CollectionUtils.isNotEmpty(componentWindowResponseAppenders)) {
+                for (ComponentWindowResponseAppender componentWindowResponseAppender : componentWindowResponseAppenders) {
+                    componentWindowResponseAppender.process(rootWindow, rootRenderingWindow, window, request, response);
+                }
             }
-
         }
     }
 
