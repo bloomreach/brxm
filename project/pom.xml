@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -73,8 +73,6 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.11</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
-    <tika-core.version>1.7</tika-core.version>
-    <tika-parsers.version>1.7</tika-parsers.version>
     <xerces.version>2.9.1</xerces.version>
 
     <!-- END properties versions with dependency management -->
@@ -331,98 +329,6 @@
         <version>${jaxrs.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.apache.tika</groupId>
-        <artifactId>tika-core</artifactId>
-        <version>${tika-core.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tika</groupId>
-        <artifactId>tika-parsers</artifactId>
-        <version>${tika-parsers.version}</version>
-        <exclusions>
-          <!-- Exclude PKCS7 signed messages -->
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk15</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
-          </exclusion>
-          <!-- Exclude audio and video formats -->
-          <exclusion>
-            <groupId>org.gagravarr</groupId>
-            <artifactId>vorbis-java-tika</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.gagravarr</groupId>
-            <artifactId>vorbis-java-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.googlecode.mp4parser</groupId>
-            <artifactId>isoparser</artifactId>
-          </exclusion>
-          <!-- Exclude NetCDF and HDF formats -->
-          <exclusion>
-            <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-          </exclusion>
-          <!-- Exclude MIME4J (raw email and mbox files) -->
-          <exclusion>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j-dom</artifactId>
-          </exclusion>
-          <!-- Exclude EXIF and other image metadata as we normally don't want to parse
-               images for full text indexing -->
-          <exclusion>
-            <groupId>com.drewnoakes</groupId>
-            <artifactId>metadata-extractor</artifactId>
-          </exclusion>
-          <!-- Exclude the Rome library as we normally don't want to parse
-               RSS and Atom feeds for full text indexing. -->
-          <exclusion>
-            <groupId>rome</groupId>
-            <artifactId>rome</artifactId>
-          </exclusion>
-          <!-- Exclude asm (Java parsing) -->
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-debug-all</artifactId>
-          </exclusion>
-          <!-- Exclude boilerpipe -->
-          <exclusion>
-            <artifactId>boilerpipe</artifactId>
-            <groupId>de.l3s.boilerpipe</groupId>
-          </exclusion>
-          <!-- Exclude xmlbeans because it contains org/w3c/dom/** which is incompatible with Java6 or higher. -->
-          <exclusion>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-          </exclusion>
-          <!-- Exclude geronimo-stax-api-1.0-spec, the JRE 6+ already provides the api-1.2 spec itself -->
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
