@@ -62,7 +62,7 @@ class ChannelCtrl {
   }
 
   get isContentOverlayDisplayed() {
-    this.OverlayService.showContentOverlay(this.OverlayService.isContentOverlayDisplayed && (!this.ProjectService || (this.ProjectService && this.ProjectService.actionFlags.contentOverlay.allowed)));
+    this.OverlayService.showContentOverlay(this.OverlayService.isContentOverlayDisplayed && this.ProjectService.actionFlags.contentOverlay.allowed);
     return this.OverlayService.isContentOverlayDisplayed;
   }
 
@@ -71,7 +71,7 @@ class ChannelCtrl {
   }
 
   get isComponentsOverlayDisplayed() {
-    this.OverlayService.showComponentsOverlay(this.OverlayService.isComponentsOverlayDisplayed && (!this.ProjectService || (this.ProjectService && this.ProjectService.actionFlags.componentsOverlay.allowed)));
+    this.OverlayService.showComponentsOverlay(this.OverlayService.isComponentsOverlayDisplayed && this.ProjectService.actionFlags.componentsOverlay.allowed);
     return this.OverlayService.isComponentsOverlayDisplayed;
   }
 
