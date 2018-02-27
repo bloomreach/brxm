@@ -57,7 +57,7 @@ public class EssentialsFacetsComponent extends CommonComponent {
         final HippoFacetNavigationBean hippoFacetNavigationBean = getFacetNavigationBean(context, facetPath, queryParam);
 
         request.setAttribute(REQUEST_ATTR_QUERY, queryParam);
-        request.setAttribute(REQUEST_ATTR_FACETS, hippoFacetNavigationBean);
+        request.setModel(REQUEST_ATTR_FACETS, hippoFacetNavigationBean);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 
