@@ -20,19 +20,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -46,9 +44,13 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
@@ -227,6 +229,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private Map<String, String> parameters;
 
     private HstSiteMapMatcher matcher;
+
+    private Map<String, String> responseHeaders;
 
     public MountService(final HstNode mount,
                         final Mount parent,
@@ -521,6 +525,23 @@ public class MountService implements ContextualizableMount, MutableMount {
             defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
         } else if (parent != null) {
             defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
+        }
+
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS);
+            if (resHeaders.length != 0) {
+                responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
+            }
+        } else if (parent != null) {
+            Map<String, String> resHeaderMap = parent.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        } else {
+            Map<String, String> resHeaderMap = virtualHost.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
         }
 
         if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_CHANNELPATH)) {
@@ -1021,6 +1042,15 @@ public class MountService implements ContextualizableMount, MutableMount {
         StringBuilder builder = new StringBuilder("MountService [jcrPath=");
         builder.append(jcrLocation).append(", hostName=").append(virtualHost.getHostName()).append("]");
         return  builder.toString();
+    }
+
+    @Override
+    public Map<String, String> getResponseHeaders() {
+        if (responseHeaders == null) {
+            return Collections.emptyMap();
+        }
+
+        return Collections.unmodifiableMap(responseHeaders);
     }
 
 }

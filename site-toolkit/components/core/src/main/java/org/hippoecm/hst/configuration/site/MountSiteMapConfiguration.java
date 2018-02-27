@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 
@@ -47,6 +48,7 @@ public class MountSiteMapConfiguration {
     private int hashCode;
     private final String mountContentPath;
     private final String mountContextPath;
+    private final Map<String, String> responseHeaders;
 
     public MountSiteMapConfiguration(Mount mount) {
         parameters = mount.getParameters();
@@ -61,6 +63,7 @@ public class MountSiteMapConfiguration {
         hashCode = computeHashCode();
         mountContentPath = mount.getContentPath();
         mountContextPath = mount.getContextPath();
+        responseHeaders = mount.getResponseHeaders();
     }
 
     public Map<String, String> getParameters() {
@@ -107,6 +110,10 @@ public class MountSiteMapConfiguration {
         return mountContextPath;
     }
 
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -151,6 +158,9 @@ public class MountSiteMapConfiguration {
         if (mountContextPath != null ? !mountContextPath.equals(that.mountContextPath) : that.mountContextPath != null) {
             return false;
         }
+        if (!Objects.equals(responseHeaders, that.responseHeaders)) {
+            return false;
+        }
 
         return true;
     }
@@ -172,6 +182,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (defaultResourceBundleIds != null ? Arrays.hashCode(defaultResourceBundleIds) : 0);
         result = 31 * result + (mountContentPath != null ? mountContentPath.hashCode() : 0);
         result = 31 * result + (mountContextPath != null ? mountContextPath.hashCode() : 0);
+        result = 31 * result + (responseHeaders != null ? responseHeaders.hashCode() : 0);
         return result;
     }
 }

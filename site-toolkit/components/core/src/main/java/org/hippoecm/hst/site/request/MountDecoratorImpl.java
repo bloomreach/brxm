@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
@@ -48,6 +47,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -421,6 +421,11 @@ public class MountDecoratorImpl implements MountDecorator {
             return  builder.toString();
         }
 
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return delegatee.getResponseHeaders();
+        }
+
     }
 
     class PreviewDecoratedVirtualHost implements VirtualHost {
@@ -567,6 +572,11 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public boolean isCustomHttpsSupported() {
             return delegatee.isCustomHttpsSupported();
+        }
+
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return delegatee.getResponseHeaders();
         }
     }
 

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -206,5 +207,13 @@ public interface VirtualHost {
      * through <code>getScheme()</code> the request should be <code>http</code>
      */
     boolean isCustomHttpsSupported();
+
+    /**
+     * Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     * in any responses by the requests on this.
+     * @return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     * in any responses by the requests on this.
+     */
+    Map<String, String> getResponseHeaders();
 
 }

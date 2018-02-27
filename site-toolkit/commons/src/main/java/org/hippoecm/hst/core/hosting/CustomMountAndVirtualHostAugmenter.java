@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -43,6 +42,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -364,6 +364,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String toString() {
             return "CustomVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
+        }
+
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return Collections.emptyMap();
         }
 
     }
@@ -745,6 +750,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         public List<String> getCmsLocations() {
             // nothing to return for the custom mount
             return Collections.emptyList();
+        }
+
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return Collections.emptyMap();
         }
 
     }

@@ -389,4 +389,12 @@ public interface HstSiteMapItem {
      */
     boolean isMarkedDeleted();
 
+    /**
+     * Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     * in any responses by the requests on this.
+     * @return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     * in any responses by the requests on this.
+     */
+    Map<String, String> getResponseHeaders();
+
 }

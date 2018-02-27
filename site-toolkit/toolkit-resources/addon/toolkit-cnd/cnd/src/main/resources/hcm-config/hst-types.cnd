@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -181,6 +181,7 @@
 - hst:containerresource (boolean)
 // boolean when set to false can be used to explicitly skip a sitemap item in pages overview in channel mngr.
 - hst:hiddeninchannelmanager (boolean)
+- hst:responseheaders (string) multiple
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable
@@ -358,6 +359,7 @@
 - hst:cacheable (boolean)
 // to hold all the 'free defined properties'
 - hst:defaultresourcebundleid (string)
+- hst:responseheaders (string) multiple
 - * (string)
 
 [hst:portmount] > nt:base, mix:referenceable
@@ -392,6 +394,7 @@
 // cndhost is used in the URL if configured. The value is not allowed to contain the scheme, thus do not use http://hostname or
 // https://hostname but //hostname
 - hst:cdnhost (string)
+- hst:responseheaders (string) multiple
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms

@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -45,6 +44,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -531,6 +531,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return "CustomVirtualHost [name=" + name + ", hostName=" + hostName + "]";
         }
 
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return Collections.emptyMap();
+        }
+
     }
 
     private class CustomPortMount implements MutablePortMount {
@@ -933,6 +938,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 log.warn("Can only get cms locations of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
                 return Collections.emptyList();
             }
+        }
+
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return Collections.emptyMap();
         }
 
     }

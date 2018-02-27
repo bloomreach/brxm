@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +44,11 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
@@ -174,6 +175,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
+
+    private Map<String, String> responseHeaders;
 
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
@@ -441,6 +444,23 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>(parentItem.getUsers());
         } else {
             users = new HashSet<>();
+        }
+
+        if (node.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = node.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS);
+            if (resHeaders.length != 0) {
+                responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
+            }
+        } else if (parentItem != null) {
+            Map<String, String> resHeaderMap = parentItem.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        } else {
+            Map<String, String> resHeaderMap = mountSiteMapConfiguration.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
         }
 
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE)) {
@@ -891,6 +911,15 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     public boolean isMarkedDeleted() {
         return markedDeleted;
+    }
+
+    @Override
+    public Map<String, String> getResponseHeaders() {
+        if (responseHeaders == null) {
+            return Collections.emptyMap();
+        }
+
+        return Collections.unmodifiableMap(responseHeaders);
     }
 
     /**

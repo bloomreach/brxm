@@ -16,13 +16,13 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.google.common.net.InetAddresses;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,8 +32,11 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.net.InetAddresses;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
@@ -98,6 +101,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String [] defaultResourceBundleIds;
     private String cdnHost;
     private boolean customHttpsSupported;
+    private Map<String, String> responseHeaders;
 
     public VirtualHostService(final VirtualHostsService virtualHosts,
                               final HstNode virtualHostNode,
@@ -278,6 +282,18 @@ public class VirtualHostService implements MutableVirtualHost {
             cdnHost = null;
         }
 
+        if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = virtualHostNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOST_PROPERTY_RESPONSE_HEADERS);
+            if (resHeaders.length != 0) {
+                responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
+            }
+        } else if (parentHost != null) {
+            Map<String, String> resHeaderMap = parentHost.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        }
+
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("[.]");
 
@@ -379,6 +395,13 @@ public class VirtualHostService implements MutableVirtualHost {
         this.cdnHost = parent.cdnHost;
         this.customHttpsSupported = parent.customHttpsSupported;
         this.name = nameSegments[position];
+
+        if (parent.responseHeaders == null) {
+            this.responseHeaders = null;
+        } else {
+            this.responseHeaders = new LinkedHashMap<String, String>(parent.responseHeaders);
+        }
+
         // add child host services
         int nextPosition = position - 1;
         if(nextPosition > -1 ) {
@@ -549,6 +572,15 @@ public class VirtualHostService implements MutableVirtualHost {
     @Override
     public boolean isCustomHttpsSupported() {
         return customHttpsSupported;
+    }
+
+    @Override
+    public Map<String, String> getResponseHeaders() {
+        if (responseHeaders == null) {
+            return Collections.emptyMap();
+        }
+
+        return Collections.unmodifiableMap(responseHeaders);
     }
 
     private String buildHostName() {
