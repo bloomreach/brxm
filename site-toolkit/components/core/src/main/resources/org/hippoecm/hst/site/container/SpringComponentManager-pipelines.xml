@@ -100,6 +100,10 @@
     <property name="valveName" value="contextResolvingValve" />
   </bean>
 
+  <bean id="selectiveRenderingContextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SelectiveRenderingContextResolvingValve">
+    <property name="valveName" value="selectiveRenderingContextResolvingValve" />
+  </bean>
+
   <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
     <property name="valveName" value="localizationValve" />
   </bean>
@@ -213,6 +217,38 @@
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
                 <ref bean="contextResolvingValve" />
+                <ref bean="localizationValve" />
+                <ref bean="actionValve" />
+                <ref bean="resourceServingValve" />
+                <ref bean="pageInfoRenderingValve" />
+                <ref bean="esiPageInfoScanningValve" />
+                <ref bean="pageCachingValve"/>
+                <ref bean="componentRenderingValve" />
+                <ref bean="aggregationValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="SpaSitePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve"/>
+                <ref bean="selectiveRenderingContextResolvingValve" />
                 <ref bean="localizationValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
