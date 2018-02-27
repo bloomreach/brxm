@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,11 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoGlobal = HippoGlobal;
+    this.initialActionFlags = {
+      contentOverlay: { allowed: true, enabled: true },
+      componentsOverlay: { allowed: true, enabled: true },
+    };
+    this.actionFlags = Object.assign({}, this.initialActionFlags);
   }
 
   load(mountId, projectId) {
@@ -111,8 +116,19 @@ class ProjectService {
       .then(() => {
         const selectedProject = this.projects.find(project => project.id === this.projectId);
         this.selectedProject = selectedProject;
+        this.updateActionFlags(selectedProject);
         return this.selectedProject ? this._selectProject(this.selectedProject.id) : this._selectCore();
       });
+  }
+
+  updateActionFlags(project) {
+    const allowed = this.isCore(project) || (project.state === 'UNAPPROVED');
+    this.actionFlags.contentOverlay.allowed = allowed;
+    this.actionFlags.componentsOverlay.allowed = allowed;
+  }
+
+  isCore(project) {
+    return !project;
   }
 
   _getProjects() {

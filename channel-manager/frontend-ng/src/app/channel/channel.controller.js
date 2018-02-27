@@ -29,6 +29,7 @@ class ChannelCtrl {
     ConfigService,
     FeedbackService,
     HippoIframeService,
+    ProjectService,
     PageActionsService,
     PageMetaDataService,
     SidePanelService,
@@ -47,6 +48,7 @@ class ChannelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.PageActionsService = PageActionsService;
     this.PageMetaDataService = PageMetaDataService;
+    this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
 
     this.projectsEnabled = ConfigService.projectsEnabled;
@@ -60,6 +62,7 @@ class ChannelCtrl {
   }
 
   get isContentOverlayDisplayed() {
+    this.OverlayService.showContentOverlay(this.OverlayService.isContentOverlayDisplayed && this.ProjectService.actionFlags.contentOverlay.allowed);
     return this.OverlayService.isContentOverlayDisplayed;
   }
 
@@ -68,6 +71,7 @@ class ChannelCtrl {
   }
 
   get isComponentsOverlayDisplayed() {
+    this.OverlayService.showComponentsOverlay(this.OverlayService.isComponentsOverlayDisplayed && this.ProjectService.actionFlags.componentsOverlay.allowed);
     return this.OverlayService.isComponentsOverlayDisplayed;
   }
 
