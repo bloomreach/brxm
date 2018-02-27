@@ -32,15 +32,8 @@
     <property name="extraMixins" ref="pageModelJacksonObjectMapperExtraMixins" />
   </bean>
 
-  <bean id="pageModelJacksonJaxbIntrospector"
-        class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair"
-        factory-method="pair">
-    <constructor-arg>
-      <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
-    </constructor-arg>
-    <constructor-arg>
-      <bean class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector"/>
-    </constructor-arg>
+  <bean id="pageModelAnnotationIntrospector"
+        class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector">
   </bean>
 
   <bean id="pageModelJacksonObjectMapper"
@@ -51,7 +44,7 @@
     <property name="arguments">
       <list>
         <bean class="com.fasterxml.jackson.databind.ObjectMapper">
-          <property name="annotationIntrospector" ref="pageModelJacksonJaxbIntrospector"/>
+          <property name="annotationIntrospector" ref="pageModelAnnotationIntrospector" />
         </bean>
       </list>
     </property>

@@ -72,16 +72,6 @@ public class PageModelAggregationValve extends AggregationValve {
     private static final String DEFINITION_ID_METADATA = "definitionId";
 
     /**
-     * Self link name.
-     */
-    private static final String SELF_LINK_NAME = "self";
-
-    /**
-     * Site link name.
-     */
-    private static final String SITE_LINK_NAME = "site";
-
-    /**
      * Content JSON Pointer prefix.
      */
     private static final String CONTENT_JSON_POINTER_PREFIX = "/content/";
@@ -270,9 +260,12 @@ public class PageModelAggregationValve extends AggregationValve {
                     final HippoBean bean = (HippoBean) model;
                     final String contentId = bean.getCanonicalUUID();
                     final String jsonPointerContentId = contentIdToJsonName(contentId);
-                    HippoBeanWrapperModel beanWrapperModel = addContentModelToPageModel(pageModel, bean, contentId,
-                            jsonPointerContentId);
-                    decorateContentMetadata(hstRequest, hstResponse, bean, beanWrapperModel);
+
+                    final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(contentId, bean);
+                    pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
+
+                    decorateContentMetadata(hstRequest, hstResponse, bean, wrapperBeanModel);
+
                     referenceModel = new ReferenceMetadataBaseModel(
                             CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
                 }
@@ -284,38 +277,6 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return pageModel;
-    }
-
-    /**
-     * Add and return a content model to the page model's content section.
-     * @param pageModel aggregated page model
-     * @param bean Hippo content bean instance
-     * @param contentId the content identifier of a specific Hippo content bean instance
-     * @param jsonPointerContentId the identifier to be used in JSON Pointer String representation for the content {@code bean}
-     * @return wrapperBeanModel added content wrapper model
-     */
-    private HippoBeanWrapperModel addContentModelToPageModel(final AggregatedPageModel pageModel, final HippoBean bean,
-            final String contentId, final String jsonPointerContentId) {
-        final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(contentId, bean);
-
-        if (bean.isHippoDocumentBean() || bean.isHippoFolderBean()) {
-            final HstRequestContext requestContext = RequestContextProvider.get();
-            final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
-
-            final Mount selfMount = requestContext.getResolvedMount().getMount();
-            final HstLink selfLink = linkCreator.create(bean.getNode(), selfMount);
-            wrapperBeanModel.putLink(SELF_LINK_NAME, selfLink.toUrlForm(requestContext, true));
-
-            final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
-            if (siteMount != null) {
-                final HstLink siteLink = linkCreator.create(bean.getNode(), siteMount);
-                wrapperBeanModel.putLink(SITE_LINK_NAME, siteLink.toUrlForm(requestContext, true));
-            }
-        }
-
-        pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
-
-        return wrapperBeanModel;
     }
 
     /**
@@ -363,12 +324,12 @@ public class PageModelAggregationValve extends AggregationValve {
         if (siteMapItem != null) {
             final Mount selfMount = requestContext.getResolvedMount().getMount();
             final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-            pageModel.putLink(SELF_LINK_NAME, selfLink.toUrlForm(requestContext, true));
+            pageModel.putLink(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
 
             final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
             if (siteMount != null) {
                 final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
-                pageModel.putLink(SITE_LINK_NAME, siteLink.toUrlForm(requestContext, true));
+                pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
             }
         }
     }

@@ -177,4 +177,15 @@ public interface ContainerConstants {
     String FREEMARKER_JCR_TEMPLATE_PROTOCOL = "jcr:";
     String FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL = "webfile:";
     String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
+
+    /**
+     * Generic Link Name for the self.
+     */
+    String LINK_NAME_SELF = "self";
+
+    /**
+     * Generic Link Name for the site.
+     */
+    String LINK_NAME_SITE = "site";
+
 }
