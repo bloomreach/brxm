@@ -20,7 +20,9 @@ import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,5 +52,10 @@ public class Banner extends BaseHstComponent {
 
         String bannerPath = paramsInfo.getPath();
         request.setAttribute("bannerPath", bannerPath);
+
+        HstRequestContext requestContext = request.getRequestContext();
+        HstLink aboutUsLink = requestContext.getHstLinkCreator().createByRefId("aboutId",
+                requestContext.getResolvedMount().getMount());
+        request.setModel("aboutUsLink", aboutUsLink);
     }
 }
