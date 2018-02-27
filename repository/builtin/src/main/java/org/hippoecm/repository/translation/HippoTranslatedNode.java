@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,10 +75,22 @@ public final class HippoTranslatedNode {
         if (!nodes.hasNext()) {
             throw new ItemNotFoundException("Folder was not translated to " + language);
         }
-        if (nodes.getSize() > 1) {
+
+        Node node = nodes.nextNode();
+        if (nodes.getSize() > 3) {
             log.warn("More than one translated variant found for node " + id + " in language " + language);
+        } else if (nodes.getSize() > 1) {
+            String handleId = null;
+            Node parent = node.getParent();
+            do {
+                Node next = nodes.nextNode();
+                if (!next.getParent().getIdentifier().equals(parent.getIdentifier())) {
+                    log.warn("More than one translated variant found for node " + id + " in language " + language);
+                    break;
+                }
+            } while (nodes.hasNext());
         }
-        return nodes.nextNode();
+        return node;
     }
 
     public boolean hasTranslation(String language) throws RepositoryException {
