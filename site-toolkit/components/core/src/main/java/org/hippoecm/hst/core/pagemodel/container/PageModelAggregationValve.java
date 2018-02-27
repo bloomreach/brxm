@@ -34,6 +34,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.AggregationValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -232,6 +233,7 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
+                addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.isContainerItemWindow()) {
@@ -245,6 +247,7 @@ public class PageModelAggregationValve extends AggregationValve {
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
+                addComponentRenderingURLLink(hstResponse, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
                 curContainerWindowModel.addComponentWindowSet(componentWindowModel);
             } else {
@@ -277,6 +280,12 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return pageModel;
+    }
+
+    private void addComponentRenderingURLLink(HstResponse hstResponse,
+            IdentifiableLinkableMetadataBaseModel linkableModel) {
+        HstURL compRenderURL = hstResponse.createComponentRenderingURL();
+        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL.toString());
     }
 
     /**
