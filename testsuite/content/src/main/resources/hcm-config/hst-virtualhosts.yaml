@@ -31,6 +31,7 @@ definitions:
               jcr:primaryType: hst:mount
               hst:alias: resourceapi
               hst:namedpipeline: PageModelPipeline
+              hst:responseheaders: ['Access-Control-Allow-Origin: *']
             /demosite_fr:
               jcr:primaryType: hst:mount
               hst:alias: fr_site
@@ -106,6 +107,7 @@ definitions:
                 jcr:primaryType: hst:mount
                 hst:alias: resourceapi
                 hst:namedpipeline: PageModelPipeline
+                hst:responseheaders: ['Access-Control-Allow-Origin: *']
               /demosite_fr:
                 jcr:primaryType: hst:mount
                 hst:alias: fr_site
