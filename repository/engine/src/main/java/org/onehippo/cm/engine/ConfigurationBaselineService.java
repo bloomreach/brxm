@@ -211,8 +211,16 @@ public class ConfigurationBaselineService {
                 // set lastupdated date to now
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-                Node moduleNode = getModuleNode(baseline, module);
-
+                //TODO SS: Improve new module handling
+                Node moduleNode = null;
+                try {
+                    moduleNode = getModuleNode(baseline, module);
+                } catch(Exception ex) {
+                    final Node group = createNodeIfNecessary(baseline, module.getProject().getGroup().getName(), NT_HCM_GROUP, true);
+                    final Node project = createNodeIfNecessary(group, module.getProject().getName(), NT_HCM_PROJECT, true);
+                    moduleNode = createNodeIfNecessary(project, module.getName(), NT_HCM_MODULE, true);
+                    storeBaselineModule(module, moduleNode, session, false);
+                }
                 // do incremental update
                 storeBaselineModule(module, moduleNode, session, true);
 
@@ -317,6 +325,9 @@ public class ConfigurationBaselineService {
         Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
 
         // delete removed resources, which might include removed sources
+
+        //todo SS: In case of extension module, delete module before saving
+
         if (incremental) {
             log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
             log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));

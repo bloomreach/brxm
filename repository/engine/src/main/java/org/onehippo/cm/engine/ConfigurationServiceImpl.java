@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -70,6 +72,11 @@ import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.util.NodeTypeUtils;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.Subscribe;
+import org.onehippo.cms7.services.extension.ExtensionEvent;
+import org.onehippo.cms7.services.extension.ExtensionRegistry;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +133,24 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             stop();
             throw e;
         }
+
+        HippoServiceRegistry.registerService(this, HippoEventBus.class);
         return this;
+    }
+
+    @Subscribe
+    public void onEvent(final ExtensionEvent event) throws ParserException, IOException, URISyntaxException, RepositoryException {
+        final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
+        final Collection<ModuleImpl> modules = modelReader.collectExtensionModules(event.getClassLoader());
+        for (ModuleImpl module : modules) {
+            runtimeConfigurationModel.addModule(module);
+        }
+        final ConfigurationModelImpl newModel = runtimeConfigurationModel.build();
+        applyConfig(baselineModel, newModel,false,false, false,false);
+        applyContent(newModel);
+        runtimeConfigurationModel = newModel;
+
+        updateBaselineForAutoExport(modules);
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
@@ -492,7 +516,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private ConfigurationModelImpl loadBootstrapModel() throws RepositoryException {
         try {
-            return new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader());
+            final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
+            ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
+            final Map<String, ClassLoader> contexts = ExtensionRegistry.getContexts();
+            for (ClassLoader classLoader : contexts.values()) {
+                model = modelReader.readExtension(classLoader, model);
+            }
+            return model;
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;
@@ -693,11 +723,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             // webfiles
             try {
-                final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
-                if (autoReloadService == null || !autoReloadService.isEnabled()) {
-                    configService.writeWebfiles(bootstrapModel, baselineService, session);
-                    session.save();
-                }
+                configService.writeWebfiles(bootstrapModel, baselineService, session);
+                session.save();
             } catch (IOException e) {
                 log.error("Error initializing webfiles", e);
             }

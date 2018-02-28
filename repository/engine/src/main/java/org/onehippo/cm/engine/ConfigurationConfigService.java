@@ -48,13 +48,17 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.impl.DigestBundleResolver;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -66,9 +70,13 @@ import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.repository.util.PartialZipFile;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +118,11 @@ public class ConfigurationConfigService {
     }
 
     void writeWebfiles(final ConfigurationModel model, final ConfigurationBaselineService baselineService, final Session session) throws IOException, RepositoryException {
+
+        final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
+        final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
+        final boolean shouldLoad = autoReloadService == null || !autoReloadService.isEnabled();
+
         if (!model.getWebFileBundleDefinitions().isEmpty()) {
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
@@ -124,6 +137,30 @@ public class ConfigurationConfigService {
 
                 final Module module = webFileBundleDefinition.getSource().getModule();
                 if (module.isArchive()) {
+
+                    if (webFilesWatcherService != null) {
+                        final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
+                        boolean shouldProcess = true;
+                        for (Path webFilesDirectory : webFilesDirectories) {
+                            final Path moduleDescriptorPath = webFilesDirectory.resolveSibling(Constants.HCM_MODULE_YAML);
+                            try {
+                                final PathConfigurationReader.ReadResult result;
+                                result = new PathConfigurationReader().read(moduleDescriptorPath, false);
+                                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
+                                if (moduleImpl.equals(module)) {
+                                    //Skip loading since it was already taken care by webfilewatcher/autoreaload
+                                    shouldProcess = false;
+                                }
+                            } catch (ParserException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        if (!shouldProcess) {
+                            continue;
+                        }
+                    }
+                    //check if webfile service already loaded this module
+
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
                     boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);

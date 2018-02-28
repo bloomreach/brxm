@@ -43,8 +43,8 @@ import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
@@ -238,7 +238,7 @@ public class ConfigurationContentService {
                 .distinct().map(i -> i.getDefinition().getNode().getPath() + " in " + i.getDefinition().getSource().getOrigin())
                 .collect(Collectors.joining(", \n    "));
         if (StringUtils.isNotEmpty(orderBeforeDuplicates)) {
-            log.warn("Following node(s) reference the same node multiple times in order before:\n    {}", orderBeforeDuplicates);
+            log.warn("Following node(s) reference the same node multiple times in order-before:\n    {}", orderBeforeDuplicates);
         }
     }
 
