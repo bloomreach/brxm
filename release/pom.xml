@@ -49,8 +49,6 @@
     <hippo.ckeditor.version>4.7.1-h12.3.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.3.0-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>5.3.0-SNAPSHOT</hippo.cms.version>
-    <hippo.frontend.plugins.version>4.3.0-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>4.3.0-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>5.3.0-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>5.3.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>5.3.0-SNAPSHOT</hippo.repository.version>
@@ -867,20 +865,6 @@
       </dependency>
 
       <!-- All Hippo Github artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7.frontend</groupId>
-        <artifactId>hippo-plugins</artifactId>
-        <version>${hippo.frontend.plugins.version}</version>
-        <classifier>distribution</classifier>
-        <type>zip</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.frontend</groupId>
-        <artifactId>hippo-theme</artifactId>
-        <version>${hippo.frontend.theme.version}</version>
-        <classifier>distribution</classifier>
-        <type>zip</type>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-ckeditor</artifactId>
