@@ -41,15 +41,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.frontend</groupId>
-      <artifactId>hippo-theme</artifactId>
-      <version>${hippo.frontend.theme.version}</version>
-      <classifier>distribution</classifier>
-      <type>tar.gz</type>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -74,24 +65,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-hippo-theme-dependencies</id>
-            <phase>initialize</phase>
-            <goals><goal>copy-dependencies</goal></goals>
-            <configuration>
-              <includeGroupIds>org.onehippo.cms7</includeGroupIds>
-              <includeArtifactIds>hippo-theme</includeArtifactIds>
-              <stripClassifier>true</stripClassifier>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
