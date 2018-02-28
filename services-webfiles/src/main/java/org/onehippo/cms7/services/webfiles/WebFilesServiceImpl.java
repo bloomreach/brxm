@@ -134,6 +134,12 @@ public class WebFilesServiceImpl implements WebFilesService {
         }
     }
 
+    @Override
+    public void importJcrWebFileBundle(final Session session, final ZipFile zip) throws IOException, WebFileException {
+        final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles, maxFileLengthBytes);
+        importJcrWebFileBundle(session, archive);
+    }
+
 
     private void importJcrWebFileBundle(final Session session, final AbstractWebFilesArchive archive) throws IOException, WebFileException{
         WebFileBundleArchive bundleArchive = new WebFileBundleArchive(archive);

@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * per web file bundle, with the name of the directory being the name of the bundle.
  * Only existing bundles are watched for changes.
  */
-public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListener {
+public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWatcher.PathChangesListener {
 
     public static Logger log = LoggerFactory.getLogger(WebFilesWatcher.class);
 
@@ -264,4 +264,8 @@ public class WebFilesWatcher implements SubDirectoriesWatcher.PathChangesListene
         }
     }
 
+    @Override
+    public List<Path> getWebFilesDirectories() {
+        return fileSystemObserver.getObservedRootDirectories();
+    }
 }

@@ -27,6 +27,7 @@ import org.onehippo.cms7.services.webfiles.watch.GlobFileNameMatcher;
 import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher;
 import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig;
 import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherJcrConfig;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
 
@@ -66,6 +67,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
         watcher = new WebFilesWatcher(config, service, session, eventBus, autoReload);
+        HippoServiceRegistry.registerService(watcher, WebFilesWatcherService.class);
     }
 
     @Override
