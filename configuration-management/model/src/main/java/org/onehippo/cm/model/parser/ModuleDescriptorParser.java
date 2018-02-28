@@ -25,6 +25,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 import static org.onehippo.cm.model.Constants.AFTER_KEY;
+import static org.onehippo.cm.model.Constants.EXTENSION_KEY;
 import static org.onehippo.cm.model.Constants.GROUP_KEY;
 import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.NAME_KEY;
@@ -79,10 +80,14 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         if (src instanceof ScalarNode) {
             return parent.addModule(asStringScalar(src));
         } else {
-            final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
+            final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY, EXTENSION_KEY});
             final String name = asStringScalar(map.get(NAME_KEY));
             final ModuleImpl module = parent.addModule(name);
             module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
+            final Node extensionNode = map.get(EXTENSION_KEY);
+            if (extensionNode != null) {
+                module.setExtension(asStringScalar(extensionNode));
+            }
             return module;
         }
     }

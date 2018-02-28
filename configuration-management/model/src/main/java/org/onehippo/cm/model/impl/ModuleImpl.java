@@ -107,6 +107,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private File archiveFile;
 
+    private String extension;
+
     // set of resource paths that should be removed during auto-export write step
     private Set<String> removedConfigResources = new HashSet<>();
     private Set<String> removedContentResources = new HashSet<>();
@@ -140,6 +142,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         sortedSources.forEach(source -> source.setModule(this));
 
         mvnPath = module.getMvnPath();
+        extension = module.getExtension();
         archiveFile = module.getArchiveFile();
         build();
     }
@@ -235,6 +238,14 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     public void setLastExecutedAction(String value) {
         lastExecutedAction = value;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(final String extension) {
+        this.extension = extension;
     }
 
     /**
@@ -655,6 +666,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
+            newModule.setExtension(extension);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 
