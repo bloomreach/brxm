@@ -57,7 +57,6 @@ import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
-import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
@@ -70,7 +69,6 @@ import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.repository.util.PartialZipFile;
@@ -119,11 +117,12 @@ public class ConfigurationConfigService {
 
     void writeWebfiles(final ConfigurationModel model, final ConfigurationBaselineService baselineService, final Session session) throws IOException, RepositoryException {
 
-        final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
-        final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
-        final boolean shouldLoad = autoReloadService == null || !autoReloadService.isEnabled();
 
         if (!model.getWebFileBundleDefinitions().isEmpty()) {
+
+            final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
+            final List<Module> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
+
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
                 log.warn(String.format("Skipping import web file bundles: service '%s' not available.",
@@ -138,28 +137,11 @@ public class ConfigurationConfigService {
                 final Module module = webFileBundleDefinition.getSource().getModule();
                 if (module.isArchive()) {
 
-                    if (webFilesWatcherService != null) {
-                        final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
-                        boolean shouldProcess = true;
-                        for (Path webFilesDirectory : webFilesDirectories) {
-                            final Path moduleDescriptorPath = webFilesDirectory.resolveSibling(Constants.HCM_MODULE_YAML);
-                            try {
-                                final PathConfigurationReader.ReadResult result;
-                                result = new PathConfigurationReader().read(moduleDescriptorPath, false);
-                                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
-                                if (moduleImpl.equals(module)) {
-                                    //Skip loading since it was already taken care by webfilewatcher/autoreaload
-                                    shouldProcess = false;
-                                }
-                            } catch (ParserException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        if (!shouldProcess) {
-                            continue;
-                        }
-                    }
                     //check if webfile service already loaded this module
+                    if (watchedModules.contains(module)) {
+                        //Module was already loaded by WebFileService
+                        continue;
+                    }
 
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
@@ -181,6 +163,28 @@ public class ConfigurationConfigService {
                 }
             }
         }
+    }
+
+    /**
+     * Collect all webfilebundle modules watched by WebFileWatcherService
+     */
+    private List<Module> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
+
+        final List<Module> webfileModules = new ArrayList<>();
+        if (webFilesWatcherService != null) {
+            final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
+            for (final Path webFilesDirectory : webFilesDirectories) {
+                final Path moduleDescriptorPath = webFilesDirectory.resolveSibling(Constants.HCM_MODULE_YAML);
+                try {
+                    final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, false);
+                    final ModuleImpl moduleImpl = result.getModuleContext().getModule();
+                    webfileModules.add(moduleImpl);
+                } catch (Exception e) {
+                    throw new RuntimeException(String.format("Failed to read webfile bundle module: %s", moduleDescriptorPath), e);
+                }
+            }
+        }
+        return webfileModules;
     }
 
     /**
