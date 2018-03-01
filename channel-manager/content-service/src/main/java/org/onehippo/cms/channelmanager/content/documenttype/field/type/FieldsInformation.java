@@ -34,7 +34,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 public class FieldsInformation {
 
     private static final List<String> REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList(
-            "Boolean", "CalendarDate", "Date", "Docbase", "DynamicDropdown", "Reference", "StaticDropdown"
+            "CalendarDate", "Date", "Docbase", "DynamicDropdown", "Reference", "StaticDropdown"
     );
     private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList(
             "hippo:", "hippogallerypicker:", "hippostd:", "hipposys:", "hippotaxonomy:", "poll:", "selection:"
