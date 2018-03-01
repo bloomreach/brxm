@@ -33,8 +33,18 @@ right-side-panel {
     }
   }
 
-  md-input-container > span > md-checkbox.md-checked > div.md-container.md-ink-ripple > div.md-icon {
-    background-color: $grey-550;
+  md-input-container > span > md-checkbox {
+    &.md-default-theme.md-checked .md-ink-ripple, md-checkbox.md-checked .md-ink-ripple {
+      color: $grey-550;
+    }
+
+    &.md-checked > div.md-container.md-ink-ripple > div.md-icon {
+      background-color: $grey-550;
+    }
+
+     > div.md-label > md-icon {
+      font-size: 16px;
+    }
   }
 
   .btn-fullwidth,
