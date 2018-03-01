@@ -22,7 +22,7 @@
                       ng-switch="::$ctrl.fieldType.type"
                       ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
 
-    <label ng-if="::$first"
+    <label ng-if="::$first && !$ctrl.fieldType.type == 'BOOLEAN'"
            layout
            layout-align="start center"
            class="field-title">
@@ -71,6 +71,18 @@
            ng-blur="$ctrl.blurPrimitive($event)"
            ng-required="::$ctrl.fieldType.required"
            ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
+
+    <span ng-switch-when="BOOLEAN">
+      <md-checkbox ng-model="fieldValue.value"
+                   ng-true-value="'true'"
+                   ng-false-value="'false'"
+                   ng-change="$ctrl.valueChanged()"
+                   name="{{::$ctrl.getFieldName($index)}}"
+                   ng-focus="$ctrl.focusPrimitive($event)"
+                   ng-blur="$ctrl.blurPrimitive($event)">
+        {{::$ctrl.fieldType.displayName}}
+      </md-checkbox>
+    </span>
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"

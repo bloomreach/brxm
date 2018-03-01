@@ -33,6 +33,10 @@ right-side-panel {
     }
   }
 
+  md-input-container > span > md-checkbox.md-checked > div.md-container.md-ink-ripple > div.md-icon {
+    background-color: $grey-550;
+  }
+
   .btn-fullwidth,
   .btn-normalwidth {
     margin: 0 !important;
