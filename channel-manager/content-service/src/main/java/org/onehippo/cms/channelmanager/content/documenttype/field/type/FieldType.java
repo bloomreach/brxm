@@ -38,6 +38,7 @@ public interface FieldType {
         DOUBLE,
         LONG,
         MULTILINE_STRING,
+        DATE,
         HTML,
         CHOICE, // "content blocks"
         COMPOUND
