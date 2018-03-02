@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 @import 'variables';
 
 right-side-panel {
@@ -33,18 +32,8 @@ right-side-panel {
     }
   }
 
-  md-input-container > span > md-checkbox {
-    &.md-default-theme.md-checked .md-ink-ripple, md-checkbox.md-checked .md-ink-ripple {
-      color: $grey-550;
-    }
-
-    &.md-checked > div.md-container.md-ink-ripple > div.md-icon {
-      background-color: $grey-550;
-    }
-
-     > div.md-label > md-icon {
-      font-size: 16px;
-    }
+  md-checkbox.md-checked div.md-icon {
+    background-color: $grey-550;
   }
 
   .btn-fullwidth,
