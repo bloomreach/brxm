@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
-import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -92,43 +90,6 @@ public class BooleanFieldTypeTest {
         fieldType.writeTo(node, Optional.of(listOf(valueOf("" + newValue))));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
     }
-
-    @Test
-    public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
-        final Boolean oldValue = Boolean.TRUE;
-        final String invalidValue = "foo";
-
-        fieldType.setId(PROPERTY);
-        node.setProperty(PROPERTY, oldValue);
-
-        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
-        assertThat(node.getProperty(PROPERTY).getBoolean(), equalTo(oldValue));
-    }
-
-    @Test
-    public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setMultiple(true);
-        fieldType.setMaxValues(2);
-
-        final Boolean oldValue1 = Boolean.TRUE;
-        final Boolean oldValue2 = Boolean.TRUE;
-        node.setProperty(PROPERTY, new String[] {oldValue1 + "", oldValue2 + ""}, PropertyType.BOOLEAN);
-
-        final String invalidValue1 = "foo";
-        final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
-        fieldType.writeTo(node, Optional.of(es));
-
-        final Value[] values = node.getProperty(PROPERTY).getValues();
-        assertThat(values[0].getBoolean(), equalTo(oldValue1));
-        assertThat(values[1].getBoolean(), equalTo(oldValue2));
-    }
-
 
     private static List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);
