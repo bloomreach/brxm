@@ -29,10 +29,12 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_SYSTEM;
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
 public class JcrNodeIcon {
 
@@ -178,9 +180,39 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("targeting:services", FontAwesomeIcon.SUN_O);
         primaryTypeNameIcons.put("targeting:service", FontAwesomeIcon.CERTIFICATE);
 
+        // jcr:system
+        primaryTypeNameIcons.put("rep:system", FontAwesomeIcon.LINK);
+        primaryTypeNameIcons.put("rep:versionStorage", FontAwesomeIcon.CLONE);
+
+        // HCM
+        primaryTypeNameIcons.put("hcm:hcm", FontAwesomeIcon.LINK);
+        primaryTypeNameIcons.put("hcm:baseline", FontAwesomeIcon.CLONE);
+        primaryTypeNameIcons.put("hcm:group", FontAwesomeIcon.FOLDER_O);
+        primaryTypeNameIcons.put("hcm:project", FontAwesomeIcon.FOLDER_O);
+        primaryTypeNameIcons.put("hcm:module", FontAwesomeIcon.FOLDER);
+        primaryTypeNameIcons.put("hcm:descriptor", FontAwesomeIcon.COG);
+        primaryTypeNameIcons.put("hcm:actions", FontAwesomeIcon.LIST);
+        primaryTypeNameIcons.put("hcm:configfolder", FontAwesomeIcon.FOLDER_OPEN_O);
+        primaryTypeNameIcons.put("hcm:contentfolder", FontAwesomeIcon.FOLDER_OPEN_O);
+        primaryTypeNameIcons.put("hcm:contentsource", FontAwesomeIcon.FILE_TEXT_O);
+        primaryTypeNameIcons.put("hcm:definitions", FontAwesomeIcon.FILE_TEXT_O);
+        primaryTypeNameIcons.put("hcm:binary", FontAwesomeIcon.FILE);
+        primaryTypeNameIcons.put("hcm:cnd", FontAwesomeIcon.FILE_TEXT);
+        primaryTypeNameIcons.put("hcm:webbundles", FontAwesomeIcon.SUITCASE);
+        primaryTypeNameIcons.put("hcm:content", FontAwesomeIcon.LIST_ALT);
+
+        // logs
+        primaryTypeNameIcons.put("hippolog:folder", FontAwesomeIcon.LIST);
+        primaryTypeNameIcons.put("hippolog:item", FontAwesomeIcon.LIST_ALT);
+
+        // reports
+        primaryTypeNameIcons.put("hipporeport:folder", FontAwesomeIcon.PIECHART);
+
         pathCssMatchers.put("^/hst:hst.*-preview.*$", "hst-preview");
         pathCssMatchers.put("^/hst:hst.*$", "hst");
         pathCssMatchers.put("^/" + CONFIGURATION_PATH + ".*$", "conf");
+        pathCssMatchers.put("^/" + HCM_ROOT + ".*$", "system");
+        pathCssMatchers.put("^/" + JCR_SYSTEM + ".*$", "system");
         pathCssMatchers.put("^/content.*$", "content");
         pathCssMatchers.put("^/hippo:namespaces.*$", "namespaces");
         pathCssMatchers.put("^/formdata.*$", "formdata");

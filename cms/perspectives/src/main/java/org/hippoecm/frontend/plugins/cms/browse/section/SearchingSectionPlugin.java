@@ -25,11 +25,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.markup.html.HTML5Attributes;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -38,7 +36,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -49,10 +46,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
+import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.plugins.standards.search.GeneralSearchBuilder;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -108,7 +107,13 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         };
         form.setOutputMarkupId(true);
 
-        final TextField<String> tx = new SubmittingTextField("searchBox", PropertyModel.of(this, "query"));
+        final TextField<String> tx = new SubmittingTextField("searchBox", PropertyModel.of(this, "query")) {
+            @Override
+            public void onEnter(final AjaxRequestTarget target) {
+                super.onEnter(target);
+                updateSearch(true);
+            }
+        };
         tx.setLabel(Model.of(getString("placeholder")));
         form.add(tx);
 
@@ -202,7 +207,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 collection.setSearchResult(NO_RESULTS);
             } else {
                 final String queryName = StringUtils.startsWith(scope, GALLERY_PATH) ?
-                        IMAGE_QUERY_NAME : TextSearchBuilder.TEXT_QUERY_NAME;
+                        IMAGE_QUERY_NAME : GeneralSearchBuilder.TEXT_QUERY_NAME;
                 final TextSearchBuilder sb = new TextSearchBuilder(queryName);
                 sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);
@@ -357,48 +362,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
         };
         return HippoIcon.fromSprite(id, iconModel);
-    }
-
-    private class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
-        private SubmittingTextField(final String id, final IModel<String> model) {
-            super(id, model);
-
-            add(new HTML5Attributes());
-
-            add(new OnEnterAjaxBehavior() {
-
-                @Override
-                protected void onSubmit(final AjaxRequestTarget target) {
-                    updateSearch(true);
-                }
-
-                @Override
-                protected void onError(final AjaxRequestTarget target) {
-                }
-            });
-        }
-
-        @Override
-        public Component setDefaultFormProcessing(final boolean defaultFormProcessing) {
-            return this;
-        }
-
-        @Override
-        public boolean getDefaultFormProcessing() {
-            return true;
-        }
-
-        @Override
-        public void onSubmit() {
-        }
-
-        @Override
-        public void onAfterSubmit() {
-        }
-
-        @Override
-        public void onError() {
-        }
     }
 
     private class FolderModelService extends ModelReference<Node> {

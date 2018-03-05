@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,6 +92,11 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isCustomFieldEnabled() {
+        return false;
+    }
+
+    @Override
     protected boolean isParametersFieldEnabled() {
         return false;
     }
@@ -108,7 +113,7 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
 
     @Override
     protected boolean isRadioVisible() {
-        return false;
+        return true;
     }
 
     @Override
@@ -122,6 +127,10 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isCustomFieldVisible() {
+        return "custom".equals(method);
+    }
+
     protected boolean isScriptEditorReadOnly() {
         return true;
     }

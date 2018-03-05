@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -43,10 +43,7 @@
     <h3>
       <wicket:message key="group-add-users-label"/>
     </h3>
-    <form wicket:id="search-form">
-      <input type="text" size="35" wicket:id="search-query" wicket:message="title:user-search-help"/>
-      <input type="submit" class="btn btn-default btn-xs" wicket:message="value:user-search-action" wicket:id="search-button"/>
-    </form>
+    <span wicket:id="search-field"></span>
     <br/>
     <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
   </wicket:extend>

@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.services.cmscontext;
 
-import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -29,7 +28,7 @@ public interface CmsInternalCmsContextService extends CmsContextService {
      * </p>
      *
      * @param session the HttpSession to create the CmsSessionContext for and bind into
-\     * @return the new CmsSessionContext
+     * @return the new CmsSessionContext
      */
     CmsSessionContext create(final HttpSession session);
 

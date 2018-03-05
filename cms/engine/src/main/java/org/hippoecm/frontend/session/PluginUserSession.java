@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -359,11 +359,10 @@ public class PluginUserSession extends UserSession {
             JcrObservationManager.getInstance().cleanupListeners(this);
             pageId = 0;
 
-            getHttpSession().removeAttribute("hippo:username");
-
             final int appCount = decreaseAppCount();
             dirty();
             if (appCount == 0) {
+                getHttpSession().removeAttribute("hippo:username");
                 invalidate();
             } else {
                 if (PluginApplication.get().getPluginApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {

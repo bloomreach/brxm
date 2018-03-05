@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,19 +34,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Navigator extends RenderPlugin {
-    static final Logger log = LoggerFactory.getLogger(Navigator.class);
+
+    private static final Logger log = LoggerFactory.getLogger(Navigator.class);
 
     public static final String CLUSTER_NAME = "cluster.name";
     public static final String CLUSTER_PARAMETERS = "cluster.config";
     public static final String SELECTED_SECTION_MODEL = "selected.section.model";
 
-    private DocumentCollectionView docView;
-    private SectionViewer sectionViewer;
-    private ObservableModel<String> sectionModel;
+    private final DocumentCollectionView docView;
+    private final SectionViewer sectionViewer;
+    private final ObservableModel<String> sectionModel;
 
     private boolean clusterStarted;
 
-    public Navigator(IPluginContext context, final IPluginConfig config) {
+    public Navigator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         // pretend that cluster has already been started to prevent it's creation in the BrowseService constructor
@@ -69,7 +70,7 @@ public class Navigator extends RenderPlugin {
         };
         clusterStarted = false;
 
-        IModel<DocumentCollection> collectionModel = browseService.getCollectionModel();
+        final IModel<DocumentCollection> collectionModel = browseService.getCollectionModel();
         docView = new DocumentCollectionView("documents", context, config, collectionModel, this) {
             @Override
             protected String getExtensionPoint() {
@@ -92,7 +93,7 @@ public class Navigator extends RenderPlugin {
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (!clusterStarted && isActive()) {
             startCluster();
         }
@@ -104,19 +105,19 @@ public class Navigator extends RenderPlugin {
     private void startCluster() {
         clusterStarted = true;
 
-        IPluginConfig config = getPluginConfig();
-        String clusterName = config.getString(CLUSTER_NAME);
+        final IPluginConfig config = getPluginConfig();
+        final String clusterName = config.getString(CLUSTER_NAME);
         if (clusterName != null) {
-            IPluginContext context = getPluginContext();
-            IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+            final IPluginContext context = getPluginContext();
+            final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                     IPluginConfigService.class);
 
-            IClusterConfig cluster = pluginConfigService.getCluster(clusterName);
+            final IClusterConfig cluster = pluginConfigService.getCluster(clusterName);
             if (cluster == null) {
                 log.warn("Unable to find cluster '" + clusterName + "'. Does it exist in repository?");
             } else {
-                IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
-                IClusterControl control = context.newCluster(cluster, parameters);
+                final IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
+                final IClusterControl control = context.newCluster(cluster, parameters);
                 control.start();
             }
         }

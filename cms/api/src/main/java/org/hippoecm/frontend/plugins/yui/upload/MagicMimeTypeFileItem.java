@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.wicket.util.upload.FileItem;
+import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MagicMimeTypeFileItem implements FileItem {
 
     private static final Logger log = LoggerFactory.getLogger(MagicMimeTypeFileItem.class);
-    private static final Tika tika = new Tika();
+    private static final Tika tika = TikaFactory.newTika();
 
     private FileItem delegate;
     private String contentType;
