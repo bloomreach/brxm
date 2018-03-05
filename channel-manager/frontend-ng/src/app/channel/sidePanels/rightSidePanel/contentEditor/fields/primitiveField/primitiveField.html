@@ -72,15 +72,13 @@
            ng-required="::$ctrl.fieldType.required"
            ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
-    <input ng-switch-when="DATE"
-           ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
-           name="{{::$ctrl.getFieldName($index)}}"
-           aria-label="{{::$ctrl.fieldType.displayName}}"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)"
-           ng-required="::$ctrl.fieldType.required"
-           >
+    <md-datepicker ng-switch-when="DATE"
+                   ng-model="fieldValue.value"
+                   ng-change="$ctrl.valueChanged()"
+                   aria-label="{{::$ctrl.fieldType.displayName}}"
+                   ng-focus="$ctrl.focusPrimitive($event)"
+                   ng-blur="$ctrl.blurPrimitive($event)"
+                   ng-required="::$ctrl.fieldType.required"/>
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
