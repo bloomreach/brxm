@@ -17,10 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
-import javax.jcr.ValueFormatException;
-
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 public class BooleanFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_VALUE = "false";
@@ -41,6 +37,9 @@ public class BooleanFieldType extends PrimitiveFieldType {
 
     @Override
     protected String fieldSpecificConversion(final String input) {
+        if (!"true".equalsIgnoreCase(input) && !"false".equalsIgnoreCase(input)) {
+            throw new IllegalArgumentException("BooleanFieldType value must be 'true' or 'false'.");
+        }
         return Boolean.parseBoolean(input) + "";
     }
 }
