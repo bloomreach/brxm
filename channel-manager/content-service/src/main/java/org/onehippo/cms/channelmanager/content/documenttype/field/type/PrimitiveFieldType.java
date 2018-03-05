@@ -117,7 +117,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
                     } else {
                         node.setProperty(propertyName, convertToSpecificType(strings[0]), getPropertyType());
                     }
-                } catch (final IllegalArgumentException | ValueFormatException ignore) {
+                } catch (final NumberFormatException | ValueFormatException ignore) {
                 }
             }
         } catch (final RepositoryException e) {

@@ -72,18 +72,16 @@
            ng-required="::$ctrl.fieldType.required"
            ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
-    <div ng-switch-when="BOOLEAN">
+    <span ng-switch-when="BOOLEAN">
       <md-checkbox ng-model="fieldValue.value"
                    ng-true-value="'true'"
                    ng-false-value="'false'"
                    ng-change="$ctrl.valueChanged()"
-                   class="md-primary"
                    name="{{::$ctrl.getFieldName($index)}}"
                    ng-focus="$ctrl.focusPrimitive($event)"
                    ng-blur="$ctrl.blurPrimitive($event)">
         {{::$ctrl.fieldType.displayName}}
-        <md-icon ng-if="::$ctrl.fieldType.hint"
-                 class="checkbox-hint">
+        <md-icon ng-if="::$ctrl.fieldType.hint">
           info_outline
 
           <md-tooltip>
@@ -91,7 +89,7 @@
           </md-tooltip>
         </md-icon>
       </md-checkbox>
-    </div>
+    </span>
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
