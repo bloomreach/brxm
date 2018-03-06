@@ -1,0 +1,92 @@
+@startuml
+scale 1000 width
+
+actor Author
+actor Webmaster
+actor Admin
+
+Admin ~left~^ Webmaster: is a
+Webmaster ~left~^ Author: is a
+
+rectangle "Channel Manager" as CM {
+
+  rectangle AddChannelWizard [
+    Add Channel Wizard
+    <i>ExtJs
+
+    --
+    Adds a new channel to the system.
+  ]
+
+  rectangle ChannelOverview [
+    Channel Overview
+    <i>Wicket, ExtJs
+
+    ---
+    Shows all available channels.
+  ]
+
+  together {
+    rectangle ChannelEditor [
+      Channel Editor
+      <i>AngularJs
+
+      ---
+      Previews and modifies of a single channel.
+      ....
+      <b>DXP:</b> Previews projects and component variants,\nmanages experiments.
+    ]
+
+    rectangle ContentService [
+      Content Service
+      <i>JAXRS
+
+      ---
+      Creates and updates content.
+    ]
+  }
+
+  rectangle ComponentEditor [
+    Component Editor
+    <i>ExtJs, AngularJs
+
+    ---
+    Modifies component parameters.
+    ....
+    <b>DXP:</b> Adds/removes variants,
+    manages experiments.
+  ]
+
+}
+
+rectangle CMS
+rectangle "Delivery Tier" as HST
+rectangle Repository
+
+Author ~~> ChannelOverview : Creates, updates and\n previews content
+Webmaster ~~> ChannelOverview : Creates, updates and\n previews presentation;\n adds and deletes channels
+Admin ~~> ChannelOverview : Manages changes\n of other users
+
+AddChannelWizard .left.> HST : Create channel\n<i>Server-side REST
+
+ChannelOverview -left-> AddChannelWizard : Adds channel\n<i>JavaScript
+ChannelOverview --> ChannelEditor : Creates, updates and\n previews presentation\n of a channel\n<i>JavaScript
+
+ChannelEditor -right-> ComponentEditor : Edit components\n<i>JavaScript
+ComponentEditor -left-> ChannelEditor : Preview and save changes\n<i>JavaScript
+ChannelEditor .down.> ContentService : Creates and\n updates content\n<i>REST
+ContentService .up.> ChannelEditor : Provides content\n and content types\n<i>REST
+
+ChannelEditor ..> HST : Modifies presentation model\n<i>REST
+
+ChannelEditor --> CMS : Open/close content\n editors; pick content\n<i>JavaScript + Wicket-Ajax
+ComponentEditor --> CMS : Pick content\n<i>JavaScript + Wicket-Ajax
+CMS --> ChannelEditor : View content in channel\n<i>JavaScript + Wicket-Ajax
+
+HST ..> ChannelOverview : Provide channels information\n<i>Server-side REST
+HST .right.> ChannelEditor : Renders channels\n<i>HTTP
+
+Repository --> ContentService : Provides content\n and content types\n<i>JCR + ContentType API
+ContentService --> Repository : Creates and updates content\n<i>JCR + workflow
+
+@enduml

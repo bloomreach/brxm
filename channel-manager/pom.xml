@@ -190,11 +190,12 @@
   </dependencyManagement>
 
   <modules>
-    <module>frontend-api</module>
-    <module>frontend-ng</module>
-    <module>frontend</module>
-    <module>repository</module>
     <module>content-service</module>
+    <module>frontend-api</module>
+    <module>frontend</module>
+    <module>frontend-ng</module>
+    <module>repository</module>
+    <module>documentation</module>
   </modules>
 
   <scm>
