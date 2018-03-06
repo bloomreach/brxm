@@ -109,9 +109,9 @@ public class WebFilesServiceImpl implements WebFilesService {
     }
 
     @Override
-    public void importJcrWebFileBundle(final Session session, final File directory, boolean bootstrapPhase) throws IOException, WebFileException {
+    public void importJcrWebFileBundle(final Session session, final File directory, boolean skipIfAlreadyAutoLoaded) throws IOException, WebFileException {
         final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
-        if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
+        if (skipIfAlreadyAutoLoaded && autoReload != null && autoReload.isEnabled()) {
             // (re)import files will be done directly from file system. In case of an existing local repository, existing
             // web files will be replaced completely to sync possible local changes after restart
             log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of from configuration module.");
@@ -122,9 +122,9 @@ public class WebFilesServiceImpl implements WebFilesService {
     }
 
     @Override
-    public void importJcrWebFileBundle(final Session session, final ZipFile zip, boolean bootstrapPhase) throws IOException, WebFileException {
+    public void importJcrWebFileBundle(final Session session, final ZipFile zip, boolean skipIfAlreadyAutoLoaded) throws IOException, WebFileException {
         final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
-        if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
+        if (skipIfAlreadyAutoLoaded && autoReload != null && autoReload.isEnabled()) {
             // (re)import files will be done directly from file system. In case of an existing local repository, existing
             // web files will be replaced completely to sync possible local changes after restart
            log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of from configuration module.");
@@ -133,13 +133,6 @@ public class WebFilesServiceImpl implements WebFilesService {
             importJcrWebFileBundle(session, archive);
         }
     }
-
-    @Override
-    public void importJcrWebFileBundle(final Session session, final ZipFile zip) throws IOException, WebFileException {
-        final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles, maxFileLengthBytes);
-        importJcrWebFileBundle(session, archive);
-    }
-
 
     private void importJcrWebFileBundle(final Session session, final AbstractWebFilesArchive archive) throws IOException, WebFileException{
         WebFileBundleArchive bundleArchive = new WebFileBundleArchive(archive);
