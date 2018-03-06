@@ -1,4 +1,4 @@
-// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,10 +80,16 @@ $grey-a700: #39434c;
 // Text colors
 $text-dark: rgba(0, 0, 0, .87);
 $text-light: rgba(255, 255, 255, .87);
-$icon-button-default: rgba(0, 0, 0, .54);
+$text-dim: rgba(0, 0, 0, .54);
+$text-disabled: rgba(0, 0, 0, .38);
+$icon-button-default: $text-dim;
 
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+
+// $font-family-material2 has to be a string for it to be passed to @include angular-material-typography()
+// without node-sass throwing warnings
+$font-family-material2: 'Open Sans, Roboto, Helvetica Neue, sans-serif';
 
 //TODO Clean these variables, replace with color palette
 $white: #fff;
@@ -169,11 +175,16 @@ $overlay-lock-width: 26px;
 
 $overlay-link-bgcolor: $orange-a400;
 $overlay-link-shadow-color: rgba(0, 0, 0, .26);
+$overlay-link-shadow-color-light: rgba(0, 0, 0, .1);
 $overlay-link-fill-color: $white;
 $overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
 $overlay-link-hover-bgcolor: #e06717;
 $overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
 $overlay-link-clicked-bgcolor: $orange-a200;
+$overlay-link-shadow-color: rgba(0, 0, 0, .3);
+
+$overlay-link-shadow-active: 1px 3px 8px 2px $overlay-link-shadow-color;
+$overlay-link-shadow-hover: 1px 3px 8px 1px $overlay-link-shadow-color;
 
 $overlay-icon-fill: $grey-600;
 $overlay-icon-size: 36px;
@@ -199,3 +210,4 @@ $z-index-overlay: 10000;
 $z-index-overlay-component: $z-index-overlay + 1;
 $z-index-overlay-container: $z-index-overlay-component + 1;
 $z-index-overlay-link: $z-index-overlay-container + 1;
+$z-index-overlay-manage-content-options: $z-index-overlay-link + 1;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -111,7 +111,8 @@
     },
 
     _renderInitialComponentState: function(componentId) {
-      this._renderComponent(componentId, {});
+      // don't pass any properties so the persisted properties are used
+      this._renderComponent(componentId);
     },
 
     _onComponentChanged: function (componentId) {
@@ -229,11 +230,20 @@
 
     _showPathPicker: function(field, value, pickerConfig) {
       this.pathPickerField = field;
-      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPathPicked.bind(this));
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
+        value,
+        pickerConfig,
+        this._onPathPicked.bind(this),
+        this._onPathCancelled.bind(this)
+      );
     },
 
     _onPathPicked: function(path, displayValue) {
       this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
+    },
+
+    _onPathCancelled: function() {
+      this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
     },
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {

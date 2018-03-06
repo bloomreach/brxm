@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -28,27 +28,36 @@
       this.listeners = config.listeners;
 
       Hippo.ChannelManager.ExtLinkPickerFactory.superclass.constructor.call(this, config);
-
-      this.on('cancel', this._removePickedListener, this);
     },
 
-    _addPickedListener: function (callback) {
-      this.callback = callback;
+    _addListeners: function (pickedCallback, cancelCallback) {
+      this.pickedCallback = pickedCallback;
+      this.cancelCallback = cancelCallback;
       this.on('picked', this._onPicked, this);
+      this.on('cancel', this._onCancel, this);
     },
 
-    _removePickedListener: function () {
-      this.callback = null;
+    _removeListeners: function () {
+      this.pickedCallback = null;
+      this.cancelCallback = null;
       this.un('picked', this._onPicked, this);
+      this.un('cancel', this._onCancel, this);
     },
 
     _onPicked: function (path, name) {
-      this.callback.call(this, path, name);
-      this._removePickedListener();
+      this.pickedCallback.call(this, path, name);
+      this._removeListeners();
     },
 
-    openPicker: function (currentValue, pickerConfig, callback) {
-      this._addPickedListener(callback);
+    _onCancel: function() {
+      if (this.cancelCallback) {
+        this.cancelCallback.call(this);
+      }
+      this._removeListeners();
+    },
+
+    openPicker: function (currentValue, pickerConfig, pickedCallback, cancelCallback) {
+      this._addListeners(pickedCallback, cancelCallback);
       this._firePickEvent(currentValue, pickerConfig);
     },
 
@@ -119,7 +128,8 @@
         Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
           this.getValue(),
           this.pickerConfig,
-          Ext.createDelegate(this.picked, this)
+          Ext.createDelegate(this.picked, this),
+          Ext.createDelegate(this.canceled, this)
         );
       }
     },
@@ -132,6 +142,10 @@
       this.setValue(newValue);
       this.updateClearButton();
       this.fireEvent('select', this, newValue);
+    },
+
+    canceled: function () {
+      this.renderTextField.focus();
     },
 
     updateClearButton: function () {
@@ -181,6 +195,7 @@
         tag: 'input',
         type: 'text',
         readonly: 'readonly',
+        tabindex: -1, // make focusable
         value: Ext.util.Format.htmlEncode(this.displayValue),
         width: this.el.getWidth()
       }, true);

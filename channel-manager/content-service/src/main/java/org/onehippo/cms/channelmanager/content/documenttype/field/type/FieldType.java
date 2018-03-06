@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,18 +83,19 @@ public interface FieldType {
     boolean isRequired();
 
     /**
-     * Check if an initialized field is "valid", i.e. should be present in a document type.
+     * Check if an initialized field is supported, i.e. should be present in a document type.
      *
      * @return true or false
      */
-    boolean isValid();
+    boolean isSupported();
 
     /**
      * Initialize a {@link FieldType}, given a field context.
      *
      * @param fieldContext  information about the field (as part of a parent content type)
+     * @return information about the initialized fields.
      */
-    void init(final FieldTypeContext fieldContext);
+    FieldsInformation init(final FieldTypeContext fieldContext);
 
     /**
      * Read a document field instance from a document variant node

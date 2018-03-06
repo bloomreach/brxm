@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-// TODO: Make this normal class properties
-let log;
-let HST;
-
 class HstCommentsProcessorService {
   constructor($log, HstConstants) {
     'ngInject';
 
-    log = $log;
-    HST = HstConstants;
+    this.$log = $log;
+    this.HstConstants = HstConstants;
   }
 
   run(document, callback) {
     if (!document) {
       throw new Error('DOM document is empty');
     }
-    // IE doesn't support 'evaluate', see
-    // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
-    if (document.evaluate) {
-      this.processCommentsWithXPath(document, callback);
-    } else {
-      this.processCommentsWithDomWalking(document, callback);
-    }
+    this.processCommentsWithXPath(document, callback);
   }
 
   processFragment(jQueryNodeCollection, callback) {
@@ -75,7 +65,7 @@ class HstCommentsProcessorService {
         try {
           callback(element, json);
         } catch (e) {
-          log.warn('Error invoking callback on HST comment', e, json);
+          this.$log.warn('Error invoking callback on HST comment', e, json);
         }
       }
     }
@@ -102,18 +92,18 @@ class HstCommentsProcessorService {
       return false;
     }
     const trimmedData = data.trim();
-    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(HST.TYPE);
+    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(this.HstConstants.TYPE);
   }
 
   _isHstEndMarker(data) {
-    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HST.END_MARKER);
+    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(this.HstConstants.END_MARKER);
   }
 
   _parseJson(data) {
     try {
       return JSON.parse(data);
     } catch (e) {
-      log.warn('Error parsing HST comment as JSON', e, data);
+      this.$log.warn('Error parsing HST comment as JSON', e, data);
     }
     return null;
   }
@@ -132,8 +122,7 @@ class HstCommentsProcessorService {
       nextSibling = nextSibling.nextSibling;
     }
 
-    const exception = `No component end marker found for '${id}'.`;
-    throw exception;
+    throw new Error(`No component end marker found for '${id}'.`);
   }
 
   _isEndMarker(domElement, id) {

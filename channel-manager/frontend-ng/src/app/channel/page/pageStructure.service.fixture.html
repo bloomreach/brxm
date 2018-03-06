@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@
   <p id="content-in-container-vbox">
     <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-container-vbox" } -->
   </p>
+  <p id="manage-content-in-container-vbox">
+    <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "templateQuery": "manage-content-in-container-vbox" } -->
+  </p>
   <div id="componentB" class="hst-container-item">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
     <p>Some markup in component B</p>
@@ -52,6 +55,9 @@
     <p>Some markup in component D</p>
     <p id="content-in-component-no-markup">
       <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-component-no-markup" } -->
+    </p>
+    <p id="manage-content-in-component-no-markup">
+      <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "templateQuery": "manage-content-in-component-no-markup" } -->
     </p>
   </div>
   <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
@@ -87,6 +93,38 @@
 </div>
 <div id="edit-menu-in-page">
   <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-page" } -->
+</div>
+<div id="manage-content-in-page">
+  <!-- { 
+    "HST-Type": "MANAGE_CONTENT_LINK", 
+    "defaultPath": "test-default-path",
+    "parameterName": "test-component-parameter",
+    "parameterValue": "test-component-value",
+    "parameterValueIsRelativePath": "true",
+    "pickerConfiguration": "test-component-picker configuration",
+    "pickerInitialPath": "test-component-picker-initial-path",
+    "pickerRemembersLastVisited": "false",
+    "pickerRootPath": "test-component-picker-root-path",
+    "pickerSelectableNodeTypes": "test-node-type-1,test-node-type-2",
+    "rootPath": "test-root-path",
+    "templateQuery": "new-test-document"
+  } -->
+</div>
+<div id="manage-content-with-absolute-path">
+  <!-- {
+    "HST-Type": "MANAGE_CONTENT_LINK",
+    "defaultPath": "test-default-path",
+    "parameterName": "test-component-parameter",
+    "parameterValue": "test-component-value",
+    "parameterValueIsRelativePath": "false",
+    "pickerConfiguration": "test-component-picker configuration",
+    "pickerInitialPath": "test-component-picker-initial-path",
+    "pickerRemembersLastVisited": "false",
+    "pickerRootPath": "test-component-picker-root-path",
+    "pickerSelectableNodeTypes": "test-node-type-1,test-node-type-2",
+    "rootPath": "test-root-path",
+    "templateQuery": "new-test-document"
+  } -->
 </div>
 <div id="processed-head-contributions">
   <!--{"HST-Type":"HST_PROCESSED_HEAD_CONTRIBUTIONS","headElements":["<title>processed</title>", "<script>window.processed = true</script>"]}-->

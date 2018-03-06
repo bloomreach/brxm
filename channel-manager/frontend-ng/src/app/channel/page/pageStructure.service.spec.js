@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -236,6 +236,46 @@ describe('PageStructureService', () => {
     expect(editMenuLinks[0].getUuid()).toBe('menu-in-page');
   });
 
+  it('registers manage content links', () => {
+    registerEmbeddedLink('#manage-content-in-page');
+    const manageContentLinks = PageStructureService.getEmbeddedLinks();
+    const manageContentLink = manageContentLinks[0];
+    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
+    expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
+    expect(manageContentLink.getRootPath()).toBe('test-root-path');
+    expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
+    expect(manageContentLink.getParameterValue()).toBe('test-component-value');
+    expect(manageContentLink.getPickerConfig()).toEqual({
+      configuration: 'test-component-picker configuration',
+      initialPath: 'test-component-picker-initial-path',
+      isRelativePath: false,
+      remembersLastVisited: false,
+      rootPath: 'test-component-picker-root-path',
+      selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
+    });
+    expect(manageContentLink.isParameterValueRelativePath()).toBe(true);
+  });
+
+  it('recognizes a manage content link for a parameter that stores an absolute path', () => {
+    registerEmbeddedLink('#manage-content-with-absolute-path');
+    const manageContentLinks = PageStructureService.getEmbeddedLinks();
+    const manageContentLink = manageContentLinks[0];
+    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
+    expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
+    expect(manageContentLink.getRootPath()).toBe('test-root-path');
+    expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
+    expect(manageContentLink.getParameterValue()).toBe('test-component-value');
+    expect(manageContentLink.getPickerConfig()).toEqual({
+      configuration: 'test-component-picker configuration',
+      initialPath: 'test-component-picker-initial-path',
+      isRelativePath: false,
+      remembersLastVisited: false,
+      rootPath: 'test-component-picker-root-path',
+      selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
+    });
+    expect(manageContentLink.isParameterValueRelativePath()).toBe(false);
+  });
+
   it('registers processed and unprocessed head contributions', () => {
     registerHeadContributions('#processed-head-contributions');
     registerHeadContributions('#unprocessed-head-contributions');
@@ -250,11 +290,12 @@ describe('PageStructureService', () => {
   it('clears the page structure', () => {
     registerVBoxContainer();
     registerEmbeddedLink('#content-in-page');
+    registerEmbeddedLink('#manage-content-in-page');
     registerEmbeddedLink('#edit-menu-in-page');
     registerHeadContributions('#processed-head-contributions');
 
     expect(PageStructureService.getContainers().length).toEqual(1);
-    expect(PageStructureService.getEmbeddedLinks().length).toEqual(2);
+    expect(PageStructureService.getEmbeddedLinks().length).toEqual(3);
     expect(PageStructureService.headContributions.length).toBe(2);
 
     PageStructureService.clearParsedElements();
@@ -584,28 +625,29 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#edit-menu-in-component-a');
     registerEmbeddedLink('#edit-menu-in-page');
     registerEmbeddedLink('#content-in-page');
+    registerEmbeddedLink('#manage-content-in-page');
     registerEmbeddedLink('#content-in-container-vbox');
+    registerEmbeddedLink('#manage-content-in-container-vbox');
 
     const containerVBox = PageStructureService.getContainers()[0];
     const componentA = containerVBox.getComponents()[0];
     const embeddedLinks = PageStructureService.getEmbeddedLinks();
 
-    expect(embeddedLinks.length).toBe(4);
-    expect(embeddedLinks[0].getEnclosingElement()).toBeUndefined();
-    expect(embeddedLinks[1].getEnclosingElement()).toBeUndefined();
-    expect(embeddedLinks[2].getEnclosingElement()).toBeUndefined();
-    expect(embeddedLinks[3].getEnclosingElement()).toBeUndefined();
+    expect(embeddedLinks.length).toBe(6);
+    embeddedLinks.forEach(embeddedLink => expect(embeddedLink.getEnclosingElement()).toBeUndefined());
 
     expect(embeddedLinks[0].getBoxElement().length).toBe(0);
 
     PageStructureService.attachEmbeddedLinks();
 
     const attachedEmbeddedLinks = PageStructureService.getEmbeddedLinks();
-    expect(attachedEmbeddedLinks.length).toBe(4);
+    expect(attachedEmbeddedLinks.length).toBe(6);
     expect(attachedEmbeddedLinks[0].getEnclosingElement()).toBe(componentA);
     expect(attachedEmbeddedLinks[1].getEnclosingElement()).toBe(null);
     expect(attachedEmbeddedLinks[2].getEnclosingElement()).toBe(null);
-    expect(attachedEmbeddedLinks[3].getEnclosingElement()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[3].getEnclosingElement()).toBe(null);
+    expect(attachedEmbeddedLinks[4].getEnclosingElement()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[5].getEnclosingElement()).toBe(containerVBox);
 
     expect(attachedEmbeddedLinks[0].getBoxElement().length).toBe(1);
     expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-cmseditlink');
@@ -627,8 +669,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -643,6 +684,7 @@ describe('PageStructureService', () => {
     registerNoMarkupContainer();
     registerNoMarkupComponent();
     registerEmbeddedLink('#content-in-component-no-markup');
+    registerEmbeddedLink('#manage-content-in-component-no-markup');
     PageStructureService.attachEmbeddedLinks();
 
     const updatedMarkup = `
@@ -653,8 +695,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('component-no-markup', propertiesMap);
+    PageStructureService.renderComponent('component-no-markup');
     $rootScope.$digest();
 
     expect(PageStructureService.getEmbeddedLinks().length).toBe(0);
@@ -676,8 +717,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -697,10 +737,9 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "bbbb" } -->
       `;
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    const propertiesMap = { };
 
-    PageStructureService.renderComponent('bbbb', propertiesMap);
-    PageStructureService.renderComponent('bbbb', propertiesMap);
+    PageStructureService.renderComponent('bbbb');
+    PageStructureService.renderComponent('bbbb');
 
     expect(() => {
       $rootScope.$digest();
@@ -711,7 +750,7 @@ describe('PageStructureService', () => {
     spyOn($log, 'warn');
     spyOn(RenderingService, 'fetchComponentMarkup');
 
-    PageStructureService.renderComponent('unknown-component', { });
+    PageStructureService.renderComponent('unknown-component');
 
     expect($log.warn).toHaveBeenCalled();
     expect(RenderingService.fetchComponentMarkup).not.toHaveBeenCalled();
@@ -729,7 +768,7 @@ describe('PageStructureService', () => {
       `;
     spyOn($log, 'error');
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('aaaa', { });
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     expect(PageStructureService.getContainers().length).toBe(1);
@@ -751,8 +790,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
@@ -773,8 +811,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = {};
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -797,8 +834,7 @@ describe('PageStructureService', () => {
     spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    const propertiesMap = { };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
@@ -908,7 +944,10 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#edit-menu-in-component-a');
     registerEmbeddedLink('#edit-menu-in-page');
     registerEmbeddedLink('#content-in-page');
+    registerEmbeddedLink('#manage-content-in-page');
     registerEmbeddedLink('#content-in-container-vbox');
+    registerEmbeddedLink('#manage-content-in-container-vbox');
+
     PageStructureService.attachEmbeddedLinks();
 
     const container = PageStructureService.getContainers()[0];
@@ -923,6 +962,9 @@ describe('PageStructureService', () => {
         <p id="new-content-in-container-vbox">
           <!-- { "HST-Type": "CONTENT_LINK", "uuid": "new-content-in-container-vbox" } -->
         </p>
+        <p id="new-manage-content-in-container-vbox">
+          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "templateQuery": "new-manage-content-in-container-vbox" } -->
+        </p>
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       `;
@@ -933,12 +975,14 @@ describe('PageStructureService', () => {
 
       // edit menu link in component A is no longer there
       const embeddedLinks = PageStructureService.getEmbeddedLinks();
-      expect(embeddedLinks.length).toBe(3);
+      expect(embeddedLinks.length).toBe(5);
       expect(embeddedLinks[0].getUuid()).toBe('menu-in-page');
       expect(embeddedLinks[1].getUuid()).toBe('content-in-page');
-      expect(embeddedLinks[2].getUuid()).toBe('new-content-in-container-vbox');
-      expect(embeddedLinks[2].getEnclosingElement()).toBe(newContainer);
-
+      expect(embeddedLinks[2].getTemplateQuery()).toBe('new-test-document');
+      expect(embeddedLinks[3].getUuid()).toBe('new-content-in-container-vbox');
+      expect(embeddedLinks[3].getEnclosingElement()).toBe(newContainer);
+      expect(embeddedLinks[4].getTemplateQuery()).toBe('new-manage-content-in-container-vbox');
+      expect(embeddedLinks[4].getEnclosingElement()).toBe(newContainer);
       done();
     });
     $rootScope.$digest();

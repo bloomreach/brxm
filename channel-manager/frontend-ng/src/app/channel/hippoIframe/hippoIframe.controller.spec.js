@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,6 @@ describe('hippoIframeCtrl', () => {
     spyOn(DragDropService, 'init');
     spyOn(OverlayService, 'init');
     spyOn(OverlayService, 'onEditMenu');
-    spyOn(OverlayService, 'onEditContent');
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
@@ -90,7 +89,6 @@ describe('hippoIframeCtrl', () => {
     const el = angular.element(
       `<hippo-iframe show-components-overlay="false"
                      show-content-overlay="true"
-                     on-edit-content="onEditContent(contentUuid)"
                      on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);
@@ -193,10 +191,24 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('enables/disables drag-drop when the components overlay is toggled', () => {
+  it('enables/disables drag-drop when the components overlay is toggled and the iframe finished loading', () => {
     const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     const disableSpy = spyOn(DragDropService, 'disable');
 
+    HippoIframeService.pageLoaded = false;
+    hippoIframeCtrl.showComponentsOverlay = true;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    hippoIframeCtrl.showComponentsOverlay = false;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
@@ -217,6 +229,7 @@ describe('hippoIframeCtrl', () => {
     const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
     const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
 
+    HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
@@ -235,12 +248,6 @@ describe('hippoIframeCtrl', () => {
     const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
     callback('menu-uuid');
     expect(scope.onEditMenu).toHaveBeenCalledWith('menu-uuid');
-  });
-
-  it('opens right side panel when clicking the edit content button', () => {
-    const callback = OverlayService.onEditContent.calls.mostRecent().args[0];
-    callback('document-uuid');
-    expect(scope.onEditContent).toHaveBeenCalledWith('document-uuid');
   });
 
   it('resets overlay toggles', () => {

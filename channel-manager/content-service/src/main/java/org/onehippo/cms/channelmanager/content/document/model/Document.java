@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a document, stored in the CMS.
- * It can be serialized into JSON to expose it through a REST API.
+ * This bean represents a document, stored in the CMS. It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 public class Document {
     private String id;                // UUID
     private String displayName;
+    private String urlName;
+    private String repositoryPath;
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, List<FieldValue>> fields;
 
@@ -52,6 +54,22 @@ public class Document {
 
     public void setDisplayName(final String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getUrlName() {
+        return urlName;
+    }
+
+    public void setUrlName(final String urlName) {
+        this.urlName = urlName;
+    }
+
+    public String getRepositoryPath() {
+        return repositoryPath;
+    }
+
+    public void setRepositoryPath(final String repositoryPath) {
+        this.repositoryPath = repositoryPath;
     }
 
     public DocumentInfo getInfo() {

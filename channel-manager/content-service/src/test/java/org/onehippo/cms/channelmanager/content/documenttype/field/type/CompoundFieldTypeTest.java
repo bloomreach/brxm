@@ -83,14 +83,14 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void isValid() {
-        assertTrue(fieldType.isValid());
+    public void isSupported() {
+        assertTrue(fieldType.isSupported());
 
         CompoundFieldType empty = new CompoundFieldType();
-        assertFalse(empty.isValid());
+        assertFalse(empty.isSupported());
 
         fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.isValid());
+        assertFalse(fieldType.isSupported());
     }
 
     @Test
@@ -193,6 +193,7 @@ public class CompoundFieldTypeTest {
         final Node node = createMock(Node.class);
 
         expect(node.getNodes(NODE_NAME)).andThrow(new RepositoryException());
+        expect(node.getPath()).andReturn("node/location");
         replay(node);
 
         assertFalse(fieldType.readFrom(node).isPresent());

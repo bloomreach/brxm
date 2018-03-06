@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './channel.scss';
+
 class ChannelCtrl {
   constructor(
     $log,
@@ -24,10 +26,10 @@ class ChannelCtrl {
     OverlayService,
     ChannelActionsService,
     ChannelService,
-    CmsService,
     ConfigService,
     FeedbackService,
     HippoIframeService,
+    ProjectService,
     PageActionsService,
     PageMetaDataService,
     SidePanelService,
@@ -41,12 +43,12 @@ class ChannelCtrl {
     this.OverlayService = OverlayService;
     this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageActionsService = PageActionsService;
     this.PageMetaDataService = PageMetaDataService;
+    this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
 
     this.projectsEnabled = ConfigService.projectsEnabled;
@@ -60,6 +62,7 @@ class ChannelCtrl {
   }
 
   get isContentOverlayDisplayed() {
+    this.OverlayService.showContentOverlay(this.OverlayService.isContentOverlayDisplayed && this.ProjectService.actionFlags.contentOverlay.allowed);
     return this.OverlayService.isContentOverlayDisplayed;
   }
 
@@ -68,7 +71,7 @@ class ChannelCtrl {
   }
 
   get isComponentsOverlayDisplayed() {
-    if (this.OverlayService.toggleOverlayByComponent) return false;
+    this.OverlayService.showComponentsOverlay(this.OverlayService.isComponentsOverlayDisplayed && this.ProjectService.actionFlags.componentsOverlay.allowed);
     return this.OverlayService.isComponentsOverlayDisplayed;
   }
 
@@ -103,11 +106,6 @@ class ChannelCtrl {
   editMenu(menuUuid) {
     this.menuUuid = menuUuid;
     this.showSubpage('menu-editor');
-  }
-
-  editContent(contentUuid) {
-    this.SidePanelService.open('right', contentUuid);
-    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   getRenderVariant() {

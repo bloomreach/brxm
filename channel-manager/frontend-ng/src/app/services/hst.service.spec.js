@@ -20,7 +20,6 @@ import 'angular-mocks';
 describe('HstService', () => {
   let $q;
   let $httpBackend;
-  let $window;
   let hstService;
   let ConfigServiceMock;
 
@@ -45,10 +44,9 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$httpBackend_, _$window_, _HstService_) => {
+    inject((_$q_, _$httpBackend_, _HstService_) => {
       $q = _$q_;
       $httpBackend = _$httpBackend_;
-      $window = _$window_;
       hstService = _HstService_;
     });
   });
@@ -344,15 +342,14 @@ describe('HstService', () => {
     $httpBackend.flush();
   });
 
-  it('reports user activity to the CMS when the backend is called', () => {
-    spyOn($window.APP_TO_CMS, 'publish');
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
+  it('can do a put form call', () => {
+    $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, 'foo=1&bar=a%20b', {
       'CMS-User': 'testUser',
       'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     }).respond(200);
-    hstService.doGet('some-uuid', 'one', 'two', 'three');
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
+    hstService.doPutForm({ foo: 1, bar: 'a b' }, 'some-uuid', 'one', 'two', 'three').catch(fail);
     $httpBackend.flush();
   });
 });

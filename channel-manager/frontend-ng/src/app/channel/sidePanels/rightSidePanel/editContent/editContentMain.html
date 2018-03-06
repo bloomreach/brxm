@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<add-to-project ng-if="$ctrl.showAddToProject()" on-close="$ctrl.close()"></add-to-project>
+
+<content-editor ng-show="!$ctrl.showAddToProject()"
+                flex="grow"
+                layout="column"
+                allow-save="true"
+                on-switch-editor="$ctrl.switchEditor()"
+                on-save="$ctrl.save()"
+                on-close="$ctrl.close()">
+
+  <content-editor-message>
+    <md-subheader ng-if="$ctrl.notAllFieldsShown()"
+                  class="md-no-sticky"
+                  md-colors="{background: 'hippo-grey-200'}">
+      <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
+      <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+      <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+    </md-subheader>
+  </content-editor-message>
+
+</content-editor>

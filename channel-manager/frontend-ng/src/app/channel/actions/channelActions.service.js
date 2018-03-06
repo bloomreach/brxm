@@ -20,6 +20,7 @@ import deleteProgressTemplate from './delete/delete-channel-progress.html';
 class ChannelActionsService extends MenuService {
   constructor(
     $log,
+    $state,
     $translate,
     ChannelService,
     CmsService,
@@ -28,7 +29,6 @@ class ChannelActionsService extends MenuService {
     FeedbackService,
     HippoIframeService,
     SessionService,
-    SidePanelService,
     SiteMapService,
     ProjectService,
   ) {
@@ -37,6 +37,7 @@ class ChannelActionsService extends MenuService {
     super();
 
     this.$log = $log;
+    this.$state = $state;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -45,13 +46,12 @@ class ChannelActionsService extends MenuService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
-    this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
     this.ProjectService = ProjectService;
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
-      isIconVisible: () => this.hasAnyChanges(),
+      isIconVisible: () => this._hasAnyChanges(),
       iconSvg: 'attention',
     })
       .addAction('settings', {
@@ -119,7 +119,7 @@ class ChannelActionsService extends MenuService {
     this.showSubPage('manage-changes');
   }
 
-  hasAnyChanges() {
+  _hasAnyChanges() {
     return this._hasOwnChanges() || this._hasChangesToManage();
   }
 
@@ -175,8 +175,20 @@ class ChannelActionsService extends MenuService {
   }
 
   _confirmDiscard() {
+    const channel = this.ChannelService.getChannel();
+    let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
+
+    if (this._isBranch()) {
+      const project = this.ProjectService.selectedProject;
+
+      content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE', {
+        channelName: channel.name,
+        projectName: project.name,
+      });
+    }
+
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .textContent(content)
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.$translate.instant('CANCEL'));
 
@@ -251,7 +263,7 @@ class ChannelActionsService extends MenuService {
 
   // Close
   _closeChannel() {
-    this.SidePanelService.close('right')
+    this.$state.go('hippo-cm')
       .then(() => this.CmsService.publish('close-channel'));
   }
 }
