@@ -42,6 +42,15 @@ document-fields {
   md-icon {
     margin: 0 2px;
   }
+
+  .checkbox-hint {
+    font-size: 18px;
+    height: 18px;
+    min-height: 18px;
+    min-width: 18px;
+    vertical-align: baseline;
+    width: 18px;
+  }
 }
 
 primitive-field,
@@ -59,13 +68,4 @@ compound-field {
   primitive-field > .field {
     padding-left: 0;
   }
-}
-
-.checkbox-hint {
-  font-size: 18px;
-  width: 18px;
-  min-width: 18px;
-  height: 18px;
-  min-height: 18px;
-  vertical-align: baseline;
 }
