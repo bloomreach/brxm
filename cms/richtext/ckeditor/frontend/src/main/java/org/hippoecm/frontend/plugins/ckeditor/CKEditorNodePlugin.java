@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,14 +29,14 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketURLEncoder;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
@@ -111,38 +111,38 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private void addPickerExtension(final CKEditorPanel editPanel) {
         final String editorId = editPanel.getEditorId();
-        final LinkPickerBehavior linkPickerBehavior = createLinkPickerBehavior(editorId);
-        final ImagePickerBehavior imagePickerBehavior = createImagePickerBehavior(editorId);
-        final CKEditorPanelPickerExtension pickerExtension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
+        final LinkPicker linkPicker = createLinkPicker(editorId);
+        final ImagePicker imagePicker = createImagePicker(editorId);
+        final CKEditorPanelPickerExtension pickerExtension = new CKEditorPanelPickerExtension(linkPicker, imagePicker);
         editPanel.addExtension(pickerExtension);
     }
 
-    private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
+    private ImagePicker createImagePicker(final String editorId) {
+        final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
+
+        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
+        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,
+                WicketNodeFactory.INSTANCE,
+                WicketURLEncoder.INSTANCE);
+        final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
+
+        final ImagePicker manager = new ImagePicker(getPluginContext(), imagePickerConfig, imageService);
+        manager.setCloseAction(new CKEditorInsertImageAction(editorId));
+
+        return manager;
+    }
+
+    private LinkPicker createLinkPicker(final String editorId) {
         final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
                 getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG), (JcrPropertyValueModel) getHtmlModel());
 
         final RichTextLinkFactory linkFactory = createLinkFactory();
         final RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
-        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), dialogConfig, linkService);
-        behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
+        final LinkPicker manager = new LinkPicker(getPluginContext(), dialogConfig, linkService);
+        manager.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
 
-        return behavior;
-    }
-
-    private ImagePickerBehavior createImagePickerBehavior(final String editorId) {
-        final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
-
-        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
-        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,
-                                                                               WicketNodeFactory.INSTANCE,
-                                                                               WicketURLEncoder.INSTANCE);
-        final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
-
-        final ImagePickerBehavior behavior = new ImagePickerBehavior(getPluginContext(), imagePickerConfig, imageService);
-        behavior.setCloseAction(new CKEditorInsertImageAction(editorId));
-
-        return behavior;
+        return manager;
     }
 
     @Override

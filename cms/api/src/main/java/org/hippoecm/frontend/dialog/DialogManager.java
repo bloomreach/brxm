@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,63 +17,71 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.Map;
 
-import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 /**
  * Base manager for showing a dialog.
- *
- * - 'dialogConfig' contains the configuration for the dialog as serialized JSON.
- *
- * The behavior can be called by the frontend to open the dialog.
  */
-public class DialogManager<ModelType> implements IClusterable {
+public class DialogManager<ModelType> implements IDetachable {
 
     private final IPluginContext context;
-    private final ConfigProvider configProvider;
+    private final IPluginConfig config;
 
-    private DialogBehavior<ModelType> behavior;
+    private DialogBehavior behavior;
     private ScriptAction<ModelType> cancelAction;
     private ScriptAction<ModelType> closeAction;
 
-    public DialogManager(final IPluginContext context, final IPluginConfig defaultDialogConfig) {
+    public DialogManager(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
+        this.config = config;
+    }
 
-        configProvider = new ConfigProvider(defaultDialogConfig) {
-            @Override
-            public IPluginConfig get(final Map<String, String> parameters) {
-                onConfigure(defaultDialogConfig, parameters);
-                return super.get(parameters);
-            }
-        };
+    @Override
+    public void detach() {
+    }
+
+    public void setCancelAction(final ScriptAction<ModelType> cancelAction) {
+        this.cancelAction = cancelAction;
+    }
+
+    public void setCloseAction(final ScriptAction<ModelType> closeAction) {
+        this.closeAction = closeAction;
     }
 
     public DialogBehavior getBehavior() {
         if (behavior == null) {
-            behavior = createBehavior(context, configProvider);
+            behavior = createBehavior(context, config);
         }
-
-        if (behavior != null) {
-            behavior.setCancelAction(cancelAction);
-            behavior.setCloseAction(closeAction);
-        }
-
         return behavior;
     }
 
-    protected void setCancelAction(final ScriptAction<ModelType> cancelAction) {
-        this.cancelAction = cancelAction;
+    public String getCallbackUrl() {
+        return getBehavior().getCallbackUrl().toString();
     }
 
-    protected void setCloseAction(final ScriptAction<ModelType> closeAction) {
-        this.closeAction = closeAction;
+    protected DialogBehavior createBehavior(final IPluginContext context, final IPluginConfig config) {
+        return new DialogBehavior() {
+            @Override
+            protected void showDialog(final Map<String, String> parameters) {
+                onShowDialog(parameters);
+            }
+        };
     }
 
-    protected DialogBehavior<ModelType> createBehavior(final IPluginContext context, final ConfigProvider configProvider) {
-        return new DialogBehavior<>(context, configProvider);
+    protected Dialog<ModelType> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
+        return new Dialog<>();
     }
 
-    protected void onConfigure(final IPluginConfig defaultDialogConfig, final Map<String, String> parameters) {
+    private void onShowDialog(final Map<String, String> parameters) {
+        final Dialog<ModelType> dialog = createDialog(context, config, parameters);
+        dialog.setCancelAction(cancelAction);
+        dialog.setCloseAction(closeAction);
+        getDialogService().show(dialog);
+    }
+
+    private IDialogService getDialogService() {
+        return context.getService(IDialogService.class.getName(), IDialogService.class);
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,46 +23,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class DialogBehavior<ModelType> extends AbstractDefaultAjaxBehavior {
-
-    private final IPluginContext context;
-    private final ConfigProvider configProvider;
-
-    private ScriptAction<ModelType> cancelAction;
-    private ScriptAction<ModelType> closeAction;
-
-    public DialogBehavior(final IPluginContext context, final IPluginConfig config) {
-        this(context, new ConfigProvider(config));
-    }
-
-    public DialogBehavior(final IPluginContext context, final ConfigProvider configProvider) {
-        this.context = context;
-        this.configProvider = configProvider;
-    }
-
-    public void setCancelAction(final ScriptAction<ModelType> cancelAction) {
-        this.cancelAction = cancelAction;
-    }
-
-    public void setCloseAction(final ScriptAction<ModelType> closeAction) {
-        this.closeAction = closeAction;
-    }
+public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        final Map<String, String> parameters = getParameters();
-        final IPluginConfig config = configProvider.get(parameters);
-        final Dialog<ModelType> dialog = createDialog(context, config);
-        dialog.setCancelAction(cancelAction);
-        dialog.setCloseAction(closeAction);
-        getDialogService().show(dialog);
-    }
-
-    protected Dialog<ModelType> createDialog(final IPluginContext context, final IPluginConfig config) {
-        return new Dialog<>();
+        showDialog(getParameters());
     }
 
     protected Map<String, String> getParameters() {
@@ -76,7 +42,5 @@ public class DialogBehavior<ModelType> extends AbstractDefaultAjaxBehavior {
                 ));
     }
 
-    private IDialogService getDialogService() {
-        return context.getService(IDialogService.class.getName(), IDialogService.class);
-    }
+    protected abstract void showDialog(final Map<String, String> parameters);
 }
