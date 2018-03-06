@@ -75,12 +75,14 @@ public interface WebFilesService {
      *
      * @param session the JCR session used to access web files.
      * @param directory the directory containing the web files to import.
-     * @param bootstrapPhase <code>true</code> if this method is invoked during repository bootstrap phase or as part of a
-     *                       PostStartupTask
+     * @param skipIfAlreadyAutoLoaded If <code>true</code> and AutoReloadService is enabled, then skip loading of webfilebundle
+     *                                as it already will have been loaded by AutoReloadService. If AutoReloadService is disabled,
+     *                                load webfilebundle.<br/><code>false</code>
+     *                                Webfilebundle must be loaded, regardless of the state of AutoReloadService.
      * @throws IOException if an I/O error occurs while reading web files from file system
      * @throws WebFileException if another error occurs while importing web files
      */
-    void importJcrWebFileBundle(Session session, File directory, boolean bootstrapPhase) throws IOException, WebFileException;
+    void importJcrWebFileBundle(Session session, File directory, boolean skipIfAlreadyAutoLoaded) throws IOException, WebFileException;
 
     /**
      * Imports a web file bundle from the given zip file. The zip file should contain a single root directory entry
@@ -90,25 +92,14 @@ public interface WebFilesService {
      *
      * @param session the JCR session used to access web files.
      * @param zip the ZIP file containing the web files to import.
-     * @param bootstrapPhase <code>true</code> if this method is invoked during repository bootstrap phase or as part of a
-     *                       PostStartupTask
+     * @param skipIfAlreadyAutoLoaded If <code>true</code> and AutoReloadService is enabled, then skip loading of webfilebundle
+     *                                as it already will have been loaded by AutoReloadService. If AutoReloadService is disabled,
+     *                                load webfilebundle.<br/><code>false</code>
+     *                                Webfilebundle must be loaded, regardless of the state of AutoReloadService.
      * @throws IOException if an I/O error occurs while reading web files from the ZIP file
      * @throws WebFileException if another error occurs while importing web files
      */
-    void importJcrWebFileBundle(Session session, ZipFile zip, boolean bootstrapPhase) throws IOException, WebFileException;
-
-    /**
-     * Imports a web file bundle from the given zip file. The zip file should contain a single root directory entry
-     * that contains all web files. The name of the root directory entry is used as the name of the bundle.
-     * Existing web files in JCR are replaced by the new ones. Missing web files are deleted from JCR.
-     * The caller of this method is responsible for saving the changes made in the session.
-     *
-     * @param session the JCR session used to access web files.
-     * @param zip the ZIP file containing the web files to import.
-     * @throws IOException if an I/O error occurs while reading web files from the ZIP file
-     * @throws WebFileException if another error occurs while importing web files
-     */
-    void importJcrWebFileBundle(final Session session, final ZipFile zip) throws IOException, WebFileException;
+    void importJcrWebFileBundle(Session session, ZipFile zip, boolean skipIfAlreadyAutoLoaded) throws IOException, WebFileException;
 
     /**
      * Imports a sub-tree of a web file bundle from a directory. The sub-tree can consist of a directory or
