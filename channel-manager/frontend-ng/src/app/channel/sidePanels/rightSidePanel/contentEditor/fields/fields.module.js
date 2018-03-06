@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
+import dateFieldComponent from "./dateField/dateField.component";
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
@@ -30,6 +31,7 @@ const fieldsModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
+  .component('dateField', dateFieldComponent)
   .directive('collapse', collapse)
   .service('FieldService', fieldService);
 
