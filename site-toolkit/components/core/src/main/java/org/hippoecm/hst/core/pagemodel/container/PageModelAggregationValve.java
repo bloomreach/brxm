@@ -40,6 +40,8 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
@@ -208,6 +210,12 @@ public class PageModelAggregationValve extends AggregationValve {
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final HstContainerURLProvider containerURLProvider = getUrlFactory().getContainerURLProvider();
+        final HstContainerURL apiBaseURL = requestContext.getBaseURL();
+        final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+        final HstContainerURL siteBaseURL = containerURLProvider.createURL(siteMount, apiBaseURL, apiBaseURL.getPathInfo());
+
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
         final String id = rootWindow.getReferenceNamespace();
@@ -233,7 +241,7 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
-                addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
+                addComponentRenderingURLLink(requestContext, siteBaseURL, window, curContainerWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.isContainerItemWindow()) {
@@ -247,7 +255,7 @@ public class PageModelAggregationValve extends AggregationValve {
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
-                addComponentRenderingURLLink(hstResponse, componentWindowModel);
+                addComponentRenderingURLLink(requestContext, siteBaseURL, window, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
                 curContainerWindowModel.addComponentWindowSet(componentWindowModel);
             } else {
@@ -282,10 +290,18 @@ public class PageModelAggregationValve extends AggregationValve {
         return pageModel;
     }
 
-    private void addComponentRenderingURLLink(HstResponse hstResponse,
-            IdentifiableLinkableMetadataBaseModel linkableModel) {
-        HstURL compRenderURL = hstResponse.createComponentRenderingURL();
-        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL.toString());
+    /**
+     * Generate a component rendering URL which should return renderable markups.
+     * @param requestContext request context
+     * @param siteBaseURL site base page rendering URL which is not from this API pipeline but normal site pipeline.
+     * @param compWindow HST component window
+     * @param linkableModel linable model object
+     */
+    private void addComponentRenderingURLLink(HstRequestContext requestContext, HstContainerURL siteBaseURL,
+            HstComponentWindow compWindow, IdentifiableLinkableMetadataBaseModel linkableModel) {
+        final HstURL compRenderURL = requestContext.getURLFactory().createURL(HstURL.COMPONENT_RENDERING_TYPE,
+                compWindow.getReferenceNamespace(), siteBaseURL, requestContext);
+        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL);
     }
 
     /**
