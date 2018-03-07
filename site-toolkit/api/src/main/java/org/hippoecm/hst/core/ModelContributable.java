@@ -55,7 +55,7 @@ public interface ModelContributable {
      * combined view for both <code>models</code> and other <code>attributes</code> through <code>#getAttribute(String)</code>,
      * <code>#getAttributeNames()</code> or <code>#getAttributeMap</code>.
      * </P>
-     * @return an unmodifiable map of model objectscontributed by {@link #setModel(String, Object)}
+     * @return an unmodifiable map of model objects contributed by {@link #setModel(String, Object)}
      */
     Map<String, Object> getModelsMap();
 
