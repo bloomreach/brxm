@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,20 +64,24 @@ public final class HippoTranslatedNode {
     }
 
     public Node getTranslation(String language) throws RepositoryException {
-        String id = node.getProperty(HippoTranslationNodeType.ID).getString();
-        Query query = node.getSession().getWorkspace().getQueryManager().createQuery(
+        final String id = node.getProperty(HippoTranslationNodeType.ID).getString();
+        final Query query = node.getSession().getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM " + HippoTranslationNodeType.NT_TRANSLATED
                         + " WHERE " + HippoTranslationNodeType.ID + "='" + id + "'"
                         + " AND " + HippoTranslationNodeType.LOCALE + "='" + language + "'",
                 Query.SQL);
         final QueryResult result = query.execute();
-        NodeIterator nodes = result.getNodes();
+        final NodeIterator nodes = result.getNodes();
         if (!nodes.hasNext()) {
-            throw new ItemNotFoundException("Folder was not translated to " + language);
+            throw new ItemNotFoundException("Node " + node.getPath() + " was not translated to " + language);
         }
-        if (nodes.getSize() > 1) {
-            log.warn("More than one translated variant found for node " + id + " in language " + language);
+
+        if (nodes.getSize() > 3) {
+            // check 3 for the stable draft/unpublished/published versions
+            log.warn("Not a maximum of 3 but {} translated variants found for node {} with translation id {} and language {}.",
+                    nodes.getSize(), node.getPath(), id, language);
         }
+
         return nodes.nextNode();
     }
 
