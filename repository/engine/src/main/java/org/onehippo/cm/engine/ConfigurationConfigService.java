@@ -147,7 +147,7 @@ public class ConfigurationConfigService {
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
                     boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);
                     if (reload) {
-                        webFilesService.importJcrWebFileBundle(session, bundleZipFile);
+                        webFilesService.importJcrWebFileBundle(session, bundleZipFile, false);
                         final Map<String, String> bundlesDigests = baselineService.getBundlesDigests(session);
                         final String baselineBundleDigest = bundlesDigests.get(bundleName);
                         if ((baselineBundleDigest != null && !baselineBundleDigest.equals(fsBundleDigest)) || baselineBundleDigest == null) {
