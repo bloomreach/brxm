@@ -26,11 +26,13 @@ import javax.jcr.observation.EventListener;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.DaemonModule;
+import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.l10n.LocalizationService.TRANSLATIONS_PATH;
 
+@ProvidesService(types = LocalizationService.class)
 public class LocalizationModule implements DaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(LocalizationModule.class);
