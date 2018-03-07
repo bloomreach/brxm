@@ -64,33 +64,25 @@ public final class HippoTranslatedNode {
     }
 
     public Node getTranslation(String language) throws RepositoryException {
-        String id = node.getProperty(HippoTranslationNodeType.ID).getString();
-        Query query = node.getSession().getWorkspace().getQueryManager().createQuery(
+        final String id = node.getProperty(HippoTranslationNodeType.ID).getString();
+        final Query query = node.getSession().getWorkspace().getQueryManager().createQuery(
                 "SELECT * FROM " + HippoTranslationNodeType.NT_TRANSLATED
                         + " WHERE " + HippoTranslationNodeType.ID + "='" + id + "'"
                         + " AND " + HippoTranslationNodeType.LOCALE + "='" + language + "'",
                 Query.SQL);
         final QueryResult result = query.execute();
-        NodeIterator nodes = result.getNodes();
+        final NodeIterator nodes = result.getNodes();
         if (!nodes.hasNext()) {
-            throw new ItemNotFoundException("Folder was not translated to " + language);
+            throw new ItemNotFoundException("Node " + node.getPath() + " was not translated to " + language);
         }
 
-        Node node = nodes.nextNode();
+        final Node translationNode = nodes.nextNode();
         if (nodes.getSize() > 3) {
-            log.warn("More than one translated variant found for node " + id + " in language " + language);
-        } else if (nodes.getSize() > 1) {
-            String handleId = null;
-            Node parent = node.getParent();
-            do {
-                Node next = nodes.nextNode();
-                if (!next.getParent().getIdentifier().equals(parent.getIdentifier())) {
-                    log.warn("More than one translated variant found for node " + id + " in language " + language);
-                    break;
-                }
-            } while (nodes.hasNext());
+            // check 3 for the stable draft/unpublished/published versions
+            log.warn("Not a maximum of 3 but {} translated variants found for node {} with translation id {} and language {}.",
+                    nodes.getSize(), node.getPath(), id, language);
         }
-        return node;
+        return translationNode;
     }
 
     public boolean hasTranslation(String language) throws RepositoryException {
