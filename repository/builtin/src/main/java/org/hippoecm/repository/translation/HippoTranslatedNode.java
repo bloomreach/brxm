@@ -76,13 +76,13 @@ public final class HippoTranslatedNode {
             throw new ItemNotFoundException("Node " + node.getPath() + " was not translated to " + language);
         }
 
-        final Node translationNode = nodes.nextNode();
         if (nodes.getSize() > 3) {
             // check 3 for the stable draft/unpublished/published versions
             log.warn("Not a maximum of 3 but {} translated variants found for node {} with translation id {} and language {}.",
                     nodes.getSize(), node.getPath(), id, language);
         }
-        return translationNode;
+
+        return nodes.nextNode();
     }
 
     public boolean hasTranslation(String language) throws RepositoryException {
