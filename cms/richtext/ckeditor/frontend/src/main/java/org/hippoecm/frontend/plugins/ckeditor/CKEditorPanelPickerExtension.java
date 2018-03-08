@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.dialog.DialogManager;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextImagePicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextLinkPicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
 import org.onehippo.ckeditor.HippoPicker;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,10 +31,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
-    private final RichTextLinkPicker linkPicker;
-    private final RichTextImagePicker imagePicker;
+    private final LinkPickerManager linkPicker;
+    private final ImagePickerManager imagePicker;
 
-    public CKEditorPanelPickerExtension(final RichTextLinkPicker linkPicker, final RichTextImagePicker imagePicker) {
+    public CKEditorPanelPickerExtension(final LinkPickerManager linkPicker, final ImagePickerManager imagePicker) {
         this.linkPicker= linkPicker;
         this.imagePicker= imagePicker;
     }

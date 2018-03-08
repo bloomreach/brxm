@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.dialog.DialogBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextImagePicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextLinkPicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.ckeditor.HippoPicker;
@@ -43,19 +43,19 @@ import static org.junit.Assert.assertTrue;
  */
 public class CKEditorPanelPickerExtensionTest {
 
-    private RichTextLinkPicker linkPicker;
+    private LinkPickerManager linkPicker;
     private DialogBehavior linkPickerBehavior;
-    private RichTextImagePicker imagePicker;
+    private ImagePickerManager imagePicker;
     private DialogBehavior imagePickerBehavior;
     private CKEditorPanelPickerExtension extension;
 
     @Before
     public void setUp() {
-        linkPicker = createMock(RichTextLinkPicker.class);
+        linkPicker = createMock(LinkPickerManager.class);
         linkPickerBehavior = createMock(DialogBehavior.class);
         expect(linkPicker.getBehavior()).andReturn(linkPickerBehavior);
 
-        imagePicker = createMock(RichTextImagePicker.class);
+        imagePicker = createMock(ImagePickerManager.class);
         imagePickerBehavior = createMock(DialogBehavior.class);
         expect(imagePicker.getBehavior()).andReturn(imagePickerBehavior);
         replay(linkPicker, imagePicker);

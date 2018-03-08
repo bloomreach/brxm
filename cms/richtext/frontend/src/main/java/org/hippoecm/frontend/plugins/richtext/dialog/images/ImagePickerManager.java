@@ -31,11 +31,11 @@ import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactoryImpl;
 
-public class RichTextImagePicker extends DialogManager<RichTextEditorImageLink> {
+public class ImagePickerManager extends DialogManager<RichTextEditorImageLink> {
 
     private final RichTextEditorImageService imageService;
 
-    public RichTextImagePicker(final IPluginContext context, final IPluginConfig config, final Model<Node> nodeModel) {
+    public ImagePickerManager(final IPluginContext context, final IPluginConfig config, final Model<Node> nodeModel) {
         super(context, config);
 
         final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,

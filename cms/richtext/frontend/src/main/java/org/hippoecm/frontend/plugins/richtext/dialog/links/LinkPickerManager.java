@@ -31,11 +31,11 @@ import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactoryImpl;
 
-public class RichTextLinkPicker extends DialogManager<RichTextEditorDocumentLink> {
+public class LinkPickerManager extends DialogManager<RichTextEditorDocumentLink> {
 
     private final RichTextEditorLinkService linkService;
 
-    public RichTextLinkPicker(final IPluginContext context, final IPluginConfig config, final Model<Node> nodeModel) {
+    public LinkPickerManager(final IPluginContext context, final IPluginConfig config, final Model<Node> nodeModel) {
         super(context, config);
 
         final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(nodeModel, WicketNodeFactory.INSTANCE);

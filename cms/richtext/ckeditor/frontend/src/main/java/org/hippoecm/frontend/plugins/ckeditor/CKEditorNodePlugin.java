@@ -29,8 +29,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextImagePicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextLinkPicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
@@ -103,29 +103,29 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private void addPickerExtension(final CKEditorPanel editPanel) {
         final String editorId = editPanel.getEditorId();
-        final RichTextLinkPicker linkPicker = createLinkPicker(editorId);
-        final RichTextImagePicker imagePicker = createImagePicker(editorId);
+        final LinkPickerManager linkPicker = createLinkPicker(editorId);
+        final ImagePickerManager imagePicker = createImagePicker(editorId);
         final CKEditorPanelPickerExtension pickerExtension = new CKEditorPanelPickerExtension(linkPicker, imagePicker);
         editPanel.addExtension(pickerExtension);
     }
 
-    private RichTextImagePicker createImagePicker(final String editorId) {
+    private ImagePickerManager createImagePicker(final String editorId) {
         final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
         final Model<Node> nodeModel = WicketModel.of(getNodeModel());
 
-        final RichTextImagePicker richTextImagePicker = new RichTextImagePicker(getPluginContext(), imagePickerConfig,
+        final ImagePickerManager richTextImagePicker = new ImagePickerManager(getPluginContext(), imagePickerConfig,
                 nodeModel);
 
         richTextImagePicker.setCloseAction(new CKEditorInsertImageAction(editorId));
         return richTextImagePicker;
     }
 
-    private RichTextLinkPicker createLinkPicker(final String editorId) {
+    private LinkPickerManager createLinkPicker(final String editorId) {
         final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
                 getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG), (JcrPropertyValueModel) getHtmlModel());
         final Model<Node> nodeModel = WicketModel.of(getNodeModel());
 
-        final RichTextLinkPicker richTextLinkPicker = new RichTextLinkPicker(getPluginContext(), dialogConfig,
+        final LinkPickerManager richTextLinkPicker = new LinkPickerManager(getPluginContext(), dialogConfig,
                 nodeModel);
         richTextLinkPicker.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
         return richTextLinkPicker;
