@@ -34,7 +34,6 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.AggregationValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -241,7 +240,6 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
-                addComponentRenderingURLLink(requestContext, siteBaseURL, window, curContainerWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.isContainerItemWindow()) {
@@ -255,7 +253,6 @@ public class PageModelAggregationValve extends AggregationValve {
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
-                addComponentRenderingURLLink(requestContext, siteBaseURL, window, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
                 curContainerWindowModel.addComponentWindowSet(componentWindowModel);
             } else {
@@ -288,20 +285,6 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return pageModel;
-    }
-
-    /**
-     * Generate a component rendering URL which should return renderable markups.
-     * @param requestContext request context
-     * @param siteBaseURL site base page rendering URL which is not from this API pipeline but normal site pipeline.
-     * @param compWindow HST component window
-     * @param linkableModel linable model object
-     */
-    private void addComponentRenderingURLLink(HstRequestContext requestContext, HstContainerURL siteBaseURL,
-            HstComponentWindow compWindow, IdentifiableLinkableMetadataBaseModel linkableModel) {
-        final HstURL compRenderURL = requestContext.getURLFactory().createURL(HstURL.COMPONENT_RENDERING_TYPE,
-                compWindow.getReferenceNamespace(), siteBaseURL, requestContext);
-        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL);
     }
 
     /**
