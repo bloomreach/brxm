@@ -37,6 +37,7 @@ public interface FieldType {
         STRING,
         DOUBLE,
         LONG,
+        BOOLEAN,
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
