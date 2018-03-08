@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -109,8 +109,9 @@ public class ChannelEditor extends ExtPanel {
     private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
-    private final LinkPickerManager linkPickerManager;
-    private final ImageVariantPickerManager imageVariantPickerManager;
+
+    private final RichTextLinkPicker linkPicker;
+    private final RichTextImageVariantPicker imageVariantPicker;
     private final ImagePickerManager imagePickerManager;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
 
@@ -142,11 +143,11 @@ public class ChannelEditor extends ExtPanel {
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
         addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
 
-        linkPickerManager = new LinkPickerManager(context, getMarkupId());
-        add(linkPickerManager.getBehavior());
+        linkPicker = new RichTextLinkPicker(context, getMarkupId());
+        add(linkPicker.getBehavior());
 
-        imageVariantPickerManager = new ImageVariantPickerManager(context, getMarkupId());
-        add(imageVariantPickerManager.getBehavior());
+        imageVariantPicker = new RichTextImageVariantPicker(context, getMarkupId());
+        add(imageVariantPicker.getBehavior());
 
         imagePickerManager = new ImagePickerManager(context, getMarkupId());
         add(imagePickerManager.getBehavior());
@@ -176,8 +177,8 @@ public class ChannelEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
-        properties.put("linkPickerWicketUrl", this.linkPickerManager.getBehavior().getCallbackUrl().toString());
-        properties.put("imageVariantPickerWicketUrl", this.imageVariantPickerManager.getBehavior().getCallbackUrl().toString());
+        properties.put("linkPickerWicketUrl", linkPicker.getBehavior().getCallbackUrl().toString());
+        properties.put("imageVariantPickerWicketUrl", this.imageVariantPicker.getBehavior().getCallbackUrl().toString());
         properties.put("imagePickerWicketUrl", this.imagePickerManager.getBehavior().getCallbackUrl().toString());
     }
 
@@ -219,6 +220,13 @@ public class ChannelEditor extends ExtPanel {
             log.info("Variants path not configured. Only the default variant will be available.");
         }
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        linkPicker.detach();
+        imageVariantPicker.detach();
     }
 
     /**

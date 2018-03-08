@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,59 +30,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class manager for a picker dialog in rich text fields. Contains the generic code for parsing AJAX parameters:
- *
- * - 'fieldId' contains the UUID of the compound node of the rich text field, so the dialog configuration can determine
- *   the field-node-specific settings
+ * Base class for a picker dialog in rich text fields invoked through the channel editor. Contains the generic code for
+ * parsing AJAX parameters:
+ * <ul>
+ *     <li>'fieldId' contains the UUID of the compound node of the rich text field, so the dialog configuration can
+ *     determine the field-node-specific settings</li>
+ *</ul>
+ * <p>
+ * Handles save and discard of the node referenced by field "nodeId".
+ * </p>
  */
+public class RichTextPicker<T extends RichTextEditorLink> extends ChannelEditorPicker<T> {
 
-public class RichTextPickerManager<Item extends RichTextEditorLink> extends PickerManager<Item> {
+    private static final Logger log = LoggerFactory.getLogger(RichTextPicker.class);
 
-    public static final Logger log = LoggerFactory.getLogger(RichTextPickerManager.class);
+    private String nodeId;
 
-    private String fieldId;
+    protected RichTextPicker(final IPluginContext context, final IPluginConfig config, final String channelEditorId) {
+        super(context, config, channelEditorId);
+    }
 
-    RichTextPickerManager(final IPluginContext context, final IPluginConfig defaultPickerConfig, final String channelEditorId) {
-        super(context, defaultPickerConfig, channelEditorId);
+    void setNodeId(final Map<String, String> parameters) {
+        nodeId = parameters.get("fieldId");
     }
 
     @Override
-    protected void onConfigure(final IPluginConfig defaultDialogConfig, final Map<String, String> parameters) {
-        fieldId = parameters.get("fieldId");
-    }
-
-    @Override
-    protected boolean isValid(final Item pickedItem) {
+    protected boolean isValid(final T pickedItem) {
         return savePendingChanges();
     }
 
     @Override
-    protected String toJsString(final Item pickedItem) {
+    protected String toJson(final T pickedItem) {
         return pickedItem.toJsString();
     }
 
-    Node getFieldNode() {
+    private Node getFieldNode() {
         try {
-            return UserSession.get().getJcrSession().getNodeByIdentifier(fieldId);
+            return UserSession.get().getJcrSession().getNodeByIdentifier(nodeId);
         } catch (IllegalArgumentException | RepositoryException e) {
-            log.info("Cannot find document '{}' while opening link picker", fieldId);
+            log.info("Cannot find document '{}' while opening link picker", nodeId);
         }
         return null;
     }
 
     Model<Node> getFieldNodeModel() {
-        return new Model<Node>() {
+        return new NodeModel() {
             @Override
             public Node get() {
                 return getFieldNode();
-            }
-
-            @Override
-            public void set(final Node value) {
-            }
-
-            @Override
-            public void release() {
             }
         };
     }
@@ -101,10 +96,27 @@ public class RichTextPickerManager<Item extends RichTextEditorLink> extends Pick
     }
 
     private void discardChangesInField() {
+        final Node node = getFieldNode();
+        if (node == null) {
+            log.warn("No node found with UUID %s, can not discard changes.", nodeId);
+            return;
+        }
+
         try {
-            getFieldNodeModel().get().refresh(false);
+            node.refresh(false);
         } catch (RepositoryException e) {
-            log.warn("Also failed to discard changes", e);
+            log.warn("Failed to discard changes for node with UUID %s", nodeId, e);
+        }
+    }
+
+    private static abstract class NodeModel implements Model<Node> {
+
+        @Override
+        public final void set(final Node node) {
+        }
+
+        @Override
+        public final void release() {
         }
     }
 }
