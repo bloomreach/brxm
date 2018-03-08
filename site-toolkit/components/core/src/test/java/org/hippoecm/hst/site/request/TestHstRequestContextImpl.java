@@ -76,6 +76,7 @@ public class TestHstRequestContextImpl {
         assertTrue(requestContext.getModelsMap().isEmpty());
 
         requestContext.removeAttribute("attr1");
+        requestContext.removeAttribute("model1");
         assertNull(requestContext.getAttribute("attr1"));
         assertNull(requestContext.getAttributes().get("attr1"));
         assertTrue(requestContext.attributes.isEmpty());

@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.collection.CompositeCollection;
-import org.apache.commons.collections.map.CompositeMap;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -116,7 +115,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
 
-    private Map<String, Object> unmodifiableCompositeAttributes;
+    private Map<String, Object> unmodifiableAttributes;
 
     private boolean disposed;
     private boolean matchingFinished;
@@ -363,12 +362,14 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public Object setModel(String name, Object model) {
+        setAttribute(name, model);
         return modelsMap.put(name, model);
     }
 
     @Override
     public void removeModel(String name) {
         modelsMap.remove(name);
+        removeAttribute(name);
     }
 
     @Override
@@ -423,39 +424,19 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.attributes.put(name, object);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> getAttributes() {
         checkStateValidity();
 
-        if (unmodifiableCompositeAttributes == null) {
-            Map<String, Object> compositeMap = new CompositeMap(new Map[] { attributes, getModelsMap() },
-                    new CompositeMap.MapMutator() {
-                @Override
-                public void resolveCollision(CompositeMap composite, Map existing, Map added,
-                        Collection intersect) {
-                    // don't care same keys in internalAttributes and modelsMap.
-                }
-
-                @Override
-                public void putAll(CompositeMap map, Map[] composited, Map mapToAdd) {
-                    // The last item is the same as the first array item input in constructor.
-                    Map<String, Object> internalAttributesMap = composited[composited.length - 1];
-                    internalAttributesMap.putAll(mapToAdd);
-                }
-
-                @Override
-                public Object put(CompositeMap map, Map[] composited, Object key, Object value) {
-                    // The last item is the same as the first array item input in constructor.
-                    Map<String, Object> internalAttributesMap = composited[composited.length - 1];
-                    return internalAttributesMap.put((String) key, value);
-                }
-            });
-
-            unmodifiableCompositeAttributes = Collections.unmodifiableMap(compositeMap);
+        if (unmodifiableAttributes == null && attributes != null) {
+            unmodifiableAttributes = Collections.unmodifiableMap(attributes);
         }
 
-        return unmodifiableCompositeAttributes;
+        if (unmodifiableAttributes == null) {
+            return Collections.emptyMap();
+        }
+
+        return unmodifiableAttributes;
     }
 
     @Override
@@ -918,7 +899,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         renderHost = null;
         objectBeanManagers = null;
         hstQueryManagers = null;
-        unmodifiableCompositeAttributes = null;
+        unmodifiableAttributes = null;
 
         disposed = true;
     }
