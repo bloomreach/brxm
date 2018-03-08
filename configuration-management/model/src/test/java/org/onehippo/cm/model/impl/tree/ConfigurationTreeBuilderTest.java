@@ -251,6 +251,52 @@ public class ConfigurationTreeBuilderTest {
     }
 
     @Test
+    public void merge_two_definitions_separate_extension_module() throws Exception {
+        final String yaml1 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property2: bla2\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property4: bla4\n"
+                + "        property8: bla8\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property5: bla5";
+
+        final List<AbstractDefinitionImpl> definitions1 = ModelTestUtils.parseNoSort(yaml1, "module1", true);
+        builder.push((ConfigDefinitionImpl)definitions1.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property3: bla3\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property6: bla6\n"
+                + "      /b:\n"
+                + "        property7: bla7\n"
+                + "        /f:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property9: bla9";
+
+        final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2, "module2", true);
+        final ConfigDefinitionImpl definition2 = (ConfigDefinitionImpl) definitions2.get(0);
+        definition2.getSource().getModule().setExtension("module-extension");
+        try {
+            builder.push(definition2);
+            fail("Cannot merge config definitions with the same path defined in different " +
+                    "extensions or in both core and an extension");
+        } catch (IllegalArgumentException e) {
+            //expected
+        }
+    }
+
+    @Test
     public void reorder_first_node_to_first() throws Exception {
         final String yaml = "definitions:\n"
                 + "  config:\n"

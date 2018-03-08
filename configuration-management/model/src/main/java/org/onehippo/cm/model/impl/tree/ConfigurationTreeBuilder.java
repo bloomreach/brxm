@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -36,6 +38,7 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -151,6 +154,23 @@ public class ConfigurationTreeBuilder {
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+
+        //TODO SS: validate if deleted nodes should be also handled
+        if (!CollectionUtils.isEmpty(definitionNode.getProperties())) {
+            final TreeDefinitionImpl<?> definition = definitionNode.getDefinition();
+            final List<DefinitionNodeImpl> definitions = node.getDefinitions();
+            final TreeDefinitionImpl<?> bucketDefinition = definitions.get(0).getDefinition();
+            if (!Objects.equals(definition.getSource().getModule().getExtension(),
+                    bucketDefinition.getSource().getModule().getExtension())) {
+                final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
+                        "extensions or in both core and an extension: %s -> %s",
+                        definition.getNode().getPath(), bucketDefinition.getSource(), definition.getSource());
+                logger.error(errMessage);
+                throw new IllegalArgumentException(errMessage);
+            }
+        }
+
+
         if (definitionNode.isDeletedAndEmpty()) {
 
             if (node.getParent() == null || !node.getParent().isDeleted()) {
