@@ -37,6 +37,13 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/*
+ * FIXME: Undo this class and related changes once HSTTWO-4241 gets fixed.
+ *        All the changes related to this in feature/spaplus branch were done
+ *        just in order to enable/test page model api output in preview mode,
+ *        which should be done ideally through Channel Manager's previe mode using cms user's JCR session
+ *        (e.g, _cmsinternal/...) instead.
+ */
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
