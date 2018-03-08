@@ -632,6 +632,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
+                ((extension==null)? "": ("extension='" + extension +"', ")) +
                 ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
