@@ -19,8 +19,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.wicket.behavior.Behavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPicker;
+import org.hippoecm.frontend.dialog.DialogManager;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextImagePicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextLinkPicker;
 import org.onehippo.ckeditor.HippoPicker;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -30,10 +31,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
-    private final LinkPicker linkPicker;
-    private final ImagePicker imagePicker;
+    private final RichTextLinkPicker linkPicker;
+    private final RichTextImagePicker imagePicker;
 
-    public CKEditorPanelPickerExtension(final LinkPicker linkPicker, final ImagePicker imagePicker) {
+    public CKEditorPanelPickerExtension(final RichTextLinkPicker linkPicker, final RichTextImagePicker imagePicker) {
         this.linkPicker= linkPicker;
         this.imagePicker= imagePicker;
     }
@@ -47,12 +48,17 @@ public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     private void addInternalLinkPickerConfiguration(final ObjectNode pickerPluginConfig) {
         final ObjectNode config = pickerPluginConfig.with(HippoPicker.InternalLink.CONFIG_KEY);
-        config.put(HippoPicker.InternalLink.CONFIG_CALLBACK_URL, linkPicker.getCallbackUrl());
+        addCallbackUrl(config, HippoPicker.InternalLink.CONFIG_CALLBACK_URL, linkPicker);
     }
 
     private void addImagePickerConfiguration(final ObjectNode pickerPluginConfig) {
         final ObjectNode config = pickerPluginConfig.with(HippoPicker.Image.CONFIG_KEY);
-        config.put(HippoPicker.Image.CONFIG_CALLBACK_URL, imagePicker.getCallbackUrl());
+        addCallbackUrl(config, HippoPicker.Image.CONFIG_CALLBACK_URL, imagePicker);
+    }
+
+    private static void addCallbackUrl(final ObjectNode config, final String key, final DialogManager provider) {
+        final String callbackUrl = provider.getBehavior().getCallbackUrl().toString();
+        config.put(key, callbackUrl);
     }
 
     @Override
@@ -62,6 +68,7 @@ public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     @Override
     public void detach() {
-        // nothing to do
+        linkPicker.detach();
+        imagePicker.detach();
     }
 }

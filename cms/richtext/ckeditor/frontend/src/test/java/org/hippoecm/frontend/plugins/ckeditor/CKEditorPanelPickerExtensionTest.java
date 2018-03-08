@@ -16,12 +16,11 @@
 package org.hippoecm.frontend.plugins.ckeditor;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.dialog.DialogBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextImagePicker;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextLinkPicker;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.ckeditor.HippoPicker;
@@ -44,14 +43,23 @@ import static org.junit.Assert.assertTrue;
  */
 public class CKEditorPanelPickerExtensionTest {
 
-    private LinkPicker linkPicker;
-    private ImagePicker imagePicker;
+    private RichTextLinkPicker linkPicker;
+    private DialogBehavior linkPickerBehavior;
+    private RichTextImagePicker imagePicker;
+    private DialogBehavior imagePickerBehavior;
     private CKEditorPanelPickerExtension extension;
 
     @Before
     public void setUp() {
-        linkPicker = createMock(LinkPicker.class);
-        imagePicker = createMock(ImagePicker.class);
+        linkPicker = createMock(RichTextLinkPicker.class);
+        linkPickerBehavior = createMock(DialogBehavior.class);
+        expect(linkPicker.getBehavior()).andReturn(linkPickerBehavior);
+
+        imagePicker = createMock(RichTextImagePicker.class);
+        imagePickerBehavior = createMock(DialogBehavior.class);
+        expect(imagePicker.getBehavior()).andReturn(imagePickerBehavior);
+        replay(linkPicker, imagePicker);
+
         extension = new CKEditorPanelPickerExtension(linkPicker, imagePicker);
     }
 
@@ -60,10 +68,9 @@ public class CKEditorPanelPickerExtensionTest {
         final String linkPickerCallbackUrl = "./linkpicker/callback";
         final String imagePickerCallbackUrl = "./imagepicker/callback";
 
-        expect(linkPicker.getCallbackUrl()).andReturn(linkPickerCallbackUrl);
-        expect(imagePicker.getCallbackUrl()).andReturn(imagePickerCallbackUrl);
-
-        replay(linkPicker, imagePicker);
+        expect(linkPickerBehavior.getCallbackUrl()).andReturn(linkPickerCallbackUrl);
+        expect(imagePickerBehavior.getCallbackUrl()).andReturn(imagePickerCallbackUrl);
+        replay(linkPickerBehavior, imagePickerBehavior);
 
         final ObjectNode editorConfig = Json.object();
         extension.addConfiguration(editorConfig);
@@ -88,19 +95,6 @@ public class CKEditorPanelPickerExtensionTest {
 
     @Test
     public void testGetBehaviors() throws Exception {
-        final DialogBehavior linkPickerBehavior = new DialogBehavior() {
-            @Override
-            protected void showDialog(final Map<String, String> parameters) {}
-        };
-        final DialogBehavior imagePickerBehavior = new DialogBehavior() {
-            @Override
-            protected void showDialog(final Map<String, String> parameters) {}
-        };
-
-        expect(linkPicker.getBehavior()).andReturn(linkPickerBehavior);
-        expect(imagePicker.getBehavior()).andReturn(imagePickerBehavior);
-        replay(linkPicker, imagePicker);
-
         final List<Behavior> behaviors = Lists.newArrayList(extension.getBehaviors());
         assertEquals(2, behaviors.size());
         assertTrue(behaviors.contains(linkPickerBehavior));

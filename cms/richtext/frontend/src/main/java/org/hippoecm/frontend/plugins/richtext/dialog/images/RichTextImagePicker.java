@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,34 +17,43 @@ package org.hippoecm.frontend.plugins.richtext.dialog.images;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketURLEncoder;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactory;
+import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactoryImpl;
 
-public class ImagePicker extends DialogManager<RichTextEditorImageLink> {
+public class RichTextImagePicker extends DialogManager<RichTextEditorImageLink> {
 
     private final RichTextEditorImageService imageService;
 
-    public ImagePicker(final IPluginContext context, final IPluginConfig config, final RichTextEditorImageService imageService) {
+    public RichTextImagePicker(final IPluginContext context, final IPluginConfig config, final Model<Node> nodeModel) {
         super(context, config);
-        this.imageService = imageService;
+
+        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,
+                WicketNodeFactory.INSTANCE,
+                WicketURLEncoder.INSTANCE);
+        imageService = new RichTextEditorImageService(imageFactory);
     }
 
     @Override
     protected Dialog<RichTextEditorImageLink> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
         final RichTextEditorImageLink imageLink = imageService.createRichTextEditorImage(parameters);
-        final IModel<RichTextEditorImageLink> model = Model.of(imageLink);
+        final IModel<RichTextEditorImageLink> model = org.apache.wicket.model.Model.of(imageLink);
         return new ImageBrowserDialog(context, config, model);
     }
 
     @Override
     public void detach() {
-        if (imageService != null) {
-            imageService.detach();
-        }
+        super.detach();
+        imageService.detach();
     }
 }
