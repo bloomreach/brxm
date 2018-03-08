@@ -15,7 +15,7 @@
  */
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
-import dateFieldComponent from "./dateField/dateField.component";
+import dateFieldComponent from './dateField/dateField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
