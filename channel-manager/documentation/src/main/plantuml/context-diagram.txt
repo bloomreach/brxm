@@ -30,7 +30,7 @@ CMS -left-> CM : View content in channel
 CM --> HST : Modifies presentation model
 HST --> CM : Renders channels
 
-REPO --> CM  : Provides content and\n content types
+Repository --> CM  : Provides content and\n content types
 CM --> Repository  : Creates and\n updates content
 HST --> Repository : Stores presentation model
 
