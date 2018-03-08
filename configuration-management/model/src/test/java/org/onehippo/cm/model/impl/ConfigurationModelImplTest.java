@@ -29,6 +29,7 @@ import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -371,6 +372,24 @@ public class ConfigurationModelImplTest {
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
+    }
+
+    @Test
+    public void build_model_using_extension_module() throws Exception {
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+        final ModuleImpl m2 = c1.addProject("p2").addModule("m2");
+        m2.setExtension("m2");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m2);
+
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
+        final ConfigurationNodeImpl nodeFromSecondModule = model.resolveNode("/b");
+        assertNotNull(nodeFromSecondModule);
+
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
+        assertEquals(5, definitions.size());
     }
 
     @Test

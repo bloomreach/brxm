@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -223,25 +225,34 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableDeletedConfigProperties.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
-        for (GroupImpl g : groups) {
-            for (ProjectImpl p : g.getProjects()) {
-                for (ModuleImpl module : p.getModules()) {
-                    log.info("Merging module {}", module.getFullName());
-                    addNamespaceDefinitions(module.getNamespaceDefinitions());
-                    addConfigDefinitions(module.getConfigDefinitions());
-                    addContentDefinitions(module.getContentDefinitions());
-                    addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
-                    module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
-                    configurationTreeBuilder.finishModule();
-                }
-            }
-        }
+
+        //sort modules so that extension modules would be at the bottom of the list (including dependencies)
+        final List<ModuleImpl> coreModules = groups.stream().flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream()).filter(m -> Objects.isNull(m.getExtension())).collect(Collectors.toList());
+
+        coreModules.forEach(module -> buildModule(configurationTreeBuilder, module));
+
+        final List<ModuleImpl> extensionModules = groups.stream().flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream()).filter(m -> Objects.nonNull(m.getExtension())).collect(Collectors.toList());
+
+        extensionModules.forEach(module -> buildModule(configurationTreeBuilder, module));
+
         setConfigurationRootNode(configurationTreeBuilder.build());
 
         modifiableDeletedConfigNodes.putAll(configurationTreeBuilder.getDeletedNodes());
         modifiableDeletedConfigProperties.putAll(configurationTreeBuilder.getDeletedProperties());
 
         return this;
+    }
+
+    private void buildModule(final ConfigurationTreeBuilder configurationTreeBuilder, final ModuleImpl module) {
+        log.info("Merging module {}", module.getFullName());
+        addNamespaceDefinitions(module.getNamespaceDefinitions());
+        addConfigDefinitions(module.getConfigDefinitions());
+        addContentDefinitions(module.getContentDefinitions());
+        addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
+        module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+        configurationTreeBuilder.finishModule();
     }
 
     /**
