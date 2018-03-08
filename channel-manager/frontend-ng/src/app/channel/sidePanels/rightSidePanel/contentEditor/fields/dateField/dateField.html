@@ -14,10 +14,11 @@
   limitations under the License.
   -->
 <div class="field-wrapper"
-     ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
+     ng-repeat="dateValue in $ctrl.dateValues track by $index"
      ng-class="{'has-focused-field': $ctrl.hasFocus}">
 
-  <md-input-container>
+  <md-input-container class="qa-field"
+                      md-no-float>
     <label ng-if="::$first"
            layout
            layout-align="start center"
@@ -37,7 +38,7 @@
       </md-icon>
     </label>
 
-    <md-datepicker ng-model="fieldValue.value"
+    <md-datepicker ng-model="dateValue.value"
                    ng-change="$ctrl.valueChanged()"
                    name="{{::$ctrl.getFieldName($index)}}"
                    aria-label="{{::$ctrl.fieldType.displayName}}"
@@ -46,11 +47,26 @@
                    ng-blur="$ctrl.blurDateField($event)"/>
   </md-input-container>
 
-  <md-input-container>
-    <input type="text"
+  <md-input-container class="qa-field"
+                      md-no-float>
+    <input ng-model="dateValue.hours"
+           ng-change="$ctrl.valueChanged()"
            size="2"
            aria-label="HH"
-           ng-attr-maxlength="2">
+           ng-attr-maxlength="2"
+           ng-focus="$ctrl.focusDateField($event)"
+           ng-blur="$ctrl.blurDateField($event)"/>
+  </md-input-container>
+
+  <md-input-container class="qa-field"
+                      md-no-float>
+    <input ng-model="dateValue.minutes"
+           ng-change="$ctrl.valueChanged()"
+           size="2"
+           aria-label="MM"
+           ng-attr-maxlength="2"
+           ng-focus="$ctrl.focusDateField($event)"
+           ng-blur="$ctrl.blurDateField($event)"/>
   </md-input-container>
 
 </div>

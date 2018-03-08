@@ -19,11 +19,17 @@ class DateFieldController {
     'ngInject';
 
     this.FieldService = FieldService;
+    this.dateValues = [];
   }
 
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
     this.onFieldBlur = this.onFieldBlur || angular.noop;
+
+    for (let i = 0; i < this.fieldValues.length; i++) {
+      this.dateValues.push(new DateValue(this.fieldValues[i].value))
+    }
+
   }
 
   getFieldName(index) {
@@ -32,6 +38,7 @@ class DateFieldController {
   }
 
   valueChanged() {
+    this._updateFieldValues();
     this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
   }
 
@@ -62,11 +69,92 @@ class DateFieldController {
     this._draftField();
   }
 
+  _updateFieldValues() {
+    for (let i = 0; i < this.fieldValues.length; i++) {
+      this.fieldValues[i].value = this.dateValues[i].value;
+    }
+  }
+
   _draftField() {
     if (!angular.equals(this.oldValues, this.fieldValues)) {
       this.FieldService.draftField(this.getFieldName(), this.fieldValues);
     }
   }
+}
+
+class DateValue {
+
+  constructor(value) {
+    this.value = value;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get hours() {
+    let timestamp = Date.parse(this.value);
+    if (angular.isNumber(timestamp)) {
+      return '' + new Date(timestamp).getHours();
+    }
+    return '';
+  }
+
+  /**
+   * @param {string} hours
+   */
+  set hours(hours) {
+    if (hours && hours.length > 0 && !DateValue.isNumeric(hours)) {
+      return;
+    }
+
+    let timestamp = Date.parse(this.value);
+    if (angular.isNumber(timestamp)) {
+      let date = new Date(timestamp);
+      date.setHours(hours);
+      this.value = this.value.substr(0, 11) + DateValue.pad(date.getUTCHours(), 2) + this.value.substr(13);
+    }
+  }
+
+  /**
+   * @returns {string}
+   */
+  get minutes() {
+    let timestamp = Date.parse(this.value);
+    if (angular.isNumber(timestamp)) {
+      return '' + new Date(timestamp).getMinutes();
+    }
+    return '';
+  }
+
+  /**
+   * @param {string} minutes
+   */
+  set minutes(minutes) {
+    if (minutes && minutes.length > 0 && !DateValue.isNumeric(minutes)) {
+      return;
+    }
+
+    let timestamp = Date.parse(this.value);
+    if (angular.isNumber(timestamp)) {
+      let date = new Date(timestamp);
+      date.setMinutes(minutes);
+      this.value = this.value.substr(0, 14) + DateValue.pad(date.getUTCMinutes(), 2) + this.value.substr(16);
+    }
+
+  }
+
+  static pad(num, size) {
+    let result = num + "";
+    while (result.length < size) {
+      result = "0" + result;
+    }
+    return result;
+  }
+
+  static isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
 }
 
 export default DateFieldController;
