@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * Selective Rendering ContextResolvingValve.
@@ -38,6 +39,14 @@ public class SelectiveRenderingContextResolvingValve extends ContextResolvingVal
     protected HstComponentWindow createRootComponentWindow(ValveContext context,
             HstComponentConfiguration rootComponentConfig) {
         HstComponentWindow rootComponentWindow = super.createRootComponentWindow(context, rootComponentConfig);
+
+        final HstRequestContext requestContext = context.getRequestContext();
+        final String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL()
+                .getComponentRenderingWindowReferenceNamespace();
+
+        if (componentRenderingWindowReferenceNamespace != null) {
+            return rootComponentWindow;
+        }
 
         Map<String, HstComponentWindow> childMap = rootComponentWindow.getChildWindowMap();
 
