@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -57,16 +58,21 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
+        final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         fieldContext.getEditorConfigNode()
                 .ifPresent(node -> {
                     final ContentTypeContext parentContext = fieldContext.getParentContext();
-
-                    ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
-                    ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+                    ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
+                    ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
                 });
+
+        // It's not possible yet to add choices, so a required choice field cannot be created.
+        // So all required fields can only be created if this choice field is not required.
+        fieldsInfo.setCanCreateAllRequiredFields(!isRequired());
+
+        return fieldsInfo;
     }
 
     @Override
@@ -74,6 +80,11 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
         List<FieldValue> values = readValues(node);
 
         trimToMaxValues(values);
+
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
 
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }

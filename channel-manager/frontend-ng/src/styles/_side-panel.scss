@@ -51,13 +51,16 @@
   max-width: 440px;
   width: 440px;
 
+  mat-toolbar,
   md-toolbar {
     background: $grey-50;
+    box-sizing: border-box;
     color: $text-dark;
 
     &:first-child {
       border-bottom: 1px solid $grey-200;
     }
+
     &:last-child {
       border-top: 1px solid $grey-200;
     }
@@ -66,17 +69,17 @@
       color: $grey-900;
       opacity: .87;
     }
+
+    .md-button {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
   .md-subheader a {
     color: $blue-600;
-  }
-
-  .md-button {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 

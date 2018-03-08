@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import 'angular-mocks';
 
 describe('HstCommentsProcessorService', () => {
   let hstCommentsProcessorService;
-  function NOOP() { }
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -29,13 +28,6 @@ describe('HstCommentsProcessorService', () => {
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/processing/hstCommentsProcessor.service.fixture.html');
-  });
-
-  // PhantomJS does not support XPath querying through document.evaluate (https://github.com/ariya/phantomjs/issues/10161)
-  it('should use DOM-walking when XPath querying is not available', () => {
-    spyOn(hstCommentsProcessorService, 'processCommentsWithDomWalking');
-    hstCommentsProcessorService.run($j('#jasmine-fixtures')[0], NOOP);
-    expect(hstCommentsProcessorService.processCommentsWithDomWalking).toHaveBeenCalled();
   });
 
   it('should process comments with DOM-walking', () => {
@@ -59,7 +51,7 @@ describe('HstCommentsProcessorService', () => {
 
   it('should not invoke callback when JSON data is invalid', () => {
     const fixture = $j('#qa-invalid-json')[0];
-    const observer = { callback: NOOP };
+    const observer = { callback: angular.noop };
     spyOn(observer, 'callback');
     hstCommentsProcessorService.processCommentsWithDomWalking(fixture, observer.callback);
 

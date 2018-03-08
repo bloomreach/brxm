@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A document field of type hippostd:html.
- *
+ * <p>
  * <smell>
  * The configuration of the link- and image pickers is looked up in the _default_ plugin cluster of hippostd:html
  * instead of in the 'root/linkpicker' and 'root/imagepicker' child nodes. The only difference is that the names in the
@@ -116,12 +116,14 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
+        final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
         initInternalLinkPicker(fieldContext, hippoPickerConfig);
         initImagePicker(fieldContext, hippoPickerConfig);
+
+        return fieldsInfo;
     }
 
     private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
@@ -150,19 +152,25 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
         trimToMaxValues(values);
 
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
+
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
     protected List<FieldValue> readValues(final Node node) {
         try {
             final NodeIterator children = node.getNodes(getId());
-            final List<FieldValue> values = new ArrayList<>((int)children.getSize());
+            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
             for (final Node child : new NodeIterable(children)) {
                 final FieldValue value = readValue(child);
                 if (value.hasValue()) {
                     values.add(value);
                 }
             }
+
             return values;
         } catch (final RepositoryException e) {
             log.warn("Failed to read rich text field '{}'", getId(), e);

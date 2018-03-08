@@ -477,7 +477,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             final String contextPath = entry.getKey();
             final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
             restProxyJobs.add(() -> {
-                final List<Channel> result = channelService.getChannels();
+                final List<Channel> result = channelService.getChannels().getChannels();
                 final List<Channel> checkedChannels = new ArrayList<>(result.size());
                 for (Channel channel : result) {
                     if (!contextPath.equals(channel.getContextPath())) {

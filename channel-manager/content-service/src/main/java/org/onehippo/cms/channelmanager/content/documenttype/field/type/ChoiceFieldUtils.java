@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,10 +81,11 @@ public class ChoiceFieldUtils {
      */
     public static void populateProviderBasedChoices(final Node editorFieldNode,
                                                     final ContentTypeContext parentContext,
-                                                    final Map<String, NodeFieldType> choices) {
+                                                    final Map<String, NodeFieldType> choices,
+                                                    final FieldsInformation fieldsInfo) {
         getProviderId(editorFieldNode)
                 .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
-                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices)));
+                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices, fieldsInfo)));
     }
 
     private static Optional<String> getProviderId(final Node editorFieldNode) {
@@ -101,23 +102,23 @@ public class ChoiceFieldUtils {
 
     private static void populateChoicesForProvider(final ContentType provider,
                                                    final ContentTypeContext parentContext,
-                                                   final Map<String, NodeFieldType> choices) {
+                                                   final Map<String, NodeFieldType> choices,
+                                                   final FieldsInformation fieldsInfo) {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
+                // Suggestion: the provider compound may have an editor configuration, helping to initialize
+                //             the choice compound. We could try to find a node and add it to the fieldContext.
+                final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
+                final String choiceId = item.getItemType();
 
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)
-                        || contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
-                    // Suggestion: the provider compound may have an editor configuration, helping to initialize
-                    //             the choice compound. We could try to find a node and add it to the fieldContext.
-                    final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
-                    final String choiceId = item.getItemType();
+                final NodeFieldType choice = createChoiceForProvider(contentType, fieldContext, choiceId);
 
-                    final NodeFieldType choice = createChoiceForProvider(contentType, fieldContext, choiceId);
-
-                    if (choice != null) {
-                        patchDisplayNameForChoice(choice, fieldContext);
-                        choices.put(choiceId, choice);
-                    }
+                if (choice != null) {
+                    patchDisplayNameForChoice(choice, fieldContext);
+                    choices.put(choiceId, choice);
+                } else {
+                    // not all available choices are supported
+                    fieldsInfo.addUnsupportedField(item);
                 }
             });
         }
@@ -159,7 +160,8 @@ public class ChoiceFieldUtils {
      */
     public static void populateListBasedChoices(final Node editorFieldNode,
                                                 final ContentTypeContext parentContext,
-                                                final Map<String, NodeFieldType> choices) {
+                                                final Map<String, NodeFieldType> choices,
+                                                final FieldsInformation fieldsInfo) {
         final String[] choiceNames = getListBasedChoiceNames(editorFieldNode);
 
         for (String choiceName : choiceNames) {
@@ -167,16 +169,16 @@ public class ChoiceFieldUtils {
 
             ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
                 final ContentType contentType = choiceContext.getContentType();
-                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)
-                        || contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
-                    final String id = choiceContext.getContentType().getName();
+                final String id = choiceContext.getContentType().getName();
 
-                    final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
+                final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
 
-                    if (choice != null) {
-                        patchDisplayNameForChoice(choice, choiceContext);
-                        choices.put(id, choice);
-                    }
+                if (choice != null) {
+                    patchDisplayNameForChoice(choice, choiceContext);
+                    choices.put(id, choice);
+                } else {
+                    // not all available choices are supported
+                    fieldsInfo.addUnsupportedField(choiceName);
                 }
             });
         }

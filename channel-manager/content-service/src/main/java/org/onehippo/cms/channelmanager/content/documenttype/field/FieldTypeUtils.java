@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,14 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
@@ -49,8 +52,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,13 +76,13 @@ public class FieldTypeUtils {
     private static final Set<String> IGNORED_VALIDATORS;
 
     // Translate JCR level validator to FieldType.Validator
-    private static final Map<String, FieldType.Validator> VALIDATOR_MAP;
+    private static final Map<String, Validator> VALIDATOR_MAP;
 
     // Unsupported validators of which we know they have field-scope only
     private static final Set<String> FIELD_VALIDATOR_WHITELIST;
 
     // A map for associating supported JCR-level field types with relevant information
-    public static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
+    private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -85,8 +90,8 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
 
         VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldType.Validator.REQUIRED);
-        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, FieldType.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.REQUIRED, Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, Validator.REQUIRED);
         // Apparently, making a String field required puts above two(!) values onto the validator property.
 
         FIELD_VALIDATOR_WHITELIST = new HashSet<>();
@@ -105,6 +110,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Long", new TypeDescriptor(LongFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Double", new TypeDescriptor(DoubleFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("Boolean", new TypeDescriptor(BooleanFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
@@ -129,7 +135,7 @@ public class FieldTypeUtils {
      * unknown validator'.
      *
      * @param fieldType  Specification of a field type
-     * @param docType The document type the field is a part of
+     * @param docType    The document type the field is a part of
      * @param validators List of 0 or more validators specified at JCR level
      */
     public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
@@ -139,7 +145,7 @@ public class FieldTypeUtils {
             } else if (VALIDATOR_MAP.containsKey(validator)) {
                 fieldType.addValidator(VALIDATOR_MAP.get(validator));
             } else if (FIELD_VALIDATOR_WHITELIST.contains(validator)) {
-                fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
+                fieldType.addValidator(Validator.UNSUPPORTED);
             } else {
                 docType.setReadOnlyDueToUnknownValidator(true);
             }
@@ -148,38 +154,68 @@ public class FieldTypeUtils {
 
     /**
      * Populate the list of fields of a content type, in the context of assembling a Document Type.
+     * Note that compound fields use this method recursively to populate their fields.
      *
-     * @param fields      list of fields to populate
-     * @param context     determines which fields are available
+     * @param fields  list of fields to populate
+     * @param context determines which fields are available
      * @return whether all fields in the document type have been included.
      */
-    public static boolean populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+    public static FieldsInformation populateFields(final List<FieldType> fields, final ContentTypeContext context) {
         return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
                 .map(sorter -> sortValidateAndAddFields(sorter, context, fields))
-                .orElse(false);
+                .orElse(FieldsInformation.noneSupported());
     }
 
-    private static boolean sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
-                                                 final List<FieldType> fields) {
+    private static FieldsInformation sortValidateAndAddFields(final FieldSorter sorter,
+                                                              final ContentTypeContext context,
+                                                              final List<FieldType> fields) {
+        // start positive: assume all fields at this level are supported and will be included
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+
         final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
 
-        fieldTypeContexts.forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+        fieldTypeContexts.forEach(field -> createAndInit(field, fieldsInformation).ifPresent(fields::add));
 
-        return fieldTypeContexts.size() == fields.size();
+        return fieldsInformation;
     }
 
-    private static Optional<FieldType> validateCreateAndInit(final FieldTypeContext context) {
-        return determineDescriptor(context)
-                .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
-                .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
-                .map(fieldType -> {
-                    fieldType.init(context);
-                    return fieldType.isValid() ? fieldType : null;
-                });
+    private static Optional<FieldType> createAndInit(final FieldTypeContext context,
+                                                     final FieldsInformation allFieldsInfo) {
+        Optional<FieldType> optionalFieldType = determineDescriptor(context)
+                .flatMap(descriptor -> determineFieldTypeClass(context, descriptor))
+                .flatMap(FieldTypeFactory::createFieldType);
+
+        if (optionalFieldType.isPresent()) {
+            final FieldType fieldType = optionalFieldType.get();
+            final FieldsInformation fieldInfo = fieldType.init(context);
+
+            allFieldsInfo.add(fieldInfo);
+
+            if (fieldType.isSupported()) {
+                return optionalFieldType;
+            }
+
+            if (fieldType.hasUnsupportedValidator()) {
+                allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+            }
+            // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
+            // the field in the list of unsupported fields, but don't include it in the document type either.
+        } else {
+            allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+        }
+
+        return Optional.empty();
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
         return Optional.ofNullable(FIELD_TYPE_MAP.get(determineFieldType(context)));
+    }
+
+    private static Optional<Class<? extends FieldType>> determineFieldTypeClass(final FieldTypeContext context, final TypeDescriptor descriptor) {
+        if (usesDefaultFieldPlugin(context, descriptor)) {
+            return Optional.of(descriptor.fieldTypeClass);
+        }
+        return Optional.empty();
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
@@ -191,11 +227,25 @@ public class FieldTypeUtils {
         }
 
         if (item.isProperty()) {
-            // Unsupported type
-            return "";
+            // All supported property fields are part of the FIELD_TYPE_MAP, so this one is unsupported
+            return null;
         }
 
-        return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
+        if (ChoiceFieldUtils.isChoiceField(context)) {
+            return FIELD_TYPE_CHOICE;
+        }
+
+        if (isCompound(item)) {
+            return FIELD_TYPE_COMPOUND;
+        }
+
+        return null;
+    }
+
+    private static boolean isCompound(final ContentTypeItem item) {
+        return ContentTypeContext.getContentType(item.getItemType())
+                .map(ContentType::isCompoundType)
+                .orElse(false);
     }
 
     private static boolean usesDefaultFieldPlugin(final FieldTypeContext context, final TypeDescriptor descriptor) {
@@ -205,10 +255,10 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> determinePluginClass(final FieldTypeContext context) {
-        return context.getEditorConfigNode()
+        Optional<String> result = context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
+        return result;
     }
-
 
     /**
      * Try to read a list of fields from a node into a map of values.
@@ -227,14 +277,13 @@ public class FieldTypeUtils {
 
     /**
      * Write the values of a set of fields to a (JCR) node, facilitated by a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> list of field values mappings. Values are not checked yet.
      * @param fields   set of field type definitions, specifying how to interpret the corresponding field values
      * @param node     the JCR node to write the field values to.
-     * @throws ErrorWithPayloadException
-     *                 if fieldType#writeTo() bumps into an error.
+     * @throws ErrorWithPayloadException if fieldType#writeTo() bumps into an error.
      */
     public static void writeFieldValues(final Map<String, List<FieldValue>> valueMap,
                                         final List<FieldType> fields,
@@ -254,7 +303,7 @@ public class FieldTypeUtils {
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
         if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
         }
 
         for (final FieldValue value : values) {
@@ -271,7 +320,7 @@ public class FieldTypeUtils {
         if (fieldPath.isEmpty()) {
             return false;
         }
-        for (FieldType field : fields) {
+        for (final FieldType field : fields) {
             if (field.writeField(node, fieldPath, fieldValues)) {
                 return true;
             }
@@ -286,11 +335,11 @@ public class FieldTypeUtils {
         final String childName = fieldPath.getFirstSegment();
         try {
             if (!node.hasNode(childName)) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+                throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
             }
             final Node child = node.getNode(childName);
             return field.writeFieldValue(child, fieldPath.getRemainingSegments(), values);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
             throw new InternalServerErrorException();
         }
@@ -298,12 +347,12 @@ public class FieldTypeUtils {
 
     /**
      * Validate the values of a set of fields against a list of field types.
-     *
+     * <p>
      * Values not defined in the list of field types are ignored.
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
-     * @return         true if all checked field values are valid, false otherwise.
+     * @return true if all checked field values are valid, false otherwise.
      */
     public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
         boolean isValid = true;

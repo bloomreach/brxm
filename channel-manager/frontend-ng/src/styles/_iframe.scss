@@ -1,4 +1,4 @@
-// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,10 +29,9 @@ hippo-iframe {
 
   background-color: $canvas-bgcolor;
 
-  // ensure a horizontal scrollbar in Safari for constrained viewport widths
+  // ensure a horizontal scrollbar for constrained viewport widths
   height: 100%;
-  overflow: hidden;
-
+  overflow-y: hidden;
   user-select: none;
 
   &.hippo-dragging {
@@ -58,7 +57,6 @@ hippo-iframe {
   // use explicit max-width and min-width so its transition can be animated
   max-width: 100%;
   min-width: 0;
-
   position: relative;
   transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
   width: 100%;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -52,16 +53,17 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public boolean isValid() {
-        return super.isValid() && !fields.isEmpty();
+    public boolean isSupported() {
+        return super.isSupported() && !fields.isEmpty();
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
         super.init(fieldContext);
 
-        fieldContext.createContextForCompound()
-                .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
+        return fieldContext.createContextForCompound()
+                .map(context -> FieldTypeUtils.populateFields(fields, context))
+                .orElse(FieldsInformation.noneSupported());
     }
 
     void initProviderBasedChoice(final FieldTypeContext fieldContext, final String choiceId) {
@@ -79,6 +81,11 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
         List<FieldValue> values = readValues(node);
 
         trimToMaxValues(values);
+
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
 
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }

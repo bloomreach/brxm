@@ -1,0 +1,66 @@
+<!--
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<md-content class="create-content-step1">
+  <form novalidate
+        name="$ctrl.form"
+        class="create-content-step1-form">
+    <!-- Name and URL fields (as a separate component) -->
+    <name-url-fields name-field="$ctrl.name"
+                     url-field="$ctrl.url"
+                     is-url-updating="$ctrl.isUrlUpdating"
+                     locale="$ctrl.locale">
+    </name-url-fields>
+
+    <!-- Document type field -->
+    <md-select ng-model="$ctrl.documentType"
+               name="documentType"
+               required
+               placeholder="Document type"
+               ng-disabled="$ctrl.documentTypes.length === 1"
+               class="input-document-type create-content-field qa-document-type-select"
+               ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
+      <md-option ng-repeat="documentType in $ctrl.documentTypes"
+                 value="{{ documentType.id }}">{{ documentType.displayName }}
+      </md-option>
+    </md-select>
+
+    <!-- Document location field -->
+    <document-location-field root-path="$ctrl.rootPath"
+                             default-path="$ctrl.defaultPath"
+                             locale="$ctrl.locale"
+                             default-picker-path="$ctrl.defaultPickerPath">
+    </document-location-field>
+  </form>
+
+  <!-- Footer -->
+  <md-toolbar class="step1-bottom-toolbar">
+    <div class="md-toolbar-tools">
+      <span flex></span>
+
+      <md-button class="qa-close"
+                 ng-click="$ctrl.close()">
+        {{ 'CANCEL' | translate }}
+      </md-button>
+
+      <md-button class="qa-continue"
+                 type="submit"
+                 ng-click="$ctrl.submit()"
+                 ng-disabled="$ctrl.form.$invalid">
+        {{ 'CONTINUE' | translate }}
+      </md-button>
+    </div>
+  </md-toolbar>
+</md-content>

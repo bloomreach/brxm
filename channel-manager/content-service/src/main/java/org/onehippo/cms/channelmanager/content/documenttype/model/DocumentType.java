@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,32 @@ package org.onehippo.cms.channelmanager.content.documenttype.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Set;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 /**
  * This bean represents a document type, known to the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(Include.NON_DEFAULT)
 public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;
     private boolean readOnlyDueToUnknownValidator;
     private boolean allFieldsIncluded;
+    private boolean canCreateAllRequiredFields;
     private final List<FieldType> fields; // ordered list of fields
+
+    @JsonInclude(Include.NON_EMPTY)
+    private Set<String> unsupportedFieldTypes = null; // for reporting purposes
+
+    @JsonInclude(Include.NON_EMPTY)
+    private Set<String> unsupportedRequiredFieldTypes = null; // for reporting purposes
 
     public DocumentType() {
         fields = new ArrayList<>();
@@ -73,5 +83,29 @@ public class DocumentType {
 
     public List<FieldType> getFields() {
         return fields;
+    }
+
+    public Set<String> getUnsupportedFieldTypes() {
+        return unsupportedFieldTypes;
+    }
+
+    public void setUnsupportedFieldTypes(final Set<String> unsupportedFieldTypes) {
+        this.unsupportedFieldTypes = unsupportedFieldTypes;
+    }
+
+    public boolean getCanCreateAllRequiredFields() {
+        return canCreateAllRequiredFields;
+    }
+
+    public void setCanCreateAllRequiredFields(final boolean canCreateAllRequiredFields) {
+        this.canCreateAllRequiredFields = canCreateAllRequiredFields;
+    }
+
+    public Set<String> getUnsupportedRequiredFieldTypes() {
+        return unsupportedRequiredFieldTypes;
+    }
+
+    public void setUnsupportedRequiredFieldTypes(final Set<String> unsupportedRequiredFieldTypes) {
+        this.unsupportedRequiredFieldTypes = unsupportedRequiredFieldTypes;
     }
 }

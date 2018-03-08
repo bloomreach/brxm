@@ -1,0 +1,71 @@
+/*!
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import 'variables';
+
+document-fields {
+  display: block;
+
+  &.top-level {
+    padding-right: $form-dense-distance;
+    padding-top: $form-dense-distance;
+  }
+
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+
+    &::after {
+      content: '' !important; // hide material required mark
+    }
+  }
+
+  h5 {
+    margin-bottom: $form-dense-distance;
+    margin-left: -6px;
+  }
+
+  md-icon {
+    margin: 0 2px;
+  }
+
+  .checkbox-hint {
+    font-size: 18px;
+    height: 18px;
+    min-height: 18px;
+    min-width: 18px;
+    vertical-align: baseline;
+    width: 18px;
+  }
+}
+
+primitive-field,
+compound-field,
+choice-field {
+  display: block;
+
+  > .field {
+    padding-left: $form-dense-distance;
+  }
+}
+
+primitive-field,
+compound-field {
+  primitive-field > .field {
+    padding-left: 0;
+  }
+}

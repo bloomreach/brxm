@@ -75,10 +75,6 @@ class HippoIframeCtrl {
       this.onEditMenu({ menuUuid });
     });
 
-    this.OverlayService.onEditContent((contentUuid) => {
-      this.onEditContent({ contentUuid });
-    });
-
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
     this.ViewportService.init(sheetJQueryElement);
 
@@ -93,7 +89,9 @@ class HippoIframeCtrl {
   $onInit() {
     this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
       this.OverlayService.showComponentsOverlay(value);
-      this._updateDragDrop();
+      if (this.HippoIframeService.pageLoaded) {
+        this._updateDragDrop();
+      }
     });
     this.$scope.$watch('iframe.showContentOverlay', (value) => {
       this.OverlayService.showContentOverlay(value);

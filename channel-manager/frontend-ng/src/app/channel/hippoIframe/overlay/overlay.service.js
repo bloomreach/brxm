@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,25 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
+import plusSvg from '../../../../images/html/plus.svg';
+import plusWhiteSvg from '../../../../images/html/plus-white.svg';
+import searchSvg from '../../../../images/html/search.svg';
+import searchWhiteSvg from '../../../../images/html/search-white.svg';
 
 class OverlayService {
   constructor(
     $log,
     $rootScope,
     $translate,
+    ChannelService,
     CmsService,
+    CreateContentService,
     DomService,
+    EditContentService,
     ExperimentStateService,
+    FeedbackService,
     HippoIframeService,
+    HstComponentService,
     MaskService,
     PageStructureService,
   ) {
@@ -39,18 +48,23 @@ class OverlayService {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
+    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.editContentHandler = angular.noop;
+    this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
-    this.isContentOverlayDisplayed = true;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -62,10 +76,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onEditContent(callback) {
-    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -267,6 +277,9 @@ class OverlayService {
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
+      case 'manage-content-link':
+        this._initManageContentLink(structureElement, overlayElement);
+        break;
       case 'menu-link':
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
@@ -306,18 +319,235 @@ class OverlayService {
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
-    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
+    overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
+  }
+
+  _initManageContentLink(structureElement, overlayElement) {
+    const config = this._initManageContentConfig(structureElement);
+
+    if (Object.keys(config).length === 0) {
+      // config is empty, no buttons to render
+      return;
+    }
+
+    const buttons = this._getButtons(config);
+    if (buttons.length === 0) {
+      // no buttons to render
+      return;
+    }
+
+    const mainButton = buttons[0];
+    const optionButtons = buttons.slice(1);
+
+    const mainButtonElement = this._createMainButton(mainButton, config);
+    const optionsButtonsElement = $('<div class="hippo-fab-options"></div>');
+
+    overlayElement
+      .addClass('hippo-overlay-element-link')
+      .append(mainButtonElement)
+      .append(optionsButtonsElement);
+
+    const openOptions = () => {
+      if (optionsButtonsElement.children().length === 0) {
+        optionsButtonsElement.html(this._createOptionButtons(optionButtons));
+      }
+      const openAbove = this._openOptionsAboveMainButton(structureElement, optionButtons.length);
+      optionsButtonsElement.toggleClass('hippo-fab-options-above-main-button', openAbove);
+    };
+
+    const closeOptions = () => {
+      optionsButtonsElement.empty();
+    };
+
+    if (buttons.length > 1) {
+      overlayElement.on('mouseenter', openOptions);
+      overlayElement.on('mouseleave', closeOptions);
+    }
+  }
+
+  _initManageContentConfig(structureElement) {
+    // each property should be filled with the method that will extract the data from the HST comment
+    // Passing the full config through privileges to adjust buttons for authors
+    const documentUuid = structureElement.getUuid();
+    const parameterName = structureElement.getParameterName();
+    const parameterBasePath =
+      structureElement.isParameterValueRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
+
+    const config = {
+      containerItem: structureElement.getEnclosingElement(),
+      defaultPath: structureElement.getDefaultPath(),
+      documentUuid,
+      parameterBasePath,
+      parameterName,
+      parameterValue: structureElement.getParameterValue(),
+      pickerConfig: structureElement.getPickerConfig(),
+      rootPath: structureElement.getRootPath(),
+      templateQuery: structureElement.getTemplateQuery(),
+    };
+
+    if (!this.ChannelService.isEditable()) {
+      delete config.parameterName;
+
+      if (config.documentUuid) { // whenever uuid is available, only edit button for authors
+        delete config.templateQuery;
+        return config;
+      }
+
+      if (parameterName) {
+        return {};
+      }
+    }
+
+    if (parameterName
+      && config.containerItem
+      && config.containerItem.isLocked()
+      && !config.containerItem.isLockedByCurrentUser()) {
+      config.isLockedByOtherUser = true;
+    }
+
+    if (config.parameterName && !config.containerItem) {
+      this.$log.warn(`Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`);
+      delete config.parameterName;
+    }
+
+    return config;
+  }
+
+  _getButtons(config) {
+    const buttons = [];
+
+    if (config.documentUuid) {
+      const editContentButton = {
+        id: 'edit-content',
+        mainIcon: contentLinkSvg,
+        optionIcon: '', // edit button should never be a option button
+        callback: () => this._editContent(config.documentUuid),
+        tooltip: this.$translate.instant('EDIT_CONTENT'),
+      };
+      buttons.push(editContentButton);
+    }
+
+    if (config.parameterName) {
+      const selectDocumentButton = {
+        id: 'select-document',
+        mainIcon: searchWhiteSvg,
+        optionIcon: searchSvg,
+        callback: () => this._pickPath(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(selectDocumentButton);
+    }
+
+    if (config.templateQuery) {
+      const createContentButton = {
+        id: 'create-content',
+        mainIcon: plusWhiteSvg,
+        optionIcon: plusSvg,
+        callback: () => this._createContent(config),
+        tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
+        isDisabled: config.isLockedByOtherUser,
+      };
+      buttons.push(createContentButton);
+    }
+
+    return buttons;
+  }
+
+  _createMainButton(button, manageContentConfig) {
+    const mainButton = $(`<button title="${button.tooltip}">${button.mainIcon}</button>`);
+
+    mainButton.addClass(`hippo-fab-main hippo-fab-main-${button.id} qa-manage-content-link`);
+
+    if (button.isDisabled) {
+      mainButton.addClass('hippo-fab-main-disabled');
+    } else {
+      this._addClickHandler(mainButton, button.callback);
+    }
+
+    if (manageContentConfig.documentUuid) {
+      mainButton.addClass('qa-edit-content');
+    }
+    if (manageContentConfig.templateQuery) {
+      mainButton.addClass('qa-add-content');
+    }
+    if (manageContentConfig.parameterName) {
+      mainButton.addClass('qa-manage-parameters');
+    }
+
+    return mainButton;
+  }
+
+  _createOptionButtons(buttons) {
+    return buttons.map((button, index) => this._createOptionButton(button, index));
+  }
+
+  _createOptionButton(button, index) {
+    const optionButton = $(`<button title="${button.tooltip}">${button.optionIcon}</button>`);
+
+    optionButton.addClass(`hippo-fab-option hippo-fab-option-${button.id} hippo-fab-option-${index}`);
+
+    if (button.isDisabled) {
+      optionButton.addClass('hippo-fab-option-disabled');
+    } else {
+      optionButton.on('click', button.callback);
+    }
+
+    return optionButton;
+  }
+
+  _openOptionsAboveMainButton(manageContentStructureElement, optionsCount) {
+    const boxElement = manageContentStructureElement.prepareBoxElement();
+    const elementPosition = this._getElementPosition(boxElement);
+    const viewportPosition = this._getViewportPosition();
+
+    const optionsHeight = optionsCount * (32 + 5); // 32px button height plus 5px margin between buttons
+
+    const enoughRoomBelow = () => (elementPosition.top + elementPosition.height + optionsHeight) <= viewportPosition.bottom;
+    const enoughRoomAbove = () => (elementPosition.top - optionsHeight) >= viewportPosition.top;
+
+    return !enoughRoomBelow() && enoughRoomAbove();
+  }
+
+  _getElementPosition(boxElement) {
+    const rect = boxElement[0].getBoundingClientRect();
+
+    let top = rect.top;
+    let left = rect.left;
+    const width = rect.width;
+    const height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    left += this.iframeWindow.pageXOffset;
+    top += this.iframeWindow.pageYOffset;
+
+    return {
+      top,
+      left,
+      width,
+      height,
+    };
+  }
+
+  _getViewportPosition() {
+    const top = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
+    const viewHeight = $(this.iframeWindow).height();
+    const bottom = top + viewHeight;
+
+    return {
+      top,
+      bottom,
+    };
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$apply(() => {
-        this.editContentHandler(structureElement.getUuid());
-      });
+      this._editContent(structureElement.getUuid());
     });
   }
 
@@ -331,11 +561,48 @@ class OverlayService {
     });
   }
 
-  _addClickHandler(overlayElement, handler) {
-    overlayElement.click((event) => {
+  _addClickHandler(jqueryElement, handler) {
+    jqueryElement.click((event) => {
       event.stopPropagation();
       handler();
     });
+  }
+
+  _createContent(config) {
+    this.CreateContentService.start(config);
+  }
+
+  _editContent(uuid) {
+    this.EditContentService.startEditing(uuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+  }
+
+  _pickPath(config) {
+    const component = config.containerItem;
+    const componentId = component.getId();
+    const componentName = component.getLabel();
+    const componentVariant = component.getRenderVariant();
+    const parameterBasePath = config.parameterBasePath;
+    const parameterName = config.parameterName;
+    const parameterValue = config.parameterValue;
+    const pickerConfig = config.pickerConfig;
+
+    this.CmsService.reportUsageStatistic('PickContentButton');
+    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
+      .then(() => {
+        this.PageStructureService.renderComponent(component.getId());
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      })
+      .catch((response) => {
+        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+        const defaultErrorParams = { componentName };
+        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+
+        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+
+        // probably the container got locked by another user, so reload the page to show new locked containers
+        this.HippoIframeService.reload();
+      });
   }
 
   _linkButtonTransition(element) {
@@ -351,7 +618,6 @@ class OverlayService {
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
-
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
     switch (structureElement.getType()) {
@@ -379,6 +645,8 @@ class OverlayService {
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
+      case 'manage-content-link':
         return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
         return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
@@ -412,22 +680,12 @@ class OverlayService {
   }
 
   _syncPosition(overlayElement, boxElement) {
-    const rect = boxElement[0].getBoundingClientRect();
+    const position = this._getElementPosition(boxElement);
 
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
-
-    overlayElement.css('top', `${top}px`);
-    overlayElement.css('left', `${left}px`);
-    overlayElement.css('width', `${width}px`);
-    overlayElement.css('height', `${height}px`);
+    overlayElement.css('top', `${position.top}px`);
+    overlayElement.css('left', `${position.left}px`);
+    overlayElement.css('width', `${position.width}px`);
+    overlayElement.css('height', `${position.height}px`);
   }
 
   _tidyOverlay(elementsToKeep) {

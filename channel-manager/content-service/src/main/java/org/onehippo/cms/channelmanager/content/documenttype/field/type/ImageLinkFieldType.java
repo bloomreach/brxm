@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.ckeditor.Json;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
@@ -40,6 +39,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,9 +80,7 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext) {
-        super.init(fieldContext);
-
+    public FieldsInformation init(final FieldTypeContext fieldContext) {
         config = Json.object();
 
         final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
@@ -92,6 +90,8 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
                 .strings(IMAGE_PICKER_PREFIXED_STRING_PROPERTIES)
                 .build();
         config.set("imagepicker", imagePickerConfig);
+
+        return super.init(fieldContext);
     }
 
     void initListBasedChoice(final String choiceId) {
@@ -116,7 +116,7 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             final NodeIterator children = node.getNodes(valueName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write rich text field '{}'", valueName, e);
+            log.warn("Failed to write image link field '{}'", valueName, e);
             throw new InternalServerErrorException();
         }
     }
