@@ -112,7 +112,7 @@ public class ChannelEditor extends ExtPanel {
 
     private final RichTextLinkPicker linkPicker;
     private final RichTextImageVariantPicker imageVariantPicker;
-    private final ImagePickerManager imagePickerManager;
+    private final ImagePicker imagePicker;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
@@ -149,8 +149,8 @@ public class ChannelEditor extends ExtPanel {
         imageVariantPicker = new RichTextImageVariantPicker(context, getMarkupId());
         add(imageVariantPicker.getBehavior());
 
-        imagePickerManager = new ImagePickerManager(context, getMarkupId());
-        add(imagePickerManager.getBehavior());
+        imagePicker = new ImagePicker(context, getMarkupId());
+        add(imagePicker.getBehavior());
     }
 
     @Override
@@ -179,7 +179,7 @@ public class ChannelEditor extends ExtPanel {
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
         properties.put("linkPickerWicketUrl", linkPicker.getBehavior().getCallbackUrl().toString());
         properties.put("imageVariantPickerWicketUrl", this.imageVariantPicker.getBehavior().getCallbackUrl().toString());
-        properties.put("imagePickerWicketUrl", this.imagePickerManager.getBehavior().getCallbackUrl().toString());
+        properties.put("imagePickerWicketUrl", this.imagePicker.getBehavior().getCallbackUrl().toString());
     }
 
     @Override
@@ -227,6 +227,7 @@ public class ChannelEditor extends ExtPanel {
         super.detachModels();
         linkPicker.detach();
         imageVariantPicker.detach();
+        imagePicker.detach();
     }
 
     /**

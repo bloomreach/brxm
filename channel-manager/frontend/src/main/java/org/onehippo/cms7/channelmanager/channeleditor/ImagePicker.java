@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.ConfigProvider;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogBehavior;
+import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.addon.frontend.gallerypicker.WicketJcrSessionProvider;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
 import org.onehippo.cms.json.Json;
 
@@ -35,53 +33,42 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Manages the picker dialog for imagelink fields. The dialog is used to select an image.
- * The behavior can be called by the frontend to open the dialog.
- * When done the method 'ChannelEditor#onImagePicked' is called.
- * Cancelling the dialog calls 'ChannelEditor#onImagePickCancelled'.
  */
-class ImagePickerManager extends PickerManager<String> {
+class ImagePicker extends ChannelEditorPicker<String> {
 
     private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
-    private Model<String> dialogModel;
+    private final Model<String> dialogModel;
 
-    ImagePickerManager(final IPluginContext context, final String channelEditorId) {
-        super(context, channelEditorId);
+    ImagePicker(final IPluginContext context, final String channelEditorId) {
+        super(context, null, channelEditorId);
         dialogModel = Model.of(StringUtils.EMPTY);
     }
 
     @Override
-    protected DialogBehavior<String> createBehavior(final IPluginContext context, final ConfigProvider configProvider) {
-        return new GalleryPickerDialogBehavior(context, configProvider);
+    protected DialogManager<String> createDialogManager(final IPluginContext context, final IPluginConfig config) {
+        return new DialogManager<String>(context, config) {
+            @Override
+            protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
+                return new GalleryPickerDialog(context, config, dialogModel);
+            }
+
+            @Override
+            protected void beforeShowDialog(final Map<String, String> parameters) {
+                dialogModel.setObject(parameters.get("uuid"));
+            }
+        };
     }
 
     @Override
-    protected String toJsString(final String pickedItem) {
+    protected String toJson(final String pickedItem) {
         final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(pickedItem);
-        final String url = imageItem.getPrimaryUrl(WicketJcrSessionProvider.get());
+        final String url = imageItem.getPrimaryUrl();
 
         final ObjectNode picked = Json.object();
         picked.put("uuid", pickedItem);
         picked.put("url", url);
 
         return picked.toString();
-    }
-
-    @Override
-    protected void onConfigure(final IPluginConfig defaultDialogConfig, final Map<String, String> parameters) {
-        dialogModel.setObject(parameters.get("uuid"));
-    }
-
-    private class GalleryPickerDialogBehavior extends DialogBehavior<String> {
-
-        GalleryPickerDialogBehavior(final IPluginContext context, final ConfigProvider configProvider) {
-            super(context, configProvider);
-        }
-
-        @Override
-        protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config) {
-            return new GalleryPickerDialog(context, config, dialogModel);
-        }
-
     }
 }
