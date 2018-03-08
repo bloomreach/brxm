@@ -30,7 +30,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -83,6 +85,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static java.util.stream.Collectors.toList;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
@@ -139,12 +143,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     @Subscribe
-    public void onEvent(final ExtensionEvent event) throws ParserException, IOException, URISyntaxException, RepositoryException {
+    public void onNewSiteEvent(final ExtensionEvent event) throws ParserException, IOException, URISyntaxException, RepositoryException {
+        final String extensionName = (String) event.getValues().get("application");
+        log.info("New site extension detected: {}", extensionName);
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
-        final Collection<ModuleImpl> modules = modelReader.collectExtensionModules(event.getClassLoader());
-        for (ModuleImpl module : modules) {
-            runtimeConfigurationModel.addModule(module);
-        }
+
+        final Collection<ModuleImpl> modules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
+                .filter(m -> Objects.equals(extensionName, m.getExtension())).collect(Collectors.toList());
+        modules.forEach(runtimeConfigurationModel::addModule);
         final ConfigurationModelImpl newModel = runtimeConfigurationModel.build();
         applyConfig(baselineModel, newModel,false,false, false,false);
         applyContent(newModel);
