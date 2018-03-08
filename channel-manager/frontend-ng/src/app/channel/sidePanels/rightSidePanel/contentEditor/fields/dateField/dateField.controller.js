@@ -14,75 +14,27 @@
  * limitations under the License.
  */
 
+import moment from 'moment-timezone';
+
 class DateValue {
   constructor(value) {
-    this.value = value;
+    this.value = moment(value);
   }
 
-  /**
-   * @returns {string}
-   */
   get hours() {
-    const timestamp = Date.parse(this.value);
-    if (angular.isNumber(timestamp)) {
-      return String(new Date(timestamp).getHours());
-    }
-    return '';
+    return this.value.hours();
   }
 
-  /**
-   * @param {string} hours
-   */
   set hours(hours) {
-    if (hours && hours.length > 0 && !DateValue.isNumeric(hours)) {
-      return;
-    }
-
-    const timestamp = Date.parse(this.value);
-    if (angular.isNumber(timestamp)) {
-      const date = new Date(timestamp);
-      date.setHours(hours);
-      this.value = this.value.substr(0, 11) + DateValue.pad(date.getUTCHours(), 2) + this.value.substr(13);
-    }
+    this.value.hours(hours);
   }
 
-  /**
-   * @returns {string}
-   */
   get minutes() {
-    const timestamp = Date.parse(this.value);
-    if (angular.isNumber(timestamp)) {
-      return String(new Date(timestamp).getMinutes());
-    }
-    return '';
+    return this.value.minutes();
   }
 
-  /**
-   * @param {string} minutes
-   */
   set minutes(minutes) {
-    if (minutes && minutes.length > 0 && !DateValue.isNumeric(minutes)) {
-      return;
-    }
-
-    const timestamp = Date.parse(this.value);
-    if (angular.isNumber(timestamp)) {
-      const date = new Date(timestamp);
-      date.setMinutes(minutes);
-      this.value = this.value.substr(0, 14) + DateValue.pad(date.getUTCMinutes(), 2) + this.value.substr(16);
-    }
-  }
-
-  static pad(num, size) {
-    let result = String(num);
-    while (result.length < size) {
-      result = `0${result}`;
-    }
-    return result;
-  }
-
-  static isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+    this.value.minute(minutes);
   }
 }
 
@@ -142,7 +94,7 @@ class DateFieldController {
 
   _updateFieldValues() {
     for (let i = 0; i < this.fieldValues.length; i += 1) {
-      this.fieldValues[i].value = this.dateValues[i].value;
+      this.fieldValues[i].value = this.dateValues[i].value.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
     }
   }
 
