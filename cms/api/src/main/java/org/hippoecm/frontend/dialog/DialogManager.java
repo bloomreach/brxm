@@ -28,6 +28,7 @@ public class DialogManager<ModelType> implements IDetachable {
 
     private final IPluginContext context;
     private final IPluginConfig config;
+    private final DialogConfig dialogConfig;
 
     private DialogBehavior behavior;
     private ScriptAction<ModelType> cancelAction;
@@ -36,18 +37,8 @@ public class DialogManager<ModelType> implements IDetachable {
     public DialogManager(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
         this.config = config;
-    }
 
-    @Override
-    public void detach() {
-    }
-
-    public void setCancelAction(final ScriptAction<ModelType> cancelAction) {
-        this.cancelAction = cancelAction;
-    }
-
-    public void setCloseAction(final ScriptAction<ModelType> closeAction) {
-        this.closeAction = closeAction;
+        dialogConfig = new DialogConfig(config);
     }
 
     public DialogBehavior getBehavior() {
@@ -55,10 +46,6 @@ public class DialogManager<ModelType> implements IDetachable {
             behavior = createBehavior(context, config);
         }
         return behavior;
-    }
-
-    public String getCallbackUrl() {
-        return getBehavior().getCallbackUrl().toString();
     }
 
     protected DialogBehavior createBehavior(final IPluginContext context, final IPluginConfig config) {
@@ -70,18 +57,37 @@ public class DialogManager<ModelType> implements IDetachable {
         };
     }
 
+    private void onShowDialog(final Map<String, String> parameters) {
+        beforeShowDialog(parameters);
+
+        final Dialog<ModelType> dialog = createDialog(context, dialogConfig.get(parameters), parameters);
+
+        dialog.setCancelAction(cancelAction);
+        dialog.setCloseAction(closeAction);
+
+        getDialogService().show(dialog);
+    }
+
+    protected void beforeShowDialog(final Map<String, String> parameters) {
+    }
+
     protected Dialog<ModelType> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
         return new Dialog<>();
     }
 
-    private void onShowDialog(final Map<String, String> parameters) {
-        final Dialog<ModelType> dialog = createDialog(context, config, parameters);
-        dialog.setCancelAction(cancelAction);
-        dialog.setCloseAction(closeAction);
-        getDialogService().show(dialog);
-    }
-
     private IDialogService getDialogService() {
         return context.getService(IDialogService.class.getName(), IDialogService.class);
+    }
+
+    public void setCancelAction(final ScriptAction<ModelType> cancelAction) {
+        this.cancelAction = cancelAction;
+    }
+
+    public void setCloseAction(final ScriptAction<ModelType> closeAction) {
+        this.closeAction = closeAction;
+    }
+
+    @Override
+    public void detach() {
     }
 }

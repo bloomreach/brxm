@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ConfigProvider implements IClusterable {
+public class DialogConfig implements IClusterable {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(DialogConfig.class);
 
     private static final String DIALOG_CONFIG = "dialogConfig";
 
     private final IPluginConfig defaultConfig;
 
-    public ConfigProvider(final IPluginConfig defaultConfig) {
+    public DialogConfig(final IPluginConfig defaultConfig) {
         this.defaultConfig = defaultConfig;
     }
 
@@ -48,6 +48,10 @@ public class ConfigProvider implements IClusterable {
     }
 
     public IPluginConfig get(final Map<String, String> parameters) {
+        if (!parameters.containsKey(DIALOG_CONFIG)) {
+            return defaultConfig;
+        }
+
         final JavaPluginConfig config = new JavaPluginConfig();
         config.putAll(defaultConfig);
 
@@ -59,7 +63,6 @@ public class ConfigProvider implements IClusterable {
             log.warn("Could not parse dialog configuration '{}'. Using default configuration.",
                     dialogConfigJson, e);
         }
-
         return config;
     }
 
