@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -312,16 +312,6 @@ public class HstComponentWindowImpl implements HstComponentWindow {
                 childWindowMapByReferenceName.remove(window.getReferenceName());
             }
         }
-    }
-
-    @Override
-    public boolean isContainerWindow() {
-        return HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(hstComponentConfiguration.getComponentType());
-    }
-
-    @Override
-    public boolean isContainerItemWindow() {
-        return HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(hstComponentConfiguration.getComponentType());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -233,17 +233,5 @@ public interface HstComponentWindow {
      * @param window the window to remove
      */
     void removeChildWindow(HstComponentWindow window);
-
-    /**
-     * Return true if this window is an HST Container window which can contain container item component windows.
-     * @return
-     */
-    boolean isContainerWindow();
-
-    /**
-     * Return true if this window is a HST Container Item window which can be contained in an HST Container window.
-     * @return
-     */
-    boolean isContainerItemWindow();
 
 }

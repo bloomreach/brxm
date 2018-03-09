@@ -229,13 +229,13 @@ public class PageModelAggregationValve extends AggregationValve {
             final HstRequest hstRequest = requestMap.get(window);
             final HstResponse hstResponse = responseMap.get(window);
 
-            if (window.isContainerWindow()) {
+            if (window.getComponentInfo().isContainer()) {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
-            } else if (window.isContainerItemWindow()) {
+            } else if (window.getComponentInfo().isContainerItem()) {
                 if (curContainerWindowModel == null) {
                     log.warn("Invalid container item component window location for {}.",
                             window.getReferenceNamespace());
