@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.content;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.xml.transform.Source;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -36,15 +35,12 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 public class ContentExportDialog extends AbstractDialog<Node> {
 
@@ -94,10 +90,18 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             public void onClick(AjaxRequestTarget target) {
                 String export;
                 try {
+                    SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+                    TransformerHandler handler = stf.newTransformerHandler();
+                    StringWriter exportWriter = new StringWriter();
+                    Transformer transformer = handler.getTransformer();
+                    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+                    handler.setResult(new StreamResult(exportWriter));
                     Node node = nodeModel.getObject();
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
-                    export = prettyPrint(out.toByteArray());
+                    ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), handler, skipBinary, false);
+                    export = exportWriter.getBuffer().toString();
                     JcrNodeModel newNodeModel = new JcrNodeModel(node);
                     modelReference.setModel(newNodeModel);
                 } catch (Exception e) {
@@ -134,27 +138,5 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     @Override
     public IValueMap getProperties() {
         return SIZE;
-    }
-
-    // privates
-
-    private String prettyPrint(byte[] bytes) throws Exception {
-        Source source = new StreamSource(new ByteArrayInputStream(bytes));
-        DOMResult result = new DOMResult();
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer identityTransformer = transformerFactory.newTransformer();
-        identityTransformer.transform(source, result);
-        Document doc = (Document) result.getNode();
-
-        OutputFormat format = new OutputFormat(doc);
-        format.setEncoding("UTF-8");
-        format.setIndenting(true);
-        format.setIndent(2);
-        format.setLineWidth(80);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLSerializer xmlSerializer = new XMLSerializer(out, format);
-        xmlSerializer.serialize(doc);
-        return out.toString("UTF-8");
     }
 }

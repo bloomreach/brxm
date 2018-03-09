@@ -114,7 +114,6 @@
 
     <wicket.version>6.26.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
-    <nekohtml.version>1.9.13</nekohtml.version>
     <httpclient.version>4.5.3</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
@@ -125,7 +124,7 @@
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
-    <hippo.htmldiff.version>1.01.04</hippo.htmldiff.version>
+    <hippo.htmldiff.version>1.02.00-SNAPSHOT</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.06</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.7.1-h12.3.0-SNAPSHOT</hippo.ckeditor.version>
 
@@ -332,11 +331,6 @@
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${httpclient.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sourceforge.nekohtml</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>${nekohtml.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
