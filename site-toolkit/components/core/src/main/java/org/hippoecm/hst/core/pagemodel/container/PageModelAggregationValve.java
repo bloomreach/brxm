@@ -26,6 +26,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -39,8 +43,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerConfig;
-import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
@@ -56,10 +58,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -209,11 +207,6 @@ public class PageModelAggregationValve extends AggregationValve {
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final HstContainerURLProvider containerURLProvider = getUrlFactory().getContainerURLProvider();
-        final HstContainerURL apiBaseURL = requestContext.getBaseURL();
-        final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
-        final HstContainerURL siteBaseURL = containerURLProvider.createURL(siteMount, apiBaseURL, apiBaseURL.getPathInfo());
 
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];

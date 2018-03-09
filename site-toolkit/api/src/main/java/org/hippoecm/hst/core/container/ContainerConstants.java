@@ -188,9 +188,4 @@ public interface ContainerConstants {
      */
     String LINK_NAME_SITE = "site";
 
-    /**
-     * Generic Link Name for the component rendering.
-     */
-    String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
-
 }
