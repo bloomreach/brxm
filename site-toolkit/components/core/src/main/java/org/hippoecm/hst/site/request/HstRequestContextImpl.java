@@ -366,8 +366,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public void removeModel(String name) {
-        modelsMap.remove(name);
-        removeAttribute(name);
+        if (modelsMap.remove(name) != null) {
+            removeAttribute(name);
+        }
     }
 
     @Override

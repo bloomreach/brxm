@@ -414,8 +414,9 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @Override
     public void removeModel(String name) {
-        modelsMap.remove(name);
-        removeAttribute(name);
+        if (modelsMap.remove(name) != null) {
+            removeAttribute(name);
+        }
     }
 
 }
