@@ -17,13 +17,14 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DateFieldType extends PrimitiveFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(DateFieldType.class);
-    private static final String DEFAULT_VALUE = "0001-01-01T13:00:00.000+01:00";
+    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 
     public DateFieldType() {
         setType(Type.DATE);

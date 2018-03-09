@@ -18,7 +18,11 @@ import moment from 'moment-timezone';
 
 class DateValue {
   constructor(dateString) {
-    this._init(moment(dateString));
+    if (dateString === '') {
+      this._initBlank();
+    } else {
+      this._init(moment(dateString));
+    }
   }
 
   _init(initMoment) {
@@ -26,19 +30,32 @@ class DateValue {
     this.jsDate = this.moment.toDate(); // ngModel for md-date-picker
   }
 
+  _initBlank() {
+    this.moment = null;
+    this.jsDate = null;
+  }
+
+  _checkInit() {
+    if (this.moment === null) {
+      this._init(moment());
+    }
+  }
+
   get hours() {
-    return this.moment.hours();
+    return this.moment ? this.moment.hours() : '';
   }
 
   set hours(hours) {
+    this._checkInit();
     this.moment.hours(hours);
   }
 
   get minutes() {
-    return this.moment.minutes();
+    return this.moment ? this.moment.minutes() : '';
   }
 
   set minutes(minutes) {
+    this._checkInit();
     this.moment.minutes(minutes);
   }
 
@@ -47,6 +64,7 @@ class DateValue {
   }
 
   set date(date) {
+    this._checkInit();
     const newMoment = moment(date);
     newMoment.hours(this.moment.hours());
     newMoment.minutes(this.moment.minutes());
@@ -54,7 +72,7 @@ class DateValue {
   }
 
   toDateString() {
-    return this.moment.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+    return this.moment ? this.moment.format('YYYY-MM-DDTHH:mm:ss.SSSZ') : '';
   }
 
   setToNow() {
