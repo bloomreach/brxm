@@ -17,24 +17,48 @@
 import moment from 'moment-timezone';
 
 class DateValue {
-  constructor(value) {
-    this.value = moment(value);
+  constructor(dateString) {
+    this._init(moment(dateString));
+  }
+
+  _init(initMoment) {
+    this.moment = initMoment; // moment for correct timezone handling
+    this.jsDate = this.moment.toDate(); // ngModel for md-date-picker
   }
 
   get hours() {
-    return this.value.hours();
+    return this.moment.hours();
   }
 
   set hours(hours) {
-    this.value.hours(hours);
+    this.moment.hours(hours);
   }
 
   get minutes() {
-    return this.value.minutes();
+    return this.moment.minutes();
   }
 
   set minutes(minutes) {
-    this.value.minute(minutes);
+    this.moment.minutes(minutes);
+  }
+
+  get date() {
+    return this.jsDate;
+  }
+
+  set date(date) {
+    const newMoment = moment(date);
+    newMoment.hours(this.moment.hours());
+    newMoment.minutes(this.moment.minutes());
+    this._init(newMoment);
+  }
+
+  toDateString() {
+    return this.moment.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+  }
+
+  setToNow() {
+    this._init(moment());
   }
 }
 
@@ -92,9 +116,15 @@ class DateFieldController {
     this._draftField();
   }
 
+  setToNow(index) {
+    this.dateValues[index].setToNow();
+    this.valueChanged();
+    this.form.$setDirty();
+  }
+
   _updateFieldValues() {
     for (let i = 0; i < this.fieldValues.length; i += 1) {
-      this.fieldValues[i].value = this.dateValues[i].value.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+      this.fieldValues[i].value = this.dateValues[i].toDateString();
     }
   }
 

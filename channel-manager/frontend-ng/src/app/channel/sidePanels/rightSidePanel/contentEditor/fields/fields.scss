@@ -51,6 +51,23 @@ document-fields {
     vertical-align: baseline;
     width: 18px;
   }
+
+  date-field {
+    .md-datepicker-input {
+      font-size: 100%;
+      min-width: 225px; // in smallest editor size, all fields + button must remain on one line
+    }
+
+    .timepart {
+      width: 25px;
+      text-align: right;
+    }
+
+    .now-button {
+      opacity: .54;
+      padding: 1px 0 0 6px !important;
+    }
+  }
 }
 
 primitive-field,

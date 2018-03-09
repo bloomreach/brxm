@@ -164,7 +164,8 @@ function config(
     .icon('switch-to-content-editor', `images/switch-to-content-editor.svg${antiCache}`)
     .icon('tablet', `images/tablet.svg${antiCache}`)
     .icon('toggle_components_overlay', `images/toggle_components_overlay.svg${antiCache}`)
-    .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`);
+    .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`)
+    .icon('sync-black', `images/sync-black.svg${antiCache}`);
 
   // only enable Angular debug information when the CMS runs in 'Wicket development mode'
   const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
