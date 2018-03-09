@@ -26,13 +26,13 @@ public interface HstSiteMenuMixin extends HstSiteMenu, CommonMenuMixin {
 
     @JsonIgnore
     @Override
-    public HstSiteMenus getHstSiteMenus();
+    HstSiteMenus getHstSiteMenus();
 
     @JsonIgnore
     @Override
-    public HstSiteMenuItem getDeepestExpandedItem();
+    HstSiteMenuItem getDeepestExpandedItem();
 
     @JsonIgnore
     @Override
-    public EditableMenu getEditableMenu();
+    EditableMenu getEditableMenu();
 }

@@ -26,17 +26,17 @@ public interface HstSiteMenuItemMixin extends HstSiteMenuItem, CommonMenuItemMix
 
     @JsonIgnore
     @Override
-    public HstSiteMenuItem getParentItem();
+    HstSiteMenuItem getParentItem();
 
     @JsonIgnore
     @Override
-    public HstSiteMenu getHstSiteMenu();
+    HstSiteMenu getHstSiteMenu();
 
     @JsonIgnore
     @Override
-    public Map<String, String> getLocalParameters();
+    Map<String, String> getLocalParameters();
 
     @JsonIgnore
-    public HstSiteMenuItem getDeepestExpandedItem();
+    HstSiteMenuItem getDeepestExpandedItem();
 
 }
