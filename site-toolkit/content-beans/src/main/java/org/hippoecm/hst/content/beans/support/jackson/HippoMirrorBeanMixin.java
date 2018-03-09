@@ -24,11 +24,11 @@ public interface HippoMirrorBeanMixin extends HippoMirrorBean, HippoBeanMixin {
 
     @JsonIgnore
     @Override
-    public HippoBean getReferencedBean();
+    HippoBean getReferencedBean();
 
     @JsonIgnore
     @Override
     @Deprecated
-    public HippoBean getDeref();
+    HippoBean getDeref();
 
 }

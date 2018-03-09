@@ -23,6 +23,6 @@ public interface CommonMenuMixin extends CommonMenu {
 
     @JsonIgnore
     @Override
-    public boolean isExpanded();
+    boolean isExpanded();
 
 }

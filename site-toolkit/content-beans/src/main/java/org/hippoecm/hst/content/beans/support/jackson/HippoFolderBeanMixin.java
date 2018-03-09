@@ -35,14 +35,14 @@ public interface HippoFolderBeanMixin extends HippoFolderBean, HippoBeanMixin {
 
     @JsonIgnore
     @Override
-    public List<HippoFolderBean> getFolders();
+    List<HippoFolderBean> getFolders();
 
     @JsonIgnore
     @Override
-    public List<HippoDocumentBean> getDocuments();
+    List<HippoDocumentBean> getDocuments();
 
     @JsonIgnore
     @Override
-    public Locale getLocale();
+    Locale getLocale();
 
 }

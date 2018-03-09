@@ -28,18 +28,18 @@ public interface HippoGalleryImageSetBeanMixin extends HippoGalleryImageSetBean,
 
     @JsonProperty
     @Override
-    public String getFileName();
+    String getFileName();
 
     @JsonProperty
     @Override
-    public String getDescription();
+    String getDescription();
 
     @JsonIgnore
     @Override
-    public HippoGalleryImageBean getThumbnail();
+    HippoGalleryImageBean getThumbnail();
 
     @JsonIgnore
     @Override
-    public HippoGalleryImageBean getOriginal();
+    HippoGalleryImageBean getOriginal();
 
 }

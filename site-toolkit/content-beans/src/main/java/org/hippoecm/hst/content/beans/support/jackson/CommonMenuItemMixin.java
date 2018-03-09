@@ -25,6 +25,6 @@ public interface CommonMenuItemMixin extends CommonMenuItem {
 
     @JsonIgnore
     @Override
-    public Map<String, Object> getProperties();
+    Map<String, Object> getProperties();
 
 }

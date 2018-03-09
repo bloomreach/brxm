@@ -23,10 +23,10 @@ public interface HippoGalleryImageBeanMixin extends HippoGalleryImageBean, Hippo
 
     @JsonProperty
     @Override
-    public int getHeight();
+    int getHeight();
 
     @JsonProperty
     @Override
-    public int getWidth();
+    int getWidth();
 
 }

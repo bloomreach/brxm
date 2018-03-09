@@ -26,6 +26,6 @@ public interface HippoHtmlBeanMixin extends HippoHtmlBean, HippoBeanMixin {
 
     @JsonProperty("value")
     @Override
-    public String getContent();
+    String getContent();
 
 }

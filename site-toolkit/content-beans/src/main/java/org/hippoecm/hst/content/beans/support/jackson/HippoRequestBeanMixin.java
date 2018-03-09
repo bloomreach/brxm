@@ -24,6 +24,6 @@ public interface HippoRequestBeanMixin extends HippoRequestBean, HippoBeanMixin 
 
     @JsonIgnore
     @Override
-    public HippoBean getDocument();
+    HippoBean getDocument();
 
 }

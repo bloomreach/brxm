@@ -73,6 +73,11 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
             linksMap.put(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
         }
 
+        // TODO this doesn't work for multiple mounts unless they use the 'mapped alias' feature which is very complex
+        // TODO shouldn't we make this easier? isn't it always the parent mount we need?
+        // TODO Also why should we need a site link AT ALL? The site mount only renders the initial SPA template (root
+        // TODO component. Afaik we NEVER need a site link as the 'site' only returns the initial SPA template, also see
+        // TODO HSTTWO-4225
         final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
 
         if (siteMount != null) {
