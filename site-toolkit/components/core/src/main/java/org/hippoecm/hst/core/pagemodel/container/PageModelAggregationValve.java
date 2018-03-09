@@ -356,7 +356,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * Invoke custom metadata decorators to give a chance to add more metadata for the content bean.
      * @param hstRequest HstRequest object
      * @param hstResponse HstResponse object
-     * @param HippoBean content bean
+     * @param contentBean content bean
      * @param model MetadataContributable model
      */
     private void decorateContentMetadata(final HstRequest hstRequest, final HstResponse hstResponse,
