@@ -241,14 +241,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     @SuppressWarnings("unchecked")
     @Override
-    public Enumeration<String> getAttributeNames() {
+    public Enumeration getAttributeNames() {
         List servletRequestAttrs = EnumerationUtils.toList(super.getAttributeNames());
         Set<String> localRequestAttrs = this.getAttributeMap().keySet();
-
-        // Combine global servlet request attributes, local HstRequest attributes and model attributes.
-        // This attribute names can be queried by view templates or servlet-based frameworks.
-        Collection composite = new CompositeCollection(
-                new Collection[] { servletRequestAttrs, localRequestAttrs, getModelsMap().keySet() });
+        Collection composite = new CompositeCollection(new Collection [] { servletRequestAttrs, localRequestAttrs });
         return Collections.enumeration(composite);
     }
     
@@ -275,13 +271,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                 }
             }
         }
-
-        if (value != null) {
-            return value;
-        }
-
-        // Fallback to model objects as this can be called in view templates.
-        return getModel(name);
+        
+        return value;
     }
 
     @Override

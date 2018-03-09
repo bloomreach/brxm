@@ -16,7 +16,6 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -380,22 +378,25 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
 
-        Object value = attributes.get(name);
+        Object value = null;
 
-        if (value != null) {
-            return value;
+        if (this.attributes != null) {
+            value = this.attributes.get(name);
         }
 
-        return getModel(name);
+        return value;
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
         checkStateValidity();
 
-        Collection composite = new CompositeCollection(
-                new Collection[] { attributes.keySet(), getModelsMap().keySet() });
-        return Collections.enumeration(composite);
+        if (this.attributes != null) {
+            return Collections.enumeration(attributes.keySet());
+        } else {
+            List<String> emptyAttrNames = Collections.emptyList();
+            return Collections.enumeration(emptyAttrNames);
+        }
     }
 
     @Override
