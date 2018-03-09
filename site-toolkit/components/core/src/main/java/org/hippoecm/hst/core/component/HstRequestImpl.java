@@ -60,13 +60,13 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
-    protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<String, Map<String, String []>>();
-    protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
+    protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<>();
+    protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<>();
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
     protected boolean referenceNamespaceIgnored;
 
-    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> modelsMap = new HashMap<>();
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String lifecyclePhase) {

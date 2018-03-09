@@ -118,7 +118,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private boolean disposed;
     private boolean matchingFinished;
 
-    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> modelsMap = new HashMap<>();
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     public HstRequestContextImpl(Repository repository) {
