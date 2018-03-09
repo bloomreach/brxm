@@ -73,7 +73,6 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.11</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
-    <xerces.version>2.9.1</xerces.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.2.3</maven.required.version>
@@ -327,12 +326,6 @@
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
         <version>${jaxrs.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
       </dependency>
 
     </dependencies>
