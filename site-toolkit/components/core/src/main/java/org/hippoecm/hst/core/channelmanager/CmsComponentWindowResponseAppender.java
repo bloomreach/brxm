@@ -37,13 +37,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*
- * FIXME: Undo this class and related changes once HSTTWO-4241 gets fixed.
- *        All the changes related to this in feature/spaplus branch were done
- *        just in order to enable/test page model api output in preview mode,
- *        which should be done ideally through Channel Manager's previe mode using cms user's JCR session
- *        (e.g, _cmsinternal/...) instead.
- */
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
@@ -58,12 +51,12 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
-        if (!isApplicableRequest(request)) {
+        if (!isCmsRequest(request)) {
             return;
         }
 
         HttpSession session = request.getSession(false);
-        if (session == null && isComposerMode(request)) {
+        if (session == null) {
             throw new IllegalStateException("HttpSession should never be null here.");
         }
 
@@ -71,17 +64,12 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
 
         if (isContainerOrContainerItem(compConfig)) {
-            if (isComponentMetadataAppilcableRequest(request)) {
+            if (isComposerMode(request)) {
                 populateComponentMetaData(request, response, window);
             }
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
             populatePageMetaData(request, response, session, compConfig);
         }
-    }
-
-    @Override
-    protected boolean isComponentMetadataAppilcableRequest(final HstRequest request) {
-        return true;
     }
 
     private void populatePageMetaData(final HstRequest request, final HstResponse response, final HttpSession session, final HstComponentConfiguration compConfig) {
@@ -113,7 +101,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
         }
 
-        Object variant = (session != null) ? session.getAttribute(ContainerConstants.RENDER_VARIANT) : null;
+        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
         if (variant == null) {
             variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
         }

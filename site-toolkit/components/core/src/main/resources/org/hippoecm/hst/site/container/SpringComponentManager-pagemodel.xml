@@ -51,9 +51,8 @@
   </bean>
 
   <bean id="pageModelComponentWindowResponseAppender"
-        class="org.hippoecm.hst.core.pagemodel.container.PageModelComponentWindowResponseAppender">
+        class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
     <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
-    <property name="previewOnly" value="${pagemodel.component.window.response.appender.previewonly}" />
   </bean>
 
   <bean id="pageModelComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
