@@ -150,7 +150,7 @@ public interface HstResponseState
      * Return unmodifiable preamble {@link org.w3c.dom.Node}s.
      * @return unmodifiable preamble {@link org.w3c.dom.Node}s
      */
-    public List<Node> getPreambleNodes();
+    List<Node> getPreambleNodes();
 
     void addEpilogueNode(Comment comment);
 
@@ -158,7 +158,7 @@ public interface HstResponseState
      * Return unmodifiable epilogue {@link org.w3c.dom.Node}s.
      * @return unmodifiable epilogue {@link org.w3c.dom.Node}s
      */
-    public List<Node> getEpilogueNodes();
+    List<Node> getEpilogueNodes();
 
     void setWrapperElement(Element element);
     
