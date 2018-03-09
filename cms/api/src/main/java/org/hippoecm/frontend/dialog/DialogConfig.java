@@ -40,7 +40,9 @@ public class DialogConfig implements IClusterable {
     private final IPluginConfig defaultConfig;
 
     public DialogConfig(final IPluginConfig defaultConfig) {
-        this.defaultConfig = defaultConfig;
+        this.defaultConfig = defaultConfig != null
+            ? defaultConfig
+            : new JavaPluginConfig();
     }
 
     public IPluginConfig get() {
