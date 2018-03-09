@@ -57,4 +57,9 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
      * @return a {@link HippoAvailableTranslationsBean} where the translations must be of type <code>beanMappingClass</code>. This method never returns <code>null</code>
      */
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass);
+
+    @Override
+    default String getRepresentationId() {
+        return getCanonicalHandleUUID();
+    }
 }

@@ -29,57 +29,77 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public interface HippoBeanMixin {
+public interface HippoBeanMixin extends HippoBean {
 
     @JsonProperty("id")
-    public String getIdentifier();
+    String getRepresentationId();
 
+    @Override
     @JsonIgnore
-    public Node getNode();
+    String getIdentifier();
 
+    @Override
     @JsonIgnore
-    public JCRValueProvider getValueProvider();
+    Node getNode();
 
+    @Override
+    @JsonIgnore
+    JCRValueProvider getValueProvider();
+
+    @Override
     @Deprecated
     @JsonIgnore
-    public String getLocalizedName();
+    String getLocalizedName();
 
+    @Override
     @JsonIgnore
-    public String getPath();
+    String getPath();
 
+    @Override
     @JsonIgnore
-    public Map<String, Object> getProperties();
+    Map<String, Object> getProperties();
 
+    @Override
     @JsonIgnore
-    public Map<String, Object> getProperty();
+    Map<String, Object> getProperty();
 
+    @Override
     @JsonIgnore
-    public HippoBean getParentBean();
+    HippoBean getParentBean();
 
+    @Override
     @JsonIgnore
-    public <T extends HippoBean> T getCanonicalBean();
+    <T extends HippoBean> T getCanonicalBean();
 
+    @Override
     @JsonIgnore
-    public String getCanonicalPath();
+    String getCanonicalPath();
 
+    @Override
     @JsonIgnore
-    public String getCanonicalUUID();
+    String getCanonicalUUID();
 
+    @Override
     @JsonIgnore
-    public boolean isHippoDocumentBean();
+    boolean isHippoDocumentBean();
 
+    @Override
     @JsonIgnore
-    public boolean isHippoFolderBean();
+    boolean isHippoFolderBean();
 
+    @Override
     @JsonIgnore
-    public boolean isLeaf();
+    boolean isLeaf();
 
+    @Override
     @JsonIgnore
-    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations();
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations();
 
+    @Override
     @JsonIgnore
-    public Map<Object, Object> getEqualComparator();
+    Map<Object, Object> getEqualComparator();
 
+    @Override
     @JsonIgnore
-    public String getComparePath();
+    String getComparePath();
 }

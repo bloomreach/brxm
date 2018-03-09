@@ -34,16 +34,26 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
     )
 public interface HippoDocumentBeanMixin extends HippoDocumentBean, HippoBeanMixin {
 
-    @JsonProperty("handlePath")
+    @Override
+    default String getRepresentationId() {
+        return getCanonicalHandleUUID();
+    }
+
+    @JsonIgnore
+    @Override
+    String getCanonicalHandleUUID();
+
+    @JsonIgnore
     @Override
     String getCanonicalHandlePath();
 
     @JsonIgnore
     @Override
-    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass);
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass);
 
     @JsonIgnore
     @Override
-    public Locale getLocale();
+    Locale getLocale();
+
 
 }

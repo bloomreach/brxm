@@ -45,4 +45,16 @@ public interface IdentifiableContentBean extends ContentBean {
      * @see #getIdentifier()
      */
     void setIdentifier(String identifier);
+
+    /**
+     * The representational id for a {@link IdentifiableContentBean} is by default equal to the {@link #getIdentifier()}
+     * <strong>however</strong> implementations can change choose to return another id than the {@link #getIdentifier()}.
+     * An example of a subclass (interface) returning a different value is for example the {@link HippoDocumentBean}, since
+     * this one does return for {@link #getRepresentationId()} the id of the backing JCR handle uuid instead of the uuid
+     * of the document variant.
+     * @return the representational id for this {@link IdentifiableContentBean}
+     */
+    default String getRepresentationId() {
+        return getIdentifier();
+    }
 }
