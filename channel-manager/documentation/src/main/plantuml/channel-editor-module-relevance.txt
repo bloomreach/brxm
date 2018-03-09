@@ -1,0 +1,15 @@
+@startuml
+scale 900 width
+rectangle "relevance" as relevance_module {
+rectangle ViewAsCtrl
+rectangle relevanceViewAs
+rectangle ExperimentStateService
+}
+ViewAsCtrl ~~> CmsService
+ViewAsCtrl ~~> ConfigService
+ViewAsCtrl ~~> SessionService
+ViewAsCtrl ~~> HstService
+ViewAsCtrl ~~> HippoIframeService
+ViewAsCtrl ~~> PageMetaDataService
+ViewAsCtrl ~~> FeedbackService
+@enduml

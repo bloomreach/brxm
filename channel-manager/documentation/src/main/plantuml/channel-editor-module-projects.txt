@@ -1,0 +1,6 @@
+@startuml
+scale 200 width
+rectangle "projects" as projects_module {
+rectangle projectToggle
+}
+@enduml

@@ -6,10 +6,31 @@
 
 ## Functional Overview
 
-Include list, new channel wizard etc.
-
 ![Container Diagram](../plantuml/container-diagram.png)
 
+## Channel Editor
+
+### Modules
+
+![Channel Editor Modules](../plantuml/channel-editor-modules.png)
+
+With injectables per module:
+
+![Channel Editor Modules with Injectables](../plantuml/channel-editor-modules-with-injectables.png)
+
+### Injectables
+
+Individual
+
+![Channel Editor Injectables](../plantuml/channel-editor-injectables.png)
+
+Grouped by module
+
+![Channel Editor Injectables Linked](../plantuml/channel-editor-injectables-linked.png)
+
+### Individual Modules
+
+TODO
 
 ### Preview
 - Browse through the preview version of a channel 

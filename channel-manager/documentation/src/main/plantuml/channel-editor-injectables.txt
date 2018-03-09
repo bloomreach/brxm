@@ -1,0 +1,331 @@
+@startuml
+scale 4100 width
+rectangle "Channel Editor" as hippo_cm_module {
+rectangle HstConstants
+rectangle BrowserService
+rectangle CatalogService
+rectangle CmsService
+rectangle ConfigService
+rectangle ContentService
+rectangle DialogService
+rectangle HstComponentService
+rectangle HstService
+rectangle SessionService
+rectangle SiteMapService
+rectangle SiteMapItemService
+rectangle SiteMenuService
+rectangle DomService
+rectangle FeedbackService
+rectangle PathService
+rectangle ProjectService
+rectangle HippoGlobal
+rectangle illegalCharacters
+rectangle stopPropagation
+rectangle scrollToIf
+rectangle getByProperty
+rectangle incrementProperty
+rectangle startWithSlash
+rectangle ChannelCtrl
+rectangle ChannelService
+rectangle SubpageToolbarCtrl
+rectangle subpageToolbar
+rectangle subpageContent
+rectangle RenderingService
+rectangle ExtJsHandlerService
+rectangle PageMetaDataService
+rectangle PageStructureService
+rectangle PageActionsService
+rectangle PageNewCtrl
+rectangle pageNew
+rectangle PagePropertiesCtrl
+rectangle pageProperties
+rectangle PageMoveCtrl
+rectangle pageMove
+rectangle PageCopyCtrl
+rectangle pageCopy
+rectangle ChannelSettingsCtrl
+rectangle channelSettings
+rectangle propertyField
+rectangle helpIcon
+rectangle ChangeManagementCtrl
+rectangle changeManagement
+rectangle ChannelActionsService
+rectangle dropdownMenu
+rectangle SidePanelService
+rectangle leftSidePanel
+rectangle leftSidePanelToggle
+rectangle ComponentCatalogService
+rectangle componentCatalog
+rectangle rightSidePanel
+rectangle RightSidePanelService
+rectangle contentEditor
+rectangle ContentEditor
+rectangle documentFields
+rectangle primitiveField
+rectangle choiceField
+rectangle compoundField
+rectangle collapse
+rectangle FieldService
+rectangle ckeditor
+rectangle CKEditorService
+rectangle sharedspaceToolbar
+rectangle SharedSpaceToolbarService
+rectangle EditContentService
+rectangle editContentMainCtrl
+rectangle editContentToolsCtrl
+rectangle addToProject
+rectangle resizeHandle
+rectangle documentLocationField
+rectangle nameUrlFields
+rectangle CreateContentService
+rectangle step1Ctrl
+rectangle Step1Service
+rectangle step2Ctrl
+rectangle Step2Service
+rectangle hippoIframe
+rectangle hippoIframeCtrl
+rectangle HippoIframeService
+rectangle hstCommentsProcessorService
+rectangle linkProcessorService
+rectangle ScrollService
+rectangle DragDropService
+rectangle ViewportService
+rectangle OverlayService
+rectangle menuEditor
+rectangle selectAllOnFocus
+rectangle MenuEditorCtrl
+rectangle hippoTree
+rectangle itemsRenderer
+rectangle hippoTreeTemplate
+rectangle HippoTreeCtrl
+rectangle PickerCtrl
+rectangle ListingCtrl
+rectangle PickerService
+rectangle listing
+rectangle ViewAsCtrl
+rectangle relevanceViewAs
+rectangle ExperimentStateService
+rectangle projectToggle
+rectangle viewportToggle
+rectangle overlayToggle
+rectangle MaskService
+rectangle mask
+rectangle throttle
+}
+CatalogService --> HstService
+ConfigService --> CmsService
+ContentService --> ConfigService
+ContentService --> PathService
+DialogService --> CmsService
+HstComponentService --> ChannelService
+HstComponentService --> CmsService
+HstComponentService --> HstService
+HstService --> CmsService
+HstService --> ConfigService
+HstService --> PathService
+SessionService --> HstService
+SiteMapService --> HstService
+SiteMapService --> FeedbackService
+SiteMapItemService --> ConfigService
+SiteMapItemService --> HstService
+SiteMapItemService --> FeedbackService
+SiteMenuService --> HstService
+DomService --> BrowserService
+ProjectService --> ConfigService
+ProjectService --> FeedbackService
+ProjectService --> HippoGlobal
+ChannelCtrl --> OverlayService
+ChannelCtrl --> ChannelActionsService
+ChannelCtrl --> ChannelService
+ChannelCtrl --> ConfigService
+ChannelCtrl --> FeedbackService
+ChannelCtrl --> HippoIframeService
+ChannelCtrl --> ProjectService
+ChannelCtrl --> PageActionsService
+ChannelCtrl --> PageMetaDataService
+ChannelCtrl --> SidePanelService
+ChannelService --> CatalogService
+ChannelService --> CmsService
+ChannelService --> ConfigService
+ChannelService --> FeedbackService
+ChannelService --> HstService
+ChannelService --> PathService
+ChannelService --> ProjectService
+ChannelService --> SessionService
+ChannelService --> SiteMapService
+ExtJsHandlerService --> CmsService
+ExtJsHandlerService --> PageStructureService
+PageMetaDataService --> HstConstants
+PageStructureService --> ChannelService
+PageStructureService --> CmsService
+PageStructureService --> FeedbackService
+PageStructureService --> HippoIframeService
+PageStructureService --> hstCommentsProcessorService
+PageStructureService --> HstConstants
+PageStructureService --> HstService
+PageStructureService --> MaskService
+PageStructureService --> PageMetaDataService
+PageStructureService --> RenderingService
+PageActionsService --> ChannelService
+PageActionsService --> DialogService
+PageActionsService --> FeedbackService
+PageActionsService --> HippoIframeService
+PageActionsService --> PageMetaDataService
+PageActionsService --> SessionService
+PageActionsService --> SiteMapItemService
+PageActionsService --> SiteMapService
+PageNewCtrl --> ChannelService
+PageNewCtrl --> SiteMapService
+PageNewCtrl --> HippoIframeService
+PageNewCtrl --> FeedbackService
+PagePropertiesCtrl --> SiteMapService
+PagePropertiesCtrl --> SiteMapItemService
+PagePropertiesCtrl --> ChannelService
+PagePropertiesCtrl --> HippoIframeService
+PagePropertiesCtrl --> FeedbackService
+PageMoveCtrl --> ChannelService
+PageMoveCtrl --> SiteMapService
+PageMoveCtrl --> SiteMapItemService
+PageMoveCtrl --> HippoIframeService
+PageMoveCtrl --> FeedbackService
+PageCopyCtrl --> ChannelService
+PageCopyCtrl --> CmsService
+PageCopyCtrl --> FeedbackService
+PageCopyCtrl --> HippoIframeService
+PageCopyCtrl --> SessionService
+PageCopyCtrl --> SiteMapItemService
+PageCopyCtrl --> SiteMapService
+ChannelSettingsCtrl --> FeedbackService
+ChannelSettingsCtrl --> ChannelService
+ChannelSettingsCtrl --> HippoIframeService
+ChannelSettingsCtrl --> ConfigService
+ChangeManagementCtrl --> ChannelService
+ChangeManagementCtrl --> CmsService
+ChangeManagementCtrl --> ConfigService
+ChangeManagementCtrl --> DialogService
+ChangeManagementCtrl --> FeedbackService
+ChangeManagementCtrl --> HippoIframeService
+ChannelActionsService --> ChannelService
+ChannelActionsService --> CmsService
+ChannelActionsService --> ConfigService
+ChannelActionsService --> DialogService
+ChannelActionsService --> FeedbackService
+ChannelActionsService --> HippoIframeService
+ChannelActionsService --> SessionService
+ChannelActionsService --> SiteMapService
+ChannelActionsService --> ProjectService
+SidePanelService --> OverlayService
+ComponentCatalogService --> SidePanelService
+ComponentCatalogService --> HippoIframeService
+ComponentCatalogService --> MaskService
+ComponentCatalogService --> OverlayService
+ComponentCatalogService --> PageStructureService
+ComponentCatalogService --> FeedbackService
+ContentEditor --> CmsService
+ContentEditor --> ContentService
+ContentEditor --> DialogService
+ContentEditor --> FeedbackService
+ContentEditor --> FieldService
+FieldService --> ContentService
+CKEditorService --> ConfigService
+CKEditorService --> DomService
+CKEditorService --> PathService
+EditContentService --> CmsService
+EditContentService --> ContentEditor
+EditContentService --> RightSidePanelService
+editContentMainCtrl --> CmsService
+editContentMainCtrl --> ConfigService
+editContentMainCtrl --> ContentEditor
+editContentMainCtrl --> EditContentService
+editContentMainCtrl --> HippoIframeService
+editContentMainCtrl --> ProjectService
+editContentToolsCtrl --> CmsService
+editContentToolsCtrl --> ContentEditor
+editContentToolsCtrl --> EditContentService
+CreateContentService --> CmsService
+CreateContentService --> ContentService
+CreateContentService --> EditContentService
+CreateContentService --> FeedbackService
+CreateContentService --> HippoIframeService
+CreateContentService --> Step1Service
+CreateContentService --> Step2Service
+CreateContentService --> RightSidePanelService
+step1Ctrl --> CreateContentService
+step1Ctrl --> Step1Service
+step1Ctrl --> CmsService
+Step1Service --> ChannelService
+Step1Service --> ContentService
+Step1Service --> FeedbackService
+step2Ctrl --> ContentEditor
+step2Ctrl --> ContentService
+step2Ctrl --> CreateContentService
+step2Ctrl --> FeedbackService
+step2Ctrl --> RightSidePanelService
+step2Ctrl --> Step2Service
+step2Ctrl --> CmsService
+Step2Service --> CmsService
+Step2Service --> ContentEditor
+Step2Service --> ContentService
+Step2Service --> DialogService
+Step2Service --> FeedbackService
+Step2Service --> HstComponentService
+hippoIframeCtrl --> ChannelService
+hippoIframeCtrl --> ConfigService
+hippoIframeCtrl --> CmsService
+hippoIframeCtrl --> DialogService
+hippoIframeCtrl --> DomService
+hippoIframeCtrl --> DragDropService
+hippoIframeCtrl --> HippoIframeService
+hippoIframeCtrl --> OverlayService
+hippoIframeCtrl --> PageMetaDataService
+hippoIframeCtrl --> PageStructureService
+hippoIframeCtrl --> ProjectService
+hippoIframeCtrl --> ViewportService
+hippoIframeCtrl --> hstCommentsProcessorService
+hippoIframeCtrl --> linkProcessorService
+HippoIframeService --> ChannelService
+HippoIframeService --> CmsService
+HippoIframeService --> ConfigService
+HippoIframeService --> ProjectService
+HippoIframeService --> ScrollService
+hstCommentsProcessorService --> HstConstants
+ScrollService --> BrowserService
+ScrollService --> DomService
+DragDropService --> BrowserService
+DragDropService --> ChannelService
+DragDropService --> ConfigService
+DragDropService --> DomService
+DragDropService --> FeedbackService
+DragDropService --> HstService
+DragDropService --> PageStructureService
+DragDropService --> ScrollService
+DragDropService --> HippoIframeService
+OverlayService --> ChannelService
+OverlayService --> CmsService
+OverlayService --> CreateContentService
+OverlayService --> DomService
+OverlayService --> EditContentService
+OverlayService --> ExperimentStateService
+OverlayService --> FeedbackService
+OverlayService --> HippoIframeService
+OverlayService --> HstComponentService
+OverlayService --> MaskService
+OverlayService --> PageStructureService
+MenuEditorCtrl --> SiteMenuService
+MenuEditorCtrl --> HippoIframeService
+MenuEditorCtrl --> DialogService
+MenuEditorCtrl --> FeedbackService
+MenuEditorCtrl --> ChannelService
+MenuEditorCtrl --> PickerService
+MenuEditorCtrl --> ConfigService
+PickerCtrl --> PickerService
+PickerService --> DialogService
+PickerService --> HstService
+ViewAsCtrl --> CmsService
+ViewAsCtrl --> ConfigService
+ViewAsCtrl --> SessionService
+ViewAsCtrl --> HstService
+ViewAsCtrl --> HippoIframeService
+ViewAsCtrl --> PageMetaDataService
+ViewAsCtrl --> FeedbackService
+@enduml

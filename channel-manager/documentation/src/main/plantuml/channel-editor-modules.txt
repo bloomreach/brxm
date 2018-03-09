@@ -1,0 +1,62 @@
+@startuml
+scale 1000 width
+rectangle "Channel Editor" as hippo_cm_module {
+rectangle channel as channel_module
+rectangle subpage as subpage_module
+channel_module --> subpage_module
+rectangle page as page_module
+channel_module --> page_module
+rectangle actions as actions_module
+channel_module --> actions_module
+rectangle actions as actions_module
+channel_module --> actions_module
+rectangle menu as menu_module
+channel_module --> menu_module
+rectangle sidePanel as sidePanel_module
+channel_module --> sidePanel_module
+rectangle leftSidePanelModule as leftSidePanelModule_module
+sidePanel_module --> leftSidePanelModule_module
+rectangle componentCatalog as componentCatalog_module
+leftSidePanelModule_module --> componentCatalog_module
+rectangle rightSidePanelModule as rightSidePanelModule_module
+sidePanel_module --> rightSidePanelModule_module
+rectangle contentEditor as contentEditor_module
+rightSidePanelModule_module --> contentEditor_module
+rectangle fieldsModule as fieldsModule_module
+contentEditor_module --> fieldsModule_module
+rectangle ckeditor as ckeditor_module
+fieldsModule_module --> ckeditor_module
+rectangle sharedspaceToolbar as sharedspaceToolbar_module
+ckeditor_module --> sharedspaceToolbar_module
+rectangle editContentModule as editContentModule_module
+rightSidePanelModule_module --> editContentModule_module
+rectangle resizeHandle as resizeHandle_module
+rightSidePanelModule_module --> resizeHandle_module
+rectangle createContentModule as createContentModule_module
+rightSidePanelModule_module --> createContentModule_module
+rectangle step1 as step1_module
+createContentModule_module --> step1_module
+rectangle step2 as step2_module
+createContentModule_module --> step2_module
+rectangle hippoIframe as hippoIframe_module
+channel_module --> hippoIframe_module
+rectangle sitemenu as sitemenu_module
+channel_module --> sitemenu_module
+rectangle tree as tree_module
+sitemenu_module --> tree_module
+rectangle picker as picker_module
+sitemenu_module --> picker_module
+picker_module --> tree_module
+rectangle relevance as relevance_module
+channel_module --> relevance_module
+rectangle projects as projects_module
+channel_module --> projects_module
+rectangle viewports as viewports_module
+channel_module --> viewports_module
+rectangle overlayToggle as overlayToggle_module
+channel_module --> overlayToggle_module
+rectangle mask as mask_module
+channel_module --> mask_module
+rectangle factories as factories_module
+}
+@enduml

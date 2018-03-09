@@ -1,0 +1,31 @@
+@startuml
+scale 2000 width
+rectangle "actions" as actions_module {
+rectangle ChannelSettingsCtrl
+rectangle channelSettings
+rectangle propertyField
+rectangle helpIcon
+rectangle ChangeManagementCtrl
+rectangle changeManagement
+rectangle ChannelActionsService
+}
+ChannelSettingsCtrl ~~> FeedbackService
+ChannelSettingsCtrl ~~> ChannelService
+ChannelSettingsCtrl ~~> HippoIframeService
+ChannelSettingsCtrl ~~> ConfigService
+ChangeManagementCtrl ~~> ChannelService
+ChangeManagementCtrl ~~> CmsService
+ChangeManagementCtrl ~~> ConfigService
+ChangeManagementCtrl ~~> DialogService
+ChangeManagementCtrl ~~> FeedbackService
+ChangeManagementCtrl ~~> HippoIframeService
+ChannelActionsService ~~> ChannelService
+ChannelActionsService ~~> CmsService
+ChannelActionsService ~~> ConfigService
+ChannelActionsService ~~> DialogService
+ChannelActionsService ~~> FeedbackService
+ChannelActionsService ~~> HippoIframeService
+ChannelActionsService ~~> SessionService
+ChannelActionsService ~~> SiteMapService
+ChannelActionsService ~~> ProjectService
+@enduml

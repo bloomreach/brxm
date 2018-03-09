@@ -1,0 +1,56 @@
+@startuml
+scale 3000 width
+rectangle "hippoIframe" as hippoIframe_module {
+rectangle hippoIframe
+rectangle hippoIframeCtrl
+rectangle HippoIframeService
+rectangle hstCommentsProcessorService
+rectangle linkProcessorService
+rectangle ScrollService
+rectangle DragDropService
+rectangle ViewportService
+rectangle OverlayService
+}
+hippoIframeCtrl ~~> ChannelService
+hippoIframeCtrl ~~> ConfigService
+hippoIframeCtrl ~~> CmsService
+hippoIframeCtrl ~~> DialogService
+hippoIframeCtrl ~~> DomService
+hippoIframeCtrl --> DragDropService
+hippoIframeCtrl --> HippoIframeService
+hippoIframeCtrl --> OverlayService
+hippoIframeCtrl ~~> PageMetaDataService
+hippoIframeCtrl ~~> PageStructureService
+hippoIframeCtrl ~~> ProjectService
+hippoIframeCtrl --> ViewportService
+hippoIframeCtrl --> hstCommentsProcessorService
+hippoIframeCtrl --> linkProcessorService
+HippoIframeService ~~> ChannelService
+HippoIframeService ~~> CmsService
+HippoIframeService ~~> ConfigService
+HippoIframeService ~~> ProjectService
+HippoIframeService --> ScrollService
+hstCommentsProcessorService ~~> HstConstants
+ScrollService ~~> BrowserService
+ScrollService ~~> DomService
+DragDropService ~~> BrowserService
+DragDropService ~~> ChannelService
+DragDropService ~~> ConfigService
+DragDropService ~~> DomService
+DragDropService ~~> FeedbackService
+DragDropService ~~> HstService
+DragDropService ~~> PageStructureService
+DragDropService --> ScrollService
+DragDropService --> HippoIframeService
+OverlayService ~~> ChannelService
+OverlayService ~~> CmsService
+OverlayService ~~> CreateContentService
+OverlayService ~~> DomService
+OverlayService ~~> EditContentService
+OverlayService ~~> ExperimentStateService
+OverlayService ~~> FeedbackService
+OverlayService --> HippoIframeService
+OverlayService ~~> HstComponentService
+OverlayService ~~> MaskService
+OverlayService ~~> PageStructureService
+@enduml

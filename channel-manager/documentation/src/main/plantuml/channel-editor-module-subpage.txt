@@ -1,0 +1,8 @@
+@startuml
+scale 400 width
+rectangle "subpage" as subpage_module {
+rectangle SubpageToolbarCtrl
+rectangle subpageToolbar
+rectangle subpageContent
+}
+@enduml

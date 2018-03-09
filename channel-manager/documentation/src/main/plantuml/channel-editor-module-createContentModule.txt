@@ -1,0 +1,39 @@
+@startuml
+scale 1500 width
+rectangle "createContentModule" as createContentModule_module {
+rectangle documentLocationField
+rectangle nameUrlFields
+rectangle CreateContentService
+rectangle step1Ctrl
+rectangle Step1Service
+rectangle step2Ctrl
+rectangle Step2Service
+}
+CreateContentService ~~> CmsService
+CreateContentService ~~> ContentService
+CreateContentService ~~> EditContentService
+CreateContentService ~~> FeedbackService
+CreateContentService ~~> HippoIframeService
+CreateContentService ~~> Step1Service
+CreateContentService ~~> Step2Service
+CreateContentService ~~> RightSidePanelService
+step1Ctrl ~~> CreateContentService
+step1Ctrl --> Step1Service
+step1Ctrl ~~> CmsService
+Step1Service ~~> ChannelService
+Step1Service ~~> ContentService
+Step1Service ~~> FeedbackService
+step2Ctrl ~~> ContentEditor
+step2Ctrl ~~> ContentService
+step2Ctrl ~~> CreateContentService
+step2Ctrl ~~> FeedbackService
+step2Ctrl ~~> RightSidePanelService
+step2Ctrl --> Step2Service
+step2Ctrl ~~> CmsService
+Step2Service ~~> CmsService
+Step2Service ~~> ContentEditor
+Step2Service ~~> ContentService
+Step2Service ~~> DialogService
+Step2Service ~~> FeedbackService
+Step2Service ~~> HstComponentService
+@enduml

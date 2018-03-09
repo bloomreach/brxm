@@ -1,0 +1,177 @@
+@startuml
+scale 3000 width
+rectangle "Channel Editor" as hippo_cm_module {
+rectangle "channel" as channel_module {
+rectangle ChannelCtrl
+rectangle ChannelService
+}
+rectangle "subpage" as subpage_module {
+rectangle SubpageToolbarCtrl
+rectangle subpageToolbar
+rectangle subpageContent
+}
+channel_module --> subpage_module 
+rectangle "page" as page_module {
+rectangle RenderingService
+rectangle ExtJsHandlerService
+rectangle PageMetaDataService
+rectangle PageStructureService
+}
+channel_module --> page_module 
+rectangle "actions" as actions_module {
+rectangle PageActionsService
+rectangle PageNewCtrl
+rectangle pageNew
+rectangle PagePropertiesCtrl
+rectangle pageProperties
+rectangle PageMoveCtrl
+rectangle pageMove
+rectangle PageCopyCtrl
+rectangle pageCopy
+}
+channel_module --> actions_module 
+rectangle "actions" as actions_module {
+rectangle ChannelSettingsCtrl
+rectangle channelSettings
+rectangle propertyField
+rectangle helpIcon
+rectangle ChangeManagementCtrl
+rectangle changeManagement
+rectangle ChannelActionsService
+}
+channel_module --> actions_module 
+rectangle "menu" as menu_module {
+rectangle dropdownMenu
+}
+channel_module --> menu_module 
+rectangle "sidePanel" as sidePanel_module {
+rectangle SidePanelService
+}
+channel_module --> sidePanel_module 
+rectangle "leftSidePanelModule" as leftSidePanelModule_module {
+rectangle leftSidePanel
+rectangle leftSidePanelToggle
+}
+sidePanel_module --> leftSidePanelModule_module 
+rectangle "componentCatalog" as componentCatalog_module {
+rectangle ComponentCatalogService
+rectangle componentCatalog
+}
+leftSidePanelModule_module --> componentCatalog_module 
+rectangle "rightSidePanelModule" as rightSidePanelModule_module {
+rectangle rightSidePanel
+rectangle RightSidePanelService
+}
+sidePanel_module --> rightSidePanelModule_module 
+rectangle "contentEditor" as contentEditor_module {
+rectangle contentEditor
+rectangle ContentEditor
+}
+rightSidePanelModule_module --> contentEditor_module 
+rectangle "fieldsModule" as fieldsModule_module {
+rectangle documentFields
+rectangle primitiveField
+rectangle choiceField
+rectangle compoundField
+rectangle collapse
+rectangle FieldService
+}
+contentEditor_module --> fieldsModule_module 
+rectangle "ckeditor" as ckeditor_module {
+rectangle ckeditor
+rectangle CKEditorService
+}
+fieldsModule_module --> ckeditor_module 
+rectangle "sharedspaceToolbar" as sharedspaceToolbar_module {
+rectangle sharedspaceToolbar
+rectangle SharedSpaceToolbarService
+}
+ckeditor_module --> sharedspaceToolbar_module 
+rectangle "editContentModule" as editContentModule_module {
+rectangle EditContentService
+rectangle editContentMainCtrl
+rectangle editContentToolsCtrl
+rectangle addToProject
+}
+rightSidePanelModule_module --> editContentModule_module 
+rectangle "resizeHandle" as resizeHandle_module {
+rectangle resizeHandle
+}
+rightSidePanelModule_module --> resizeHandle_module 
+rectangle "createContentModule" as createContentModule_module {
+rectangle documentLocationField
+rectangle nameUrlFields
+rectangle CreateContentService
+}
+rightSidePanelModule_module --> createContentModule_module 
+rectangle "step1" as step1_module {
+rectangle step1Ctrl
+rectangle Step1Service
+}
+createContentModule_module --> step1_module 
+rectangle "step2" as step2_module {
+rectangle step2Ctrl
+rectangle Step2Service
+}
+createContentModule_module --> step2_module 
+rectangle "hippoIframe" as hippoIframe_module {
+rectangle hippoIframe
+rectangle hippoIframeCtrl
+rectangle HippoIframeService
+rectangle hstCommentsProcessorService
+rectangle linkProcessorService
+rectangle ScrollService
+rectangle DragDropService
+rectangle ViewportService
+rectangle OverlayService
+}
+channel_module --> hippoIframe_module 
+rectangle "sitemenu" as sitemenu_module {
+rectangle menuEditor
+rectangle selectAllOnFocus
+rectangle MenuEditorCtrl
+}
+channel_module --> sitemenu_module 
+rectangle "tree" as tree_module {
+rectangle hippoTree
+rectangle itemsRenderer
+rectangle hippoTreeTemplate
+rectangle HippoTreeCtrl
+}
+sitemenu_module --> tree_module 
+rectangle "picker" as picker_module {
+rectangle PickerCtrl
+rectangle ListingCtrl
+rectangle PickerService
+rectangle listing
+}
+sitemenu_module --> picker_module 
+picker_module --> tree_module 
+rectangle "relevance" as relevance_module {
+rectangle ViewAsCtrl
+rectangle relevanceViewAs
+rectangle ExperimentStateService
+}
+channel_module --> relevance_module 
+rectangle "projects" as projects_module {
+rectangle projectToggle
+}
+channel_module --> projects_module 
+rectangle "viewports" as viewports_module {
+rectangle viewportToggle
+}
+channel_module --> viewports_module 
+rectangle "overlayToggle" as overlayToggle_module {
+rectangle overlayToggle
+}
+channel_module --> overlayToggle_module 
+rectangle "mask" as mask_module {
+rectangle MaskService
+rectangle mask
+}
+channel_module --> mask_module 
+rectangle "factories" as factories_module {
+rectangle throttle
+}
+}
+@enduml
