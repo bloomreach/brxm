@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,14 +71,6 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     public void setComponentWindowResponseAppenders(List<ComponentWindowResponseAppender> componentWindowResponseAppenders) {
         this.componentWindowResponseAppenders = componentWindowResponseAppenders;
-    }
-
-    public void addComponentWindowResponseAppender(ComponentWindowResponseAppender componentWindowResponseAppender) {
-        if (componentWindowResponseAppenders == null) {
-            componentWindowResponseAppenders = new ArrayList<>();
-        }
-
-        componentWindowResponseAppenders.add(componentWindowResponseAppender);
     }
 
     @Override
