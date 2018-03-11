@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { downgradeComponent } from '@angular/upgrade/static';
-import { ImageLinkComponent } from './imageLink/imageLink.component.ts';
+
+import imageLinkComponent from './imageLink/imageLink.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
@@ -24,7 +24,6 @@ import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
 import './fields.scss';
 
-
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
     ckeditorModule,
@@ -32,9 +31,9 @@ const fieldsModule = angular
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
+  .component('imageLink', imageLinkComponent)
   .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse)
-  .service('FieldService', fieldService)
-  .directive('hippoImageLink', downgradeComponent({ component: ImageLinkComponent }));
+  .service('FieldService', fieldService);
 
 export default fieldsModule.name;
