@@ -64,11 +64,15 @@ class DateValue {
   }
 
   set date(date) {
-    this._checkInit();
-    const newMoment = moment(date);
-    newMoment.hours(this.moment.hours());
-    newMoment.minutes(this.moment.minutes());
-    this._init(newMoment);
+    if (date) {
+      this._checkInit();
+      const newMoment = moment(date);
+      newMoment.hours(this.moment.hours());
+      newMoment.minutes(this.moment.minutes());
+      this._init(newMoment);
+    } else {
+      this._initBlank();
+    }
   }
 
   toDateString() {
