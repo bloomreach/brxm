@@ -296,3 +296,6 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
 
     https://github.com/FontFaceKit/open-sans.git
         Apache License version 2.0
+
+    https://github.com/google/material-design-icons
+        Apache License version 2.0
