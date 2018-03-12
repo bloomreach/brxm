@@ -39,19 +39,19 @@ public class HttpHeaderUtils {
      * @param headerLine single http header line (name and value pair separated by ':')
      * @return parsed key value pair
      */
-    public static KeyValue<String, String> parseHeaderLine(String headerLine) {
+    public static KeyValue<String, String> parseHeaderLine(final String headerLine) {
         if (headerLine == null) {
             return null;
         }
 
-        String[] pair = StringUtils.split(headerLine, ":", 2);
+        final String[] pair = StringUtils.split(headerLine, ":", 2);
 
         if (pair.length != 2) {
             log.warn("Header line in an invalid form: '{}'.", headerLine);
             return null;
         }
 
-        return new DefaultKeyValue<String, String>(StringUtils.trim(pair[0]), StringUtils.trim(pair[1]));
+        return new DefaultKeyValue<>(StringUtils.trim(pair[0]), StringUtils.trim(pair[1]));
     }
 
     /**
@@ -62,15 +62,15 @@ public class HttpHeaderUtils {
      * @param headerLines http header lines, each of which is a single http header line (name and value pair separated by ':')
      * @return map of parsed key value pairs
      */
-    public static Map<String, String> parseHeaderLines(String[] headerLines) {
+    public static Map<String, String> parseHeaderLines(final String[] headerLines) {
         if (headerLines == null) {
             return null;
         }
 
-        Map<String, String> headerMap = new LinkedHashMap<>();
+        final Map<String, String> headerMap = new LinkedHashMap<>();
 
         for (String headerLine : headerLines) {
-            KeyValue<String, String> kv = parseHeaderLine(headerLine);
+            final KeyValue<String, String> kv = parseHeaderLine(headerLine);
 
             if (kv != null) {
                 headerMap.put(kv.getKey(), kv.getValue());

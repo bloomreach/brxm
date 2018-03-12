@@ -390,8 +390,14 @@ public interface HstSiteMapItem {
     boolean isMarkedDeleted();
 
     /**
-     * Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
-     * in any responses by the requests on this.
+     * <p>
+     *     Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     *     in any responses by the requests on this. They keys from the returned map are the header names.
+     * </p>
+     * <p>
+     *     Note that the header names returned by this method overwrites any already set headers during request processing
+     *     with the same name
+     * </p>
      * @return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
      * in any responses by the requests on this.
      */
