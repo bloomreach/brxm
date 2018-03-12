@@ -53,6 +53,10 @@ document-fields {
   }
 
   date-field {
+    .md-datepicker-input-container {
+      z-index: 2;
+    }
+
     .md-datepicker-input {
       font-size: 100%;
       min-width: 200px;
