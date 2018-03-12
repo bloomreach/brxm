@@ -27,6 +27,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +167,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         applyContent(newModel);
         runtimeConfigurationModel = newModel;
 
-        updateBaselineForAutoExport(modules);
+        storeBaselineModel(newModel, extensionName);
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
@@ -184,6 +186,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
+            // TODO: call with appropriate extensions
             ConfigurationModelImpl baselineModel = loadBaselineModel();
 
             // check the appropriate params to determine our state and bootstrap mode
@@ -252,7 +255,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         runtimeConfigurationModel = bootstrapModel;
 
                         log.info("ConfigurationService: store bootstrap config");
-                        success = storeBaselineModel(bootstrapModel);
+                        success = storeBaselineModel(bootstrapModel, null);
                     }
                     if (success) {
                         log.info("ConfigurationService: apply bootstrap content");
@@ -262,6 +265,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     if (success) {
                         // reload the baseline after storing, so we have a JCR-backed view of our modules
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
+                        // TODO: call with appropriate extensions
                         baselineModel = loadBaselineModel();
 
                         // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
@@ -402,6 +406,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
             if (baselineModel == null) {
+                // TODO: call with appropriate extensions
                 baselineModel = loadBaselineModel();
             }
 
@@ -610,10 +615,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     /**
      * @return a valid baseline, if one exists, or an empty ConfigurationModel
      * @throws RepositoryException only if an unexpected repository problem occurs (not if the baseline is missing)
+     * TODO: specify a Set<String> of extension names here
      */
     private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
         try {
-            ConfigurationModelImpl model = baselineService.loadBaseline(session);
+            ConfigurationModelImpl model = baselineService.loadBaseline(session, null);
             if (model == null) {
                 model = new ConfigurationModelImpl().build();
             }
@@ -700,9 +706,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private boolean storeBaselineModel(final ConfigurationModelImpl model) {
+    private boolean storeBaselineModel(final ConfigurationModelImpl model, final String extension) {
         try {
-            baselineService.storeBaseline(model, session);
+            baselineService.storeBaseline(model, session, extension);
             // session.save() isn't necessary here, because storeBaseline() already does it
             return true;
         } catch (Exception e) {
