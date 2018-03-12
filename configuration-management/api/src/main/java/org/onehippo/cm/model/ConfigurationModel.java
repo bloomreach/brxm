@@ -80,9 +80,10 @@ public interface ConfigurationModel extends Closeable {
      * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
      * A String.equals() comparison of this digest should be sufficient to detect changes in any config definitions,
      * actions, or the root definition paths for content definitions, at minimum.
+     * @param extension the name of an extension whose digest is desired, or null for the core digest
      * @return a String containing a digest of model contents, in a format determined by the implementation
      */
-    String getDigest();
+    String getDigest(final String extension);
 
     /**
      * When processing of this model is complete, this method must be closed to free up resources used by

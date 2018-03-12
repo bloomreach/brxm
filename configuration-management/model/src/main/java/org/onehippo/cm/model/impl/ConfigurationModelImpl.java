@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
@@ -100,6 +101,18 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     public Iterable<ModuleImpl> getModules() {
         return getModulesStream()::iterator;
+    }
+
+    /**
+     * The set of all names of extensions present in this model. The "core" is always assumed to be present and
+     * does not have an explicit representation. Thus, a core-only model will return an empty Set.
+     * @return a Set of names for extensions present in this model; does not contain null
+     * @since 1.3
+     */
+    public Set<String> getExtensionNames() {
+        final Set<String> names = getModulesStream().map(ModuleImpl::getExtension).collect(Collectors.toSet());
+        names.remove(null);
+        return names;
     }
 
     @Override
@@ -320,18 +333,21 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * be normalized to use Module-relative paths, rather than the mix of Module- and Source-relative
      * paths as used within the Source text. Resource paths will use 4-spaces indentation, and Modules will use none.
      * Lines will use a single "\n" line separator, and the final resource reference will end in a line separator.
+     * @param extension the name of an extension whose digest is desired, or null for the core digest
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String getDigest() {
+    public String getDigest(final String extension) {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
-            m.compileManifest(this, manifest);
+            if (StringUtils.equalsIgnoreCase(extension, m.getExtension())) {
+                m.compileManifest(this, manifest);
+            }
         }
 
         final String modelManifest = manifestToString(manifest);
-        log.debug("model manifest:\n{}", modelManifest);
+        log.debug("model manifest for extension {}:\n{}", extension, modelManifest);
 
         return DigestUtils.computeManifestDigest(modelManifest);
     }
