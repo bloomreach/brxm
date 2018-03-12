@@ -15,11 +15,13 @@
  */
 package org.hippoecm.hst.core.pagemodel.model;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstRequest;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Component window model representation.
@@ -67,13 +69,10 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
 
     /**
      * Return the contributed model map by <code>HstRequest{@link HstRequest#setModel(String,Object)} calls.
-s     * @return
+     * @return
      */
+    @JsonInclude(Include.NON_NULL)
     public Map<String, Object> getModels() {
-        if (models == null) {
-            return Collections.emptyMap();
-        }
-
         return models;
     }
 

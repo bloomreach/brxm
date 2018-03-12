@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -38,6 +40,7 @@ public class ComponentContainerWindowModel extends IdentifiableLinkableMetadataB
      * Return container component's name.
      * @return
      */
+    @JsonInclude(Include.NON_NULL)
     public String getName() {
         return name;
     }

@@ -15,12 +15,13 @@
  */
 package org.hippoecm.hst.core.pagemodel.model;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -36,11 +37,8 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     }
 
     @JsonProperty("containers")
+    @JsonInclude(Include.NON_NULL)
     public Set<ComponentContainerWindowModel> getContainerWindowSet() {
-        if (containerWindowSet == null) {
-            return Collections.emptySet();
-        }
-
         return containerWindowSet;
     }
 
@@ -57,11 +55,8 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     }
 
     @JsonProperty("content")
+    @JsonInclude(Include.NON_NULL)
     public Map<String, Object> getContentMap() {
-        if (contentMap == null) {
-            return Collections.emptyMap();
-        }
-
         return contentMap;
     }
 

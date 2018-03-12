@@ -194,7 +194,8 @@ public class PageModelAggregationValve extends AggregationValve {
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        final boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
+        final String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL()
+                .getComponentRenderingWindowReferenceNamespace();
 
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
@@ -211,7 +212,7 @@ public class PageModelAggregationValve extends AggregationValve {
         // As sortedComponentWindows is sorted by parent-child order, we can assume all the container item component
         // window appears after a container component window.
 
-        for (int i = 1; i < sortedComponentWindowsLen; i++) {
+        for (int i = 0; i < sortedComponentWindowsLen; i++) {
             final HstComponentWindow window = sortedComponentWindows[i];
             ComponentWindowModel componentWindowModel = null;
             final HstRequest hstRequest = requestMap.get(window);
@@ -221,25 +222,26 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
-                if (isPreviewOrCmsRequest) {
-                    addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
-                }
+                addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.getComponentInfo().isContainerItem()) {
                 if (curContainerWindowModel == null) {
-                    log.warn("Invalid container item component window location for {}.",
-                            window.getReferenceNamespace());
-                    continue;
+                    if (componentRenderingWindowReferenceNamespace == null) {
+                        log.warn("Invalid container item component window location for {}.",
+                                window.getReferenceNamespace());
+                        continue;
+                    }
+                    // In component rendering request mode, just create a placeholder container window model.
+                    curContainerWindowModel = new ComponentContainerWindowModel(null, null);
+                    pageModel.addContainerWindow(curContainerWindowModel);
                 }
 
                 componentWindowModel = new ComponentWindowModel(
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
-                if (isPreviewOrCmsRequest) {
-                    addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
-                }
+                addComponentRenderingURLLink(hstResponse, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
                 curContainerWindowModel.addComponentWindow(componentWindowModel);
             } else {
