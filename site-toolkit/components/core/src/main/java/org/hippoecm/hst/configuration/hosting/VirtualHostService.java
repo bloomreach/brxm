@@ -41,6 +41,7 @@ import com.google.common.net.InetAddresses;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 
 public class VirtualHostService implements MutableVirtualHost {
 
@@ -282,8 +283,8 @@ public class VirtualHostService implements MutableVirtualHost {
             cdnHost = null;
         }
 
-        if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_RESPONSE_HEADERS)) {
-            String[] resHeaders = virtualHostNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOST_PROPERTY_RESPONSE_HEADERS);
+        if (virtualHostNode.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = virtualHostNode.getValueProvider().getStrings(GENERAL_PROPERTY_RESPONSE_HEADERS);
             if (resHeaders.length != 0) {
                 responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
             }

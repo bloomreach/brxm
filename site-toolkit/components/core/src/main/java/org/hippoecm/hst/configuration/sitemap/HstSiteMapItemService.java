@@ -61,6 +61,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKE
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
@@ -446,8 +447,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>();
         }
 
-        if (node.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS)) {
-            String[] resHeaders = node.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS);
+        if (node.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = node.getValueProvider().getStrings(GENERAL_PROPERTY_RESPONSE_HEADERS);
             if (resHeaders.length != 0) {
                 responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
             }

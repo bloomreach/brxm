@@ -55,6 +55,7 @@ import com.google.common.collect.ImmutableList;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
@@ -527,8 +528,8 @@ public class MountService implements ContextualizableMount, MutableMount {
             defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS)) {
-            String[] resHeaders = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_RESPONSE_HEADERS);
+        if (mount.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = mount.getValueProvider().getStrings(GENERAL_PROPERTY_RESPONSE_HEADERS);
             if (resHeaders.length != 0) {
                 responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -91,6 +91,8 @@ public interface HstNodeTypes {
     String GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
     String GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE = "hst:schemenotmatchresponsecode";
     String GENERAL_PROEPRTY_SCHEME_AGNOSTIC = "hst:schemeagnostic";
+    String GENERAL_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
+
     String VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT = "hst:customhttpssupport";
 
     String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
@@ -136,7 +138,6 @@ public interface HstNodeTypes {
     String SITEMAPITEM_PAGE_TITLE = "hst:pagetitle";
     String SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE = "hst:containerresource";
     String SITEMAPITEM_PROPERTY_HIDDEN_IN_CHANNEL_MANAGER = "hst:hiddeninchannelmanager";
-    String SITEMAPITEM_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
 
     String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM = "hst:referencesitemapitem";
     String SITEMENUITEM_PROPERTY_EXTERNALLINK = "hst:externallink";
@@ -196,7 +197,6 @@ public interface HstNodeTypes {
     String VIRTUALHOST_PROPERTY_CONTEXTPATH = "hst:contextpath";
     String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
     String VIRTUALHOST_PROPERTY_CDN_HOST = "hst:cdnhost";
-    String VIRTUALHOST_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
 
     String MOUNT_HST_ROOTNAME = "hst:root";
     String MOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
@@ -235,7 +235,6 @@ public interface HstNodeTypes {
     @Deprecated
     String MOUNT_PROPERTY_CHANNELPATH = "hst:channelpath";
     String MOUNT_PROPERTY_NOCHANNELINFO = "hst:nochannelinfo";
-    String MOUNT_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
 
     String CHANNEL_PROPERTY_NAME = "hst:name";
     String CHANNEL_PROPERTY_TYPE = "hst:type";
