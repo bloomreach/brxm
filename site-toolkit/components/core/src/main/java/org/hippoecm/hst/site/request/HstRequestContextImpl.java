@@ -345,27 +345,37 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getModel(String name) {
+        checkStateValidity();
+
         return (T) getModelsMap().get(name);
     }
 
     @Override
     public Iterable<String> getModelNames() {
+        checkStateValidity();
+
         return Collections.unmodifiableSet(getModelsMap().keySet());
     }
 
     @Override
     public Map<String, Object> getModelsMap() {
+        checkStateValidity();
+
         return unmodifiableModelsMap;
     }
 
     @Override
     public Object setModel(String name, Object model) {
+        checkStateValidity();
+
         setAttribute(name, model);
         return modelsMap.put(name, model);
     }
 
     @Override
     public void removeModel(String name) {
+        checkStateValidity();
+
         if (modelsMap.remove(name) != null) {
             removeAttribute(name);
         }
