@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,27 +116,6 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-    }
-
-    /**
-     * Return custom {@link MetadataDecorator} instance list, each of which is invoked to give a chance to customize
-     * the {@link MetadataContributable} instances in the page model aggregation result output.
-     * @return custom {@link MetadataDecorator} instance list
-     */
-    public List<MetadataDecorator> getMetadataDecorators() {
-        if (metadataDecorators == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(metadataDecorators);
-    }
-
-    /**
-     * Set custom {@link MetadataDecorator} instance list, each of which is invoked to give a chance to customize
-     * the {@link MetadataContributable} instances in the page model aggregation result output.
-     * @param metadataDecorators custom {@link MetadataDecorator} instance list
-     */
-    public void setMetadataDecorators(List<MetadataDecorator> metadataDecorators) {
-        this.metadataDecorators = metadataDecorators;
     }
 
     /**
@@ -266,16 +244,16 @@ public class PageModelAggregationValve extends AggregationValve {
 
                 if (model instanceof HippoBean) {
                     final HippoBean bean = (HippoBean) model;
-                    final String contentId = bean.getCanonicalUUID();
-                    final String jsonPointerContentId = contentIdToJsonName(contentId);
+                    final String representationId = bean.getRepresentationId();
+                    final String jsonPointerRepresentationId = contentRepresentationIdToJsonName(representationId);
 
-                    final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(contentId, bean);
-                    pageModel.putContent(jsonPointerContentId, wrapperBeanModel);
+                    final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
+                    pageModel.putContent(jsonPointerRepresentationId, wrapperBeanModel);
 
                     decorateContentMetadata(hstRequest, hstResponse, bean, wrapperBeanModel);
 
                     referenceModel = new ReferenceMetadataBaseModel(
-                            CONTENT_JSON_POINTER_PREFIX + jsonPointerContentId);
+                            CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId);
                 }
 
                 if (componentWindowModel != null) {
@@ -288,11 +266,11 @@ public class PageModelAggregationValve extends AggregationValve {
     }
 
     /**
-     * Convert content identifier (e.g, UUID) to a safe JSON property/variable name.
+     * Convert content representation identifier (e.g, handle ID or node ID) to a safe JSON property/variable name.
      * @param uuid content identifier
-     * @return a safe JSON property/variable name converted from the {@code uuid}
+     * @return a safe JSON property/variable name converted from the handle ID or node ID
      */
-    private String contentIdToJsonName(final String uuid) {
+    private String contentRepresentationIdToJsonName(final String uuid) {
         return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
                 .toString();
     }
