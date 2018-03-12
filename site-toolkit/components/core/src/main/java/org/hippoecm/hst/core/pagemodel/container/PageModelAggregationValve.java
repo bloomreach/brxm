@@ -16,8 +16,6 @@
 package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,12 +24,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -43,6 +36,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
@@ -59,12 +53,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
  */
 public class PageModelAggregationValve extends AggregationValve {
 
     private static Logger log = LoggerFactory.getLogger(PageModelAggregationValve.class);
+
+    /**
+     * Internal page model attribute name for an <code>HstRequestContext</code> attribute.
+     */
+    private static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
      * Page definition ID metadata name.
@@ -164,40 +167,39 @@ public class PageModelAggregationValve extends AggregationValve {
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
             final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+        AggregatedPageModel pageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
+        RequestContextProvider.get().setAttribute(PAGE_MODEL_ATTR_NAME, pageModel);
+    }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Overrides <code>AggregationValve#processWindowsRender()</code> to create an {@link AggregatedPageModel}
+     * from the current page request and write it as JSON output.
+     */
+    @Override
+    protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
+            throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final HttpServletResponse response = requestContext.getServletResponse();
-
-        PrintWriter writer = null;
 
         try {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");
-            AggregatedPageModel pageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
-            writer = response.getWriter();
-            writeAggregatedPageModel(writer, pageModel);
-        } catch (IOException e) {
-            log.warn("Failed to write aggregated page model in json.", e);
-        } finally {
-            IOUtils.closeQuietly(writer);
-        }
-    }
 
-    /**
-     * Write {@link AggregatedPageModel} object to the {@code writer}.
-     * @param writer output writer
-     * @param pageModel aggregated page model
-     * @throws ContainerException if container exception occurs
-     * @throws IOException if IO exception occurs
-     */
-    private void writeAggregatedPageModel(final Writer writer, final AggregatedPageModel pageModel)
-            throws ContainerException, IOException {
-        try {
-            getObjectMapper().writeValue(writer, pageModel);
+            AggregatedPageModel pageModel = (AggregatedPageModel) requestContext.getAttribute(PAGE_MODEL_ATTR_NAME);
+
+            if (pageModel == null) {
+                throw new ContainerException("Page model cannot be null! Page model might not be aggregated for some reason in #processWindowsRender() for some reason.");
+            }
+
+            getObjectMapper().writeValue(response.getWriter(), pageModel);
         } catch (JsonGenerationException e) {
             throw new ContainerException(e.getMessage(), e);
         } catch (JsonMappingException e) {
             throw new ContainerException(e.getMessage(), e);
+        } catch (IOException e) {
+            log.warn("Failed to write aggregated page model in json.", e);
         }
     }
 

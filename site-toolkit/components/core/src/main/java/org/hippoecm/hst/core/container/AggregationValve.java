@@ -246,43 +246,17 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         } else {
             // process doRender() of each component as reversed sort order, child first.
             processWindowsRender(requestContainerConfig, sortedComponentRenderingWindows, requestMap, responseMap);
-            // page error handling...
-            pageErrors = getPageErrors(sortedComponentWindows, true);
-
-            if (pageErrors != null) {
-                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
-
-                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
-                    // just ignore because we don't support forward or redirect during rendering...
-                }
-            }
-
-            try {
-                // add the X-HST-VERSION as a response header if we are in preview:
-                boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
-                if (rootWindow == rootRenderingWindow && isPreviewOrCmsRequest) {
-                    setNoCacheHeaders(rootWindow.getResponseState());
-                    if (requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
-                        rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
-                    }
-                }
-                // flush root component window content.
-                // note that the child component's contents are already flushed into the root component's response state.
-                rootRenderingWindow.getResponseState().flush();
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Exception during flushing the response state.", e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Exception during flushing the response state. {}", e.toString());
-                }
-            }
+            // handle page errors if exists
+            handlePageErrors(context, requestContainerConfig, sortedComponentRenderingWindows, requestMap, responseMap);
+            // finally write the aggregated output
+            writeAggregatedOutput(context, rootRenderingWindow);
         }
 
         // continue
         context.invokeNext();
     }
 
-    private static void setNoCacheHeaders(final HstResponseState response) {
+    private static void setNoCacheHeaders(final HttpServletResponse response) {
         response.setDateHeader("Expires", -1);
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache");
@@ -441,6 +415,18 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
     }
 
+    /**
+     * Process rendering on each HstComponentWindow.
+     * <p>
+     * Note that after invocation on this method, all the rendering outputs from each HstComponentWindow instance
+     * are accumulated into the root HstComponentWindow's {@link HstResponseState}.
+     * Therefore, the caller on this method is responsible for flushing the the root HstComponentWindow's {@link HstResponseState}.
+     * @param requestContainerConfig {@link HstContainerConfig} instance
+     * @param sortedComponentWindows {@link HstComponentWindow} instances array sorted by parent to child order.
+     * @param requestMap HstComponentWindow vs HstRequest map
+     * @param responseMap HstComponentWindow vs HstResponse map
+     * @throws ContainerException if HST Container exception occurs
+     */
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
                                         final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
                                         final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
@@ -459,6 +445,66 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
 
             logPossibleWaste(responseMap, window);
+        }
+    }
+
+    /**
+     * Handle page errors by collection all the errors from the sorted {@link HstComponentWindow} array.
+     * @param context {@link ValveContext} instance
+     * @param requestContainerConfig {@link HstContainerConfig} instance
+     * @param sortedComponentWindows {@link HstComponentWindow} instances array sorted by parent to child order.
+     * @param requestMap HstComponentWindow vs HstRequest map
+     * @param responseMap HstComponentWindow vs HstResponse map
+     * @throws ContainerException if HST Container exception occurs
+     */
+    protected void handlePageErrors(final ValveContext context, final HstContainerConfig requestContainerConfig,
+            final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+        // page error handling...
+        final HstComponentWindow rootWindow = context.getRootComponentWindow();
+        final PageErrors pageErrors = getPageErrors(sortedComponentWindows, true);
+
+        if (pageErrors != null) {
+            PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
+
+            if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
+                // just ignore because we don't support forward or redirect during rendering...
+            }
+        }
+    }
+
+    /**
+     * Write the aggregated output to the client. e.g, by flushing the {@code rootRenderingWindow} by default.
+     * @param context {@link ValveContext} instance
+     * @param rootRenderingWindow the root rendering {@link HstComponentWindow} instance
+     * @throws ContainerException if HST Container exception occurs
+     */
+    protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
+            throws ContainerException {
+        final HstRequestContext requestContext = context.getRequestContext();
+
+        try {
+            // add the X-HST-VERSION as a response header if we are in preview:
+            boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
+
+            if (isPreviewOrCmsRequest) {
+                final HttpServletResponse servletResponse = context.getServletResponse();
+                setNoCacheHeaders(servletResponse);
+
+                if (requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
+                    servletResponse.setHeader("X-HST-VERSION", HstServices.getImplementationVersion());
+                }
+            }
+
+            // flush root component window content.
+            // note that the child component's contents are already flushed into the root component's response state.
+            rootRenderingWindow.getResponseState().flush();
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Exception during flushing the response state.", e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Exception during flushing the response state. {}", e.toString());
+            }
         }
     }
 
