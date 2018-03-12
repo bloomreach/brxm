@@ -138,8 +138,13 @@ public class PageModelAggregationValve extends AggregationValve {
     }
 
     /**
-     * Add a custom {@link MetadataDecorator} instance, which is invoked to give a chance to customize
-     * the {@link MetadataContributable} instances in the page model aggregation result output.
+     * <p>
+     *     Add a custom {@link MetadataDecorator} instance, which is invoked to give a chance to customize
+     *     the {@link MetadataContributable} instances in the page model aggregation result output.
+     * </p>
+     * <p>
+     *     Downstream projects like enterprise modules can inject extra meta data decorators
+     * </p>
      * @param metadataDecorator custom {@link MetadataDecorator} instance
      */
     public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
