@@ -26,6 +26,10 @@ public class ExtensionEvent extends HippoEvent<ExtensionEvent> {
         this.classLoader = classLoader;
     }
 
+    public String getExtensionName() {
+        return (String) getValues().get("application");
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
     }
