@@ -26,21 +26,21 @@ public interface MetadataContributable {
      * Return unmodifiable metadata map.
      * @return unmodifiable metadata map
      */
-    public Map<String, Object> getMetadataMap();
+    Map<String, Object> getMetadataMap();
 
     /**
      * Put a metadata, {@code value}, by the {@code name}.
      * @param name metadata name
      * @param value metadata value
      */
-    public void putMetadata(String name, Object value);
+    void putMetadata(String name, Object value);
 
     /**
      * Get the metadata value by the {@code name}, or null if not found.
      * @param name metadata name
      * @return metadata value, or null if not found.
      */
-    public Object getMetadata(String name);
+    Object getMetadata(String name);
 
     /**
      * Remove the existing metadata value by the {@code name} and return the old metadata value if removed.
@@ -48,11 +48,11 @@ public interface MetadataContributable {
      * @param name
      * @return
      */
-    public Object removeMetadata(String name);
+    Object removeMetadata(String name);
 
     /**
      * Removes all the items in the metadata map.
      */
-    public void clearMetadataMap();
+    void clearMetadataMap();
 
 }
