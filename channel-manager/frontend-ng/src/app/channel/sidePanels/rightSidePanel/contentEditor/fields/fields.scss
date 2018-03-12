@@ -55,7 +55,7 @@ document-fields {
   date-field {
     .md-datepicker-input {
       font-size: 100%;
-      min-width: 225px; // in smallest editor size, all fields + button must remain on one line
+      min-width: 200px;
     }
 
     .timepart {
