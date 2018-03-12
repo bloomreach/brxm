@@ -39,6 +39,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -144,14 +145,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     @Subscribe
     public void onNewSiteEvent(final ExtensionEvent event) throws ParserException, IOException, URISyntaxException, RepositoryException {
-        final String extensionName = (String) event.getValues().get("application");
+        final String extensionName = event.getExtensionName();
         log.info("New site extension detected: {}", extensionName);
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
 
         final Collection<ModuleImpl> modules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
                 .filter(m -> Objects.equals(extensionName, m.getExtension())).collect(Collectors.toList());
+
         modules.forEach(runtimeConfigurationModel::addModule);
-        final ConfigurationModelImpl newModel = runtimeConfigurationModel.build();
+        ConfigurationModelImpl newModel = runtimeConfigurationModel.build();
+
+        final List<ModuleImpl> extensionModulesFromSourceFiles =
+                readModulesFromSourceFiles(runtimeConfigurationModel).stream()
+                        .filter(m -> extensionName.equals(m.getExtension())).collect(toList());
+        if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
+            newModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newModel);
+        }
         applyConfig(baselineModel, newModel,false,false, false,false);
         applyContent(newModel);
         runtimeConfigurationModel = newModel;
@@ -205,7 +214,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             // load modules that are specified via auto-export config
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
-                            bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
+
+                            final List<String> knownExtensions = ExtensionRegistry.getContexts().values().stream().map(ExtensionEvent::getExtensionName).collect(toList());
+
+                            final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
+                                    .filter(m -> m.getExtension() == null || knownExtensions.contains(m.getExtension())).collect(toList());
+                            bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
                         } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
                             if (e instanceof ConfigurationRuntimeException) {
@@ -524,9 +538,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
-            final Map<String, ClassLoader> contexts = ExtensionRegistry.getContexts();
-            for (ClassLoader classLoader : contexts.values()) {
-                model = modelReader.readExtension(classLoader, model);
+            final Map<String, ExtensionEvent> contexts = ExtensionRegistry.getContexts();
+            for (ExtensionEvent event : contexts.values()) {
+                model = modelReader.readExtension(event.getClassLoader(), model);
             }
             return model;
         } catch (Exception e) {
