@@ -23,6 +23,7 @@ class DateValue {
     } else {
       this._init(moment(dateString));
     }
+    this.editMinutes = false;
   }
 
   _init(initMoment) {
@@ -42,16 +43,27 @@ class DateValue {
   }
 
   get hours() {
-    return this.moment ? this.moment.hours() : '';
+    return this.moment ? this.moment.hours() : null;
   }
 
   set hours(hours) {
+    const checkedHours = (hours && hours > 23) ? 23 : hours;
     this._checkInit();
-    this.moment.hours(hours);
+    this.moment.hours(checkedHours);
   }
 
+  /**
+   * @returns {*}
+   */
   get minutes() {
-    return this.moment ? this.moment.minutes() : '';
+    if (!this.moment) {
+      return null;
+    }
+    const minutes = this.moment.minutes();
+    if (minutes < 10 && this.editMinutes === false) {
+      return `0${minutes}`; // 00 zero padding when viewing
+    }
+    return minutes;
   }
 
   set minutes(minutes) {
@@ -81,6 +93,14 @@ class DateValue {
 
   setToNow() {
     this._init(moment());
+  }
+
+  focusMinutes() {
+    this.editMinutes = true;
+  }
+
+  blurMinutes() {
+    this.editMinutes = false;
   }
 }
 
