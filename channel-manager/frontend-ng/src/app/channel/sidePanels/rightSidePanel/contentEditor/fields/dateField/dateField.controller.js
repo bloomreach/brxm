@@ -16,7 +16,7 @@
 
 import moment from 'moment-timezone';
 
-class DateValue {
+export class DateValue {
   constructor(dateString) {
     if (dateString === '') {
       this._initBlank();
