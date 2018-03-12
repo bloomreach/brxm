@@ -82,11 +82,10 @@ function isInternalInjectable(name) {
 
 const renderedInjectables = new Set();
 
-function renderInjectable(injectable) {
-  if (!renderedInjectables.has(injectable.name)) {
-    dump(`rectangle ${sanitize(injectable.name)}`);
-    // TODO: also render injectable.type?
-    renderedInjectables.add(injectable.name);
+function renderInjectable(name) {
+  if (!renderedInjectables.has(name)) {
+    dump(`rectangle ${sanitize(name)}`);
+    renderedInjectables.add(name);
   }
 }
 
@@ -178,23 +177,18 @@ xit('generates a graph of all internal modules', () => {
 function walkInjectableGraph(moduleName, nodeCallback, edgeCallback) {
   const module = angular.module(moduleName);
 
-  const moduleInjectables = module._invokeQueue.map((provider) => {
-    return {
-      name: provider[2][0],
-      type: provider[1],
-    }
-  });
+  const moduleInjectables = module._invokeQueue.map((provider) => provider[2][0]);
 
   moduleInjectables.forEach((injectable) => {
     nodeCallback(injectable);
   });
 
   module._invokeQueue.forEach((provider) => {
-    const injectableName = provider[2][0];
+    const injectable = provider[2][0];
     const dependencies = provider[2][1].$inject || [];
-    dependencies.forEach((dependencyName) => {
-      const internalInModule = moduleInjectables.some((injectable) => injectable.name === dependencyName);
-      edgeCallback(injectableName, dependencyName, internalInModule);
+    dependencies.forEach((dependency) => {
+      const internalInModule = moduleInjectables.some((injectable) => injectable === dependency);
+      edgeCallback(injectable, dependency, internalInModule);
     });
   });
 }
