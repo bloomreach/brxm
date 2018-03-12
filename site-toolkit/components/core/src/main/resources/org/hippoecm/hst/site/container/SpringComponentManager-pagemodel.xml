@@ -27,24 +27,19 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.pagemodel.container.HstBeansExcludingObjectMapperDecorator"
-        class="org.hippoecm.hst.core.pagemodel.container.HstBeansExcludingObjectMapperDecorator">
+  <bean id="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator"
+        class="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator">
     <property name="extraMixins" ref="pageModelJacksonObjectMapperExtraMixins" />
-  </bean>
-
-  <bean id="pageModelAnnotationIntrospector"
-        class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector">
   </bean>
 
   <bean id="pageModelJacksonObjectMapper"
         class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
-    <property name="targetObject" ref="org.hippoecm.hst.core.pagemodel.container.HstBeansExcludingObjectMapperDecorator" />
+    <property name="targetObject" ref="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator" />
     <property name="targetMethod" value="decorate" />
     <property name="arguments">
       <list>
         <bean class="com.fasterxml.jackson.databind.ObjectMapper">
-          <property name="annotationIntrospector" ref="pageModelAnnotationIntrospector" />
         </bean>
       </list>
     </property>
@@ -84,12 +79,8 @@
         <ref bean="jcrSessionStatefulConcurrencyValve"/>
         <ref bean="contextResolvingValve" />
         <ref bean="localizationValve" />
-        <ref bean="actionValve" />
-        <ref bean="resourceServingValve" />
         <ref bean="pageInfoRenderingValve" />
-        <ref bean="esiPageInfoScanningValve" />
         <ref bean="pageCachingValve"/>
-        <ref bean="componentRenderingValve" />
         <ref bean="pageModelAggregationValve" />
       </list>
     </property>

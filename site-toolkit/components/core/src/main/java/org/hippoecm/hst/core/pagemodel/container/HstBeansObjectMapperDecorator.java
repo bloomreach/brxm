@@ -54,12 +54,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * {@link ObjectMapper} decorator with mixins, supposed to be configured in an Spring bean assembly.
  */
-public class HstBeansExcludingObjectMapperDecorator {
+public class HstBeansObjectMapperDecorator {
 
     private Map<Class<?>, Class<?>> defaultMixins;
     private Map<Class<?>, Class<?>> extraMixins;
 
-    public HstBeansExcludingObjectMapperDecorator() {
+    public HstBeansObjectMapperDecorator() {
         defaultMixins = new LinkedHashMap<>();
 
         defaultMixins.put(Session.class, DefaultJsonIgnoreTypeMixin.class);
