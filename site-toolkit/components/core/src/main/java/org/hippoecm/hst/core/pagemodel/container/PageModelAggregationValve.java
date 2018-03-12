@@ -252,7 +252,7 @@ public class PageModelAggregationValve extends AggregationValve {
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
-                curContainerWindowModel.addComponentWindowSet(componentWindowModel);
+                curContainerWindowModel.addComponentWindow(componentWindowModel);
             } else {
                 curContainerWindowModel = null;
             }
@@ -327,17 +327,16 @@ public class PageModelAggregationValve extends AggregationValve {
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
         final HstSiteMapItem siteMapItem = requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
 
-        if (siteMapItem != null) {
-            final Mount selfMount = requestContext.getResolvedMount().getMount();
-            final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-            pageModel.putLink(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
+        final Mount selfMount = requestContext.getResolvedMount().getMount();
+        final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
+        pageModel.putLink(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
 
-            final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
-            if (siteMount != null) {
-                final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
-                pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
-            }
+        final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+        if (siteMount != null) {
+            final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
+            pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
         }
+
     }
 
     /**

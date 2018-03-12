@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ComponentContainerWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
     private final String name;
-    private Set<ComponentWindowModel> componentWindowSet;
+    private Set<ComponentWindowModel> componentWindows;
 
     public ComponentContainerWindowModel(final String id, final String name) {
         super(id);
@@ -43,23 +43,19 @@ public class ComponentContainerWindowModel extends IdentifiableLinkableMetadataB
     }
 
     @JsonProperty("components")
-    public Set<ComponentWindowModel> getComponentWindowSet() {
-        if (componentWindowSet == null) {
+    public Set<ComponentWindowModel> getComponentWindows() {
+        if (componentWindows == null) {
             return Collections.emptySet();
         }
 
-        return componentWindowSet;
+        return componentWindows;
     }
 
-    public void setComponentWindowSet(Set<ComponentWindowModel> componentWindowSet) {
-        this.componentWindowSet = componentWindowSet;
-    }
-
-    public void addComponentWindowSet(ComponentWindowModel componentWindow) {
-        if (componentWindowSet == null) {
-            componentWindowSet = new LinkedHashSet<>();
+    public void addComponentWindow(ComponentWindowModel componentWindow) {
+        if (componentWindows == null) {
+            componentWindows = new LinkedHashSet<>();
         }
 
-        componentWindowSet.add(componentWindow);
+        componentWindows.add(componentWindow);
     }
 }
