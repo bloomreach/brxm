@@ -1,0 +1,51 @@
+@startuml
+scale 1500 width
+rectangle "shared" as hippo_cm_module {
+rectangle HstConstants
+rectangle BrowserService
+rectangle CatalogService
+rectangle CmsService
+rectangle ConfigService
+rectangle ContentService
+rectangle DialogService
+rectangle HstComponentService
+rectangle HstService
+rectangle SessionService
+rectangle SiteMapService
+rectangle SiteMapItemService
+rectangle SiteMenuService
+rectangle DomService
+rectangle FeedbackService
+rectangle PathService
+rectangle ProjectService
+rectangle HippoGlobal
+rectangle illegalCharacters
+rectangle stopPropagation
+rectangle scrollToIf
+rectangle getByProperty
+rectangle incrementProperty
+rectangle startWithSlash
+rectangle ChannelService
+CatalogService --> HstService
+ConfigService --> CmsService
+ContentService --> ConfigService
+ContentService --> PathService
+DialogService --> CmsService
+HstComponentService --> CmsService
+HstComponentService --> HstService
+HstService --> CmsService
+HstService --> ConfigService
+HstService --> PathService
+SessionService --> HstService
+SiteMapService --> HstService
+SiteMapService --> FeedbackService
+SiteMapItemService --> ConfigService
+SiteMapItemService --> HstService
+SiteMapItemService --> FeedbackService
+SiteMenuService --> HstService
+DomService --> BrowserService
+ProjectService --> ConfigService
+ProjectService --> FeedbackService
+ProjectService --> HippoGlobal
+}
+@enduml
