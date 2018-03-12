@@ -81,6 +81,7 @@
         <ref bean="localizationValve" />
         <ref bean="pageInfoRenderingValve" />
         <ref bean="pageCachingValve"/>
+        <ref bean="componentRenderingValve" />
         <ref bean="pageModelAggregationValve" />
       </list>
     </property>

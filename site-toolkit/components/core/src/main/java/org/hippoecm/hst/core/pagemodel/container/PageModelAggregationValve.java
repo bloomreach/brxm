@@ -30,6 +30,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.AggregationValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -192,6 +193,8 @@ public class PageModelAggregationValve extends AggregationValve {
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
 
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
@@ -218,6 +221,9 @@ public class PageModelAggregationValve extends AggregationValve {
                 curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
                         window.getName());
                 addParameterMapMetadata(window, curContainerWindowModel);
+                if (isPreviewOrCmsRequest) {
+                    addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
+                }
                 decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
                 pageModel.addContainerWindow(curContainerWindowModel);
             } else if (window.getComponentInfo().isContainerItem()) {
@@ -231,6 +237,9 @@ public class PageModelAggregationValve extends AggregationValve {
                         window.getReferenceNamespace(), window.getName(), window.getComponentName());
                 componentWindowModel.setLabel(window.getComponentInfo().getLabel());
                 addParameterMapMetadata(window, componentWindowModel);
+                if (isPreviewOrCmsRequest) {
+                    addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
+                }
                 decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
                 curContainerWindowModel.addComponentWindow(componentWindowModel);
             } else {
@@ -263,6 +272,17 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return pageModel;
+    }
+
+    /**
+     * Adding componentRendering URL link to the linkable model.
+     * @param hstResponse HstResponse
+     * @param linkableModel linkable model
+     */
+    private void addComponentRenderingURLLink(HstResponse hstResponse,
+            IdentifiableLinkableMetadataBaseModel linkableModel) {
+        HstURL compRenderURL = hstResponse.createComponentRenderingURL();
+        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL.toString());
     }
 
     /**
