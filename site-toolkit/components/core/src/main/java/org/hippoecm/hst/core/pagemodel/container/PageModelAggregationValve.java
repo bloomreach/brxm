@@ -40,7 +40,6 @@ import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
-import org.hippoecm.hst.core.pagemodel.model.ComponentContainerWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.HippoBeanWrapperModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
@@ -200,58 +199,29 @@ public class PageModelAggregationValve extends AggregationValve {
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
         final String id = rootWindow.getReferenceNamespace();
-        final String definitionId = rootWindow.getComponentInfo().getId();
+
         final AggregatedPageModel pageModel = new AggregatedPageModel(id);
-        pageModel.putMetadata(DEFINITION_ID_METADATA, definitionId);
-        addParameterMapMetadata(rootWindow, pageModel);
+        pageModel.setPage(new ComponentWindowModel(rootWindow));
         addLinksToPageModel(pageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
-        ComponentContainerWindowModel curContainerWindowModel = null;
-
-        // As sortedComponentWindows is sorted by parent-child order, we can assume all the container item component
-        // window appears after a container component window.
 
         for (int i = 0; i < sortedComponentWindowsLen; i++) {
             final HstComponentWindow window = sortedComponentWindows[i];
-            ComponentWindowModel componentWindowModel = null;
             final HstRequest hstRequest = requestMap.get(window);
             final HstResponse hstResponse = responseMap.get(window);
 
-            if (window.getComponentInfo().isContainer()) {
-                curContainerWindowModel = new ComponentContainerWindowModel(window.getReferenceNamespace(),
-                        window.getName());
-                addParameterMapMetadata(window, curContainerWindowModel);
-                addComponentRenderingURLLink(hstResponse, curContainerWindowModel);
-                decorateComponentWindowMetadata(hstRequest, hstResponse, curContainerWindowModel);
-                pageModel.addContainerWindow(curContainerWindowModel);
-            } else if (window.getComponentInfo().isContainerItem()) {
-                if (curContainerWindowModel == null) {
-                    if (componentRenderingWindowReferenceNamespace == null) {
-                        log.warn("Invalid container item component window location for {}.",
-                                window.getReferenceNamespace());
-                        continue;
-                    }
-                    // In component rendering request mode, just create a placeholder container window model.
-                    curContainerWindowModel = new ComponentContainerWindowModel(null, null);
-                    pageModel.addContainerWindow(curContainerWindowModel);
-                }
+            final ComponentWindowModel currentComponentWindowModel = pageModel.getModel(window.getReferenceNamespace())
+                    .orElseThrow(() ->
+                            new ContainerException(String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
-                componentWindowModel = new ComponentWindowModel(
-                        window.getReferenceNamespace(), window.getName(), window.getComponentName());
-                componentWindowModel.setLabel(window.getComponentInfo().getLabel());
-                addParameterMapMetadata(window, componentWindowModel);
-                addComponentRenderingURLLink(hstResponse, componentWindowModel);
-                decorateComponentWindowMetadata(hstRequest, hstResponse, componentWindowModel);
-                curContainerWindowModel.addComponentWindow(componentWindowModel);
-            } else {
-                curContainerWindowModel = null;
-            }
+            addComponentRenderingURLLink(hstResponse, currentComponentWindowModel);
+            addParameterMapMetadata(window, currentComponentWindowModel);
+            decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
                 final String name = entry.getKey();
                 final Object model = entry.getValue();
-                ReferenceMetadataBaseModel referenceModel = null;
 
                 if (model instanceof HippoBean) {
                     final HippoBean bean = (HippoBean) model;
@@ -263,12 +233,9 @@ public class PageModelAggregationValve extends AggregationValve {
 
                     decorateContentMetadata(hstRequest, hstResponse, bean, wrapperBeanModel);
 
-                    referenceModel = new ReferenceMetadataBaseModel(
-                            CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId);
-                }
 
-                if (componentWindowModel != null) {
-                    componentWindowModel.putModel(name, (referenceModel != null) ? referenceModel : model);
+                    currentComponentWindowModel
+                            .putModel(name, new ReferenceMetadataBaseModel(CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId));
                 }
             }
         }
@@ -338,7 +305,6 @@ public class PageModelAggregationValve extends AggregationValve {
             final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
             pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
         }
-
     }
 
     /**

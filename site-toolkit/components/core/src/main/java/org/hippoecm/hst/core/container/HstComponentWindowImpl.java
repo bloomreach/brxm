@@ -165,6 +165,9 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     }
 
     public Map<String, HstComponentWindow> getChildWindowMap() {
+        if (childWindowMap == null) {
+            return Collections.emptyMap();
+        }
         return childWindowMap;
     }
     

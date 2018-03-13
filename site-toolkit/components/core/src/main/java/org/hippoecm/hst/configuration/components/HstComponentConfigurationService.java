@@ -669,16 +669,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
-    public boolean isContainer() {
-        return Type.CONTAINER_COMPONENT == getComponentType();
-    }
-
-    @Override
-    public boolean isContainerItem() {
-        return Type.CONTAINER_ITEM_COMPONENT == getComponentType();
-    }
-
-    @Override
     public String getIconPath() {
         return iconPath;
     }

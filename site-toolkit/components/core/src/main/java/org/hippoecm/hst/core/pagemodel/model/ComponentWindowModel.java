@@ -15,13 +15,18 @@
  */
 package org.hippoecm.hst.core.pagemodel.model;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.container.HstComponentWindow;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Component window model representation.
@@ -29,27 +34,41 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
     private final String name;
+    private final String clazz;
     private final String type;
     private String label;
-    private Map<String, Object> models;
+    private Map<String, ReferenceMetadataBaseModel> models;
+    private Set<ComponentWindowModel> components;
 
-    public ComponentWindowModel(final String id, final String name, final String type) {
-        super(id);
-        this.name = name;
-        this.type = type;
+
+    public ComponentWindowModel(final HstComponentWindow window) {
+        super(window.getReferenceNamespace());
+        name = window.getName();
+        clazz = window.getComponentName();
+        type = window.getComponentInfo().getComponentType().toString();
+        components = new HashSet<>();
+        for (HstComponentWindow child : window.getChildWindowMap().values()) {
+            components.add(new ComponentWindowModel(child));
+        }
     }
 
     /**
-     * Return container item component's name.
-     * @return
+     * @return the container item component's name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Return component's type name. i.e component class' FQCN.
-     * @return
+     * @return the component's type name. i.e component class' FQCN.
+     */
+    @JsonProperty("class")
+    public String getClazz() {
+        return clazz;
+    }
+
+    /**
+     * @return the component type, see {@link HstComponentConfiguration.Type}
      */
     public String getType() {
         return type;
@@ -72,15 +91,11 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
      * @return
      */
     @JsonInclude(Include.NON_NULL)
-    public Map<String, Object> getModels() {
+    public Map<String, ReferenceMetadataBaseModel> getModels() {
         return models;
     }
 
-    public void setModels(Map<String, Object> models) {
-        this.models = models;
-    }
-
-    public void putModel(String name, Object model) {
+    public void putModel(String name, ReferenceMetadataBaseModel model) {
         if (models == null) {
             models = new LinkedHashMap<>();
         }
@@ -88,4 +103,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         models.put(name, model);
     }
 
+    public Set<ComponentWindowModel> getComponents() {
+        return components;
+    }
 }

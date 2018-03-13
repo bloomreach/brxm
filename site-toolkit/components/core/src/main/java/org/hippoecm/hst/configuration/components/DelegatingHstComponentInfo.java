@@ -87,12 +87,8 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     }
 
     @Override
-    public boolean isContainer() {
-        return delegatee.isContainer();
+    public HstComponentConfiguration.Type getComponentType() {
+        return delegatee.getComponentType();
     }
 
-    @Override
-    public boolean isContainerItem() {
-        return delegatee.isContainerItem();
-    }
 }

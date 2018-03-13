@@ -101,15 +101,8 @@ public interface HstComponentInfo {
     String getLabel();
 
     /**
-     * @return {@code true} if this {@link HstComponentInfo} is of type
-     * {@link HstComponentConfiguration.Type#CONTAINER_COMPONENT}
+     * @return the {@link HstComponentConfiguration.Type} of this component
      */
-    boolean isContainer();
-
-    /**
-     * @return {@code true} if this {@link HstComponentInfo} is of type
-     * {@link HstComponentConfiguration.Type#CONTAINER_ITEM_COMPONENT}
-     */
-    boolean isContainerItem();
+    HstComponentConfiguration.Type getComponentType();
 
 }

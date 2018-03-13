@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.core.pagemodel.model;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,29 +30,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
-    private Set<ComponentContainerWindowModel> containerWindowSet;
+    private ComponentWindowModel page;
     private Map<String, Object> contentMap;
+    private Map<String, ComponentWindowModel> flattened = new HashMap<>();
 
     public AggregatedPageModel(final String id) {
         super(id);
     }
 
-    @JsonProperty("containers")
-    @JsonInclude(Include.NON_NULL)
-    public Set<ComponentContainerWindowModel> getContainerWindowSet() {
-        return containerWindowSet;
+    @JsonProperty("page")
+    public ComponentWindowModel getPage() {
+        return page;
     }
 
-    public void setContainerWindowSet(Set<ComponentContainerWindowModel> containerWindowSet) {
-        this.containerWindowSet = containerWindowSet;
+    public void setPage(final ComponentWindowModel page) {
+        this.page = page;
+        populateFlattened(page);
     }
 
-    public void addContainerWindow(ComponentContainerWindowModel containerWindow) {
-        if (containerWindowSet == null) {
-            containerWindowSet = new LinkedHashSet<>();
+    private void populateFlattened(final ComponentWindowModel model) {
+        flattened.put(model.getId(), model);
+        for (ComponentWindowModel child : model.getComponents()) {
+            populateFlattened(child);
         }
-
-        containerWindowSet.add(containerWindow);
     }
 
     @JsonProperty("content")
@@ -60,15 +61,16 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
         return contentMap;
     }
 
-    public void setContentMap(Map<String, Object> contentMap) {
-        this.contentMap = contentMap;
-    }
-
     public void putContent(String id, Object content) {
         if (contentMap == null) {
             contentMap = new LinkedHashMap<>();
         }
-
         contentMap.put(id, content);
     }
+
+    @JsonIgnore
+    public Optional<ComponentWindowModel> getModel(final String referenceNamespace) {
+        return Optional.ofNullable(flattened.get(referenceNamespace));
+    }
+
 }

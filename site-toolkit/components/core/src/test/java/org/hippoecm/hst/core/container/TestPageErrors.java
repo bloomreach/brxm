@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.util.DefaultKeyValue;
@@ -184,13 +185,9 @@ public class TestPageErrors {
         }
 
         @Override
-        public boolean isContainer() {
-            return false;
+        public HstComponentConfiguration.Type getComponentType() {
+            return HstComponentConfiguration.Type.COMPONENT;
         }
 
-        @Override
-        public boolean isContainerItem() {
-            return false;
-        }
     }
 }

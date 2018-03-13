@@ -365,13 +365,4 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
         this.markedDeleted = markedDeleted;
     }
 
-    @Override
-    public boolean isContainer() {
-        return Type.CONTAINER_COMPONENT == getComponentType();
-    }
-
-    @Override
-    public boolean isContainerItem() {
-        return Type.CONTAINER_ITEM_COMPONENT == getComponentType();
-    }
 }
