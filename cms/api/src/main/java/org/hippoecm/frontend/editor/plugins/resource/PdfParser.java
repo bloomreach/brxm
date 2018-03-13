@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tika.detect.NameDetector;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.pdf.PDFParser;
+import org.onehippo.repository.tika.TikaFactory;
 
 public class PdfParser {
     
@@ -38,7 +39,7 @@ public class PdfParser {
         patterns.put(Pattern.compile(".*\\.pdf", Pattern.CASE_INSENSITIVE),
                 MediaType.application("pdf"));
         NameDetector detector = new NameDetector(patterns);
-        tika = new Tika(detector, new PDFParser());
+        tika = TikaFactory.newTika(detector, new PDFParser());
     }
     
     private String doParse(final InputStream inputStream) {
