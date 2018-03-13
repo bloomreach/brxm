@@ -106,6 +106,22 @@
     "url": "https://github.com/jquery/jquery/blob/3.2.1/AUTHORS.txt",
     "licenseFile": "node_modules/jquery/LICENSE.txt"
   },
+  "moment-timezone@0.5.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moment/moment-timezone",
+    "publisher": "Tim Wood",
+    "email": "washwithcare@gmail.com",
+    "url": "http://timwoodcreates.com/",
+    "licenseFile": "node_modules/moment-timezone/LICENSE"
+  },
+  "moment@2.21.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moment/moment",
+    "publisher": "Iskren Ivov Chernev",
+    "email": "iskren.chernev@gmail.com",
+    "url": "https://github.com/ichernev",
+    "licenseFile": "node_modules/moment/LICENSE"
+  },
   "mutation-summary@0.1.1": {
     "licenses": "Apache 2.0",
     "repository": "https://github.com/rafaelw/mutation-summary",
