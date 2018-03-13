@@ -61,7 +61,7 @@ public class DateFieldType extends PrimitiveFieldType {
         }
 
         final Calendar calendar = ISO8601.parse(value);
-        if (calendar != null && calendar.getTime().equals(PropertyValueProvider.EMPTY_DATE)) {
+        if (calendar == null || calendar.getTime().equals(PropertyValueProvider.EMPTY_DATE)) {
             return new FieldValue(StringUtils.EMPTY);
         }
 

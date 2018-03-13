@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
-import javax.jcr.Value;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.repository.util.JcrUtils;
@@ -96,6 +94,34 @@ public class DateFieldTypeTest {
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf("" + newValue))));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
+    }
+
+    @Test
+    public void testGetFieldValueForNullValue() {
+        final PrimitiveFieldType fieldType = new DateFieldType();
+        final FieldValue fieldValue = fieldType.getFieldValue(null);
+        assertThat(fieldValue.getValue(), equalTo(""));
+    }
+
+    @Test
+    public void testGetFieldValueForBlankValue() {
+        final PrimitiveFieldType fieldType = new DateFieldType();
+        final FieldValue fieldValue = fieldType.getFieldValue(" ");
+        assertThat(fieldValue.getValue(), equalTo(""));
+    }
+
+    @Test
+    public void testGetFieldValueForUnparsableValue() {
+        final PrimitiveFieldType fieldType = new DateFieldType();
+        final FieldValue fieldValue = fieldType.getFieldValue("doesnotparse");
+        assertThat(fieldValue.getValue(), equalTo(""));
+    }
+
+    @Test
+    public void testGetFieldValueForParsableValue() {
+        final PrimitiveFieldType fieldType = new DateFieldType();
+        final FieldValue fieldValue = fieldType.getFieldValue("2015-08-24T06:53:00.000Z");
+        assertThat(fieldValue.getValue(), equalTo("2015-08-24T06:53:00.000Z"));
     }
 
     // TODO: what is considered an invalid value?
