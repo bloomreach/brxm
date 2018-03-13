@@ -22,6 +22,7 @@ describe('DateField', () => {
   let FieldService;
   let onFieldFocus;
   let onFieldBlur;
+  let form;
 
   const fieldType = {id: 'field:type'};
   const fieldValues = [
@@ -136,7 +137,7 @@ describe('DateField', () => {
     spyOn(FieldService, 'draftField');
 
     $ctrl.focusDateField();
-    fieldValues[1].value = 'Changed';
+    fieldValues[1].value = '2018-01-01T12:11:50.041+01:00';
     $ctrl.blurDateField();
 
     expect(FieldService.draftField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
@@ -160,15 +161,12 @@ describe('DateField', () => {
     expect($ctrl.valueChanged).toHaveBeenCalled();
     const newValue = $ctrl.dateValues[0].date;
     expect(oldValue).toBeLessThan(newValue);
-    /*
-        expect(form.$setDirty()).toHaveBeenCalled();
-    */
-
+    expect(form.$setDirty).toHaveBeenCalled();
   });
 
 });
 
-fdescribe('DateValue', () => {
+describe('DateValue', () => {
   let dateValue;
 
   describe('when populated', () => {
@@ -233,7 +231,6 @@ fdescribe('DateValue', () => {
       dateValue.minutes = 1;
       expect(dateValue.date).not.toBe(null);
     });
-
   });
 
 });
