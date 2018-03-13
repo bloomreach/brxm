@@ -36,13 +36,17 @@
       </md-icon>
     </label>
 
-  <md-datepicker ng-model="dateValue.date"
-                 ng-change="$ctrl.valueChanged()"
-                 name="{{::$ctrl.getFieldName($index)}}"
-                 aria-label="{{::$ctrl.fieldType.displayName}}"
-                 ng-required="::$ctrl.fieldType.required"
-                 ng-focus="$ctrl.focusDateField($event)"
-                 ng-blur="$ctrl.blurDateField($event)"/>
+    <md-datepicker ng-model="dateValue.date"
+                   ng-change="$ctrl.valueChanged()"
+                   name="{{::$ctrl.getFieldName($index)}}"
+                   aria-label="{{::$ctrl.fieldType.displayName}}"
+                   ng-required="::$ctrl.fieldType.required"
+                   ng-focus="$ctrl.focusDateField($event)"
+                   ng-blur="$ctrl.blurDateField($event)"/>
+    <div ng-messages="$ctrl.getFieldError($index)">
+      <div ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+      <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
+    </div>
   </md-input-container>
 
   <md-input-container class="qa-field">

@@ -126,6 +126,12 @@ class DateFieldController {
     return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
   }
 
+  getFieldError(index) {
+    const fieldName = this.getFieldName(index);
+    const field = this.form[fieldName];
+    return field.$error;
+  }
+
   valueChanged() {
     this._updateFieldValues();
     this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
