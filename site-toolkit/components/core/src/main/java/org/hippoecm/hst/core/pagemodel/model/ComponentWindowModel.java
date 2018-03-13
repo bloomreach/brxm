@@ -26,7 +26,6 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Component window model representation.
@@ -34,21 +33,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
     private final String name;
-    private final String clazz;
+    private final String componentClass;
     private final String type;
     private String label;
-    private Map<String, ReferenceMetadataBaseModel> models;
+    private Map<String, Object> models;
     private Set<ComponentWindowModel> components;
-
 
     public ComponentWindowModel(final HstComponentWindow window) {
         super(window.getReferenceNamespace());
         name = window.getName();
-        clazz = window.getComponentName();
+        componentClass = window.getComponentName();
         type = window.getComponentInfo().getComponentType().toString();
-        components = new HashSet<>();
-        for (HstComponentWindow child : window.getChildWindowMap().values()) {
-            components.add(new ComponentWindowModel(child));
+
+        final Map<String, HstComponentWindow> childComponentWindows = window.getChildWindowMap();
+
+        if (!childComponentWindows.isEmpty()) {
+            components = new HashSet<>();
+
+            for (HstComponentWindow child : childComponentWindows.values()) {
+                components.add(new ComponentWindowModel(child));
+            }
         }
     }
 
@@ -62,9 +66,8 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
     /**
      * @return the component's type name. i.e component class' FQCN.
      */
-    @JsonProperty("class")
-    public String getClazz() {
-        return clazz;
+    public String getComponentClass() {
+        return componentClass;
     }
 
     /**
@@ -91,11 +94,11 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
      * @return
      */
     @JsonInclude(Include.NON_NULL)
-    public Map<String, ReferenceMetadataBaseModel> getModels() {
+    public Map<String, Object> getModels() {
         return models;
     }
 
-    public void putModel(String name, ReferenceMetadataBaseModel model) {
+    public void putModel(String name, Object model) {
         if (models == null) {
             models = new LinkedHashMap<>();
         }
@@ -103,6 +106,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         models.put(name, model);
     }
 
+    @JsonInclude(Include.NON_NULL)
     public Set<ComponentWindowModel> getComponents() {
         return components;
     }

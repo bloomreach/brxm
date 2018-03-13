@@ -69,11 +69,6 @@ public class PageModelAggregationValve extends AggregationValve {
     private static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
-     * Page definition ID metadata name.
-     */
-    private static final String DEFINITION_ID_METADATA = "definitionId";
-
-    /**
      * Content JSON Pointer prefix.
      */
     private static final String CONTENT_JSON_POINTER_PREFIX = "/content/";
@@ -192,10 +187,6 @@ public class PageModelAggregationValve extends AggregationValve {
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL()
-                .getComponentRenderingWindowReferenceNamespace();
-
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
         final String id = rootWindow.getReferenceNamespace();
@@ -233,9 +224,10 @@ public class PageModelAggregationValve extends AggregationValve {
 
                     decorateContentMetadata(hstRequest, hstResponse, bean, wrapperBeanModel);
 
-
                     currentComponentWindowModel
                             .putModel(name, new ReferenceMetadataBaseModel(CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId));
+                } else {
+                    currentComponentWindowModel.putModel(name, model);
                 }
             }
         }

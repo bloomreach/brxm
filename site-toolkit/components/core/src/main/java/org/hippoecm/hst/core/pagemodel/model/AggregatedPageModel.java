@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,8 +51,12 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     private void populateFlattened(final ComponentWindowModel model) {
         flattened.put(model.getId(), model);
-        for (ComponentWindowModel child : model.getComponents()) {
-            populateFlattened(child);
+
+        final Set<ComponentWindowModel> components = model.getComponents();
+        if (components != null) {
+            for (ComponentWindowModel child : components) {
+                populateFlattened(child);
+            }
         }
     }
 
