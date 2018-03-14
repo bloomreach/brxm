@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -81,7 +82,12 @@ public class PageModelAggregationValve extends AggregationValve {
     /**
      * Page or component parameter map metadata name.
      */
-    private static final String PARAMETERNS_METADATA = "params";
+    private static final String PARAMETERS_METADATA = "params";
+
+    /**
+     * Page title metadata name.
+     */
+    private static final String PAGE_TITLE_METADATA = "pageTitle";
 
     /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
@@ -187,12 +193,19 @@ public class PageModelAggregationValve extends AggregationValve {
     protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
         final String id = rootWindow.getReferenceNamespace();
 
         final AggregatedPageModel pageModel = new AggregatedPageModel(id);
-        pageModel.setPage(new ComponentWindowModel(rootWindow));
+        final ComponentWindowModel pageWindowModel = new ComponentWindowModel(rootWindow);
+        final String pageTitle = requestContext.getResolvedSiteMapItem().getPageTitle();
+        if (StringUtils.isNotEmpty(pageTitle)) {
+            pageWindowModel.putMetadata(PAGE_TITLE_METADATA, pageTitle);
+        }
+        pageModel.setPage(pageWindowModel);
         addLinksToPageModel(pageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
@@ -276,7 +289,7 @@ public class PageModelAggregationValve extends AggregationValve {
             params.put(paramName, paramValue);
         }
 
-        model.putMetadata(PARAMETERNS_METADATA, params);
+        model.putMetadata(PARAMETERS_METADATA, params);
     }
 
     /**
