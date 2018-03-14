@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             for (Map<String, Object> item : itemsList) {
                 final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
                 final Node node = handleNode.getNode(handleNode.getName());
-                if (!node.hasProperty(PROPERTY_TITLE) && !node.hasProperty(PROPERTY_DATE)) {
+                if (!node.hasProperty(PROPERTY_TITLE) || !node.hasProperty(PROPERTY_DATE)) {
                     continue;
                 }
                 String current = node.getProperty(PROPERTY_TITLE).getString();
@@ -322,7 +322,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             for (Map<String, Object> item : itemsList) {
                 final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
                 final Node node = handleNode.getNode(handleNode.getName());
-                if (!node.hasProperty(PROPERTY_TITLE) && !node.hasProperty(PROPERTY_DATE)) {
+                if (!node.hasProperty(PROPERTY_TITLE) || !node.hasProperty(PROPERTY_DATE)) {
                     continue;
                 }
                 final String currentTitle = node.getProperty(PROPERTY_TITLE).getString();

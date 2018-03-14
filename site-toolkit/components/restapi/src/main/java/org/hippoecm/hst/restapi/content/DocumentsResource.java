@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,13 +49,14 @@ import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.search.query.AndClause;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
-import org.onehippo.cms7.services.search.query.constraint.ExistsConstraint;
 import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.restapi.content.DocumentsResource.SortOrder.DESCENDING;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
@@ -150,8 +151,27 @@ public class DocumentsResource extends AbstractResource {
         return Arrays.asList(attributeString.split(","));
     }
 
+
+    private List<String> getOrderBy(final String orderBy, final boolean preview) {
+        if (StringUtils.isNotBlank(orderBy)) {
+            return parseOrderBy(orderBy);
+        }
+        if (preview) {
+            return Collections.singletonList(HIPPOSTDPUBWF_LAST_MODIFIED_DATE);
+        }
+        return  Collections.singletonList(HIPPOSTDPUBWF_PUBLICATION_DATE);
+    }
+
+
     private List<String> parseOrderBy(final String orderBy) {
         return Arrays.asList(StringUtils.split(orderBy, ','));
+    }
+
+    private List<SortOrder> getSortOrder(final String sortOrder) {
+        if (StringUtils.isNotBlank(sortOrder)) {
+            return parseSortOrder(sortOrder);
+        }
+        return Collections.singletonList(DESCENDING);
     }
 
     private List<SortOrder> parseSortOrder(final String sortOrder) {
@@ -179,22 +199,25 @@ public class DocumentsResource extends AbstractResource {
                                  @QueryParam("_max") final String maxString,
                                  @QueryParam("_query") final String queryString,
                                  @QueryParam("_nodetype") final String nodeTypeString,
-                                 @QueryParam("_orderBy") @DefaultValue(HIPPOSTDPUBWF_PUBLICATION_DATE) final String orderBy,
-                                 @QueryParam("_sortOrder") @DefaultValue("descending") final String sortOrder,
+                                 @QueryParam("_orderBy") final String orderBy,
+                                 @QueryParam("_sortOrder") final String sortOrder,
                                  @QueryParam("_attributes") final String attributeString) {
         try {
+
+            final boolean preview = RequestContextProvider.get().isPreview();
+
             final List<String> includedAttributes = parseAttributes(attributeString);
             final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
             final String parsedNodeType = parseNodeType(context, nodeTypeString);
-            final List<String> parsedOrderBys = parseOrderBy(orderBy);
-            final List<SortOrder> parsedSortOrders = parseSortOrder(sortOrder);
+            final List<String> parsedOrderBys = getOrderBy(orderBy, preview);
+            final List<SortOrder> parsedSortOrders = getSortOrder(sortOrder);
             checkOrderParameters(parsedOrderBys, parsedSortOrders);
 
             final String availability;
-            if (RequestContextProvider.get().isPreview() ) {
+            if (preview) {
                 availability = "preview";
             } else {
                 availability = "live";
@@ -208,10 +231,6 @@ public class DocumentsResource extends AbstractResource {
                     .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
-
-            for (String ob : parsedOrderBys) {
-                andClause = andClause.and(new ExistsConstraint(ob));
-            }
 
             final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders).offsetBy(offset)
                     .limitTo(max);
