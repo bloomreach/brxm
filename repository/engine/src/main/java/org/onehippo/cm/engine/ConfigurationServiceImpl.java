@@ -27,8 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +60,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
@@ -151,24 +150,46 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         log.info("New site extension detected: {}", extensionName);
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
 
-        final Collection<ModuleImpl> modules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
+        final Collection<ModuleImpl> extensionModules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
                 .filter(m -> Objects.equals(extensionName, m.getExtension())).collect(Collectors.toList());
+        extensionModules.forEach(runtimeConfigurationModel::addModule);
 
-        modules.forEach(runtimeConfigurationModel::addModule);
-        ConfigurationModelImpl newModel = runtimeConfigurationModel.build();
+        ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
 
         final List<ModuleImpl> extensionModulesFromSourceFiles =
                 readModulesFromSourceFiles(runtimeConfigurationModel).stream()
                         .filter(m -> extensionName.equals(m.getExtension())).collect(toList());
-        if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
-            newModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newModel);
-        }
-        applyConfig(baselineModel, newModel,false,false, false,false);
-        applyContent(newModel);
-        runtimeConfigurationModel = newModel;
 
-        storeBaselineModel(newModel, extensionName);
+        if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
+            newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
+        }
+
+        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
+
+        boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, false, false, false);
+        if (success) {
+            success = applyContent(newRuntimeConfigModel);
+        }
+
+        if (success) {
+            runtimeConfigurationModel = newRuntimeConfigModel;
+            storeBaselineModel(newRuntimeConfigModel, extensionName);
+            baselineModel = newBaselineModel;
+
+            //process webfilebundle instructions from extensions which are not from the current site
+
+            //collect webfilebundle definitions from extension modules
+            final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
+                    filter(m -> extensionName.equals(m.getExtension())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
+            configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+            log.info("Extension '{}' was successfuly applied", extensionName);
+        } else {
+            log.error("Extension '{}' failed to be applied", extensionName);
+        }
+
     }
+
+
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
         lockManager = new ConfigurationLockManager();
@@ -613,13 +634,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     /**
+     * @return a valid baseline without extension modules, if one exists, or an empty ConfigurationModel
+     * @throws RepositoryException
+     */
+    private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
+        return loadBaselineModel(null);
+    }
+
+    /**
      * @return a valid baseline, if one exists, or an empty ConfigurationModel
+     * @param extensionNames A set of extensions which should be included in the baseline
      * @throws RepositoryException only if an unexpected repository problem occurs (not if the baseline is missing)
      * TODO: specify a Set<String> of extension names here
      */
-    private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
+    private ConfigurationModelImpl loadBaselineModel(Set<String> extensionNames) throws RepositoryException {
         try {
-            ConfigurationModelImpl model = baselineService.loadBaseline(session, null);
+            ConfigurationModelImpl model = baselineService.loadBaseline(session, extensionNames);
             if (model == null) {
                 model = new ConfigurationModelImpl().build();
             }
@@ -749,7 +779,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             // webfiles
             try {
-                configService.writeWebfiles(bootstrapModel, baselineService, session);
+                configService.writeWebfiles(bootstrapModel.getWebFileBundleDefinitions(), baselineService, session);
                 session.save();
             } catch (IOException e) {
                 log.error("Error initializing webfiles", e);

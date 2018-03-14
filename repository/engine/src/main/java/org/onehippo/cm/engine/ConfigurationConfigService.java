@@ -115,10 +115,10 @@ public class ConfigurationConfigService {
         }
     }
 
-    void writeWebfiles(final ConfigurationModel model, final ConfigurationBaselineService baselineService, final Session session) throws IOException, RepositoryException {
+    void writeWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles, final ConfigurationBaselineService baselineService, final Session session)
+            throws IOException, RepositoryException {
 
-
-        if (!model.getWebFileBundleDefinitions().isEmpty()) {
+        if (!webfileBundles.isEmpty()) {
 
             final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
             final List<Module> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
@@ -129,7 +129,7 @@ public class ConfigurationConfigService {
                         WebFilesService.class.getName()));
                 return;
             }
-            for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
+            for (WebFileBundleDefinition webFileBundleDefinition : webfileBundles) {
                 final String bundleName = webFileBundleDefinition.getName();
                 log.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
                         webFileBundleDefinition.getOrigin()));
@@ -168,7 +168,7 @@ public class ConfigurationConfigService {
     /**
      * Collect all webfilebundle modules watched by WebFileWatcherService
      */
-    private List<Module> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
+    private static List<Module> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
 
         final List<Module> webfileModules = new ArrayList<>();
         if (webFilesWatcherService != null) {
