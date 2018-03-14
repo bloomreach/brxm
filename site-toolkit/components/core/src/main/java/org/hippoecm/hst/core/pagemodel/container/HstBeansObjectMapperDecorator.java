@@ -30,7 +30,11 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 import org.hippoecm.hst.content.beans.standard.HippoMirrorBean;
 import org.hippoecm.hst.content.beans.standard.HippoRequestBean;
+import org.hippoecm.hst.content.beans.support.jackson.CommonMenuItemMixin;
+import org.hippoecm.hst.content.beans.support.jackson.CommonMenuMixin;
 import org.hippoecm.hst.content.beans.support.jackson.DefaultJsonIgnoreTypeMixin;
+import org.hippoecm.hst.content.beans.support.jackson.EditableMenuItemMixin;
+import org.hippoecm.hst.content.beans.support.jackson.EditableMenuMixin;
 import org.hippoecm.hst.content.beans.support.jackson.HippoBeanMixin;
 import org.hippoecm.hst.content.beans.support.jackson.HippoDocumentBeanMixin;
 import org.hippoecm.hst.content.beans.support.jackson.HippoFolderBeanMixin;
@@ -45,6 +49,10 @@ import org.hippoecm.hst.content.beans.support.jackson.HstSiteMenuMixin;
 import org.hippoecm.hst.content.beans.support.jackson.HstURLMixin;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.sitemenu.CommonMenu;
+import org.hippoecm.hst.core.sitemenu.CommonMenuItem;
+import org.hippoecm.hst.core.sitemenu.EditableMenu;
+import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
 import org.hippoecm.hst.provider.ValueProvider;
@@ -81,6 +89,10 @@ public class HstBeansObjectMapperDecorator {
         defaultMixins.put(HstLink.class, HstLinkMixin.class);
         defaultMixins.put(HstSiteMenuItem.class, HstSiteMenuItemMixin.class);
         defaultMixins.put(HstSiteMenu.class, HstSiteMenuMixin.class);
+        defaultMixins.put(EditableMenuItem.class, EditableMenuItemMixin.class);
+        defaultMixins.put(EditableMenu.class, EditableMenuMixin.class);
+        defaultMixins.put(CommonMenuItem.class, CommonMenuItemMixin.class);
+        defaultMixins.put(CommonMenu.class, CommonMenuMixin.class);
     }
 
     public Map<Class<?>, Class<?>> getDefaultMixins() {
