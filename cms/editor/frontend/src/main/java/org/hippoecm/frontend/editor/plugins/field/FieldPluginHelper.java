@@ -228,7 +228,7 @@ public class FieldPluginHelper implements IDetachable {
         return null;
     }
 
-    private String getStringFromBundle(final String key) {
+    String getStringFromBundle(final String key) {
         final String bundleName = getBundleName();
         if (bundleName != null) {
             final LocalizationService service = HippoServiceRegistry.getService(LocalizationService.class);
