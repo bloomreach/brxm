@@ -1,4 +1,10 @@
 {
+  "@bloomreach/hippo-theme@4.3.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://code.onehippo.org/cms-community/hippo-frontend-theme",
+    "licenseFile": "node_modules/@bloomreach/hippo-theme/LICENSE",
+    "noticeFile": "node_modules/@bloomreach/hippo-theme/NOTICE"
+  },
   "angular-animate@1.5.11": {
     "licenses": "MIT",
     "repository": "https://github.com/angular/angular.js",
@@ -51,12 +57,8 @@
   },
   "chosen-js@1.7.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/harvesthq/chosen"
-  },
-  "hippo-theme@3.2.0-SNAPSHOT": {
-    "licenses": "Apache-2.0",
-    "licenseFile": "node_modules/hippo-theme/LICENSE",
-    "noticeFile": "node_modules/hippo-theme/NOTICE"
+    "repository": "https://github.com/harvesthq/chosen",
+    "licenseFile": "node_modules/chosen-js/README.md"
   },
   "jquery@3.2.1": {
     "licenses": "MIT",

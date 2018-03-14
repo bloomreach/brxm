@@ -42,33 +42,6 @@ public final class HstUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HstUtils.class);
 
-    public static Set<Node> getHstMounts(final JcrService jcrService) {
-        final Session session = jcrService.createSession();
-
-        try {
-            final Workspace workspace = session.getWorkspace();
-            final QueryManager queryManager = workspace.getQueryManager();
-            final Query query = queryManager.createQuery("//hst:hst/hst:hosts//element(*, hst:mount)", "xpath");
-            final QueryResult queryResult = query.execute();
-            final NodeIterator nodes = queryResult.getNodes();
-            final Set<Node> retVal = new HashSet<>();
-            while (nodes.hasNext()) {
-                final Node node = nodes.nextNode();
-                retVal.add(node);
-            }
-            return retVal;
-        } catch (InvalidQueryException e) {
-            log.error("Error creating query", e);
-        } catch (RepositoryException e) {
-            log.error("Error fetching hst:host nodes", e);
-        } finally {
-            jcrService.destroySession(session);
-        }
-        return Collections.emptySet();
-
-    }
-
-
     private HstUtils() {
         // utility
     }

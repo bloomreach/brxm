@@ -7,6 +7,10 @@
     "build": "grunt build",
     "start": "grunt server"
   },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
+  },
   "dependencies": {
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
@@ -17,12 +21,12 @@
     "angular-ui-router": "0.4.2",
     "angular-ui-tree": "2.22.5",
     "chosen-js": "1.7.0",
-    "hippo-theme": "./target/dependency/hippo-theme.tar.gz",
+    "@bloomreach/hippo-theme": "4.3.2",
     "jquery": "3.2.1"
   },
   "devDependencies": {
     "angular-mocks": "1.5.11",
-    "grunt": "1.0.1",
+    "grunt": "1.0.2",
     "grunt-contrib-clean": "1.1.0",
     "grunt-contrib-copy": "1.0.0",
     "grunt-contrib-jshint": "1.1.0",
