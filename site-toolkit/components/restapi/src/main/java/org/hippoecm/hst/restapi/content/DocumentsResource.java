@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,10 +208,6 @@ public class DocumentsResource extends AbstractResource {
                     .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
-
-            for (String ob : parsedOrderBys) {
-                andClause = andClause.and(new ExistsConstraint(ob));
-            }
 
             final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders).offsetBy(offset)
                     .limitTo(max);
