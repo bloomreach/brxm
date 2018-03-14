@@ -50,7 +50,7 @@ public class LeftMenu extends BaseHstComponent {
                     }
                 }
             }
-            request.setAttribute("menu", editable);
+            request.setModel("menu", editable);
         }
 
     }
