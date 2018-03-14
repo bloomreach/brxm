@@ -35,7 +35,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
     private final String name;
     private final String componentClass;
     private final String type;
-    private String label;
+    private final String label;
     private Map<String, Object> models;
     private Set<ComponentWindowModel> components;
 
@@ -44,6 +44,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         name = window.getName();
         componentClass = window.getComponentName();
         type = window.getComponentInfo().getComponentType().toString();
+        label = window.getComponentInfo().getLabel();
 
         final Map<String, HstComponentWindow> childComponentWindows = window.getChildWindowMap();
 
@@ -81,12 +82,9 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
      * Return component's label. i.e. hst:label property value of an hst:containeritemcomponent.
      * @return
      */
+    @JsonInclude(Include.NON_NULL)
     public String getLabel() {
         return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     /**
