@@ -47,7 +47,6 @@ import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
@@ -58,6 +57,7 @@ import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceHeadParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
@@ -240,6 +240,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         lastExecutedAction = value;
     }
 
+    @Override
     public String getExtension() {
         return extension;
     }

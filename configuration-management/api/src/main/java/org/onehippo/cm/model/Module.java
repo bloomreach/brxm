@@ -53,6 +53,11 @@ public interface Module extends OrderableByName {
     Project getProject();
 
     /**
+     * @return Extension name of the Module or null if it is a core Module
+     */
+    String getExtension();
+
+    /**
      * @return The immutable set of all {@link Source}s of this module, in undefined order.
      */
     Set<? extends Source> getSources();
