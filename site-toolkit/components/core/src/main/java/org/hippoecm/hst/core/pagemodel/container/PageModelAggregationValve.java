@@ -90,6 +90,11 @@ public class PageModelAggregationValve extends AggregationValve {
     private static final String PAGE_TITLE_METADATA = "pageTitle";
 
     /**
+     * Page definition ID (from the configuration) metadata name.
+     */
+    private static final String PAGE_DEFINITION_ID_METADATA = "definitionId";
+
+    /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
      */
     private ObjectMapper objectMapper;
@@ -201,10 +206,17 @@ public class PageModelAggregationValve extends AggregationValve {
 
         final AggregatedPageModel pageModel = new AggregatedPageModel(id);
         final ComponentWindowModel pageWindowModel = new ComponentWindowModel(rootWindow);
+
+        final String definitionId = rootWindow.getComponentInfo().getId();
+        if (StringUtils.isNotEmpty(definitionId)) {
+            pageWindowModel.putMetadata(PAGE_DEFINITION_ID_METADATA, definitionId);
+        }
+
         final String pageTitle = requestContext.getResolvedSiteMapItem().getPageTitle();
         if (StringUtils.isNotEmpty(pageTitle)) {
             pageWindowModel.putMetadata(PAGE_TITLE_METADATA, pageTitle);
         }
+
         pageModel.setPage(pageWindowModel);
         addLinksToPageModel(pageModel);
 
