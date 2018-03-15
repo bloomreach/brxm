@@ -88,6 +88,7 @@ import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
@@ -207,8 +208,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
-            // TODO: call with appropriate extensions
-            ConfigurationModelImpl baselineModel = loadBaselineModel();
+            final Set<String> knownExtensions = ExtensionRegistry.getContexts().values().stream().map(ExtensionEvent::getExtensionName).collect(toSet());
+            ConfigurationModelImpl baselineModel = loadBaselineModel(knownExtensions);
 
             // check the appropriate params to determine our state and bootstrap mode
             // empty baseline means we've never applied the v12+ bootstrap model before, since we should have at
@@ -238,8 +239,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             // load modules that are specified via auto-export config
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
-
-                            final List<String> knownExtensions = ExtensionRegistry.getContexts().values().stream().map(ExtensionEvent::getExtensionName).collect(toList());
 
                             final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
                                     .filter(m -> m.getExtension() == null || knownExtensions.contains(m.getExtension())).collect(toList());
