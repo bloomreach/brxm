@@ -119,6 +119,7 @@ public interface HstNodeTypes {
     String TEMPLATE_PROPERTY_SCRIPT = "hst:script";
 
     String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
+    String SITEMAPITEM_PROPERTY_APPLICATION_ID = "hst:applicationId";
     String SITEMAPITEM_PROPERTY_VALUE = "hst:value";
     String SITEMAPITEM_PROPERTY_AUTHENTICATED = "hst:authenticated";
     String SITEMAPITEM_PROPERTY_ROLES = "hst:roles";

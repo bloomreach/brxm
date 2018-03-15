@@ -17,8 +17,10 @@ package org.hippoecm.hst.content.beans.support.jackson;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -38,6 +40,7 @@ import com.fasterxml.jackson.databind.util.Annotations;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_TYPE;
 
 public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanPropertyWriter {
 
@@ -95,6 +98,17 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
                 }
             }
 
+            final HstSiteMapItem siteMapItem = selfLink.getHstSiteMapItem();
+            if (siteMapItem != null) {
+                if (siteMapItem.isContainerResource()) {
+                    linksMap.put(LINK_NAME_TYPE, "resource");
+                } else {
+                    final String linkApplicationId = siteMapItem.getApplicationId();
+                    final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
+
+                    linksMap.put(LINK_NAME_TYPE, Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external");
+                }
+            }
         }
 
         return linksMap;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -187,6 +187,11 @@ public interface ContainerConstants {
      * Generic Link Name for the site.
      */
     String LINK_NAME_SITE = "site";
+
+    /**
+     * The type of the link, for example 'internal', 'external' or 'resource'.
+     */
+    String LINK_NAME_TYPE = "type";
 
     /**
      * Generic Link Name for the component rendering.

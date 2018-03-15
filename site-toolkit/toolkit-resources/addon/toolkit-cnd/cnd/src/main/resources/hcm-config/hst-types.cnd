@@ -167,6 +167,9 @@
 - hst:roles (string) multiple
 // refId must be unique within a single sitemap item tree. The property is optional
 - hst:refId (string)
+// in case of multiple kinds of applications within a single mount, like multiple SPAs, sitemap items can have an
+// application id.
+- hst:applicationId (String)
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:scheme (string)

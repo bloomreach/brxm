@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEM
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PAGE_TITLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_APPLICATION_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES;
@@ -112,6 +113,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
     private String refId;
+
+    /**
+     * in case this sitemap item belongs to an explicit application, like an explicit SPA, this can be stored in the
+     * applicationId. In general this value will be null
+     * Child items will inherit the value from a parent item
+     */
+    private String applicationId;
 
     private String pageTitle;
 
@@ -226,6 +234,12 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_REF_ID)) {
             refId = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_REF_ID));
+        }
+
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_APPLICATION_ID)) {
+            applicationId = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_APPLICATION_ID));
+        } else if (parentItem != null) {
+            applicationId = parentItem.getApplicationId();
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PAGE_TITLE)) {
@@ -635,8 +649,14 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return lockedOn;
     }
 
+    @Override
     public String getRefId() {
         return refId;
+    }
+
+    @Override
+    public String getApplicationId() {
+        return applicationId;
     }
 
     public String getRelativeContentPath() {
