@@ -21,10 +21,11 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
@@ -35,9 +36,15 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.Annotations;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
+
 public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanPropertyWriter {
 
     private static final long serialVersionUID = 1L;
+    public static final String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
+
+    private static Logger log = LoggerFactory.getLogger(HippoBeanLinksVirtualBeanPropertyWriter.class);
 
     @SuppressWarnings("unused")
     public HippoBeanLinksVirtualBeanPropertyWriter() {
@@ -71,7 +78,23 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
         final HstLink selfLink = linkCreator.create(hippoBean.getNode(), selfMount);
 
         if (selfLink!= null && !selfLink.isNotFound()) {
-            linksMap.put(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
+            linksMap.put(LINK_NAME_SELF, selfLink.toUrlForm(requestContext, false));
+
+            // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
+            if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
+                final Mount siteMount = selfMount.getParent();
+                if (siteMount == null) {
+                    log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
+                            "case for '{}'. Cannot add site links", selfMount);
+                } else {
+                    // since the selfLink could be resolved, the site link also must be possible to resolve
+                    final HstLink siteLink = linkCreator.create(hippoBean.getNode(), siteMount);
+                    if (siteLink!= null && !siteLink.isNotFound()) {
+                        linksMap.put(LINK_NAME_SITE, siteLink.toUrlForm(requestContext, false));
+                    }
+                }
+            }
+
         }
 
         return linksMap;

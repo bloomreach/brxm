@@ -32,7 +32,7 @@ public interface MetadataDecorator {
      * @param response HstResponse instance
      * @param metadataModel metadata model object to decorate
      */
-    public void decorateComponentWindowMetadata(HstRequest request, HstResponse response,
+    void decorateComponentWindowMetadata(HstRequest request, HstResponse response,
             MetadataContributable metadataModel);
 
     /**
@@ -41,7 +41,7 @@ public interface MetadataDecorator {
      * @param contentBean content bean object
      * @param metadataModel metadata model object to decorate
      */
-    public void decorateContentMetadata(HstRequestContext requestContext, HippoBean contentBean,
+    void decorateContentMetadata(HstRequestContext requestContext, HippoBean contentBean,
             MetadataContributable metadataModel);
 
 }
