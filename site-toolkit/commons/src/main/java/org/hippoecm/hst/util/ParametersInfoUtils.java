@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,42 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.utils;
+package org.hippoecm.hst.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.hippoecm.hst.util.ParametersInfoUtils;
 
-public class ParameterUtils {
+public class ParametersInfoUtils {
 
-    public static final String PARAMETERS_INFO_ATTRIBUTE = ParameterUtils.class.getName() + ".parametersInfo";
-
-    /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_DATETIME_FORMAT} instead
-     */
-    public static final String ISO_DATETIME_FORMAT = DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT;
+    private static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new DefaultHstParameterValueConverter();
 
     /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_DATE_FORMAT} instead
-     */
-    public static final String ISO_DATE_FORMAT = DefaultHstParameterValueConverter.ISO_DATE_FORMAT;
-
-    /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_TIME_FORMAT} instead
-     */
-    public static final String ISO_TIME_FORMAT = DefaultHstParameterValueConverter.ISO_TIME_FORMAT;
-
-    public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new DefaultHstParameterValueConverter();
-
-    /**
-     * Returns a proxy ParametersInfo object for the component class which resolves parameter from
+     * Creates a proxy ParametersInfo object for the component class which resolves parameter from
      * HstComponentConfiguration : resolved means that possible property placeholders like ${1} or ${year}, where the
      * first refers to the first wildcard matcher in a resolved sitemap item, and the latter to a resolved parameter in
      * the resolved HstSiteMapItem
@@ -61,22 +47,23 @@ public class ParameterUtils {
      *
      * @param component       the HST component with a ParameterInfo annotation
      * @param componentConfig the HST component configuration
-     * @param request         the HST request
+     * @param request         the HttpServletRequest
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getParametersInfo(HstComponent component, final ComponentConfiguration componentConfig, final HstRequest request) {
-        T parametersInfo = (T) request.getAttribute(PARAMETERS_INFO_ATTRIBUTE);
+    public static <T> T createParametersInfo(HstComponent component, final ComponentConfiguration componentConfig,
+            final HttpServletRequest request) {
+        // first, try the new ParametersInfo annotation
+        ParametersInfo annotation = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component,
+                componentConfig);
 
-        if (parametersInfo != null) {
-            return parametersInfo;
+        if (annotation == null) {
+            return null;
         }
 
-        parametersInfo =  ParametersInfoUtils.createParametersInfo(component, componentConfig, request);
-
-        if (parametersInfo != null) {
-            request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
-        }
+        HstParameterInfoProxyFactory parameterInfoProxyFacotory = RequestContextProvider.get()
+                .getParameterInfoProxyFactory();
+        T parametersInfo = parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request,
+                DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
 
         return parametersInfo;
     }
@@ -90,12 +77,23 @@ public class ParameterUtils {
      * @param annotationClass the class of the annotation to find
      * @param <A> the annotation, or null if the annotation could not be found
      * @return
-     * @deprecated Use {@link ParametersInfoUtils#getParameterAnnotation(ParametersInfo, String, Class)}.
      */
-    @Deprecated
     public static <A extends Annotation> A getParameterAnnotation(final ParametersInfo parametersInfo,
-                                                                  final String parameterName,
-                                                                  final Class<A> annotationClass) {
-        return ParametersInfoUtils.getParameterAnnotation(parametersInfo, parameterName, annotationClass);
+            final String parameterName, final Class<A> annotationClass) {
+        if (parametersInfo == null || parameterName == null || annotationClass == null) {
+            return null;
+        }
+
+        final Class<?> paramsInfoClass = parametersInfo.type();
+
+        for (Method method : paramsInfoClass.getMethods()) {
+            final Parameter parameter = method.getAnnotation(Parameter.class);
+
+            if (parameter != null && parameter.name().equals(parameterName)) {
+                return method.getAnnotation(annotationClass);
+            }
+        }
+
+        return null;
     }
 }

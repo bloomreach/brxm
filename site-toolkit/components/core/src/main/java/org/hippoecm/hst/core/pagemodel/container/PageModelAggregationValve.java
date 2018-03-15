@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.pagemodel.container;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseMod
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -70,9 +69,9 @@ public class PageModelAggregationValve extends AggregationValve {
     static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
-     * Page or component parameter map metadata name.
+     * Page or component parameter info metadata name.
      */
-    private static final String PARAMETERS_METADATA = "params";
+    private static final String PARAMETERS_INFO_METADATA = "paramsInfo";
 
     /**
      * Page title metadata name.
@@ -234,7 +233,7 @@ public class PageModelAggregationValve extends AggregationValve {
                             String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
             addComponentRenderingURLLink(hstResponse, currentComponentWindowModel);
-            addParameterMapMetadata(window, currentComponentWindowModel);
+            addParametersInfoMetadata(window, hstRequest, currentComponentWindowModel);
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
@@ -263,22 +262,18 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param window HST Component Window instance
      * @param model the {@link MetadataContributable} model instance where the parameter map should be contributed to
      */
-    private void addParameterMapMetadata(HstComponentWindow window, MetadataContributable model) {
+    private void addParametersInfoMetadata(HstComponentWindow window, HstRequest hstRequest, MetadataContributable model) {
         final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
 
         if (compConfig == null) {
             return;
         }
 
-        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
-        final Map<String, String> params = new LinkedHashMap<>();
+        final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
 
-        for (String paramName : compConfig.getParameterNames()) {
-            String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
-            params.put(paramName, paramValue);
+        if (paramsInfo != null) {
+            model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfo);
         }
-
-        model.putMetadata(PARAMETERS_METADATA, params);
     }
 
     /**
