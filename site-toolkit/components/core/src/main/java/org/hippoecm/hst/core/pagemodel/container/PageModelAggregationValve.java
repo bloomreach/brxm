@@ -294,10 +294,13 @@ public class PageModelAggregationValve extends AggregationValve {
         final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
         pageModel.putLink(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
 
-        final Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
+        final Mount siteMount = selfMount.getParent();
         if (siteMount != null) {
             final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
             pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
+        } else {
+            log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
+                    "case for '{}'. Cannot add site links", selfMount);
         }
     }
 
