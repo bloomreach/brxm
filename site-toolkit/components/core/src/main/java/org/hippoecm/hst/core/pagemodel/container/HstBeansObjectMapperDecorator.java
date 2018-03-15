@@ -95,7 +95,7 @@ class HstBeansObjectMapperDecorator {
     private HstBeansObjectMapperDecorator() {
     }
 
-    static ObjectMapper decorate(final ObjectMapper objectMapper, final Map<Class<?>, Class<?>> extraMixins) {
+    static void decorate(final ObjectMapper objectMapper, final Map<Class<?>, Class<?>> extraMixins) {
         if (defaultMixins != null) {
             defaultMixins.forEach((clazz, mixin) -> {
                 objectMapper.addMixIn(clazz, mixin);
@@ -107,7 +107,5 @@ class HstBeansObjectMapperDecorator {
                 objectMapper.addMixIn(clazz, mixin);
             });
         }
-
-        return objectMapper;
     }
 }

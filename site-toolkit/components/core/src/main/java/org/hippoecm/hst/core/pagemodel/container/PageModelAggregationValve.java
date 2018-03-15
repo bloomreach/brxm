@@ -95,10 +95,8 @@ public class PageModelAggregationValve extends AggregationValve {
     private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
 
     public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
-        objectMapper = HstBeansObjectMapperDecorator.decorate(
-                objectMapperInput.registerModule(
-                        new SimpleModule().setSerializerModifier(new HippoBeanModelsSerializerModifier(metadataDecorators))),
-                extraMixins);
+        objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(new HippoBeanModelsSerializerModifier(metadataDecorators)));
+        HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
     }
 
     /**
