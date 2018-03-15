@@ -250,12 +250,8 @@
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
                 <ref bean="selectiveRenderingContextResolvingValve" />
                 <ref bean="localizationValve" />
-                <ref bean="actionValve" />
-                <ref bean="resourceServingValve" />
                 <ref bean="pageInfoRenderingValve" />
-                <ref bean="esiPageInfoScanningValve" />
                 <ref bean="pageCachingValve"/>
-                <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />
               </list>
             </property>

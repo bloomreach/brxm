@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,14 +39,6 @@ public class SelectiveRenderingContextResolvingValve extends ContextResolvingVal
     protected HstComponentWindow createRootComponentWindow(ValveContext context,
             HstComponentConfiguration rootComponentConfig) {
         HstComponentWindow rootComponentWindow = super.createRootComponentWindow(context, rootComponentConfig);
-
-        final HstRequestContext requestContext = context.getRequestContext();
-        final String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL()
-                .getComponentRenderingWindowReferenceNamespace();
-
-        if (componentRenderingWindowReferenceNamespace != null) {
-            return rootComponentWindow;
-        }
 
         Map<String, HstComponentWindow> childMap = rootComponentWindow.getChildWindowMap();
 
