@@ -153,6 +153,11 @@
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
   </bean>
 
+  <bean id="selectiveRenderingAggregationValve" parent="aggregationValve">
+    <property name="valveName" value="selectiveRenderingAggregationValve" />
+    <property name="componentWindowResponseAppenders" ref="selectiveRenderingComposerComponentWindowResponseAppenders"/>
+  </bean>
+
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
     <property name="valveName" value="resourceServingValve" />
   </bean>
@@ -256,7 +261,7 @@
                 <ref bean="esiPageInfoScanningValve" />
                 <ref bean="pageCachingValve"/>
                 <ref bean="componentRenderingValve" />
-                <ref bean="aggregationValve" />
+                <ref bean="selectiveRenderingAggregationValve" />
               </list>
             </property>
             <property name="cleanupValves">

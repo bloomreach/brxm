@@ -81,5 +81,16 @@
     </property>
   </bean>
 
+  <bean id="selectiveRenderingComposerComponentWindowResponseAppenders"
+        class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
+          <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
+         </bean>
+      </list>
+    </property>
+  </bean>
+
 </beans>
 
