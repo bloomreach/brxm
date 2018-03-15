@@ -19,6 +19,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * Decorator interface to allow custom decorators to add more metadata.
@@ -36,12 +37,11 @@ public interface MetadataDecorator {
 
     /**
      * Decorate the given content bean's {@code metadataModel}.
-     * @param request HstRequest instance
-     * @param response HstResponse instance
+     * @param requestContext HstRequestContext instance
      * @param contentBean content bean object
      * @param metadataModel metadata model object to decorate
      */
-    public void decorateContentMetadata(HstRequest request, HstResponse response, HippoBean contentBean,
+    public void decorateContentMetadata(HstRequestContext requestContext, HippoBean contentBean,
             MetadataContributable metadataModel);
 
 }

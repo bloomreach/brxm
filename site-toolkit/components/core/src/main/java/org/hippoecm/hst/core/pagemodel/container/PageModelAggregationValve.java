@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -40,12 +40,9 @@ import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.pagemodel.model.AggregatedPageModel;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
-import org.hippoecm.hst.core.pagemodel.model.HippoBeanWrapperModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
-import org.hippoecm.hst.core.pagemodel.model.ReferenceMetadataBaseModel;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -55,7 +52,10 @@ import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -67,17 +67,7 @@ public class PageModelAggregationValve extends AggregationValve {
     /**
      * Internal page model attribute name for an <code>HstRequestContext</code> attribute.
      */
-    private static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
-
-    /**
-     * Content JSON Pointer prefix.
-     */
-    private static final String CONTENT_JSON_POINTER_PREFIX = "/content/";
-
-    /**
-     * JSON property name prefix for a UUID-based identifier.
-     */
-    private static final String CONTENT_ID_JSON_NAME_PREFIX = "u";
+    static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
      * Page or component parameter map metadata name.
@@ -97,31 +87,18 @@ public class PageModelAggregationValve extends AggregationValve {
     /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
      */
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     /**
      * Custom metadata decorators.
      */
-    private List<MetadataDecorator> metadataDecorators;
+    private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
 
-    /**
-     * Return the Jackson ObjectMapper used in JSON (de)serialization.
-     * @return the Jackson ObjectMapper used in JSON (de)serialization
-     */
-    public ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
-
-        return objectMapper;
-    }
-
-    /**
-     * Set Jackson ObjectMapper used in JSON (de)serialization.
-     * @param objectMapper Jackson ObjectMapper used in JSON (de)serialization
-     */
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
+        objectMapper = HstBeansObjectMapperDecorator.decorate(
+                objectMapperInput.registerModule(
+                        new SimpleModule().setSerializerModifier(new HippoBeanModelsSerializerModifier(metadataDecorators))),
+                extraMixins);
     }
 
     /**
@@ -135,9 +112,6 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param metadataDecorator custom {@link MetadataDecorator} instance
      */
     public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
-        if (metadataDecorators == null) {
-            metadataDecorators = new ArrayList<>();
-        }
         metadataDecorators.add(metadataDecorator);
     }
 
@@ -151,8 +125,8 @@ public class PageModelAggregationValve extends AggregationValve {
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
             final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-        AggregatedPageModel pageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
-        RequestContextProvider.get().setAttribute(PAGE_MODEL_ATTR_NAME, pageModel);
+        final Object aggregatedPageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
+        RequestContextProvider.get().setAttribute(PAGE_MODEL_ATTR_NAME, aggregatedPageModel);
     }
 
     /**
@@ -165,37 +139,66 @@ public class PageModelAggregationValve extends AggregationValve {
     protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
             throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
+        final AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) requestContext.getAttribute(PAGE_MODEL_ATTR_NAME);
+
+        if (aggregatedPageModel == null) {
+            throw new ContainerException("Page model cannot be null! Page model might not be aggregated for some reason in #processWindowsRender() for some reason.");
+        }
+
         final HttpServletResponse response = requestContext.getServletResponse();
 
         try {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");
 
-            AggregatedPageModel pageModel = (AggregatedPageModel) requestContext.getAttribute(PAGE_MODEL_ATTR_NAME);
+            final ComponentWindowModel pageWindowModel = aggregatedPageModel.getPageWindowModel();
 
-            if (pageModel == null) {
-                throw new ContainerException("Page model cannot be null! Page model might not be aggregated for some reason in #processWindowsRender() for some reason.");
+            if (pageWindowModel != null) {
+                JsonNode pageNode = getObjectMapper().valueToTree(pageWindowModel);
+                aggregatedPageModel.setPageNode(pageNode);
             }
 
-            getObjectMapper().writeValue(response.getWriter(), pageModel);
+            requestContext.setAttribute(HippoBeanSerializer.CONTENT_SECTION_SERIALIZATION_FLAG, Boolean.TRUE);
+
+            if (aggregatedPageModel.hasAnyContent()) {
+                ObjectNode contentNode = getObjectMapper().valueToTree(aggregatedPageModel.getContentMap());
+                unwrapHippoBeanNodes(contentNode);
+                aggregatedPageModel.setContentNode(contentNode);
+            }
+
+            getObjectMapper().writeValue(response.getWriter(), aggregatedPageModel);
         } catch (JsonGenerationException e) {
             throw new ContainerException(e.getMessage(), e);
         } catch (JsonMappingException e) {
             throw new ContainerException(e.getMessage(), e);
         } catch (IOException e) {
             log.warn("Failed to write aggregated page model in json.", e);
+        } finally {
+            requestContext.removeAttribute(HippoBeanSerializer.CONTENT_SECTION_SERIALIZATION_FLAG);
+            requestContext.removeAttribute(PAGE_MODEL_ATTR_NAME);
         }
     }
 
     /**
-     * Create an {@link AggregatedPageModel} instance to write.
+     * Return the Jackson ObjectMapper used in JSON (de)serialization.
+     * @return the Jackson ObjectMapper used in JSON (de)serialization
+     */
+    protected ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    /**
+     * Create an aggregated page model to write.
+     * <p>
+     * Note: if this method is overriden, it is supposed to override {@link #writeAggregatedOutput(ValveContext, HstComponentWindow)}
+     * method as well because the method is reponsible for serializaing the returned object from this method.
      * @param sortedComponentWindows sorted component window array which was sorted by the parent {@link AggregationValve}
      * @param requestMap HST Request map for each {@link HstComponentWindow} instance
      * @param responseMap HST Response map for each {@link HstComponentWindow} instance
-     * @return an {@link AggregatedPageModel} instance to write
+     * @return an aggregated page model to write
      * @throws ContainerException if container exception occurs
      */
-    protected AggregatedPageModel createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
+    protected Object createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
@@ -204,7 +207,8 @@ public class PageModelAggregationValve extends AggregationValve {
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
         final String id = rootWindow.getReferenceNamespace();
 
-        final AggregatedPageModel pageModel = new AggregatedPageModel(id);
+        final AggregatedPageModel aggregatedPageModel = new AggregatedPageModel(id);
+
         final ComponentWindowModel pageWindowModel = new ComponentWindowModel(rootWindow);
 
         final String definitionId = rootWindow.getComponentInfo().getId();
@@ -217,8 +221,8 @@ public class PageModelAggregationValve extends AggregationValve {
             pageWindowModel.putMetadata(PAGE_TITLE_METADATA, pageTitle);
         }
 
-        pageModel.setPage(pageWindowModel);
-        addLinksToPageModel(pageModel);
+        aggregatedPageModel.setPageWindowModel(pageWindowModel);
+        addLinksToPageModel(aggregatedPageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
 
@@ -227,9 +231,9 @@ public class PageModelAggregationValve extends AggregationValve {
             final HstRequest hstRequest = requestMap.get(window);
             final HstResponse hstResponse = responseMap.get(window);
 
-            final ComponentWindowModel currentComponentWindowModel = pageModel.getModel(window.getReferenceNamespace())
-                    .orElseThrow(() ->
-                            new ContainerException(String.format("Expected window for '%s' to be present", window.getReferenceName())));
+            final ComponentWindowModel currentComponentWindowModel = aggregatedPageModel.getModel(window.getReferenceNamespace())
+                    .orElseThrow(() -> new ContainerException(
+                            String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
             addComponentRenderingURLLink(hstResponse, currentComponentWindowModel);
             addParameterMapMetadata(window, currentComponentWindowModel);
@@ -238,26 +242,11 @@ public class PageModelAggregationValve extends AggregationValve {
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
                 final String name = entry.getKey();
                 final Object model = entry.getValue();
-
-                if (model instanceof HippoBean) {
-                    final HippoBean bean = (HippoBean) model;
-                    final String representationId = bean.getRepresentationId();
-                    final String jsonPointerRepresentationId = contentRepresentationIdToJsonName(representationId);
-
-                    final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
-                    pageModel.putContent(jsonPointerRepresentationId, wrapperBeanModel);
-
-                    decorateContentMetadata(hstRequest, hstResponse, bean, wrapperBeanModel);
-
-                    currentComponentWindowModel
-                            .putModel(name, new ReferenceMetadataBaseModel(CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId));
-                } else {
-                    currentComponentWindowModel.putModel(name, model);
-                }
+                currentComponentWindowModel.putModel(name, model);
             }
         }
 
-        return pageModel;
+        return aggregatedPageModel;
     }
 
     /**
@@ -269,16 +258,6 @@ public class PageModelAggregationValve extends AggregationValve {
             IdentifiableLinkableMetadataBaseModel linkableModel) {
         HstURL compRenderURL = hstResponse.createComponentRenderingURL();
         linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL.toString());
-    }
-
-    /**
-     * Convert content representation identifier (e.g, handle ID or node ID) to a safe JSON property/variable name.
-     * @param uuid content identifier
-     * @return a safe JSON property/variable name converted from the handle ID or node ID
-     */
-    private String contentRepresentationIdToJsonName(final String uuid) {
-        return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
-                .toString();
     }
 
     /**
@@ -341,21 +320,19 @@ public class PageModelAggregationValve extends AggregationValve {
         }
     }
 
-    /**
-     * Invoke custom metadata decorators to give a chance to add more metadata for the content bean.
-     * @param hstRequest HstRequest object
-     * @param hstResponse HstResponse object
-     * @param contentBean content bean
-     * @param model MetadataContributable model
+    /*
+     * As @JsonUnwrapped annotation on HippoBeanWrapperModel cannot work due to the custom HippoBeanSerializer,
+     * let's unwrap the hippo bean property here manually.
      */
-    private void decorateContentMetadata(final HstRequest hstRequest, final HstResponse hstResponse,
-            final HippoBean contentBean, MetadataContributable model) {
-        if (CollectionUtils.isEmpty(metadataDecorators)) {
-            return;
-        }
+    private void unwrapHippoBeanNodes(final ObjectNode wrapperContentNode) {
+        for (Iterator<String> it = wrapperContentNode.fieldNames(); it.hasNext();) {
+            final String fieldName = it.next();
+            final ObjectNode contentItem = (ObjectNode) wrapperContentNode.get(fieldName);
 
-        for (MetadataDecorator decorator : metadataDecorators) {
-            decorator.decorateContentMetadata(hstRequest, hstResponse, contentBean, model);
+            if (contentItem.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
+                final ObjectNode beanNode = (ObjectNode) contentItem.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
+                contentItem.setAll(beanNode);
+            }
         }
     }
 }

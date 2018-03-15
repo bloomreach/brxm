@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.pagemodel.model;
+package org.hippoecm.hst.core.pagemodel.container;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,17 +21,26 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
+import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Aggregated page model which represents the whole output in the page model pipeline request processing.
  */
-public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
+@JsonPropertyOrder({ "id", "_meta", "_links", "page", "content" })
+class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
-    private ComponentWindowModel page;
+    private JsonNode pageNode;
+    private JsonNode contentNode;
+
+    private ComponentWindowModel pageWindowModel;
     private Map<String, Object> contentMap;
     private Map<String, ComponentWindowModel> flattened = new HashMap<>();
 
@@ -40,19 +49,40 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     }
 
     @JsonProperty("page")
-    public ComponentWindowModel getPage() {
-        return page;
+    @JsonInclude(Include.NON_NULL)
+    public JsonNode getPageNode() {
+        return pageNode;
     }
 
-    public void setPage(final ComponentWindowModel page) {
-        this.page = page;
-        populateFlattened(page);
+    public void setPageNode(JsonNode pageNode) {
+        this.pageNode = pageNode;
     }
 
-    private void populateFlattened(final ComponentWindowModel model) {
-        flattened.put(model.getId(), model);
+    @JsonProperty("content")
+    @JsonInclude(Include.NON_NULL)
+    public JsonNode getContentNode() {
+        return contentNode;
+    }
 
-        final Set<ComponentWindowModel> components = model.getComponents();
+    public void setContentNode(JsonNode contentNode) {
+        this.contentNode = contentNode;
+    }
+
+    @JsonIgnore
+    public ComponentWindowModel getPageWindowModel() {
+        return pageWindowModel;
+    }
+
+    public void setPageWindowModel(final ComponentWindowModel pageWindowModel) {
+        this.pageWindowModel = pageWindowModel;
+        populateFlattened(pageWindowModel);
+    }
+
+    private void populateFlattened(final ComponentWindowModel pageWindowModel) {
+        flattened.put(pageWindowModel.getId(), pageWindowModel);
+
+        final Set<ComponentWindowModel> components = pageWindowModel.getComponents();
+
         if (components != null) {
             for (ComponentWindowModel child : components) {
                 populateFlattened(child);
@@ -60,8 +90,7 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
         }
     }
 
-    @JsonProperty("content")
-    @JsonInclude(Include.NON_NULL)
+    @JsonIgnore
     public Map<String, Object> getContentMap() {
         return contentMap;
     }
@@ -70,7 +99,13 @@ public class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
         if (contentMap == null) {
             contentMap = new LinkedHashMap<>();
         }
+
         contentMap.put(id, content);
+    }
+
+    @JsonIgnore
+    public boolean hasAnyContent() {
+        return (contentMap != null && !contentMap.isEmpty());
     }
 
     @JsonIgnore

@@ -47,6 +47,7 @@ import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.DOMUtils;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.HeadElementUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -1008,15 +1009,7 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public Comment createComment(String comment) {
-        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder;
-        try {
-            docBuilder = dbfac.newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            return doc.createComment(comment);
-        } catch (ParserConfigurationException e) {
-            throw new DOMException((short) 0, "Initialization failure");
-        }
+        return DOMUtils.createComment(comment);
     }
 
     protected void setResponseLocale(Locale locale) {

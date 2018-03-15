@@ -27,24 +27,6 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator"
-        class="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator">
-    <property name="extraMixins" ref="pageModelJacksonObjectMapperExtraMixins" />
-  </bean>
-
-  <bean id="pageModelJacksonObjectMapper"
-        class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
-    <property name="targetObject" ref="org.hippoecm.hst.core.pagemodel.container.HstBeansObjectMapperDecorator" />
-    <property name="targetMethod" value="decorate" />
-    <property name="arguments">
-      <list>
-        <bean class="com.fasterxml.jackson.databind.ObjectMapper">
-        </bean>
-      </list>
-    </property>
-  </bean>
-
   <bean id="pageModelComponentWindowResponseAppender"
         class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
     <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
@@ -58,11 +40,15 @@
     </property>
   </bean>
 
+  <bean id="pageModelAggregationObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+  </bean>
+
   <bean id="pageModelAggregationValve" parent="aggregationValve"
         class="org.hippoecm.hst.core.pagemodel.container.PageModelAggregationValve">
+    <constructor-arg ref="pageModelAggregationObjectMapper" />
+    <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins" />
     <property name="valveName" value="pageModelAggregationValve"/>
     <property name="componentWindowResponseAppenders" ref="pageModelComponentWindowResponseAppenders" />
-    <property name="objectMapper" ref="pageModelJacksonObjectMapper" />
   </bean>
 
   <bean id="pageModelPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">

@@ -62,14 +62,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * {@link ObjectMapper} decorator with mixins, supposed to be configured in an Spring bean assembly.
  */
-public class HstBeansObjectMapperDecorator {
+class HstBeansObjectMapperDecorator {
 
-    private Map<Class<?>, Class<?>> defaultMixins;
-    private Map<Class<?>, Class<?>> extraMixins;
+    private static final Map<Class<?>, Class<?>> defaultMixins = new LinkedHashMap<>();
 
-    public HstBeansObjectMapperDecorator() {
-        defaultMixins = new LinkedHashMap<>();
-
+    static {
         defaultMixins.put(Session.class, DefaultJsonIgnoreTypeMixin.class);
         defaultMixins.put(Node.class, DefaultJsonIgnoreTypeMixin.class);
 
@@ -95,23 +92,10 @@ public class HstBeansObjectMapperDecorator {
         defaultMixins.put(CommonMenu.class, CommonMenuMixin.class);
     }
 
-    public Map<Class<?>, Class<?>> getDefaultMixins() {
-        return defaultMixins;
+    private HstBeansObjectMapperDecorator() {
     }
 
-    public void setDefaultMixins(Map<Class<?>, Class<?>> defaultMixins) {
-        this.defaultMixins = defaultMixins;
-    }
-
-    public Map<Class<?>, Class<?>> getExtraMixins() {
-        return extraMixins;
-    }
-
-    public void setExtraMixins(Map<Class<?>, Class<?>> extraMixins) {
-        this.extraMixins = extraMixins;
-    }
-
-    public ObjectMapper decorate(final ObjectMapper objectMapper) {
+    static ObjectMapper decorate(final ObjectMapper objectMapper, final Map<Class<?>, Class<?>> extraMixins) {
         if (defaultMixins != null) {
             defaultMixins.forEach((clazz, mixin) -> {
                 objectMapper.addMixIn(clazz, mixin);

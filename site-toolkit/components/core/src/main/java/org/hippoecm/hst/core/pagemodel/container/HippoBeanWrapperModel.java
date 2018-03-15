@@ -13,16 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.pagemodel.model;
+package org.hippoecm.hst.core.pagemodel.container;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * HippoBean Wrapper Model to include properties of the unwrapped {@code bean} as well as links and metadata.
  */
-public class HippoBeanWrapperModel extends IdentifiableLinkableMetadataBaseModel {
+class HippoBeanWrapperModel extends IdentifiableLinkableMetadataBaseModel {
+
+    static final String HIPPO_BEAN_PROP = "bean";
 
     private final HippoBean bean;
 
@@ -31,7 +34,8 @@ public class HippoBeanWrapperModel extends IdentifiableLinkableMetadataBaseModel
         this.bean = bean;
     }
 
-    @JsonUnwrapped
+    //@JsonUnwrapped not working as HippoBeanSerializer does a custom serialization.
+    @JsonProperty(HIPPO_BEAN_PROP)
     public HippoBean getBean() {
         return bean;
     }
