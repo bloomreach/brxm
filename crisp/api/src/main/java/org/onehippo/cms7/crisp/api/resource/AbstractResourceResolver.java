@@ -147,4 +147,12 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
     public ResourceBeanMapper getResourceBeanMapper() throws ResourceException {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getResourceBackendOperations() throws ResourceException {
+        throw new UnsupportedOperationException();
+    }
 }

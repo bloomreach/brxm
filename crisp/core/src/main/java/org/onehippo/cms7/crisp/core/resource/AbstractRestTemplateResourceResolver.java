@@ -193,6 +193,11 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         return binary;
     }
 
+    @Override
+    public Object getResourceBackendOperations() throws ResourceException {
+        return restTemplate;
+    }
+
     /**
      * Create a new default {@link RestTemplate} if {@link #restTemplate} was not set.
      * @return a new default {@link RestTemplate} if {@link #restTemplate} was not set

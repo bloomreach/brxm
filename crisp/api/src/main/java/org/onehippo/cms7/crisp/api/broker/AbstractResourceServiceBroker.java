@@ -182,6 +182,17 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
         return null;
     }
 
+    @Override
+    public Object getResourceBackendOperations(String resourceSpace) throws ResourceException {
+        ResourceResolver resolver = getResourceResolver(resourceSpace);
+
+        if (resolver != null) {
+            return resolver.getResourceBackendOperations();
+        }
+
+        return null;
+    }
+
     /**
      * Finds and returns a {@link ResourceResolver} by the specified {@code resourceSpace}.
      * @param resourceSpace resource space name
