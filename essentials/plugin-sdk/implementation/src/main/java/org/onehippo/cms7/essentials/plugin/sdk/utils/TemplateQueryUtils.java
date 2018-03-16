@@ -45,7 +45,7 @@ public class TemplateQueryUtils {
     private static Logger log = LoggerFactory.getLogger(GalleryUtils.class);
 
     public static boolean createDocumentTemplateQuery(final JcrService jcrService, final String projectNamespace,
-                                               final String documentName) {
+                                                      final String documentName) {
         final Session session = jcrService.createSession();
 
         try {
@@ -55,7 +55,6 @@ public class TemplateQueryUtils {
                 return false;
             }
             final Node templateQueryNode = JcrUtils.getOrCreateByPath(nodePath, "hippostd:templatequery", session);
-            templateQueryNode.setProperty("hippostd:icon", "adddocument_ico"); // TODO: necessary?
             templateQueryNode.setProperty("hippostd:modify", MODIFY_VALUES_DOCUMENT);
             templateQueryNode.setProperty("jcr:language", "xpath");
             templateQueryNode.setProperty("jcr:statement", String.format(XPATH_QUERY_DOCUMENT, projectNamespace, documentName));
@@ -71,7 +70,8 @@ public class TemplateQueryUtils {
         return false;
     }
 
-    public static boolean createFolderTemplateQuery(final JcrService jcrService, final String projectNamespace, final String documentName) {
+    public static boolean createFolderTemplateQuery(final JcrService jcrService, final String projectNamespace,
+                                                    final String documentName) {
         final Session session = jcrService.createSession();
 
         try {
@@ -98,7 +98,6 @@ public class TemplateQueryUtils {
             throws RepositoryException {
 
         final Node templateQueryNode = JcrUtils.getOrCreateByPath(nodePath, "hippostd:templatequery", session);
-        templateQueryNode.setProperty("hippostd:icon", "adddocument_ico"); // TODO: necessary?
         templateQueryNode.setProperty("hippostd:modify", MODIFY_VALUES_FOLDER);
         templateQueryNode.setProperty("jcr:language", "xpath");
         templateQueryNode.setProperty("jcr:statement", String.format(XPATH_QUERY_FOLDER, documentName));
