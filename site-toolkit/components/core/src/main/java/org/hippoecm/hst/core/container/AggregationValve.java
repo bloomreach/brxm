@@ -73,6 +73,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         this.componentWindowResponseAppenders = componentWindowResponseAppenders;
     }
 
+    List<ComponentWindowResponseAppender> getComponentWindowResponseAppenders() {
+        return componentWindowResponseAppenders;
+    }
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HstRequestContext requestContext = context.getRequestContext();
