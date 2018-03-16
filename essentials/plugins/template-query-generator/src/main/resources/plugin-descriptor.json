@@ -1,7 +1,7 @@
 {
   "id": "templatequerygenerator",
   "name": "Template Query Generator",
-  "icon": "/essentials/tool/images/bean-writer-icon.png",
+  "icon": "/essentials/tool/images/template-query-generator-icon.svg",
   "introduction": "Generate template queries for documents and document folders.",
   "restClasses": [
     "org.onehippo.cms7.essentials.templatequery.rest.TemplateQueryGeneratorResource"
