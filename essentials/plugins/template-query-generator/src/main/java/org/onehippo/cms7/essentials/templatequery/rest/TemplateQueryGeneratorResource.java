@@ -60,18 +60,24 @@ public class TemplateQueryGeneratorResource {
 
     @POST
     public UserFeedback createTemplateQuery(final TemplateQueryData data) throws Exception {
+        final List<String> scopes = data.getScopes();
+        if (scopes == null || scopes.isEmpty()) {
+            return UserFeedback.error("No scope(s) provided");
+        }
+
+        final List<ContentType> contentTypes = data.getContentTypes();
+        if (contentTypes == null || contentTypes.isEmpty()) {
+            return UserFeedback.error("No content-type(s) provided");
+        }
+
         final UserFeedback feedback = new UserFeedback();
-        final List<String> scope = data.getScope();
-        if (scope == null || scope.isEmpty()) {
-            feedback.addError("No scope provided");
-        } else {
-            final ContentType contentType = data.getContentType();
+        for (final ContentType contentType : contentTypes) {
             final String prefix = contentType.getPrefix();
             final String name = contentType.getName();
-            if (scope.contains(DOCUMENT_SCOPE)) {
+            if (scopes.contains(DOCUMENT_SCOPE)) {
                 generateDocumentTemplateQuery(feedback, prefix, name);
             }
-            if (scope.contains(FOLDER_SCOPE)) {
+            if (scopes.contains(FOLDER_SCOPE)) {
                 generateFolderTemplateQuery(feedback, prefix, name);
             }
         }

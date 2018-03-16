@@ -21,22 +21,22 @@ import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 
 public class TemplateQueryData {
 
-    private List<String> scope;
-    private ContentType contentType;
+    private List<String> scopes;
+    private List<ContentType> contentTypes;
 
-    public List<String> getScope() {
-        return scope;
+    public List<String> getScopes() {
+        return scopes;
     }
 
-    public void setScope(final List<String> scope) {
-        this.scope = scope;
+    public void setScopes(final List<String> scopes) {
+        this.scopes = scopes;
     }
 
-    public ContentType getContentType() {
-        return contentType;
+    public List<ContentType> getContentTypes() {
+        return contentTypes;
     }
 
-    public void setContentType(final ContentType contentType) {
-        this.contentType = contentType;
+    public void setContentTypes(final List<ContentType> contentTypes) {
+        this.contentTypes = contentTypes;
     }
 }

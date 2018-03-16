@@ -23,26 +23,29 @@
 
             $scope.identity = angular.identity; // for sorting
 
-            var generateTemplateQuery = function(parameters) {
+            var generateTemplateQueries = function(parameters) {
               $http.post($scope.endpoint, parameters)
                 .success(function (data) { });
             };
 
             $scope.generateAllTemplateQueries = function () {
-                console.log('run template query generator', $scope.contentTypes);
+                generateTemplateQueries({
+                    contentTypes: $scope.contentTypes,
+                    scopes: ['document', 'folder']
+                });
             };
 
             $scope.generateDocumentTemplateQuery = function(contentType) {
-              generateTemplateQuery({
-                contentType: contentType,
-                scope: ['document']
+              generateTemplateQueries({
+                contentTypes: [contentType],
+                scopes: ['document']
               });
             };
 
             $scope.generateFolderTemplateQuery = function(contentType) {
-              generateTemplateQuery({
-                contentType: contentType,
-                scope: ['folder']
+              generateTemplateQueries({
+                contentTypes: [contentType],
+                scopes: ['folder']
               });
             };
 
