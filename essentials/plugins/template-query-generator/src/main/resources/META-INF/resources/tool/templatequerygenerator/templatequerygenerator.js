@@ -23,21 +23,31 @@
 
             $scope.identity = angular.identity; // for sorting
 
+            var generateTemplateQuery = function(parameters) {
+              $http.post($scope.endpoint, parameters)
+                .success(function (data) { });
+            };
+
             $scope.generateAllTemplateQueries = function () {
-                console.log('run template query generator', $scope.documentTypes);
-                // $http.post($scope.endpoint, parameters).success(function (data) { });
+                console.log('run template query generator', $scope.contentTypes);
             };
 
-            $scope.generateDocumentTemplateQuery = function(documentType) {
-              console.log('generate document template query', documentType);
+            $scope.generateDocumentTemplateQuery = function(contentType) {
+              generateTemplateQuery({
+                contentType: contentType,
+                scope: ['document']
+              });
             };
 
-            $scope.generateDocumentFolderTemplateQuery = function(documentType) {
-              console.log('generate document folder template query', documentType);
+            $scope.generateFolderTemplateQuery = function(contentType) {
+              generateTemplateQuery({
+                contentType: contentType,
+                scope: ['folder']
+              });
             };
 
-            $http.get($scope.endpoint + "/documenttypes").success(function (data) {
-                $scope.documentTypes = data;
+            $http.get($scope.endpoint + "/contenttypes").success(function (data) {
+                $scope.contentTypes = data;
             });
         })
 })();
