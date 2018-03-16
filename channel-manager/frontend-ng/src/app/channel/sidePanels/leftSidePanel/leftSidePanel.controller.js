@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,21 @@
 
 class LeftSidePanelCtrl {
   constructor(
-    $scope,
     $element,
-    SidePanelService,
+    $scope,
     CatalogService,
-    SiteMapService,
-    HippoIframeService,
     ChannelService,
+    SidePanelService,
+    SiteMapService,
   ) {
     'ngInject';
 
-    this.$scope = $scope;
     this.$element = $element;
+    this.$scope = $scope;
     this.CatalogService = CatalogService;
+    this.ChannelService = ChannelService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
-    this.HippoIframeService = HippoIframeService;
-    this.SiteMapService = SiteMapService;
-    this.ChannelService = ChannelService;
   }
 
   $postLink() {
@@ -53,20 +50,8 @@ class LeftSidePanelCtrl {
     return this.CatalogService.getComponents();
   }
 
-  getSiteMap() {
+  getSiteMapItems() {
     return this.SiteMapService.get();
-  }
-
-  getSiteMapItemHash(item) {
-    return `${item.pathInfo}\0${item.pageTitle || item.name}`;
-  }
-
-  showPage(siteMapItem) {
-    this.HippoIframeService.load(siteMapItem.renderPathInfo);
-  }
-
-  isActiveSiteMapItem(siteMapItem) {
-    return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 
   isSidePanelLifted() {
