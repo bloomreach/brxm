@@ -2,9 +2,9 @@
   "id": "templatequerygenerator",
   "name": "Template Query Generator",
   "icon": "/essentials/tool/images/bean-writer-icon.png",
-  "introduction": "Generate Template Queries for documents and document folders.",
+  "introduction": "Generate template queries for documents and document folders.",
   "restClasses": [
-    "org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"
+    "org.onehippo.cms7.essentials.templatequery.rest.TemplateQueryGeneratorResource"
   ],
   "categories": {
     "application": [
