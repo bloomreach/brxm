@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
-
 /**
  * This is a marker interface for all beans that represent a document. When developers implement their own bean which
  * does not extend the standard HippoDocument bean, they should implement this interface. This ensures that linkrewriting
@@ -60,6 +58,10 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
 
     @Override
     default String getRepresentationId() {
-        return getCanonicalHandleUUID();
+        String canonicalHandleUUID = getCanonicalHandleUUID();
+        if (canonicalHandleUUID != null) {
+            return canonicalHandleUUID;
+        }
+        return getIdentifier();
     }
 }
