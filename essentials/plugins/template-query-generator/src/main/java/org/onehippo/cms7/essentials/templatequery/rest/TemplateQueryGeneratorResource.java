@@ -85,7 +85,7 @@ public class TemplateQueryGeneratorResource {
     }
 
     private void generateFolderTemplateQuery(final UserFeedback feedback, final String prefix, final String name) {
-        if (TemplateQueryUtils.createFolderTemplateQuery(jcrService, prefix, name)) {
+        if (TemplateQueryUtils.createFolderTemplateQuery(jcrService, name)) {
             feedback.addSuccess("Folder template query created for " + prefix + ":" + name);
         } else {
             feedback.addError("Failed to generate folder template query for " + prefix + ":" + name);
