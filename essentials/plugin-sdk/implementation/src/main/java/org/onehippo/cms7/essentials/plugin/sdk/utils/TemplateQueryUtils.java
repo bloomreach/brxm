@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -28,15 +29,17 @@ import org.slf4j.LoggerFactory;
 public class TemplateQueryUtils {
 
     public static final String TEMPLATE_QUERIES_ROOTPATH = "/hippo:configuration/hippo:queries/hippo:templates";
+    public static final String TEMPLATE_QUERIES_EN_TRANSLATIONS_PATH =
+            "/hippo:configuration/hippo:translations/hippo:templates/en";
     public static final String DOCUMENT_NAME = "new-%s-document";
     public static final String FOLDER_NAME = "new-%s-folder";
     public static final String XPATH_QUERY_DOCUMENT = "//element(*,hipposysedit:namespacefolder)" +
             "/element(*,mix:referenceable)" +
             "/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,%s:%s)";
-    public static final String[] MODIFY_VALUES_DOCUMENT = {"./_name", "$name", "./hippotranslation:locale", "$inherited",
-            "./hippotranslation:id", "$uuid", "./hippostdpubwf:createdBy", "$holder", "./hippostdpubwf:creationDate",
-            "$now", "./hippostdpubwf:lastModifiedBy", "$holder", "./hippostdpubwf:lastModificationDate", "$now",
-            "./hippostd:holder", "$holder"};
+    public static final String[] MODIFY_VALUES_DOCUMENT = {"./_name", "$name", "./hippotranslation:locale",
+            "$inherited", "./hippotranslation:id", "$uuid", "./hippostdpubwf:createdBy", "$holder",
+            "./hippostdpubwf:creationDate", "$now", "./hippostdpubwf:lastModifiedBy", "$holder",
+            "./hippostdpubwf:lastModificationDate", "$now", "./hippostd:holder", "$holder"};
     public static final String XPATH_QUERY_FOLDER = "/jcr:root/hippo:configuration/hippo:queries/hippo:templates/" +
             "new-%s-folder/hippostd:templates/node()";
     public static final String[] MODIFY_VALUES_FOLDER = {"./_name", "$name", "./hippotranslation:id", "$uuid",
@@ -54,10 +57,7 @@ public class TemplateQueryUtils {
                 log.warn("Node already exists at path '{}'", nodePath);
                 return false;
             }
-            final Node templateQueryNode = JcrUtils.getOrCreateByPath(nodePath, "hippostd:templatequery", session);
-            templateQueryNode.setProperty("hippostd:modify", MODIFY_VALUES_DOCUMENT);
-            templateQueryNode.setProperty("jcr:language", "xpath");
-            templateQueryNode.setProperty("jcr:statement", String.format(XPATH_QUERY_DOCUMENT, projectNamespace, documentName));
+            createDocumentTemplateQueryNode(session, nodePath, projectNamespace, documentName);
 
             session.save();
             return true;
@@ -70,8 +70,18 @@ public class TemplateQueryUtils {
         return false;
     }
 
-    public static boolean createFolderTemplateQuery(final JcrService jcrService, final String projectNamespace,
-                                                    final String documentName) {
+    private static void createDocumentTemplateQueryNode(final Session session, final String nodePath,
+                                                        final String projectNamespace, final String documentName)
+            throws RepositoryException {
+        final Node templateQueryNode = JcrUtils.getOrCreateByPath(nodePath, "hippostd:templatequery", session);
+        templateQueryNode.setProperty("hippostd:modify", MODIFY_VALUES_DOCUMENT);
+        templateQueryNode.setProperty("jcr:language", "xpath");
+        templateQueryNode.setProperty("jcr:statement", String.format(XPATH_QUERY_DOCUMENT, projectNamespace, documentName));
+
+        addTemplateTranslation(session, String.format(DOCUMENT_NAME, documentName));
+    }
+
+    public static boolean createFolderTemplateQuery(final JcrService jcrService, final String documentName) {
         final Session session = jcrService.createSession();
 
         try {
@@ -80,7 +90,7 @@ public class TemplateQueryUtils {
                 log.warn("Node already exists at path '{}'", nodePath);
                 return false;
             }
-            createFolderTemplateQueryNodes(session, nodePath, projectNamespace, documentName);
+            createFolderTemplateQueryNodes(session, nodePath, documentName);
 
             session.save();
             return true;
@@ -94,9 +104,7 @@ public class TemplateQueryUtils {
     }
 
     private static void createFolderTemplateQueryNodes(final Session session, final String nodePath,
-                                                final String projectNamespace, final String documentName)
-            throws RepositoryException {
-
+                                                       final String documentName) throws RepositoryException {
         final Node templateQueryNode = JcrUtils.getOrCreateByPath(nodePath, "hippostd:templatequery", session);
         templateQueryNode.setProperty("hippostd:modify", MODIFY_VALUES_FOLDER);
         templateQueryNode.setProperty("jcr:language", "xpath");
@@ -110,6 +118,20 @@ public class TemplateQueryUtils {
         folderNode.setProperty("hippotranslation:locale", "inherited locale");
         String[] folderTypes = {String.format(DOCUMENT_NAME, documentName), String.format(FOLDER_NAME, documentName)};
         folderNode.setProperty("hippostd:foldertype", folderTypes);
+
+        addTemplateTranslation(session, String.format(FOLDER_NAME, documentName));
+    }
+
+    private static void addTemplateTranslation(final Session session, final String propertyName)
+            throws RepositoryException {
+        try {
+            final Node translationsNode = session.getNode(TEMPLATE_QUERIES_EN_TRANSLATIONS_PATH);
+            if (!translationsNode.hasProperty(propertyName)) {
+                translationsNode.setProperty(propertyName, propertyName.replaceAll("-", " "));
+            }
+        } catch (PathNotFoundException e) {
+            log.warn("Translations node for template queries '{}' not found.", TEMPLATE_QUERIES_EN_TRANSLATIONS_PATH);
+        }
     }
 
 }
