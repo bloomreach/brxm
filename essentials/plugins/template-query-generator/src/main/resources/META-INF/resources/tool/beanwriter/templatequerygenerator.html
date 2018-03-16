@@ -1,0 +1,50 @@
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default" ng-controller="beanWriterCtrl">
+  <div class="panel-heading"><h3>Generate document and document folder Template Queries.</h3></div>
+  <div class="panel-body">
+    <p>
+      The Template Query Generator generates template queries for documents and/or document folders.
+    </p>
+    <div ng-show="imageSets.length > 1">
+      <p>
+        <strong>Use the following Image Set for
+          <span class="alert-info">new methods</span> that return image types:</strong>
+      </p>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="image in imageSets | orderBy:identity" ng-switch="image==selectedImageSet">
+          <label>
+            <input type="radio" name="selectedImage" ng-model="$parent.selectedImageSet" ng-value="image"/>
+            <strong ng-switch-when="true">{{image}}</strong>
+            <span ng-switch-default>{{image}}</span>
+          </label>
+        </li>
+      </ul>
+      <p>
+        <label>
+          <input type="checkbox" ng-model="updateImageMethods"/>
+          Update <span class="alert-info">existing</span> methods so they will use the selected imageset too.
+        </label>
+      </p>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <button class="btn btn-primary" ng-click="runBeanWriter()">Generate Template Queries</button>
+  </div>
+</div>
+
+

@@ -164,6 +164,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-template-query-generator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-rest-services</artifactId>
       <version>${project.version}</version>
     </dependency>
