@@ -44,6 +44,7 @@ import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseMod
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +70,9 @@ public class PageModelAggregationValve extends AggregationValve {
     static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
-     * Page or component parameter info metadata name.
+     * Page or component parameter metadata name.
      */
-    private static final String PARAMETERS_INFO_METADATA = "paramsInfo";
+    private static final String PARAMETERS_METADATA = "params";
 
     /**
      * Page title metadata name.
@@ -269,11 +270,31 @@ public class PageModelAggregationValve extends AggregationValve {
             return;
         }
 
+        final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
+        final ObjectNode paramsNode = getObjectMapper().getNodeFactory().objectNode();
+
+        // Let's add resolved parameters from the low-level HST API without depending on ParametersInfo annotation first.
+        for (String paramName : compConfig.getParameterNames()) {
+            final String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
+
+            if (paramValue != null) {
+                paramsNode.put(paramName, paramValue);
+            }
+        }
+
+        // If annotated by ParametersInfo, let's merge it to paramsNode as well.
         final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
 
         if (paramsInfo != null) {
-            model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfo);
+            try {
+                ObjectNode paramsInfoNode = (ObjectNode) getObjectMapper().valueToTree(paramsInfo);
+                paramsNode.setAll(paramsInfoNode);
+            } catch (Exception e) {
+                log.warn("Failed to convert ParametersInfo instance ({}) to ObjectNode.", paramsInfo, e);
+            }
         }
+
+        model.putMetadata(PARAMETERS_METADATA, paramsNode);
     }
 
     /**
