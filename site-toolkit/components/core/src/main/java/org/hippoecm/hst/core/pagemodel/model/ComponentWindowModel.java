@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.pagemodel.model;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         final Map<String, HstComponentWindow> childComponentWindows = window.getChildWindowMap();
 
         if (!childComponentWindows.isEmpty()) {
-            components = new HashSet<>();
+            components = new LinkedHashSet<>();
 
             for (HstComponentWindow child : childComponentWindows.values()) {
                 components.add(new ComponentWindowModel(child));
