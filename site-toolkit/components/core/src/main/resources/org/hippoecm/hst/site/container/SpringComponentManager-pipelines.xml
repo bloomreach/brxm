@@ -147,23 +147,30 @@
     <property name="pageCache" ref="pageCache"/>
   </bean>
 
+  <bean id="defaultAggregationValveComposerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <ref bean="composerComponentWindowResponseAppenders" />
+    </property>
+  </bean>
+
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Boolean"/>
+    <property name="targetObject" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.autoreload.AutoReloadResponseAppender"/>
+    </property>
+  </bean>
+
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
-    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
-  </bean>
-
-  <bean id="selectiveRenderingComposerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <list>
-        <ref bean="selectiveRenderingComposerComponentWindowResponseAppender" />
-      </list>
-    </property>
+    <property name="componentWindowResponseAppenders" ref="extendedComposerComponentWindowResponseAppenders"/>
   </bean>
 
   <bean id="selectiveRenderingAggregationValve" parent="aggregationValve">
     <property name="valveName" value="selectiveRenderingAggregationValve" />
-    <property name="componentWindowResponseAppenders" ref="selectiveRenderingComposerComponentWindowResponseAppenders"/>
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
   </bean>
 
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">

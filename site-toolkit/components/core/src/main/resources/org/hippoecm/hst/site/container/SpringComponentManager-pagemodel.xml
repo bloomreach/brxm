@@ -27,14 +27,6 @@
     </property>
   </bean>
 
-  <bean id="pageModelComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <list>
-        <ref bean="pageModelComponentWindowResponseAppender" />
-      </list>
-    </property>
-  </bean>
-
   <bean id="pageModelAggregationObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
   </bean>
 
@@ -43,7 +35,7 @@
     <constructor-arg ref="pageModelAggregationObjectMapper" />
     <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins" />
     <property name="valveName" value="pageModelAggregationValve"/>
-    <property name="componentWindowResponseAppenders" ref="pageModelComponentWindowResponseAppenders" />
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders" />
   </bean>
 
   <bean id="pageModelPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
