@@ -105,6 +105,7 @@ public class TemplateQueryUtils {
         final Node templatesNode = templateQueryNode.addNode("hippostd:templates", "hippostd:templates");
 
         final Node folderNode = templatesNode.addNode("hippostd:folder", "hippostd:folder");
+        folderNode.addMixin("hippotranslation:translated");
         folderNode.setProperty("hippotranslation:id", "generated id");
         folderNode.setProperty("hippotranslation:locale", "inherited locale");
         String[] folderTypes = {String.format(DOCUMENT_NAME, documentName), String.format(FOLDER_NAME, documentName)};
