@@ -75,6 +75,11 @@ public class PageModelAggregationValve extends AggregationValve {
     private static final String PARAMETERS_METADATA = "params";
 
     /**
+     * Page or component parametersInfo metadata name.
+     */
+    private static final String PARAMETERS_INFO_METADATA = "paramsInfo";
+
+    /**
      * Page title metadata name.
      */
     private static final String PAGE_TITLE_METADATA = "pageTitle";
@@ -270,6 +275,19 @@ public class PageModelAggregationValve extends AggregationValve {
             return;
         }
 
+        // If annotated by ParametersInfo, let's merge it to paramsNode as well.
+        final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
+        JsonNode paramsInfoNode = null;
+
+        if (paramsInfo != null) {
+            try {
+                paramsInfoNode = getObjectMapper().valueToTree(paramsInfo);
+                model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfoNode);
+            } catch (Exception e) {
+                log.warn("Failed to convert ParametersInfo instance ({}) to ObjectNode.", paramsInfo, e);
+            }
+        }
+
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
         final ObjectNode paramsNode = getObjectMapper().getNodeFactory().objectNode();
 
@@ -279,18 +297,6 @@ public class PageModelAggregationValve extends AggregationValve {
 
             if (paramValue != null) {
                 paramsNode.put(paramName, paramValue);
-            }
-        }
-
-        // If annotated by ParametersInfo, let's merge it to paramsNode as well.
-        final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
-
-        if (paramsInfo != null) {
-            try {
-                ObjectNode paramsInfoNode = (ObjectNode) getObjectMapper().valueToTree(paramsInfo);
-                paramsNode.setAll(paramsInfoNode);
-            } catch (Exception e) {
-                log.warn("Failed to convert ParametersInfo instance ({}) to ObjectNode.", paramsInfo, e);
             }
         }
 
