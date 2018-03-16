@@ -38,7 +38,6 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.Annotations;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_TYPE;
 
@@ -81,8 +80,6 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
         final HstLink selfLink = linkCreator.create(hippoBean.getNode(), selfMount);
 
         if (selfLink!= null && !selfLink.isNotFound()) {
-            linksMap.put(LINK_NAME_SELF, selfLink.toUrlForm(requestContext, false));
-
             // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
             if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
                 final Mount siteMount = selfMount.getParent();
