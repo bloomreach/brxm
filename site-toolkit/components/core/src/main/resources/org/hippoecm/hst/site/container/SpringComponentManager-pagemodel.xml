@@ -27,11 +27,6 @@
     </property>
   </bean>
 
-  <bean id="pageModelComponentWindowResponseAppender"
-        class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender">
-    <property name="attributeContributors" ref="cmsComponentAttributeContributors"/>
-  </bean>
-
   <bean id="pageModelComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>

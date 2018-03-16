@@ -153,6 +153,14 @@
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
   </bean>
 
+  <bean id="selectiveRenderingComposerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <ref bean="selectiveRenderingComposerComponentWindowResponseAppender" />
+      </list>
+    </property>
+  </bean>
+
   <bean id="selectiveRenderingAggregationValve" parent="aggregationValve">
     <property name="valveName" value="selectiveRenderingAggregationValve" />
     <property name="componentWindowResponseAppenders" ref="selectiveRenderingComposerComponentWindowResponseAppenders"/>
