@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.templatequery.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -26,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateQueryUtils;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
@@ -95,6 +97,13 @@ public class TemplateQueryGeneratorResource {
     @GET
     @Path("/contenttypes")
     public List<ContentType> getContentTypes() throws Exception {
-        return contentTypeService.fetchContentTypesFromOwnNamespace();
+        return contentTypeService.fetchContentTypesFromOwnNamespace()
+                .stream().filter(this::isRelaxed)
+                .collect(Collectors.toList());
+    }
+
+    private boolean isRelaxed(final ContentType contentType) {
+        return contentType.getSuperTypes() != null
+                && contentType.getSuperTypes().contains(HippoStdNodeType.NT_RELAXED);
     }
 }
