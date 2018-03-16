@@ -32,7 +32,7 @@
     <thead>
       <tr>
         <th>Document Type</th>
-        <th>Actions</th>
+        <th>Generate Template Query</th>
       </tr>
     </thead>
     <tbody>
@@ -40,17 +40,17 @@
         <td>{{::tplQuery.contentType.name}}</td>
         <td>
           <button class="btn btn-disabled" ng-if="tplQuery.documentQueryExists" disabled>
-            <span class="glyphicon glyphicon-file"></span> Document Query
+            <span class="glyphicon glyphicon-file"></span> Document
           </button>
           <button class="btn btn-primary" ng-if="!tplQuery.documentQueryExists" ng-click="generateDocumentTemplateQuery(tplQuery.contentType)" title="Generate document template query">
-            <span class="glyphicon glyphicon-file"></span> Document Query
+            <span class="glyphicon glyphicon-file"></span> Document
           </button>
           &#160;
           <button class="btn btn-disabled" ng-if="tplQuery.folderQueryExists" disabled>
-            <span class="glyphicon glyphicon-folder-close"></span> Folder Query
+            <span class="glyphicon glyphicon-folder-close"></span> Folder
           </button>
           <button class="btn btn-primary" ng-if="!tplQuery.folderQueryExists" ng-click="generateFolderTemplateQuery(tplQuery.contentType)" title="Generate folder template query">
-            <span class="glyphicon glyphicon-folder-close"></span> Folder Query
+            <span class="glyphicon glyphicon-folder-close"></span> Folder
           </button>
         </td>
       </tr>
