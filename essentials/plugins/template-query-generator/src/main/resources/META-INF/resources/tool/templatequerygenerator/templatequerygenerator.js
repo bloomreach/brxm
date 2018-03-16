@@ -23,14 +23,22 @@
 
             $scope.identity = angular.identity; // for sorting
 
+            var loadTemplateQueries = function() {
+              $http.get($scope.endpoint + "/templatequeries").success(function (data) {
+                $scope.tplQueries = data;
+              });
+            };
+
             var generateTemplateQueries = function(parameters) {
               $http.post($scope.endpoint, parameters)
-                .success(function (data) { });
+                .success(function (data) {
+                  loadTemplateQueries();
+                });
             };
 
             $scope.generateAllTemplateQueries = function () {
                 generateTemplateQueries({
-                    contentTypes: $scope.contentTypes,
+                    contentTypes: $scope.tplQueries.map(tplQuery => tplQuery.contentType),
                     scopes: ['document', 'folder']
                 });
             };
@@ -49,8 +57,6 @@
               });
             };
 
-            $http.get($scope.endpoint + "/contenttypes").success(function (data) {
-                $scope.contentTypes = data;
-            });
+          loadTemplateQueries();
         })
 })();

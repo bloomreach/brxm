@@ -28,7 +28,7 @@
     <p>The generated names for the queries are as follows. If the document type name is <i>mytype</i> then the query for the document type will be <i>new-mytype-document</i>. The name for the folder query will be <i>new-mytype-folder</i>.</p>
     <p>Next to the query definition a label for it will be created as well. Note that only an English label is made, you have to make translations yourself.</p>
   </div>
-  <table class="table" ng-show="contentTypes.length > 0">
+  <table class="table" ng-show="tplQueries.length > 0">
     <thead>
       <tr>
         <th>Document Type</th>
@@ -36,14 +36,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="contentType in contentTypes | orderBy:identity">
-        <td>{{::contentType.name}}</td>
+      <tr ng-repeat="tplQuery in tplQueries | orderBy:identity">
+        <td>{{::tplQuery.contentType.name}}</td>
         <td>
-          <button class="btn btn-primary" ng-click="generateDocumentTemplateQuery(contentType)" title="Generate document template query">
+          <button class="btn btn-disabled" ng-if="tplQuery.documentQueryExists" disabled>
+            <span class="glyphicon glyphicon-file"></span> Document Query
+          </button>
+          <button class="btn btn-primary" ng-if="!tplQuery.documentQueryExists" ng-click="generateDocumentTemplateQuery(tplQuery.contentType)" title="Generate document template query">
             <span class="glyphicon glyphicon-file"></span> Document Query
           </button>
           &#160;
-          <button class="btn btn-primary" ng-click="generateFolderTemplateQuery(contentType)" title="Generate folder template query">
+          <button class="btn btn-disabled" ng-if="tplQuery.folderQueryExists" disabled>
+            <span class="glyphicon glyphicon-folder-close"></span> Folder Query
+          </button>
+          <button class="btn btn-primary" ng-if="!tplQuery.folderQueryExists" ng-click="generateFolderTemplateQuery(tplQuery.contentType)" title="Generate folder template query">
             <span class="glyphicon glyphicon-folder-close"></span> Folder Query
           </button>
         </td>

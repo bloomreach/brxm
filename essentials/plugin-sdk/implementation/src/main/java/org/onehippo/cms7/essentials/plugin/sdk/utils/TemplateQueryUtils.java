@@ -134,4 +134,29 @@ public class TemplateQueryUtils {
         }
     }
 
+    public static boolean documentQueryExists(final JcrService jcrService, final String documentName) {
+        final Session session = jcrService.createSession();
+
+        final String nodePath = TEMPLATE_QUERIES_ROOTPATH + "/" + String.format(DOCUMENT_NAME, documentName);
+        try {
+            return session.nodeExists(nodePath);
+        } catch (final RepositoryException ignore) {
+            return false;
+        } finally {
+            jcrService.destroySession(session);
+        }
+    }
+
+    public static boolean folderQueryExists(final JcrService jcrService, final String documentName) {
+        final Session session = jcrService.createSession();
+
+        final String nodePath = TEMPLATE_QUERIES_ROOTPATH + "/" + String.format(FOLDER_NAME, documentName);
+        try {
+            return session.nodeExists(nodePath);
+        } catch (RepositoryException e) {
+            return false;
+        } finally {
+            jcrService.destroySession(session);
+        }
+    }
 }

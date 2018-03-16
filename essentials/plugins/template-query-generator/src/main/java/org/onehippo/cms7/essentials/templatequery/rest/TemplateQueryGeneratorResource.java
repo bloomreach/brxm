@@ -33,7 +33,6 @@ import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.RebuildService;
 
 
 /**
@@ -47,13 +46,11 @@ public class TemplateQueryGeneratorResource {
     private static final String DOCUMENT_SCOPE = "document";
     private static final String FOLDER_SCOPE = "folder";
 
-    private final RebuildService rebuildService;
     private final JcrService jcrService;
     private final ContentTypeService contentTypeService;
 
     @Inject
-    public TemplateQueryGeneratorResource(final RebuildService rebuildService, final JcrService jcrService, final ContentTypeService contentTypeService) {
-        this.rebuildService = rebuildService;
+    public TemplateQueryGeneratorResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
         this.jcrService = jcrService;
         this.contentTypeService = contentTypeService;
     }
@@ -101,11 +98,24 @@ public class TemplateQueryGeneratorResource {
     }
 
     @GET
-    @Path("/contenttypes")
-    public List<ContentType> getContentTypes() throws Exception {
-        return contentTypeService.fetchContentTypesFromOwnNamespace()
-                .stream().filter(this::isRelaxed)
+    @Path("/templatequeries")
+    public List<TemplateQuery> getTemplateQueries() throws Exception {
+        return contentTypeService.fetchContentTypesFromOwnNamespace().stream()
+                .filter(this::isRelaxed)
+                .filter(contentType -> !contentType.isCompoundType())
+                .map(this::createTemplateQuery)
                 .collect(Collectors.toList());
+    }
+
+    private TemplateQuery createTemplateQuery(final ContentType contentType) {
+        final TemplateQuery templateQuery = new TemplateQuery();
+        templateQuery.setContentType(contentType);
+
+        final String documentName = contentType.getName();
+        templateQuery.setDocumentQueryExists(TemplateQueryUtils.documentQueryExists(jcrService, documentName));
+        templateQuery.setFolderQueryExists(TemplateQueryUtils.folderQueryExists(jcrService, documentName));
+
+        return templateQuery;
     }
 
     private boolean isRelaxed(final ContentType contentType) {
