@@ -20,20 +20,33 @@
     <p>
       The Template Query Generator generates template queries for documents and/or document folders.
     </p>
-    <div ng-show="contentTypes.length > 0">
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="contentType in contentTypes | orderBy:identity">
-          <label>
-            <strong >{{::contentType.prefix}}:{{::contentType.name}}</strong>
-          </label>
-          <button class="btn btn-primary" ng-click="generateDocumentTemplateQuery(contentType)">Generate document template query</button>
-          <button class="btn btn-primary" ng-click="generateFolderTemplateQuery(contentType)">Generate folder template query</button>
-        </li>
-      </ul>
-    </div>
   </div>
+  <table class="table" ng-show="contentTypes.length > 0">
+    <thead>
+      <tr>
+        <th>Namespace</th>
+        <th>Document Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="contentType in contentTypes | orderBy:identity">
+        <td>{{::contentType.prefix}}</td>
+        <td>{{::contentType.name}}</td>
+        <td>
+          <button class="btn btn-primary" ng-click="generateDocumentTemplateQuery(contentType)" title="Generate document template query">
+            <span class="glyphicon glyphicon-file"></span> Document Query
+          </button>
+          &#160;
+          <button class="btn btn-primary" ng-click="generateFolderTemplateQuery(contentType)" title="Generate folder template query">
+            <span class="glyphicon glyphicon-folder-close"></span> Folder Query
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <div class="panel-footer">
-    <button class="btn btn-primary" ng-click="generateAllTemplateQueries()">Generate all template queries</button>
+    <button class="btn btn-primary" ng-click="generateAllTemplateQueries()" title="Generate all template queries">Generate All</button>
   </div>
 </div>
 
