@@ -44,7 +44,7 @@ public class TemplateQueryUtils {
 
     private static Logger log = LoggerFactory.getLogger(GalleryUtils.class);
 
-    public boolean createDocumentTemplateQuery(final JcrService jcrService, final String projectNamespace,
+    public static boolean createDocumentTemplateQuery(final JcrService jcrService, final String projectNamespace,
                                                final String documentName) {
         final Session session = jcrService.createSession();
 
@@ -71,7 +71,7 @@ public class TemplateQueryUtils {
         return false;
     }
 
-    public boolean createFolderTemplateQuery(final JcrService jcrService, final String projectNamespace, final String documentName) {
+    public static boolean createFolderTemplateQuery(final JcrService jcrService, final String projectNamespace, final String documentName) {
         final Session session = jcrService.createSession();
 
         try {
@@ -93,7 +93,7 @@ public class TemplateQueryUtils {
         return false;
     }
 
-    private void createFolderTemplateQueryNodes(final Session session, final String nodePath,
+    private static void createFolderTemplateQueryNodes(final Session session, final String nodePath,
                                                 final String projectNamespace, final String documentName)
             throws RepositoryException {
 
