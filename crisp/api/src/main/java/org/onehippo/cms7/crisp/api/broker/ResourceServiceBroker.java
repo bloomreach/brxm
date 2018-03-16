@@ -334,20 +334,4 @@ public interface ResourceServiceBroker {
      */
     ResourceBeanMapper getResourceBeanMapper(String resourceSpace) throws ResourceException;
 
-    /**
-     * WARNING: This is only for advanced use cases as the backend {@link ResourceResolver} may give an underlying
-     *          object which is responsible for backend integration operations such as <code>org.springframework.web.client.RestOperations</code>
-     *          and as a result, any direct access to this backend operations object cannot take advantage of other
-     *          useful features such as per-request or cross-request level caching, etc.
-     *          This can be used only when the caller understands what she or he is doing. e.g, invoking DELETE or
-     *          PUT methods onto the backend system just to take advantage of all the configurations for the specific
-     *          {@link ResourceResolver} such as authentication, etc.
-     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
-     * @return backend integration operations object such as <code>org.springframework.web.client.RestOperations</code>
-     *         for advanced use cases only.
-     * @throws ResourceException if resource space is not found
-     * @throws UnsupportedOperationException if a backend integration operations is not supported for the {@code resourceSpace}
-     */
-    Object getResourceBackendOperations(String resourceSpace) throws ResourceException;
-
 }

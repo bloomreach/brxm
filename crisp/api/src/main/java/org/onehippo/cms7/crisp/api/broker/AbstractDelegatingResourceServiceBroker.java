@@ -123,9 +123,4 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
         return delegated.getResourceBeanMapper(resourceSpace);
     }
 
-    @Override
-    public Object getResourceBackendOperations(String resourceSpace) throws ResourceException {
-        return delegated.getResourceBackendOperations(resourceSpace);
-    }
-
 }
