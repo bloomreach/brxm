@@ -165,7 +165,7 @@
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
-    <property name="componentWindowResponseAppenders" ref="extendedComposerComponentWindowResponseAppenders"/>
+    <property name="componentWindowResponseAppenders" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
   </bean>
 
   <bean id="selectiveRenderingAggregationValve" parent="aggregationValve">
