@@ -44,6 +44,8 @@ class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
         final Class<?> beanClazz = beanDesc.getBeanClass();
 
         if (beanClazz != null) {
+            // Customize JsonSerializer for HippoBean type as we need to accumulate HippoBeans and add JSON Pointer
+            // references in the first phase, and later serialize the HippoBeans in content section in the end.
             if (HippoBean.class.isAssignableFrom(beanClazz)) {
                 return new HippoBeanSerializer((JsonSerializer<Object>) serializer, metadataDecorators);
             }
@@ -58,6 +60,9 @@ class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
         final Class<?> beanClazz = beanDesc.getBeanClass();
 
         if (beanClazz != null) {
+            // Customize BeanSerializerBuilder in order to set the Serializer of the ObjectIdWriter
+            // as there seems to be a bug(?) in Jackson serialization when (a) there's a custom JsonSerializer for a type
+            // and (b) there's an ObjectIdGenerator annotation for the type to avoid circular reference errors.
             if (HippoBean.class.isAssignableFrom(beanClazz)) {
                 final ObjectIdWriter objectIdWriter = ObjectIdWriter
                         .construct(beanDesc.getType(), PropertyName.construct("id"), new HippoBeanIdGenerator(), false)
