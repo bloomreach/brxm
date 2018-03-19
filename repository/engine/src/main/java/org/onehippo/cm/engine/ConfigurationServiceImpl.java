@@ -357,6 +357,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     public void stop() {
         log.info("ConfigurationService: stop");
+
+        HippoServiceRegistry.unregisterService(this, HippoEventBus.class);
+
         if (autoExportService != null) {
             autoExportService.close();
             autoExportService = null;
