@@ -27,10 +27,6 @@ content-editor {
     margin-bottom: $form-dense-distance;
   }
 
-  md-input-container.md-input-focused date-field .md-input {
-    border-bottom-width: 0;
-  }
-
   // multiple fields should only have 1 error message visible
   md-input-container:not(:last-child) .md-errors-spacer {
     height: 0;

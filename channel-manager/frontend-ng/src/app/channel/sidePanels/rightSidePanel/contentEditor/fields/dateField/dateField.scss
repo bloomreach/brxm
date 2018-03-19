@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@import 'variables';
 
 date-field {
   .md-datepicker-input-container {
     z-index: 2;
+    border-bottom-width: 0;
+
+    &.md-datepicker-focused {
+      border-bottom-width: 0;
+    }
   }
 
   .md-datepicker-input {
@@ -27,6 +33,16 @@ date-field {
   .timepart {
     text-align: right;
     width: 25px;
+  }
+
+  md-input-container:not(md-input-focused) > input.timepart {
+    border-bottom: 1px solid $grey-300 !important;
+    padding-bottom: 1px !important;
+  }
+
+  md-input-container.md-input-focused > input.timepart {
+    border-bottom: 2px solid $blue-500 !important;
+    padding-bottom: 0 !important;
   }
 
   .now-button {
