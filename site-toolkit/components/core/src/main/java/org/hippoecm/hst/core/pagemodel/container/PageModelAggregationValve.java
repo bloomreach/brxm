@@ -96,6 +96,12 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
 
+    /**
+     * Default maximum content reference depth level allowed to generate content item models from a reference in a content item.
+     * 1 by default.
+     */
+    private int defaultMaxContentReferenceLevel = 1;
+
     public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
         objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(new HippoBeanModelsSerializerModifier(metadataDecorators)));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
@@ -113,6 +119,14 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
         metadataDecorators.add(metadataDecorator);
+    }
+
+    /**
+     * Set the max content reference depth level allowed to generate content item models from a reference in a content item.
+     * @param maxContentReferenceLevel the max content reference depth level allowed to generate content item models from a reference in a content item
+     */
+    public void setDefaultMaxContentReferenceLevel(int defaultMaxContentReferenceLevel) {
+        this.defaultMaxContentReferenceLevel = defaultMaxContentReferenceLevel;
     }
 
     /**
@@ -355,7 +369,7 @@ public class PageModelAggregationValve extends AggregationValve {
             final HippoBeanWrapperModel beanModel = entry.getValue();
 
             try {
-                appendContentItemModel(contentNode, jsonPropName, beanModel);
+                appendContentItemModel(contentNode, jsonPropName, beanModel, 0);
             } catch (Exception e) {
                 log.warn("Failed to append a content item: {}.", jsonPropName, e);
             }
@@ -370,8 +384,14 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param contentNode to which the serialized <code>JsonNode</code> from {@code cbeanModel} should be appended
      * @param jsonPropName JSON property name
      * @param beanModel content item bean model
+     * @param level reference depth level
      */
-    private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName, HippoBeanWrapperModel beanModel) {
+    private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName,
+            final HippoBeanWrapperModel beanModel, final int level) {
+        if (level > defaultMaxContentReferenceLevel) {
+            return;
+        }
+
         if (contentNode.has(jsonPropName)) {
             return;
         }
@@ -394,7 +414,7 @@ public class PageModelAggregationValve extends AggregationValve {
             while (model != null) {
                 appendContentItemModel(contentNode,
                         HippoBeanSerializer.representationIdToJsonPropName(model.getBean().getRepresentationId()),
-                        model);
+                        model, level + 1);
 
                 if (!stack.empty()) {
                     model = (HippoBeanWrapperModel) stack.pop();
