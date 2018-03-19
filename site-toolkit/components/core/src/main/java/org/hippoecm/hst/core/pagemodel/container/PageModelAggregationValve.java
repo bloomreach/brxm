@@ -17,9 +17,9 @@ package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
@@ -63,11 +64,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class PageModelAggregationValve extends AggregationValve {
 
     private static Logger log = LoggerFactory.getLogger(PageModelAggregationValve.class);
-
-    /**
-     * Internal page model attribute name for an <code>HstRequestContext</code> attribute.
-     */
-    static final String PAGE_MODEL_ATTR_NAME = PageModelAggregationValve.class.getName() + ".pageModel";
 
     /**
      * Page or component parameter metadata name.
@@ -128,8 +124,9 @@ public class PageModelAggregationValve extends AggregationValve {
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
             final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-        final Object aggregatedPageModel = createAggregatedPageModel(sortedComponentWindows, requestMap, responseMap);
-        RequestContextProvider.get().setAttribute(PAGE_MODEL_ATTR_NAME, aggregatedPageModel);
+        final AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) createAggregatedPageModel(
+                sortedComponentWindows, requestMap, responseMap);
+        ContentSerializationContext.setCurrentAggregatedPageModel(aggregatedPageModel);
     }
 
     /**
@@ -142,7 +139,7 @@ public class PageModelAggregationValve extends AggregationValve {
     protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
             throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        final AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) requestContext.getAttribute(PAGE_MODEL_ATTR_NAME);
+        final AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
 
         if (aggregatedPageModel == null) {
             throw new ContainerException("Page model cannot be null! Page model might not be aggregated for some reason in #processWindowsRender() for some reason.");
@@ -156,16 +153,17 @@ public class PageModelAggregationValve extends AggregationValve {
 
             final ComponentWindowModel pageWindowModel = aggregatedPageModel.getPageWindowModel();
 
+            ContentSerializationContext.setCurrentPhase(Phase.REFERENCING_CONTENT_IN_COMPONENT);
+
             if (pageWindowModel != null) {
                 JsonNode pageNode = getObjectMapper().valueToTree(pageWindowModel);
                 aggregatedPageModel.setPageNode(pageNode);
             }
 
-            requestContext.setAttribute(HippoBeanSerializer.CONTENT_SECTION_SERIALIZATION_FLAG, Boolean.TRUE);
+            ContentSerializationContext.setCurrentPhase(Phase.SERIALIZING_CONTENT);
 
             if (aggregatedPageModel.hasAnyContent()) {
-                ObjectNode contentNode = getObjectMapper().valueToTree(aggregatedPageModel.getContentMap());
-                unwrapHippoBeanNodes(contentNode);
+                final JsonNode contentNode = serializeContentMap(aggregatedPageModel.getContentMap());
                 aggregatedPageModel.setContentNode(contentNode);
             }
 
@@ -177,8 +175,8 @@ public class PageModelAggregationValve extends AggregationValve {
         } catch (IOException e) {
             log.warn("Failed to write aggregated page model in json.", e);
         } finally {
-            requestContext.removeAttribute(HippoBeanSerializer.CONTENT_SECTION_SERIALIZATION_FLAG);
-            requestContext.removeAttribute(PAGE_MODEL_ATTR_NAME);
+            HippoBeanSerializationContext.clear();
+            ContentSerializationContext.clear();
         }
     }
 
@@ -341,18 +339,67 @@ public class PageModelAggregationValve extends AggregationValve {
         }
     }
 
-    /*
-     * As @JsonUnwrapped annotation on HippoBeanWrapperModel cannot work due to the custom HippoBeanSerializer,
-     * let's unwrap the hippo bean property here manually.
+    /**
+     * Serialize content model map which were accumulated from the references in models of components into a <code>JsonNode</code>
+     * and return the <code>JsonNode</code>.
+     * @param contentMap content model map
+     * @return <code>JsonNode</code> serialized from the content model map which were accumulated from the references in models
+     * of components
      */
-    private void unwrapHippoBeanNodes(final ObjectNode wrapperContentNode) {
-        for (Iterator<String> it = wrapperContentNode.fieldNames(); it.hasNext();) {
-            final String fieldName = it.next();
-            final ObjectNode contentItem = (ObjectNode) wrapperContentNode.get(fieldName);
+    private JsonNode serializeContentMap(final Map<String, HippoBeanWrapperModel> contentMap) {
+        ObjectNode contentNode = getObjectMapper().createObjectNode();
 
-            if (contentItem.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
-                final ObjectNode beanNode = (ObjectNode) contentItem.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
-                contentItem.setAll(beanNode);
+        for (Map.Entry<String, HippoBeanWrapperModel> entry : contentMap.entrySet()) {
+            final String jsonPropName = entry.getKey();
+            final HippoBeanWrapperModel beanModel = entry.getValue();
+
+            try {
+                appendContentItemModel(contentNode, jsonPropName, beanModel);
+            } catch (Exception e) {
+                log.warn("Failed to append a content item: {}.", jsonPropName, e);
+            }
+        }
+
+        return contentNode;
+    }
+
+    /**
+     * Serialize {@code beanModel} into a <code>JsonNode</code> and append the <code>JsonNode</code> to {@code contentNode}
+     * with the property name, {@code jsonPropName}.
+     * @param contentNode to which the serialized <code>JsonNode</code> from {@code cbeanModel} should be appended
+     * @param jsonPropName JSON property name
+     * @param beanModel content item bean model
+     */
+    private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName, HippoBeanWrapperModel beanModel) {
+        if (contentNode.has(jsonPropName)) {
+            return;
+        }
+
+        final ObjectNode modelNode = getObjectMapper().valueToTree(beanModel);
+
+        if (modelNode.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
+            final ObjectNode beanNode = (ObjectNode) modelNode.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
+            modelNode.setAll(beanNode);
+        }
+
+        contentNode.set(jsonPropName, modelNode);
+
+        final Stack<HippoBeanWrapperModel> stack = HippoBeanSerializationContext
+                .getContentBeanModelStack(beanModel.getBean().getRepresentationId());
+
+        if (stack != null && !stack.empty()) {
+            HippoBeanWrapperModel model = (HippoBeanWrapperModel) stack.pop();
+
+            while (model != null) {
+                appendContentItemModel(contentNode,
+                        HippoBeanSerializer.representationIdToJsonPropName(model.getBean().getRepresentationId()),
+                        model);
+
+                if (!stack.empty()) {
+                    model = (HippoBeanWrapperModel) stack.pop();
+                } else {
+                    break;
+                }
             }
         }
     }

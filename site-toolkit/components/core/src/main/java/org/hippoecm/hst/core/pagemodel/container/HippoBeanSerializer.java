@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -29,12 +31,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 class HippoBeanSerializer extends JsonSerializer<HippoBean> {
-
-    /**
-     * Flag whether the content section of the aggregated page model started rendering.
-     */
-    static final String CONTENT_SECTION_SERIALIZATION_FLAG = HippoBeanSerializer.class.getName()
-            + ".CONTENT_SECTION_SERIALIZATION_FLAG";
 
     /**
      * Content JSON Pointer prefix.
@@ -51,6 +47,16 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
      */
     private static final String CONTENT_JSON_POINTER_REFERENCE_PROP = "$ref";
 
+    /**
+     * Convert content representation identifier (e.g, handle ID or node ID) to a safe JSON property/variable name.
+     * @param uuid content identifier
+     * @return a safe JSON property/variable name converted from the handle ID or node ID
+     */
+    static String representationIdToJsonPropName(final String uuid) {
+        return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
+                .toString();
+    }
+
     private final JsonSerializer<Object> beanSerializer;
 
     private final List<MetadataDecorator> metadataDecorators;
@@ -62,25 +68,41 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
     }
 
     @Override
-    public void serialize(HippoBean bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        Object contentSectionSerializationFlag = RequestContextProvider.get()
-                .getAttribute(CONTENT_SECTION_SERIALIZATION_FLAG);
+    public void serialize(final HippoBean bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        if (!bean.isHippoDocumentBean() || ((HippoDocumentBean) bean).getCanonicalHandleUUID() == null) {
+            beanSerializer.serialize(bean, gen, provider);
+            return;
+        }
 
-        if (contentSectionSerializationFlag == null) {
-            gen.writeStartObject(bean);
-            final String representationId = bean.getRepresentationId();
-            final String jsonPointerRepresentationId = contentRepresentationIdToJsonName(representationId);
-            gen.writeStringField(CONTENT_JSON_POINTER_REFERENCE_PROP,
-                    CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId);
-            gen.writeEndObject();
+        Phase curPhase = ContentSerializationContext.getCurrentPhase();
+
+        final String representationId = bean.getRepresentationId();
+        final String jsonRepresentationId = representationIdToJsonPropName(representationId);
+
+        if (curPhase == Phase.REFERENCING_CONTENT_IN_COMPONENT) {
+            serializeBeanReference(bean, gen, jsonRepresentationId);
 
             final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
             decorateContentMetadata(RequestContextProvider.get(), bean, wrapperBeanModel);
-            AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) RequestContextProvider.get()
-                    .getAttribute(PageModelAggregationValve.PAGE_MODEL_ATTR_NAME);
-            aggregatedPageModel.putContent(jsonPointerRepresentationId, wrapperBeanModel);
+            AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
+            aggregatedPageModel.putContent(jsonRepresentationId, wrapperBeanModel);
         } else {
-            beanSerializer.serialize(bean, gen, provider);
+            if (curPhase == Phase.SERIALIZING_CONTENT) {
+                try {
+                    ContentSerializationContext.setCurrentPhase(Phase.REFERENCING_CONTENT_IN_CONTENT);
+                    HippoBeanSerializationContext.beginTopLevelContentBean(representationId);
+                    beanSerializer.serialize(bean, gen, provider);
+                } finally {
+                    HippoBeanSerializationContext.endTopLevelContentBean();
+                    ContentSerializationContext.setCurrentPhase(Phase.SERIALIZING_CONTENT);
+                }
+            } else if (curPhase == Phase.REFERENCING_CONTENT_IN_CONTENT) {
+                serializeBeanReference(bean, gen, jsonRepresentationId);
+                final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
+                decorateContentMetadata(RequestContextProvider.get(), bean, wrapperBeanModel);
+                HippoBeanSerializationContext.pushContentBeanModel(
+                        HippoBeanSerializationContext.getCurrentTopLevelContentBeanRepresentationId(), wrapperBeanModel);
+            }
         }
     }
 
@@ -101,14 +123,11 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
         }
     }
 
-    /**
-     * Convert content representation identifier (e.g, handle ID or node ID) to a safe JSON property/variable name.
-     * @param uuid content identifier
-     * @return a safe JSON property/variable name converted from the handle ID or node ID
-     */
-    private String contentRepresentationIdToJsonName(final String uuid) {
-        return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
-                .toString();
+    private void serializeBeanReference(final HippoBean bean, final JsonGenerator gen,
+            final String jsonPointerRepresentationId) throws IOException {
+        gen.writeStartObject(bean);
+        gen.writeStringField(CONTENT_JSON_POINTER_REFERENCE_PROP,
+                CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId);
+        gen.writeEndObject();
     }
-
 }

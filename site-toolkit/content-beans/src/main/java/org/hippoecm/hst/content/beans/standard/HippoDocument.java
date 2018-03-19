@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,28 +89,36 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
             return null;
         }
     }
-    
+
     private javax.jcr.Node getCanonicalHandleNode() {
         if(canonicalHandleNode != null) {
             return canonicalHandleNode;
         }
-        
+
         if(this.getNode() == null) {
             log.info("Cannot get handle uuid for detached node '{}'", this.getPath());
             return null;
         }
+
         try {
             // first get the canonical handle. Because we can have a document in a faceted resultset, we first need to get the 
             // canonical node of the document, and then fetch the parent
-            javax.jcr.Node canonical = ((HippoNode)getNode()).getCanonicalNode();
-            if(canonical == null) {
+            javax.jcr.Node canonical = ((HippoNode) getNode()).getCanonicalNode();
+
+            if (canonical == null) {
                 log.info("We cannot get the canonical handle uuid for a document that does not have a canonical version. Node '{}'. Return null", getNode().getPath());
                 return null;
             }
-            canonicalHandleNode = canonical.getParent();
+
+            final javax.jcr.Node parent = canonical.getParent();
+
+            if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                canonicalHandleNode = parent;
+            }
         } catch (RepositoryException e) {
             log.error("Cannot get handle uuid for node '"+this.getPath()+"'", e);
         }
+
         return canonicalHandleNode;
     }
     

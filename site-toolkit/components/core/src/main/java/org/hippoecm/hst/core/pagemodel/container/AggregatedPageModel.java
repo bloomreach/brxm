@@ -41,7 +41,7 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     private JsonNode contentNode;
 
     private ComponentWindowModel pageWindowModel;
-    private Map<String, Object> contentMap;
+    private Map<String, HippoBeanWrapperModel> contentMap;
     private Map<String, ComponentWindowModel> flattened = new HashMap<>();
 
     public AggregatedPageModel(final String id) {
@@ -91,11 +91,11 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     }
 
     @JsonIgnore
-    public Map<String, Object> getContentMap() {
+    public Map<String, HippoBeanWrapperModel> getContentMap() {
         return contentMap;
     }
 
-    public void putContent(String id, Object content) {
+    public void putContent(String id, HippoBeanWrapperModel content) {
         if (contentMap == null) {
             contentMap = new LinkedHashMap<>();
         }

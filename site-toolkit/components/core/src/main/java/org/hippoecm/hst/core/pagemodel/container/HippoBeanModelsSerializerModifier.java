@@ -19,15 +19,10 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.ser.BeanSerializerBuilder;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 
 class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
 
@@ -54,64 +49,4 @@ class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
         return serializer;
     }
 
-    @Override
-    public BeanSerializerBuilder updateBuilder(SerializationConfig config, BeanDescription beanDesc,
-            BeanSerializerBuilder builder) {
-        final Class<?> beanClazz = beanDesc.getBeanClass();
-
-        if (beanClazz != null) {
-            // Customize BeanSerializerBuilder in order to set the Serializer of the ObjectIdWriter
-            // as there seems to be a bug(?) in Jackson serialization when (a) there's a custom JsonSerializer for a type
-            // and (b) there's an ObjectIdGenerator annotation for the type to avoid circular reference errors.
-            if (HippoBean.class.isAssignableFrom(beanClazz)) {
-                final ObjectIdWriter objectIdWriter = ObjectIdWriter
-                        .construct(beanDesc.getType(), PropertyName.construct("id"), new HippoBeanIdGenerator(), false)
-                        .withSerializer(new StringSerializer());
-                builder.setObjectIdWriter(objectIdWriter);
-            }
-        }
-
-        return builder;
-    }
-
-    private static class HippoBeanIdGenerator extends ObjectIdGenerator<String> {
-
-        private static final long serialVersionUID = 1L;
-
-        private final Class<?> scope = HippoBean.class;
-
-        @Override
-        public final Class<?> getScope() {
-            return scope;
-        }
-
-        @Override
-        public String generateId(Object forPojo) {
-            return ((HippoBean) forPojo).getRepresentationId();
-        }
-
-        @Override
-        public ObjectIdGenerator<String> forScope(Class<?> scope) {
-            return this;
-        }
-
-        @Override
-        public ObjectIdGenerator<String> newForSerialization(Object context) {
-            return this;
-        }
-
-        @Override
-        public IdKey key(Object key) {
-            if (key == null) {
-                return null;
-            }
-
-            return new IdKey(getClass(), scope, key);
-        }
-
-        @Override
-        public boolean canUseFor(ObjectIdGenerator<?> gen) {
-            return (gen instanceof HippoBeanIdGenerator);
-        }
-    }
 }
