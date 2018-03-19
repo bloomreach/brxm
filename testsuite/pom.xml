@@ -26,7 +26,7 @@
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>4.3.0-SNAPSHOT</version>
+  <version>5.3.0-spaplus-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -313,7 +313,7 @@
       <properties>
         <mysql.driver>com.mysql.jdbc.Driver</mysql.driver>
         <mysql.username>root</mysql.username>
-        <mysql.password></mysql.password>
+        <mysql.password />
         <mysql.host>localhost:3306</mysql.host>
         <mysql.repo.db>testsuite</mysql.repo.db>
       </properties>
@@ -359,7 +359,7 @@
                   <repo.config>file:${project.basedir}/target/tomcat${cargo.tomcat.major.version}x/conf/repository-mysql.xml</repo.config>
                   <org.apache.jackrabbit.core.cluster.node_id>${cluster.node}</org.apache.jackrabbit.core.cluster.node_id>
                   <!-- disable auto export and web files watch: -->
-                  <project.basedir/>
+                  <project.basedir />
                 </systemProperties>
                 <dependencies>
                   <dependency>
