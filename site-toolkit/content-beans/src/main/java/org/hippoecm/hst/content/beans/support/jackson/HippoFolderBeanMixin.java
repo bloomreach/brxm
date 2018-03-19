@@ -22,15 +22,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
-@JsonAppend(props = {
-        @JsonAppend.Prop(
-                name = "_links",
-                value = HippoBeanLinksVirtualBeanPropertyWriter.class
-                )
-        }
-    )
 public interface HippoFolderBeanMixin extends HippoFolderBean, HippoBeanMixin {
 
     @JsonIgnore

@@ -42,6 +42,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
+import org.hippoecm.hst.core.pagemodel.model.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -258,7 +259,7 @@ public class PageModelAggregationValve extends AggregationValve {
     private void addComponentRenderingURLLink(HstResponse hstResponse,
             IdentifiableLinkableMetadataBaseModel linkableModel) {
         HstURL compRenderURL = hstResponse.createComponentRenderingURL();
-        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, compRenderURL.toString());
+        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, new LinkModel(compRenderURL.toString()));
     }
 
     /**
@@ -310,12 +311,12 @@ public class PageModelAggregationValve extends AggregationValve {
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
         final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-        pageModel.putLink(ContainerConstants.LINK_NAME_SELF, selfLink.toUrlForm(requestContext, true));
+        pageModel.putLink(ContainerConstants.LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true)));
 
         final Mount siteMount = selfMount.getParent();
         if (siteMount != null) {
             final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
-            pageModel.putLink(ContainerConstants.LINK_NAME_SITE, siteLink.toUrlForm(requestContext, true));
+            pageModel.putLink(ContainerConstants.LINK_NAME_SITE, new LinkModel(siteLink.toUrlForm(requestContext, true)));
         } else {
             log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
                     "case for '{}'. Cannot add site links", selfMount);

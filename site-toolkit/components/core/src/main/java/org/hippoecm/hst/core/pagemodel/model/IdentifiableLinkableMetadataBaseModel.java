@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataBaseModel {
 
-    private Map<String, Object> linksMap;
+    private Map<String, LinkModel> linksMap;
 
     public IdentifiableLinkableMetadataBaseModel(final String id) {
         super(id);
@@ -36,7 +36,7 @@ public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataB
 
     @JsonProperty("_links")
     @JsonInclude(Include.NON_NULL)
-    public Map<String, Object> getLinksMap() {
+    public Map<String, LinkModel> getLinksMap() {
         if (linksMap == null) {
             return null;
         }
@@ -44,7 +44,7 @@ public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataB
         return Collections.unmodifiableMap(linksMap);
     }
 
-    public void putLink(String name, Object value) {
+    public void putLink(String name, LinkModel value) {
         if (linksMap == null) {
             linksMap = new LinkedHashMap<>();
         }
@@ -52,7 +52,7 @@ public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataB
         linksMap.put(name, value);
     }
 
-    public Object getLink(String name) {
+    public LinkModel getLink(String name) {
         if (linksMap == null) {
             return null;
         }
@@ -60,7 +60,7 @@ public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataB
         return linksMap.get(name);
     }
 
-    public Object removeLink(String name) {
+    public LinkModel removeLink(String name) {
         if (linksMap != null) {
             return linksMap.remove(name);
         }

@@ -17,20 +17,36 @@ package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
+import org.hippoecm.hst.core.pagemodel.model.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
+
 class HippoBeanSerializer extends JsonSerializer<HippoBean> {
+
+    private static Logger log = LoggerFactory.getLogger(HippoBeanSerializer.class);
+
+    /**
+     * Page Model API processing pipeline name.
+     */
+    private static final String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
 
     /**
      * Content JSON Pointer prefix.
@@ -74,6 +90,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             return;
         }
 
+        final HstRequestContext requestContext = RequestContextProvider.get();
         Phase curPhase = ContentSerializationContext.getCurrentPhase();
 
         final String representationId = bean.getRepresentationId();
@@ -83,7 +100,8 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             serializeBeanReference(bean, gen, jsonRepresentationId);
 
             final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
-            decorateContentMetadata(RequestContextProvider.get(), bean, wrapperBeanModel);
+            decorateContentMetadata(requestContext, bean, wrapperBeanModel);
+            addLinksToContent(requestContext, wrapperBeanModel);
             AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
             aggregatedPageModel.putContent(jsonRepresentationId, wrapperBeanModel);
         } else {
@@ -99,7 +117,8 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             } else if (curPhase == Phase.REFERENCING_CONTENT_IN_CONTENT) {
                 serializeBeanReference(bean, gen, jsonRepresentationId);
                 final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
-                decorateContentMetadata(RequestContextProvider.get(), bean, wrapperBeanModel);
+                decorateContentMetadata(requestContext, bean, wrapperBeanModel);
+                addLinksToContent(requestContext, wrapperBeanModel);
                 HippoBeanSerializationContext.pushContentBeanModel(
                         HippoBeanSerializationContext.getCurrentTopLevelContentBeanRepresentationId(), wrapperBeanModel);
             }
@@ -123,6 +142,61 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
         }
     }
 
+    /**
+     * Add links to content bean model.
+     * @param contentBeanModel content bean model
+     */
+    private void addLinksToContent(final HstRequestContext requestContext, final HippoBeanWrapperModel contentBeanModel) {
+        final HippoBean hippoBean = contentBeanModel.getBean();
+
+        if (!hippoBean.isHippoDocumentBean() && !hippoBean.isHippoFolderBean()) {
+            return;
+        }
+
+        final Mount selfMount = requestContext.getResolvedMount().getMount();
+
+        // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
+        if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
+            final Mount siteMount = selfMount.getParent();
+
+            if (siteMount == null) {
+                log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
+                        "case for '{}'. Cannot add site links", selfMount);
+                return;
+            }
+
+            // since the selfLink could be resolved, the site link also must be possible to resolve
+            final HstLink siteLink = requestContext.getHstLinkCreator().create(hippoBean.getNode(), siteMount);
+
+            if (siteLink != null && !siteLink.isNotFound()) {
+                String linkType = null;
+                final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
+
+                if (siteMapItem != null) {
+                    if (siteMapItem.isContainerResource()) {
+                        linkType = "resource";
+                    } else {
+                        final String linkApplicationId = siteMapItem.getApplicationId();
+                        // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
+                        // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
+                        // the application id
+                        final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
+                        linkType = (Objects.equals(linkApplicationId, currentApplicationId)) ? "internal" : "external";
+                    }
+                }
+
+                contentBeanModel.putLink(LINK_NAME_SITE, new LinkModel(siteLink.toUrlForm(requestContext, false), linkType));
+            }
+        }
+    }
+
+    /**
+     * Serialize content bean reference.
+     * @param bean content bean
+     * @param gen JsonGenerator
+     * @param jsonPointerRepresentationId JSON Pointer representation ID
+     * @throws IOException if IO exception occurs
+     */
     private void serializeBeanReference(final HippoBean bean, final JsonGenerator gen,
             final String jsonPointerRepresentationId) throws IOException {
         gen.writeStartObject(bean);

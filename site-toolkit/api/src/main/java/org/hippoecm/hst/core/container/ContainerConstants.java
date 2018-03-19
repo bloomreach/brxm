@@ -189,11 +189,6 @@ public interface ContainerConstants {
     String LINK_NAME_SITE = "site";
 
     /**
-     * The type of the link, for example 'internal', 'external' or 'resource'.
-     */
-    String LINK_NAME_TYPE = "type";
-
-    /**
      * Generic Link Name for the component rendering.
      */
     String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
