@@ -39,7 +39,7 @@ public class RichTextLinkPicker extends RichTextPicker<RichTextEditorDocumentLin
         return new LinkPickerManager(context, config, getFieldNodeModel()) {
             @Override
             protected void beforeShowDialog(final Map<String, String> parameters) {
-                setNodeId(parameters);
+                setNodeId(parameters.get("fieldId"));
             }
         };
     }

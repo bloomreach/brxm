@@ -29,9 +29,12 @@ public abstract class ChannelEditorPicker<T> implements IDetachable {
     ChannelEditorPicker(final IPluginContext context, final IPluginConfig config,  final String channelEditorId) {
         dialogManager = createDialogManager(context, config);
         dialogManager.setCancelAction(pickedItem -> getCancelScript(channelEditorId));
-        dialogManager.setCloseAction(pickedItem -> isValid(pickedItem)
-                ? getCloseScript(channelEditorId, toJson(pickedItem))
-                : StringUtils.EMPTY);
+        dialogManager.setCloseAction(pickedItem -> {
+            if (saveChanges(pickedItem)) {
+                return getCloseScript(channelEditorId, toJson(pickedItem));
+            }
+            return StringUtils.EMPTY;
+        });
     }
 
     protected DialogManager<T> createDialogManager(final IPluginContext context, final IPluginConfig config) {
@@ -55,7 +58,8 @@ public abstract class ChannelEditorPicker<T> implements IDetachable {
      */
     protected abstract String toJson(final T pickedItem);
 
-    protected boolean isValid(final T pickedItem) {
+    protected boolean saveChanges(final T pickedItem) {
+        // by default, save nothing
         return true;
     }
 
