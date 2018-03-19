@@ -180,7 +180,9 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                if (filter.test(result.getModuleContext().getModule())) {
+                    groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                }
             }
         }
         return groups;
