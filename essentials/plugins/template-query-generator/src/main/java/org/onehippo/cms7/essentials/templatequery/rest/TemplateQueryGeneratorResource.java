@@ -99,7 +99,7 @@ public class TemplateQueryGeneratorResource {
     @Path("/templatequeries")
     public List<TemplateQuery> getTemplateQueries() throws Exception {
         return contentTypeService.fetchContentTypesFromOwnNamespace().stream()
-                .filter(this::isRelaxed)
+                .filter(this::isRelaxed) // has the effect that basedocument is excluded
                 .filter(contentType -> !contentType.isCompoundType())
                 .map(this::createTemplateQuery)
                 .collect(Collectors.toList());
