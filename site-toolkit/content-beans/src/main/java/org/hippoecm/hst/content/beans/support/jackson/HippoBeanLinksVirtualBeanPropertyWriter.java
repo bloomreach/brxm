@@ -77,34 +77,31 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
-        final HstLink selfLink = linkCreator.create(hippoBean.getNode(), selfMount);
 
-        if (selfLink!= null && !selfLink.isNotFound()) {
-            // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
-            if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
-                final Mount siteMount = selfMount.getParent();
-                if (siteMount == null) {
-                    log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
-                            "case for '{}'. Cannot add site links", selfMount);
-                } else {
-                    // since the selfLink could be resolved, the site link also must be possible to resolve
-                    final HstLink siteLink = linkCreator.create(hippoBean.getNode(), siteMount);
-                    if (siteLink!= null && !siteLink.isNotFound()) {
-                        linksMap.put(LINK_NAME_SITE, siteLink.toUrlForm(requestContext, false));
+        // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
+        if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
+            final Mount siteMount = selfMount.getParent();
+            if (siteMount == null) {
+                log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
+                        "case for '{}'. Cannot add site links", selfMount);
+                return linksMap;
+            }
+            // since the selfLink could be resolved, the site link also must be possible to resolve
+            final HstLink siteLink = linkCreator.create(hippoBean.getNode(), siteMount);
+            if (siteLink!= null && !siteLink.isNotFound()) {
+                linksMap.put(LINK_NAME_SITE, siteLink.toUrlForm(requestContext, false));
+                final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
+                if (siteMapItem != null) {
+                    if (siteMapItem.isContainerResource()) {
+                        linksMap.put(LINK_NAME_TYPE, "resource");
+                    } else {
+                        final String linkApplicationId = siteMapItem.getApplicationId();
+                        final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
+
+                        linksMap.put(LINK_NAME_TYPE, Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external");
                     }
                 }
-            }
 
-            final HstSiteMapItem siteMapItem = selfLink.getHstSiteMapItem();
-            if (siteMapItem != null) {
-                if (siteMapItem.isContainerResource()) {
-                    linksMap.put(LINK_NAME_TYPE, "resource");
-                } else {
-                    final String linkApplicationId = siteMapItem.getApplicationId();
-                    final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-
-                    linksMap.put(LINK_NAME_TYPE, Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external");
-                }
             }
         }
 
