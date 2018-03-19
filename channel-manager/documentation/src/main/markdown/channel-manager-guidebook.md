@@ -6,53 +6,46 @@
 
 ## Functional Overview
 
+The container diagram below depicts how the main parts of the Channel Manager work together 
+and which technology they use.
+
 ![Container Diagram](../plantuml/container-diagram.png)
 
 ## Channel Editor
 
-### Modules
+The Channel Editor manages and modifies a single channel. The channel is rendered in an iframe.
+With some server-side proxy configuration the origin of the rendered channel is the same as the 
+origin of the surrounding CMS. The frontend code can therefore read and modify the DOM of the 
+rendered channel without cross-origin restrictions.    
 
-![Channel Editor Modules](../plantuml/channel-editor-modules.png)
+The delivery tier augments the rendered HTML with additional HTML comments that contain meta-data
+about elements in the rendered channel (e.g. "here starts a container"). Once a page is loaded
+these HTML comments are parsed and turned into a model of the current page structure. Based on
+this model an 'overlay' is generated in the DOM of the channel. The overlay elements depict 
+containers, components and floating action buttons to edit menus and manage content.
 
-With injectables per module:
+The presentation of a channel is modified via a REST API in the delivery tier. The code of this 
+REST API resides in the hippo-site-toolkit Git repository.
 
-![Channel Editor Modules with Injectables](../plantuml/channel-editor-modules-with-injectables.png)
+The content of a channel is modified via a REST API that resides in the "content-service" module 
+of this Git repository.
 
-### Injectables
+### Hippo CMS
 
-Individual
+Most of the Channel Editor functionality is available in Hippo CMS, also known as the 'open source' 
+or 'community' edition).
 
-![Channel Editor Injectables](../plantuml/channel-editor-injectables.png)
+#### Preview content and presentation 
 
-Grouped by module
+- Browse through the preview version of a channel. External links are opened in a new tab.
+- Adjust the viewport dimensions (desktop / tablet / phone) 
 
-![Channel Editor Injectables Linked](../plantuml/channel-editor-injectables-linked.png)
+#### Channel settings
 
-### Individual Modules
-
-TODO
-
-### Preview
-- Browse through the preview version of a channel 
-- Navigate back using browser back button
-- Open external links in new tab
-- Adjust dimensions (desktop / tablet / phone)
-
-### Components
-- Add components to containers
-- Delete components
-- Move components
-- Edit component properties
-
-### Content
-- Create new content
-- Edit existing content
-- Select existing content for a component
-
-### Channel Settings
 - Edit channel settings
 
-### Pages
+#### Pages
+
 - View all pages
 - Navigate to a page
 - Add page
@@ -61,27 +54,49 @@ TODO
 - Copy page
 - Edit page 
 
-### Menus
+#### Components
+
+- Add components to containers
+- Delete components
+- Move components within and between containers
+- Edit component properties
+
+#### Menus
+
 - Add menu item
 - Move menu item
 - Edit menu item parameters
 - Delete menu item
 
-### Change Management
+#### Content
+
+- Create new content
+- Edit existing content
+- Select existing content for a component
+
+#### Change Management
+
 - Publish own changes
 - Discard own changes
 - Manage changes of others (admin)
  
-### Multi-User
+#### Multi-User
+
 - Show locks by other users
 - Prevent editing of locked items
 - Provide feedback who locked what
 
-### Projects
+### DXP
 
-TODO
+Several modules in the DXP (or 'enterprise edition') extend the Channel Editor with 
+additional functionality.
 
-### Relevance
+#### Projects
+
+- Show project-specific version of a channel
+
+#### Relevance
+
 - Add component variant
 - Edit component variant
 - Delete component variant
@@ -89,7 +104,8 @@ TODO
 - Show page as persona
 - Show page as alter ego (and edit alter ego)
 
-### Experiments
+#### Experiments
+
 - Create experiment
 - Monitor experiment progress / status
 - Stop/complete experiment
