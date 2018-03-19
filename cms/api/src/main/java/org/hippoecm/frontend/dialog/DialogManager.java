@@ -26,30 +26,20 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  */
 public class DialogManager<ModelType> implements IDetachable {
 
-    private final IPluginContext context;
-    private final IPluginConfig config;
-    private final DialogConfig dialogConfig;
+    private static final String DIALOG_CONFIG = "dialogConfig";
 
-    private DialogBehavior behavior;
+    private final IPluginContext context;
+    private final DialogConfig config;
+    private final DialogBehavior behavior;
+
     private ScriptAction<ModelType> cancelAction;
     private ScriptAction<ModelType> closeAction;
 
     public DialogManager(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
-        this.config = config;
+        this.config = new DialogConfig(config);
 
-        dialogConfig = new DialogConfig(config);
-    }
-
-    public DialogBehavior getBehavior() {
-        if (behavior == null) {
-            behavior = createBehavior(context, config);
-        }
-        return behavior;
-    }
-
-    protected DialogBehavior createBehavior(final IPluginContext context, final IPluginConfig config) {
-        return new DialogBehavior() {
+        behavior = new DialogBehavior() {
             @Override
             protected void showDialog(final Map<String, String> parameters) {
                 onShowDialog(parameters);
@@ -57,10 +47,16 @@ public class DialogManager<ModelType> implements IDetachable {
         };
     }
 
+    public DialogBehavior getBehavior() {
+        return behavior;
+    }
+
     private void onShowDialog(final Map<String, String> parameters) {
         beforeShowDialog(parameters);
 
-        final Dialog<ModelType> dialog = createDialog(context, dialogConfig.get(parameters), parameters);
+        final String paramsDialogConfig = parameters.get(DIALOG_CONFIG);
+        final IPluginConfig mergedDialogConfig = config.getMerged(paramsDialogConfig);
+        final Dialog<ModelType> dialog = createDialog(context, mergedDialogConfig, parameters);
 
         dialog.setCancelAction(cancelAction);
         dialog.setCloseAction(closeAction);

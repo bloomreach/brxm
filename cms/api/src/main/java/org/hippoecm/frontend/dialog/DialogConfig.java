@@ -16,10 +16,9 @@
 package org.hippoecm.frontend.dialog;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -31,39 +30,32 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DialogConfig implements IClusterable {
+class DialogConfig implements IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(DialogConfig.class);
 
-    private static final String DIALOG_CONFIG = "dialogConfig";
-
     private final IPluginConfig defaultConfig;
 
-    public DialogConfig(final IPluginConfig defaultConfig) {
+    DialogConfig(final IPluginConfig defaultConfig) {
         this.defaultConfig = defaultConfig != null
             ? defaultConfig
             : new JavaPluginConfig();
     }
 
-    public IPluginConfig get() {
-        return get(Collections.emptyMap());
-    }
-
-    public IPluginConfig get(final Map<String, String> parameters) {
-        if (!parameters.containsKey(DIALOG_CONFIG)) {
+    IPluginConfig getMerged(final String jsonConfig) {
+        if (StringUtils.isEmpty(jsonConfig)) {
             return defaultConfig;
         }
 
         final JavaPluginConfig config = new JavaPluginConfig();
         config.putAll(defaultConfig);
 
-        final String dialogConfigJson = parameters.get(DIALOG_CONFIG);
         try {
-            final ObjectNode dialogConfig = Json.object(dialogConfigJson);
+            final ObjectNode dialogConfig = Json.object(jsonConfig);
             addJsonToConfig(dialogConfig, config);
         } catch (IOException e) {
             log.warn("Could not parse dialog configuration '{}'. Using default configuration.",
-                    dialogConfigJson, e);
+                    jsonConfig, e);
         }
         return config;
     }
