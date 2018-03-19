@@ -96,6 +96,9 @@ public class HippoBeanLinksVirtualBeanPropertyWriter extends VirtualBeanProperty
                         linksMap.put(LINK_NAME_TYPE, "resource");
                     } else {
                         final String linkApplicationId = siteMapItem.getApplicationId();
+                        // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
+                        // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
+                        // the application id
                         final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
 
                         linksMap.put(LINK_NAME_TYPE, Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external");
