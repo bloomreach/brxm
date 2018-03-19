@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-import './dateField.scss';
-import template from './dateField.html';
-import DateFieldFieldCtrl from './dateField.controller';
+date-field {
+  .md-datepicker-input-container {
+    z-index: 2;
+  }
 
-const dateFieldComponent = {
-  bindings: {
-    name: '<',
-    fieldType: '<',
-    onFieldFocus: '&',
-    onFieldBlur: '&',
-  },
-  controller: DateFieldFieldCtrl,
-  template,
-  require: {
-    ngModel: 'ngModel',
-  },
-};
+  .md-datepicker-input {
+    font-size: 100%;
+    min-width: 200px;
+  }
 
-export default dateFieldComponent;
+  .timepart {
+    text-align: right;
+    width: 25px;
+  }
+
+  .now-button {
+    opacity: .54;
+    padding: 1px 0 0 6px !important;
+  }
+
+  /* to hide the parent div of md-error-spacer div */
+  > div {
+    display: none;
+  }
+}

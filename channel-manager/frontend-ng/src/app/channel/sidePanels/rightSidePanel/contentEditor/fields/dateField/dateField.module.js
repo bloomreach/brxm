@@ -13,23 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import dateFieldComponent from './dateField.component';
 
-import './dateField.scss';
-import template from './dateField.html';
-import DateFieldFieldCtrl from './dateField.controller';
+const dateFieldModule = angular
+  .module('hippo-cm.channel.fieldsModule.dateField', [])
+  .component('dateField', dateFieldComponent);
 
-const dateFieldComponent = {
-  bindings: {
-    name: '<',
-    fieldType: '<',
-    onFieldFocus: '&',
-    onFieldBlur: '&',
-  },
-  controller: DateFieldFieldCtrl,
-  template,
-  require: {
-    ngModel: 'ngModel',
-  },
-};
-
-export default dateFieldComponent;
+export default dateFieldModule.name;

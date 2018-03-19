@@ -15,10 +15,10 @@
  */
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
-import dateFieldComponent from './dateField/dateField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
+import dateFieldModule from './dateField/dateField.module';
 import collapse from './collapse/collapse.directive';
 import fieldService from './field.service';
 import './fields.scss';
@@ -26,12 +26,12 @@ import './fields.scss';
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
     ckeditorModule,
+    dateFieldModule
   ])
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  .component('dateField', dateFieldComponent)
   .directive('collapse', collapse)
   .service('FieldService', fieldService);
 

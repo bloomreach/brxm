@@ -51,27 +51,6 @@ document-fields {
     vertical-align: baseline;
     width: 18px;
   }
-
-  date-field {
-    .md-datepicker-input-container {
-      z-index: 2;
-    }
-
-    .md-datepicker-input {
-      font-size: 100%;
-      min-width: 200px;
-    }
-
-    .timepart {
-      text-align: right;
-      width: 25px;
-    }
-
-    .now-button {
-      opacity: .54;
-      padding: 1px 0 0 6px !important;
-    }
-  }
 }
 
 primitive-field,

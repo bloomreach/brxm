@@ -13,69 +13,39 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div ng-repeat="dateValue in $ctrl.dateValues track by $index"
-     ng-class="{'has-focused-field': $ctrl.hasFocus}">
 
-  <md-input-container class="qa-field">
-    <label ng-if="::$first"
-           layout
-           layout-align="start center"
-           class="field-title">
-      <span>
-        {{ ::$ctrl.fieldType.displayName }}
+<md-datepicker ng-model="$ctrl.dateValue.date"
+               ng-change="$ctrl.valueChanged()"
+               aria-label="{{::$ctrl.fieldType.displayName}}"
+               ng-required="::$ctrl.fieldType.required"
+               ng-focus="$ctrl.onFieldFocus()"
+               ng-blur="$ctrl.onFieldBlur()"/>
 
-        <span ng-if="::$ctrl.fieldType.required">*</span>
-      </span>
+<md-input-container class="qa-field">
+  <input ng-model="$ctrl.dateValue.hours"
+         ng-change="$ctrl.valueChanged()"
+         class="timepart"
+         aria-label="{ ::'HOURS' | translate }}"
+         ng-attr-maxlength="2"
+         ng-focus="$ctrl.onFieldFocus()"
+         ng-blur="$ctrl.onFieldBlur()">
+</md-input-container>
+:
+<md-input-container class="qa-field">
+  <input ng-model="$ctrl.dateValue.minutes"
+         ng-change="$ctrl.valueChanged()"
+         class="timepart"
+         aria-label="{ ::'MINUTES' | translate }}"
+         ng-attr-maxlength="2"
+         ng-focus="$ctrl.onFieldFocus();dateValue.focusMinutes()"
+         ng-blur="$ctrl.onFieldBlur();dateValue.blurMinutes()"
+         ng-pattern="/^[0-5]?[0-9]$/">
+</md-input-container>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint">
-        info_outline
-
-        <md-tooltip>
-          {{ ::$ctrl.fieldType.hint }}
-        </md-tooltip>
-      </md-icon>
-    </label>
-
-    <md-datepicker ng-model="dateValue.date"
-                   ng-change="$ctrl.valueChanged()"
-                   name="{{::$ctrl.getFieldName($index)}}"
-                   aria-label="{{::$ctrl.fieldType.displayName}}"
-                   ng-required="::$ctrl.fieldType.required"
-                   ng-focus="$ctrl.focusDateField($event)"
-                   ng-blur="$ctrl.blurDateField($event)"/>
-    <div ng-messages="$ctrl.getFieldError($index)">
-      <div ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
-      <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
-    </div>
-  </md-input-container>
-
-  <md-input-container class="qa-field">
-    <input ng-model="dateValue.hours"
-           ng-change="$ctrl.valueChanged()"
-           class="timepart"
-           aria-label="{ ::'HOURS' | translate }}"
-           ng-attr-maxlength="2"
-           ng-focus="$ctrl.focusDateField($event)"
-           ng-blur="$ctrl.blurDateField($event)">
-  </md-input-container>
-  :
-  <md-input-container class="qa-field">
-    <input ng-model="dateValue.minutes"
-           ng-change="$ctrl.valueChanged()"
-           class="timepart"
-           aria-label="{ ::'MINUTES' | translate }}"
-           ng-attr-maxlength="2"
-           ng-focus="$ctrl.focusDateField($event);dateValue.focusMinutes()"
-           ng-blur="$ctrl.blurDateField($event);dateValue.blurMinutes()"
-           ng-pattern="/^[0-5]?[0-9]$/">
-  </md-input-container>
-
-  <md-button md-no-ink
-             class="md-icon-button now-button"
-             aria-label="{{ ::'SET_TO_NOW' | translate }}"
-             ng-click="$ctrl.setToNow($index)"
-             title="{{ ::'SET_TO_NOW' | translate }}">
-    <md-icon md-svg-src="sync-black"/>
-  </md-button>
-
-</div>
+<md-button md-no-ink
+           class="md-icon-button now-button"
+           aria-label="{{ ::'SET_TO_NOW' | translate }}"
+           ng-click="$ctrl.setToNow()"
+           title="{{ ::'SET_TO_NOW' | translate }}">
+  <md-icon md-svg-src="sync-black"/>
+</md-button>

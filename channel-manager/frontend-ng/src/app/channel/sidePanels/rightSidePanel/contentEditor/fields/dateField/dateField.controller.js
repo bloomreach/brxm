@@ -105,82 +105,30 @@ export class DateValue {
 }
 
 class DateFieldController {
-  constructor(FieldService) {
-    'ngInject';
-
-    this.FieldService = FieldService;
-    this.dateValues = [];
-  }
-
   $onInit() {
-    this.onFieldFocus = this.onFieldFocus || angular.noop;
-    this.onFieldBlur = this.onFieldBlur || angular.noop;
-
-    for (let i = 0; i < this.fieldValues.length; i += 1) {
-      this.dateValues.push(new DateValue(this.fieldValues[i].value));
+    this.dateValue = new DateValue();
+    this.ngModel.$render = () => {
+      this.dateValue = new DateValue(this.ngModel.$viewValue);
     }
-  }
-
-  getFieldName(index) {
-    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
-    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
-  }
-
-  getFieldError(index) {
-    const fieldName = this.getFieldName(index);
-    const field = this.form[fieldName];
-    return field.$error;
   }
 
   valueChanged() {
-    this._updateFieldValues();
-    this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
+    this.ngModel.$setViewValue(this.dateValue.toDateString());
   }
 
   focusDateField($event = null) {
-    this.hasFocus = true;
     this.onFieldFocus();
-
-    this.oldValues = angular.copy(this.fieldValues);
-    this.FieldService.unsetFocusedInput();
-
-    if ($event) {
-      $event.target = angular.element($event.target);
-      this.FieldService.setFocusedInput($event.target, $event.customFocus);
-    }
   }
 
   blurDateField($event = null) {
-    if ($event) {
-      $event.target = angular.element($event.relatedTarget);
-
-      if (this.FieldService.shouldPreserveFocus($event.target)) {
-        this.FieldService.triggerInputFocus();
-        return;
-      }
-    }
-    delete this.hasFocus;
     this.onFieldBlur();
-    this._draftField();
   }
 
-  setToNow(index) {
-    this.dateValues[index].setToNow();
+  setToNow() {
+    this.dateValue.setToNow();
     this.valueChanged();
-    this.form.$setDirty();
   }
 
-  _updateFieldValues() {
-    for (let i = 0; i < this.fieldValues.length; i += 1) {
-      this.fieldValues[i].value = this.dateValues[i].toDateString();
-    }
-  }
-
-  _draftField() {
-    if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
-    }
-  }
 }
 
 export default DateFieldController;
