@@ -275,7 +275,6 @@ public class PageModelAggregationValve extends AggregationValve {
             return;
         }
 
-        // If annotated by ParametersInfo, let's merge it to paramsNode as well.
         final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
         JsonNode paramsInfoNode = null;
 
@@ -291,7 +290,6 @@ public class PageModelAggregationValve extends AggregationValve {
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
         final ObjectNode paramsNode = getObjectMapper().getNodeFactory().objectNode();
 
-        // Let's add resolved parameters from the low-level HST API without depending on ParametersInfo annotation first.
         for (String paramName : compConfig.getParameterNames()) {
             final String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
 
