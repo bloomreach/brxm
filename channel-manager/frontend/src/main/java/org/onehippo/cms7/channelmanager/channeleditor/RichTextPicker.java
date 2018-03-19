@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.channeleditor;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -46,17 +44,29 @@ public class RichTextPicker<T extends RichTextEditorLink> extends ChannelEditorP
 
     private String nodeId;
 
-    protected RichTextPicker(final IPluginContext context, final IPluginConfig config, final String channelEditorId) {
+    RichTextPicker(final IPluginContext context, final IPluginConfig config, final String channelEditorId) {
         super(context, config, channelEditorId);
     }
 
-    void setNodeId(final Map<String, String> parameters) {
-        nodeId = parameters.get("fieldId");
+    void setNodeId(final String nodeId) {
+        this.nodeId = nodeId;
     }
 
     @Override
-    protected boolean isValid(final T pickedItem) {
-        return savePendingChanges();
+    protected boolean saveChanges(final T pickedItem) {
+        // The picker will have created a new facet node below the field node. Those changes should be saved,
+        // otherwise the Visual Editing backend will overwrite those changes again and the CMS will keep references
+        // to pending changes in deleted nodes.
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.save();
+            return true;
+        } catch (RepositoryException e) {
+            final String user = session.getUserID();
+            log.warn("User '{}' failed to save session when closing picker, discarding changes. Cause:", user, e);
+            discardChangesInField();
+            return false;
+        }
     }
 
     @Override
@@ -80,19 +90,6 @@ public class RichTextPicker<T extends RichTextEditorLink> extends ChannelEditorP
                 return getFieldNode();
             }
         };
-    }
-
-    private boolean savePendingChanges() {
-        final Session session = UserSession.get().getJcrSession();
-        try {
-            session.save();
-            return true;
-        } catch (RepositoryException e) {
-            final String user = session.getUserID();
-            log.warn("User '{}' failed to save session when closing picker, discarding changes. Cause:", user, e);
-            discardChangesInField();
-            return false;
-        }
     }
 
     private void discardChangesInField() {

@@ -39,7 +39,7 @@ public class RichTextImageVariantPicker extends RichTextPicker<RichTextEditorIma
         return new ImagePickerManager(context, config, getFieldNodeModel()) {
             @Override
             protected void beforeShowDialog(final Map<String, String> parameters) {
-                setNodeId(parameters);
+                setNodeId(parameters.get("fieldId"));
             }
         };
     }
