@@ -27,7 +27,7 @@
   <name>Hippo Essentials Components</name>
   <description>Hippo Essentials Components</description>
   <artifactId>hippo-essentials-components</artifactId>
-  <version>4.3.0-SNAPSHOT</version>
+  <version>4.3.0-spaplus-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
