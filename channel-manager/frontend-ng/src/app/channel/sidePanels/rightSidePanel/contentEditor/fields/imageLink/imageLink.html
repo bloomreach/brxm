@@ -19,7 +19,7 @@
        aria-label="{{::$ctrl.ariaLabel}}"
        readonly="readonly"
        ng-model="$ctrl.ngModel.$modelValue"
-       ng-hide="$ctrl.ngModel.$modelValue"
+       ng-hide="$ctrl.url"
        ng-required="$ctrl.isRequired"
        ng-disabled="true">
 
@@ -31,10 +31,8 @@
 <div class="input-bottom-border"
      ng-hide="!$ctrl.url"></div>
 
-<div class="hippo-imagelink-buttons" 
-     ng-class="{ 
-       'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint
-      }">
+<div class="hippo-imagelink-buttons"
+     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">
   <span>{{::$ctrl.ariaLabel}}</span>
   <md-button class="md-icon-button"
              ng-disabled="!$ctrl.url"

@@ -28,7 +28,6 @@ const imageLinkComponent = {
     url: '<',
     hint: '<',
     isRequired: '<',
-    fieldObject: '=',
   },
   require: {
     ngModel: 'ngModel',

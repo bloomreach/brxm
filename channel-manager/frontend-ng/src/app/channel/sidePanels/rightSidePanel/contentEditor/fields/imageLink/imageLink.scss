@@ -21,26 +21,30 @@ image-link {
 
   .input-bottom-border,
   input {
+    // hide checkered background for readonly input fields
     background-image: none !important;
     border-bottom-color: rgba(0, 0, 0, .12) !important;
   }
 
-  button.md-icon-button {
-    md-icon {
-      color: $grey-600 !important;
-    }
+  .md-icon-button > md-icon {
+    color: $grey-600 !important;
   }
 
   .hippo-imagelink-buttons {
+    // render transparent span containing the field name to align 
+    // the image picker buttons in the correct position
     > span {
       color: transparent;
       min-width: 60px;
+      user-select: none;
     }
 
     .md-button.md-icon-button {
       margin: 0 0 0 8px;
     }
 
+    // the hippo-imagelink-buttons container will overlay the (optional) hint icon,
+    // so it should pass through pointer events to allow the hint label to show on hover
     &.image-has-hint {
       pointer-events: none;
 
