@@ -1,5 +1,6 @@
 {
   "id": "templatequerygenerator",
+  "type": "tool",
   "name": "Template Query Generator",
   "icon": "/essentials/tool/images/template-query-generator-icon.svg",
   "introduction": "Generate template queries for documents and document folders.",
@@ -18,7 +19,6 @@
       "community"
     ]
   },
-  "type": "tool",
   "vendor": {
     "name": "BloomReach",
     "url": "https://www.bloomreach.com"

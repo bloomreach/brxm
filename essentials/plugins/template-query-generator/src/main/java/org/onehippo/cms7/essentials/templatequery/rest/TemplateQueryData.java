@@ -21,14 +21,14 @@ import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 
 public class TemplateQueryData {
 
-    private List<String> scopes;
+    private List<Scope> scopes;
     private List<ContentType> contentTypes;
 
-    public List<String> getScopes() {
+    public List<Scope> getScopes() {
         return scopes;
     }
 
-    public void setScopes(final List<String> scopes) {
+    public void setScopes(final List<Scope> scopes) {
         this.scopes = scopes;
     }
 
@@ -38,5 +38,9 @@ public class TemplateQueryData {
 
     public void setContentTypes(final List<ContentType> contentTypes) {
         this.contentTypes = contentTypes;
+    }
+
+    public enum Scope {
+        DOCUMENT, FOLDER
     }
 }

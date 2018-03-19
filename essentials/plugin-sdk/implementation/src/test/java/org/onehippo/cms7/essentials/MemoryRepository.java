@@ -148,7 +148,10 @@ class MemoryRepository {
             // /hippo:namespaces
             //   /testnamespace
             final Node namespaceNode = rootNode.addNode("hippo:namespaces", "hipposysedit:namespacefolder");
-            namespaceNode.addNode("testnamespace", "hipposysedit:namespace");
+            final Node testNamespaceNode = namespaceNode.addNode("testnamespace", "hipposysedit:namespace");
+            testNamespaceNode.addMixin("mix:referenceable");
+            final Node myTestProjectNode = namespaceNode.addNode("mytestproject", "hipposysedit:namespace");
+            myTestProjectNode.addMixin("mix:referenceable");
 
             // /hippo:configuration
             //   /hippo:derivatives (auto-created)
@@ -157,12 +160,18 @@ class MemoryRepository {
             //     /hippo:templates
             //   /hippo:temporary (auto-created)
             //   /hippo:translations (auto-created)
+            //     /hippo:templates
+            //       /en
             //   /hippo:update (auto-created)
             //   /hippo:workflows
             final Node config = rootNode.addNode("hippo:configuration", "hipposys:configuration");
             config.addNode("hippo:documents", "hipposys:ocmqueryfolder");
             config.getNode("hippo:queries").addNode("hippo:templates", "hipposys:queryfolder");
             config.addNode("hippo:workflows", "hipposys:workflowfolder");
+
+            config.getNode("hippo:translations")
+                    .addNode("hippo:templates", "hipposys:resourcebundles")
+                    .addNode("en", "hipposys:resourcebundle");
 
             // /hst:hst
             //   /hst:configurations

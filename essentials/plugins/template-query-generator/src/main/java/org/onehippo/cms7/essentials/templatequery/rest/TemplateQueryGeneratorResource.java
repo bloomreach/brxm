@@ -28,11 +28,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateQueryUtils;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.TemplateQueryService;
+
+import static org.onehippo.cms7.essentials.templatequery.rest.TemplateQueryData.Scope.DOCUMENT;
+import static org.onehippo.cms7.essentials.templatequery.rest.TemplateQueryData.Scope.FOLDER;
 
 
 /**
@@ -43,57 +45,53 @@ import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 @Path("templatequerygenerator/")
 public class TemplateQueryGeneratorResource {
 
-    private static final String DOCUMENT_SCOPE = "document";
-    private static final String FOLDER_SCOPE = "folder";
-
-    private final JcrService jcrService;
+    private final TemplateQueryService templateQueryService;
     private final ContentTypeService contentTypeService;
 
     @Inject
-    public TemplateQueryGeneratorResource(final JcrService jcrService, final ContentTypeService contentTypeService) {
-        this.jcrService = jcrService;
+    public TemplateQueryGeneratorResource(final TemplateQueryService templateQueryService, final ContentTypeService contentTypeService) {
+        this.templateQueryService = templateQueryService;
         this.contentTypeService = contentTypeService;
     }
 
     @POST
     public UserFeedback createTemplateQuery(final TemplateQueryData data) throws Exception {
-        final List<String> scopes = data.getScopes();
+        final UserFeedback feedback = new UserFeedback();
+        final List<TemplateQueryData.Scope> scopes = data.getScopes();
         if (scopes == null || scopes.isEmpty()) {
-            return UserFeedback.error("No scope(s) provided");
+            return feedback.addError("No scope(s) provided");
         }
 
         final List<ContentType> contentTypes = data.getContentTypes();
         if (contentTypes == null || contentTypes.isEmpty()) {
-            return UserFeedback.error("No content-type(s) provided");
+            return feedback.addError("No content-type(s) provided");
         }
 
-        final UserFeedback feedback = new UserFeedback();
         for (final ContentType contentType : contentTypes) {
-            final String prefix = contentType.getPrefix();
-            final String name = contentType.getName();
-            if (scopes.contains(DOCUMENT_SCOPE)) {
-                generateDocumentTemplateQuery(feedback, prefix, name);
+            final String jcrDocumentType = contentType.getFullName();
+            if (scopes.contains(DOCUMENT)) {
+                generateDocumentTemplateQuery(feedback, jcrDocumentType);
             }
-            if (scopes.contains(FOLDER_SCOPE)) {
-                generateFolderTemplateQuery(feedback, prefix, name);
+            if (scopes.contains(FOLDER)) {
+                generateFolderTemplateQuery(feedback, jcrDocumentType);
             }
         }
         return feedback;
     }
 
-    private void generateFolderTemplateQuery(final UserFeedback feedback, final String prefix, final String name) {
-        if (TemplateQueryUtils.createFolderTemplateQuery(jcrService, name)) {
-            feedback.addSuccess("Folder template query created for " + prefix + ":" + name);
+    private void generateFolderTemplateQuery(final UserFeedback feedback, final String jcrDocumentType) {
+        if (templateQueryService.createFolderTemplateQuery(jcrDocumentType)) {
+            feedback.addSuccess("Folder template query created for " + jcrDocumentType + ".");
         } else {
-            feedback.addError("Failed to generate folder template query for " + prefix + ":" + name);
+            feedback.addError("Failed to generate folder template query for " + jcrDocumentType + ".");
         }
     }
 
-    private void generateDocumentTemplateQuery(final UserFeedback feedback, final String prefix, final String name) {
-        if (TemplateQueryUtils.createDocumentTemplateQuery(jcrService, prefix, name)) {
-            feedback.addSuccess("Document template query created for " + prefix + ":" + name);
+    private void generateDocumentTemplateQuery(final UserFeedback feedback, final String jcrDocumentType) {
+        if (templateQueryService.createDocumentTypeTemplateQuery(jcrDocumentType)) {
+            feedback.addSuccess("Document template query created for " + jcrDocumentType + ".");
         } else {
-            feedback.addError("Failed to generate document template query for " + prefix + ":" + name);
+            feedback.addError("Failed to generate document template query for " + jcrDocumentType + ".");
         }
     }
 
@@ -111,9 +109,9 @@ public class TemplateQueryGeneratorResource {
         final TemplateQuery templateQuery = new TemplateQuery();
         templateQuery.setContentType(contentType);
 
-        final String documentName = contentType.getName();
-        templateQuery.setDocumentQueryExists(TemplateQueryUtils.documentQueryExists(jcrService, documentName));
-        templateQuery.setFolderQueryExists(TemplateQueryUtils.folderQueryExists(jcrService, documentName));
+        final String jcrDocumentType = contentType.getFullName();
+        templateQuery.setDocumentQueryExists(templateQueryService.documentTypeTemplateQueryExists(jcrDocumentType));
+        templateQuery.setFolderQueryExists(templateQueryService.folderTemplateQueryExists(jcrDocumentType));
 
         return templateQuery;
     }

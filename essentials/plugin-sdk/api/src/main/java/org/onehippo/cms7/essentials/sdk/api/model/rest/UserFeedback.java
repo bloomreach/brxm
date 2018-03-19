@@ -53,12 +53,6 @@ public class UserFeedback implements Serializable {
         feedbackMessages.add(details);
     }
 
-    public static UserFeedback error(final String message) {
-        final UserFeedback feedback = new UserFeedback();
-        feedback.addError(message);
-        return feedback;
-    }
-
     public static class Details {
         private String message;
         private boolean error;

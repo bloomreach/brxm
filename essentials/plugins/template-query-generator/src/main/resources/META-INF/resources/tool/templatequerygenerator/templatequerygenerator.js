@@ -31,7 +31,7 @@
 
             var generateTemplateQueries = function(parameters) {
               $http.post($scope.endpoint, parameters)
-                .success(function (data) {
+                .success(function () {
                   loadTemplateQueries();
                 });
             };
@@ -39,21 +39,21 @@
             $scope.generateAllTemplateQueries = function () {
                 generateTemplateQueries({
                     contentTypes: $scope.tplQueries.map(tplQuery => tplQuery.contentType),
-                    scopes: ['document', 'folder']
+                    scopes: ['DOCUMENT', 'FOLDER']
                 });
             };
 
             $scope.generateDocumentTemplateQuery = function(contentType) {
               generateTemplateQueries({
                 contentTypes: [contentType],
-                scopes: ['document']
+                scopes: ['DOCUMENT']
               });
             };
 
             $scope.generateFolderTemplateQuery = function(contentType) {
               generateTemplateQueries({
                 contentTypes: [contentType],
-                scopes: ['folder']
+                scopes: ['FOLDER']
               });
             };
 
