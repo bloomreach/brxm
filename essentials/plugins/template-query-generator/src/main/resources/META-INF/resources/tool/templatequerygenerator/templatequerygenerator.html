@@ -1,0 +1,64 @@
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default" ng-controller="templateQueryGeneratorCtrl">
+  <div class="panel-heading"><h3>Generate document and document folder Template Queries</h3></div>
+  <div class="panel-body">
+    <p>
+      The Template Query Generator allows you to generate template queries for documents and/or document folders.
+    </p>
+    <p>
+      If you want to guide users where to create specific document types, you can configure the allowed content for a folder.
+      Template Queries serve as entries for that configuration.
+      See the <a href="https://www.onehippo.org/library/concepts/document-types/template-queries.html" target="_blank">documentation</a> for more information about this.
+    </p>
+    <p>The generated names for the queries are as follows. If the document type name is <i>mytype</i> then the query for the document type will be <i>new-mytype-document</i>. The name for the folder query will be <i>new-mytype-folder</i>.</p>
+    <p>Next to the query definition a label for it will be created as well. Note that only an English label is made, you have to make translations yourself.</p>
+  </div>
+  <table class="table" ng-show="tplQueries.length > 0">
+    <thead>
+      <tr>
+        <th>Document Type</th>
+        <th>Generate Template Query</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="tplQuery in tplQueries | orderBy:identity">
+        <td>{{::tplQuery.contentType.name}}</td>
+        <td>
+          <button class="btn btn-disabled" ng-if="tplQuery.documentQueryExists" disabled>
+            <span class="glyphicon glyphicon-file"></span> Document
+          </button>
+          <button class="btn btn-primary" ng-if="!tplQuery.documentQueryExists" ng-click="generateDocumentTemplateQuery(tplQuery.contentType)" title="Generate document template query">
+            <span class="glyphicon glyphicon-file"></span> Document
+          </button>
+          &#160;
+          <button class="btn btn-disabled" ng-if="tplQuery.folderQueryExists" disabled>
+            <span class="glyphicon glyphicon-folder-close"></span> Folder
+          </button>
+          <button class="btn btn-primary" ng-if="!tplQuery.folderQueryExists" ng-click="generateFolderTemplateQuery(tplQuery.contentType)" title="Generate folder template query">
+            <span class="glyphicon glyphicon-folder-close"></span> Folder
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="panel-footer">
+    <button class="btn btn-primary" ng-click="generateAllTemplateQueries()" title="Generate all template queries">Generate All</button>
+  </div>
+</div>
+
+
