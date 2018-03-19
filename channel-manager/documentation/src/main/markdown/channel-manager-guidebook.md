@@ -1,38 +1,41 @@
 # Channel Manager Guidebook
 
+Guide for the Channel Manager codebase.
+
 ## Context
 
-![Context Diagram](../plantuml/context-diagram.png)
+![Context Diagram](../plantuml/context-diagram.svg)
 
 ## Functional Overview
 
-The container diagram below depicts how the main parts of the Channel Manager work together 
-and which technology they use.
+The main parts of the Channel Manager are depicted below. Arrows indicate how parts use each other.
+Each part also lists the framework(s) it uses.
 
-![Container Diagram](../plantuml/container-diagram.png)
+![Container Diagram](../plantuml/container-diagram.svg)
 
 ## Channel Editor
 
 The Channel Editor manages and modifies a single channel. The channel is rendered in an iframe.
-With some server-side proxy configuration the origin of the rendered channel is the same as the 
-origin of the surrounding CMS. The frontend code can therefore read and modify the DOM of the 
+Server-side proxy configuration ensures that the origin of the rendered channel is the same as the 
+origin of the surrounding CMS. Frontend code can therefore read and modify the DOM of the 
 rendered channel without cross-origin restrictions.    
 
-The delivery tier augments the rendered HTML with additional HTML comments that contain meta-data
-about elements in the rendered channel (e.g. "here starts a container"). Once a page is loaded
-these HTML comments are parsed and turned into a model of the current page structure. Based on
-this model an 'overlay' is generated in the DOM of the channel. The overlay elements depict 
-containers, components and floating action buttons to edit menus and manage content.
+The delivery tier augments the rendered channel with additional HTML comments. These comments 
+contain meta-data about elements in the rendered channel (e.g. "here starts a container"). 
+Once a page is loaded these HTML comments are parsed and turned into a model of the current 
+page structure. Based on this model an 'overlay' is generated in the DOM of the channel. 
+The overlay elements depict containers, components, and floating action buttons to edit menus 
+and manage content.
 
 The presentation of a channel is modified via a REST API in the delivery tier. The code of this 
-REST API resides in the hippo-site-toolkit Git repository.
+REST API resides in the `hippo-site-toolkit` Git repository.
 
-The content of a channel is modified via a REST API that resides in the "content-service" module 
+The content of a channel is modified via a REST API that resides in the `content-service` module 
 of this Git repository.
 
 ### Hippo CMS
 
-Most of the Channel Editor functionality is available in Hippo CMS, also known as the 'open source' 
+Most of the Channel Editor functionality is available in Hippo CMS (also known as the 'open source' 
 or 'community' edition).
 
 #### Preview content and presentation 

@@ -45,6 +45,7 @@
               <include>*.txt</include>
             </includes>
           </sourceFiles>
+          <format>svg</format>
         </configuration>
         <dependencies>
           <dependency>
