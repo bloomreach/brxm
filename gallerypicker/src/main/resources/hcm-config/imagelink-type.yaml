@@ -26,13 +26,12 @@ definitions:
           enable.upload: 'true'
           image.validator.id: service.gallery.image.validation
           jcr:primaryType: frontend:plugincluster
-          frontend:properties: [base.uuid, cluster.name, enable.upload, image.validator.id, last.visited.enabled, last.visited.key, mode, nodetypes, preview.width]
+          frontend:properties: [base.uuid, cluster.name, enable.upload, image.validator.id, last.visited.enabled, last.visited.key, mode, nodetypes]
           frontend:references: [model.compareTo, wicket.model]
           frontend:services: [wicket.id]
           last.visited.enabled: 'true'
           last.visited.key: gallerypicker-imagelink
           nodetypes: []
-          preview.width: '60'
           /root:
             jcr:primaryType: frontend:plugin
             plugin.class: org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin
