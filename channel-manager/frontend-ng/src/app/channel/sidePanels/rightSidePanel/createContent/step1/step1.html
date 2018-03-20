@@ -28,7 +28,7 @@
     <md-select ng-model="$ctrl.documentType"
                name="documentType"
                required
-               placeholder="Document type"
+               placeholder="{{ ::'PLACEHOLDER_DOCUMENT_TYPE' | translate }}"
                ng-disabled="$ctrl.documentTypes.length === 1"
                class="input-document-type create-content-field qa-document-type-select"
                ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
