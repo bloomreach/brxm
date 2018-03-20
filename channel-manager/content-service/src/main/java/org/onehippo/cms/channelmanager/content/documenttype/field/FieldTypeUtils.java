@@ -345,6 +345,19 @@ public class FieldTypeUtils {
         }
     }
 
+    public static boolean writeChoiceFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException, RepositoryException {
+        if (!fieldPath.is(field.getId())) {
+            return false;
+        }
+        if (values.isEmpty()) {
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+        }
+        // Choices can never be multiple, there is always only one value.
+        final FieldValue choiceFieldValue = values.get(0);
+        field.writeValue(node, choiceFieldValue);
+        return true;
+    }
+
     /**
      * Validate the values of a set of fields against a list of field types.
      * <p>

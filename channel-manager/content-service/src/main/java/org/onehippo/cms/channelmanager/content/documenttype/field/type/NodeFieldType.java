@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
@@ -57,7 +58,9 @@ public interface NodeFieldType extends FieldType {
      * @throws ErrorWithPayloadException when the field path or field value is wrong
      * @throws RepositoryException when the write failed
      */
-    boolean writeFieldValue(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException;
+    default boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        return FieldTypeUtils.writeChoiceFieldValue(node, fieldPath, values, this);
+    }
 
     /**
      * Validates the value.

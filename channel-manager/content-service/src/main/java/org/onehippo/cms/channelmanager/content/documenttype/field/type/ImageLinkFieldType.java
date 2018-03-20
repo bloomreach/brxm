@@ -33,7 +33,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -168,12 +167,6 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, fieldValue.getValue());
-    }
-
-    @Override
-    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        // TODO
-        return false;
     }
 
     @Override
