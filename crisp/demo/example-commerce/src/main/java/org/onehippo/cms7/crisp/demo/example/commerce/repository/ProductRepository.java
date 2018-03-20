@@ -69,6 +69,27 @@ public class ProductRepository {
         return Collections.unmodifiableList(list);
     }
 
+    public Product findProductBySku(final String sku) {
+        if (StringUtils.isBlank(sku)) {
+            return null;
+        }
+
+        // NOTE: Only for demonstration purpose, simply iterate each product to find one by sku.
+
+        int size = productList.size();
+        Product product;
+        String name;
+
+        for (int i = 0; i < size; i++) {
+            product = productList.get(i);
+            if (StringUtils.equals(product.getSku(), sku)) {
+                return product;
+            }
+        }
+
+        return null;
+    }
+
     @PostConstruct
     public void init() {
         final URL dataUrl = getClass().getResource("/META-INF/example/commerce/data/products.json");

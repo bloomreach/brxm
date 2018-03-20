@@ -37,6 +37,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -133,17 +134,24 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
 
         try {
             HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : null;
-            if (!HttpMethod.POST.equals(httpMethod)) {
+
+            if (httpMethod == null) {
                 httpMethod = HttpMethod.GET;
             }
 
             RestTemplate restTemplate = getRestTemplate();
+            RequestCallback requestCallback = null;
+
+            final Object requestObject = getRequestEntityObject(exchangeHint);
+            if (requestObject != null) {
+                requestCallback = new SimpleSpringHttpEntityRequestCallback(requestObject, restTemplate.getMessageConverters());
+            }
 
             binary =
                     restTemplate.execute(
                             getBaseResourceURI(absPath),
                             httpMethod,
-                            null,
+                            requestCallback,
                             new ResponseExtractor<SpringResourceBinary>() {
                                 @Override
                                 public SpringResourceBinary extractData(ClientHttpResponse response) throws IOException {

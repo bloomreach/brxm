@@ -18,6 +18,8 @@ package org.onehippo.cms7.crisp.demo.components;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -60,7 +62,8 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
             if (productCatalogs.getChildCount() > 0) {
                 Resource firstProductResource = productCatalogs.getChildren(0, 1).get(0);
-                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker.getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG);
+                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker
+                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG);
                 Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
                 log.debug("==> First product: [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
                         firstProduct.getDescription());
@@ -78,13 +81,21 @@ public class NewsContentComponent extends EssentialsContentComponent {
             if (productCatalogsXml.getChildCount() > 0) {
                 Resource products = (Resource) productCatalogsXml.getValue("products");
                 Resource firstProductResource = products.getChildren(0, 1).get(0);
-                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker.getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML);
+                ResourceBeanMapper resourceBeanMapper = resourceServiceBroker
+                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML);
                 Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
                 log.debug("==> First product (XML): [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
                         firstProduct.getDescription());
             }
         }
 
+        if (BooleanUtils.toBoolean(getPublicRequestParameter(request, "_testput"))) {
+            testPutMethodOnEndpoint();
+        }
+
+        if (BooleanUtils.toBoolean(getPublicRequestParameter(request, "_testdelete"))) {
+            testDeleteMethodOnEndpoint();
+        }
     }
 
     private Resource findProductCatalogs(final NewsDocument document) {
@@ -138,7 +149,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
                     "/products.xml?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products.xml", document.getTitle(), e);
+                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML, "/products.xml", document.getTitle(), e);
         }
 
         return productCatalogs;
@@ -155,5 +166,51 @@ public class NewsContentComponent extends EssentialsContentComponent {
         }
         return ExchangeHintBuilder.create().methodName("POST").requestHeader("Content-Type", "application/json")
                 .requestBody("{}").build();
+    }
+
+    private void testPutMethodOnEndpoint() {
+        Binary data = null;
+
+        final String jsonBody = "{\"description\":\"O!Play HDP-R3, MPEG1, MPEG2, MPEG4, VC-1, H.264, 479 g, 10 W, HDMI\",\"name\":\"Asus O!PLAY HDP-R3\",\"extendedData\":{\"title\":\"Asus O!PLAY HDP-R3\",\"type\":\"Link\",\"uri\":\"Incentro-HIC-Site/-/products/6384114\",\"description\":\"O!Play HDP-R3, MPEG1, MPEG2, MPEG4, VC-1, H.264, 479 g, 10 W, HDMI\"},\"SKU\":\"6384114\"}";
+
+        try {
+            ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+            final Map<String, Object> pathVars = new HashMap<>();
+            pathVars.put("sku", "6384114");
+            final ExchangeHint exchangeHint = ExchangeHintBuilder.create().methodName("PUT")
+                    .requestHeader("Content-Type", "application/json").requestBody(jsonBody).build();
+            data = resourceServiceBroker.resolveBinary(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/{sku}", pathVars,
+                    exchangeHint);
+            log.warn("[INFO] testPutMethodOnEndpoint gets data: {}", IOUtils.toString(data.getInputStream(), "UTF-8"));
+        } catch (Exception e) {
+            log.warn("Failed to put resource from '{}{}' resource space.", RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
+                    "/products/6384114", e);
+        } finally {
+            if (data != null) {
+                data.dispose();
+            }
+        }
+    }
+
+    private void testDeleteMethodOnEndpoint() {
+        Binary data = null;
+
+        try {
+            ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+            final Map<String, Object> pathVars = new HashMap<>();
+            pathVars.put("sku", "6384114");
+            final ExchangeHint exchangeHint = ExchangeHintBuilder.create().methodName("DELETE")
+                    .requestHeader("Content-Type", "application/json").build();
+            data = resourceServiceBroker.resolveBinary(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/{sku}", pathVars,
+                    exchangeHint);
+            log.warn("[INFO] testDeleteMethodOnEndpoint gets data: {}", IOUtils.toString(data.getInputStream(), "UTF-8"));
+        } catch (Exception e) {
+            log.warn("Failed to delete resource from '{}{}' resource space.", RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
+                    "/products/6384114", e);
+        } finally {
+            if (data != null) {
+                data.dispose();
+            }
+        }
     }
 }

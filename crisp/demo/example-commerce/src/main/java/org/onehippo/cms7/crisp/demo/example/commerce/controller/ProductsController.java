@@ -17,6 +17,7 @@ package org.onehippo.cms7.crisp.demo.example.commerce.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.crisp.demo.example.commerce.model.Product;
 import org.onehippo.cms7.crisp.demo.example.commerce.model.ProductDataResult;
 import org.onehippo.cms7.crisp.demo.example.commerce.repository.ProductRepository;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,6 +66,28 @@ public class ProductsController {
     public Resource downloadProductImage(@PathVariable(value="sku") String sku) {
         // Simply return a classpath resource to write a binary (only for demonstration purpose).
         return new ClassPathResource("META-INF/example/commerce/data/windpower.jpg");
+    }
+
+    @RequestMapping(value="/products/{sku}",
+            method = { RequestMethod.GET, RequestMethod.PUT },
+            consumes = { "application/json" },
+            produces = { "application/json" }
+    )
+    public Product updateProduct(@PathVariable("sku") String sku, @RequestBody Product product) {
+        return product;
+    }
+
+    @RequestMapping(value="/products/{sku}",
+            method = { RequestMethod.DELETE, RequestMethod.PUT },
+            consumes = { "*/*" },
+            produces = { "application/json" }
+    )
+    public Product deleteProduct(@PathVariable("sku") String sku) {
+        if (StringUtils.isBlank(sku)) {
+            return null;
+        }
+
+        return productRepository.findProductBySku(sku);
     }
 
 }
