@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,32 @@ class ImageLinkController {
 
   $onInit() {
     this.hiddenLabel = this.ariaLabel + (this.isRequired ? ' *' : '');
+    this.selectElement = this.$element.find('.hippo-imagelink-select');
   }
 
   openImagePicker() {
     const uuid = this.ngModel.$modelValue;
-    this.CmsService.publish('show-image-picker', this.id, this.config.imagepicker, { uuid }, (image) => {
-      this.$scope.$apply(() => {
-        this.url = image.url;
-        this.ngModel.$setViewValue(image.uuid);
-      });
-    }, () => {
-      // Cancel callback
+    this.CmsService.publish('show-image-picker', this.config.imagepicker, { uuid },
+      image => this._onImagePicked(image),
+      () => this._onImagePickCancelled(),
+    );
+  }
+
+  _onImagePicked(image) {
+    this.$scope.$apply(() => {
+      this.url = image.url;
+      this.ngModel.$setViewValue(image.uuid);
+      this._focusSelectButton();
     });
+  }
+
+  _onImagePickCancelled() {
+    this._focusSelectButton();
+  }
+
+  _focusSelectButton() {
+    // focus the select button so pressing ESC again closes the right side-panel
+    this.selectElement.focus();
   }
 
   clearPickedImage() {
