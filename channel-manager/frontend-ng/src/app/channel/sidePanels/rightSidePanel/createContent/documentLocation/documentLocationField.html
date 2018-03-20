@@ -20,10 +20,10 @@
     <md-input-container class="create-content-field qa-document-location">
       <div class="input-overlay"
            tabindex="-1"
-           ng-click="$ctrl.openPicker()" 
+           ng-click="$ctrl.openPicker()"
            title="{{ $ctrl.pathLabel }}">
         <div>
-          <span ng-repeat="folder in $ctrl.folders track by folder.path" 
+          <span ng-repeat="folder in $ctrl.folders track by folder.path"
                 ng-class="{ 'highlight': folder.exists }"><span>/</span>{{::folder.displayName }}</span>
         </div>
         <md-icon class="material-icons">search</md-icon>
