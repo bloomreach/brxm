@@ -19,37 +19,31 @@ import {DateValue} from "./dateField.controller";
 describe('DateField', () => {
   let $componentController;
   let $ctrl;
-  let FieldService;
-  let onFieldFocus;
-  let onFieldBlur;
-  let form;
+  let ngModel;
 
   const fieldType = {id: 'field:type'};
-  const fieldValues = [
-    {value: '2015-08-24T06:53:00.000Z'},
-    {value: '2018-03-12T12:11:50.041+01:00'},
-    {value: ''},
-  ];
+  const fieldValue = {value: '2015-08-24T06:53:00.000Z'};
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$rootScope_, _FieldService_) => {
+    inject((_$componentController_) => {
       $componentController = _$componentController_;
-      FieldService = _FieldService_;
     });
 
-    onFieldFocus = jasmine.createSpy('onFieldFocus');
-    onFieldBlur = jasmine.createSpy('onFieldBlur');
-    form = jasmine.createSpyObj('form', ['$setDirty']);
+    ngModel = jasmine.createSpyObj('ngModel', [
+      '$setViewValue',
+    ]);
+
+    ngModel.$setViewValue.and.callFake((value) => {
+      ngModel.$viewValue = value;
+    });
 
     $ctrl = $componentController('dateField', {}, {
       fieldType,
-      fieldValues,
+      fieldValue,
       name: 'test-name',
-      onFieldFocus,
-      onFieldBlur,
-      form,
+      ngModel,
     });
 
     $ctrl.$onInit();
@@ -57,113 +51,26 @@ describe('DateField', () => {
 
   it('initializes the component', () => {
     expect($ctrl.fieldType).toBe(fieldType);
-    expect($ctrl.fieldValues).toBe(fieldValues);
+    expect($ctrl.fieldValue).toBe(fieldValue);
     expect($ctrl.name).toBe('test-name');
-    expect($ctrl.onFieldFocus).toBe(onFieldFocus);
-    expect($ctrl.onFieldBlur).toBe(onFieldBlur);
-    expect($ctrl.dateValues.length).toBe($ctrl.fieldValues.length);
   });
 
-  it('helps composing unique form field names', () => {
-    expect($ctrl.getFieldName(0)).toBe('test-name/field:type');
-    expect($ctrl.getFieldName(1)).toBe('test-name/field:type[2]');
-    expect($ctrl.getFieldName(2)).toBe('test-name/field:type[3]');
-
-    const stubbed = $componentController('primitiveField', {}, {
-      fieldType,
-      fieldValues,
-    });
-    expect(stubbed.getFieldName(0)).toBe('field:type');
-    expect(stubbed.getFieldName(1)).toBe('field:type[2]');
-    expect(stubbed.getFieldName(2)).toBe('field:type[3]');
-  });
-
-  it('handles $event object if supplied upon focus', () => {
-    const mockTargetElement = $('<input type="text">');
-    const $event = {
-      target: mockTargetElement,
-      customFocus: null,
-    };
-    spyOn(FieldService, 'unsetFocusedInput');
-    spyOn(FieldService, 'setFocusedInput');
-
-    $ctrl.focusDateField($event);
-    expect(FieldService.unsetFocusedInput).toHaveBeenCalledWith();
-    expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
-  });
-
-  it('handles $event object if supplied upon blur', () => {
-    const $event = {
-      relatedTarget: angular.element('<input type="text">'),
-    };
-    spyOn(FieldService, 'shouldPreserveFocus').and.returnValue(true);
-    spyOn(FieldService, 'triggerInputFocus');
-
-    $ctrl.blurDateField($event);
-    expect(FieldService.shouldPreserveFocus).toHaveBeenCalledWith($event.target);
-    expect(FieldService.triggerInputFocus).toHaveBeenCalled();
-
-    // if should not preserve focus
-    FieldService.shouldPreserveFocus.and.returnValue(false);
-    $ctrl.blurDateField($event);
-  });
-
-  it('keeps track of the focused state', () => {
-    expect($ctrl.hasFocus).toBeFalsy();
-
-    $ctrl.focusDateField();
-
-    expect($ctrl.hasFocus).toBeTruthy();
-    expect(onFieldFocus).toHaveBeenCalled();
-    expect(onFieldBlur).not.toHaveBeenCalled();
-    onFieldFocus.calls.reset();
-
-    $ctrl.blurDateField();
-
-    expect($ctrl.hasFocus).toBeFalsy();
-    expect(onFieldFocus).not.toHaveBeenCalled();
-    expect(onFieldBlur).toHaveBeenCalled();
-  });
-
-  it('starts a draft timer when the value changed', () => {
-    spyOn(FieldService, 'startDraftTimer');
-
-    $ctrl.valueChanged();
-
-    expect(FieldService.startDraftTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
-  });
-
-  it('drafts the field on blur when the value has changed', () => {
-    spyOn(FieldService, 'draftField');
-
-    $ctrl.focusDateField();
-    fieldValues[1].value = '2018-01-01T12:11:50.041+01:00';
-    $ctrl.blurDateField();
-
-    expect(FieldService.draftField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
-  });
-
-  it('does not draft the field on blur when the value has not changed', () => {
-    spyOn(FieldService, 'draftField');
-
-    $ctrl.focusDateField();
-    $ctrl.blurDateField();
-
-    expect(FieldService.draftField).not.toHaveBeenCalled();
+  it('initializes the date value from ngModel', () => {
+    ngModel.$viewValue = '2015-08-24T06:53:00.000Z';
+    ngModel.$render();
+    expect($ctrl.dateValue).toBeDefined();
   });
 
   it('sets the value of a date to the current date and time when set to now is called', () => {
     spyOn($ctrl, 'valueChanged');
-    const oldValue = $ctrl.dateValues[0].date;
+    const oldValue = new DateValue('2015-08-24T06:53:00.000Z');
+    $ctrl.dateValue = new DateValue('2015-08-24T06:53:00.000Z');
 
-    $ctrl.setToNow(0);
+    $ctrl.setToNow();
 
     expect($ctrl.valueChanged).toHaveBeenCalled();
-    const newValue = $ctrl.dateValues[0].date;
-    expect(oldValue).toBeLessThan(newValue);
-    expect(form.$setDirty).toHaveBeenCalled();
+    expect(oldValue.jsDate).toBeLessThan($ctrl.dateValue.date);
   });
-
 });
 
 describe('DateValue', () => {
