@@ -38,11 +38,6 @@ import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 class HippoBeanSerializer extends JsonSerializer<HippoBean> {
 
     /**
-     * Page Model API processing pipeline name.
-     */
-    private static final String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
-
-    /**
      * Content JSON Pointer prefix.
      */
     private static final String CONTENT_JSON_POINTER_PREFIX = "/content/";
