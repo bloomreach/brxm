@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -394,11 +394,11 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param jsonPropName JSON property name
      * @param beanModel content item bean model
      * @param maxRefLevel maximum reference depth level
-     * @param curReflevel reference depth level
+     * @param curRefLevel reference depth level
      */
     private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName,
-            final HippoBeanWrapperModel beanModel, final int maxRefLevel, final int curReflevel) {
-        if (curReflevel > maxRefLevel) {
+            final HippoBeanWrapperModel beanModel, final int maxRefLevel, final int curRefLevel) {
+        if (curRefLevel > maxRefLevel) {
             return;
         }
 
@@ -415,22 +415,14 @@ public class PageModelAggregationValve extends AggregationValve {
 
         contentNode.set(jsonPropName, modelNode);
 
-        final Stack<HippoBeanWrapperModel> stack = HippoBeanSerializationContext
-                .getContentBeanModelStack(beanModel.getBean().getRepresentationId());
+        final Set<HippoBeanWrapperModel> set = HippoBeanSerializationContext
+                .getContentBeanModelSet(beanModel.getBean().getRepresentationId());
 
-        if (stack != null && !stack.empty()) {
-            HippoBeanWrapperModel model = (HippoBeanWrapperModel) stack.pop();
-
-            while (model != null) {
+        if (set != null && !set.isEmpty()) {
+            for (HippoBeanWrapperModel model : set) {
                 appendContentItemModel(contentNode,
                         HippoBeanSerializer.representationIdToJsonPropName(model.getBean().getRepresentationId()),
-                        model, maxRefLevel, curReflevel + 1);
-
-                if (!stack.empty()) {
-                    model = (HippoBeanWrapperModel) stack.pop();
-                } else {
-                    break;
-                }
+                        model, maxRefLevel, curRefLevel + 1);
             }
         }
     }

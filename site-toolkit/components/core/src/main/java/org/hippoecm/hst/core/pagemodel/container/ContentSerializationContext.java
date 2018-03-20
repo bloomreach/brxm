@@ -51,7 +51,13 @@ class ContentSerializationContext {
      * @return the current Content Serialization phase
      */
     public static Phase getCurrentPhase() {
-        Phase phase = (Phase) RequestContextProvider.get().getAttribute(PHASE_ATTR);
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            return null;
+        }
+
+        Phase phase = (Phase) requestContext.getAttribute(PHASE_ATTR);
         return phase;
     }
 
@@ -60,7 +66,13 @@ class ContentSerializationContext {
      * @param phase the current Content Serialization phase
      */
     public static void setCurrentPhase(Phase phase) {
-        RequestContextProvider.get().setAttribute(PHASE_ATTR, phase);
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not available.");
+        }
+
+        requestContext.setAttribute(PHASE_ATTR, phase);
     }
 
     /**
@@ -68,9 +80,13 @@ class ContentSerializationContext {
      * @return the current {@link AggregatedPageModel} object
      */
     public static AggregatedPageModel getCurrentAggregatedPageModel() {
-        AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) RequestContextProvider.get()
-                .getAttribute(AGGREGATED_PAGE_MODEL_ATTR);
-        return aggregatedPageModel;
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext != null) {
+            return (AggregatedPageModel) requestContext.getAttribute(AGGREGATED_PAGE_MODEL_ATTR);
+        }
+
+        return null;
     }
 
     /**
@@ -78,7 +94,13 @@ class ContentSerializationContext {
      * @param aggregatedPageModel the current {@link AggregatedPageModel} object
      */
     public static void setCurrentAggregatedPageModel(AggregatedPageModel aggregatedPageModel) {
-        RequestContextProvider.get().setAttribute(AGGREGATED_PAGE_MODEL_ATTR, aggregatedPageModel);
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not available.");
+        }
+
+        requestContext.setAttribute(AGGREGATED_PAGE_MODEL_ATTR, aggregatedPageModel);
     }
 
     /**
@@ -86,7 +108,10 @@ class ContentSerializationContext {
      */
     public static void clear() {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        requestContext.removeAttribute(PHASE_ATTR);
-        requestContext.removeAttribute(AGGREGATED_PAGE_MODEL_ATTR);
+
+        if (requestContext != null) {
+            requestContext.removeAttribute(PHASE_ATTR);
+            requestContext.removeAttribute(AGGREGATED_PAGE_MODEL_ATTR);
+        }
     }
 }

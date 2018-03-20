@@ -90,38 +90,40 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             return;
         }
 
+        final Phase curPhase = ContentSerializationContext.getCurrentPhase();
+
+        if (curPhase == null) {
+            beanSerializer.serialize(bean, gen, provider);
+            return;
+        }
+
         final HstRequestContext requestContext = RequestContextProvider.get();
-        Phase curPhase = ContentSerializationContext.getCurrentPhase();
 
         final String representationId = bean.getRepresentationId();
         final String jsonRepresentationId = representationIdToJsonPropName(representationId);
 
         if (curPhase == Phase.REFERENCING_CONTENT_IN_COMPONENT) {
             serializeBeanReference(bean, gen, jsonRepresentationId);
-
             final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
             decorateContentMetadata(requestContext, bean, wrapperBeanModel);
             addLinksToContent(requestContext, wrapperBeanModel);
             AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
             aggregatedPageModel.putContent(jsonRepresentationId, wrapperBeanModel);
-        } else {
-            if (curPhase == Phase.SERIALIZING_CONTENT) {
-                try {
-                    ContentSerializationContext.setCurrentPhase(Phase.REFERENCING_CONTENT_IN_CONTENT);
-                    HippoBeanSerializationContext.beginTopLevelContentBean(representationId);
-                    beanSerializer.serialize(bean, gen, provider);
-                } finally {
-                    HippoBeanSerializationContext.endTopLevelContentBean();
-                    ContentSerializationContext.setCurrentPhase(Phase.SERIALIZING_CONTENT);
-                }
-            } else if (curPhase == Phase.REFERENCING_CONTENT_IN_CONTENT) {
-                serializeBeanReference(bean, gen, jsonRepresentationId);
-                final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
-                decorateContentMetadata(requestContext, bean, wrapperBeanModel);
-                addLinksToContent(requestContext, wrapperBeanModel);
-                HippoBeanSerializationContext.pushContentBeanModel(
-                        HippoBeanSerializationContext.getCurrentTopLevelContentBeanRepresentationId(), wrapperBeanModel);
+        } else if (curPhase == Phase.SERIALIZING_CONTENT) {
+            try {
+                ContentSerializationContext.setCurrentPhase(Phase.REFERENCING_CONTENT_IN_CONTENT);
+                HippoBeanSerializationContext.beginTopLevelContentBean(representationId);
+                beanSerializer.serialize(bean, gen, provider);
+            } finally {
+                HippoBeanSerializationContext.endTopLevelContentBean();
+                ContentSerializationContext.setCurrentPhase(Phase.SERIALIZING_CONTENT);
             }
+        } else if (curPhase == Phase.REFERENCING_CONTENT_IN_CONTENT) {
+            serializeBeanReference(bean, gen, jsonRepresentationId);
+            final HippoBeanWrapperModel wrapperBeanModel = new HippoBeanWrapperModel(representationId, bean);
+            decorateContentMetadata(requestContext, bean, wrapperBeanModel);
+            addLinksToContent(requestContext, wrapperBeanModel);
+            HippoBeanSerializationContext.addSerializableContentBeanModel(wrapperBeanModel);
         }
     }
 
