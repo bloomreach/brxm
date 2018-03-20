@@ -22,8 +22,9 @@
 
   <resize-handle element="$ctrl.$element"
                  on-resize="$ctrl.onResize(newWidth)"
+                 min-width="440"
                  ng-if="!$ctrl.isFullWidth"
-                 class="left">
+                 handle-position="left">
   </resize-handle>
 
   <md-toolbar class="right-side-panel-top-toolbar">

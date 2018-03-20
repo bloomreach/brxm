@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ class LeftSidePanelCtrl {
   constructor(
     $scope,
     $element,
+    localStorageService,
     SidePanelService,
     CatalogService,
     SiteMapService,
@@ -28,16 +29,30 @@ class LeftSidePanelCtrl {
 
     this.$scope = $scope;
     this.$element = $element;
+    this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapService = SiteMapService;
     this.ChannelService = ChannelService;
+
+    this.lastSavedWidth = null;
+  }
+
+  $onInit() {
+    this.lastSavedWidth = this.localStorageService.get('leftSidePanelWidth') || '320px';
+    // TODO: this should be done after leftSidePanelToggle event has happened! $watch? subscribe?
+    this._openPanel();
   }
 
   $postLink() {
     this.SidePanelService.initialize('left', this.$element.find('.left-side-panel'));
+  }
+
+  onResize(newWidth) {
+    this.lastSavedWidth = `${newWidth}px`;
+    this.localStorageService.set('leftSidePanelWidth', this.lastSavedWidth);
   }
 
   isLockedOpen() {
@@ -75,6 +90,22 @@ class LeftSidePanelCtrl {
 
   isEditable() {
     return this.ChannelService.isEditable();
+  }
+
+  _openPanel() {
+    this.SidePanelService.open('left')
+      .then(() => {
+        this.$element.addClass('sidepanel-open');
+        this.$element.css('width', this.lastSavedWidth);
+        this.$element.css('max-width', this.lastSavedWidth);
+      });
+  }
+
+  _closePanel() {
+    this.$element.removeClass('sidepanel-open');
+    this.$element.css('max-width', '0px');
+
+    this.SidePanelService.close('left');
   }
 }
 

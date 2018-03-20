@@ -1,4 +1,4 @@
-// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,49 +13,50 @@
 // limitations under the License.
 @import 'variables';
 
-right-side-panel {
+left-side-panel {
   max-width: 0;
-  transition: max-width $swift-ease-out;
 
   &.sidepanel-open {
     max-width: 50% !important;
-    transition: max-width $swift-ease-in;
 
     md-sidenav {
-      border-left: 1px solid $grey-200;
-      margin-left: auto;
+      margin-right: auto;
       width: 100%;
+      max-width: 100%;
+      border-right: 1px solid $grey-200;
     }
-
-    &.fullwidth {
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-  }
-
-  .btn-fullwidth,
-  .btn-normalwidth {
-    margin: 0 !important;
   }
 
   &.in-resize {
     user-select: none;
   }
 
-  .right-side-panel-top-toolbar {
-    max-height: 64px;
-    z-index: 3 !important;
-
-    .md-toolbar-tools > .md-icon-button {
-      min-width: 40px;
-    }
+  md-list {
+    padding: 0;
   }
 
-  .right-side-panel-top-toolbar-tools {
-    display: flex;
+  .md-avatar {
+    border-radius: 0 !important;
+  }
+
+  .list-item-active {
+    background-color: $list-item-active-bgcolor;
+  }
+
+  .catalog-list-item-active {
+    font-style: italic;
+  }
+
+  // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
+  .md-list-item-text h4 {
+    line-height: 1.3em !important;
+  }
+
+  &.sidepanel-lifted {
+    z-index: $z-index-sidepanel-lifted;
   }
 }
 
-.right-side-panel {
-  max-width: 100%;
+md-tabs {
+  padding-right: 12px;
 }
