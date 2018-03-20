@@ -19,19 +19,18 @@ import controller from './imageLink.controller';
 import './imageLink.scss';
 
 const imageLinkComponent = {
-  template,
   controller,
+  template,
   bindings: {
     ariaLabel: '@',
     config: '<',
-    name: '@',
-    url: '<',
     hint: '<',
     isRequired: '<',
+    name: '@',
+    url: '<',
   },
   require: {
     ngModel: 'ngModel',
-    form: '^^form',
   },
 };
 
