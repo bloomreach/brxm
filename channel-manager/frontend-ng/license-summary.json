@@ -1605,11 +1605,6 @@
     "url": "http://substack.net",
     "licenseFile": "node_modules/mkdirp/LICENSE"
   },
-  "ms@2.0.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/zeit/ms",
-    "licenseFile": "node_modules/fsevents/node_modules/ms/license.md"
-  },
   "moment-timezone@0.5.14": {
     "licenses": "MIT",
     "repository": "https://github.com/moment/moment-timezone",
@@ -1625,6 +1620,11 @@
     "email": "iskren.chernev@gmail.com",
     "url": "https://github.com/ichernev",
     "licenseFile": "node_modules/moment/LICENSE"
+  },
+  "ms@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/zeit/ms",
+    "licenseFile": "node_modules/fsevents/node_modules/ms/license.md"
   },
   "mutation-summary@0.1.1": {
     "licenses": "Apache*",
