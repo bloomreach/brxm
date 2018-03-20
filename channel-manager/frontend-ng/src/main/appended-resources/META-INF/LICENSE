@@ -4,8 +4,8 @@ Addon Channel Manager Frontend Next Generation includes and bundles the followin
 licensed under the Apache License, Version 2.0. Your use of the code for these sub-components is subject to the terms
 and conditions of the Apache License, Version 2.0, as specified in the license text above:
 
-angular/hippo-cm/fonts/Regular/**
-angular/hippo-cm/scripts/hippo-cm*.min.js (parts originating from https://code.google.com/p/mutation-summary)
+angular/hippo-cm/OpenSans-Regular.*
+angular/hippo-cm/app.*.js (parts originating from https://code.google.com/p/mutation-summary)
 
 For both the above listed sub-components or other bundled sub-components also additional or separate copyright notices
 and license terms may apply. Your use of the code for these sub-components is also subject to the terms and conditions
@@ -37,8 +37,9 @@ angular/hippo-cm/styles/dragula.min.css
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/hippo-cm/scripts/hippo-cm*.min.js
-angular/hippo-cm/styles/hippo-cm-*.min.css
+angular/hippo-cm/app.*.js
+angular/hippo-cm/app.*.css
+angular/hippo-cm/vendor.*.js
 
     These files include and merge a number of 3rd party resources with separate copyright notices and license terms.
     Your use of (parts of) these external resources is subject to the terms and conditions of their specific license.
@@ -295,4 +296,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         SOFTWARE.
 
     https://github.com/FontFaceKit/open-sans.git
+        Apache License version 2.0
+
+    https://github.com/google/material-design-icons
         Apache License version 2.0

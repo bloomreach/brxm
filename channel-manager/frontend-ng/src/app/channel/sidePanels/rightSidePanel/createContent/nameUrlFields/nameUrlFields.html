@@ -19,7 +19,7 @@
   <md-input-container class="create-content-field qa-name-field">
     <input class="name-input-element"
            name="nameField"
-           placeholder="Document name"
+           placeholder="{{ ::'PLACEHOLDER_DOCUMENT_NAME' | translate }}"
            ng-model="$ctrl.nameField"
            ng-change="$ctrl.onNameChange($event)"
            type="text"
@@ -36,10 +36,10 @@
     <md-input-container class="create-content-field qa-url-field">
       <input class="url-input-element"
              name="url"
-             placeholder="URL"
+             placeholder="{{ ::'PLACEHOLDER_DOCUMENT_URL' | translate }}"
              type="text"
              ng-model="$ctrl.urlField"
-             ng-disabled="!$ctrl.isManualUrlMode" 
+             ng-disabled="!$ctrl.isManualUrlMode"
              autocomplete="off"
              required>
 

@@ -36,6 +36,7 @@
     "angular-ui-tree": "2.22.6",
     "es6-shim": "0.35.3",
     "jquery": "3.2.1",
+    "material-design-icons": "3.0.1",
     "moment-timezone": "0.5.14",
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
