@@ -247,29 +247,28 @@
     },
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      this._showPicker(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+      selectedLink.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
     _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this._showPicker(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
+      selectedImage.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
     },
 
-    _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this._showPicker(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
     },
 
-    _showPicker: function(fieldId, dialogConfig, selection, successCallback, cancelCallback, wicketUrl) {
+    _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {
       this.pickerSuccessCallback = successCallback;
       this.pickerCancelCallback = cancelCallback;
 
-      Ext.apply(selection, {
-        'fieldId': fieldId,
-        'dialogConfig': JSON.stringify(dialogConfig)
-      });
+      parameters.dialogConfig = JSON.stringify(dialogConfig);
 
       Wicket.Ajax.post({
         u: wicketUrl,
-        ep: selection
+        ep: parameters
       });
     },
 
