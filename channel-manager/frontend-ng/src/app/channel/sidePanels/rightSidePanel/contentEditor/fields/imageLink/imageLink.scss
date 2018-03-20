@@ -14,6 +14,9 @@
 
 @import 'variables';
 
+$thumbnail-width: 60px; // default thumbnail max width
+$hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
+
 image-link {
   .input-bottom-border {
     border-bottom: 1px solid;
@@ -28,14 +31,15 @@ image-link {
 
   .md-icon-button > md-icon {
     color: $grey-600 !important;
+    margin: 0;
   }
 
   .hippo-imagelink-buttons {
-    // render transparent span containing the field name to align 
-    // the image picker buttons in the correct position
+    // render transparent span containing the field name + optional asterisk
+    // to align the image picker buttons in the correct position
     > span {
       color: transparent;
-      min-width: 60px;
+      min-width: $thumbnail-width;
       user-select: none;
     }
 
@@ -52,8 +56,9 @@ image-link {
         pointer-events: all;
       }
 
+      // if no image is yet selected
       &:not(.image-has-url) button:first-of-type {
-        margin-left: 24px;
+        margin-left: $hint-icon-width;
       }
     }
 
@@ -61,7 +66,7 @@ image-link {
       align-items: center;
       display: flex;
       height: 100%;
-      padding-left: 60px;
+      padding-left: $thumbnail-width;
       position: absolute;
 
       > span {
