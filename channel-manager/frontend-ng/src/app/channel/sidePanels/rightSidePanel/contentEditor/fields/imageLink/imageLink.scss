@@ -64,10 +64,8 @@ image-link {
 
     &.image-has-url {
       align-items: center;
-      display: flex;
       height: 100%;
       padding-left: $thumbnail-width;
-      position: absolute;
 
       > span {
         display: none;
@@ -78,5 +76,21 @@ image-link {
     position: absolute;
     top: -2px;
     z-index: 1;
+  }
+
+  .hippo-imagelink-picked {
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+    animation-name: enter;
+  }
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
   }
 }

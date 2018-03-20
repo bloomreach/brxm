@@ -26,10 +26,10 @@
 <img ng-if="$ctrl.url"
      ng-src="../../{{ $ctrl.url }}"
      ng-click="$ctrl.openImagePicker()"
-     class="hippo-image-link-thumbnail" />
+     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }" />
 
 <div class="input-bottom-border"
-     ng-hide="!$ctrl.url"></div>
+     ng-if="$ctrl.url"></div>
 
 <div class="hippo-imagelink-buttons"
      ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">

@@ -38,6 +38,7 @@ class ImageLinkController {
 
   _onImagePicked(image) {
     this.$scope.$apply(() => {
+      this.imagePicked = true;
       this.url = image.url;
       this.ngModel.$setViewValue(image.uuid);
       this._focusSelectButton();
@@ -54,6 +55,9 @@ class ImageLinkController {
   }
 
   clearPickedImage() {
+    // hide the image before the animations start to prevent it from being pushed down first
+    this.$element.find('img').hide();
+    this.imagePicked = false;
     this.url = '';
     this.ngModel.$setViewValue('');
   }

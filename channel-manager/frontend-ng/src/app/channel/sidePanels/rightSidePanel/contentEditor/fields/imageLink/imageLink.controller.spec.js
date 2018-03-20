@@ -73,6 +73,7 @@ describe('imageLinkController', () => {
     expect($ctrl.hint).toEqual('TestHint');
     expect($ctrl.url).toEqual('TestUrl');
     expect($ctrl.selectElement).toBeDefined();
+      expect($ctrl.imagePicked).toBeFalsy();
   });
 
   it('adds an asterisk to the hiddenLabel for required image links', () => {
@@ -103,6 +104,7 @@ describe('imageLinkController', () => {
       });
       $scope.$apply();
 
+      expect($ctrl.imagePicked).toBe(true);
       expect($ctrl.url).toEqual('new-url');
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
       expect($ctrl.selectElement.focus).toHaveBeenCalled();
@@ -122,6 +124,7 @@ describe('imageLinkController', () => {
       $ctrl.clearPickedImage();
 
       expect($ctrl.url).toEqual('');
+      expect($ctrl.imagePicked).toBe(false);
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('');
     });
   });
