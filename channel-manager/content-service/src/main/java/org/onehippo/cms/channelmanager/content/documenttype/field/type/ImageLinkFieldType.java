@@ -149,9 +149,8 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
     public FieldValue readValue(final Node node) {
         final FieldValue value = new FieldValue();
         try {
-            final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, null);
+            final String uuid = readUuid(node);
             value.setValue(uuid);
-            value.setId(node.getIdentifier());
             value.setUrl(createImageUrl(uuid, node.getSession()));
         } catch (final RepositoryException e) {
             log.warn("Failed to read image link '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
@@ -159,14 +158,33 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
         return value;
     }
 
-    private String createImageUrl(final String uuid, final Session session) {
+    private static String readUuid(final Node node) throws RepositoryException {
+        final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, StringUtils.EMPTY);
+        final String rootUuid = node.getSession().getRootNode().getIdentifier();
+        return uuid.equals(rootUuid) ? StringUtils.EMPTY : uuid;
+    }
+
+    private static String createImageUrl(final String uuid, final Session session) {
         final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(uuid);
         return imageItem.getPrimaryUrl(() -> session);
     }
 
     @Override
-    public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, fieldValue.getValue());
+    public void writeValue(final Node node, final FieldValue fieldValue) throws RepositoryException {
+        writeUuid(node, fieldValue.getValue());
+    }
+
+    private static void writeUuid(final Node node, final String uuid) throws RepositoryException {
+        if (StringUtils.isEmpty(uuid)) {
+            final String rootUuid = node.getSession().getRootNode().getIdentifier();
+            writeDocBase(node, rootUuid);
+        } else {
+            writeDocBase(node, uuid);
+        }
+    }
+
+    private static void writeDocBase(final Node node, final String rootUuid) throws RepositoryException {
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, rootUuid);
     }
 
     @Override
