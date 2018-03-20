@@ -33,7 +33,7 @@
 
 <div class="hippo-imagelink-buttons"
      ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">
-  <span>{{::$ctrl.ariaLabel}}</span>
+  <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button"
              ng-disabled="!$ctrl.url"
              ng-click="$ctrl.clearPickedImage()">

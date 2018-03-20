@@ -24,7 +24,7 @@ class ImageLinkController {
   }
 
   $onInit() {
-    this.inputElement = this.$element.find('input');
+    this.hiddenLabel = this.ariaLabel + (this.isRequired ? ' *' : '');
   }
 
   openImagePicker() {
@@ -42,7 +42,6 @@ class ImageLinkController {
   clearPickedImage() {
     this.url = '';
     this.ngModel.$setViewValue('');
-    this.inputElement.blur();
   }
 }
 
