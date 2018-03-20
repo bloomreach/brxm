@@ -106,7 +106,9 @@ public class LinkModel {
                     final String linkApplicationId = siteMapItem.getApplicationId();
                     // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
                     // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
-                    // the application id
+                    // the application id. If there is *no* application id set for both site map items, the link type is
+                    // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
+                    // have an application id to have correct indication of 'internal/external'.
                     final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
                     linkType = Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
                 }
