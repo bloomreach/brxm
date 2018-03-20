@@ -32,7 +32,7 @@
         <span ng-if="::$ctrl.fieldType.required">*</span>
       </span>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint">
+      <md-icon ng-if="::$ctrl.fieldType.hint" class="hippo-hint-icon">
         info_outline
 
         <md-tooltip>
@@ -83,7 +83,7 @@
                    ng-blur="$ctrl.blurPrimitive($event)">
         {{::$ctrl.fieldType.displayName}}
         <md-icon ng-if="::$ctrl.fieldType.hint"
-                 class="checkbox-hint">
+                 class="checkbox-hint hippo-hint-icon">
           info_outline
 
           <md-tooltip>
