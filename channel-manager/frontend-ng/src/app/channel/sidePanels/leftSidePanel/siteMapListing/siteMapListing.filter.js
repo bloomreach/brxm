@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-import siteMapListingController from './siteMapListing.controller';
-import template from './siteMapListing.html';
-import './siteMapListing.scss';
+function siteMapListingFilter() {
+  'ngInject';
 
-const siteMapListingComponent = {
-  bindings: {
-    items: '<',
-  },
-  template,
-  controller: siteMapListingController,
-};
+  return (list, query, fields) => {
+    if (!query) {
+      return list;
+    }
 
-export default siteMapListingComponent;
+    query = query.toLowerCase().split(' ');
+
+    if (!angular.isArray(fields)) {
+      fields = [fields.toString()];
+    }
+    return list.filter(item => query.every(needle => fields.some((field) => {
+      let content = item[field] != null ? item[field] : '';
+      if (!angular.isString(content)) {
+        content = `${content}`;
+      }
+
+      return content.toLowerCase().indexOf(needle) > -1;
+    })));
+  };
+}
+
+export default siteMapListingFilter;

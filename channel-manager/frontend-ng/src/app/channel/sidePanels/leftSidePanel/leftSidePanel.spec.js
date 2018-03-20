@@ -44,7 +44,7 @@ describe('LeftSidePanel', () => {
     spyOn(CatalogService, 'load');
     spyOn(SidePanelService, 'close');
     spyOn(SidePanelService, 'initialize');
-    spyOn(SiteMapService, 'get');
+    spyOn(SiteMapService, 'get').and.returnValue([]);
   });
 
   function instantiateController(componentsVisible) {

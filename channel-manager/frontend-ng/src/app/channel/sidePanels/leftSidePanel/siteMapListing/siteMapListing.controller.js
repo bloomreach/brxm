@@ -15,11 +15,19 @@
  */
 
 class SiteMapListingController {
-  constructor($translate, HippoIframeService) {
+  constructor($scope, $translate, HippoIframeService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.$translate = $translate;
     this.HippoIframeService = HippoIframeService;
+
+    this.$scope.keywords = '';
+    this.$scope.filterFields = ['name', 'pathInfo'];
+  }
+
+  clearKeywords() {
+    this.$scope.keywords = '';
   }
 
   showPage(siteMapItem) {
