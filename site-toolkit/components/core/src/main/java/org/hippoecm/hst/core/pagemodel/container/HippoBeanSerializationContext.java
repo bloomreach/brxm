@@ -63,7 +63,7 @@ class HippoBeanSerializationContext {
 
     /**
      * Enter into a specific top level bean's (referred to by {@code representationId}) content bean serialization sub-context.
-     * @param topLevelBeanRepresentationId the top level bean's {@code representationId}
+     * @param representationId the top level bean's {@code representationId}
      */
     public static void beginTopLevelContentBean(final String representationId) {
         final HstRequestContext requestContext = RequestContextProvider.get();
@@ -121,8 +121,7 @@ class HippoBeanSerializationContext {
         }
 
         final String topLevelBeanRepresentationId = getCurrentTopLevelContentBeanRepresentationId();
-        Set<HippoBeanWrapperModel> modelSet = (Set<HippoBeanWrapperModel>) modelSetMap
-                .get(topLevelBeanRepresentationId);
+        Set<HippoBeanWrapperModel> modelSet = modelSetMap.get(topLevelBeanRepresentationId);
 
         if (modelSet == null) {
             modelSet = new LinkedHashSet<>();
@@ -151,7 +150,7 @@ class HippoBeanSerializationContext {
             return null;
         }
 
-        return (Set<HippoBeanWrapperModel>) modelSetMap.get(topLevelContentBeanRepresentationId);
+        return modelSetMap.get(topLevelContentBeanRepresentationId);
     }
 
     /**

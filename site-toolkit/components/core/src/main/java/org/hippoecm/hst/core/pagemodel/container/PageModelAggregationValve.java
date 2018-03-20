@@ -43,7 +43,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
-import org.hippoecm.hst.core.pagemodel.model.LinkModel;
+import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -129,7 +129,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
     /**
      * Set the max content reference depth level allowed to generate content item models from a reference in a content item.
-     * @param maxContentReferenceLevel the max content reference depth level allowed to generate content item models from a reference in a content item
+     * @param defaultMaxContentReferenceLevel the max content reference depth level allowed to generate content item models from a reference in a content item
      */
     public void setDefaultMaxContentReferenceLevel(int defaultMaxContentReferenceLevel) {
         this.defaultMaxContentReferenceLevel = defaultMaxContentReferenceLevel;

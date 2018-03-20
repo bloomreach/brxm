@@ -15,11 +15,20 @@
  */
 package org.hippoecm.hst.content.beans.support.jackson;
 
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
+@JsonAppend(props = {
+        @JsonAppend.Prop(
+                name = "_links",
+                value = MenuItemLinkVirtualBeanPropertyWriter.class
+        )
+}
+)
 public interface EditableMenuItemMixin extends EditableMenuItem, CommonMenuItemMixin {
 
     @Override
@@ -30,4 +39,17 @@ public interface EditableMenuItemMixin extends EditableMenuItem, CommonMenuItemM
     @JsonIgnore
     EditableMenuItem getParentItem();
 
+    /**
+     * instead of getHstLink and getExternalLink we serialize a _links object
+     */
+    @JsonIgnore
+    @Override
+    HstLink getHstLink();
+
+    /**
+     * instead of getHstLink and getExternalLink we serialize a _links object
+     */
+    @JsonIgnore
+    @Override
+    String getExternalLink();
 }

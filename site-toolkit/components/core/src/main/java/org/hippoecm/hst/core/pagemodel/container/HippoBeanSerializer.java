@@ -27,7 +27,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
-import org.hippoecm.hst.core.pagemodel.model.LinkModel;
+import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;

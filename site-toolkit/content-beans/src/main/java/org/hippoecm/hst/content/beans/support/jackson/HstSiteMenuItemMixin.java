@@ -17,11 +17,20 @@ package org.hippoecm.hst.content.beans.support.jackson;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
+@JsonAppend(props = {
+        @JsonAppend.Prop(
+                name = "_links",
+                value = MenuItemLinkVirtualBeanPropertyWriter.class
+        )
+}
+)
 public interface HstSiteMenuItemMixin extends HstSiteMenuItem, CommonMenuItemMixin {
 
     @JsonIgnore
@@ -38,5 +47,19 @@ public interface HstSiteMenuItemMixin extends HstSiteMenuItem, CommonMenuItemMix
 
     @JsonIgnore
     HstSiteMenuItem getDeepestExpandedItem();
+
+    /**
+     * instead of getHstLink and getExternalLink we serialize a _links object
+     */
+    @JsonIgnore
+    @Override
+    HstLink getHstLink();
+
+    /**
+     * instead of getHstLink and getExternalLink we serialize a _links object
+     */
+    @JsonIgnore
+    @Override
+    String getExternalLink();
 
 }
