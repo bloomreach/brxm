@@ -17,11 +17,9 @@ package org.hippoecm.hst.core.pagemodel.container;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -30,8 +28,6 @@ import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Pha
 import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -40,8 +36,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
 class HippoBeanSerializer extends JsonSerializer<HippoBean> {
-
-    private static Logger log = LoggerFactory.getLogger(HippoBeanSerializer.class);
 
     /**
      * Page Model API processing pipeline name.
@@ -156,40 +150,13 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
         }
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
-
-        // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
-        if (PAGE_MODEL_PIPELINE_NAME.equals(selfMount.getNamedPipeline())) {
-            final Mount siteMount = selfMount.getParent();
-
-            if (siteMount == null) {
-                log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
-                        "case for '{}'. Cannot add site links", selfMount);
-                return;
-            }
-
-            // since the selfLink could be resolved, the site link also must be possible to resolve
-            final HstLink siteLink = requestContext.getHstLinkCreator().create(hippoBean.getNode(), siteMount);
-
-            if (siteLink != null && !siteLink.isNotFound()) {
-                String linkType = null;
-                final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
-
-                if (siteMapItem != null) {
-                    if (siteMapItem.isContainerResource()) {
-                        linkType = "resource";
-                    } else {
-                        final String linkApplicationId = siteMapItem.getApplicationId();
-                        // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
-                        // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
-                        // the application id
-                        final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-                        linkType = (Objects.equals(linkApplicationId, currentApplicationId)) ? "internal" : "external";
-                    }
-                }
-
-                contentBeanModel.putLink(LINK_NAME_SITE, new LinkModel(siteLink.toUrlForm(requestContext, false), linkType));
-            }
+        final HstLink selfLink = requestContext.getHstLinkCreator().create(hippoBean.getNode(), selfMount);
+        if (selfLink == null) {
+            return;
         }
+
+        contentBeanModel.putLink(LINK_NAME_SITE, LinkModel.convert(selfLink, requestContext));
+
     }
 
     /**

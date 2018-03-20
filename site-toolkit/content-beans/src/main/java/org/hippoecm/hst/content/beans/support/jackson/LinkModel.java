@@ -82,7 +82,7 @@ public class LinkModel {
 
     /**
      * @param hstLink
-     * @return the {@code hstLink} converted to a {@link LinkModel} or {@code null} when no LinkModel can be returned.
+     * @return the {@code hstLink} converted to a {@link LinkModel}
      */
     public static LinkModel convert(final HstLink hstLink, final HstRequestContext requestContext) {
         final Mount linkMount = hstLink.getMount();
