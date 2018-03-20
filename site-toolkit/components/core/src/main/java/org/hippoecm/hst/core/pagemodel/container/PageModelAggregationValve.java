@@ -24,7 +24,8 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -85,6 +86,11 @@ public class PageModelAggregationValve extends AggregationValve {
      * Page definition ID (from the configuration) metadata name.
      */
     private static final String PAGE_DEFINITION_ID_METADATA = "definitionId";
+
+    /**
+     * Maximum content reference level request parameter name.
+     */
+    private static final String MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME = "_maxreflevel";
 
     /**
      * Jackson ObjectMapper instance for JSON (de)serialization.
@@ -178,7 +184,10 @@ public class PageModelAggregationValve extends AggregationValve {
             ContentSerializationContext.setCurrentPhase(Phase.SERIALIZING_CONTENT);
 
             if (aggregatedPageModel.hasAnyContent()) {
-                final JsonNode contentNode = serializeContentMap(aggregatedPageModel.getContentMap());
+                final int maxRefLevel = NumberUtils.toInt(
+                        requestContext.getServletRequest().getParameter(MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME),
+                        defaultMaxContentReferenceLevel);
+                final JsonNode contentNode = serializeContentMap(aggregatedPageModel.getContentMap(), maxRefLevel);
                 aggregatedPageModel.setContentNode(contentNode);
             }
 
@@ -361,7 +370,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * @return <code>JsonNode</code> serialized from the content model map which were accumulated from the references in models
      * of components
      */
-    private JsonNode serializeContentMap(final Map<String, HippoBeanWrapperModel> contentMap) {
+    private JsonNode serializeContentMap(final Map<String, HippoBeanWrapperModel> contentMap, final int maxRefLevel) {
         ObjectNode contentNode = getObjectMapper().createObjectNode();
 
         for (Map.Entry<String, HippoBeanWrapperModel> entry : contentMap.entrySet()) {
@@ -369,7 +378,7 @@ public class PageModelAggregationValve extends AggregationValve {
             final HippoBeanWrapperModel beanModel = entry.getValue();
 
             try {
-                appendContentItemModel(contentNode, jsonPropName, beanModel, 0);
+                appendContentItemModel(contentNode, jsonPropName, beanModel, maxRefLevel, 0);
             } catch (Exception e) {
                 log.warn("Failed to append a content item: {}.", jsonPropName, e);
             }
@@ -384,11 +393,12 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param contentNode to which the serialized <code>JsonNode</code> from {@code cbeanModel} should be appended
      * @param jsonPropName JSON property name
      * @param beanModel content item bean model
-     * @param level reference depth level
+     * @param maxRefLevel maximum reference depth level
+     * @param curReflevel reference depth level
      */
     private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName,
-            final HippoBeanWrapperModel beanModel, final int level) {
-        if (level > defaultMaxContentReferenceLevel) {
+            final HippoBeanWrapperModel beanModel, final int maxRefLevel, final int curReflevel) {
+        if (curReflevel > maxRefLevel) {
             return;
         }
 
@@ -414,7 +424,7 @@ public class PageModelAggregationValve extends AggregationValve {
             while (model != null) {
                 appendContentItemModel(contentNode,
                         HippoBeanSerializer.representationIdToJsonPropName(model.getBean().getRepresentationId()),
-                        model, level + 1);
+                        model, maxRefLevel, curReflevel + 1);
 
                 if (!stack.empty()) {
                     model = (HippoBeanWrapperModel) stack.pop();
