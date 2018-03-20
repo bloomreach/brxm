@@ -23,9 +23,9 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
-import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -79,14 +79,22 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
 
     @Override
     public void serialize(final HippoBean bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (!bean.isHippoDocumentBean() || ((HippoDocumentBean) bean).getCanonicalHandleUUID() == null) {
+        final Phase curPhase = ContentSerializationContext.getCurrentPhase();
+
+        if (curPhase == null) {
             beanSerializer.serialize(bean, gen, provider);
             return;
         }
 
-        final Phase curPhase = ContentSerializationContext.getCurrentPhase();
+        boolean inContentSection = bean.isHippoFolderBean();
 
-        if (curPhase == null) {
+        if (!inContentSection) {
+            if (bean.isHippoDocumentBean() && ((HippoDocumentBean) bean).getCanonicalHandleUUID() != null) {
+                inContentSection = true;
+            }
+        }
+
+        if (!inContentSection) {
             beanSerializer.serialize(bean, gen, provider);
             return;
         }
