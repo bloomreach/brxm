@@ -26,7 +26,7 @@ import './fields.scss';
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
     ckeditorModule,
-    dateFieldModule
+    dateFieldModule,
   ])
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)

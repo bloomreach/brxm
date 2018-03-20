@@ -94,8 +94,8 @@
     </div>
 
     <date-field ng-switch-when="DATE"
-                name="::$ctrl.name"
-                field-type="::fieldType"
+                name="::$ctrl.getFieldName($index)"
+                field-type="::$ctrl.fieldType"
                 ng-model="fieldValue.value"
                 ng-change="$ctrl.valueChanged()"
                 on-field-focus="$ctrl.focusPrimitive($event)"

@@ -16,6 +16,7 @@
 
 <md-datepicker ng-model="$ctrl.dateValue.date"
                ng-change="$ctrl.valueChanged()"
+               name="{{ ::$ctrl.name }}"
                aria-label="{{::$ctrl.fieldType.displayName}}"
                ng-required="::$ctrl.fieldType.required"
                ng-focus="$ctrl.onFieldFocus()"
@@ -37,8 +38,8 @@
          class="timepart"
          aria-label="{ ::'MINUTES' | translate }}"
          ng-attr-maxlength="2"
-         ng-focus="$ctrl.onFieldFocus();dateValue.focusMinutes()"
-         ng-blur="$ctrl.onFieldBlur();dateValue.blurMinutes()"
+         ng-focus="$ctrl.onFieldFocus();$ctrl.dateValue.focusMinutes()"
+         ng-blur="$ctrl.onFieldBlur();$ctrl.dateValue.blurMinutes()"
          ng-pattern="/^[0-5]?[0-9]$/">
 </md-input-container>
 

@@ -106,29 +106,19 @@ export class DateValue {
 
 class DateFieldController {
   $onInit() {
-    this.dateValue = new DateValue();
     this.ngModel.$render = () => {
       this.dateValue = new DateValue(this.ngModel.$viewValue);
-    }
+    };
   }
 
   valueChanged() {
     this.ngModel.$setViewValue(this.dateValue.toDateString());
   }
 
-  focusDateField($event = null) {
-    this.onFieldFocus();
-  }
-
-  blurDateField($event = null) {
-    this.onFieldBlur();
-  }
-
   setToNow() {
     this.dateValue.setToNow();
     this.valueChanged();
   }
-
 }
 
 export default DateFieldController;
