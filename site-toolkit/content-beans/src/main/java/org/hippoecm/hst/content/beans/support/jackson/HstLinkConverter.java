@@ -21,22 +21,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
 
-public class HstLinkConverter extends StdConverter<HstLink, HstLinkRepresentation> {
+public class HstLinkConverter extends StdConverter<HstLink, LinkModel> {
 
     @Override
-    public HstLinkRepresentation convert(HstLink value) {
+    public LinkModel convert(HstLink hstLink) {
         HstRequestContext requestContext = RequestContextProvider.get();
-
-        HstLinkRepresentation representation = new HstLinkRepresentation();
-
-        representation.setPath(value.getPath());
-        representation.setSubPath(value.getSubPath());
-
-        if (requestContext != null) {
-            representation.setUrl(value.toUrlForm(requestContext, true));
-        }
-
-        return representation;
+        return LinkModel.convert(hstLink, requestContext);
     }
 
 }

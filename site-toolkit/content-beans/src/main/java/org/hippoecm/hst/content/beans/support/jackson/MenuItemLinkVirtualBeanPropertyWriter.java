@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.support.jackson;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
@@ -29,25 +28,16 @@ import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.Annotations;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenuItem;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
 public class MenuItemLinkVirtualBeanPropertyWriter extends VirtualBeanPropertyWriter {
 
     private static final long serialVersionUID = 1L;
-    public static final String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
-
-    private static Logger log = LoggerFactory.getLogger(MenuItemLinkVirtualBeanPropertyWriter.class);
 
     @SuppressWarnings("unused")
     public MenuItemLinkVirtualBeanPropertyWriter() {
@@ -79,39 +69,8 @@ public class MenuItemLinkVirtualBeanPropertyWriter extends VirtualBeanPropertyWr
             return linksMap;
         }
 
-        final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
-
-        final Mount linkMount = menuItemLink.getMount();
-        // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
-        if (PAGE_MODEL_PIPELINE_NAME.equals(linkMount.getNamedPipeline())) {
-            final Mount siteMount = linkMount.getParent();
-            if (siteMount == null) {
-                log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
-                        "case for '{}'. Cannot add site links", linkMount);
-                return linksMap;
-            }
-            // since the selfLink could be resolved, the site link also must be possible to resolve
-            final HstLink siteLink = linkCreator.create(menuItemLink.getPath(), siteMount);
-            final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
-            if (siteMapItem != null) {
-                final String linkType;
-                if (siteMapItem.isContainerResource()) {
-                    linkType = "resource";
-                } else {
-                    final String linkApplicationId = siteMapItem.getApplicationId();
-                    // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
-                    // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
-                    // the application id
-                    final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-                    linkType = Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
-                }
-                linksMap.put(LINK_NAME_SITE, new LinkModel(siteLink.toUrlForm(requestContext, false), linkType) );
-            }
-        } else {
-            // might be a cross channel link to a mount that does not have resource api: Thus add this as an 'external' link
-            linksMap.put(LINK_NAME_SITE, new LinkModel(menuItemLink.toUrlForm(requestContext, false), "external") );
-        }
-
+        final LinkModel linkModel = LinkModel.convert(menuItemLink, requestContext);
+        linksMap.put(LINK_NAME_SITE, linkModel);
         return linksMap;
     }
 
