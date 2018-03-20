@@ -176,6 +176,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             runtimeConfigurationModel = newRuntimeConfigModel;
             storeBaselineModel(newRuntimeConfigModel, extensionName);
             baselineModel = newBaselineModel;
+            ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
 
             //process webfilebundle instructions from extensions which are not from the current site
 
@@ -208,7 +209,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
-            final Set<String> knownExtensions = ExtensionRegistry.getContexts().values().stream().map(ExtensionEvent::getExtensionName).collect(toSet());
+            final Set<String> knownExtensions = ExtensionRegistry.getHstRoots().values().stream().map(ExtensionEvent::getExtensionName).collect(toSet());
             ConfigurationModelImpl baselineModel = loadBaselineModel(knownExtensions);
 
             // check the appropriate params to determine our state and bootstrap mode
@@ -566,7 +567,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
-            final Map<String, ExtensionEvent> contexts = ExtensionRegistry.getContexts();
+            final Map<String, ExtensionEvent> contexts = ExtensionRegistry.getHstRoots();
             for (ExtensionEvent event : contexts.values()) {
                 model = modelReader.readExtension(event.getClassLoader(), model);
             }

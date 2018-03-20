@@ -28,7 +28,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Session;
-import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
@@ -43,7 +42,6 @@ import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.extension.ExtensionEvent;
 import org.onehippo.cms7.services.extension.ExtensionRegistry;
-import org.springframework.mock.web.MockServletContext;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -63,15 +61,9 @@ public class ExtensionIntegrationTest {
         final String fixtureName = "extensions_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
-        final ExtensionEvent event = createExtensionEvent(fixtureName, "m1");
+        final ExtensionEvent event = createExtensionEvent(fixtureName, "/hst:site1", "m1");
 
-        final ServletContext servletContext = new MockServletContext() {
-            @Override
-            public String getContextPath() {
-                return "/extContext";
-            }
-        };
-        ExtensionRegistry.register(servletContext, event, ExtensionRegistry.ExtensionType.HST);
+        ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
 
         fixture.test(session -> {
 
@@ -89,7 +81,7 @@ public class ExtensionIntegrationTest {
                 //expected
             }
 
-            final ExtensionEvent afterEvent = createExtensionEvent(fixtureName, "m2");
+            final ExtensionEvent afterEvent = createExtensionEvent(fixtureName, "/hst:site2", "m2");
             eventBus.post(afterEvent);
             Thread.sleep(1000); //TODO SS: Replace with while loop or replace with direct call to onNewSiteEvent()
 
@@ -102,12 +94,12 @@ public class ExtensionIntegrationTest {
         });
     }
 
-    public ExtensionEvent createExtensionEvent(final String fixtureName, final String extensionName) throws MalformedURLException {
+    public ExtensionEvent createExtensionEvent(final String fixtureName, String hstRoot, final String extensionName) throws MalformedURLException {
         final Path extensionsBasePath = getExtensionBasePath(fixtureName, getBaseDir());
         final Path extensionPath = extensionsBasePath.resolve(extensionName);
         final URL dirUrl = new URL(extensionPath.toUri().toURL().toString());
         final URLClassLoader extensionClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
-        return new ExtensionEvent(extensionName, extensionClassLoader);
+        return new ExtensionEvent(extensionName, hstRoot, extensionClassLoader);
     }
 
     public Path getExtensionBasePath(final String fixtureName, final Path path) {
