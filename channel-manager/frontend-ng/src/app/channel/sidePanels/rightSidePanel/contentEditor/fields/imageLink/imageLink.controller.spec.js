@@ -22,7 +22,7 @@ describe('imageLinkController', () => {
   let ngModel;
   let config;
 
-  const $element = angular.element('<div><button class="hippo-imagelink-select"></button></div>');
+  const $element = angular.element('<div></div>');
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.fieldsModule');
@@ -53,6 +53,7 @@ describe('imageLinkController', () => {
       ariaLabel: 'TestAriaLabel',
       config,
       hint: 'TestHint',
+      index: 0,
       url: 'TestUrl',
     });
   });
@@ -62,25 +63,39 @@ describe('imageLinkController', () => {
     $scope.$apply();
   }
 
-  it('initializes the component', () => {
-    init();
+  describe('$onInit', () => {
+    it('initializes the component', () => {
+      init();
 
-    expect($ctrl.ngModel.$modelValue).toEqual('model-value');
-    expect($ctrl.name).toEqual('TestField');
-    expect($ctrl.ariaLabel).toEqual('TestAriaLabel');
-    expect($ctrl.hiddenLabel).toEqual('TestAriaLabel');
-    expect($ctrl.config).toEqual(config);
-    expect($ctrl.hint).toEqual('TestHint');
-    expect($ctrl.url).toEqual('TestUrl');
-    expect($ctrl.selectElement).toBeDefined();
+      expect($ctrl.ngModel.$modelValue).toEqual('model-value');
+      expect($ctrl.name).toEqual('TestField');
+      expect($ctrl.ariaLabel).toEqual('TestAriaLabel');
+      expect($ctrl.hiddenLabel).toEqual('TestAriaLabel');
+      expect($ctrl.config).toEqual(config);
+      expect($ctrl.hint).toEqual('TestHint');
+      expect($ctrl.url).toEqual('TestUrl');
+      expect($ctrl.selectElement).toBeDefined();
       expect($ctrl.imagePicked).toBeFalsy();
-  });
+    });
 
-  it('adds an asterisk to the hiddenLabel for required image links', () => {
-    $ctrl.isRequired = true;
-    init();
+    it('adds an asterisk to the hiddenLabel for required image links', () => {
+      $ctrl.isRequired = true;
+      init();
 
-    expect($ctrl.hiddenLabel).toEqual('TestAriaLabel *');
+      expect($ctrl.hiddenLabel).toEqual('TestAriaLabel *');
+    });
+
+    it('only renders a hidden label for the first image', () => {
+      $ctrl.index = 0;
+      init();
+
+      expect($ctrl.hiddenLabel).not.toEqual('');
+
+      $ctrl.index = 1;
+      init();
+
+      expect($ctrl.hiddenLabel).toEqual('');
+    });
   });
 
   describe('openImagePicker', () => {

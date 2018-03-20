@@ -25,6 +25,7 @@ const imageLinkComponent = {
     ariaLabel: '@',
     config: '<',
     hint: '<',
+    index: '<',
     isRequired: '<',
     name: '@',
     url: '<',

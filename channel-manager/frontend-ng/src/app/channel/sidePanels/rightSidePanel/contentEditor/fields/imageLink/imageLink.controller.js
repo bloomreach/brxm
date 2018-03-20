@@ -24,7 +24,11 @@ class ImageLinkController {
   }
 
   $onInit() {
-    this.hiddenLabel = this.ariaLabel + (this.isRequired ? ' *' : '');
+    // The hidden label pushes the buttons to the right when no image is shown.
+    // In case of multiple images, only the buttons of the first image should be
+    // pushed by both the default thumbnail width and the optional label text width.
+    // All other buttons will be pushed by the default thumbnail width only.
+    this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.isRequired ? ' *' : '') : '';
     this.selectElement = this.$element.find('.hippo-imagelink-select');
   }
 
