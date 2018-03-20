@@ -178,6 +178,9 @@ public interface ContainerConstants {
     String FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL = "webfile:";
     String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
 
+
+    String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
+
     /**
      * Generic Link Name for the self.
      */

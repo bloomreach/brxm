@@ -22,17 +22,18 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class LinkModel {
 
     private static Logger log = LoggerFactory.getLogger(LinkModel.class);
-    public static final String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
 
     private final String href;
 

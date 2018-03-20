@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class MountSiteMapConfiguration {
     private final String[] defaultSiteMapItemHandlerIds;
     private final String locale;
     private final String namedPipeline;
+    private final boolean finalPipeline;
     private final boolean cacheable;
     private final String scheme;
     private final boolean schemeAgnostic;
@@ -55,6 +56,7 @@ public class MountSiteMapConfiguration {
         defaultSiteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
         locale = mount.getLocale();
         namedPipeline = mount.getNamedPipeline();
+        finalPipeline = mount.isFinalPipeline();
         cacheable = mount.isCacheable();
         scheme = mount.getScheme();
         schemeAgnostic = mount.isSchemeAgnostic();
@@ -80,6 +82,10 @@ public class MountSiteMapConfiguration {
 
     public String getNamedPipeline() {
         return namedPipeline;
+    }
+
+    public boolean isFinalPipeline() {
+        return finalPipeline;
     }
 
     public boolean isCacheable() {
@@ -144,6 +150,9 @@ public class MountSiteMapConfiguration {
             return false;
         }
         if (namedPipeline != null ? !namedPipeline.equals(that.namedPipeline) : that.namedPipeline != null) {
+            return false;
+        }
+        if (finalPipeline != that.isFinalPipeline()) {
             return false;
         }
         if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) {

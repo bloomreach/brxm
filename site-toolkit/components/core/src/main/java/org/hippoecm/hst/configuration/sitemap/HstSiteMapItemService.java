@@ -529,7 +529,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             }
         }
 
-        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
+        if(!mountSiteMapConfiguration.isFinalPipeline() && node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if (parentItem != null) {
             namedPipeline = parentItem.getNamedPipeline();

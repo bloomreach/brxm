@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteFactory;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -51,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
@@ -59,6 +61,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPO
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -232,6 +235,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private HstSiteMapMatcher matcher;
 
     private Map<String, String> responseHeaders;
+
+    private Set<String> finalPipelines = ImmutableSet.of(PAGE_MODEL_PIPELINE_NAME);
 
     public MountService(final HstNode mount,
                         final Mount parent,
@@ -875,6 +880,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public String getNamedPipeline(){
         return namedPipeline;
+    }
+
+    @Override
+    public boolean isFinalPipeline() {
+        return finalPipelines.contains(getNamedPipeline());
     }
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
