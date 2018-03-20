@@ -54,7 +54,6 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             "enable.upload",
             "last.visited.enabled",
             "last.visited.key",
-            "preview.width"
     };
     private static final String[] IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES = {
             "nodetypes",
