@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 public class ExtensionRegistry {
 
     public enum ExtensionType {
@@ -30,49 +28,48 @@ public class ExtensionRegistry {
     private static Map<String, ExtensionEvent> registry = new HashMap<>();
 
     /**
-     * Register a site's classloader
-     * @throws IllegalStateException if the ServletContext already has been registered by its contextPath
-     * @param ctx the servletContext to register
+     * Register a extension event
+     * @throws IllegalStateException if the extension already has been registered by its hst root
      * @param type the <code>WebAppType</code> to which the <code>ctx</code> belongs. Not allowed to be <code>null</code>
      */
-    public synchronized static void register(final ServletContext ctx, final ExtensionEvent extensionEvent, final ExtensionType type) {
-        if (registry.containsKey(ctx.getContextPath())) {
-            throw new IllegalStateException("ServletContext "+ctx.getContextPath()+" already registered");
+    public synchronized static void register(final ExtensionEvent extensionEvent, final ExtensionType type) {
+        if (registry.containsKey(extensionEvent.getHstRoot())) {
+            throw new IllegalStateException("Hst root " + extensionEvent.getHstRoot() + " is already registered");
         }
         if (type == null) {
             throw new IllegalArgumentException("ExtensionType argument is not allowed to be null.");
         }
         Map<String, ExtensionEvent> newMap = new HashMap<>(registry);
-        newMap.put(ctx.getContextPath(), extensionEvent);
+        newMap.put(extensionEvent.getHstRoot(), extensionEvent);
         registry = Collections.unmodifiableMap(newMap);
     }
 
     /**
-     * Unregister site
-     * @throws IllegalStateException if the ServletContext has not been registered by its contextPath
-     * @param ctx the servletContext to unregister
+     * Unregister extension
+     * @throws IllegalStateException if the extension has not been registered by its hst root
+     * @param hstRoot the hst root to unregister
      */
-    public synchronized static void unregister(final ServletContext ctx) {
-        if (!registry.containsKey(ctx.getContextPath())) {
-            throw new IllegalStateException("ServletContext "+ctx.getContextPath()+" not registered");
+    public synchronized static void unregister(final String hstRoot) {
+        if (!registry.containsKey(hstRoot)) {
+            throw new IllegalStateException("Hst root " + hstRoot + " is not registered");
         }
         Map<String, ExtensionEvent> newMap = new HashMap<>(registry);
-        newMap.remove(ctx.getContextPath());
+        newMap.remove(hstRoot);
         registry = Collections.unmodifiableMap(newMap);
     }
 
     /**
-     * @param contextPath The contextPath for which to lookup the site
-     * @return the site's Classloader registered under the parameter contextPath
+     * @param hstRoot The hst root for which of the extension
+     * @return the extension registered under the extension's hst root
      */
-    public static ExtensionEvent getContext(final String contextPath) {
-        return registry.get(contextPath);
+    public static ExtensionEvent getExtension(final String hstRoot) {
+        return registry.get(hstRoot);
     }
 
     /**
-     * @return unmodifiable map of all currently registered site's classloaders mapped by their contextPath
+     * @return unmodifiable map of all currently registered extensions mapped by their hst root
      */
-    public static Map<String, ExtensionEvent> getContexts() {
+    public static Map<String, ExtensionEvent> getHstRoots() {
         return registry;
     }
 }

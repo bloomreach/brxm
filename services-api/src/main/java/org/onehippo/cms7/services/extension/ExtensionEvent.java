@@ -20,14 +20,20 @@ import org.onehippo.cms7.event.HippoEvent;
 public class ExtensionEvent extends HippoEvent<ExtensionEvent> {
 
     private final ClassLoader classLoader;
+    private final String hstRoot;
 
-    public ExtensionEvent(final String application, final ClassLoader classLoader) {
+    public ExtensionEvent(final String application, final String hstRoot, final ClassLoader classLoader) {
         super(application);
+        this.hstRoot = hstRoot;
         this.classLoader = classLoader;
     }
 
     public String getExtensionName() {
         return (String) getValues().get("application");
+    }
+
+    public String getHstRoot() {
+        return hstRoot;
     }
 
     public ClassLoader getClassLoader() {
