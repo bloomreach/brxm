@@ -44,7 +44,11 @@ image-link {
     }
 
     .md-button.md-icon-button {
-      margin: 0 0 0 8px;
+      margin: 0;
+
+      &:first-of-type {
+        margin-left: 8px;
+      }
     }
 
     // the hippo-imagelink-buttons container will overlay the (optional) hint icon,
