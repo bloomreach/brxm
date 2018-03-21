@@ -23,7 +23,7 @@ class SiteMapListingController {
     this.HippoIframeService = HippoIframeService;
 
     this.$scope.keywords = '';
-    this.$scope.filterFields = ['name', 'pathInfo'];
+    this.$scope.filterFields = ['pageTitle', 'name', 'pathInfo'];
   }
 
   clearKeywords() {
