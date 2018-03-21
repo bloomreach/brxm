@@ -51,6 +51,7 @@
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
       this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-image-variant-picker', this._showImageVariantPicker, this);
       this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
@@ -70,7 +71,9 @@
     },
 
     /**
-     * Called by ChannelEditor.java */ killEditor: function(documentId) {
+     * Called by ChannelEditor.java
+     */
+    killEditor: function(documentId) {
       this.hostToIFrame.publish('kill-editor', documentId);
     },
 
@@ -244,50 +247,40 @@
     },
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      this.linkPickerSuccessCallback = successCallback;
-      this.linkPickerCancelCallback = cancelCallback;
-      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
+      selectedLink.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
     },
 
-    _showImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      this.imagePickerSuccessCallback = successCallback;
-      this.imagePickerCancelCallback = cancelCallback;
-      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imagePickerWicketUrl);
+    _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      selectedImage.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
     },
 
-    _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
-      Ext.apply(selection, {
-        'fieldId': fieldId,
-        'dialogConfig': JSON.stringify(dialogConfig)
-      });
+    _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {
+      this.pickerSuccessCallback = successCallback;
+      this.pickerCancelCallback = cancelCallback;
+
+      parameters.dialogConfig = JSON.stringify(dialogConfig);
 
       Wicket.Ajax.post({
         u: wicketUrl,
-        ep: selection
+        ep: parameters
       });
     },
 
-    onLinkPicked: function(link) {
-      if (this.linkPickerSuccessCallback) {
-        this.linkPickerSuccessCallback(link);
+    onPicked: function(selected) {
+      if (this.pickerSuccessCallback) {
+        this.pickerSuccessCallback(selected);
       }
     },
 
-    onImagePicked: function(image) {
-      if (this.imagePickerSuccessCallback) {
-        this.imagePickerSuccessCallback(image);
-      }
-    },
-
-    onLinkPickCancelled: function () {
-      if(this.linkPickerCancelCallback) {
-        this.linkPickerCancelCallback();
-      }
-    },
-
-    onImagePickCancelled: function () {
-      if(this.imagePickerCancelCallback) {
-        this.imagePickerCancelCallback();
+    onPickCancelled: function () {
+      if(this.pickerCancelCallback) {
+        this.pickerCancelCallback();
       }
     },
 

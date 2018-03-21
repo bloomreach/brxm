@@ -238,6 +238,7 @@ public class ChoiceFieldUtilsTest {
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
+        expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
 
         replay(provider, choice, compound);
         PowerMock.replayAll();
@@ -414,6 +415,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.getName()).andReturn("NonCompound");
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
+        expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
 
         replay(parentContext, childContext, compound);
         PowerMock.replayAll();
