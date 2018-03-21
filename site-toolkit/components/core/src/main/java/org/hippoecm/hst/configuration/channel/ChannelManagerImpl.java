@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -253,7 +253,7 @@ public class ChannelManagerImpl implements ChannelManager {
     public synchronized boolean canUserModifyChannels() {
         try {
             final Session session = getSession();
-            return session.hasPermission(hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
+            return session.hasPermission(hstNodeLoadingCache.getRootPath() + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
         }
