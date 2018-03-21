@@ -116,10 +116,10 @@ class ProjectService {
   }
 
   isContentOverlayEnabled() {
-    // For now, to prevent all kinds of corner cases, we disable the content overlay
-    // for projects in review so that you cannot edit documents at all.
+    // For now, to prevent all kinds of corner cases, we only enable the content overlay
+    // for unapproved projects in review so that you cannot edit documents at all.
     return !this.selectedProject
-      || this.selectedProject.state !== 'IN_REVIEW';
+      || this.selectedProject.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
