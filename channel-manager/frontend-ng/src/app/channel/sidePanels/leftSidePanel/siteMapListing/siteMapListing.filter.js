@@ -24,13 +24,11 @@ function siteMapListingFilter() {
 
     const terms = keywords.toLowerCase().split(' ');
 
-    if (!angular.isArray(fields)) {
-      fields = [fields.toString()];
-    }
     return items.filter(item => terms.every(term => fields.some((field) => {
-      let content = item[field] != null ? item[field] : '';
+      const content = item[field];
+
       if (!angular.isString(content)) {
-        content = `${content}`;
+        return false;
       }
 
       return content.toLowerCase().indexOf(term) > -1;
