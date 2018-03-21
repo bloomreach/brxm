@@ -226,12 +226,12 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         assertEquals("Expected a preview decorated mount", "preview",crossSiteNewsLinkToPreviewDecoratedMount.getMount().getType());
 
         assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossSiteNewsLinkToPreviewDecoratedMount.getPath());
-        assertEquals("Expected a render_host paramater in relative URL since host cms should be used + ?" +ContainerConstants.RENDERING_HOST+ "=....",
-                "/site/subsite/news/2008/SubNews1.html?"+ContainerConstants.RENDERING_HOST+"=localhost",
+        assertEquals("Expected NO render_host paramater in relative URL since the current renderingHost is already the same (localhost)",
+                "/site/subsite/news/2008/SubNews1.html",
                 crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, false));
         // fully qualified links will still be relative!
-        assertEquals("Expected a render_host paramater in relative URL since host cms should be used + render_host ",
-                "/site/subsite/news/2008/SubNews1.html?"+ContainerConstants.RENDERING_HOST+"=localhost",
+        assertEquals("Expected NO render_host paramater in relative URL since the current renderingHost is already the same (localhost)",
+                "/site/subsite/news/2008/SubNews1.html",
                 crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, true));
     }
 
