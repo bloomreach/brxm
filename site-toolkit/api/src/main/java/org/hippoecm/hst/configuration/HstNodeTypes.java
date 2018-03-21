@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -271,6 +271,10 @@ public interface HstNodeTypes {
     String NODENAME_HST_CONFIGURATIONS = "hst:configurations";
     String NODENAME_HST_MOUNT = "hst:mount";
     String NODENAME_HST_HOSTS = "hst:hosts";
+    /**
+     * @deprecated since 12.0.0 (5.0.0) not used any more
+     */
+    @Deprecated
     String NODENAME_HST_CHANNELS = "hst:channels";
     String NODENAME_HST_WORKSPACE = "hst:workspace";
     String NODENAME_HST_CONTAINERS = "hst:containers";

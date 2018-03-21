@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -171,8 +171,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<>();
 
-    private String channelsRoot;
-
     private final Map<String, Map<String, Channel>> channelsByHostGroup = new HashMap<>();
 
     private final Map<String, Blueprint> blueprints = new HashMap<>();
@@ -182,7 +180,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         long start = System.currentTimeMillis();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
         this.hstManager = hstManager;
-        channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
         virtualHostsConfigured = true;
 
         // quick check if the basic mandatory hst nodes are available. If not, we throw a runtime model loading exception
@@ -859,11 +856,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (channels == null) {
             return null;
         }
-        if (StringUtils.isBlank(channelPath) || !channelPath.startsWith(channelsRoot)) {
-            throw new IllegalArgumentException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + channelPath + "' instead");
+        if (StringUtils.isBlank(channelPath)) {
+            throw new IllegalArgumentException(String.format("Expected a valid channel JCR path for channelPath but got '%s' instead", channelPath));
         }
-        final String channelId = channelPath.substring(channelsRoot.length());
-        return channels.get(channelId);
+        return channels.values().stream().filter(channel -> channelPath.equals(channel.getChannelPath())).findFirst().orElse(null);
     }
 
     @Override
