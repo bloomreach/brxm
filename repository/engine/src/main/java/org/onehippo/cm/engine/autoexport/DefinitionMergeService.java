@@ -88,6 +88,7 @@ import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
+import org.onehippo.cms7.services.extension.ExtensionRegistry;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1093,10 +1094,18 @@ public class DefinitionMergeService {
      * @param incomingPath the JCR node path to test
      * @return true iff this path should go in a new file, different than its parent node
      */
-    protected static boolean shouldPathCreateNewSource(final JcrPath incomingPath) {
+    protected static boolean shouldPathCreateNewSource(JcrPath incomingPath) {
         // for the sake of creating new source files, we always want to use the minimally-indexed path
         // to avoid annoying and unnecessary "[1]" tags on filenames
-        final String minimallyIndexedPath = incomingPath.suppressIndices().toString();
+        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
+        final Optional<String> matchingHstRoot = hstRoots.stream().filter(incomingPath::startsWith).findFirst();
+        String minimallyIndexedPath = incomingPath.suppressIndices().toString();
+        //TODO SS: Enhance location mapper to use nodetype matchers
+        if (matchingHstRoot.isPresent()) {
+            incomingPath = JcrPaths.getPath(incomingPath.toString().replace(matchingHstRoot.get(), "/hst:hst"));
+            minimallyIndexedPath = minimallyIndexedPath.replace(matchingHstRoot.get(), "/hst:hst");
+        }
+
         return JcrPaths.getPath(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
                 .equals(incomingPath);
     }
@@ -1108,7 +1117,14 @@ public class DefinitionMergeService {
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
     protected String getFilePathByLocationMapper(JcrPath path) {
-        String xmlFile = LocationMapper.fileForPath(path.suppressIndices().toString(), true);
+        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
+        String normalizedPath = path.suppressIndices().toString();
+        final Optional<String> matchingHstRoot = hstRoots.stream().filter(normalizedPath::startsWith).findFirst();
+        //TODO SS: Enhance location mapper to use nodetype matchers
+        if (matchingHstRoot.isPresent()) {
+            normalizedPath = normalizedPath.replace(matchingHstRoot.get(), "/hst:hst");
+        }
+        String xmlFile = LocationMapper.fileForPath(normalizedPath, true);
         if (xmlFile == null) {
             return "main.yaml";
         }
