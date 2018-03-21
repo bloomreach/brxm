@@ -35,7 +35,7 @@
      ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">
   <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button"
-             ng-disabled="!$ctrl.url"
+             ng-if="$ctrl.url"
              ng-click="$ctrl.clearPickedImage()">
     <md-icon >clear</md-icon>
   </md-button>
