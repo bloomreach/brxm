@@ -22,7 +22,7 @@ function searchFilter() {
       return items;
     }
 
-    const terms = keywords.toLowerCase().split(' ');
+    const terms = keywords.toLowerCase().split(' ').filter(term => term.length > 0);
 
     return items.filter(item => terms.every(term => fields.some((field) => {
       const content = item[field];
