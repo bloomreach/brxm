@@ -15,6 +15,7 @@
   -->
 <input type="text"
        class="hippo-imagelink-input"
+       ng-class="{'input-bottom-border-limited-empty': $ctrl.index > 0}"
        name="{{::$ctrl.name}}"
        aria-label="{{::$ctrl.ariaLabel}}"
        readonly="readonly"
@@ -29,7 +30,8 @@
      ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }" />
 
 <div class="input-bottom-border"
-     ng-if="$ctrl.url"></div>
+     ng-if="$ctrl.url"
+     ng-class="{'input-bottom-border-limited-image': $ctrl.index > 0}"></div>
 
 <div class="hippo-imagelink-buttons"
      ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">

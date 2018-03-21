@@ -15,11 +15,14 @@
 @import 'variables';
 
 $thumbnail-width: 60px; // default thumbnail max width
+$first-button-left-padding: 8px;
+$button-width: 40px;
 $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 
 image-link {
   .input-bottom-border {
     border-bottom: 1px solid;
+    max-width: 148px;
   }
 
   .input-bottom-border,
@@ -27,6 +30,14 @@ image-link {
     // hide checkered background for readonly input fields
     background-image: none !important;
     border-bottom-color: rgba(0, 0, 0, .12) !important;
+  }
+
+  .input-bottom-border-limited-empty {
+    max-width: $thumbnail-width + $first-button-left-padding + $button-width;
+  }
+
+  .input-border-border-limited-image {
+    max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
   }
 
   .md-icon-button > md-icon {
@@ -47,7 +58,7 @@ image-link {
       margin: 0;
 
       &:first-of-type {
-        margin-left: 8px;
+        margin-left: $first-button-left-padding;
       }
     }
 
