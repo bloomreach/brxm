@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static javax.jcr.security.Privilege.JCR_WRITE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -309,6 +310,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         userSession.checkPermission(testData.getPath() + "/" + "expanders/usertest" ,  READ_ACTION);
         userSession.checkPermission(testData.getPath() + "/" + "expanders/grouptest" , READ_ACTION);
         userSession.checkPermission(testData.getPath() + "/" + "expanders/roletest" ,  READ_ACTION);
+
     }
 
     @Test
@@ -318,6 +320,37 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertFalse(testData.hasNode("expanders/useradmin"));
         assertFalse(testData.hasNode("expanders/groupadmin"));
         assertFalse(testData.hasNode("expanders/roleadmin"));
+    }
+
+    @Test
+    public void awkward_permissions_logic_REPO_1971() throws RepositoryException {
+
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+
+        assertFalse("User session should not have write access to the checked node",
+                userSession.hasPermission(testData.getPath() + "/" + "readdoc0", Session.ACTION_ADD_NODE));
+
+        // node 'foo' does not exist below 'readdoc0', but the action is checked against the parent 'readdoc0' which does exist
+        assertFalse("User session should not have write access to the checked node",
+                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", Session.ACTION_ADD_NODE));
+
+
+        // TODO node 'foo' does not exist below 'readdoc0' : The action is checked agains 'readdoc0/foo' which does not exist
+        // TODO and thus HippoAccessManager.hasPrivileges(org.apache.jackrabbit.spi.Path, javax.jcr.security.Privilege[]) returns
+        // TODO true because getNodeId(absPath) returns null
+        // TODO Perhaps this is needed for some obscure clustering logic, however not clear from the code (at all) and
+        // TODO version history does go long enough back
+        assertTrue("UNEXPECTED TRUE",
+                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo/bar", Session.ACTION_ADD_NODE));
+    }
+
+    @Test
+    public void awkward_permissions_logic_REPO_1971_2() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        // TODO 'foo' is not a known privilege....why does this return true?
+        assertTrue("UNEXPECTED TRUE : 'foo' is not a known privilege : why does this return true?",
+                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", "foo"));
+
     }
 
     @Test
