@@ -41,9 +41,11 @@
     <hippo.repository.version>5.3.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.3.0-SNAPSHOT</hippo.cms.version>
 
-    <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
-    <easymock.version>3.2</easymock.version>
+
+    <!-- Make sure that easymock and powermock are compatible -->
+    <easymock.version>3.4</easymock.version>
+    <powermock.version>1.6.5</powermock.version>
   </properties>
 
   <repositories>
@@ -110,24 +112,22 @@
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
-      <version>${easymock.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
       <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>${commons-lang.version}</version>
-      <scope>provided</scope>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

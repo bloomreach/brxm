@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.onehippo.addon.frontend.gallerypicker;
 
+import java.io.Serializable;
+
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -22,23 +24,18 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Session;
-import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.JcrHelper;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Class management by the factory ImageItemFactory. You should not instantiate this class.
  * <p/>
- * The ImageItem is used to obtain the location of an image in the repository, it also gives the url of the
+ * The ImageItem is used to obtain the location of an image in the repository. It also gives the url of the
  * default image if the provided uuid is not correct or does not exist.
- *
- * @author Jeroen Reijn
  */
-public class ImageItem implements IClusterable {
-    private static final long serialVersionUID = 1L;
+public class ImageItem implements Serializable {
+
     private static final Logger log = LoggerFactory.getLogger(ImageItem.class);
 
     public static final String BASE_PATH_BINARIES = "binaries";
@@ -69,12 +66,16 @@ public class ImageItem implements IClusterable {
      * @return String containing the url of the requested image, if no image is specified return an empty String.
      */
     public String getPrimaryUrl() {
+        return getPrimaryUrl(WicketJcrSessionProvider.get());
+    }
+
+    public String getPrimaryUrl(final JcrSessionProvider sessionProvider) {
         if (StringUtils.isNotEmpty(uuid)) {
             Node handle;
             Item item;
             String path = "";
             try {
-                handle = obtainJcrSession().getNodeByUUID(uuid);
+                handle = sessionProvider.getJcrSession().getNodeByIdentifier(uuid);
                 path = handle.getName();
                 if (!"".equals(path) && !"/".equals(path) && !BASE_IMAGES_PATH.equals(path)) {
                     Node document = handle.getNode(path);
@@ -95,14 +96,4 @@ public class ImageItem implements IClusterable {
     public boolean isValid() {
         return uuid != null;
     }
-
-    /**
-     * Utitlity method that returns the JCrSessionFrom the wicket session
-     *
-     * @return javax.jcr.Session session object to be used to interact with the repository
-     */
-    protected javax.jcr.Session obtainJcrSession() {
-        return ((UserSession) Session.get()).getJcrSession();
-    }
-
 }

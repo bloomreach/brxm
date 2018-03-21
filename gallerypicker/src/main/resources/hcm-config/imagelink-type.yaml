@@ -21,23 +21,21 @@ definitions:
       /editor:templates:
         jcr:primaryType: editor:templateset
         /_default_:
+          base.uuid: ''
+          cluster.name: cms-pickers/images
+          enable.upload: 'true'
+          image.validator.id: service.gallery.image.validation
           jcr:primaryType: frontend:plugincluster
-          frontend:properties: [mode, nodetypes]
+          frontend:properties: [base.uuid, cluster.name, enable.upload, image.validator.id, last.visited.enabled, last.visited.key, mode, nodetypes]
           frontend:references: [model.compareTo, wicket.model]
           frontend:services: [wicket.id]
+          last.visited.enabled: 'true'
+          last.visited.key: gallerypicker-imagelink
           nodetypes: []
           /root:
             jcr:primaryType: frontend:plugin
-            cluster.name: cms-pickers/images
-            dialog.height: '550'
-            enable.upload: 'true'
-            mode: ${mode}
-            model.compareTo: ${model.compareTo}
             plugin.class: org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin
-            preview.width: '50'
-            validator.id: service.gallery.image.validation
-            wicket.id: ${wicket.id}
-            wicket.model: ${wicket.model}
+            validator.id: ${image.validator.id}
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:
