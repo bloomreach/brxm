@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,8 +34,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -49,6 +51,9 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Plugin that renders a list of configured mixin types in the document editor as checkboxes.
+ */
 public class MixinPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +61,7 @@ public class MixinPlugin extends RenderPlugin {
     private static final Logger log = LoggerFactory.getLogger(MixinPlugin.class);
 
     protected Mode mode;
+    protected FieldPluginHelper helper;
 
     private List<MixinModel> available;
     private Map<String, IClusterControl> controllers;
@@ -63,22 +69,26 @@ public class MixinPlugin extends RenderPlugin {
     public MixinPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        controllers = new HashMap<String, IClusterControl>();
+        controllers = new HashMap<>();
 
         mode = Mode.fromString(config.getString(ITemplateEngine.MODE), Mode.VIEW);
         if (mode == Mode.COMPARE) {
             mode = Mode.VIEW;
         }
+        helper = new FieldPluginHelper(context, config);
+
+        final String defaultCaption = new StringResourceModel("mixins", this, null).getString();
+        add(new Label("name", helper.getCaptionModel(this, defaultCaption)));
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
 
         String[] mixins = config.getStringArray("mixins");
-        available = new ArrayList<MixinModel>(mixins.length);
+        available = new ArrayList<>(mixins.length);
         for (String mixin : mixins) {
             try {
                 MixinModel model = new MixinModel(engine, mixin);
                 available.add(model);
-                if ((Boolean) model.getObject()) {
+                if (model.getObject()) {
                     controllers.put(mixin, startMixin(mixin));
                 }
             } catch (TemplateEngineException ex) {
@@ -102,7 +112,7 @@ public class MixinPlugin extends RenderPlugin {
 
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
-                        Boolean value = (Boolean) getModelObject();
+                        Boolean value = getModelObject();
                         String mixin = model.getMixin();
                         if (value) {
                             if (!controllers.containsKey(mixin)) {
@@ -163,7 +173,7 @@ public class MixinPlugin extends RenderPlugin {
         return false;
     }
 
-    private class MixinModel implements IModel {
+    private class MixinModel implements IModel<Boolean> {
         private static final long serialVersionUID = 1L;
 
         String name;
@@ -179,7 +189,7 @@ public class MixinPlugin extends RenderPlugin {
             return name;
         }
 
-        public Object getObject() {
+        public Boolean getObject() {
             JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getDefaultModel();
             try {
                 Node node = nodeModel.getNode();
@@ -194,8 +204,7 @@ public class MixinPlugin extends RenderPlugin {
             return false;
         }
 
-        public void setObject(Object object) {
-            Boolean value = (Boolean) object;
+        public void setObject(Boolean value) {
             JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getDefaultModel();
             try {
                 Node node = nodeModel.getNode();
@@ -208,7 +217,7 @@ public class MixinPlugin extends RenderPlugin {
                         node.removeMixin(realType);
                     }
                 }
-                node.save();
+                node.getSession().save();
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }

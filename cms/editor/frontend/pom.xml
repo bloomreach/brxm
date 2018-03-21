@@ -91,6 +91,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-test</artifactId>
       <version>${project.version}</version>
