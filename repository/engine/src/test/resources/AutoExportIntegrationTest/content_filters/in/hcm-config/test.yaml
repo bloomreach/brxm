@@ -7,7 +7,7 @@ definitions:
         autoexport:filteruuidpaths:
           operation: add
           type: string
-          value: ['/content/uuids']
+          value: ['/content/uuids', '/content/uuids/**']
         autoexport:excluded:
           operation: add
           type: string

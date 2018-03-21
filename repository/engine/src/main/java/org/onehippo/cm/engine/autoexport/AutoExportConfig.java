@@ -54,7 +54,7 @@ public class AutoExportConfig extends ExportConfig {
     private InjectResidualMatchers injectResidualMatchers;
 
     // constructor for testing purposes only
-    AutoExportConfig(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PathsMap filterUuidPaths) {
+    AutoExportConfig(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PatternSet filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -83,16 +83,17 @@ public class AutoExportConfig extends ExportConfig {
         return exclusionContext;
     }
 
-    public PathsMap getFilterUuidPaths() {
-        PathsMap filterUuidPaths = super.getFilterUuidPaths();
+    public PatternSet getFilterUuidPaths() {
+        PatternSet filterUuidPaths = super.getFilterUuidPaths();
         if (filterUuidPaths == null) {
-            filterUuidPaths = new PathsMap();
-            setFilterUuidPaths(filterUuidPaths);
             final String[] values = getMultipleStringProperty(node, CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME);
+            final List<String> excluded = new ArrayList<>(values.length);
             for (final String value: values) {
-                filterUuidPaths.add(value);
+                excluded.add(value);
                 log.debug("filtering uuid paths below {}", value);
             }
+            filterUuidPaths = new PatternSet(excluded);
+            setFilterUuidPaths(filterUuidPaths);
         }
         return filterUuidPaths;
     }

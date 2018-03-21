@@ -25,7 +25,7 @@ public class ExportConfig {
 
     private PathsMap ignoredPaths = new PathsMap();
     private PatternSet exclusionContext;
-    private PathsMap filterUuidPaths;
+    private PatternSet filterUuidPaths;
 
     public void addIgnoredPaths(final PathsMap ignoredPaths) {
         this.ignoredPaths.addAll(ignoredPaths);
@@ -47,16 +47,16 @@ public class ExportConfig {
         return exclusionContext != null && exclusionContext.matches(path);
     }
 
-    public PathsMap getFilterUuidPaths() {
+    public PatternSet getFilterUuidPaths() {
         return filterUuidPaths;
     }
 
-    public void setFilterUuidPaths(final PathsMap filterUuidPaths) {
+    public void setFilterUuidPaths(final PatternSet filterUuidPaths) {
         this.filterUuidPaths = filterUuidPaths;
     }
 
     public boolean shouldFilterUuid(final String nodePath) {
-        final PathsMap filterUuidPaths = getFilterUuidPaths();
+        final PatternSet filterUuidPaths = getFilterUuidPaths();
         return filterUuidPaths != null && filterUuidPaths.matches(nodePath);
     }
 
