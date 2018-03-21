@@ -54,11 +54,23 @@ describe('search filter', () => {
   it('should return all matches for a single term', () => {
     expect(searchFilter(people, 'a', ['firstName'])).toEqual([andrii, arthur, mathijs, michael]);
     expect(searchFilter(people, 'b', ['firstName'])).toEqual([bert]);
+    expect(searchFilter(people, 'AnDr', ['firstName'])).toEqual([andrii]);
     expect(searchFilter(people, 'q', ['firstName'])).toEqual([]);
   });
 
-  it('should return all matches in all fields', () => {
+  it('should return all matches for a single term in all fields', () => {
     expect(searchFilter(people, 'er', ['firstName', 'lastName'])).toEqual([bert, mathijs, michael]);
+  });
+
+  it('should return all matches for multiple terms', () => {
+    expect(searchFilter(people, 'a r', ['firstName'])).toEqual([andrii, arthur]);
+    expect(searchFilter(people, 'er en', ['lastName'])).toEqual([mathijs]);
+  });
+
+  it('should return all matches for multiple terms in all fields', () => {
+    expect(searchFilter(people, 'er s', ['firstName', 'lastName'])).toEqual([bert, mathijs]);
+    expect(searchFilter(people, 'den burger', ['firstName', 'lastName'])).toEqual([mathijs]);
+    expect(searchFilter(people, 'arthur metternich', ['firstName', 'lastName'])).toEqual([]);
   });
 
   it('should return all matches when there are no terms', () => {
