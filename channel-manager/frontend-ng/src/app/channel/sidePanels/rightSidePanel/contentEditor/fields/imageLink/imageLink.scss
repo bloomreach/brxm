@@ -40,6 +40,10 @@ image-link {
     max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
   }
 
+  img {
+    padding-top: 6px;
+  }
+
   .md-icon-button > md-icon {
     color: $grey-600 !important;
     margin: 0;
@@ -78,7 +82,6 @@ image-link {
     }
 
     &.image-has-url {
-      align-items: center;
       height: 100%;
       padding-left: $thumbnail-width;
 
@@ -87,9 +90,11 @@ image-link {
       }
     }
 
+    align-items: flex-end;
     display: flex;
+    min-height: $button-width;
     position: absolute;
-    top: -2px;
+    top: 0;
     z-index: 1;
   }
 
