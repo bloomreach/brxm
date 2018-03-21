@@ -22,14 +22,21 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore({"javax.management.*"})
+@PrepareForTest({FieldPluginHelper.class})
 public class FieldPluginHelperTest {
 
     private static final String BUNDLE_FIELD_CAPTION_KEY_VALUE = "Bundle Field Caption Key Value";
@@ -82,15 +89,12 @@ public class FieldPluginHelperTest {
 
     @Test
     public void testGetCaptionModelWithFieldFromBundle() {
-
         final IPluginConfig pluginConfig = new JavaPluginConfig();
         pluginConfig.put(AbstractFieldPlugin.FIELD, "testfield");
 
-        final FieldPluginHelper helper = new NoServiceFieldPluginHelper(null, pluginConfig) {
-            public IFieldDescriptor getField() {
-                return new JavaFieldDescriptor("testns", new JavaTypeDescriptor("testfield","String", null));
-            }
-        };
+        final FieldPluginHelper helper = new NoServiceFieldPluginHelper(null, pluginConfig);
+        final JavaFieldDescriptor field = new JavaFieldDescriptor("testns", new JavaTypeDescriptor("testfield", "String", null));
+        Whitebox.setInternalState(helper, field);
 
         // caption taken from bundle base on field path
         final IModel<String> caption = helper.getCaptionModel(page.getComponent());
@@ -99,17 +103,14 @@ public class FieldPluginHelperTest {
 
     @Test
     public void testGetCaptionModelWithFieldNoBundle() {
-
         final IPluginConfig pluginConfig = new JavaPluginConfig();
         pluginConfig.put(AbstractFieldPlugin.FIELD, "testFieldNoBundle");
 
-        final FieldPluginHelper helper = new NoServiceFieldPluginHelper(null, pluginConfig) {
-            public IFieldDescriptor getField() {
-                return new JavaFieldDescriptor("testns", new JavaTypeDescriptor("testFieldNoBundle","String", null));
-            }
-        };
+        final FieldPluginHelper helper = new NoServiceFieldPluginHelper(null, pluginConfig);
+        final JavaFieldDescriptor field = new JavaFieldDescriptor("testns", new JavaTypeDescriptor("testFieldNoBundle","String", null));
+        Whitebox.setInternalState(helper, field);
 
-        // no config: capitalize lowercased field name
+        // no config: capitalize lowercase field name
         IModel<String> caption = helper.getCaptionModel(page.getComponent());
         assertEquals("Testfieldnobundle", caption.getObject());
 
@@ -133,8 +134,8 @@ public class FieldPluginHelperTest {
             return null;
         }
 
+        @Override
         String getStringFromBundle(final String key) {
-
             if ("configuredCaptionKey".equals(key)) {
                 return BUNDLE_CAPTION_KEY_VALUE;
             } else if ("testns:testfield".equals(key)) {

@@ -164,9 +164,9 @@ public class FieldPluginHelper implements IDetachable {
 
     public IModel<String> getCaptionModel(final Component component, final String defaultCaption) {
 
-        String caption = (defaultCaption != null) ? defaultCaption : getPluginConfig().getString("caption");
+        String caption = (defaultCaption != null) ? defaultCaption : config.getString("caption");
         String captionKey;
-        final IFieldDescriptor field = getField();
+
         if (field != null) {
             captionKey = field.getPath();
             final String translation = getStringFromBundle(captionKey);
@@ -179,14 +179,12 @@ public class FieldPluginHelper implements IDetachable {
                 caption = StringUtils.capitalize(captionKey);
             }
         } else {
-            final String key = getPluginConfig().getString("captionKey");
-            if ((key != null) && !key.isEmpty()) {
-                captionKey = key;
+            captionKey = config.getString("captionKey");
+            if (StringUtils.isNotEmpty(captionKey)) {
                 final String translation = getStringFromBundle(captionKey);
                 if (translation != null) {
                     return Model.of(translation);
                 }
-
                 if (caption == null) {
                     caption = StringUtils.capitalize(captionKey);
                 }
@@ -208,7 +206,6 @@ public class FieldPluginHelper implements IDetachable {
     }
 
     public IModel<String> getHintModel(final Component component) {
-        final IFieldDescriptor field = getField();
         if (field == null) {
             return null;
         }
@@ -245,5 +242,4 @@ public class FieldPluginHelper implements IDetachable {
     private String getBundleName() {
         return (documentType == null) ? null : HIPPO_TYPES + "." + documentType.getName();
     }
-
 }
