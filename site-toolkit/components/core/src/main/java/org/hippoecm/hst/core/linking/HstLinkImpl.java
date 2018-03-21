@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.linking;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 
 public class HstLinkImpl implements HstLink {
@@ -310,8 +312,10 @@ public class HstLinkImpl implements HstLink {
                 }
             }
             if (requestContext.getRenderHost() != null && requestMount != mount) {
-                // the link is cross-domain, so set the render host
-                renderHost = mount.getVirtualHost().getHostName();
+                // the link is cross-domain, so set the render host if the render host is different than the current host
+                if (!isHostSame(requestContext.getRenderHost(), mount.getVirtualHost().getHostName())) {
+                    renderHost = mount.getVirtualHost().getHostName();
+                }
             } else if (!requestContext.isCmsRequest()) {
                 // the above !requestContext.isCmsRequest() check is to avoid fully qualified links in CMS channel manager:
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
@@ -366,6 +370,11 @@ public class HstLinkImpl implements HstLink {
         }
 
         return urlString;
+    }
+
+    // one host can contain port number and the other not
+    private boolean isHostSame(String renderHost, String hostName) {
+        return Objects.equals(substringBefore(renderHost, ":"), substringBefore(hostName, ":"));
     }
 
     private boolean isCdnSupportedPipeline(final String pipeline) {
