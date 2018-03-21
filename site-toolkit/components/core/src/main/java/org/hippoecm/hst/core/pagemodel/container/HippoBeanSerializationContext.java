@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.pagemodel.container;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -49,14 +48,6 @@ class HippoBeanSerializationContext {
      */
     private static final String BEAN_MODEL_SET_MAP_ATTR_NAME = HippoBeanSerializationContext.class.getName()
             + ".beanModelSetMap";
-
-    /**
-     * <code>HstRequestContext</code> specific attribute name to store a <code>Set</code> that stores all the processed
-     * content beans' representation IDs for caching purpose, in order not to process multiple times for the same
-     * content bean item.
-     */
-    private static final String BEAN_MODEL_ID_CACHE_SET_ATTR_NAME = HippoBeanSerializationContext.class.getName()
-            + ".beanModelIdCacheSet";
 
     private HippoBeanSerializationContext() {
     }
@@ -100,17 +91,6 @@ class HippoBeanSerializationContext {
     @SuppressWarnings("unchecked")
     public static void addSerializableContentBeanModel(HippoBeanWrapperModel model) {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        final String representationId = model.getBean().getRepresentationId();
-        Set<String> modelIdCacheSet = (Set<String>) requestContext.getAttribute(BEAN_MODEL_ID_CACHE_SET_ATTR_NAME);
-
-        if (modelIdCacheSet == null) {
-            modelIdCacheSet = new HashSet<>();
-            requestContext.setAttribute(BEAN_MODEL_ID_CACHE_SET_ATTR_NAME, modelIdCacheSet);
-        }
-
-        if (modelIdCacheSet.contains(representationId)) {
-            return;
-        }
 
         Map<String, Set<HippoBeanWrapperModel>> modelSetMap = (Map<String, Set<HippoBeanWrapperModel>>) requestContext
                 .getAttribute(BEAN_MODEL_SET_MAP_ATTR_NAME);
@@ -129,7 +109,6 @@ class HippoBeanSerializationContext {
         }
 
         modelSet.add(model);
-        modelIdCacheSet.add(model.getBean().getRepresentationId());
     }
 
     /**
@@ -160,7 +139,6 @@ class HippoBeanSerializationContext {
         final HstRequestContext requestContext = RequestContextProvider.get();
         requestContext.removeAttribute(TOP_LEVEL_BEAN_IDS_STACK_ATTR_NAME);
         requestContext.removeAttribute(BEAN_MODEL_SET_MAP_ATTR_NAME);
-        requestContext.removeAttribute(BEAN_MODEL_ID_CACHE_SET_ATTR_NAME);
     }
 
     /**

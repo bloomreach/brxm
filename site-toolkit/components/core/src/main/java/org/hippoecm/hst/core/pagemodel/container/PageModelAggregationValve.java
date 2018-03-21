@@ -29,6 +29,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -43,7 +44,6 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.pagemodel.container.ContentSerializationContext.Phase;
 import org.hippoecm.hst.core.pagemodel.model.ComponentWindowModel;
 import org.hippoecm.hst.core.pagemodel.model.IdentifiableLinkableMetadataBaseModel;
-import org.hippoecm.hst.content.beans.support.jackson.LinkModel;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -402,18 +402,18 @@ public class PageModelAggregationValve extends AggregationValve {
             return;
         }
 
-        if (contentNode.has(jsonPropName)) {
-            return;
+        if (!contentNode.has(jsonPropName)) {
+            final ObjectNode modelNode = getObjectMapper().valueToTree(beanModel);
+
+            // We want to put all the properties of the HippoBean nested in HippoBeanWrapperModel,
+            // so let's move the "bean" property object out to the parent node.
+            if (modelNode.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
+                final ObjectNode beanNode = (ObjectNode) modelNode.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
+                modelNode.setAll(beanNode);
+            }
+
+            contentNode.set(jsonPropName, modelNode);
         }
-
-        final ObjectNode modelNode = getObjectMapper().valueToTree(beanModel);
-
-        if (modelNode.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
-            final ObjectNode beanNode = (ObjectNode) modelNode.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
-            modelNode.setAll(beanNode);
-        }
-
-        contentNode.set(jsonPropName, modelNode);
 
         final Set<HippoBeanWrapperModel> set = HippoBeanSerializationContext
                 .getContentBeanModelSet(beanModel.getBean().getRepresentationId());
