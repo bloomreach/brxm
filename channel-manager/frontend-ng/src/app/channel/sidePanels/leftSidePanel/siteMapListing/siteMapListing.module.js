@@ -15,11 +15,11 @@
  */
 
 import siteMapListingComponent from './siteMapListing.component';
-import siteMapListingFilter from './siteMapListing.filter';
+import searchFilter from './search.filter';
 
 const siteMapListingModule = angular
   .module('hippo-cm.channel.siteMapListing', [])
   .component('siteMapListing', siteMapListingComponent)
-  .filter('search', siteMapListingFilter);
+  .filter('search', searchFilter);
 
 export default siteMapListingModule;

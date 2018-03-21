@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-function siteMapListingFilter() {
+function searchFilter() {
   'ngInject';
 
   return (items, keywords, fields) => {
@@ -36,4 +36,4 @@ function siteMapListingFilter() {
   };
 }
 
-export default siteMapListingFilter;
+export default searchFilter;
