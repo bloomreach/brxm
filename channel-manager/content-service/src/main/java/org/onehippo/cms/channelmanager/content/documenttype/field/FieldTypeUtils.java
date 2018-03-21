@@ -42,6 +42,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
@@ -63,8 +64,10 @@ import org.slf4j.LoggerFactory;
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
  */
 public class FieldTypeUtils {
+
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
+    public static final String FIELD_TYPE_IMAGELINK = "hippogallerypicker:imagelink";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
@@ -111,6 +114,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
+        FIELD_TYPE_MAP.put(FIELD_TYPE_IMAGELINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
@@ -339,6 +343,19 @@ public class FieldTypeUtils {
             log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
             throw new InternalServerErrorException();
         }
+    }
+
+    public static boolean writeChoiceFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException, RepositoryException {
+        if (!fieldPath.is(field.getId())) {
+            return false;
+        }
+        if (values.isEmpty()) {
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+        }
+        // Choices can never be multiple, there is always only one value.
+        final FieldValue choiceFieldValue = values.get(0);
+        field.writeValue(node, choiceFieldValue);
+        return true;
     }
 
     /**

@@ -85,6 +85,8 @@ Failed to set display name of node
 Cannot change the URL name of document
 Property 'displayName' cannot be empty
 Property 'urlName' cannot be empty
-
 No values available for node of type 'choice'
 No values available for node of type 'node:name'
+Failed to read nodes for image link type 'my:imagelink'
+Failed to read image link 'my:imagelink' from node '/my:imagelink'
+Failed to write image link field 'my:imagelink'
