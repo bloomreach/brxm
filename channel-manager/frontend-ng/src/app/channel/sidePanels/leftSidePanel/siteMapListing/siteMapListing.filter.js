@@ -17,23 +17,23 @@
 function siteMapListingFilter() {
   'ngInject';
 
-  return (list, query, fields) => {
-    if (!query) {
-      return list;
+  return (items, keywords, fields) => {
+    if (!keywords) {
+      return items;
     }
 
-    query = query.toLowerCase().split(' ');
+    const terms = keywords.toLowerCase().split(' ');
 
     if (!angular.isArray(fields)) {
       fields = [fields.toString()];
     }
-    return list.filter(item => query.every(needle => fields.some((field) => {
+    return items.filter(item => terms.every(term => fields.some((field) => {
       let content = item[field] != null ? item[field] : '';
       if (!angular.isString(content)) {
         content = `${content}`;
       }
 
-      return content.toLowerCase().indexOf(needle) > -1;
+      return content.toLowerCase().indexOf(term) > -1;
     })));
   };
 }
