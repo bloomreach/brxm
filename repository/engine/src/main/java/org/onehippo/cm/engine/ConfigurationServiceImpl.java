@@ -165,6 +165,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
         }
 
+        //Reload baseline for bootstrap 2+
         final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
 
         boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, false, false, false);
@@ -175,15 +176,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         if (success) {
             runtimeConfigurationModel = newRuntimeConfigModel;
             storeBaselineModel(newRuntimeConfigModel, extensionName);
-            baselineModel = newBaselineModel;
-            ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
+            baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
 
             //process webfilebundle instructions from extensions which are not from the current site
-
-            //collect webfilebundle definitions from extension modules
             final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
                     filter(m -> extensionName.equals(m.getExtension())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
             configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+
+            ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
             log.info("Extension '{}' was successfuly applied", extensionName);
         } else {
             log.error("Extension '{}' failed to be applied", extensionName);
