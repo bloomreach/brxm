@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldType {
 
-    public static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
 
     private static final String[] IMAGE_PICKER_STRING_PROPERTIES = {
             "base.uuid",
@@ -54,7 +54,6 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
             "enable.upload",
             "last.visited.enabled",
             "last.visited.key",
-            "preview.width"
     };
     private static final String[] IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES = {
             "nodetypes",
@@ -69,9 +68,15 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
     private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
     private ObjectNode config;
+    private ImageItemFactory imageItemFactory;
 
     public ImageLinkFieldType() {
+        this(IMAGE_ITEM_FACTORY);
+    }
+
+    ImageLinkFieldType(final ImageItemFactory imageItemFactory) {
         setType(Type.IMAGE_LINK);
+        this.imageItemFactory = imageItemFactory;
     }
 
     public ObjectNode getConfig() {
@@ -164,8 +169,8 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
         return uuid.equals(rootUuid) ? StringUtils.EMPTY : uuid;
     }
 
-    private static String createImageUrl(final String uuid, final Session session) {
-        final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(uuid);
+    private String createImageUrl(final String uuid, final Session session) {
+        final ImageItem imageItem = imageItemFactory.createImageItem(uuid);
         return imageItem.getPrimaryUrl(() -> session);
     }
 
