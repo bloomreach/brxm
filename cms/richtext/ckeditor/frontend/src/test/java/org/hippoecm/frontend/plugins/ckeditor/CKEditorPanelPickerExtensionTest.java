@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.wicket.behavior.Behavior;
+import org.hippoecm.frontend.dialog.DialogBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.ckeditor.HippoPicker;
+import org.onehippo.ckeditor.Json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.apache.wicket.behavior.Behavior;
-import org.onehippo.ckeditor.HippoPicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
-import org.junit.Before;
-import org.junit.Test;
-import org.onehippo.ckeditor.Json;
+import com.google.common.collect.Lists;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -42,15 +43,24 @@ import static org.junit.Assert.assertTrue;
  */
 public class CKEditorPanelPickerExtensionTest {
 
-    private LinkPickerBehavior linkPickerBehavior;
-    private ImagePickerBehavior imagePickerBehavior;
+    private LinkPickerManager linkPicker;
+    private DialogBehavior linkPickerBehavior;
+    private ImagePickerManager imagePicker;
+    private DialogBehavior imagePickerBehavior;
     private CKEditorPanelPickerExtension extension;
 
     @Before
     public void setUp() {
-        linkPickerBehavior = createMock(LinkPickerBehavior.class);
-        imagePickerBehavior = createMock(ImagePickerBehavior.class);
-        extension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
+        linkPicker = createMock(LinkPickerManager.class);
+        linkPickerBehavior = createMock(DialogBehavior.class);
+        expect(linkPicker.getBehavior()).andReturn(linkPickerBehavior);
+
+        imagePicker = createMock(ImagePickerManager.class);
+        imagePickerBehavior = createMock(DialogBehavior.class);
+        expect(imagePicker.getBehavior()).andReturn(imagePickerBehavior);
+        replay(linkPicker, imagePicker);
+
+        extension = new CKEditorPanelPickerExtension(linkPicker, imagePicker);
     }
 
     @Test
@@ -60,13 +70,12 @@ public class CKEditorPanelPickerExtensionTest {
 
         expect(linkPickerBehavior.getCallbackUrl()).andReturn(linkPickerCallbackUrl);
         expect(imagePickerBehavior.getCallbackUrl()).andReturn(imagePickerCallbackUrl);
-
         replay(linkPickerBehavior, imagePickerBehavior);
 
         final ObjectNode editorConfig = Json.object();
         extension.addConfiguration(editorConfig);
 
-        verify(linkPickerBehavior, imagePickerBehavior);
+        verify(linkPicker, imagePicker);
 
         assertTrue("CKEditor config has configuration for the hippopicker plugin", editorConfig.has(HippoPicker.CONFIG_KEY));
         JsonNode hippoPickerConfig = editorConfig.get(HippoPicker.CONFIG_KEY);
@@ -86,10 +95,7 @@ public class CKEditorPanelPickerExtensionTest {
 
     @Test
     public void testGetBehaviors() throws Exception {
-        List behaviors = new ArrayList();
-        for (Behavior behavior : this.extension.getBehaviors()) {
-            behaviors.add(behavior);
-        }
+        final List<Behavior> behaviors = Lists.newArrayList(extension.getBehaviors());
         assertEquals(2, behaviors.size());
         assertTrue(behaviors.contains(linkPickerBehavior));
         assertTrue(behaviors.contains(imagePickerBehavior));

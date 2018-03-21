@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -42,8 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.plugins.linkpicker.GalleryUploadPanel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -59,7 +57,7 @@ import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImageLink> implements IHeaderContributor {
+public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImageLink> {
 
     private static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
@@ -71,15 +69,17 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     public static final List<String> ALIGN_OPTIONS =
             Collections.unmodifiableList(Arrays.asList("top", "middle", "bottom", "left", "right"));
 
-    private Component uploadPanel;
     private boolean okSucceeded;
     DropDownChoice<String> type;
 
+    private final Component uploadPanel;
     private final LinkedHashMap<String, String> nameTypeMap;
     private final IModel<RichTextEditorImageLink> imageModel;
 
     public ImageBrowserDialog(final IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
+
+        setSize(DialogConstants.LARGE_AUTO);
 
         imageModel = model;
 
@@ -139,7 +139,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
         });
         align.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 checkState();
@@ -294,7 +293,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         return allImageVariants;
     }
 
-
     private List<String> getIncludedImageVariants() {
         return getMultipleString(INCLUDED_IMAGE_VARIANTS);
     }
@@ -333,11 +331,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             cancelled = true;
         }
         super.onClose();
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=525");
     }
 
 }
