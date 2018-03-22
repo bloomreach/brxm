@@ -286,8 +286,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     if (success) {
                         // reload the baseline after storing, so we have a JCR-backed view of our modules
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
-                        // TODO: call with appropriate extensions
-                        baselineModel = loadBaselineModel();
+                        baselineModel = loadBaselineModel(knownExtensions);
 
                         // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
                         if (startAutoExportService) {
@@ -416,6 +415,17 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
+    /**
+     * INTERNAL USAGE ONLY
+     **/
+    @Override
+    public ConfigurationModel getBaselineModel() {
+        return baselineModel;
+    }
+
+    /**
+     * INTERNAL USAGE ONLY
+     **/
     @Override
     public void runSingleAutoExportCycle() throws RepositoryException {
         autoExportService.runOnce();

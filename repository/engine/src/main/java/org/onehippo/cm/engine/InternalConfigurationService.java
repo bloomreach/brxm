@@ -19,6 +19,7 @@ package org.onehippo.cm.engine;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.model.ConfigurationModel;
 
 /** INTERNAL USAGE ONLY **/
 public interface InternalConfigurationService extends ConfigurationService {
@@ -29,6 +30,12 @@ public interface InternalConfigurationService extends ConfigurationService {
      * @throws RepositoryException
      */
     boolean verifyConfigurationModel() throws RepositoryException;
+
+    /**
+     * Used for test purposes only: return baseline model
+     */
+    ConfigurationModel getBaselineModel();
+
 
     /**
      * Used for test purposes only: perform a single run of AutoExport
