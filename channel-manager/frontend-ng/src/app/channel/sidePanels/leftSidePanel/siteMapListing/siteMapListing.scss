@@ -21,24 +21,25 @@ site-map-listing {
     box-shadow: 0 4px 5px 0 $grey-300;
     display: flex;
     padding-left: 16px;
-    padding-right: 16px;
+    padding-right: 4px;
     z-index: 1;
 
     md-input-container {
       width: 100%;
-      color: $grey-300 !important;
 
       md-icon {
-        color: $grey-400 !important;
+        color: $grey-500 !important;
+        top: 6px;
       }
 
       &:not(.md-input-invalid).md-input-focused md-icon {
-        color: $grey-500 !important;
+        color: $grey-600 !important;
       }
     }
 
     input {
       border-color: transparent !important;
+      color: $text-dim;
       width: calc(100% - 40px);
     }
 
@@ -49,7 +50,7 @@ site-map-listing {
     button {
       position: absolute;
       right: 0;
-      top: -1px;
+      top: -2px;
     }
   }
 
