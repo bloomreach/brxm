@@ -16,19 +16,31 @@
 
 import moment from 'moment-timezone';
 
+/**
+ * The DateValue class supports displaying and setting date values correctly. For manipulation of the moment
+ * in time moment.js is used. The md-datepicker works with a JavaScript Date object. Calculations with this
+ * class are not consistent across browsers though.
+ *
+ * User time zone is taken into account to show the moment in time to the user as the moment in the users' time zone.
+ */
 export class DateValue {
-  constructor(dateString) {
+  constructor(dateString, userTimeZone) {
+    this.userTimeZone = userTimeZone;
+    this.editMinutes = false;
+
     if (dateString === '') {
       this._initBlank();
     } else {
       this._init(moment(dateString));
     }
-    this.editMinutes = false;
   }
 
   _init(initMoment) {
-    this.moment = initMoment; // moment for correct timezone handling
-    this.jsDate = this.moment.toDate(); // ngModel for md-date-picker
+    this.moment = initMoment;
+    if (this.userTimeZone) {
+      this.moment.tz(this.userTimeZone);
+    }
+    this.jsDate = new Date(this.moment.format('L'));
   }
 
   _initBlank() {
@@ -78,10 +90,10 @@ export class DateValue {
   set date(date) {
     if (date) {
       this._checkInit();
-      const newMoment = moment(date);
-      newMoment.hours(this.moment.hours());
-      newMoment.minutes(this.moment.minutes());
-      this._init(newMoment);
+      this.moment.year(date.getFullYear());
+      this.moment.month(date.getMonth());
+      this.moment.date(date.getDate()); // day of the month
+      this.jsDate = new Date(this.moment.format('L'));
     } else {
       this._initBlank();
     }
@@ -105,9 +117,15 @@ export class DateValue {
 }
 
 class DateFieldController {
+  constructor(ConfigService) {
+    'ngInject';
+
+    this.ConfigService = ConfigService;
+  }
+
   $onInit() {
     this.ngModel.$render = () => {
-      this.dateValue = new DateValue(this.ngModel.$viewValue);
+      this.dateValue = new DateValue(this.ngModel.$viewValue, this.ConfigService.timeZone);
     };
   }
 
