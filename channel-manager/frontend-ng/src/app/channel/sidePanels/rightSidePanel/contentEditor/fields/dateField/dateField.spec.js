@@ -107,6 +107,71 @@ describe('DateValue', () => {
     });
   });
 
+  describe('when populated with time zone', () => {
+    // Note that the day, month year part of the date are shown in the md-datepicker which uses the get/set date
+    // methods. The fields for the hours and minutes part of the date are using their own getter/setters.
+
+    it('shows the day of the month correctly across the dateline', () => {
+      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
+      // in Londen this is december 31 in 2018 at 23:30
+      const dateString = '2019-01-01T00:30:00.000+01:00';
+
+      dateValue = new DateValue(dateString, 'Europe/London');
+      expect(dateValue.date.getDate()).toBe(31);
+
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
+      expect(dateValue.date.getDate()).toBe(1);
+    });
+
+    it('shows the month correctly across the dateline', () => {
+      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
+      // in Londen this is december 31 in 2018 at 23:30
+      const dateString = '2019-01-01T00:30:00.000+01:00';
+
+      dateValue = new DateValue(dateString, 'Europe/London');
+      expect(dateValue.date.getMonth()).toBe(11);
+
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
+      expect(dateValue.date.getMonth()).toBe(0);
+    });
+
+    it('shows the year correctly across the dateline', () => {
+      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
+      // in Londen this is december 31 in 2018 at 23:30
+      const dateString = '2019-01-01T00:30:00.000+01:00';
+
+      dateValue = new DateValue(dateString, 'Europe/London');
+      expect(dateValue.date.getFullYear()).toBe(2018);
+
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
+      expect(dateValue.date.getFullYear()).toBe(2019);
+    });
+
+    it('shows the hours correctly across the timezone', () => {
+      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
+      // in Londen this is december 31 in 2018 at 23:30
+      const dateString = '2019-01-01T00:30:00.000+01:00';
+
+      dateValue = new DateValue(dateString, 'Europe/London');
+      expect(dateValue.hours).toBe(23);
+
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
+      expect(dateValue.hours).toBe(0);
+    });
+
+    it('shows the minutes correctly across the timezone', () => {
+      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
+      // in Calcutta this is january 1 in 2019 at 5:00 (India timezone differs 5.5 hours with CET).
+      const dateString = '2019-01-01T00:30:00.000+01:00';
+
+      dateValue = new DateValue(dateString, 'Asia/Calcutta');
+      expect(dateValue.minutes).toBe('00'); // string due to zero padding
+
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
+      expect(dateValue.minutes).toBe(30);
+    });
+  });
+
   describe('when empty', () => {
     beforeEach(() => {
       dateValue = new DateValue('');
