@@ -37,6 +37,7 @@ image-link {
   }
 
   img {
+    cursor: pointer;
     padding-top: 6px;
   }
 
@@ -46,6 +47,14 @@ image-link {
   }
 
   .hippo-imagelink-buttons {
+    // the hippo-imagelink-buttons container will overlay the selected image and (optional) hint icon,
+    // so it should pass through pointer events to allow the image to be clickable and the hint label to show on hover
+    pointer-events: none;
+
+    button {
+      pointer-events: all;
+    }
+
     // render transparent span containing the field name + optional asterisk
     // to align the image picker buttons in the correct position
     > span {
