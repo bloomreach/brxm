@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import imageLinkComponent from './imageLink/imageLink.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
@@ -31,6 +33,7 @@ const fieldsModule = angular
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
+  .component('imageLink', imageLinkComponent)
   .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse)
   .service('FieldService', fieldService);

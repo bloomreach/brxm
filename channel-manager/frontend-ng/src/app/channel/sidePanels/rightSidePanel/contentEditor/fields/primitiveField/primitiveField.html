@@ -32,7 +32,7 @@
         <span ng-if="::$ctrl.fieldType.required">*</span>
       </span>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint">
+      <md-icon ng-if="::$ctrl.fieldType.hint" class="hippo-hint-icon">
         info_outline
 
         <md-tooltip>
@@ -83,7 +83,7 @@
                    ng-blur="$ctrl.blurPrimitive($event)">
         {{::$ctrl.fieldType.displayName}}
         <md-icon ng-if="::$ctrl.fieldType.hint"
-                 class="checkbox-hint">
+                 class="checkbox-hint hippo-hint-icon">
           info_outline
 
           <md-tooltip>
@@ -126,6 +126,18 @@
               field-object="$ctrl.form[$ctrl.getFieldName()]"
               ng-class="{ 'is-invalid': !$ctrl.isValid() }">
     </ckeditor>
+
+    <image-link ng-switch-when="IMAGE_LINK"
+                ng-model="fieldValue.value"
+                ng-change="$ctrl.valueChanged()"
+                name="{{::$ctrl.getFieldName($index)}}"
+                aria-label="{{::$ctrl.fieldType.displayName}}"
+                config="::$ctrl.fieldType.config"
+                hint="::$ctrl.fieldType.hint"
+                index="::$index"
+                is-required="::$ctrl.fieldType.required"
+                url="::fieldValue.url">
+    </image-link>
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">

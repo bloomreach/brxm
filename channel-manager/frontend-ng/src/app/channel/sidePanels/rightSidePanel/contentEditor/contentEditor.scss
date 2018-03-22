@@ -55,7 +55,7 @@ content-editor {
 
   .has-invalid-field {
     label,
-    md-icon,
+    .hippo-hint-icon,
     > .has-focused-field > .field-title {
       color: $red-a700 !important;
     }

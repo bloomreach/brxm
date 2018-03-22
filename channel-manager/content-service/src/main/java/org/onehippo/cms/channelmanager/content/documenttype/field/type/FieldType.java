@@ -42,7 +42,8 @@ public interface FieldType {
         DATE,
         HTML,
         CHOICE, // "content blocks"
-        COMPOUND
+        COMPOUND,
+        IMAGE_LINK
     }
 
     /**

@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class StringFieldType extends PrimitiveFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
-    private static final String DEFAULT_VALUE = "";
+    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 
     private Long maxLength;
 
