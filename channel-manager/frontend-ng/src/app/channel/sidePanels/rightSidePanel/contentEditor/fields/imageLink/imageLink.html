@@ -33,7 +33,7 @@
      ng-if="$ctrl.url"></div>
 
 <div class="hippo-imagelink-buttons"
-     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">
+     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint, 'image-has-label': $ctrl.index === 0}">
   <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button"
              ng-if="$ctrl.url"

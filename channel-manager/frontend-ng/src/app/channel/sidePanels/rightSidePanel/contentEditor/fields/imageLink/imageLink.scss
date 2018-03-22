@@ -71,19 +71,12 @@ image-link {
       }
     }
 
-    // the hippo-imagelink-buttons container will overlay the (optional) hint icon,
-    // so it should pass through pointer events to allow the hint label to show on hover
-    &.image-has-hint {
-      pointer-events: none;
+    &:not(.image-has-url) .md-button.md-icon-button {
+      bottom: 1px;
+    }
 
-      button {
-        pointer-events: all;
-      }
-
-      // if no image is yet selected
-      &:not(.image-has-url) button:first-of-type {
-        margin-left: $hint-icon-width;
-      }
+    &.image-has-hint.image-has-label:not(.image-has-url) button {
+      margin-left: $hint-icon-width;
     }
 
     &.image-has-url {
