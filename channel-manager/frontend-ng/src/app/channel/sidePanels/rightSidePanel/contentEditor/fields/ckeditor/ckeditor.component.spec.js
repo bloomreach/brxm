@@ -325,7 +325,7 @@ describe('CKEditor Component', () => {
     });
 
     it('should open image picker', () => {
-      $ctrl._openImagePicker();
+      $ctrl._openImageVariantPicker();
       expect(SharedSpaceToolbarService.isToolbarPinned).toEqual(true);
     });
 
@@ -334,7 +334,7 @@ describe('CKEditor Component', () => {
 
       beforeEach(() => {
         spyOn(CmsService, 'publish');
-        $ctrl._openImagePicker();
+        $ctrl._openImageVariantPicker();
         args = CmsService.publish.calls.allArgs()[0];
       });
 

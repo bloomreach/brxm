@@ -1,0 +1,114 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+$thumbnail-width: 60px; // default thumbnail max width
+$first-button-left-padding: 8px;
+$button-width: 40px;
+$hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
+
+image-link {
+  .input-bottom-border {
+    border-bottom: 1px solid;
+    max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
+  }
+
+  .input-bottom-border,
+  input {
+    // hide checkered background for readonly input fields
+    background-image: none !important;
+    border-bottom-color: rgba(0, 0, 0, .12) !important;
+  }
+
+  .input-bottom-border-limited-empty {
+    max-width: $thumbnail-width + $first-button-left-padding + $button-width;
+  }
+
+  img {
+    cursor: pointer;
+    padding-top: 6px;
+  }
+
+  .md-icon-button > md-icon {
+    color: $grey-600 !important;
+    margin: 0;
+  }
+
+  .hippo-imagelink-buttons {
+    // the hippo-imagelink-buttons container will overlay the selected image and (optional) hint icon,
+    // so it should pass through pointer events to allow the image to be clickable and the hint label to show on hover
+    pointer-events: none;
+
+    button {
+      pointer-events: all;
+    }
+
+    // render transparent span containing the field name + optional asterisk
+    // to align the image picker buttons in the correct position
+    > span {
+      color: transparent;
+      min-width: $thumbnail-width;
+      user-select: none;
+    }
+
+    .md-button.md-icon-button {
+      margin: 0;
+
+      &:first-of-type {
+        margin-left: $first-button-left-padding;
+      }
+    }
+
+    &:not(.image-has-url) .md-button.md-icon-button {
+      bottom: 1px;
+    }
+
+    &.image-has-hint.image-has-label:not(.image-has-url) button {
+      margin-left: $hint-icon-width;
+    }
+
+    &.image-has-url {
+      height: 100%;
+      padding-left: $thumbnail-width;
+
+      > span {
+        display: none;
+      }
+    }
+
+    align-items: flex-end;
+    display: flex;
+    min-height: $button-width;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+  }
+
+  .hippo-imagelink-picked {
+    animation-duration: .2s;
+    animation-fill-mode: forwards;
+    animation-name: enter;
+  }
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}

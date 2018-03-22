@@ -41,7 +41,8 @@ public interface FieldType {
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
-        COMPOUND
+        COMPOUND,
+        IMAGE_LINK
     }
 
     /**

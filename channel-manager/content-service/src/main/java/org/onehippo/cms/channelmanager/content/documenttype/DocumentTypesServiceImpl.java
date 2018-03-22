@@ -52,8 +52,10 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
+
+        final String cacheKey = id + "-" + locale.toString();
         try {
-            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
+            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, userSession, locale));
         } catch (final ExecutionException ignore) {
             throw new NotFoundException();
         }
