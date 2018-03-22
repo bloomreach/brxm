@@ -99,6 +99,11 @@ describe('DateValue', () => {
       expect(dateValue.minutes).toBe('01');
     });
 
+    it('it keeps hours to a maximum of 23 when a higher number is set', () => {
+      dateValue.hours = 24;
+      expect(dateValue.hours).toBe(23);
+    });
+
     it('when a new date is set, existing hours and minutes are maintained', () => {
       const newDate = new Date(2017, 2, 2, 0, 0, 0, 0); // date with hours and minutes = 0
       dateValue.date = newDate;
