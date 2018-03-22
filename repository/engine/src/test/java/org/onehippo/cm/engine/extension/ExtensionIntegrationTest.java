@@ -39,12 +39,16 @@ import org.onehippo.cm.engine.autoexport.ModuleInfo;
 import org.onehippo.cm.engine.autoexport.Run;
 import org.onehippo.cm.engine.autoexport.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.extension.ExtensionEvent;
 import org.onehippo.cms7.services.extension.ExtensionRegistry;
 
 import com.google.common.collect.ImmutableSet;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ExtensionIntegrationTest {
@@ -67,6 +71,8 @@ public class ExtensionIntegrationTest {
 
         fixture.test(session -> {
 
+            final IsolatedRepository repository = fixture.getRepository();
+
             try {
                 final Node extNode = session.getNode("/m1-extension");
                 extNode.getProperty("property").getString();
@@ -81,6 +87,11 @@ public class ExtensionIntegrationTest {
                 //expected
             }
 
+            //Validate that baseline contains m1 extension after core bootstrap
+            final ConfigurationModelImpl baselineModel1 = repository.getBaselineConfigurationModel();
+            final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
+            assertNotNull(configurationNode);
+
             final ExtensionEvent afterEvent = createExtensionEvent(fixtureName, "/hst:site2", "m2");
             eventBus.post(afterEvent);
             Thread.sleep(1000); //TODO SS: Replace with while loop or replace with direct call to onNewSiteEvent()
@@ -91,6 +102,17 @@ public class ExtensionIntegrationTest {
             } catch (PathNotFoundException ex) {
                 fail("Node extension-m2 from extension m2 or its properties are not found");
             }
+
+            //Validate that baseline contains m1 & m2 extensions after extension event
+            final ConfigurationModelImpl baselineModel2 = repository.getBaselineConfigurationModel();
+            assertTrue(baselineModel1 != baselineModel2);
+
+            final ConfigurationNodeImpl configurationNode1 = baselineModel2.resolveNode("/m1-extension");
+            assertNotNull(configurationNode1);
+
+            final ConfigurationNodeImpl configurationNode2 = baselineModel2.resolveNode("/m2-extension");
+            assertNotNull(configurationNode2);
+
         });
     }
 
@@ -150,6 +172,12 @@ public class ExtensionIntegrationTest {
             run(new Run(modules, preConditionValidator, jcrRunner, postConditionValidator));
         }
 
+        IsolatedRepository repository;
+
+        public IsolatedRepository getRepository() {
+            return repository;
+        }
+
         public void run(final Run... runs) throws Exception {
             for (final Run run : runs) {
                 FileUtils.cleanDirectory(projectPath.toFile());
@@ -164,7 +192,7 @@ public class ExtensionIntegrationTest {
                     additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
                 }
 
-                final IsolatedRepository repository =
+                repository =
                         new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs,
                                 ImmutableSet.of("org.onehippo.cms7.services."));
 

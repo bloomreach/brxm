@@ -17,6 +17,7 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -193,6 +194,24 @@ public class IsolatedRepository {
                     .getMethod("getService", Class.class)
                     .invoke(null, configurationServiceClass);
             return (ConfigurationModelImpl) configurationServiceClass.getMethod("getRuntimeConfigurationModel").invoke(service);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
+    public ConfigurationModelImpl getBaselineConfigurationModel() throws Exception {
+        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        try {
+            final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
+
+            final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
+                    .getMethod("getService", Class.class)
+                    .invoke(null, configurationServiceClass);
+
+            final Class internalConfigService = Class.forName(InternalConfigurationService.class.getName(), true, classLoader);
+            final Method method = internalConfigService.getMethod("getBaselineModel");
+            return (ConfigurationModelImpl) method.invoke(service);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
