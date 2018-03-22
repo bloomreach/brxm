@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2001-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,8 +260,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             } catch (IllegalStateException ise) {
                 if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
                         ClassificationType.LISTDATE)) {
-                    log.warn(
-                            "ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value " + valuelistPath);
+                    log.warn("ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value {}", valuelistPath);
                 }
                 categories = new ValueList();
             }
@@ -382,15 +381,15 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
                             ClassificationType.LISTDATE)) {
                         arguments.put("list", list);
-                        log.debug("Create document using for $list: " + list);
+                        log.debug("Create document using for $list: {}", list);
                     }
                     if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
                             ClassificationType.LISTDATE)) {
                         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'kk:mm:ss.SSSZZ");
                         arguments.put("date", fmt.print(date.getTime()));
-                        log.debug("Create document using for $date: " + fmt.print(date.getTime()));
+                        log.debug("Create document using for $date: {}", fmt.print(date.getTime()));
                     }
-                    log.debug("Query used: " + query);
+                    log.debug("Query used: {}", query);
                     String path = fw.add(query, documentType, arguments);
 
                     JcrNodeModel nodeModel = new JcrNodeModel(path);
@@ -407,8 +406,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     }
                 }
             } catch (RepositoryException | RemoteException | WorkflowException e) {
-                log.error("Error occurred while creating new document: "
-                                  + e.getClass().getName() + ": " + e.getMessage());
+                log.error("Error occurred while creating new document: {}: {}", e.getClass().getName(), e.getMessage());
             }
         }
 
@@ -518,6 +516,20 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 log.warn("no browser service found");
             }
         }
+
+
+        protected String getQuery() {
+            return query;
+        }
+
+        protected String getDocumentType() {
+            return this.documentType;
+        }
+
+        protected Node addPropertiesToNode(Node documentNode) throws RepositoryException {
+            return documentNode;
+        }
+        
     }
 
     /**
@@ -666,5 +678,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         }
 
     }
+
 
 }
