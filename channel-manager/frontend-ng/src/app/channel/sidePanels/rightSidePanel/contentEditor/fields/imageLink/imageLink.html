@@ -25,6 +25,7 @@
        ng-disabled="true">
 
 <img ng-if="$ctrl.url"
+     focus-if="$ctrl.imagePicked"
      ng-src="../../{{ $ctrl.url }}"
      ng-click="$ctrl.openImagePicker()"
      ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }" />

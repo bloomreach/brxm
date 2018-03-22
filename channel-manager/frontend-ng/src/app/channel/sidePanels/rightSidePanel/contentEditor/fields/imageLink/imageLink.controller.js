@@ -42,20 +42,32 @@ class ImageLinkController {
 
   _onImagePicked(image) {
     this.$scope.$apply(() => {
+      // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during rendering.
+      // Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
+      if (this.imagePicked) {
+        this._focusImageElement();
+      }
       this.imagePicked = true;
       this.url = image.url;
       this.ngModel.$setViewValue(image.uuid);
-      this._focusSelectButton();
     });
   }
 
   _onImagePickCancelled() {
-    this._focusSelectButton();
+    // focus either the img or, if not present, the select button so pressing ESC again closes the right side-panel
+    if (this._hasImageElement()) {
+      this._focusImageElement();
+    } else {
+      this.selectElement.focus();
+    }
   }
 
-  _focusSelectButton() {
-    // focus the select button so pressing ESC again closes the right side-panel
-    this.selectElement.focus();
+  _hasImageElement() {
+    return this.$element.find('img').length > 0;
+  }
+
+  _focusImageElement() {
+    this.$element.find('img').focus();
   }
 
   clearPickedImage() {

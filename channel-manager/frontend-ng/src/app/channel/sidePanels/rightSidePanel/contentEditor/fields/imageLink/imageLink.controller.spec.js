@@ -103,6 +103,7 @@ describe('imageLinkController', () => {
       init();
       spyOn(CmsService, 'publish');
       spyOn($ctrl.selectElement, 'focus');
+      spyOn($ctrl, '_focusImageElement');
       $ctrl.openImagePicker();
     });
 
@@ -120,12 +121,33 @@ describe('imageLinkController', () => {
       $scope.$apply();
 
       expect($ctrl.imagePicked).toBe(true);
+      // the image will be focussed by the focus-if directive
+      expect($ctrl._focusImageElement).not.toHaveBeenCalled();
       expect($ctrl.url).toEqual('new-url');
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
-      expect($ctrl.selectElement.focus).toHaveBeenCalled();
     });
 
-    it('sets focus on the selectElement when the picker is cancelled', () => {
+    it('sets focus on the imageElement if an image was previously picked', () => {
+      $ctrl.imagePicked = true;
+      const okCallback = CmsService.publish.calls.mostRecent().args[3];
+      okCallback({
+        url: 'new-url',
+        uuid: 'new-uuid',
+      });
+      $scope.$apply();
+
+      expect($ctrl._focusImageElement).toHaveBeenCalled();
+    });
+
+    it('sets focus on the imageElement when the picker is cancelled and an image was previously picked', () => {
+      spyOn($ctrl, '_hasImageElement').and.returnValue(true);
+      const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
+      cancelCallback();
+
+      expect($ctrl._focusImageElement).toHaveBeenCalled();
+    });
+
+    it('sets focus on the selectElement when the picker is cancelled and no image has been picked yet', () => {
       const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
       cancelCallback();
 
