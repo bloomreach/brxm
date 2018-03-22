@@ -22,7 +22,7 @@ $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 image-link {
   .input-bottom-border {
     border-bottom: 1px solid;
-    max-width: 148px;
+    max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
   }
 
   .input-bottom-border,
@@ -34,10 +34,6 @@ image-link {
 
   .input-bottom-border-limited-empty {
     max-width: $thumbnail-width + $first-button-left-padding + $button-width;
-  }
-
-  .input-border-border-limited-image {
-    max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
   }
 
   img {
