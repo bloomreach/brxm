@@ -26,9 +26,11 @@
 
 <img ng-if="$ctrl.url"
      focus-if="$ctrl.imagePicked"
-     ng-src="../../{{ $ctrl.url }}"
+     ng-blur="$ctrl.onBlur($event)"
+     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }"
      ng-click="$ctrl.openImagePicker()"
-     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }" />
+     ng-focus="$ctrl.onFocus($event)"
+     ng-src="../../{{ $ctrl.url }}"/>
 
 <div class="input-bottom-border"
      ng-if="$ctrl.url"></div>
@@ -38,11 +40,15 @@
   <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button"
              ng-if="$ctrl.url"
-             ng-click="$ctrl.clearPickedImage()">
+             ng-blur="$ctrl.onBlur($event)"
+             ng-click="$ctrl.clearPickedImage()"
+             ng-focus="$ctrl.onFocus($event)">
     <md-icon >clear</md-icon>
   </md-button>
   <md-button class="md-icon-button hippo-imagelink-select"
-             ng-click="$ctrl.openImagePicker()">
+             ng-blur="$ctrl.onBlur($event)"
+             ng-click="$ctrl.openImagePicker()"
+             ng-focus="$ctrl.onFocus($event)">
     <md-icon class="material-icons">search</md-icon>
   </md-button>
 </div>

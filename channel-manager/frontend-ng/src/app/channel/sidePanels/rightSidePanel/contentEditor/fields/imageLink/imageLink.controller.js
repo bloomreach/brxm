@@ -78,6 +78,7 @@ class ImageLinkController {
     this.imagePicked = false;
     this.url = '';
     this.ngModel.$setViewValue('');
+    this.labelElement.focus();
   }
 }
 

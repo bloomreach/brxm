@@ -28,6 +28,8 @@ const imageLinkComponent = {
     index: '<',
     isRequired: '<',
     name: '@',
+    onBlur: '&',
+    onFocus: '&',
     url: '<',
   },
   require: {
