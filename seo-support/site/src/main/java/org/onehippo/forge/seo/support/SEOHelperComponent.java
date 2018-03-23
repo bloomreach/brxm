@@ -86,6 +86,7 @@ public class SEOHelperComponent extends BaseHstComponent {
         setDublinCoreLinksRequestAttributes(request, params);
         setMetaKeywordsDescriptionRequestAttributes(request, params, document, menu);
         setDocumentDatesRequestAttributes(request, document);
+        setImageAttributes(request, params, document);
     }
 
     /**
@@ -111,6 +112,27 @@ public class SEOHelperComponent extends BaseHstComponent {
                     log.warn("Failed to add title head element", e);
                 } else {
                     log.warn("Failed to add title head element. {}", e.toString());
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the {@literal image} request attribute
+     *
+     * @param request  current {@link HstRequest}
+     * @param params   {@link SEOHelperComponentParamsInfo}
+     * @param document {@link HippoBean} that is the source for the current page
+     */
+    protected void setImageAttributes(HstRequest request, SEOHelperComponentParamsInfo params, HippoBean document) {
+        if (document != null) {
+            try {
+                request.setAttribute("image", getDocumentImage(document, params));
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to add image head element", e);
+                } else {
+                    log.warn("Failed to add image head element. {}", e.toString());
                 }
             }
         }
@@ -312,8 +334,14 @@ public class SEOHelperComponent extends BaseHstComponent {
         }
 
         String documentTitle = getDocumentTitle(document, params);
+        String sitemapTitle = null;
+        if (request.getRequestContext().getResolvedSiteMapItem()!=null) {
+            sitemapTitle = request.getRequestContext().getResolvedSiteMapItem().getPageTitle();
+        }
         if (StringUtils.isNotBlank(documentTitle)) {
             values.put("pageTitle", documentTitle);
+        } else if (sitemapTitle != null) {
+            values.put("pageTitle", sitemapTitle);
         } else if (selectedMenuItem != null) {
             values.put("pageTitle", selectedMenuItem.getName());
         }
@@ -355,6 +383,33 @@ public class SEOHelperComponent extends BaseHstComponent {
                         if (StringUtils.isNotBlank(propertyValue)) {
                             return propertyValue;
                         }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the document image from a comma separated list of properties using the first property that returns a value
+     *
+     * @param document {@link HippoBean}
+     * @param params   {@link SEOHelperComponentParamsInfo}
+     * @return image based on the configured properties or {@literal null} if it can't be found
+     * @throws Exception if something goes wrong
+     */
+    protected Object getDocumentImage(HippoBean document, SEOHelperComponentParamsInfo params) throws Exception {
+
+        if (document != null) {
+            // fall-back to property-based title
+            final String propertiesString = params.getDocumentImageBeanProperties();
+            if (propertiesString != null) {
+                final String[] propertyNames = StringUtils.split(propertiesString, SEPARATOR_CHARACTERS);
+                for (String propertyName : propertyNames) {
+                    if (PropertyUtils.isReadable(document, propertyName)) {
+                        Object image = PropertyUtils.getProperty(document, propertyName);
+                        return image;
                     }
                 }
             }

@@ -313,6 +313,7 @@ public class SEOHelperComponentTest {
         private String documentTitleBeanProperties = "title";
         private String documentKeywordsBeanProperties = "keywords";
         private String documentDescriptionBeanProperties = "description";
+        private String documentImageBeanProperties = "image";
         private String siteTitle;
         private String dublinCoreSchemaLink = "http://purl.org/dc/elements/1.1/";
         private String dublinCoreTermsLink = "http://purl.org/dc/terms/";
@@ -381,6 +382,11 @@ public class SEOHelperComponentTest {
 
         public String getDocumentDescriptionBeanProperties() {
             return documentDescriptionBeanProperties;
+        }
+
+        @Override
+        public String getDocumentImageBeanProperties() {
+            return documentImageBeanProperties;
         }
 
         public void setDocumentDescriptionBeanProperties(String documentDescriptionBeanProperties) {

@@ -35,7 +35,8 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 titleKey = "group.descriptionsettings",
                 value = {
                         "document-description-bean-props",
-                        "default-meta-description"
+                        "default-meta-description",
+                        "document-image-bean-props"
                 }
         ),
         @FieldGroup(
@@ -89,6 +90,9 @@ public interface SEOHelperComponentParamsInfo {
 
     @Parameter(name="document-description-bean-props", defaultValue="description")
     String getDocumentDescriptionBeanProperties();
+
+    @Parameter(name="document-image-bean-props", defaultValue="image")
+    String getDocumentImageBeanProperties();
 
     @Parameter(name="site-title")
     String getSiteTitle();
