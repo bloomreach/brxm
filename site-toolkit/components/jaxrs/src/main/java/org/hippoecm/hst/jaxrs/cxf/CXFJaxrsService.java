@@ -169,7 +169,13 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
         String requestURI = request.getRequestURI();
         HstContainerURL baseURL = requestContext.getBaseURL();
-        String pathInfo = StringUtils.substringAfter(requestURI, baseURL.getContextPath() + baseURL.getResolvedMountPath());
+        String pathInfo;
+        final String matchingIgnoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
+        if (StringUtils.isNotBlank(matchingIgnoredPrefix)) {
+            pathInfo = StringUtils.substringAfter(requestURI, baseURL.getContextPath() + "/" + matchingIgnoredPrefix + baseURL.getResolvedMountPath());
+        } else {
+            pathInfo = StringUtils.substringAfter(requestURI, baseURL.getContextPath() + baseURL.getResolvedMountPath());
+        }
 
         if (StringUtils.startsWith(pathInfo, ";")) {
             pathInfo = "/" + StringUtils.substringAfter(pathInfo, "/");

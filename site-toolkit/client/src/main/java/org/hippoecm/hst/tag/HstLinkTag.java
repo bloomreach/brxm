@@ -292,7 +292,14 @@ public class HstLinkTag extends ParamContainerTag {
                     }
                 } else if (!parametersMap.isEmpty()) {
                     String queryString = getQueryString(reqContext.getBaseURL().getURIEncoding(), parametersMap, removedParametersList);
-                    urlString += queryString;
+                    if (StringUtils.isNotBlank(queryString)) {
+                        if (urlString.contains("?")) {
+                            // remove the "?" from the query string
+                            urlString += "&" + queryString.substring(1);
+                        } else {
+                            urlString += queryString;
+                        }
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new JspException("UnsupportedEncodingException on the base url", e);

@@ -396,7 +396,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
             try {
                 if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(child.getNodeTypeName())) {
-                    HstNode referencedContainerNode = getReferencedContainer(child, referenceableContainers);
+                    HstNode referencedContainerNode = getReferencedContainer(child, referenceableContainers, rootConfigurationPathPrefix);
                     if (referencedContainerNode == null) {
                         return null;
                     }
@@ -435,11 +435,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
 
-    private HstNode getReferencedContainer(final HstNode child, final Map<String, HstNode> referenceableContainers) {
+    private HstNode getReferencedContainer(final HstNode child, final Map<String, HstNode> referenceableContainers, final String rootConfigurationPathPrefix) {
         if (referenceableContainers == null || referenceableContainers.isEmpty()) {
-            log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}'. Component '{}' will be ignored.",
+            log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}' for configuration at '{}'. " +
+                            "Component '{}' will be ignored.",
                     new String[]{child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE,
-                            HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
+                            HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, rootConfigurationPathPrefix, child.getValueProvider().getPath()});
             return null;
         }
         // reference is mandatory so can't be null
@@ -462,9 +463,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
             }
             if (refNode == null) {
-                log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
+                log.warn("Component '{}' contains an unresolvable reference '{}' for configuration '{}'. It should be a location relative to '{}'. " +
                                 "Component '{}' will be ignored.",
-                        new String[]{child.getValueProvider().getPath(), reference,
+                        new String[]{child.getValueProvider().getPath(), reference, rootConfigurationPathPrefix,
                                 HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }

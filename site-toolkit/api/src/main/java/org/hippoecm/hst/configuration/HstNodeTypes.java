@@ -274,6 +274,10 @@ public interface HstNodeTypes {
     String NODENAME_HST_CONFIGURATIONS = "hst:configurations";
     String NODENAME_HST_MOUNT = "hst:mount";
     String NODENAME_HST_HOSTS = "hst:hosts";
+    /**
+     * @deprecated since 12.0.0 (5.0.0) not used any more
+     */
+    @Deprecated
     String NODENAME_HST_CHANNELS = "hst:channels";
     String NODENAME_HST_WORKSPACE = "hst:workspace";
     String NODENAME_HST_CONTAINERS = "hst:containers";
