@@ -36,19 +36,6 @@ describe('siteMapListingController', () => {
     spyOn(HippoIframeService, 'load');
   });
 
-  it('calculates the track-by hash of a site map item', () => {
-    expect($ctrl.getSiteMapItemHash({
-      pageTitle: 'Title',
-      pathInfo: '/title',
-      name: 'not used',
-    })).toEqual('/title\0Title');
-
-    expect($ctrl.getSiteMapItemHash({
-      pathInfo: '/title',
-      name: 'title',
-    })).toEqual('/title\0title');
-  });
-
   it('asks the HippoIframeService to load the requested siteMap item', () => {
     const siteMapItem = {
       renderPathInfo: 'dummy',

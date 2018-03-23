@@ -48,10 +48,6 @@ class SiteMapListingController {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 
-  getSiteMapItemHash(item) {
-    return `${item.pathInfo}\0${item.pageTitle || item.name}`;
-  }
-
   get activeItemIndex() {
     return this.filteredItems.findIndex(item => this.isActiveSiteMapItem(item));
   }
