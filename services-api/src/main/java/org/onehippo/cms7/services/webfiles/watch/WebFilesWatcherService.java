@@ -21,6 +21,9 @@ import java.util.List;
 import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.cms7.services.WhiteboardService;
 
+/**
+ * Provides access to service used in development environments to watch for changes in webfiles sources.
+ */
 @SingletonService
 @WhiteboardService
 public interface WebFilesWatcherService {

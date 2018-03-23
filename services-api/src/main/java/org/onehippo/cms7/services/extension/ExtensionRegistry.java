@@ -19,6 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Registry of Hippo CMS extensions provided via classloaders other than the main repository classloader. This is
+ * typically used to register HST site delivery code loaded via a separate WAR file.
+ */
 public class ExtensionRegistry {
 
     public enum ExtensionType {

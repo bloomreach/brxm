@@ -17,6 +17,9 @@ package org.onehippo.cms7.services.extension;
 
 import org.onehippo.cms7.event.HippoEvent;
 
+/**
+ * Registration info for a Hippo CMS extension.
+ */
 public class ExtensionEvent extends HippoEvent<ExtensionEvent> {
 
     private final ClassLoader classLoader;
