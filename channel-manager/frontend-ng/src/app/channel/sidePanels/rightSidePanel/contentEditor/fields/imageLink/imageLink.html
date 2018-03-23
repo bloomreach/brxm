@@ -15,6 +15,7 @@
   -->
 <input type="text"
        class="hippo-imagelink-input"
+       ng-class="{'input-bottom-border-limited-empty': $ctrl.index > 0}"
        name="{{::$ctrl.name}}"
        aria-label="{{::$ctrl.ariaLabel}}"
        readonly="readonly"
@@ -24,23 +25,30 @@
        ng-disabled="true">
 
 <img ng-if="$ctrl.url"
-     ng-src="../../{{ $ctrl.url }}"
+     focus-if="$ctrl.imagePicked"
+     ng-blur="$ctrl.onBlur($event)"
+     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }"
      ng-click="$ctrl.openImagePicker()"
-     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }" />
+     ng-focus="$ctrl.onFocus($event)"
+     ng-src="../../{{ $ctrl.url }}"/>
 
 <div class="input-bottom-border"
      ng-if="$ctrl.url"></div>
 
 <div class="hippo-imagelink-buttons"
-     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint}">
+     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint, 'image-has-label': $ctrl.index === 0}">
   <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button"
-             ng-disabled="!$ctrl.url"
-             ng-click="$ctrl.clearPickedImage()">
+             ng-if="$ctrl.url"
+             ng-blur="$ctrl.onBlur($event)"
+             ng-click="$ctrl.clearPickedImage()"
+             ng-focus="$ctrl.onFocus($event)">
     <md-icon >clear</md-icon>
   </md-button>
   <md-button class="md-icon-button hippo-imagelink-select"
-             ng-click="$ctrl.openImagePicker()">
+             ng-blur="$ctrl.onBlur($event)"
+             ng-click="$ctrl.openImagePicker()"
+             ng-focus="$ctrl.onFocus($event)">
     <md-icon class="material-icons">search</md-icon>
   </md-button>
 </div>

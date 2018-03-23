@@ -17,7 +17,7 @@
 class LeftSidePanelCtrl {
   constructor(
     $element,
-    $scope,
+    localStorageService,
     CatalogService,
     ChannelService,
     SidePanelService,
@@ -26,15 +26,28 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
-    this.$scope = $scope;
+    this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
+
+    this.lastSavedWidth = null;
+  }
+
+  $onInit() {
+    this.lastSavedWidth = this.localStorageService.get('leftSidePanelWidth') || '320px';
+    this.sideNavElement = this.$element.find('.left-side-panel');
+    this.sideNavElement.css('width', this.lastSavedWidth);
   }
 
   $postLink() {
     this.SidePanelService.initialize('left', this.$element.find('.left-side-panel'));
+  }
+
+  onResize(newWidth) {
+    this.lastSavedWidth = `${newWidth}px`;
+    this.localStorageService.set('leftSidePanelWidth', this.lastSavedWidth);
   }
 
   isLockedOpen() {

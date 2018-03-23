@@ -20,12 +20,15 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
            layout-align="start center"
-           class="field-title">
+           class="field-title"
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)"
+           tabindex="-1">
       <span>
         {{ ::$ctrl.fieldType.displayName }}
 
@@ -121,6 +124,8 @@
     <image-link ng-switch-when="IMAGE_LINK"
                 ng-model="fieldValue.value"
                 ng-change="$ctrl.valueChanged()"
+                on-focus="$ctrl.focusPrimitive($event)"
+                on-blur="$ctrl.blurPrimitive($event)"
                 name="{{::$ctrl.getFieldName($index)}}"
                 aria-label="{{::$ctrl.fieldType.displayName}}"
                 config="::$ctrl.fieldType.config"

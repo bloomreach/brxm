@@ -31,11 +31,6 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoGlobal = HippoGlobal;
-    this.initialActionFlags = {
-      contentOverlay: { allowed: true, enabled: true },
-      componentsOverlay: { allowed: true, enabled: true },
-    };
-    this.actionFlags = Object.assign({}, this.initialActionFlags);
   }
 
   load(mountId, projectId) {
@@ -116,19 +111,29 @@ class ProjectService {
       .then(() => {
         const selectedProject = this.projects.find(project => project.id === this.projectId);
         this.selectedProject = selectedProject;
-        this.updateActionFlags(selectedProject);
         return this.selectedProject ? this._selectProject(this.selectedProject.id) : this._selectCore();
       });
   }
 
-  updateActionFlags(project) {
-    const allowed = this.isCore(project) || (project.state === 'UNAPPROVED');
-    this.actionFlags.contentOverlay.allowed = allowed;
-    this.actionFlags.componentsOverlay.allowed = allowed;
+  isContentOverlayEnabled() {
+    // For now, to prevent all kinds of corner cases, we only enable the content overlay
+    // for unapproved projects in review so that you cannot edit documents at all.
+    return !this.selectedProject
+      || this.selectedProject.state === 'UNAPPROVED';
   }
 
-  isCore(project) {
-    return !project;
+  isComponentsOverlayEnabled() {
+    return !this.selectedProject
+      || this.selectedProject.state === 'UNAPPROVED'
+      || (this.selectedProject.state === 'IN_REVIEW' && this._isResetChannelEnabled());
+  }
+
+  _isResetChannelEnabled() {
+    const projectInfo = this.allProjects.find(p => p.id === this.selectedProject.id);
+    const channelInfo = projectInfo.channels.find(c => c.mountId === this.mountId);
+    // The action resetChannel puts a channel back into review.
+    // It is only enabled if a channel has been rejected and the project is in review.
+    return channelInfo.actions.resetChannel.enabled;
   }
 
   _getProjects() {

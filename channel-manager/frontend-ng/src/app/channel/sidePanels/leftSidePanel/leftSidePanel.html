@@ -32,4 +32,10 @@
   </md-tabs>
 
   <mask state="$ctrl.componentsVisible"></mask>
+
+  <resize-handle element="$ctrl.sideNavElement"
+                 min-width="320"
+                 on-resize="$ctrl.onResize(newWidth)"
+                 handle-position="right">
+  </resize-handle>
 </md-sidenav>

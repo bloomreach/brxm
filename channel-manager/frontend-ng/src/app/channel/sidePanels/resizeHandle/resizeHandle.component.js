@@ -1,5 +1,5 @@
-/*!
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import controller from './resizeHandle.controller';
+import template from './resizeHandle.html';
+import './resizeHandle.scss';
 
-resize-handle {
-  $handle-width: 20px;
-  $handle-height: 100%;
+const resizeHandleComponent = {
+  restrict: 'E',
+  template,
+  controller,
+  bindings: {
+    element: '=',
+    onResize: '&',
+    minWidth: '<',
+    handlePosition: '@',
+  },
+};
 
-  height: $handle-height;
-  left: -7px;
-  position: absolute;
-  width: $handle-width;
-  z-index: 20000;
-
-  &:hover {
-    cursor: col-resize;
-  }
-
-  .handle-inner {
-    background-image: url('../../../../../images/resize-handle.svg');
-    background-position: -5px;
-    background-repeat: no-repeat;
-    background-size: 34px;
-    height: 100%;
-    width: $handle-width;
-  }
-}
+export default resizeHandleComponent;

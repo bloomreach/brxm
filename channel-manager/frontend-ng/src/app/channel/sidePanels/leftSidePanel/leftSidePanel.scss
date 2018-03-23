@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,14 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+@import 'variables';
 
-.md-button.md-icon-button.md-icon-button-left-side-panel {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.left-side-panel {
+left-side-panel {
   border-right: 1px solid $grey-200;
+
+  md-sidenav {
+    max-width: 100%;
+    width: 100%;
+
+    md-tabs {
+      padding-right: 12px;
+    }
+  }
+
+  &.in-resize {
+    user-select: none;
+  }
 
   md-list {
     padding: 0;
@@ -46,45 +55,3 @@
   }
 }
 
-.right-side-panel {
-  border-left: 1px solid $grey-200;
-  max-width: 440px;
-  width: 440px;
-
-  mat-toolbar,
-  md-toolbar {
-    background: $grey-50;
-    box-sizing: border-box;
-    color: $text-dark;
-
-    &:first-child {
-      border-bottom: 1px solid $grey-200;
-    }
-
-    &:last-child {
-      border-top: 1px solid $grey-200;
-    }
-
-    md-icon {
-      color: $grey-900;
-      opacity: .87;
-    }
-
-    .md-button {
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 0;
-      padding-right: 0;
-    }
-  }
-
-  .md-subheader a {
-    color: $blue-600;
-  }
-}
-
-.text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}

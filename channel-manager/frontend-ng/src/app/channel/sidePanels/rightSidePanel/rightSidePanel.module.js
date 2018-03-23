@@ -18,7 +18,7 @@ import rightSidePanelComponent from './rightSidePanel.component';
 import rightSidePanelService from './rightSidePanel.service';
 import contentEditorModule from './contentEditor/contentEditor.module';
 import editContentModule from './editContent/editContent.module';
-import resizeHandleModule from './resizeHandle/resizeHandle.module';
+import resizeHandleModule from '../resizeHandle/resizeHandle.module';
 import createContentModule from './createContent/createContent.module';
 
 const rightSidePanelModule = angular

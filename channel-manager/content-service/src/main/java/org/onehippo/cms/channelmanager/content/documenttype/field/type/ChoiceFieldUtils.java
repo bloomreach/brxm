@@ -24,9 +24,9 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -135,7 +135,7 @@ public class ChoiceFieldUtils {
             final RichTextFieldType richText = new RichTextFieldType();
             richText.init(fieldContext);
             return richText;
-        } else if (contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+        } else if (contentType.isContentType(GalleryPickerNodeType.NT_IMAGE_LINK)) {
             final ImageLinkFieldType imageLink = new ImageLinkFieldType();
             imageLink.init(fieldContext);
             return imageLink;
@@ -212,7 +212,7 @@ public class ChoiceFieldUtils {
             // FIXME: this init call will not load configuration
             richText.initListBasedChoice(choiceId);
             return richText;
-        } else if(contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+        } else if(contentType.isContentType(GalleryPickerNodeType.NT_IMAGE_LINK)) {
             // FIXME: this init call will not load configuration
             final ImageLinkFieldType imageLink = new ImageLinkFieldType();
             imageLink.initListBasedChoice(choiceId);
