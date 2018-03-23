@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
+const FILTERED_FIELDS = ['pageTitle', 'name', 'pathInfo'];
+
 class SiteMapListingController {
-  constructor($scope, $translate, HippoIframeService) {
+  constructor($filter, $translate, HippoIframeService) {
     'ngInject';
 
-    this.$scope = $scope;
+    this.$filter = $filter;
     this.$translate = $translate;
     this.HippoIframeService = HippoIframeService;
 
-    this.$scope.keywords = '';
-    this.$scope.filterFields = ['pageTitle', 'name', 'pathInfo'];
+    this.keywords = '';
   }
 
-  clearKeywords() {
-    this.$scope.keywords = '';
+  $onChanges() {
+    this.filteredItems = this.items;
+  }
+
+  filterItems() {
+    this.filteredItems = this.$filter('search')(this.items, this.keywords, FILTERED_FIELDS);
+  }
+
+  clearFilter() {
+    this.keywords = '';
+    this.filteredItems = this.items;
   }
 
   showPage(siteMapItem) {
@@ -40,6 +50,14 @@ class SiteMapListingController {
 
   getSiteMapItemHash(item) {
     return `${item.pathInfo}\0${item.pageTitle || item.name}`;
+  }
+
+  get activeItemIndex() {
+    return this.filteredItems.findIndex(item => this.isActiveSiteMapItem(item));
+  }
+
+  set activeItemIndex(index) {
+    // ignore update by md-virtual-repeat-container on scroll
   }
 }
 

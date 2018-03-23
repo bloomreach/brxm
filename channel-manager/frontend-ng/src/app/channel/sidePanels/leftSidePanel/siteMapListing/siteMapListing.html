@@ -16,18 +16,21 @@
 <div class="search-field-container">
   <md-input-container md-no-float>
     <md-icon>search</md-icon>
-    <input type="text" placeholder="{{ ::'PLACEHOLDER_SEARCH' | translate }}" ng-model="keywords" />
-    <md-button class="md-icon-button" ng-click="$ctrl.clearKeywords()" ng-show="keywords">
+    <input type="text"
+           placeholder="{{ ::'PLACEHOLDER_SEARCH' | translate }}"
+           ng-model="$ctrl.keywords"
+           ng-change="$ctrl.filterItems()"/>
+    <md-button class="md-icon-button" ng-click="$ctrl.clearFilter()" ng-show="$ctrl.keywords">
       <md-icon>clear</md-icon>
     </md-button>
   </md-input-container>
 </div>
 <md-content>
-  <md-virtual-repeat-container flex layout="column">
+  <md-virtual-repeat-container md-top-index="$ctrl.activeItemIndex">
     <md-list class="qa-sitemap">
       <md-list-item class="md-2-line qa-sitemap-item"
                     ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-                    md-virtual-repeat="item in $ctrl.items | search:keywords:filterFields"
+                    md-virtual-repeat="item in $ctrl.filteredItems"
                     ng-click="$ctrl.showPage(item)">
         <div class="md-list-item-text">
           <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
