@@ -22,7 +22,6 @@
 }
 
 date-field {
-
   .md-datepicker-input-container {
     z-index: 2;
     border-bottom-width: 0;
@@ -53,7 +52,7 @@ date-field {
     md-input-container.md-input-focused > input.timepart {
       border-bottom: 2px solid $blue-500 !important;
       padding-bottom: 0 !important;
-  }
+    }
   }
 
   .now-button {
