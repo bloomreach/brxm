@@ -107,7 +107,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * The set of all names of extensions present in this model. The "core" is always assumed to be present and
      * does not have an explicit representation. Thus, a core-only model will return an empty Set.
      * @return a Set of names for extensions present in this model; does not contain null
-     * @since 1.3
+     * @since 2.0
      */
     public Set<String> getExtensionNames() {
         final Set<String> names = getModulesStream().map(ModuleImpl::getExtension).collect(Collectors.toSet());
@@ -239,16 +239,15 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
 
-        //sort modules so that extension modules would be at the bottom of the list (including dependencies)
-        final List<ModuleImpl> coreModules = groups.stream().flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream()).filter(m -> Objects.isNull(m.getExtension())).collect(Collectors.toList());
-
-        coreModules.forEach(module -> buildModule(configurationTreeBuilder, module));
-
-        final List<ModuleImpl> extensionModules = groups.stream().flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream()).filter(m -> Objects.nonNull(m.getExtension())).collect(Collectors.toList());
-
-        extensionModules.forEach(module -> buildModule(configurationTreeBuilder, module));
+        // sort modules so that extension modules would be at the bottom of the list (including dependencies)
+        // TODO: fix groupSorter to do this properly with lexical sort by extension name, so getModulesStream() does this consistently
+        // TODO: disallow dependencies that force an ordering that violates extension isolation
+        getModulesStream()
+                .filter(m -> Objects.isNull(m.getExtension()))
+                .forEach(module -> buildModule(configurationTreeBuilder, module));
+        getModulesStream()
+                .filter(m -> Objects.nonNull(m.getExtension()))
+                .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
 

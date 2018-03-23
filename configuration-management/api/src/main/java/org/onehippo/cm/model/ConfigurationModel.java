@@ -17,6 +17,7 @@ package org.onehippo.cm.model;
 
 import java.io.Closeable;
 import java.util.List;
+import java.util.Set;
 
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
@@ -51,6 +52,14 @@ public interface ConfigurationModel extends Closeable {
     List<? extends WebFileBundleDefinition> getWebFileBundleDefinitions();
 
     /**
+     * The set of all names of extensions present in this model. The "core" is always assumed to be present and
+     * does not have an explicit representation. Thus, a core-only model will return an empty Set.
+     * @return a Set of names for extensions present in this model; does not contain null
+     * @since 2.0
+     */
+    Set<String> getExtensionNames();
+
+    /**
      * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
      */
     ConfigurationNode getConfigurationRootNode();
@@ -82,6 +91,7 @@ public interface ConfigurationModel extends Closeable {
      * actions, or the root definition paths for content definitions, at minimum.
      * @param extension the name of an extension whose digest is desired, or null for the core digest
      * @return a String containing a digest of model contents, in a format determined by the implementation
+     * @since 2.0
      */
     String getDigest(final String extension);
 

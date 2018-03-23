@@ -251,7 +251,7 @@ public class ConfigurationTreeBuilderTest {
     }
 
     @Test
-    public void merge_two_definitions_separate_extension_module() throws Exception {
+    public void reject_two_definitions_same_node_separate_extensions() throws Exception {
         final String yaml1 = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"

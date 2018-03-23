@@ -54,6 +54,7 @@ public interface Module extends OrderableByName {
 
     /**
      * @return Extension name of the Module or null if it is a core Module
+     * @since 2.0
      */
     String getExtension();
 

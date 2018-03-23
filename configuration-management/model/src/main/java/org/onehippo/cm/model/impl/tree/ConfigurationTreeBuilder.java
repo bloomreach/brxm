@@ -32,8 +32,8 @@ import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyKind;
+import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
@@ -149,6 +149,7 @@ public class ConfigurationTreeBuilder {
     public Map<JcrPath, ConfigurationPropertyImpl> getDeletedProperties() {
         return deletedProperties;
     }
+
     /**
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
@@ -158,8 +159,7 @@ public class ConfigurationTreeBuilder {
         //TODO SS: validate if deleted nodes should be also handled
         if (!CollectionUtils.isEmpty(definitionNode.getProperties())) {
             final TreeDefinitionImpl<?> definition = definitionNode.getDefinition();
-            final List<DefinitionNodeImpl> definitions = node.getDefinitions();
-            final TreeDefinitionImpl<?> bucketDefinition = definitions.get(0).getDefinition();
+            final TreeDefinitionImpl<?> bucketDefinition = node.getDefinitions().get(0).getDefinition();
             if (!Objects.equals(definition.getSource().getModule().getExtension(),
                     bucketDefinition.getSource().getModule().getExtension())) {
                 final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
@@ -169,7 +169,6 @@ public class ConfigurationTreeBuilder {
                 throw new IllegalArgumentException(errMessage);
             }
         }
-
 
         if (definitionNode.isDeletedAndEmpty()) {
 

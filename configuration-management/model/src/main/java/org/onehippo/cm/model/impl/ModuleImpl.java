@@ -80,6 +80,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
+    private String extension;
+
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
             .comparing(SourceImpl::getPath)
             .thenComparing(x -> x.getClass().getSimpleName()));
@@ -106,8 +108,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private String mvnPath;
 
     private File archiveFile;
-
-    private String extension;
 
     // set of resource paths that should be removed during auto-export write step
     private Set<String> removedConfigResources = new HashSet<>();
