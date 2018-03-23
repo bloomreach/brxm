@@ -19,6 +19,10 @@ left-side-panel {
   md-sidenav {
     max-width: 100%;
     width: 100%;
+
+    md-tabs {
+      padding-right: 12px;
+    }
   }
 
   &.in-resize {
@@ -51,6 +55,3 @@ left-side-panel {
   }
 }
 
-md-tabs {
-  padding-right: 12px;
-}

@@ -91,7 +91,6 @@ class LeftSidePanelCtrl {
   isEditable() {
     return this.ChannelService.isEditable();
   }
-
 }
 
 export default LeftSidePanelCtrl;

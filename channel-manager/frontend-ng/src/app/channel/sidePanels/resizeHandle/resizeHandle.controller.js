@@ -28,7 +28,7 @@ class resizeHandleController {
 
   $onInit() {
     this.add = this.handlePosition === 'left';
-    this.handle.addClass(this.handlePosition);
+    this.handle.addClass(this.handlePosition === 'left' ? 'left' : 'right');
     this._registerEvents(this.element);
   }
 
