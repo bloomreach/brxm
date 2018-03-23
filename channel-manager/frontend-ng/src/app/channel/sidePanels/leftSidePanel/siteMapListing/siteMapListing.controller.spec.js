@@ -57,15 +57,14 @@ describe('siteMapListingController', () => {
   });
 
   it('filters sitemap-items using the "search" filter', () => {
-    const searchFilter = jasmine.createSpy('searchFilter');
-    $filter.and.returnValue(searchFilter);
+    $ctrl.searchFilter = jasmine.createSpy('searchFilter');
 
     $ctrl.keywords = 'one two';
     $ctrl.items = [];
     $ctrl.filterItems();
 
     expect($filter).toHaveBeenCalledWith('search');
-    expect(searchFilter).toHaveBeenCalledWith($ctrl.items, $ctrl.keywords, ['pageTitle', 'name', 'pathInfo']);
+    expect($ctrl.searchFilter).toHaveBeenCalledWith($ctrl.items, $ctrl.keywords, ['pageTitle', 'name', jasmine.any(Function)]);
   });
 
   it('returns the index of the active sitemap item in the filtered items', () => {

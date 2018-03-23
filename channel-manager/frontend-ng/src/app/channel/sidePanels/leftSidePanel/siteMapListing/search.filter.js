@@ -25,7 +25,7 @@ function searchFilter() {
     const terms = keywords.toLowerCase().split(' ').filter(term => term.length > 0);
 
     return items.filter(item => terms.every(term => fields.some((field) => {
-      const content = item[field];
+      const content = angular.isFunction(field) ? field(item) : item[field];
 
       if (!angular.isString(content)) {
         return false;

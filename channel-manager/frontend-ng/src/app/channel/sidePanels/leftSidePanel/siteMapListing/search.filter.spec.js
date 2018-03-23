@@ -86,4 +86,8 @@ describe('search filter', () => {
   it('should ignore non-string fields', () => {
     expect(searchFilter(people, 'a', ['qa'])).toEqual([]);
   });
+
+  it('should accept a function as searchable field', () => {
+    expect(searchFilter(people, 'ruhtra', [person => person.firstName.split('').reverse().join('')])).toEqual([arthur]);
+  });
 });

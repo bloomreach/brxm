@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-const FILTERED_FIELDS = ['pageTitle', 'name', 'pathInfo'];
-
 class SiteMapListingController {
   constructor($filter, $translate, HippoIframeService) {
     'ngInject';
 
-    this.$filter = $filter;
     this.$translate = $translate;
     this.HippoIframeService = HippoIframeService;
 
+    const startWithSlashFilter = $filter('startWithSlash');
+    this.filteredFields = ['pageTitle', 'name', item => startWithSlashFilter(item.pathInfo)];
     this.keywords = '';
+    this.searchFilter = $filter('search');
   }
 
   $onChanges() {
@@ -32,7 +32,7 @@ class SiteMapListingController {
   }
 
   filterItems() {
-    this.filteredItems = this.$filter('search')(this.items, this.keywords, FILTERED_FIELDS);
+    this.filteredItems = this.searchFilter(this.items, this.keywords, this.filteredFields);
   }
 
   clearFilter() {
