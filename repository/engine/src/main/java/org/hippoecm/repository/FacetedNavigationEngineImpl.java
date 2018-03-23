@@ -541,7 +541,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
                     boolean sortScoreAscending = false;
                     // if the sort is on score descending, we can set it to null as this is the default and more efficient                  
-                    if(sort != null && sort.getSort().length == 1 && sort.getSort()[0].getType() == SortField.SCORE) {
+                    if(sort != null && sort.getSort() != null && sort.getSort().length == 1 && sort.getSort()[0].getType() == SortField.SCORE) {
                         
                         if(sort.getSort()[0].getReverse()) {
                             sortScoreAscending = true;
@@ -564,7 +564,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
                         tfDocs = searcher.search(query, filterToApply, fetchTotal);
                     } else {
-                        if(sortScoreAscending) {
+                        if(sortScoreAscending || containsSortOnScore(sort)) {
                             // we need the entire searchQuery because scoring is involved
                             Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
                             tfDocs = searcher.search(query, filterToApply, fetchTotal, sort);
@@ -620,6 +620,13 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             }
         }
         return new ResultImpl(0, null);
+    }
+
+    private boolean containsSortOnScore(final Sort sort) {
+        if (sort == null || sort.getSort() == null) {
+            return false;
+        }
+        return Arrays.stream(sort.getSort()).anyMatch(sortField -> sortField.getType() == SortField.SCORE);
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
