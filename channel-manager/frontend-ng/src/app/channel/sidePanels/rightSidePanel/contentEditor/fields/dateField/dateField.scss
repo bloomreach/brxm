@@ -15,6 +15,7 @@
  */
 @import 'variables';
 
+// left-align labels of date fields
 .md-input-focused._md-datepicker-floating-label._md-datepicker-has-calendar-icon > label:not(.md-no-float):not(.md-container-ignore) {
   left: 0;
   right: auto;
@@ -36,6 +37,7 @@ date-field {
     min-width: 200px;
   }
 
+  // nested input container for the time fields
   > md-input-container {
     margin: 0;
 
@@ -44,12 +46,12 @@ date-field {
       width: 25px;
     }
 
-    md-input-container:not(md-input-focused) > input.timepart {
+    &:not(.md-input-focused) > input.timepart {
       border-bottom: 1px solid $grey-300 !important;
       padding-bottom: 1px !important;
     }
 
-    md-input-container.md-input-focused > input.timepart {
+    &.md-input-focused > input.timepart {
       border-bottom: 2px solid $blue-500 !important;
       padding-bottom: 0 !important;
     }
