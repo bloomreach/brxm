@@ -29,7 +29,9 @@ class ImageLinkController {
     // pushed by both the default thumbnail width and the optional label text width.
     // All other buttons will be pushed by the default thumbnail width only.
     this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.isRequired ? ' *' : '') : '';
-    this.selectElement = this.$element.find('.hippo-imagelink-select');
+
+    // focus the label element of the first image when cancelling the picker and no image has been selected yet
+    this.labelElement = this.$element.parent().parent().find('md-input-container:first-of-type .field-title');
   }
 
   openImagePicker() {
@@ -58,7 +60,7 @@ class ImageLinkController {
     if (this._hasImageElement()) {
       this._focusImageElement();
     } else {
-      this.selectElement.focus();
+      this.labelElement.focus();
     }
   }
 
@@ -76,6 +78,7 @@ class ImageLinkController {
     this.imagePicked = false;
     this.url = '';
     this.ngModel.$setViewValue('');
+    this.labelElement.focus();
   }
 }
 

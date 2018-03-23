@@ -74,7 +74,7 @@ describe('imageLinkController', () => {
       expect($ctrl.config).toEqual(config);
       expect($ctrl.hint).toEqual('TestHint');
       expect($ctrl.url).toEqual('TestUrl');
-      expect($ctrl.selectElement).toBeDefined();
+      expect($ctrl.labelElement).toBeDefined();
       expect($ctrl.imagePicked).toBeFalsy();
     });
 
@@ -102,7 +102,7 @@ describe('imageLinkController', () => {
     beforeEach(() => {
       init();
       spyOn(CmsService, 'publish');
-      spyOn($ctrl.selectElement, 'focus');
+      spyOn($ctrl.labelElement, 'focus');
       spyOn($ctrl, '_focusImageElement');
       $ctrl.openImagePicker();
     });
@@ -147,11 +147,11 @@ describe('imageLinkController', () => {
       expect($ctrl._focusImageElement).toHaveBeenCalled();
     });
 
-    it('sets focus on the selectElement when the picker is cancelled and no image has been picked yet', () => {
+    it('sets focus on the labelElement when the picker is cancelled and no image has been picked yet', () => {
       const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
       cancelCallback();
 
-      expect($ctrl.selectElement.focus).toHaveBeenCalled();
+      expect($ctrl.labelElement.focus).toHaveBeenCalled();
     });
   });
 

@@ -39,6 +39,10 @@ image-link {
   img {
     cursor: pointer;
     padding-top: 6px;
+
+    &:focus {
+      outline: none; // prevent browser-specific outline when focused
+    }
   }
 
   .md-icon-button > md-icon {

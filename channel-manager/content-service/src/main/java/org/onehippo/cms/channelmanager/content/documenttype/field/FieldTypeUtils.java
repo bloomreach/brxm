@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
@@ -67,7 +68,6 @@ public class FieldTypeUtils {
 
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
-    public static final String FIELD_TYPE_IMAGELINK = "hippogallerypicker:imagelink";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
@@ -114,7 +114,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
-        FIELD_TYPE_MAP.put(FIELD_TYPE_IMAGELINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
