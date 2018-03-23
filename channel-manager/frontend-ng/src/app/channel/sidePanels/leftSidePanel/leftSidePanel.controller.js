@@ -16,26 +16,21 @@
 
 class LeftSidePanelCtrl {
   constructor(
-    $scope,
     $element,
     localStorageService,
-    SidePanelService,
     CatalogService,
-    SiteMapService,
-    HippoIframeService,
     ChannelService,
+    SidePanelService,
+    SiteMapService,
   ) {
     'ngInject';
 
-    this.$scope = $scope;
     this.$element = $element;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
+    this.ChannelService = ChannelService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
-    this.HippoIframeService = HippoIframeService;
-    this.SiteMapService = SiteMapService;
-    this.ChannelService = ChannelService;
 
     this.lastSavedWidth = null;
   }
@@ -68,20 +63,8 @@ class LeftSidePanelCtrl {
     return this.CatalogService.getComponents();
   }
 
-  getSiteMap() {
+  getSiteMapItems() {
     return this.SiteMapService.get();
-  }
-
-  getSiteMapItemHash(item) {
-    return `${item.pathInfo}\0${item.pageTitle || item.name}`;
-  }
-
-  showPage(siteMapItem) {
-    this.HippoIframeService.load(siteMapItem.renderPathInfo);
-  }
-
-  isActiveSiteMapItem(siteMapItem) {
-    return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 
   isSidePanelLifted() {

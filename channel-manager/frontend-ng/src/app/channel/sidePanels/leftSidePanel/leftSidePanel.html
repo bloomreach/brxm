@@ -24,19 +24,7 @@
            md-no-pagination
            class="qa-sidenav-tabs">
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
-      <md-list class="qa-sitemap">
-        <md-list-item class="md-2-line qa-sitemap-item"
-                      ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-                      ng-repeat="item in $ctrl.getSiteMap() track by $ctrl.getSiteMapItemHash(item)"
-                      md-autofocus="$ctrl.isActiveSiteMapItem(item)"
-                      ng-click="$ctrl.showPage(item)">
-          <div class="md-list-item-text">
-            <h4 class="qa-pathinfo">{{ ::item.pathInfo | startWithSlash }}</h4>
-            <p class="qa-name">{{ ::item.pageTitle || item.name }}</p>
-          </div>
-          <md-divider ng-if="::!$last"></md-divider>
-        </md-list-item>
-      </md-list>
+      <site-map-listing items="$ctrl.getSiteMapItems()" flex layout="column"></site-map-listing>
     </md-tab>
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-if="$ctrl.isEditable()" ng-disabled="$ctrl.isConfigurationLocked">
       <component-catalog components="$ctrl.getCatalog()" state="$ctrl.componentsVisible"></component-catalog>
