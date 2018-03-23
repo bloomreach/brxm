@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
@@ -238,6 +239,13 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     public void setLastExecutedAction(String value) {
         lastExecutedAction = value;
+    }
+
+    /**
+     * @return true if this module is part of an extension; false if this module is in the core model
+     */
+    public boolean isExtension() {
+        return extension != null;
     }
 
     @Override

@@ -47,6 +47,7 @@ public class ClasspathConfigurationModelReader {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReader.class);
 
+
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
      * configuration and content into a ConfigurationModel.
@@ -63,7 +64,8 @@ public class ClasspathConfigurationModelReader {
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
-     * configuration and content into a ConfigurationModel.
+     * configuration and content into a ConfigurationModel. This method only loads "core" modules that are not part
+     * of an extension.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
      * @param verifyOnly when true use 'verify only' yaml parsing, allowing (but warning on) certain model errors
@@ -80,7 +82,7 @@ public class ClasspathConfigurationModelReader {
 
         // load modules that are packaged on the classpath
         final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
-                readModulesFromClasspath(classLoader, verifyOnly, p -> p.getExtension() == null);
+                readModulesFromClasspath(classLoader, verifyOnly, false);
 
         // add classpath modules to model
         classpathGroups.getRight().forEach(model::addGroup);
@@ -92,109 +94,66 @@ public class ClasspathConfigurationModelReader {
         model.build();
 
         stopWatch.stop();
-        log.info("ConfigurationModel loaded in {}", stopWatch.toString());
+        log.info("ConfigurationModel core loaded in {}", stopWatch.toString());
 
         return model;
     }
 
+    /**
+     * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
+     * configuration and content into a ConfigurationModel. This method only loads modules that are part of an extension.
+     *
+     * @param classLoader the ClassLoader which will be searched for HCM modules
+     * @return a ConfigurationModel of configuration and content definitions
+     * @throws IOException
+     * @throws ParserException
+     */
+    // TODO: Why do we need a separate code path for this? Why not just load everything available to the classloader?
     public ConfigurationModelImpl readExtension(final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         final Pair<Set<FileSystem>, List<GroupImpl>> extensionClasspathGroups =
-                readModulesFromClasspath(classLoader, false, p -> p.getExtension() != null);
+                readModulesFromClasspath(classLoader, false, true);
 
-        extensionClasspathGroups.getRight().stream().flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).forEach(model::addModule);
-        // todo add filesystems to the model
+        // TODO: why use the override addModule codepath here instead of the normal addGroup?
+        extensionClasspathGroups.getRight()
+                .forEach(g -> g.getProjects()
+                    .forEach(p -> p.getModules()
+                        .forEach(model::addModule)));
+
+        // add filesystems to the model
+        model.setFileSystems(extensionClasspathGroups.getLeft());
+
         final ConfigurationModelImpl build = model.build();
         stopWatch.stop();
-        log.info("ConfigurationModel loaded in {}", stopWatch.toString());
+        log.info("ConfigurationModel extension loaded in {}", stopWatch.toString());
 
         return build;
     }
 
+    // TODO: this is scary -- almost guaranteed to be a bad resource leak of open FileSystems!
     public Collection<ModuleImpl> collectExtensionModules(final ClassLoader classLoader)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<GroupImpl>> extensionClasspathGroups =
-                readModulesFromClasspath(classLoader, false, p -> p.getExtension() != null);
-        return extensionClasspathGroups.getRight().stream().flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).collect(toList());
-    }
-
-    public static Predicate<ModuleImpl> isExtension() {
-        return p -> p.getExtension() != null;
-    }
-
-    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly,
-                                                                              final Predicate<ModuleImpl> filter)
-            throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<GroupImpl>> groups = new MutablePair<>(new HashSet<>(), new ArrayList<>());
-
-        // find all the classpath resources with a filename that matches the expected module descriptor filename
-        // and also located at the root of a classpath entry
-        final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
-        while (resources.hasMoreElements()) {
-            final URL resource = resources.nextElement();
-            final String resourcePath = resource.getPath();
-
-            // look for the marker that indicates this is a path within a jar file
-            // this is the normal case when we load modules that were packaged and deployed in a Tomcat container
-            final int jarContentMarkerIdx = resourcePath.lastIndexOf("!/");
-            if (jarContentMarkerIdx > 0) {
-                // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
-                // using a non-exploded war based classloader might fail here, but that is (currently) not supported anyway
-
-                // First convert the resourcePath to a platform native one, e.g. on Windows this 'fixes' /C:/ to C:\
-                // Furthermore, it also properly decodes encoded special characters like spaces (%20) as well as for example '+' characters.
-                // without needing to use URLDecoder.decode() (as often times is suggested).
-                // URLDecoder.decode() typically will incorrectly replace '+' with ' '!
-                // (it also could throw UnsupportedException, but most/all implementations handle this example 'silently')
-                final File archiveFile = new File(new URL(resourcePath.substring(0, jarContentMarkerIdx)).toURI());
-                final String nativePath = archiveFile.getPath();
-                final Path jarPath = Paths.get(nativePath);
-
-                // Jar-based FileSystems must remain open for the life of a ConfigurationModel, and must be closed when
-                //  processing is complete via ConfigurationModel.close()!
-                final FileSystem fs = FileSystems.newFileSystem(jarPath, null);
-
-                // since this FS represents a jar, we should look for the descriptor at the root of the FS
-                final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
-                moduleImpl.setArchiveFile(archiveFile);
-
-
-                if (filter.test(moduleImpl)) {
-                    // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
-                    groups.getLeft().add(fs);
-
-                    groups.getRight().add(moduleImpl.getProject().getGroup());
-                }
-            }
-            else {
-                // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
-                // this is useful for loading a module for testing purposes without packaging it into a jar
-                // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
-                final Path moduleDescriptorPath = Paths.get(resource.toURI());
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-
-                if (filter.test(result.getModuleContext().getModule())) {
-                    groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
-                }
-            }
-        }
-        return groups;
+                readModulesFromClasspath(classLoader, false, true);
+        return extensionClasspathGroups.getRight().stream()
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream())
+                .collect(toList());
     }
 
     /**
      * Read modules that are packaged on the classpath for the given ClassLoader.
      * @param classLoader the classloader to search for packaged config modules
-     * @param verifyOnly TODO
+     * @param verifyOnly TODO describe
+     * @param extensions if true, load extension modules; if false, load core modules
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
+    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader,
+                                                                              final boolean verifyOnly,
+                                                                              final boolean extensions)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<GroupImpl>> groups = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 
@@ -232,9 +191,11 @@ public class ClasspathConfigurationModelReader {
                 final ModuleImpl moduleImpl = result.getModuleContext().getModule();
                 moduleImpl.setArchiveFile(archiveFile);
 
-                if (moduleImpl.getExtension() == null) {
+
+                if (extensions == moduleImpl.isExtension()) {
                     // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                     groups.getLeft().add(fs);
+
                     groups.getRight().add(moduleImpl.getProject().getGroup());
                 }
             }
@@ -246,7 +207,9 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                if (extensions == result.getModuleContext().getModule().isExtension()) {
+                    groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                }
             }
         }
         return groups;
