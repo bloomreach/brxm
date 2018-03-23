@@ -89,4 +89,16 @@ describe('siteMapListingController', () => {
     expect($ctrl.keywords).toEqual('');
     expect($ctrl.filteredItems).toEqual($ctrl.items);
   });
+
+  it('returns translationData containing the total number of items and the number of hits', () => {
+    $ctrl.items = [];
+    $ctrl.filteredItems = [];
+    expect($ctrl.translationData).toEqual({ total: 0, hits: 0 });
+
+    $ctrl.items = ['one', 'two'];
+    expect($ctrl.translationData).toEqual({ total: 2, hits: 0 });
+
+    $ctrl.filteredItems = ['one'];
+    expect($ctrl.translationData).toEqual({ total: 2, hits: 1 });
+  });
 });

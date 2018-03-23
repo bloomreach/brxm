@@ -25,10 +25,20 @@ class SiteMapListingController {
     this.filteredFields = ['pageTitle', 'name', item => startWithSlashFilter(item.pathInfo)];
     this.keywords = '';
     this.searchFilter = $filter('search');
+    this._translationData = {
+      hits: 0,
+      total: 0,
+    };
   }
 
   $onChanges() {
     this.filteredItems = this.items;
+  }
+
+  get translationData() {
+    this._translationData.hits = this.filteredItems.length;
+    this._translationData.total = this.items.length;
+    return this._translationData;
   }
 
   filterItems() {

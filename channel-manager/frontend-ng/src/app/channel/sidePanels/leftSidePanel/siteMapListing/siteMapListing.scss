@@ -17,12 +17,21 @@
 site-map-listing {
   height: 100%;
 
-  .search-field-container {
+  .md-subheader {
     box-shadow: 0 4px 5px 0 $grey-300;
+    font-size: 12px;
+    padding-left: 40px;
+
+    .md-subheader-inner {
+      padding-bottom: 12px;
+      padding-top: 0;
+    }
+  }
+
+  .search-field-container {
     display: flex;
     padding-left: 16px;
     padding-right: 4px;
-    z-index: 1;
 
     md-input-container {
       width: 100%;
@@ -39,7 +48,6 @@ site-map-listing {
 
     input {
       border-color: transparent !important;
-      color: $text-dim;
       width: calc(100% - 40px);
     }
 

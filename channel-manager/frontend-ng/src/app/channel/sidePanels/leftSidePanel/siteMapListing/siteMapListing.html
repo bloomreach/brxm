@@ -25,6 +25,12 @@
     </md-button>
   </md-input-container>
 </div>
+<md-subheader>
+  <span ng-if="$ctrl.items.length === 1 && $ctrl.keywords === ''">{{'SITEMAP_SEARCH_SINGLE' | translate:$ctrl.translationData }}</span>
+  <span ng-if="$ctrl.items.length === 1 && $ctrl.keywords !== ''">{{'SITEMAP_SEARCH_RESULTS_SINGLE' | translate:$ctrl.translationData }}</span>
+  <span ng-if="$ctrl.items.length !== 1 && $ctrl.keywords === ''">{{'SITEMAP_SEARCH_MULTIPLE' | translate:$ctrl.translationData }}</span>
+  <span ng-if="$ctrl.items.length !== 1 && $ctrl.keywords !== ''">{{'SITEMAP_SEARCH_RESULTS_MULTIPLE' | translate:$ctrl.translationData }}</span>
+</md-subheader>
 <md-content>
   <md-virtual-repeat-container md-top-index="$ctrl.activeItemIndex">
     <md-list class="qa-sitemap">
