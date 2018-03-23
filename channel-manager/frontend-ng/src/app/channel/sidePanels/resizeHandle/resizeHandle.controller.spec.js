@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ describe('resizeHandle component', () => {
       $componentController = _$componentController_;
     });
 
-    jasmine.getFixtures().load('channel/sidePanels/rightSidePanel/resizeHandle/resizeHandle.controller.fixture.html');
+    jasmine.getFixtures().load('channel/sidePanels/resizeHandle/resizeHandle.controller.fixture.html');
     mockHandleElement = $j('#resizeHandle');
     mockSidePanelElement = $j('#sidePanel');
     mockDocumentElement = $j('<div></div>');
@@ -76,6 +76,7 @@ describe('resizeHandle component', () => {
 
   it('should not allow a too small or too big sidepanel', () => {
     $ctrl._registerEvents(mockSidePanelElement);
+    $ctrl.minWidth = 440;
 
     const eMouseDown = new $j.Event('mousedown');
     eMouseDown.pageX = 500;
@@ -96,5 +97,33 @@ describe('resizeHandle component', () => {
 
     $ctrl.$document.trigger('mouseup');
     expect(mockSidePanelElement.css).toHaveBeenCalled();
+  });
+
+  it('will make the manipulated element bigger when the handle is positioned on the left', () => {
+    $ctrl.handlePosition = 'left';
+    $ctrl.$onInit();
+    expect($ctrl.add).toBe(true);
+  });
+
+  it('will make the manipulated element smaller when the handle is not positioned on the left', () => {
+    $ctrl.handlePosition = 'notdefaultvalue';
+    $ctrl.$onInit();
+    expect($ctrl.add).toBe(false);
+  });
+
+  it('adds a class named left on the handle when the handle is positioned on the left', () => {
+    spyOn($ctrl.handle, 'addClass');
+
+    $ctrl.handlePosition = 'left';
+    $ctrl.$onInit();
+    expect($ctrl.handle.addClass).toHaveBeenCalledWith('left');
+  });
+
+  it('adds a class named right on the handle when the handle is not positioned on the left', () => {
+    spyOn($ctrl.handle, 'addClass');
+
+    $ctrl.handlePosition = 'notthedefaultvalue';
+    $ctrl.$onInit();
+    expect($ctrl.handle.addClass).toHaveBeenCalledWith('right');
   });
 });
