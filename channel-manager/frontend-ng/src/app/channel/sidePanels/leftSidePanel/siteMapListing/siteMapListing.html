@@ -34,7 +34,7 @@
                     ng-click="$ctrl.showPage(item)">
         <div class="md-list-item-text">
           <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
-          <p class="qa-name">{{ item.pageTitle || item.name }}</p>
+          <p class="text-truncate qa-name">{{ item.pageTitle || item.name }}</p>
         </div>
         <md-divider />
       </md-list-item>
