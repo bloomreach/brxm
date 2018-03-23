@@ -28,20 +28,6 @@
       "community"
     ]
   },
-  "dependencies": [
-    {
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-robotstxt-addon-repository",
-      "scope": "compile",
-      "targetPom": "cms"
-    },
-    {
-      "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-robotstxt-hst-client",
-      "scope": "compile",
-      "targetPom": "site"
-    }
-  ],
   "pluginDependencies": [
     {
       "pluginId": "skeleton"
