@@ -8,15 +8,15 @@ Guide for the Channel Manager codebase.
 
 ## Functional Overview
 
-The main parts of the Channel Manager are depicted below. Arrows indicate how parts use each other.
+The main parts of the Channel Manager are depicted below, with arrows indicating how parts use each other.
 Each part also lists the framework(s) it uses.
 
 ![Container Diagram](../plantuml/container-diagram.svg)
 
 ## Channel Editor
 
-The Channel Editor manages and modifies a single channel. The channel is rendered in an iframe.
-Server-side proxy configuration ensures that the origin of the rendered channel is the same as the 
+The Channel Editor manages and modifies a single channel. Such a channel is rendered in an iframe, where 
+server-side proxy configuration ensures that the origin of the rendered channel is the same as the 
 origin of the surrounding CMS. Frontend code can therefore read and modify the DOM of the 
 rendered channel without cross-origin restrictions.    
 
