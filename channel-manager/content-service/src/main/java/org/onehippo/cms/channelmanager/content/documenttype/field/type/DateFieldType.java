@@ -23,12 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DateFieldType extends PrimitiveFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(DateFieldType.class);
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
 
     public DateFieldType() {
