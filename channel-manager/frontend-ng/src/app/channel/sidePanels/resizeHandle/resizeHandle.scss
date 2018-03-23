@@ -17,12 +17,11 @@
 @import 'variables';
 
 resize-handle {
-  $handle-width: 20px;
+  $handle-width-left: 20px;
+  $handle-width-right: 10px;
   $handle-height: 100%;
 
   height: $handle-height;
-  position: absolute;
-  width: $handle-width;
   z-index: 20000;
 
   &:hover {
@@ -31,18 +30,28 @@ resize-handle {
 
   &.left {
     left: -7px;
+    position: absolute;
+    width: $handle-width-left;
+
+    .handle-inner {
+      background-position: -4px;
+      width: $handle-width-left;
+    }
   }
 
   &.right {
-    right: 0px;
+    width: $handle-width-right;
+
+    .handle-inner {
+      background-position: -12px;
+      width: $handle-width-right;
+    }
   }
 
   .handle-inner {
     background-image: url('../../../../images/resize-handle.svg');
-    background-position: -4px;
     background-repeat: no-repeat;
     background-size: 34px;
     height: 100%;
-    width: $handle-width;
   }
 }
