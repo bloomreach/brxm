@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.repository.util.JcrUtils;
@@ -40,9 +44,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -124,23 +132,25 @@ public class DateFieldTypeTest {
         assertThat(fieldValue.getValue(), equalTo("2015-08-24T06:53:00.000Z"));
     }
 
-    // TODO: what is considered an invalid value?
-/*
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
-        final Node node = MockNode.root();
+        final Node node = createMock(Node.class);
+        final Property oldProperty = createMock(Property.class);
+        final String invalidValue = "12345-08-24T06:53:00.000Z";
+
+        expect(node.hasProperty(eq("test:id"))).andReturn(true);
+        expect(node.getProperty(eq("test:id"))).andReturn(oldProperty);
+        expect(oldProperty.isMultiple()).andReturn(false);
+        expect(node.setProperty(eq("test:id"), eq(invalidValue), eq(5))).andThrow(new ValueFormatException());
+        replayAll();
+
         final PrimitiveFieldType fieldType = new DateFieldType();
-        final Calendar oldValue = Calendar.getInstance();
-        final String oldValueString = ValueFactoryImpl.getInstance().createValue(oldValue).getString();
-        final String invalidValue = "foo";
 
         fieldType.setId(PROPERTY);
-        node.setProperty(PROPERTY, oldValue);
-
-        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue)))); // writing "foo" is accepted as value....
-        assertThat(node.getProperty(PROPERTY).getDate(), equalTo(oldValueString));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
     }
 
+/*
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
         final Node node = MockNode.root();
