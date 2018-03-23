@@ -25,13 +25,15 @@
 <md-content>
   <md-virtual-repeat-container flex layout="column">
     <md-list class="qa-sitemap">
-      <md-list-item class="md-2-line qa-sitemap-item" md-virtual-repeat="item in $ctrl.items | search:keywords:filterFields" ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-        md-autofocus="$ctrl.isActiveSiteMapItem(item)" ng-click="$ctrl.showPage(item)">
+      <md-list-item class="md-2-line qa-sitemap-item"
+                    ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
+                    md-virtual-repeat="item in $ctrl.items | search:keywords:filterFields"
+                    ng-click="$ctrl.showPage(item)">
         <div class="md-list-item-text">
           <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
           <p class="qa-name">{{ item.pageTitle || item.name }}</p>
         </div>
-        <md-divider ng-if="!$last"></md-divider>
+        <md-divider />
       </md-list-item>
     </md-list>
   </md-virtual-repeat-container>
