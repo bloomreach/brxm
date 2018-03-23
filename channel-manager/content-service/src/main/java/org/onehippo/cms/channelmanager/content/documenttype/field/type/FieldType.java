@@ -37,10 +37,12 @@ public interface FieldType {
         STRING,
         DOUBLE,
         LONG,
+        BOOLEAN,
         MULTILINE_STRING,
         HTML,
         CHOICE, // "content blocks"
-        COMPOUND
+        COMPOUND,
+        IMAGE_LINK
     }
 
     /**

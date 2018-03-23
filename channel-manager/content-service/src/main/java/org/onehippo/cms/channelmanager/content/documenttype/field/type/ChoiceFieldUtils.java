@@ -26,6 +26,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ChoiceFieldUtils {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldUtils.class);
+
     private static final String PROPERTY_PROVIDER_ID = "cpItemsPath";
     private static final String PROPERTY_COMPOUND_LIST = "compoundList";
 
@@ -133,6 +135,10 @@ public class ChoiceFieldUtils {
             final RichTextFieldType richText = new RichTextFieldType();
             richText.init(fieldContext);
             return richText;
+        } else if (contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
+            imageLink.init(fieldContext);
+            return imageLink;
         }
         return null;
     }
@@ -203,8 +209,15 @@ public class ChoiceFieldUtils {
             return compound;
         } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
             final RichTextFieldType richText = new RichTextFieldType();
+            // FIXME: this init call will not load configuration
             richText.initListBasedChoice(choiceId);
             return richText;
+        } else if(contentType.isContentType(FieldTypeUtils.FIELD_TYPE_IMAGELINK)) {
+            // FIXME: this init call will not load configuration
+            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
+            imageLink.initListBasedChoice(choiceId);
+            return imageLink;
+
         }
         return null;
     }

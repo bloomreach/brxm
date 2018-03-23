@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,19 +20,22 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }">
 
-    <label ng-if="::$first"
+    <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
            layout-align="start center"
-           class="field-title">
+           class="field-title"
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)"
+           tabindex="-1">
       <span>
         {{ ::$ctrl.fieldType.displayName }}
 
         <span ng-if="::$ctrl.fieldType.required">*</span>
       </span>
 
-      <md-icon ng-if="::$ctrl.fieldType.hint">
+      <md-icon ng-if="::$ctrl.fieldType.hint" class="hippo-hint-icon">
         info_outline
 
         <md-tooltip>
@@ -72,6 +75,27 @@
            ng-required="::$ctrl.fieldType.required"
            ng-pattern="/^[+-]?((\d+((\.)\d*)?)|((\.)\d+))$/">
 
+    <div ng-switch-when="BOOLEAN">
+      <md-checkbox ng-model="fieldValue.value"
+                   ng-true-value="'true'"
+                   ng-false-value="'false'"
+                   ng-change="$ctrl.valueChanged()"
+                   class="md-primary"
+                   name="{{::$ctrl.getFieldName($index)}}"
+                   ng-focus="$ctrl.focusPrimitive($event)"
+                   ng-blur="$ctrl.blurPrimitive($event)">
+        {{::$ctrl.fieldType.displayName}}
+        <md-icon ng-if="::$ctrl.fieldType.hint"
+                 class="checkbox-hint hippo-hint-icon">
+          info_outline
+
+          <md-tooltip>
+            {{ ::$ctrl.fieldType.hint }}
+          </md-tooltip>
+        </md-icon>
+      </md-checkbox>
+    </div>
+
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
@@ -96,6 +120,20 @@
               field-object="$ctrl.form[$ctrl.getFieldName()]"
               ng-class="{ 'is-invalid': !$ctrl.isValid() }">
     </ckeditor>
+
+    <image-link ng-switch-when="IMAGE_LINK"
+                ng-model="fieldValue.value"
+                ng-change="$ctrl.valueChanged()"
+                on-focus="$ctrl.focusPrimitive($event)"
+                on-blur="$ctrl.blurPrimitive($event)"
+                name="{{::$ctrl.getFieldName($index)}}"
+                aria-label="{{::$ctrl.fieldType.displayName}}"
+                config="::$ctrl.fieldType.config"
+                hint="::$ctrl.fieldType.hint"
+                index="::$index"
+                is-required="::$ctrl.fieldType.required"
+                url="::fieldValue.url">
+    </image-link>
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
