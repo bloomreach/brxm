@@ -42,8 +42,8 @@ class LeftSidePanelCtrl {
 
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get('leftSidePanelWidth') || '320px';
-    // TODO: this should be done after leftSidePanelToggle event has happened! $watch? subscribe?
-    this._openPanel();
+    this.sideNavElement = this.$element.find('.left-side-panel');
+    this.sideNavElement.css('width', this.lastSavedWidth);
   }
 
   $postLink() {
@@ -92,21 +92,6 @@ class LeftSidePanelCtrl {
     return this.ChannelService.isEditable();
   }
 
-  _openPanel() {
-    this.SidePanelService.open('left')
-      .then(() => {
-        this.$element.addClass('sidepanel-open');
-        this.$element.css('width', this.lastSavedWidth);
-        this.$element.css('max-width', this.lastSavedWidth);
-      });
-  }
-
-  _closePanel() {
-    this.$element.removeClass('sidepanel-open');
-    this.$element.css('max-width', '0px');
-
-    this.SidePanelService.close('left');
-  }
 }
 
 export default LeftSidePanelCtrl;

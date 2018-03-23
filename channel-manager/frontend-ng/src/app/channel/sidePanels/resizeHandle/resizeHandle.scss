@@ -34,12 +34,12 @@ resize-handle {
   }
 
   &.right {
-    right: -2px;
+    right: 0px;
   }
 
   .handle-inner {
     background-image: url('../../../../images/resize-handle.svg');
-    background-position: -5px;
+    background-position: -4px;
     background-repeat: no-repeat;
     background-size: 34px;
     height: 100%;

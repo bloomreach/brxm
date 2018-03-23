@@ -14,17 +14,11 @@
 @import 'variables';
 
 left-side-panel {
-  max-width: 0;
+  border-right: 1px solid $grey-200;
 
-  &.sidepanel-open {
-    max-width: 50% !important;
-
-    md-sidenav {
-      margin-right: auto;
-      width: 100%;
-      max-width: 100%;
-      border-right: 1px solid $grey-200;
-    }
+  md-sidenav {
+    max-width: 100%;
+    width: 100%;
   }
 
   &.in-resize {
