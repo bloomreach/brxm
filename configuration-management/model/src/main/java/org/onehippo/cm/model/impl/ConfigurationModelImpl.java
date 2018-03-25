@@ -162,6 +162,21 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         this.configurationRootNode = configurationRootNode;
     }
 
+    /**
+     * Add a single module to this model.
+     * @param module the module to add
+     * @return this, for chaining
+     */
+    public ConfigurationModelImpl addModule(final ModuleImpl module) {
+        return addGroup(module.getProject().getGroup());
+    }
+
+    /**
+     * Add a group of projects and modules to this model. This method is directly useful mainly for copying modules
+     * from an existing model.
+     * @param group the group to add
+     * @return this, for chaining
+     */
     public ConfigurationModelImpl addGroup(final GroupImpl group) {
         if (!groupMap.containsKey(group.getName())) {
             groupMap.put(group.getName(), new GroupImpl(group.getName()));
@@ -186,9 +201,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * where a new clone of a module will be used to replace an existing module from an existing ConfigurationModel.
      * Call this method with any new replacement modules before adding the groups from the existing model instance.
      * @param module the new module to add as a replacement
-     * @return this
+     * @return this, for chaining
      */
-    public ConfigurationModelImpl addModule(final ModuleImpl module) {
+    public ConfigurationModelImpl addReplacementModule(final ModuleImpl module) {
         // this duplicates much of the logic of addGroup(),
         // but it's necessary to avoid grabbing undesired sibling modules
         final GroupImpl group = module.getProject().getGroup();
@@ -211,6 +226,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return this;
     }
 
+    /**
+     * Rebuild internal data structures, including definition lists and the merged configuration tree.
+     * @return this, for chaining
+     */
     public ConfigurationModelImpl build() {
         buildTimeStamp = System.currentTimeMillis();
 
@@ -497,7 +516,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
 
         // start with the source modules
-        sourceModules.forEach(mergedModel::addModule);
+        sourceModules.forEach(mergedModel::addReplacementModule);
 
         // then layer on top all of the other modules
         model.getSortedGroups().forEach(mergedModel::addGroup);
@@ -519,7 +538,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         for (ModuleImpl module : existingModel.getModules()) {
             if (module.getMvnPath() != null) {
                 log.debug("Merging module: {}", module);
-                mergedModel.addModule(module);
+                mergedModel.addReplacementModule(module);
             }
         }
 

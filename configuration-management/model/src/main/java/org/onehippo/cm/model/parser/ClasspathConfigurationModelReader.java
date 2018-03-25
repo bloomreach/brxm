@@ -29,7 +29,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -81,14 +80,14 @@ public class ClasspathConfigurationModelReader {
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         // load modules that are packaged on the classpath
-        final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
+        final Pair<Set<FileSystem>, List<ModuleImpl>> coreModules =
                 readModulesFromClasspath(classLoader, verifyOnly, false);
 
         // add classpath modules to model
-        classpathGroups.getRight().forEach(model::addGroup);
+        coreModules.getRight().forEach(model::addModule);
 
         // add filesystems to the model
-        model.setFileSystems(classpathGroups.getLeft());
+        model.setFileSystems(coreModules.getLeft());
 
         // build the merged model
         model.build();
@@ -114,17 +113,14 @@ public class ClasspathConfigurationModelReader {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final Pair<Set<FileSystem>, List<GroupImpl>> extensionClasspathGroups =
+        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
                 readModulesFromClasspath(classLoader, false, true);
 
-        // TODO: why use the override addModule codepath here instead of the normal addGroup?
-        extensionClasspathGroups.getRight()
-                .forEach(g -> g.getProjects()
-                    .forEach(p -> p.getModules()
-                        .forEach(model::addModule)));
+        // TODO: why use the override addReplacementModule codepath here instead of the normal addModule?
+        extensionModules.getRight().forEach(model::addReplacementModule);
 
         // add filesystems to the model
-        model.setFileSystems(extensionClasspathGroups.getLeft());
+        model.setFileSystems(extensionModules.getLeft());
 
         final ConfigurationModelImpl build = model.build();
         stopWatch.stop();
@@ -136,12 +132,9 @@ public class ClasspathConfigurationModelReader {
     // TODO: this is scary -- almost guaranteed to be a bad resource leak of open FileSystems!
     public Collection<ModuleImpl> collectExtensionModules(final ClassLoader classLoader)
             throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<GroupImpl>> extensionClasspathGroups =
+        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionClasspathGroups =
                 readModulesFromClasspath(classLoader, false, true);
-        return extensionClasspathGroups.getRight().stream()
-                .flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream())
-                .collect(toList());
+        return extensionClasspathGroups.getRight();
     }
 
     /**
@@ -151,11 +144,11 @@ public class ClasspathConfigurationModelReader {
      * @param extensions if true, load extension modules; if false, load core modules
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader,
+    protected Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
                                                                               final boolean verifyOnly,
                                                                               final boolean extensions)
             throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<GroupImpl>> groups = new MutablePair<>(new HashSet<>(), new ArrayList<>());
+        final Pair<Set<FileSystem>, List<ModuleImpl>> modules = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
@@ -194,9 +187,9 @@ public class ClasspathConfigurationModelReader {
 
                 if (extensions == moduleImpl.isExtension()) {
                     // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
-                    groups.getLeft().add(fs);
+                    modules.getLeft().add(fs);
 
-                    groups.getRight().add(moduleImpl.getProject().getGroup());
+                    modules.getRight().add(moduleImpl);
                 }
             }
             else {
@@ -208,10 +201,10 @@ public class ClasspathConfigurationModelReader {
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
                 if (extensions == result.getModuleContext().getModule().isExtension()) {
-                    groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                    modules.getRight().add(result.getModuleContext().getModule());
                 }
             }
         }
-        return groups;
+        return modules;
     }
 }
