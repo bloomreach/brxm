@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.MavenComparableVersion;
+import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -65,6 +66,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
@@ -257,11 +259,9 @@ public class ConfigurationBaselineService {
                     source.markUnchanged();
                 }
 
-                // TODO: make this flow less weirdly indirect and just pass around modules
-                final List<GroupImpl> groups = new ArrayList<>();
-                groups.add(loadModuleDescriptor(moduleNode).getProject().getGroup());
-                parseSources(groups);
-                newBaselineModules.add(groups.get(0).getProjects().get(0).getModules().get(0));
+                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
+                parseSources(singletonList(reloadedModule));
+                newBaselineModules.add(reloadedModule);
             }
 
             // update digest
@@ -631,14 +631,14 @@ public class ConfigurationBaselineService {
                 }
 
                 // First phase: load and parse module descriptors
-                final List<GroupImpl> groups = parseDescriptors(baselineNode, extensions);
+                final List<ModuleImpl> modules = parseDescriptors(baselineNode, extensions);
 
                 // Second phase: load and parse config Sources, load and mockup content Sources
-                parseSources(groups);
+                parseSources(modules);
 
                 // build the final merged model
                 final ConfigurationModelImpl model = new ConfigurationModelImpl();
-                groups.forEach(model::addGroup);
+                modules.forEach(model::addModule);
                 result = model.build();
                 stopWatch.stop();
                 log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
@@ -657,28 +657,27 @@ public class ConfigurationBaselineService {
     /**
      * First phase of loading a baseline: loading and parsing module descriptors. Accumulates results in rips and groups.
      * @param baselineNode the base node for the entire stored configuration baseline
-     * @return List of configuration Groups for modules loaded here
+     * @return List of configuration modules loaded here
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected List<GroupImpl> parseDescriptors(final Node baselineNode, final Set<String> extensions)
+    protected List<ModuleImpl> parseDescriptors(final Node baselineNode, final Set<String> extensions)
             throws RepositoryException, ParserException {
         // groups accumulator
-        final List<GroupImpl> groups = new ArrayList<>();
+        final List<ModuleImpl> modules = new ArrayList<>();
 
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
             final ModuleImpl module = loadModuleDescriptor(moduleNode);
 
             if (extensions.contains(module.getExtension())) {
-                groups.add(module.getProject().getGroup());
+                modules.add(module);
             }
         }
 
-        log.debug("After parsing descriptors, we have {} groups and {} modules", groups.size(),
-                groups.stream().flatMap(g -> g.getProjects().stream()).mapToLong(p -> p.getModules().size()).sum());
+        log.debug("After parsing descriptors, we have {} modules", modules.size());
 
-        return groups;
+        return modules;
     }
 
     /**
@@ -738,86 +737,83 @@ public class ConfigurationBaselineService {
     /**
      * Second phase of loading a baseline: loading and parsing config Sources and reconstructing minimal content
      * Source mockups (containing only the root definition path).
-     * @param groups accumulator object from first phase
+     * @param modules accumulator list from first phase
      * @throws RepositoryException
      * @throws IOException
      * @throws ParserException
      */
-    protected void parseSources(final List<GroupImpl> groups) throws RepositoryException, IOException, ParserException {
-        // for each group
-        for (GroupImpl group : groups) {
-            // for each project
-            for (ProjectImpl project : group.getProjects()) {
-                // for each module
-                for (ModuleImpl module : project.getModules()) {
-                    log.debug("Parsing sources from baseline for {}/{}/{}",
+    protected void parseSources(final List<ModuleImpl> modules) throws RepositoryException, IOException, ParserException {
+        // for each module
+        for (ModuleImpl module : modules) {
+            final ProjectImpl project = module.getProject();
+            final GroupImpl group = project.getGroup();
+
+            log.debug("Parsing sources from baseline for {}/{}/{}",
+                    group.getName(), project.getName(), module.getName());
+
+            BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
+            if (rip == null) {
+                log.debug("No {} folder in {}/{}/{}", HCM_CONFIG_FOLDER,
+                        group.getName(), project.getName(), module.getName());
+            }
+            else {
+                ConfigSourceParser parser = new ConfigSourceParser(rip);
+                Node configFolderNode = rip.getBaseNode();
+
+                // for each config source
+                final List<Node> configSourceNodes = rip.getConfigSourceNodes();
+                log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
+                        group.getName(), project.getName(), module.getName());
+
+                for (Node configNode : configSourceNodes) {
+                    // compute config-root-relative path
+                    String sourcePath = StringUtils.removeStart(configNode.getPath(), configFolderNode.getPath() + "/");
+
+                    // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                    sourcePath = NodeNameCodec.decode(sourcePath);
+
+                    log.debug("Loading config from {} in {}/{}/{}", sourcePath,
                             group.getName(), project.getName(), module.getName());
 
-                    BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
-                    if (rip == null) {
-                        log.debug("No {} folder in {}/{}/{}", HCM_CONFIG_FOLDER,
-                                group.getName(), project.getName(), module.getName());
-                    }
-                    else {
-                        ConfigSourceParser parser = new ConfigSourceParser(rip);
-                        Node configFolderNode = rip.getBaseNode();
+                    // get InputStream
+                    // TODO adding the slash here is a silly hack to load a source path without needing the source first
+                    InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
-                        // for each config source
-                        final List<Node> configSourceNodes = rip.getConfigSourceNodes();
-                        log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
-                                group.getName(), project.getName(), module.getName());
+                    // parse config source
+                    parser.parse(is, sourcePath, configNode.getPath(), module);
+                }
+            }
 
-                        for (Node configNode : configSourceNodes) {
-                            // compute config-root-relative path
-                            String sourcePath = StringUtils.removeStart(configNode.getPath(), configFolderNode.getPath() + "/");
+            // for each content source
+            rip = (BaselineResourceInputProvider) module.getContentResourceInputProvider();
+            if (rip == null) {
+                log.debug("No {} folder in {}/{}/{}", HCM_CONTENT_FOLDER,
+                        group.getName(), project.getName(), module.getName());
+            }
+            else {
+                Node contentFolderNode = rip.getBaseNode();
 
-                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                            sourcePath = NodeNameCodec.decode(sourcePath);
+                final List<Node> contentSourceNodes = rip.getContentSourceNodes();
+                log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
+                        group.getName(), project.getName(), module.getName());
 
-                            log.debug("Loading config from {} in {}/{}/{}", sourcePath,
-                                    group.getName(), project.getName(), module.getName());
+                for (Node contentNode : contentSourceNodes) {
+                    // compute content-root-relative path
+                    String sourcePath = StringUtils.removeStart(contentNode.getPath(), contentFolderNode.getPath() + "/");
 
-                            // get InputStream
-                            // TODO adding the slash here is a silly hack to load a source path without needing the source first
-                            InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
+                    // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                    sourcePath = NodeNameCodec.decode(sourcePath);
 
-                            // parse config source
-                            parser.parse(is, sourcePath, configNode.getPath(), module);
-                        }
-                    }
+                    log.debug("Building content def from {} in {}/{}/{}", sourcePath,
+                            group.getName(), project.getName(), module.getName());
 
-                    // for each content source
-                    rip = (BaselineResourceInputProvider) module.getContentResourceInputProvider();
-                    if (rip == null) {
-                        log.debug("No {} folder in {}/{}/{}", HCM_CONTENT_FOLDER,
-                                group.getName(), project.getName(), module.getName());
-                    }
-                    else {
-                        Node contentFolderNode = rip.getBaseNode();
+                    // get content path and order before from JCR Node
+                    String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
+                    String orderBefore = getOrderBefore(contentNode);
 
-                        final List<Node> contentSourceNodes = rip.getContentSourceNodes();
-                        log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
-                                group.getName(), project.getName(), module.getName());
-
-                        for (Node contentNode : contentSourceNodes) {
-                            // compute content-root-relative path
-                            String sourcePath = StringUtils.removeStart(contentNode.getPath(), contentFolderNode.getPath() + "/");
-
-                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                            sourcePath = NodeNameCodec.decode(sourcePath);
-
-                            log.debug("Building content def from {} in {}/{}/{}", sourcePath,
-                                    group.getName(), project.getName(), module.getName());
-
-                            // get content path and order before from JCR Node
-                            String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
-                            String orderBefore = getOrderBefore(contentNode);
-
-                            // create Source
-                            // create ContentDefinition with a single definition node and just the node path and the order before
-                            module.addContentSource(sourcePath).addContentDefinition(contentPath, orderBefore);
-                        }
-                    }
+                    // create Source
+                    // create ContentDefinition with a single definition node and just the node path and the order before
+                    module.addContentSource(sourcePath).addContentDefinition(contentPath, orderBefore);
                 }
             }
         }

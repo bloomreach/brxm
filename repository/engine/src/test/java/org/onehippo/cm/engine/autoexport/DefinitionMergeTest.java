@@ -195,14 +195,14 @@ public class DefinitionMergeTest {
 
                 // build base
                 for (String baseName : base) {
-                    model.addModule(loadModule(in(testName, baseName)));
+                    model.addReplacementModule(loadModule(in(testName, baseName)));
                 }
 
                 // build auto-export targets
                 for (String toExportName : toExport) {
                     final ModuleImpl toExportModule = loadModule(in(testName, toExportName));
                     toExportModule.setMvnPath(toExportName);
-                    model.addModule(toExportModule);
+                    model.addReplacementModule(toExportModule);
                 }
                 model.build();
 

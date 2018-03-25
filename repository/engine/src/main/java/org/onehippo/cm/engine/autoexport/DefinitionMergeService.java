@@ -220,7 +220,7 @@ public class DefinitionMergeService {
         // note: we assume that the original baseline will perform any required cleanup in close(), so we don't need
         //       to copy FileSystems etc. here
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
-        toExport.values().forEach(model::addModule);
+        toExport.values().forEach(model::addReplacementModule);
         baseline.getSortedGroups().forEach(model::addGroup);
         model.build();
 

@@ -153,7 +153,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         final Collection<ModuleImpl> extensionModules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
                 .filter(m -> Objects.equals(extensionName, m.getExtension())).collect(Collectors.toList());
-        extensionModules.forEach(runtimeConfigurationModel::addModule);
+        extensionModules.forEach(runtimeConfigurationModel::addReplacementModule);
 
         ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
 
