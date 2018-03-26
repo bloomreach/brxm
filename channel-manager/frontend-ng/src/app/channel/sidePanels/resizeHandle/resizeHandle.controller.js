@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ class resizeHandleController {
   }
 
   $onInit() {
+    this.add = this.handlePosition === 'left';
+    this.handle.addClass(this.handlePosition === 'left' ? 'left' : 'right');
     this._registerEvents(this.element);
   }
 
@@ -44,12 +46,12 @@ class resizeHandleController {
 
       this.$document.mousemove((moveEvent) => {
         const diff = initialX - moveEvent.pageX;
-        newWidth = initialWidth + diff;
+        newWidth = this.add ? initialWidth + diff : initialWidth - diff;
 
-        if (newWidth < 440) newWidth = 440;
+        if (newWidth < this.minWidth) newWidth = this.minWidth;
         if (newWidth > this.maxWidth) newWidth = this.maxWidth;
 
-        if (manipulatedElement.width() >= 440 && manipulatedElement.width() <= this.maxWidth) {
+        if (manipulatedElement.width() >= this.minWidth && manipulatedElement.width() <= this.maxWidth) {
           manipulatedElement.css('width', newWidth);
           this.onResize({ newWidth });
         }

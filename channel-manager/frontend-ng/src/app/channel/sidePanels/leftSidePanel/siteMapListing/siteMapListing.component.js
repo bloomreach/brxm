@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import './leftSidePanelToggle.scss';
-import template from './leftSidePanelToggle.html';
-import controller from './leftSidePanelToggle.controller';
+import siteMapListingController from './siteMapListing.controller';
+import template from './siteMapListing.html';
+import './siteMapListing.scss';
 
-const leftSidePanelToggleComponent = {
+const siteMapListingComponent = {
   bindings: {
-    disabled: '=',
+    items: '<',
   },
-  controller,
   template,
+  controller: siteMapListingController,
 };
 
-export default leftSidePanelToggleComponent;
+export default siteMapListingComponent;

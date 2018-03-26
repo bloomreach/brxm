@@ -1,5 +1,5 @@
-/*!
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import siteMapListingComponent from './siteMapListing.component';
+import searchFilter from './search.filter';
 
-resize-handle {
-  $handle-width: 20px;
-  $handle-height: 100%;
+const siteMapListingModule = angular
+  .module('hippo-cm.channel.siteMapListing', [])
+  .component('siteMapListing', siteMapListingComponent)
+  .filter('search', searchFilter);
 
-  height: $handle-height;
-  left: -7px;
-  position: absolute;
-  width: $handle-width;
-  z-index: 20000;
-
-  &:hover {
-    cursor: col-resize;
-  }
-
-  .handle-inner {
-    background-image: url('../../../../../images/resize-handle.svg');
-    background-position: -5px;
-    background-repeat: no-repeat;
-    background-size: 34px;
-    height: 100%;
-    width: $handle-width;
-  }
-}
+export default siteMapListingModule;

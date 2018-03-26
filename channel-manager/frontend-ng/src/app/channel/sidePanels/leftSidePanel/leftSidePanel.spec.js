@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,33 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('LeftSidePanel', () => {
-  let $rootScope;
   let $compile;
+  let $rootScope;
+  let CatalogService;
   let SidePanelService;
   let SiteMapService;
-  let ChannelService;
-  let CatalogService;
-  let HippoIframeService;
-  let parentScope;
+
   const catalogComponents = [
     { label: 'dummy' },
   ];
+  let parentScope;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _SidePanelService_, _ChannelService_, _CatalogService_, _SiteMapService_, _HippoIframeService_) => {
-      $rootScope = _$rootScope_;
+    inject((_$compile_, _$rootScope_, _CatalogService_, _SidePanelService_, _SiteMapService_) => {
       $compile = _$compile_;
-      SidePanelService = _SidePanelService_;
-      ChannelService = _ChannelService_;
+      $rootScope = _$rootScope_;
       CatalogService = _CatalogService_;
+      SidePanelService = _SidePanelService_;
       SiteMapService = _SiteMapService_;
-      HippoIframeService = _HippoIframeService_;
     });
 
     spyOn(CatalogService, 'getComponents').and.returnValue([]);
     spyOn(CatalogService, 'load');
-    spyOn(ChannelService, 'getMountId');
     spyOn(SidePanelService, 'close');
     spyOn(SidePanelService, 'initialize');
-    spyOn(SiteMapService, 'get');
-    spyOn(HippoIframeService, 'load');
-    spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
+    spyOn(SiteMapService, 'get').and.returnValue([]);
   });
 
   function instantiateController(componentsVisible) {
@@ -108,43 +102,6 @@ describe('LeftSidePanel', () => {
     const ChannelLeftSidePanelCtrl = instantiateController(false);
     SiteMapService.get.and.returnValue(siteMapItems);
 
-    expect(ChannelLeftSidePanelCtrl.getSiteMap()).toBe(siteMapItems);
-  });
-
-  it('calculates the track-by hash of a site map item', () => {
-    const $ctrl = instantiateController(false);
-    expect($ctrl.getSiteMapItemHash({
-      pageTitle: 'Title',
-      pathInfo: '/title',
-      name: 'not used',
-    })).toEqual('/title\0Title');
-    expect($ctrl.getSiteMapItemHash({
-      pathInfo: '/title',
-      name: 'title',
-    })).toEqual('/title\0title');
-  });
-
-  it('asks the HippoIframeService to load the requested siteMap item', () => {
-    const siteMapItem = {
-      renderPathInfo: 'dummy',
-    };
-    const ChannelLeftSidePanelCtrl = instantiateController(false);
-
-    ChannelLeftSidePanelCtrl.showPage(siteMapItem);
-
-    expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
-  });
-
-  it('compares the site map item\'s renderPathInfo to the current one', () => {
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/current/path');
-    const siteMapItem = {
-      renderPathInfo: '/current/path',
-    };
-    const ChannelLeftSidePanelCtrl = instantiateController(false);
-    expect(ChannelLeftSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
-
-    siteMapItem.renderPathInfo = '/other/path';
-    expect(ChannelLeftSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
+    expect(ChannelLeftSidePanelCtrl.getSiteMapItems()).toBe(siteMapItems);
   });
 });
-
