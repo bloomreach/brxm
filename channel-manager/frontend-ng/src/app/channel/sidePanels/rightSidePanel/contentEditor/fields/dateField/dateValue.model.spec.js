@@ -21,7 +21,7 @@ describe('DateValue', () => {
 
   describe('when populated', () => {
     beforeEach(() => {
-      dateValue = new DateValue('2018-03-12T12:01:50.041+01:00');
+      dateValue = new DateValue('2018-03-12T08:01:50.041+01:00');
     });
 
     it('contains data', () => {
@@ -48,26 +48,36 @@ describe('DateValue', () => {
     });
 
     it('does not change hours or minutes values when changing the date', () => {
+      const hoursBefore = dateValue.hours;
+      const minutesBefore = dateValue.minutes;
       const newDate = new Date(2017, 2, 2, 0, 0, 0, 0); // date with hours and minutes = 0
       dateValue.date = newDate;
-      expect(dateValue.hours).toBe(12);
-      expect(dateValue.minutes).toBe('01');
+      expect(dateValue.hours).toBe(hoursBefore);
+      expect(dateValue.minutes).toBe(minutesBefore);
     });
 
     it('does not change date or minutes values when changing the hours', () => {
+      const minutesBefore = dateValue.minutes;
+      const yearBefore = dateValue.date.getFullYear();
+      const monthBefore = dateValue.date.getMonth();
+      const dayBefore = dateValue.date.getDate();
       dateValue.hours = 3;
-      expect(dateValue.minutes).toBe('01');
-      expect(dateValue.date.getFullYear()).toBe(2018);
-      expect(dateValue.date.getMonth()).toBe(2); // month is zero based
-      expect(dateValue.date.getDate()).toBe(12);
+      expect(dateValue.minutes).toBe(minutesBefore);
+      expect(dateValue.date.getFullYear()).toBe(yearBefore);
+      expect(dateValue.date.getMonth()).toBe(monthBefore);
+      expect(dateValue.date.getDate()).toBe(dayBefore);
     });
 
     it('does not change date or hours values when changing the minutes', () => {
+      const hoursBefore = dateValue.hours;
+      const yearBefore = dateValue.date.getFullYear();
+      const monthBefore = dateValue.date.getMonth();
+      const dayBefore = dateValue.date.getDate();
       dateValue.minutes = 59;
-      expect(dateValue.hours).toBe(12);
-      expect(dateValue.date.getFullYear()).toBe(2018);
-      expect(dateValue.date.getMonth()).toBe(2); // month is zero based
-      expect(dateValue.date.getDate()).toBe(12);
+      expect(dateValue.hours).toBe(hoursBefore);
+      expect(dateValue.date.getFullYear()).toBe(yearBefore);
+      expect(dateValue.date.getMonth()).toBe(monthBefore);
+      expect(dateValue.date.getDate()).toBe(dayBefore);
     });
   });
 
