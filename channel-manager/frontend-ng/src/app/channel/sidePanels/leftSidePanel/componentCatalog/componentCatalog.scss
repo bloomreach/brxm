@@ -16,6 +16,14 @@
 component-catalog {
   height: 100%;
 
+  > md-content {
+    height: 100%;
+  }
+
+  .md-virtual-repeat-container {
+    height: 100%;
+  }
+
   .md-avatar {
     border-radius: 0 !important;
   }
