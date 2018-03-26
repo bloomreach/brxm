@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+// TODO can be removed since custom serializer which doesn't use this any more...shall we remove this class?
 @JsonIdentityInfo(generator = ObjectIdGenerators.None.class)
 public interface HippoHtmlBeanMixin extends HippoHtmlBean, HippoBeanMixin {
 

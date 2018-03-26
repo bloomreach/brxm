@@ -98,21 +98,8 @@ public class LinkModel {
             }
             // since the selfLink could be resolved, the site link also must be possible to resolve
             final HstLink siteLink = requestContext.getHstLinkCreator().create(hstLink.getPath(), siteMount);
-            if (siteLink != null && siteLink.getHstSiteMapItem() != null) {
-                final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
-                final String linkType;
-                if (siteMapItem.isContainerResource()) {
-                    linkType = "resource";
-                } else {
-                    final String linkApplicationId = siteMapItem.getApplicationId();
-                    // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
-                    // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
-                    // the application id. If there is *no* application id set for both site map items, the link type is
-                    // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
-                    // have an application id to have correct indication of 'internal/external'.
-                    final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-                    linkType = Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
-                }
+            if (siteLink != null) {
+                final String linkType = getLinkType(requestContext, siteLink);
                 return new LinkModel(siteLink.toUrlForm(requestContext, false), linkType);
             }
 
@@ -127,6 +114,27 @@ public class LinkModel {
         }
 
         return new LinkModel(hstLink.toUrlForm(requestContext, false), "external");
+    }
+
+    public static String getLinkType(final HstRequestContext requestContext, final HstLink siteLink) {
+        final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
+        if (siteMapItem == null) {
+            return "external";
+        }
+        final String linkType;
+        if (siteMapItem.isContainerResource()) {
+            linkType = "resource";
+        } else {
+            final String linkApplicationId = siteMapItem.getApplicationId();
+            // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
+            // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
+            // the application id. If there is *no* application id set for both site map items, the link type is
+            // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
+            // have an application id to have correct indication of 'internal/external'.
+            final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
+            linkType = Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
+        }
+        return linkType;
     }
 
 }

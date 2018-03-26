@@ -18,6 +18,9 @@ package org.hippoecm.hst.core.pagemodel.container;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
+import org.hippoecm.hst.core.pagemodel.content.HtmlContentRewriter;
+import org.htmlcleaner.HtmlCleaner;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -27,9 +30,13 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
 
     private final List<MetadataDecorator> metadataDecorators;
+    private HtmlContentRewriter htmlContentRewriter;
 
-    public HippoBeanModelsSerializerModifier(final List<MetadataDecorator> metadataDecorators) {
+    public HippoBeanModelsSerializerModifier(final List<MetadataDecorator> metadataDecorators, final HtmlCleaner htmlCleaner) {
         this.metadataDecorators = metadataDecorators;
+
+        // htmlCleaner is thread-safe, see http://htmlcleaner.sourceforge.net/release.php  thus is single instance is ok
+        htmlContentRewriter = new HtmlContentRewriter(htmlCleaner);
     }
 
     @SuppressWarnings("unchecked")
@@ -39,9 +46,12 @@ class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
         final Class<?> beanClazz = beanDesc.getBeanClass();
 
         if (beanClazz != null) {
-            // Customize JsonSerializer for HippoBean type as we need to accumulate HippoBeans and add JSON Pointer
-            // references in the first phase, and later serialize the HippoBeans in content section in the end.
-            if (HippoBean.class.isAssignableFrom(beanClazz)) {
+            if (HippoHtmlBean.class.isAssignableFrom(beanClazz)) {
+                // Custom JsonSerializer for HippoHtmlBean type since we need content rewriting for links
+                return new HippoHtmlBeanSerializer(htmlContentRewriter);
+            } else if (HippoBean.class.isAssignableFrom(beanClazz)) {
+                // Customize JsonSerializer for HippoBean type as we need to accumulate HippoBeans and add JSON Pointer
+                // references in the first phase, and later serialize the HippoBeans in content section in the end.
                 return new HippoBeanSerializer((JsonSerializer<Object>) serializer, metadataDecorators);
             }
         }

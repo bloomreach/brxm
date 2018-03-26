@@ -49,6 +49,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.ParametersInfoUtils;
+import org.htmlcleaner.HtmlCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -108,8 +109,11 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private int defaultMaxContentReferenceLevel = 1;
 
-    public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
-        objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(new HippoBeanModelsSerializerModifier(metadataDecorators)));
+    public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins,
+                                     final HtmlCleaner htmlCleaner) {
+        objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(
+                new HippoBeanModelsSerializerModifier(metadataDecorators, htmlCleaner)
+        ));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
     }
 
@@ -426,4 +430,5 @@ public class PageModelAggregationValve extends AggregationValve {
             }
         }
     }
+
 }
