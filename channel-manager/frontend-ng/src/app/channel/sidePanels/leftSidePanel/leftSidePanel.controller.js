@@ -17,6 +17,7 @@
 class LeftSidePanelCtrl {
   constructor(
     $element,
+    $scope,
     localStorageService,
     CatalogService,
     ChannelService,
@@ -26,6 +27,7 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
@@ -48,6 +50,16 @@ class LeftSidePanelCtrl {
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
     this.localStorageService.set('leftSidePanelWidth', this.lastSavedWidth);
+  }
+
+  get isOpen() {
+    return this.localStorageService.get('leftSidePanelOpen') === true;
+  }
+
+  set isOpen(isOpen) {
+    if (typeof isOpen === 'boolean') {
+      this.localStorageService.set('leftSidePanelOpen', isOpen);
+    }
   }
 
   isLockedOpen() {

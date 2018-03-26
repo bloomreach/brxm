@@ -74,6 +74,42 @@ describe('LeftSidePanel', () => {
     expect(ctrl.isLockedOpen()).toBe(false);
   });
 
+  describe('property isOpen', () => {
+    it('defaults to false', () => {
+      const ctrl = instantiateController();
+      expect(ctrl.isOpen).toBe(false);
+    });
+
+    it('stores the open state as a boolean', () => {
+      const ctrl = instantiateController();
+      ctrl.isOpen = true;
+      expect(ctrl.localStorageService.get('leftSidePanelOpen')).toBe(true);
+      expect(ctrl.isOpen).toBe(true);
+
+      ctrl.isOpen = false;
+      expect(ctrl.localStorageService.get('leftSidePanelOpen')).toBe(false);
+      expect(ctrl.isOpen).toBe(false);
+    });
+
+    it('falls back to false if the stored value is not a boolean', () => {
+      const ctrl = instantiateController();
+      spyOn(ctrl.localStorageService, 'get').and.returnValue(null);
+
+      expect(ctrl.isOpen).toBe(false);
+    });
+
+    it('ignores input that is not a boolean', () => {
+      const ctrl = instantiateController();
+      spyOn(ctrl.localStorageService, 'set').and.callThrough();
+
+      ctrl.isOpen = null;
+      ctrl.isOpen = 1;
+      ctrl.isOpen = 'a string';
+      expect(ctrl.localStorageService.set).not.toHaveBeenCalled();
+    });
+  });
+  });
+
   it('retrieves the catalog from the channel service', () => {
     CatalogService.getComponents.and.returnValue(catalogComponents);
     const ChannelLeftSidePanelCtrl = instantiateController();
