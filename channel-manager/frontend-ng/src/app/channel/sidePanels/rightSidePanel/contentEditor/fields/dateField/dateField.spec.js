@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import DateValue from "./dateValue.model";
+import DateValue from './dateValue.model';
 
 describe('DateField', () => {
   let $componentController;
   let $ctrl;
   let ngModel;
 
-  const fieldType = {id: 'field:type'};
-  const fieldValue = {value: '2015-08-24T06:53:00.000Z'};
+  const fieldType = { id: 'field:type' };
+  const fieldValue = { value: '2015-08-24T06:53:00.000Z' };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');

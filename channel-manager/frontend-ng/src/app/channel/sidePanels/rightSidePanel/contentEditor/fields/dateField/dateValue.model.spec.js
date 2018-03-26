@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import DateValue from "./dateValue.model";
+import DateValue from './dateValue.model';
 
 describe('DateValue', () => {
   let dateValue;
@@ -168,5 +168,4 @@ describe('DateValue', () => {
       expect(dateValue.date).not.toBe(null);
     });
   });
-
 });
