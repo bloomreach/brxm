@@ -53,7 +53,7 @@ export class DateValue {
     this.jsDate = null;
   }
 
-  _checkInit() {
+  _initIfNeeded() {
     if (this.moment === null) {
       this._init(moment());
     }
@@ -65,7 +65,7 @@ export class DateValue {
 
   set hours(hours) {
     const checkedHours = (hours && hours > 23) ? 23 : hours;
-    this._checkInit();
+    this._initIfNeeded();
     this.moment.hours(checkedHours);
   }
 
@@ -84,7 +84,7 @@ export class DateValue {
   }
 
   set minutes(minutes) {
-    this._checkInit();
+    this._initIfNeeded();
     this.moment.minutes(minutes);
   }
 
@@ -94,7 +94,7 @@ export class DateValue {
 
   set date(date) {
     if (date) {
-      this._checkInit();
+      this._initIfNeeded();
       this.moment.year(date.getFullYear());
       this.moment.month(date.getMonth());
       this.moment.date(date.getDate()); // day of the month
