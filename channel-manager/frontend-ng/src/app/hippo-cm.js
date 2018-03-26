@@ -16,7 +16,6 @@
 
 import angular from 'angular';
 import ngAnimate from 'angular-animate';
-import ngCookies from 'angular-cookies';
 import ngDeviceDetector from 'ng-device-detector';
 import ngLocalStorage from 'angular-local-storage';
 import ngMaterial from 'angular-material';
@@ -59,7 +58,6 @@ import run from './hippo-cm.run';
 const hippoCmng = angular
   .module('hippo-cm', [
     ngAnimate,
-    ngCookies,
     ngDeviceDetector,
     ngLocalStorage,
     ngMaterial,

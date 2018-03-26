@@ -15,13 +15,12 @@
  */
 
 class ConfigService {
-  constructor($cookies, $window, CmsService) {
+  constructor($window, CmsService) {
     'ngInject';
 
     this.$window = $window;
 
     this.locale = 'en';
-    this.timeZone = $cookies.get('tzcookie');
     this.rootUuid = 'cafebabe-cafe-babe-cafe-babecafebabe';
     this.contextPaths = ['/site'];
 
