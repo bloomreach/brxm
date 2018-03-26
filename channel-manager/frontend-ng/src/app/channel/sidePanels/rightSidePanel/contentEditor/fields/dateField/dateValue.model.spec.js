@@ -47,11 +47,27 @@ describe('DateValue', () => {
       expect(dateValue.hours).toBe(23);
     });
 
-    it('when a new date is set, existing hours and minutes are maintained', () => {
+    it('does not change hours or minutes values when changing the date', () => {
       const newDate = new Date(2017, 2, 2, 0, 0, 0, 0); // date with hours and minutes = 0
       dateValue.date = newDate;
       expect(dateValue.hours).toBe(12);
       expect(dateValue.minutes).toBe('01');
+    });
+
+    it('does not change date or minutes values when changing the hours', () => {
+      dateValue.hours = 3;
+      expect(dateValue.minutes).toBe('01');
+      expect(dateValue.date.getFullYear()).toBe(2018);
+      expect(dateValue.date.getMonth()).toBe(2); // month is zero based
+      expect(dateValue.date.getDate()).toBe(12);
+    });
+
+    it('does not change date or hours values when changing the minutes', () => {
+      dateValue.minutes = 59;
+      expect(dateValue.hours).toBe(12);
+      expect(dateValue.date.getFullYear()).toBe(2018);
+      expect(dateValue.date.getMonth()).toBe(2); // month is zero based
+      expect(dateValue.date.getDate()).toBe(12);
     });
   });
 
