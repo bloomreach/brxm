@@ -15,11 +15,16 @@
  */
 @import 'variables';
 
-// left-align labels of date fields
-.md-input-focused._md-datepicker-floating-label._md-datepicker-has-calendar-icon > label:not(.md-no-float):not(.md-container-ignore) {
-  left: 0;
-  right: auto;
-  width: 100%;
+// left-align labels of date fields when focused, invalid, but when there is no value, the label sinks down on the field
+._md-datepicker-floating-label._md-datepicker-has-calendar-icon {
+  &.md-input-focused,
+  &.md-input-has-value {
+    > label:not(.md-no-float):not(.md-container-ignore) {
+      left: 0;
+      right: auto;
+      width: 100%;
+    }
+  }
 }
 
 date-field {
