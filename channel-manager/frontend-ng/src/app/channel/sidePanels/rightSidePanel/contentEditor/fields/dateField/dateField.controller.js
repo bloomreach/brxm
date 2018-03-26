@@ -64,7 +64,7 @@ export class DateValue {
   }
 
   set hours(hours) {
-    const checkedHours = (hours && hours > 23) ? 23 : hours;
+    const checkedHours = hours > 23 ? 23 : hours;
     this._initIfNeeded();
     this.moment.hours(checkedHours);
   }
