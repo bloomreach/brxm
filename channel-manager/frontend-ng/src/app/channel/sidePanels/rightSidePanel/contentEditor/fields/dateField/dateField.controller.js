@@ -40,6 +40,11 @@ export class DateValue {
     if (this.userTimeZone) {
       this.moment.tz(this.userTimeZone);
     }
+    this._initJsDate();
+  }
+
+  _initJsDate () {
+    // use only the year, month and day of the moment and ignore the time and time zone
     this.jsDate = new Date(this.moment.format('L'));
   }
 
@@ -93,7 +98,7 @@ export class DateValue {
       this.moment.year(date.getFullYear());
       this.moment.month(date.getMonth());
       this.moment.date(date.getDate()); // day of the month
-      this.jsDate = new Date(this.moment.format('L'));
+      this._initJsDate();
     } else {
       this._initBlank();
     }
