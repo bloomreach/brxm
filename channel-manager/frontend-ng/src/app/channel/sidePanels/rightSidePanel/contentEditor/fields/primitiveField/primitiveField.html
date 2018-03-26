@@ -96,6 +96,15 @@
       </md-checkbox>
     </div>
 
+    <date-field ng-switch-when="DATE"
+                name="::$ctrl.getFieldName($index)"
+                field-type="::$ctrl.fieldType"
+                ng-model="fieldValue.value"
+                ng-change="$ctrl.valueChanged()"
+                on-field-focus="$ctrl.focusPrimitive($event)"
+                on-field-blur="$ctrl.blurPrimitive($event)">
+    </date-field>
+
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
@@ -140,6 +149,7 @@
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
+      <div ng-if="::$ctrl.fieldType.type === 'DATE'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
     </div>
   </md-input-container>
 </div>

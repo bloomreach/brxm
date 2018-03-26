@@ -85,6 +85,13 @@
     "email": "angular-core+npm@google.com",
     "licenseFile": "node_modules/angular-aria/LICENSE.md"
   },
+  "angular-cookies@1.5.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com",
+    "licenseFile": "node_modules/angular-cookies/LICENSE.md"
+  },
   "angular-local-storage@0.7.1": {
     "licenses": "MIT",
     "repository": "https://github.com/grevory/angular-local-storage",
@@ -1604,6 +1611,22 @@
     "email": "mail@substack.net",
     "url": "http://substack.net",
     "licenseFile": "node_modules/mkdirp/LICENSE"
+  },
+  "moment-timezone@0.5.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moment/moment-timezone",
+    "publisher": "Tim Wood",
+    "email": "washwithcare@gmail.com",
+    "url": "http://timwoodcreates.com/",
+    "licenseFile": "node_modules/moment-timezone/LICENSE"
+  },
+  "moment@2.21.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moment/moment",
+    "publisher": "Iskren Ivov Chernev",
+    "email": "iskren.chernev@gmail.com",
+    "url": "https://github.com/ichernev",
+    "licenseFile": "node_modules/moment/LICENSE"
   },
   "ms@2.0.0": {
     "licenses": "MIT",

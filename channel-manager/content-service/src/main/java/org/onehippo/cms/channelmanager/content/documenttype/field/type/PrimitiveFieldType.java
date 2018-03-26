@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,13 +186,17 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         return true;
     }
 
-    private static void storeProperty(final Collection<FieldValue> values, final Property property) throws RepositoryException {
+    protected FieldValue getFieldValue(final String value) {
+        return new FieldValue(value);
+    }
+
+    private void storeProperty(final Collection<FieldValue> values, final Property property) throws RepositoryException {
         if (property.isMultiple()) {
             for (final Value v : property.getValues()) {
-                values.add(new FieldValue(v.getString()));
+                values.add(getFieldValue(v.getString()));
             }
         } else {
-            values.add(new FieldValue(property.getString()));
+            values.add(getFieldValue(property.getString()));
         }
     }
 

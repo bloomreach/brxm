@@ -70,6 +70,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private String timeZone;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private String apiUrlPrefix;
 
     @ExtProperty
@@ -122,8 +126,13 @@ public class ChannelEditor extends ExtPanel {
         this.apiUrlPrefix = apiUrlPrefix;
         this.contextPaths = contextPaths;
         this.locale = Session.get().getLocale().toString();
+
+        final UserSession userSession = UserSession.get();
+        this.timeZone = userSession.getClientInfo().getProperties().getTimeZone().getID();
+        this.cmsUser = userSession.getJcrSession().getUserID();
+
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
-        this.cmsUser = UserSession.get().getJcrSession().getUserID();
+
         this.ckeditorUrl = CKEditorConstants.getCKEditorJsReference().getUrl().toString();
         this.ckeditorTimestamp = CKEditorConstants.CKEDITOR_TIMESTAMP;
 

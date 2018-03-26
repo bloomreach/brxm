@@ -1,0 +1,52 @@
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-datepicker ng-model="$ctrl.dateValue.date"
+               ng-change="$ctrl.valueChanged()"
+               name="{{ ::$ctrl.name }}"
+               aria-label="{{::$ctrl.fieldType.displayName}}"
+               ng-required="::$ctrl.fieldType.required"
+               ng-focus="$ctrl.onFieldFocus()"
+               ng-blur="$ctrl.onFieldBlur()"/>
+
+<md-input-container class="qa-field">
+  <input ng-model="$ctrl.dateValue.hours"
+         ng-change="$ctrl.valueChanged()"
+         class="timepart"
+         aria-label="{ ::'HOURS' | translate }}"
+         ng-attr-maxlength="2"
+         ng-focus="$ctrl.onFieldFocus()"
+         ng-blur="$ctrl.onFieldBlur()">
+</md-input-container>
+:
+<md-input-container class="qa-field">
+  <input ng-model="$ctrl.dateValue.minutes"
+         ng-change="$ctrl.valueChanged()"
+         class="timepart"
+         aria-label="{ ::'MINUTES' | translate }}"
+         ng-attr-maxlength="2"
+         ng-focus="$ctrl.onFieldFocus();$ctrl.dateValue.focusMinutes()"
+         ng-blur="$ctrl.onFieldBlur();$ctrl.dateValue.blurMinutes()"
+         ng-pattern="/^[0-5]?[0-9]$/">
+</md-input-container>
+
+<md-button md-no-ink
+           class="md-icon-button now-button"
+           aria-label="{{ ::'SET_TO_NOW' | translate }}"
+           ng-click="$ctrl.setToNow()"
+           title="{{ ::'SET_TO_NOW' | translate }}">
+  <md-icon>sync</md-icon>
+</md-button>

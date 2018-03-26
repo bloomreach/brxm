@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
+import moment from 'moment-timezone';
 import template from './hippo-cm.html';
+
+const FALLBACK_LOCALE = 'en';
 
 function config(
   $compileProvider,
   $httpProvider,
+  $mdDateLocaleProvider,
   $mdIconProvider,
   $mdThemingProvider,
   $stateProvider,
@@ -43,6 +47,20 @@ function config(
         return $translate.use(ConfigService.locale || $translate.fallbackLanguage())
           .catch(() => $translate.use($translate.fallbackLanguage()));
       },
+      dateLocale: (ConfigService) => {
+        'ngInject';
+
+        moment.locale(ConfigService.locale || FALLBACK_LOCALE);
+        $mdDateLocaleProvider.months = moment.months(true);
+        $mdDateLocaleProvider.shortMonths = moment.monthsShort(true);
+        $mdDateLocaleProvider.days = moment.weekdays(true);
+        // remove dots from day abbreviations (e.g. nl has this)
+        const shortDays = moment.weekdaysShort(true);
+        shortDays.forEach((item, index, array) => {
+          array[index] = item.replace('.', '');
+        });
+        $mdDateLocaleProvider.shortDays = shortDays;
+      },
     },
   });
 
@@ -55,7 +73,7 @@ function config(
       'es_*': 'es',
       'zh_*': 'zh',
     });
-  $translateProvider.fallbackLanguage('en');
+  $translateProvider.fallbackLanguage(FALLBACK_LOCALE);
   $translateProvider.useSanitizeValueStrategy('escaped');
 
   $mdThemingProvider.definePalette('hippo-blue', {
@@ -142,6 +160,12 @@ function config(
 
   const HippoGlobal = window.parent.Hippo || {};
   const antiCache = HippoGlobal.antiCache ? `?antiCache=${window.top.Hippo.antiCache}` : '';
+
+  $mdDateLocaleProvider
+    .formatDate = (date) => {
+      const m = moment(date);
+      return m.isValid() ? m.format('L') : '';
+    };
 
   $mdIconProvider
     .icon('any-device', `images/any-device.svg${antiCache}`)

@@ -1,0 +1,73 @@
+/*!
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.01
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import 'variables';
+
+// left-align labels of date fields when focused, invalid, but when there is no value, the label sinks down on the field
+._md-datepicker-floating-label._md-datepicker-has-calendar-icon {
+  &.md-input-focused,
+  &.md-input-has-value {
+    > label:not(.md-no-float):not(.md-container-ignore) {
+      left: 0;
+      right: auto;
+      width: 100%;
+    }
+  }
+}
+
+date-field {
+  .md-datepicker-input-container {
+    z-index: 2;
+    border-bottom-width: 0;
+
+    &.md-datepicker-focused {
+      border-bottom-width: 0;
+    }
+  }
+
+  .md-datepicker-input {
+    font-size: 100%;
+    min-width: 200px;
+  }
+
+  // nested input container for the time fields
+  > md-input-container {
+    margin: 0;
+
+    .timepart {
+      text-align: right;
+      width: 25px;
+    }
+
+    &:not(.md-input-focused) > input.timepart {
+      border-bottom: 1px solid $grey-300 !important;
+      padding-bottom: 1px !important;
+    }
+
+    &.md-input-focused > input.timepart {
+      border-bottom: 2px solid $blue-500 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+
+  .now-button {
+    padding-left: 6px !important;
+  }
+
+  /* to hide the parent div of md-error-spacer div */
+  > div {
+    display: none;
+  }
+}

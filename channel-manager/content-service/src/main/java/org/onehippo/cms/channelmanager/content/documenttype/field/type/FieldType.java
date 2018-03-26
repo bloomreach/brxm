@@ -39,6 +39,7 @@ public interface FieldType {
         LONG,
         BOOLEAN,
         MULTILINE_STRING,
+        DATE,
         HTML,
         CHOICE, // "content blocks"
         COMPOUND,
