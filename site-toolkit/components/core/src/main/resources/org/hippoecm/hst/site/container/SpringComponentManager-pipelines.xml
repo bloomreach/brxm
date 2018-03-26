@@ -168,10 +168,12 @@
     <property name="componentWindowResponseAppenders" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
   </bean>
 
-  <bean id="selectiveRenderingAggregationValve" parent="aggregationValve">
-    <property name="valveName" value="selectiveRenderingAggregationValve" />
-    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
+  <bean id="selectiveRenderingAggregationValve" parent="aggregationValve"
+        class="org.hippoecm.hst.core.container.SelectiveRenderingAggregationValve">
+    <property name="valveName" value="selectiveRenderingAggregationValve"/>
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders" />
   </bean>
+
 
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
     <property name="valveName" value="resourceServingValve" />
