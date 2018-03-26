@@ -63,7 +63,7 @@ describe('DateField', () => {
 
   it('sets the value of a date to the current date and time when set to now is called', () => {
     spyOn($ctrl, 'valueChanged');
-    const oldValue = new DateValue('2015-08-24T06:53:00.000Z');
+    const oldValue = new DateValue(fieldValue.value);
     $ctrl.dateValue = new DateValue('2015-08-24T06:53:00.000Z');
 
     $ctrl.setToNow();
@@ -117,8 +117,8 @@ describe('DateValue', () => {
     // methods. The fields for the hours and minutes part of the date are using their own getter/setters.
 
     it('shows the day of the month correctly across the dateline', () => {
-      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
-      // in Londen this is december 31 in 2018 at 23:30
+      // in Amsterdam this is January 1 in 2019 at 0:30 (am)
+      // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
       dateValue = new DateValue(dateString, 'Europe/London');
@@ -129,8 +129,8 @@ describe('DateValue', () => {
     });
 
     it('shows the month correctly across the dateline', () => {
-      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
-      // in Londen this is december 31 in 2018 at 23:30
+      // in Amsterdam this is January 1 in 2019 at 0:30 (am)
+      // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
       dateValue = new DateValue(dateString, 'Europe/London');
@@ -141,8 +141,8 @@ describe('DateValue', () => {
     });
 
     it('shows the year correctly across the dateline', () => {
-      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
-      // in Londen this is december 31 in 2018 at 23:30
+      // in Amsterdam this is January 1 in 2019 at 0:30 (am)
+      // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
       dateValue = new DateValue(dateString, 'Europe/London');
@@ -153,8 +153,8 @@ describe('DateValue', () => {
     });
 
     it('shows the hours correctly across the timezone', () => {
-      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
-      // in Londen this is december 31 in 2018 at 23:30
+      // in Amsterdam this is January 1 in 2019 at 0:30 (am)
+      // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
       dateValue = new DateValue(dateString, 'Europe/London');
@@ -165,8 +165,8 @@ describe('DateValue', () => {
     });
 
     it('shows the minutes correctly across the timezone', () => {
-      // in Amsterdam this is january 1 in 2019 at 0:30 (am)
-      // in Calcutta this is january 1 in 2019 at 5:00 (India timezone differs 5.5 hours with CET).
+      // in Amsterdam this is January 1 in 2019 at 0:30 (am)
+      // in Calcutta this is January 1 in 2019 at 5:00 (India timezone differs 5.5 hours with CET).
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
       dateValue = new DateValue(dateString, 'Asia/Calcutta');
