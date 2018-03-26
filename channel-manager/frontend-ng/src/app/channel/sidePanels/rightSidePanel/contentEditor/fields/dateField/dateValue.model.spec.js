@@ -14,64 +14,7 @@
  * limitations under the License.
  */
 
-import {DateValue} from "./dateField.controller";
-
-describe('DateField', () => {
-  let $componentController;
-  let $ctrl;
-  let ngModel;
-
-  const fieldType = {id: 'field:type'};
-  const fieldValue = {value: '2015-08-24T06:53:00.000Z'};
-
-  beforeEach(() => {
-    angular.mock.module('hippo-cm');
-
-    inject((_$componentController_) => {
-      $componentController = _$componentController_;
-    });
-
-    ngModel = jasmine.createSpyObj('ngModel', [
-      '$setViewValue',
-    ]);
-
-    ngModel.$setViewValue.and.callFake((value) => {
-      ngModel.$viewValue = value;
-    });
-
-    $ctrl = $componentController('dateField', {}, {
-      fieldType,
-      fieldValue,
-      name: 'test-name',
-      ngModel,
-    });
-
-    $ctrl.$onInit();
-  });
-
-  it('initializes the component', () => {
-    expect($ctrl.fieldType).toBe(fieldType);
-    expect($ctrl.fieldValue).toBe(fieldValue);
-    expect($ctrl.name).toBe('test-name');
-  });
-
-  it('initializes the date value from ngModel', () => {
-    ngModel.$viewValue = '2015-08-24T06:53:00.000Z';
-    ngModel.$render();
-    expect($ctrl.dateValue).toBeDefined();
-  });
-
-  it('sets the value of a date to the current date and time when set to now is called', () => {
-    spyOn($ctrl, 'valueChanged');
-    const oldValue = new DateValue(fieldValue.value);
-    $ctrl.dateValue = new DateValue('2015-08-24T06:53:00.000Z');
-
-    $ctrl.setToNow();
-
-    expect($ctrl.valueChanged).toHaveBeenCalled();
-    expect(oldValue.jsDate).toBeLessThan($ctrl.dateValue.date);
-  });
-});
+import DateValue from "./dateValue.model";
 
 describe('DateValue', () => {
   let dateValue;

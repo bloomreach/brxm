@@ -23,7 +23,7 @@ import moment from 'moment-timezone';
  *
  * User time zone is taken into account to show the moment in time to the user as the moment in the users' time zone.
  */
-export class DateValue {
+class DateValue {
   constructor(dateString, userTimeZone) {
     this.userTimeZone = userTimeZone;
     this.editMinutes = false;
@@ -121,27 +121,4 @@ export class DateValue {
   }
 }
 
-class DateFieldController {
-  constructor(ConfigService) {
-    'ngInject';
-
-    this.ConfigService = ConfigService;
-  }
-
-  $onInit() {
-    this.ngModel.$render = () => {
-      this.dateValue = new DateValue(this.ngModel.$viewValue, this.ConfigService.timeZone);
-    };
-  }
-
-  valueChanged() {
-    this.ngModel.$setViewValue(this.dateValue.toDateString());
-  }
-
-  setToNow() {
-    this.dateValue.setToNow();
-    this.valueChanged();
-  }
-}
-
-export default DateFieldController;
+export default DateValue;
