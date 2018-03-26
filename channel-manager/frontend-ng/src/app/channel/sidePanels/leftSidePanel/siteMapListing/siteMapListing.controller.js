@@ -15,39 +15,17 @@
  */
 
 class SiteMapListingController {
-  constructor($filter, $translate, HippoIframeService) {
+  constructor($filter, HippoIframeService) {
     'ngInject';
 
-    this.$translate = $translate;
     this.HippoIframeService = HippoIframeService;
 
     const startWithSlashFilter = $filter('startWithSlash');
     this.filteredFields = ['pageTitle', 'name', item => startWithSlashFilter(item.pathInfo)];
-    this.keywords = '';
-    this.searchFilter = $filter('search');
-    this._translationData = {
-      hits: 0,
-      total: 0,
-    };
   }
 
-  $onChanges() {
-    this.filteredItems = this.items;
-  }
-
-  get translationData() {
-    this._translationData.hits = this.filteredItems.length;
-    this._translationData.total = this.items.length;
-    return this._translationData;
-  }
-
-  filterItems() {
-    this.filteredItems = this.searchFilter(this.items, this.keywords, this.filteredFields);
-  }
-
-  clearFilter() {
-    this.keywords = '';
-    this.filteredItems = this.items;
+  onFilter(filteredItems) {
+    this.filteredItems = filteredItems;
   }
 
   showPage(siteMapItem) {

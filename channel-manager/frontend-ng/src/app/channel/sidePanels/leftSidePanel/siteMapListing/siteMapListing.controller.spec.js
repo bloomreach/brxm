@@ -16,16 +16,10 @@
 
 describe('siteMapListingController', () => {
   let $ctrl;
-  let $filter;
   let HippoIframeService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.siteMapListing');
-
-    $filter = jasmine.createSpy('$filter');
-    angular.mock.module(($provide) => {
-      $provide.value('$filter', $filter);
-    });
 
     inject(($componentController, _HippoIframeService_) => {
       $ctrl = $componentController('siteMapListing');
@@ -56,15 +50,11 @@ describe('siteMapListingController', () => {
     expect($ctrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
   });
 
-  it('filters sitemap-items using the "search" filter', () => {
-    $ctrl.searchFilter = jasmine.createSpy('searchFilter');
+  it('gets filtered sitemap-items via the onFilter callback', () => {
+    const items = ['one', 'two'];
+    $ctrl.onFilter(items);
 
-    $ctrl.keywords = 'one two';
-    $ctrl.items = [];
-    $ctrl.filterItems();
-
-    expect($filter).toHaveBeenCalledWith('search');
-    expect($ctrl.searchFilter).toHaveBeenCalledWith($ctrl.items, $ctrl.keywords, ['pageTitle', 'name', jasmine.any(Function)]);
+    expect($ctrl.filteredItems).toEqual(items);
   });
 
   it('returns the index of the active sitemap item in the filtered items', () => {
@@ -78,27 +68,5 @@ describe('siteMapListingController', () => {
 
     HippoIframeService.getCurrentRenderPathInfo.and.returnValue('three');
     expect($ctrl.activeItemIndex).toEqual(-1);
-  });
-
-  it('clears the filter', () => {
-    $ctrl.items = ['a', 'b'];
-    $ctrl.keywords = 'b';
-    $ctrl.filteredItems = ['b'];
-    $ctrl.clearFilter();
-
-    expect($ctrl.keywords).toEqual('');
-    expect($ctrl.filteredItems).toEqual($ctrl.items);
-  });
-
-  it('returns translationData containing the total number of items and the number of hits', () => {
-    $ctrl.items = [];
-    $ctrl.filteredItems = [];
-    expect($ctrl.translationData).toEqual({ total: 0, hits: 0 });
-
-    $ctrl.items = ['one', 'two'];
-    expect($ctrl.translationData).toEqual({ total: 2, hits: 0 });
-
-    $ctrl.filteredItems = ['one'];
-    expect($ctrl.translationData).toEqual({ total: 2, hits: 1 });
   });
 });

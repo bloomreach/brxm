@@ -13,24 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<div class="search-field-container">
-  <md-input-container md-no-float>
-    <md-icon>search</md-icon>
-    <input type="text"
-           placeholder="{{ ::'PLACEHOLDER_SEARCH' | translate }}"
-           ng-model="$ctrl.keywords"
-           ng-change="$ctrl.filterItems()"/>
-    <md-button class="md-icon-button" ng-click="$ctrl.clearFilter()" ng-show="$ctrl.keywords">
-      <md-icon>clear</md-icon>
-    </md-button>
-  </md-input-container>
-</div>
-<md-subheader>
-  <span ng-if="$ctrl.items.length === 1 && $ctrl.keywords === ''">{{'SITEMAP_SEARCH_SINGLE' | translate:$ctrl.translationData }}</span>
-  <span ng-if="$ctrl.items.length === 1 && $ctrl.keywords !== ''">{{'SITEMAP_SEARCH_RESULTS_SINGLE' | translate:$ctrl.translationData }}</span>
-  <span ng-if="$ctrl.items.length !== 1 && $ctrl.keywords === ''">{{'SITEMAP_SEARCH_MULTIPLE' | translate:$ctrl.translationData }}</span>
-  <span ng-if="$ctrl.items.length !== 1 && $ctrl.keywords !== ''">{{'SITEMAP_SEARCH_RESULTS_MULTIPLE' | translate:$ctrl.translationData }}</span>
-</md-subheader>
+<search
+  filtered-fields="$ctrl.filteredFields"
+  items="$ctrl.items"
+  item-name="{{ ::'SEARCH_SITEMAP_ITEM_NAME' | translate }}"
+  items-name="{{ ::'SEARCH_SITEMAP_ITEMS_NAME' | translate }}"
+  on-filter="$ctrl.onFilter(filteredItems)">
+</search>
+
 <md-content>
   <md-virtual-repeat-container md-top-index="$ctrl.activeItemIndex">
     <md-list class="qa-sitemap">

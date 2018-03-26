@@ -17,11 +17,13 @@
 import leftSidePanelComponent from './leftSidePanel.component';
 import leftSidePanelToggleComponent from './leftSidePanelToggle/leftSidePanelToggle.component';
 import componentCatalogModule from './componentCatalog/componentCatalog.module';
+import searchModule from './search/search.module';
 import sitemapListingModule from './siteMapListing/siteMapListing.module';
 
 const leftSidePanelModule = angular
   .module('hippo-cm.channel.leftSidePanelModule', [
     componentCatalogModule.name,
+    searchModule.name,
     sitemapListingModule.name,
   ])
   .component('leftSidePanel', leftSidePanelComponent)
