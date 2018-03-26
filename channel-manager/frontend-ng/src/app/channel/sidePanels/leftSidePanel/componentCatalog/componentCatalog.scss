@@ -15,4 +15,12 @@
  */
 component-catalog {
   height: 100%;
+
+  .md-avatar {
+    border-radius: 0 !important;
+  }
+
+  .catalog-list-item-active {
+    font-style: italic;
+  }
 }

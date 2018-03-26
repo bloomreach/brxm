@@ -33,16 +33,8 @@ left-side-panel {
     padding: 0;
   }
 
-  .md-avatar {
-    border-radius: 0 !important;
-  }
-
   .list-item-active {
     background-color: $list-item-active-bgcolor;
-  }
-
-  .catalog-list-item-active {
-    font-style: italic;
   }
 
   // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
