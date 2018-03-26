@@ -43,7 +43,7 @@ export class DateValue {
     this._initJsDate();
   }
 
-  _initJsDate () {
+  _initJsDate() {
     // use only the year, month and day of the moment and ignore the time and time zone
     this.jsDate = new Date(this.moment.format('L'));
   }
