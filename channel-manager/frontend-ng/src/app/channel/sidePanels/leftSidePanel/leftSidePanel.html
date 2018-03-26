@@ -24,10 +24,17 @@
            md-no-pagination
            class="qa-sidenav-tabs">
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
-      <site-map-listing items="$ctrl.getSiteMapItems()" flex layout="column"></site-map-listing>
+      <site-map-listing items="$ctrl.getSiteMapItems()"
+                        flex
+                        layout="column">
+      </site-map-listing>
     </md-tab>
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}" ng-if="$ctrl.isEditable()" ng-disabled="$ctrl.isConfigurationLocked">
-      <component-catalog components="$ctrl.getCatalog()" state="$ctrl.componentsVisible"></component-catalog>
+      <component-catalog components="$ctrl.getCatalog()"
+                         state="$ctrl.componentsVisible"
+                         flex
+                         layout="column">
+      </component-catalog>
     </md-tab>
   </md-tabs>
 

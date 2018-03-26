@@ -172,6 +172,8 @@
   "SAVE_CHANGES_GENERIC": "'{{documentName}}' has unsaved changes. Do you want to save or discard these changes?",
   "SAVE_CHANGES_ON_PUBLISH_MESSAGE": "'{{documentName}}' has unsaved changes. Do you want to save or discard these changes before publishing?",
   "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE": "'{{documentName}}' has unsaved changes. Do you want to save or discard these changes before switching to the content editor?",
+  "SEARCH_COMPONENT_NAME": "component",
+  "SEARCH_COMPONENTS_NAME": "components",
   "SEARCH_SINGLE": "{{total}} {{itemName}}",
   "SEARCH_MULTIPLE": "{{total}} {{itemsName}}",
   "SEARCH_RESULTS_SINGLE": "{{hits}} of {{total}} {{itemName}}",
