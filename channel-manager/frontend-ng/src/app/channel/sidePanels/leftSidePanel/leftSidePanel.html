@@ -23,6 +23,7 @@
             md-disable-backdrop>
   <md-tabs flex
            md-no-pagination
+           md-selected="$ctrl.selectedTab"
            class="qa-sidenav-tabs">
     <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
       <site-map-listing items="$ctrl.getSiteMapItems()" flex layout="column"></site-map-listing>

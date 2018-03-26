@@ -108,6 +108,53 @@ describe('LeftSidePanel', () => {
       expect(ctrl.localStorageService.set).not.toHaveBeenCalled();
     });
   });
+
+  describe('property selectedTab', () => {
+    it('defaults to zero', () => {
+      const ctrl = instantiateController();
+      expect(ctrl.selectedTab).toBe(0);
+    });
+
+    it('stores the selected tab as a number', () => {
+      const ctrl = instantiateController();
+
+      ctrl.selectedTab = 0;
+      expect(ctrl.localStorageService.get('leftSidePanelSelectedTab')).toBe('0');
+      expect(ctrl.selectedTab).toBe(0);
+
+      ctrl.selectedTab = 1;
+      expect(ctrl.localStorageService.get('leftSidePanelSelectedTab')).toBe('1');
+      expect(ctrl.selectedTab).toBe(1);
+    });
+
+    it('falls back to zero if the stored value is NaN', () => {
+      const ctrl = instantiateController();
+      spyOn(ctrl.localStorageService, 'get').and.returnValue('a string');
+
+      expect(ctrl.selectedTab).toBe(0);
+    });
+
+    it('ignores input that is not a number', () => {
+      const ctrl = instantiateController();
+      ctrl.selectedTab = 1;
+      spyOn(ctrl.localStorageService, 'set').and.callThrough();
+
+      ctrl.selectedTab = null;
+      ctrl.selectedTab = false;
+      ctrl.selectedTab = 'a string';
+      expect(ctrl.localStorageService.set).not.toHaveBeenCalled();
+      expect(ctrl.selectedTab).toBe(1);
+    });
+
+    it('ignores numbers lower than zero', () => {
+      const ctrl = instantiateController();
+      ctrl.selectedTab = 1;
+      spyOn(ctrl.localStorageService, 'set').and.callThrough();
+
+      ctrl.selectedTab = -1;
+      expect(ctrl.localStorageService.set).not.toHaveBeenCalled();
+      expect(ctrl.selectedTab).toBe(1);
+    });
   });
 
   it('retrieves the catalog from the channel service', () => {

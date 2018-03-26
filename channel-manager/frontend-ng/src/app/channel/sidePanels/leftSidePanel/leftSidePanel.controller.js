@@ -52,6 +52,18 @@ class LeftSidePanelCtrl {
     this.localStorageService.set('leftSidePanelWidth', this.lastSavedWidth);
   }
 
+  get selectedTab() {
+    const selectedTabIndex = parseInt(this.localStorageService.get('leftSidePanelSelectedTab'), 10);
+    return !isNaN(selectedTabIndex) ? selectedTabIndex : 0;
+  }
+
+  set selectedTab(tabIndex) {
+    tabIndex = parseInt(tabIndex, 10);
+    if (!isNaN(tabIndex) && tabIndex >= 0) {
+      this.localStorageService.set('leftSidePanelSelectedTab', tabIndex);
+    }
+  }
+
   get isOpen() {
     return this.localStorageService.get('leftSidePanelOpen') === true;
   }
