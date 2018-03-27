@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -128,7 +129,12 @@ public class ChannelEditor extends ExtPanel {
         this.locale = Session.get().getLocale().toString();
 
         final UserSession userSession = UserSession.get();
-        this.timeZone = userSession.getClientInfo().getProperties().getTimeZone().getID();
+
+        final TimeZone timeZone = userSession.getClientInfo().getProperties().getTimeZone();
+        if (timeZone != null) {
+            this.timeZone = timeZone.getID();
+        }
+
         this.cmsUser = userSession.getJcrSession().getUserID();
 
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
