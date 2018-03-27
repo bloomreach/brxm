@@ -224,18 +224,21 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             setSize(DialogConstants.MEDIUM_AUTO);
             setCssClass("new-document-wizard");
 
-            // get values from the shortcut configuration
+            // get values from the configuration
             documentType = config.getString(PARAM_DOCUMENT_TYPE);
             if (StringUtils.isBlank(documentType)) {
                 throw new IllegalArgumentException("Missing configuration parameter: " + PARAM_DOCUMENT_TYPE);
             }
+
             query = config.getString(PARAM_QUERY, DEFAULT_QUERY);
+
             final String baseFolderConfig = config.getString(PARAM_BASE_FOLDER, DEFAULT_BASE_FOLDER);
             if (baseFolderConfig.endsWith("/")) {
                 baseFolder = baseFolderConfig;
             } else {
                 baseFolder = baseFolderConfig + "/";
             }
+
             final String classification = config.getString(PARAM_CLASSIFICATION_TYPE);
             try {
                 classificationType = ClassificationType.valueOf(StringUtils.upperCase(classification));
@@ -243,6 +246,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 classificationType = ClassificationType.DATE;
             }
 
+            // build UI
             feedback = new FeedbackPanel("feedback");
             replace(feedback);
             feedback.setOutputMarkupId(true);
@@ -292,8 +296,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this, null));
             add(listField);
 
-            if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(
-                    ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(ClassificationType.LISTDATE)) {
                 listLabel.setVisible(false);
                 listField.setVisible(false);
             }
@@ -305,8 +308,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final YuiDateTimeField dateField = new YuiDateTimeField("date", new PropertyModel<>(this, "date"));
             dateField.setRequired(true);
             add(dateField);
-            if (!classificationType.equals(ClassificationType.DATE) && !classificationType.equals(
-                    ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(ClassificationType.DATE) && !classificationType.equals(ClassificationType.LISTDATE)) {
                 dateLabel.setVisible(false);
                 dateField.setVisible(false);
             }
@@ -351,7 +353,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         protected void onOk() {
             try {
                 // get or create the folder node
-                HippoNode folder = getFolder();
+                final HippoNode folder = getFolder();
                 if (folder == null) {
                     error("Error occurred when trying to find or create the target folder.");
                     return;
@@ -364,49 +366,54 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     return;
                 }
 
-                Session session = getSession().getJcrSession();
-                HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-                WorkflowManager workflowMgr = workspace.getWorkflowManager();
+                final Session session = getSession().getJcrSession();
+                final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+                final WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
                 // get the folder node's workflow
-                Workflow workflow = workflowMgr.getWorkflow("internal", folder);
+                final Workflow workflow = workflowMgr.getWorkflow("internal", folder);
 
                 if (workflow instanceof FolderWorkflow) {
-                    FolderWorkflow fw = (FolderWorkflow) workflow;
+                    final FolderWorkflow fw = (FolderWorkflow) workflow;
 
-                    String encodedDocumentName = getNodeNameCodec().encode(documentName);
+                    final String encodedDocumentName = getNodeNameCodec().encode(documentName);
+
                     // create the new document
-                    Map<String, String> arguments = new TreeMap<>();
+                    final Map<String, String> arguments = new TreeMap<>();
                     arguments.put("name", encodedDocumentName);
+
                     if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
                             ClassificationType.LISTDATE)) {
                         arguments.put("list", list);
                         log.debug("Create document using for $list: {}", list);
                     }
+
                     if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
                             ClassificationType.LISTDATE)) {
                         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'kk:mm:ss.SSSZZ");
                         arguments.put("date", fmt.print(date.getTime()));
                         log.debug("Create document using for $date: {}", fmt.print(date.getTime()));
                     }
+
                     log.debug("Query used: {}", query);
-                    String path = fw.add(query, documentType, arguments);
+                    final String path = fw.add(query, documentType, arguments);
+                    final JcrNodeModel nodeModel = new JcrNodeModel(path);
+                    final Node documentNode = processNewDocumentNode(nodeModel.getNode());
 
-                    JcrNodeModel nodeModel = new JcrNodeModel(path);
-                    select(nodeModel);
-
-                    // add the not-encoded document name as translation
+                    // add the not-encoded document name as display name
                     if (!documentName.equals(encodedDocumentName)) {
 
-                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core",
-                                                                                                    nodeModel.getNode());
+                        final DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", documentNode);
                         if (defaultWorkflow != null) {
                             defaultWorkflow.setDisplayName(documentName);
                         }
                     }
+
+                    // browse to new document
+                    select(nodeModel);
                 }
             } catch (RepositoryException | RemoteException | WorkflowException e) {
-                log.error("Error occurred while creating new document: {}: {}", e.getClass().getName(), e.getMessage());
+                log.error(e.getClass().getSimpleName() + " occurred while creating new document", e);
             }
         }
 
@@ -517,7 +524,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             }
         }
 
-
         protected String getQuery() {
             return query;
         }
@@ -526,10 +532,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             return this.documentType;
         }
 
-        protected Node addPropertiesToNode(Node documentNode) throws RepositoryException {
+        /**
+         * Hook to be able to modify a newly created document in a subclass, e.g. to set custom properties based on
+         * custom UI parts.
+         */
+        protected Node processNewDocumentNode(Node documentNode) {
             return documentNode;
         }
-        
     }
 
     /**
