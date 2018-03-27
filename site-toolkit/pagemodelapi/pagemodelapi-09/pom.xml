@@ -18,14 +18,14 @@
 
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>components</artifactId>
+    <artifactId>pagemodelapi</artifactId>
     <version>5.3.0-spaplus-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Core Component</name>
-  <description>Hippo Site Toolkit Core Component</description>
-  <groupId>org.onehippo.cms7.hst.components</groupId>
-  <artifactId>hst-core</artifactId>
+  <name>Hippo Site Toolkit Page Model API 0.9</name>
+  <description>Hippo Site Toolkit Page Model API 0.9</description>
+  <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+  <artifactId>hst-pagemodelapi-09</artifactId>
   <packaging>jar</packaging>
   
   <dependencies>
@@ -171,7 +171,7 @@
       <artifactId>hst-content-beans</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
@@ -185,18 +185,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-session-pool</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-resourcebundle</artifactId>
+      <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -210,23 +204,11 @@
       <artifactId>hippo-cms7-utilities</artifactId>
     </dependency>
 
-    <!-- SSO for encryption/decryption -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms7-commons</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- repository api for cms security valve -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
@@ -268,33 +250,7 @@
 
   <build>
     <plugins>
-<!--  HSTTWO-3542: manually (re)generate hst-addon-module-x_y.xsd locally if needed by temporarily
-                   enable the following and copy/merge the result under src/main/resources/META-INF/schema/
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <id>schemagen</id>
-            <goals>
-              <goal>schemagen</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includes>
-            <include>org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java</include>
-          </includes>
-          <transformSchemas>
-            <transformSchema>
-              <uri>http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd</uri>
-              <toFile>hst-addon-module_1_0.xsd</toFile>
-            </transformSchema>
-          </transformSchemas>
-        </configuration>
-      </plugin>
--->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

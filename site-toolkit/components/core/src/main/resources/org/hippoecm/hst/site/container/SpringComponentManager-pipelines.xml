@@ -399,7 +399,7 @@
 
         <!-- Page Model Pipeline -->
         <entry key="PageModelPipeline">
-          <ref bean="pageModelPipeline" />
+          <ref bean="org.hippoecm.hst.core.container.PageModelPipeline"/>
         </entry>
 
         <!-- A noop pipeline -->
@@ -416,5 +416,8 @@
     </property>
   </bean>
 
+  <bean id="org.hippoecm.hst.core.container.PageModelPipeline" class="org.hippoecm.hst.core.container.PageModelPipeline">
+    <property name="defaultPageModelApiVersion" value="${default.pagemodelapi.version}"/>
+  </bean>
 </beans>
 

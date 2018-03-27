@@ -729,6 +729,7 @@
     <module>solr-client</module>
     <module>toolkit-resources</module>
     <module>components</module>
+    <module>pagemodelapi</module>
     <module>client</module>
     <module>client-modules</module>
     <module>cms-restapi</module>
