@@ -16,9 +16,12 @@
 
 import ComponentCatalogService from './componentCatalog.service';
 import componentCatalogComponent from './componentCatalog.component';
+import searchModule from '../search/search.module';
 
 const componentCatalogModule = angular
-  .module('hippo-cm.channel.componentCatalog', [])
+  .module('hippo-cm.channel.componentCatalog', [
+    searchModule.name,
+  ])
   .service('ComponentCatalogService', ComponentCatalogService)
   .component('componentCatalog', componentCatalogComponent);
 

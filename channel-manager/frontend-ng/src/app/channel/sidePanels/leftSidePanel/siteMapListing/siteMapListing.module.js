@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import searchModule from '../search/search.module';
 import siteMapListingComponent from './siteMapListing.component';
 
 const siteMapListingModule = angular
-  .module('hippo-cm.channel.siteMapListing', [])
+  .module('hippo-cm.channel.siteMapListing', [
+    searchModule.name,
+  ])
   .component('siteMapListing', siteMapListingComponent);
 
 export default siteMapListingModule;
