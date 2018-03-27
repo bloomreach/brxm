@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,11 @@ public class PageModelPipeline implements Pipeline {
 
     private Map<String, Pipeline> pageModelApiPipelinesByVersion = new HashMap<>();
 
+    protected List<Valve> extraInitValves = new ArrayList<>();
+    protected List<Valve> extraProcessingValves = new ArrayList<>();
+    protected List<Valve> extraCleanupValves = new ArrayList<>();
+
+    private volatile boolean initialized = false;
 
     @SuppressWarnings("unused")
     public void addPageModelApiPipelineByVersion(final String version, final Pipeline pipeline) {
@@ -49,6 +56,31 @@ public class PageModelPipeline implements Pipeline {
         this.defaultPageModelApiVersion = defaultPageModelApiVersion;
     }
 
+    /**
+     * Used by downstream projects to be able to add a valve to all delegatee pageModelApiPipelinesByVersion pipelines
+     */
+    @SuppressWarnings("unused")
+    public void addInitializationValve(Valve initializationValve) {
+        extraInitValves.add(initializationValve);
+    }
+
+    /**
+     * Used by downstream projects to be able to add a valve to all delegatee pageModelApiPipelinesByVersion pipelines
+     */
+    @SuppressWarnings("unused")
+    public void addProcessingValve(Valve processingValve) {
+        extraProcessingValves.add(processingValve);
+    }
+
+    /**
+     * Used by downstream projects to be able to add a valve to all delegatee pageModelApiPipelinesByVersion pipelines
+     */
+    @SuppressWarnings("unused")
+    public void addCleanupValve(Valve cleanupValve) {
+        extraCleanupValves.add(cleanupValve);
+    }
+
+
     @Override
     public void initialize() throws ContainerException {
     }
@@ -56,7 +88,30 @@ public class PageModelPipeline implements Pipeline {
     @Override
     public void invoke(final HstContainerConfig requestContainerConfig, final HstRequestContext requestContext,
                        final HttpServletRequest servletRequest, final HttpServletResponse servletResponse) throws ContainerException {
+        if (!initialized) {
+            doInitialize();
+        }
         getPageModelPipelineDelegatee(servletRequest).invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+    }
+
+    /**
+     * Note that we cannot use to call {@link #initialize()} via spring init-method on spring bean because the spring bean
+     * is created before downsteam projects add possibly extra valves
+     */
+    private synchronized void doInitialize() {
+        if (initialized) {
+            return;
+        }
+        // process all extra set valves for all pipelines we have
+        for (Pipeline pipeline : pageModelApiPipelinesByVersion.values()) {
+            if (pipeline instanceof HstSitePipeline) {
+                final HstSitePipeline hstSitePipeline = (HstSitePipeline) pipeline;
+                extraInitValves.forEach(valve -> hstSitePipeline.addInitializationValve(valve));
+                extraProcessingValves.forEach(valve -> hstSitePipeline.addProcessingValve(valve));
+                extraCleanupValves.forEach(valve -> hstSitePipeline.addCleanupValve(valve));
+            }
+        }
+        initialized = true;
     }
 
     @Override
