@@ -22,6 +22,9 @@ class ComponentCatalogController {
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.ComponentCatalogService = ComponentCatalogService;
+
+    this.filteredFields = ['label'];
+    this.filteredComponents = [];
   }
 
   _toggleState() {
@@ -29,6 +32,10 @@ class ComponentCatalogController {
       this.OverlayService.toggleOverlayByComponent = true;
       this.state = true;
     }
+  }
+
+  onFilter(filteredComponents) {
+    this.filteredComponents = filteredComponents;
   }
 
   onSelect(component) {

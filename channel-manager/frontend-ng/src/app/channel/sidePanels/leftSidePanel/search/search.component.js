@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-import searchModule from '../search/search.module';
-import siteMapListingComponent from './siteMapListing.component';
+import searchController from './search.controller';
+import template from './search.html';
+import './search.scss';
 
-const siteMapListingModule = angular
-  .module('hippo-cm.channel.siteMapListing', [
-    searchModule.name,
-  ])
-  .component('siteMapListing', siteMapListingComponent);
+const searchComponent = {
+  bindings: {
+    filteredFields: '<',
+    items: '<',
+    itemName: '@',
+    itemsName: '@',
+    onFilter: '&',
+  },
+  template,
+  controller: searchController,
+};
 
-export default siteMapListingModule;
+export default searchComponent;

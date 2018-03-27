@@ -17,8 +17,6 @@
 @import 'variables';
 
 resize-handle {
-  $handle-width-left: 20px;
-  $handle-width-right: 10px;
   $handle-height: 100%;
 
   height: $handle-height;
@@ -31,20 +29,20 @@ resize-handle {
   &.left {
     left: -7px;
     position: absolute;
-    width: $handle-width-left;
+    width: $resize-handle-width-left;
 
     .handle-inner {
       background-position: -4px;
-      width: $handle-width-left;
+      width: $resize-handle-width-left;
     }
   }
 
   &.right {
-    width: $handle-width-right;
+    width: $resize-handle-width-right;
 
     .handle-inner {
       background-position: -12px;
-      width: $handle-width-right;
+      width: $resize-handle-width-right;
     }
   }
 

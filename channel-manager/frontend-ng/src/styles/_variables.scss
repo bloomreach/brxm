@@ -101,7 +101,18 @@ $canvas-bgcolor: #c1c3c5;
 
 // the default background color in browsers is white, so make the sheet white too
 $sheet-bgcolor: #fff;
+
+// Left side panel
 $list-item-active-bgcolor: rgba(158, 158, 158, .2);
+$catalog-item-height: 70px;
+
+// Resize handles for side-panels
+$resize-handle-width-left: 20px;
+$resize-handle-width-right: 10px;
+
+// Tabs
+$tabs-bottom-border-color: rgba(0, 0, 0, .12);
+$tabs-header-height: 48px;
 
 // Picker
 $picker-subheader-bgcolor: $grey-100;

@@ -19,10 +19,6 @@ left-side-panel {
   md-sidenav {
     max-width: 100%;
     width: 100%;
-
-    md-tabs {
-      padding-right: 12px;
-    }
   }
 
   &.in-resize {
@@ -33,25 +29,23 @@ left-side-panel {
     padding: 0;
   }
 
-  .md-avatar {
-    border-radius: 0 !important;
-  }
-
   .list-item-active {
     background-color: $list-item-active-bgcolor;
   }
 
-  .catalog-list-item-active {
-    font-style: italic;
-  }
-
-  // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
-  .md-list-item-text h4 {
-    line-height: 1.3em !important;
-  }
-
   &.sidepanel-lifted {
     z-index: $z-index-sidepanel-lifted;
+  }
+
+  // visually extend the bottom border of the tabs in the resize handle
+  resize-handle::before {
+    border-bottom: 1px solid $tabs-bottom-border-color;
+    content: "";
+    height: $tabs-header-height;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: $resize-handle-width-right;
   }
 }
 

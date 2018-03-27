@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@import 'variables';
 
-import searchModule from '../search/search.module';
-import siteMapListingComponent from './siteMapListing.component';
+component-catalog {
+  height: 100%;
 
-const siteMapListingModule = angular
-  .module('hippo-cm.channel.siteMapListing', [
-    searchModule.name,
-  ])
-  .component('siteMapListing', siteMapListingComponent);
+  > md-content {
+    height: 100%;
+  }
 
-export default siteMapListingModule;
+  .md-virtual-repeat-container {
+    height: 100%;
+  }
+
+  .md-avatar {
+    border-radius: 0 !important;
+  }
+
+  .md-list-item-text {
+    // very long component names should not increase the height of list items
+    max-height: $catalog-item-height;
+    overflow: hidden;
+  }
+
+  .catalog-list-item-active {
+    font-style: italic;
+  }
+}
