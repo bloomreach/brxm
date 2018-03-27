@@ -22,6 +22,7 @@ class SiteMapListingController {
 
     const startWithSlashFilter = $filter('startWithSlash');
     this.filteredFields = ['pageTitle', 'name', item => startWithSlashFilter(item.pathInfo)];
+    this.filteredItems = [];
   }
 
   onFilter(filteredItems) {

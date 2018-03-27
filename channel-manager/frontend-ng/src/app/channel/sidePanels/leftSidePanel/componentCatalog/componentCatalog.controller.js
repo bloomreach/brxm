@@ -24,7 +24,7 @@ class ComponentCatalogController {
     this.ComponentCatalogService = ComponentCatalogService;
 
     this.filteredFields = ['label'];
-    this.filteredComponents = this.components;
+    this.filteredComponents = [];
   }
 
   _toggleState() {
