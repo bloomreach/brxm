@@ -24,4 +24,9 @@ site-map-listing {
   .md-virtual-repeat-container {
     height: 100%;
   }
+
+  // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
+  .md-list-item-text h4 {
+    line-height: 1.3em !important;
+  }
 }

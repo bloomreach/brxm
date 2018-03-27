@@ -37,11 +37,6 @@ left-side-panel {
     background-color: $list-item-active-bgcolor;
   }
 
-  // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
-  .md-list-item-text h4 {
-    line-height: 1.3em !important;
-  }
-
   &.sidepanel-lifted {
     z-index: $z-index-sidepanel-lifted;
   }
