@@ -124,6 +124,7 @@ public class PageModelAggregationValve extends AggregationValve {
      * </p>
      * @param metadataDecorator custom {@link MetadataDecorator} instance
      */
+    @SuppressWarnings("unused")
     public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
         metadataDecorators.add(metadataDecorator);
     }
