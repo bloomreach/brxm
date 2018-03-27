@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import moment from 'moment-timezone';
 import DateValue from './dateValue.model';
 
 describe('DateValue', () => {
@@ -78,6 +79,13 @@ describe('DateValue', () => {
       expect(dateValue.date.getFullYear()).toBe(yearBefore);
       expect(dateValue.date.getMonth()).toBe(monthBefore);
       expect(dateValue.date.getDate()).toBe(dayBefore);
+    });
+
+    it('initializes the JavaScript date correctly for a non English locale', () => {
+      const dateValue = new DateValue('');
+      const germanMoment = moment().locale('de');
+      dateValue._init(germanMoment);
+      expect(dateValue.jsDate.getTime()).not.toBeNaN();
     });
   });
 
