@@ -19,10 +19,6 @@ left-side-panel {
   md-sidenav {
     max-width: 100%;
     width: 100%;
-
-    md-tabs {
-      padding-right: 12px;
-    }
   }
 
   &.in-resize {
@@ -39,6 +35,17 @@ left-side-panel {
 
   &.sidepanel-lifted {
     z-index: $z-index-sidepanel-lifted;
+  }
+
+  // visually extend the bottom border of the tabs in the resize handle
+  resize-handle::before {
+    border-bottom: 1px solid $tabs-bottom-border-color;
+    content: "";
+    height: $tabs-header-height;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: $resize-handle-width-right;
   }
 }
 
