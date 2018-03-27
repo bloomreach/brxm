@@ -21,5 +21,11 @@ import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 
 @FunctionalInterface
 public interface Validator {
+
+    /**
+     * Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator.
+     */
+    Validator NOOP = (session, configurationModel) -> {};
+
     void validate(final Session session, final ConfigurationModelImpl configurationModel) throws Exception;
 }

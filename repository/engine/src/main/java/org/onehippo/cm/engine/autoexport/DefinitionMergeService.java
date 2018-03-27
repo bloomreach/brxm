@@ -49,6 +49,7 @@ import javax.jcr.Session;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.poi.ss.formula.functions.T;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
@@ -102,6 +103,7 @@ import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.HST_DEFAULT_ROOT_PATH;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
@@ -1095,19 +1097,37 @@ public class DefinitionMergeService {
      * @return true iff this path should go in a new file, different than its parent node
      */
     protected static boolean shouldPathCreateNewSource(JcrPath incomingPath) {
+
+        // If we see a node that we want to treat as an HST root, swap it with the default HST root path
+        // for purposes of the test in the final line of this method.
+        incomingPath = swapHstRootForDefault(incomingPath);
+
         // for the sake of creating new source files, we always want to use the minimally-indexed path
         // to avoid annoying and unnecessary "[1]" tags on filenames
-        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
-        final Optional<String> matchingHstRoot = hstRoots.stream().filter(incomingPath::startsWith).findFirst();
         String minimallyIndexedPath = incomingPath.suppressIndices().toString();
-        //TODO SS: Enhance location mapper to use nodetype matchers
-        if (matchingHstRoot.isPresent()) {
-            incomingPath = JcrPaths.getPath(incomingPath.toString().replace(matchingHstRoot.get(), "/hst:hst"));
-            minimallyIndexedPath = minimallyIndexedPath.replace(matchingHstRoot.get(), "/hst:hst");
-        }
 
+        // the actual test...
         return JcrPaths.getPath(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
                 .equals(incomingPath);
+    }
+
+    /**
+     * If a path has a root node that matches a known HST root node, swap it for the default HST root for
+     * purposes of pattern-matching.
+     * @param incomingPath the path to potentially swap for a new root node
+     * @return a new path based on the HST default root node
+     */
+    private static JcrPath swapHstRootForDefault(JcrPath incomingPath) {
+        //TODO SS: Enhance location mapper to use nodetype matchers
+        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
+        if (incomingPath.getSegmentCount() > 0) {
+            final String rootNode = incomingPath.getSegment(0).toString();
+            if (hstRoots.contains("/" + rootNode)) {
+                incomingPath = JcrPaths.getPath(HST_DEFAULT_ROOT_PATH +
+                        incomingPath.subpath(1, incomingPath.getSegmentCount()).toString());
+            }
+        }
+        return incomingPath;
     }
 
     /**
@@ -1117,13 +1137,10 @@ public class DefinitionMergeService {
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
     protected String getFilePathByLocationMapper(JcrPath path) {
-        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
-        String normalizedPath = path.suppressIndices().toString();
-        final Optional<String> matchingHstRoot = hstRoots.stream().filter(normalizedPath::startsWith).findFirst();
-        //TODO SS: Enhance location mapper to use nodetype matchers
-        if (matchingHstRoot.isPresent()) {
-            normalizedPath = normalizedPath.replace(matchingHstRoot.get(), "/hst:hst");
-        }
+        // If we see a node that we want to treat as an HST root, swap it with the default HST root path
+        // so that the location mapper rules will match with it.
+        final String normalizedPath = swapHstRootForDefault(path).suppressIndices().toString();
+
         String xmlFile = LocationMapper.fileForPath(normalizedPath, true);
         if (xmlFile == null) {
             return "main.yaml";

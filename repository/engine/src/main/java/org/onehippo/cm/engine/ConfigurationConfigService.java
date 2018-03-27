@@ -125,7 +125,7 @@ public class ConfigurationConfigService {
 
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
-                log.warn(String.format("Skipping import web file bundles: service '%s' not available.",
+                log.warn(String.format("Skipping import web file bundles: '%s' not available.",
                         WebFilesService.class.getName()));
                 return;
             }

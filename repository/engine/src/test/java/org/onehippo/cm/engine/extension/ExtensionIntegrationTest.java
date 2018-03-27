@@ -50,6 +50,7 @@ import com.google.common.collect.ImmutableSet;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
 public class ExtensionIntegrationTest {
 
@@ -139,27 +140,18 @@ public class ExtensionIntegrationTest {
         return Paths.get(basedir);
     }
 
-
-    private static final Validator NOOP = (session, configurationModel) -> {};
-
     private class Fixture extends AbstractBaseTest {
 
         private final ModuleInfo[] modules;
         private final Path projectPath;
-        private String fixtureName;
 
         public Fixture(final String fixtureName) throws IOException {
             this(new ExtensionModuleInfo(fixtureName));
-            this.fixtureName = fixtureName;
         }
 
         private Fixture(final ModuleInfo... modules) throws IOException {
             this.projectPath = folder.newFolder("project").toPath();
             this.modules = modules;
-        }
-
-        public String getFixtureName() {
-            return fixtureName;
         }
 
         public void test(final JcrRunner jcrRunner) throws Exception {

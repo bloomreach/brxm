@@ -72,4 +72,8 @@ public final class Constants {
 
     // Path within a Maven module where we expect the module descriptor to be
     public static final String MAVEN_MODULE_DESCRIPTOR = "/src/main/resources/" + HCM_MODULE_YAML;
+
+    // Default HST root node -- needed for auto-export to handle locationMapper rules correctly
+    public static final String HST_DEFAULT_ROOT_PATH = "/hst:hst";
+
 }

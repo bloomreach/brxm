@@ -43,6 +43,7 @@ import static org.junit.Assert.assertNull;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
+import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 
 public class AutoExportIntegrationTest {
@@ -515,9 +516,6 @@ public class AutoExportIntegrationTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
-    private static final Validator NOOP = (session, configurationModel) -> {};
 
     private class Fixture extends AbstractBaseTest {
 
