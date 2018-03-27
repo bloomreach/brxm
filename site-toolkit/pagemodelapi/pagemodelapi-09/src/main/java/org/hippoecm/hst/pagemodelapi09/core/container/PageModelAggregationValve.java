@@ -165,6 +165,7 @@ public class PageModelAggregationValve extends AggregationValve {
         try {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");
+            response.setHeader(ContainerConstants.APGE_MODEL_API_VERSION, "0.9");
 
             final ComponentWindowModel pageWindowModel = aggregatedPageModel.getPageWindowModel();
 

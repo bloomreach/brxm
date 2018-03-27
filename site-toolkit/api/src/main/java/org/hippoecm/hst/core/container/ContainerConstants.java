@@ -196,4 +196,7 @@ public interface ContainerConstants {
      */
     String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
 
+    String APGE_MODEL_API_VERSION = "Api-Version";
+
+
 }
