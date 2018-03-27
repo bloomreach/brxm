@@ -226,7 +226,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
             // get values from the configuration
             documentType = config.getString(PARAM_DOCUMENT_TYPE);
-            if (StringUtils.isBlank(documentType)) {
+            if (StringUtils.isBlank(getDocumentType())) {
                 throw new IllegalArgumentException("Missing configuration parameter: " + PARAM_DOCUMENT_TYPE);
             }
 
@@ -395,8 +395,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                         log.debug("Create document using for $date: {}", fmt.print(date.getTime()));
                     }
 
-                    log.debug("Query used: {}", query);
-                    final String path = fw.add(query, documentType, arguments);
+                    log.debug("Using query '{}', documentType '{}' and arguments '{}' to add document to folder {}",
+                            getQuery(), getDocumentType(), arguments, folder.getPath());
+                    final String path = fw.add(getQuery(), getDocumentType(), arguments);
                     final JcrNodeModel nodeModel = new JcrNodeModel(path);
                     final Node documentNode = processNewDocumentNode(nodeModel.getNode());
 
@@ -509,7 +510,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             return folderHippoNode;
         }
 
-        private IValueListProvider getValueListProvider() {
+        protected IValueListProvider getValueListProvider() {
             return context.getService(DEFAULT_SERVICE_VALUELIST, IValueListProvider.class);
         }
 
