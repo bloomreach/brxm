@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@import 'variables';
+
 component-catalog {
   height: 100%;
 
@@ -26,6 +28,12 @@ component-catalog {
 
   .md-avatar {
     border-radius: 0 !important;
+  }
+
+  .md-list-item-text {
+    // very long component names should not increase the height of list items
+    max-height: $catalog-item-height;
+    overflow: hidden;
   }
 
   .catalog-list-item-active {
