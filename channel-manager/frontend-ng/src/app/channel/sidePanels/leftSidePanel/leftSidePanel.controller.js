@@ -17,7 +17,6 @@
 class LeftSidePanelCtrl {
   constructor(
     $element,
-    $scope,
     localStorageService,
     CatalogService,
     ChannelService,
@@ -27,7 +26,6 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
-    this.$scope = $scope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
