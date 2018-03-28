@@ -85,6 +85,16 @@ class ChannelActionsService extends MenuService {
         isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
         onClick: () => this._showManageChanges(),
       })
+      .addDivider({
+        isVisible: () => this._isBranch(),
+      })
+      .addAction('reject', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
+        iconName: 'clear',
+        isVisible: () => this._isBranch(),
+        isEnabled: () => this.ProjectService.isRejectEnabled(),
+        onClick: () => this._reject(),
+      })
       .addDivider()
       .addAction('delete', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
@@ -101,7 +111,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _isBranch() {
-    return this.ConfigService.projectsEnabled && this.ProjectService.selectedProject;
+    return this.ProjectService.selectedProject && this.ConfigService.projectsEnabled;
   }
 
   // Settings
@@ -155,6 +165,11 @@ class ChannelActionsService extends MenuService {
         this.$log.info(response.message);
         this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
       });
+  }
+
+  _reject() {
+    // TODO (meggermont): Open reject dialog
+    console.log(`TODO: open reject dialog for '${this.ProjectService.selectedProject.name}'`);
   }
 
   _discardChanges() {
