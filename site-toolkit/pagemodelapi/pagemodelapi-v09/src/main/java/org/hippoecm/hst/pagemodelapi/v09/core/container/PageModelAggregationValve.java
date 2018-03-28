@@ -31,7 +31,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
-import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;

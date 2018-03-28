@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 
 /**
  * Identifiable and linkable metadata base model.

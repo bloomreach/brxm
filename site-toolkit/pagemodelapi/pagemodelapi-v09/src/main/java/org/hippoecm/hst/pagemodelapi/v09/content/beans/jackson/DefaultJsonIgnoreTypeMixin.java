@@ -13,18 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
-import org.hippoecm.hst.core.sitemenu.CommonMenuItem;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-public interface CommonMenuItemMixin extends CommonMenuItem {
-
-    @JsonIgnore
-    @Override
-    Map<String, Object> getProperties();
+@JsonIgnoreType
+public interface DefaultJsonIgnoreTypeMixin {
 
 }

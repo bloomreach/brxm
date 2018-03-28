@@ -13,26 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.sitemenu.EditableMenu;
-import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-public interface EditableMenuMixin extends EditableMenu, CommonMenuMixin {
+@JsonIdentityInfo(generator = ObjectIdGenerators.None.class)
+public interface HippoGalleryImageSetBeanMixin extends HippoGalleryImageSetBean, HippoDocumentBeanMixin {
 
+    @JsonProperty
     @Override
-    @JsonIgnore
-    EditableMenuItem getSelectMenuItem();
+    String getFileName();
 
+    @JsonProperty
     @Override
-    @JsonIgnore
-    HstSiteMenus getHstSiteMenus();
+    String getDescription();
 
-    @Override
     @JsonIgnore
-    EditableMenuItem getDeepestExpandedItem();
+    @Override
+    HippoGalleryImageBean getThumbnail();
+
+    @JsonIgnore
+    @Override
+    HippoGalleryImageBean getOriginal();
 
 }

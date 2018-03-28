@@ -13,17 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoRequestBean;
+public class HstURLRepresentation {
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+    private String type;
+    private String url;
 
-public interface HippoRequestBeanMixin extends HippoRequestBean, HippoBeanMixin {
+    public String getType() {
+        return type;
+    }
 
-    @JsonIgnore
-    @Override
-    HippoBean getDocument();
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
 }

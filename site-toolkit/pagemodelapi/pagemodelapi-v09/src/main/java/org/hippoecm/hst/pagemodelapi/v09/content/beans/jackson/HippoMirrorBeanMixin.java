@@ -13,20 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoMirrorBean;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-// TODO can be removed since custom serializer which doesn't use this any more...shall we remove this class?
-@JsonIdentityInfo(generator = ObjectIdGenerators.None.class)
-public interface HippoHtmlBeanMixin extends HippoHtmlBean, HippoBeanMixin {
+public interface HippoMirrorBeanMixin extends HippoMirrorBean, HippoBeanMixin {
 
-    @JsonProperty("value")
+    @JsonIgnore
     @Override
-    String getContent();
+    HippoBean getReferencedBean();
+
+    @JsonIgnore
+    @Override
+    @Deprecated
+    HippoBean getDeref();
 
 }

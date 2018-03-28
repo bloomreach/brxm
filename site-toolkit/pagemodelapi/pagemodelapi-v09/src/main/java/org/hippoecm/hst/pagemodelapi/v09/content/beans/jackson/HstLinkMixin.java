@@ -13,26 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.sitemenu.EditableMenu;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.linking.HstLink;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public interface HstSiteMenuMixin extends HstSiteMenu, CommonMenuMixin {
+@JsonSerialize(converter = HstLinkConverter.class)
+public interface HstLinkMixin extends HstLink {
 
-    @JsonIgnore
-    @Override
-    HstSiteMenus getHstSiteMenus();
-
-    @JsonIgnore
-    @Override
-    HstSiteMenuItem getDeepestExpandedItem();
-
-    @JsonIgnore
-    @Override
-    EditableMenu getEditableMenu();
 }

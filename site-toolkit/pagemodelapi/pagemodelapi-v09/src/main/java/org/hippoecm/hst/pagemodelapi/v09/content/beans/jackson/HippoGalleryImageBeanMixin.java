@@ -13,20 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 
-import com.fasterxml.jackson.databind.util.StdConverter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HstLinkConverter extends StdConverter<HstLink, LinkModel> {
+public interface HippoGalleryImageBeanMixin extends HippoGalleryImageBean, HippoBeanMixin {
 
+    @JsonProperty
     @Override
-    public LinkModel convert(HstLink hstLink) {
-        HstRequestContext requestContext = RequestContextProvider.get();
-        return LinkModel.convert(hstLink, requestContext);
-    }
+    int getHeight();
+
+    @JsonProperty
+    @Override
+    int getWidth();
 
 }

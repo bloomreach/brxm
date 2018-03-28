@@ -13,13 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonSerialize(converter = HstLinkConverter.class)
-public interface HstLinkMixin extends HstLink {
+// TODO can be removed since custom serializer which doesn't use this any more...shall we remove this class?
+@JsonIdentityInfo(generator = ObjectIdGenerators.None.class)
+public interface HippoHtmlBeanMixin extends HippoHtmlBean, HippoBeanMixin {
+
+    @JsonProperty("value")
+    @Override
+    String getContent();
 
 }

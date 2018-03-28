@@ -24,7 +24,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
-import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;

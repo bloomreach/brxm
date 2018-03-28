@@ -13,22 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
 
-public class HstURLConverter extends StdConverter<HstURL, HstURLRepresentation> {
+public class HstLinkConverter extends StdConverter<HstLink, LinkModel> {
 
     @Override
-    public HstURLRepresentation convert(HstURL value) {
-        HstURLRepresentation representation = new HstURLRepresentation();
-
-        representation.setType(value.getType());
-        representation.setUrl(value.toString());
-
-        return representation;
+    public LinkModel convert(HstLink hstLink) {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        return LinkModel.convert(hstLink, requestContext);
     }
 
 }

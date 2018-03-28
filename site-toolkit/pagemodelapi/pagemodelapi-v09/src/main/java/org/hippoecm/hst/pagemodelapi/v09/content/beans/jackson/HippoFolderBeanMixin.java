@@ -13,13 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.component.HstURL;
+import java.util.List;
+import java.util.Locale;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 
-@JsonSerialize(converter = HstURLConverter.class)
-public interface HstURLMixin extends HstURL {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public interface HippoFolderBeanMixin extends HippoFolderBean, HippoBeanMixin {
+
+    @JsonIgnore
+    @Override
+    List<HippoFolderBean> getFolders();
+
+    @JsonIgnore
+    @Override
+    List<HippoDocumentBean> getDocuments();
+
+    @JsonIgnore
+    @Override
+    Locale getLocale();
 
 }

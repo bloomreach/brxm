@@ -13,27 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.jackson;
+package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-public class HstURLRepresentation {
+import org.hippoecm.hst.core.sitemenu.CommonMenu;
 
-    private String type;
-    private String url;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public String getType() {
-        return type;
-    }
+public interface CommonMenuMixin extends CommonMenu {
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    @JsonIgnore
+    @Override
+    boolean isExpanded();
 
 }
