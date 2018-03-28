@@ -35,7 +35,7 @@
                ng-repeat="project in $ctrl.getProjects() | orderBy: 'name' track by project.id"
                ng-value="project"
                md-truncate>
-      {{ project.name }}
+      <span>{{ project.name }}</span> <span class="normal-font-weight">({{ project.localizedState }})</span>
     </md-option>
   </md-select>
 </div>

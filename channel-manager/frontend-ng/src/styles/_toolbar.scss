@@ -91,6 +91,10 @@ md-toolbar.hippo-toolbar {
     md-icon {
       color: $text-dark;
     }
+
+    .normal-font-weight {
+      font-weight: normal;
+    }
   }
 
   .changes-button {
