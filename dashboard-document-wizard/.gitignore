@@ -1,6 +1,6 @@
 *.iml
-/.idea/
+.idea/
 .project/
 .settings
 target/
-/demo/storage/
+storage/

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,9 +55,8 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
 
     public class Dialog extends org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin.Dialog {
 
-        private static final long serialVersionUID = 1L;
         private static final String DOCUMENTFOLDERS_ROOTPATH = "/content/documents";
-        private String rootFolders;
+        private String rootFolder;
 
         public Dialog(final IPluginContext context, final IPluginConfig config, final Component parent) {
             super(context, config, parent);
@@ -66,8 +65,8 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
             add(new Label("channel-dropdown-label", getString("channel-dropdown-label")));
 
             // add root folder dropdown
-            rootFolders = "";
-            final PropertyModel<Object> propModel = new PropertyModel<>(this, "rootFolders");
+            rootFolder = "";
+            final PropertyModel<Object> propModel = new PropertyModel<>(this, "rootFolder");
             final ValueList documentRootFolderNames = getDocumentRootFolderNames();
             final IChoiceRenderer<Object> choiceRenderer = new ListChoiceRenderer(documentRootFolderNames);
             DropDownChoice<Object> rootFoldersField = new DropDownChoice<>("rootFolders", propModel, documentRootFolderNames, choiceRenderer);
@@ -98,7 +97,17 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
 
         @Override
         protected String getFolderPath() {
-            return DOCUMENTFOLDERS_ROOTPATH + "/" + rootFolders + "/" + baseFolder + list;
+            return DOCUMENTFOLDERS_ROOTPATH + "/" + rootFolder + "/" + baseFolder + list;
+        }
+
+        @Override
+        protected Node processNewDocumentNode(final Node documentNode) throws RepositoryException {
+
+            final Node docNode = super.processNewDocumentNode(documentNode);
+
+            // as demo, set a property with a value from the UI
+            docNode.setProperty("dashboarddocumentwizarddemo:rootfolder", rootFolder);
+            return docNode;
         }
     }
 
