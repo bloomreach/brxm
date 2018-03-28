@@ -74,7 +74,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-      <artifactId>hst-pagemodelapi-09</artifactId>
+      <artifactId>hst-pagemodelapi-v09</artifactId>
       <version>${project.version}</version>
     </dependency>
 
