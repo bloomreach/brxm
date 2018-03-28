@@ -19,10 +19,13 @@ import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
+import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
@@ -33,10 +36,9 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public class HtmlContentRewriter extends SimpleContentRewriter {
-    private final static Logger log =
-            LoggerFactory.getLogger(HtmlContentRewriter.class);
-    private HtmlCleaner htmlCleaner;
 
+    private final static Logger log = LoggerFactory.getLogger(HtmlContentRewriter.class);
+    private HtmlCleaner htmlCleaner;
 
     public HtmlContentRewriter(final HtmlCleaner htmlCleaner) {
         this.htmlCleaner = htmlCleaner;
@@ -71,9 +73,17 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
 
                     final HstLink hstLink = getDocumentLink(documentPath, node, requestContext, targetMount);
                     if (hstLink == null || hstLink.isNotFound() || hstLink.getPath() == null) {
-                        log.info("Could not create a link for '{}'", documentPath);
-                        // TODO should we remove the <a> element completely and only keep the text
-                        continue;
+                        if (isRemoveAnchorTagOfBrokenLink()) {
+                            log.info("Could not create a link for '{}'. Removing the anchor now maintaining the text.",
+                                    documentPath);
+
+                            final ContentNode textContent = new ContentNode(anchorTag.getText().toString());
+                            anchorTag.getParent().insertChildAfter(anchorTag, textContent);
+                            anchorTag.getParent().removeChild(anchorTag);
+                            continue;
+                        } else {
+                            log.info("Could not create a link for '{}'.", documentPath);
+                        }
                     }
                     String rewrittenHref = hstLink.toUrlForm(requestContext, false);
                     if (!isEmpty(documentPathQueryString)) {
@@ -127,6 +137,12 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
         }
         return null;
     }
+
+    private boolean isRemoveAnchorTagOfBrokenLink() {
+        final ContainerConfiguration config = HstServices.getComponentManager().getContainerConfiguration();
+        return config.getBoolean("pagemodelapi.v09.removeAnchorTagOfBrokenLink", true);
+    }
+
 
     private void setAttribute(TagNode tagNode, String attrName, String attrValue) {
         if (tagNode.hasAttribute(attrName)) {
