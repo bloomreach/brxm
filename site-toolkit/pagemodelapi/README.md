@@ -15,6 +15,12 @@ in the MVN 'pagemodelapi-v10'
     
 The reason for this is that older versions at some point will be removed. We do not want
 to loose the GIT revision history however of course
+
+After having done the above, make sure to change where needed the 09 version to 10. Lastly
+don't forget to bump the version in SpringComponentManager.properties in components/core to 
+the new version (assuming you want to bump the default to latest)
+
+     default.pagemodelapi.version
   
 Apart from the steps in this project, you might have to take similar steps in downstream
 (possibly enterprise) projects
