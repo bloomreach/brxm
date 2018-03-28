@@ -19,11 +19,11 @@ import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.site.HstServices;
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
@@ -31,7 +31,7 @@ import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
@@ -58,6 +58,9 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
             final TagNode rootNode = htmlCleaner.clean(html);
 
             final TagNode[] anchorTags = rootNode.getElementsByName("a", true);
+
+            final boolean removeAnchorTagOfBrokenLink = isRemoveAnchorTagOfBrokenLink();
+
             for (TagNode anchorTag : anchorTags) {
                 String documentPath = anchorTag.getAttributeByName("href");
                 if (StringUtils.isBlank(documentPath)) {
@@ -67,13 +70,13 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                     continue;
                 } else {
                     String documentPathQueryString = substringAfter(documentPath, "?");
-                    if (!isEmpty(documentPathQueryString)) {
+                    if (isNotEmpty(documentPathQueryString)) {
                         documentPath = substringBefore(documentPath, "?");
                     }
 
                     final HstLink hstLink = getDocumentLink(documentPath, node, requestContext, targetMount);
                     if (hstLink == null || hstLink.isNotFound() || hstLink.getPath() == null) {
-                        if (isRemoveAnchorTagOfBrokenLink()) {
+                        if (removeAnchorTagOfBrokenLink) {
                             log.info("Could not create a link for '{}'. Removing the anchor now maintaining the text.",
                                     documentPath);
 
@@ -86,7 +89,7 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                         }
                     }
                     String rewrittenHref = hstLink.toUrlForm(requestContext, false);
-                    if (!isEmpty(documentPathQueryString)) {
+                    if (isNotEmpty(documentPathQueryString)) {
                         if (rewrittenHref.contains("?")) {
                             rewrittenHref += "&" + documentPathQueryString;
                         } else {
@@ -124,7 +127,7 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
             }
 
             // everything is rewritten. Now write the "body" element as result
-            final TagNode[] targetNodes = rootNode.getElementsByName("body", true);
+            final TagNode[] targetNodes = rootNode.getElementsByName("body", false);
             if (targetNodes.length > 0) {
                 TagNode bodyNode = targetNodes[0];
                 return htmlCleaner.getInnerHtml(bodyNode);
