@@ -34,8 +34,6 @@ public class PageModelPipeline implements Pipeline {
 
     private final static String PAGE_MODEL_PIPELINE_REQUEST_ATTR = PageModelPipeline.class.getName() + ".pageModelPipeline";
 
-    public static final String REQUEST_PAGE_MODEL_API_VERSION_HEADER_NAME = "pageModelVersion";
-
     private String defaultPageModelApiVersion;
 
     private Map<String, Pipeline> pageModelApiPipelinesByVersion = new HashMap<>();
@@ -129,7 +127,7 @@ public class PageModelPipeline implements Pipeline {
         if (pipeline != null) {
             return pipeline;
         }
-        final String requestPageModelApiVersion = servletRequest.getHeader(REQUEST_PAGE_MODEL_API_VERSION_HEADER_NAME);
+        final String requestPageModelApiVersion = servletRequest.getHeader(ContainerConstants.PAGE_MODEL_API_VERSION);
         if (StringUtils.isEmpty(requestPageModelApiVersion)) {
             final Pipeline defaultPipeline = getDefaultPageModelPipeline();
             servletRequest.setAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR, defaultPipeline);
