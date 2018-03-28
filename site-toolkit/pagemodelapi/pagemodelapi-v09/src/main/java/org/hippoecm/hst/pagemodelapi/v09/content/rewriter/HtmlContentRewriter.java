@@ -64,9 +64,8 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                 if (isExternal(documentPath)) {
                     continue;
                 } else {
-                    String queryString = substringAfter(documentPath, "?");
-                    boolean hasQueryString = !isEmpty(queryString);
-                    if (hasQueryString) {
+                    String documentPathQueryString = substringAfter(documentPath, "?");
+                    if (!isEmpty(documentPathQueryString)) {
                         documentPath = substringBefore(documentPath, "?");
                     }
 
@@ -77,8 +76,12 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                         continue;
                     }
                     String rewrittenHref = hstLink.toUrlForm(requestContext, false);
-                    if (hasQueryString) {
-                        rewrittenHref += "?" + queryString;
+                    if (!isEmpty(documentPathQueryString)) {
+                        if (rewrittenHref.contains("?")) {
+                            rewrittenHref += "&" + documentPathQueryString;
+                        } else {
+                            rewrittenHref += "?" + documentPathQueryString;
+                        }
                     }
                     // override the href attr
                     setAttribute(anchorTag, "href", rewrittenHref);
