@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,39 +20,53 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>12.2.0-SNAPSHOT</version>
+    <version>12.3.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <groupId>org.onehippo.cms7.dashboard-document-wizard-demo</groupId>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
+
+    <!--***START temporary override of versions*** -->
+    <!-- ***END temporary override of versions*** -->
+
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
-    <commons.lang.version>2.6</commons.lang.version>
+    <xalan.version>2.7.2</xalan.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
+
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
+    <buildNumber>${maven.build.timestamp}</buildNumber>
   </properties>
 
   <repositories>
     <repository>
       <id>hippo</id>
-      <name>Hippo Maven 2</name>
+      <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
     </repository>
   </repositories>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+        <version>${essentials.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>${jsp-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
@@ -69,17 +83,38 @@
         <scope>runtime</scope>
       </dependency>
 
-      <!-- other predefined compile scope versioned dependencies -->
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons.lang.version}</version>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${xalan.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>serializer</artifactId>
+        <version>${xalan.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
+      <!-- other predefined compile scope versioned dependencies -->
       <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
@@ -94,6 +129,20 @@
         <configuration>
           <!-- don't deploy -->
           <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
@@ -118,6 +167,10 @@
 
     <profile>
       <id>cargo.run</id>
+      <properties>
+        <!--Already defined in hippo-cms-project POM. Override here for project, if necessary-->
+        <!--<repo.bootstrap>true</repo.bootstrap>-->
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -125,14 +178,16 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <configuration>
-                <properties>
-                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
-                </properties>
                 <configfiles>
                   <configfile>
                     <file>${project.basedir}/conf/context.xml</file>
                     <todir>conf/</todir>
                     <tofile>context.xml</tofile>
+                  </configfile>
+                  <configfile>
+                    <file>${project.basedir}/conf/catalina-logging.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>logging.properties</tofile>
                   </configfile>
                 </configfiles>
               </configuration>
@@ -155,8 +210,9 @@
               <container>
                 <systemProperties>
                   <log4j.configurationFile>file://${project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
-                  <!-- enables auto export: -->
+                  <!-- enables auto export and web files watch: -->
                   <project.basedir>${project.basedir}</project.basedir>
+                  <send.usage.statistics.to.hippo>false</send.usage.statistics.to.hippo>
                 </systemProperties>
               </container>
             </configuration>
