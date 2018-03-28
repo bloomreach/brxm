@@ -18,11 +18,12 @@ Build
      
 1. Build with testing
     
-    mvn clean install
+       mvn clean install
     
 2. Build with skipping tests
-    mvn clean install -DskipTests 
-    
+
+       mvn clean install -DskipTests 
+
 3. Build with Hippo Snapshot Repository Flag
       - Note: Mostly you do not need this when you check out and build a released version!
               Needed only when you build the TRUNK having snapshot dependencies!
@@ -36,6 +37,7 @@ Build
 
 Creating the mvn site with javadocs: type from the root
 -------------------------------------------------------
+
     mvn site
 
    All aggregated javadocs are generated in target/site/apidocs and all aggregated test javadocs are generated in target/site/testapidocs.
