@@ -104,11 +104,17 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private final List<MetadataDecorator> metadataDecorators = new ArrayList<>();
 
+    private int defaultMaxContentReferenceLevel;
+
     public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
         objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(
                 new HippoBeanModelsSerializerModifier(metadataDecorators)
         ));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
+    }
+
+    public void setDefaultMaxContentReferenceLevel(int defaultMaxContentReferenceLevel) {
+        this.defaultMaxContentReferenceLevel = defaultMaxContentReferenceLevel;
     }
 
     /**
@@ -178,7 +184,7 @@ public class PageModelAggregationValve extends AggregationValve {
             if (aggregatedPageModel.hasAnyContent()) {
                 final int maxRefLevel = NumberUtils.toInt(
                         requestContext.getServletRequest().getParameter(MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME),
-                        getDefaultMaxContentReferenceLevel());
+                        defaultMaxContentReferenceLevel);
                 final JsonNode contentNode = serializeContentMap(aggregatedPageModel.getContentMap(), maxRefLevel);
                 aggregatedPageModel.setContentNode(contentNode);
             }
@@ -194,11 +200,6 @@ public class PageModelAggregationValve extends AggregationValve {
             HippoBeanSerializationContext.clear();
             ContentSerializationContext.clear();
         }
-    }
-
-    private int getDefaultMaxContentReferenceLevel() {
-        final ContainerConfiguration config = HstServices.getComponentManager().getContainerConfiguration();
-        return config.getInt("pagemodelapi.v09.defaultMaxContentReferenceLevel", 1);
     }
 
     /**

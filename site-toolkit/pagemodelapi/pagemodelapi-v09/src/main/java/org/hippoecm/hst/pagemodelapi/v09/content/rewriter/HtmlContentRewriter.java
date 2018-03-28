@@ -38,10 +38,12 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 public class HtmlContentRewriter extends SimpleContentRewriter {
 
     private final static Logger log = LoggerFactory.getLogger(HtmlContentRewriter.class);
-    private HtmlCleaner htmlCleaner;
+    private final HtmlCleaner htmlCleaner;
+    private final boolean removeAnchorTagOfBrokenLink;
 
-    public HtmlContentRewriter(final HtmlCleaner htmlCleaner) {
+    public HtmlContentRewriter(final HtmlCleaner htmlCleaner, final boolean removeAnchorTagOfBrokenLink) {
         this.htmlCleaner = htmlCleaner;
+        this.removeAnchorTagOfBrokenLink = removeAnchorTagOfBrokenLink;
     }
 
 
@@ -58,8 +60,6 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
             final TagNode rootNode = htmlCleaner.clean(html);
 
             final TagNode[] anchorTags = rootNode.getElementsByName("a", true);
-
-            final boolean removeAnchorTagOfBrokenLink = isRemoveAnchorTagOfBrokenLink();
 
             for (TagNode anchorTag : anchorTags) {
                 String documentPath = anchorTag.getAttributeByName("href");
@@ -140,12 +140,6 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
         }
         return null;
     }
-
-    private boolean isRemoveAnchorTagOfBrokenLink() {
-        final ContainerConfiguration config = HstServices.getComponentManager().getContainerConfiguration();
-        return config.getBoolean("pagemodelapi.v09.removeAnchorTagOfBrokenLink", true);
-    }
-
 
     private void setAttribute(TagNode tagNode, String attrName, String attrValue) {
         if (tagNode.hasAttribute(attrName)) {
