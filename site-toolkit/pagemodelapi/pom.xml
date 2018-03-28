@@ -28,7 +28,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>pagemodelapi-09</module>
+    <module>pagemodelapi-v09</module>
   </modules>
   
 </project>

@@ -16,16 +16,13 @@
 
 package org.hippoecm.hst.core.container;
 
-import java.util.List;
-
-import org.hippoecm.hst.core.autoreload.AutoReloadResponseAppender;
-import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class SpringAggregationValveAssertionsIT extends AbstractTestConfigurations {
 
     @Test
@@ -38,25 +35,6 @@ public class SpringAggregationValveAssertionsIT extends AbstractTestConfiguratio
                 "List<ComponentWindowResponseAppender> because they need not share all appenders",
                 aggregationValve.getComponentWindowResponseAppenders() == selectiveRenderingAggregationValve.getComponentWindowResponseAppenders());
 
-        final AggregationValve pageModelAggregationValve = componentManager.getComponent("pageModelAggregationValve");
-
-        assertTrue("selectiveRenderingAggregationValve expected to have the same instance as pageModelAggregationValve " +
-                "for the List<ComponentWindowResponseAppender>",
-                selectiveRenderingAggregationValve.getComponentWindowResponseAppenders() == pageModelAggregationValve.getComponentWindowResponseAppenders());
-
-        assertTrue(containsAppender(aggregationValve.getComponentWindowResponseAppenders(), AutoReloadResponseAppender.class));
-        assertFalse(containsAppender(selectiveRenderingAggregationValve.getComponentWindowResponseAppenders(), AutoReloadResponseAppender.class));
-
     }
-
-    private boolean containsAppender(final List<ComponentWindowResponseAppender> componentWindowResponseAppenders, final Class<?> clazz) {
-        for (ComponentWindowResponseAppender appender : componentWindowResponseAppenders) {
-            if (appender.getClass().getName().equals(clazz.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
 }
