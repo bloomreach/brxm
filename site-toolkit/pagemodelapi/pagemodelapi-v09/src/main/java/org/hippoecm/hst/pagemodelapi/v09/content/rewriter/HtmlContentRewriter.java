@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.core.content;
+package org.hippoecm.hst.pagemodelapi.v09.content.rewriter;
 
 import javax.jcr.Node;
 

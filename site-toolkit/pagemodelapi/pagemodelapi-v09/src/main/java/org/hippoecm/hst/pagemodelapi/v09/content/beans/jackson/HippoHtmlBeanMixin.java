@@ -18,14 +18,25 @@ package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
-// TODO can be removed since custom serializer which doesn't use this any more...shall we remove this class?
+@JsonAppend(props = {
+        @JsonAppend.Prop(
+                name = "value",
+                value = HippoHtmlVirtualBeanPropertyWriter.class
+        )
+}
+)
 @JsonIdentityInfo(generator = ObjectIdGenerators.None.class)
 public interface HippoHtmlBeanMixin extends HippoHtmlBean, HippoBeanMixin {
 
-    @JsonProperty("value")
+    @JsonIgnore
+    @Override
+    String getRepresentationId();
+
+    @JsonIgnore()
     @Override
     String getContent();
 

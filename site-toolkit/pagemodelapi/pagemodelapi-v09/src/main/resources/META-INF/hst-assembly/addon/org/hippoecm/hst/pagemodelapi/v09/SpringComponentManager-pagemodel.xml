@@ -30,53 +30,57 @@
   <bean id="pageModelAggregationObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
   </bean>
 
-  <bean id="pageModelAggregationValve" parent="aggregationValve"
-        class="org.hippoecm.hst.pagemodelapi.v09.core.container.PageModelAggregationValve">
-    <constructor-arg ref="pageModelAggregationObjectMapper" />
-    <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins" />
+  <bean id="org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter"
+        class="org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter">
     <constructor-arg>
       <bean class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
     </constructor-arg>
+  </bean>
+
+  <bean id="pageModelAggregationValve" parent="aggregationValve"
+        class="org.hippoecm.hst.pagemodelapi.v09.core.container.PageModelAggregationValve">
+    <constructor-arg ref="pageModelAggregationObjectMapper"/>
+    <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins"/>
     <property name="valveName" value="pageModelAggregationValve"/>
-    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders" />
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
   </bean>
 
   <bean id="pageModelPipeline.v09" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="initializationValves">
       <list>
-        <ref bean="initializationValve" />
+        <ref bean="initializationValve"/>
         <ref bean="cmsSecurityValve"/>
       </list>
     </property>
     <property name="processingValves">
       <list>
-        <ref bean="securityValve" />
-        <ref bean="subjectBasedSessionValve" />
+        <ref bean="securityValve"/>
+        <ref bean="subjectBasedSessionValve"/>
         <ref bean="jcrSessionStatefulConcurrencyValve"/>
-        <ref bean="contextResolvingValve" />
-        <ref bean="localizationValve" />
-        <ref bean="pageInfoRenderingValve" />
+        <ref bean="contextResolvingValve"/>
+        <ref bean="localizationValve"/>
+        <ref bean="pageInfoRenderingValve"/>
         <ref bean="pageCachingValve"/>
-        <ref bean="componentRenderingValve" />
-        <ref bean="pageModelAggregationValve" />
+        <ref bean="componentRenderingValve"/>
+        <ref bean="pageModelAggregationValve"/>
       </list>
     </property>
     <property name="cleanupValves">
       <list>
-        <ref bean="diagnosticReportingValve" />
-        <ref bean="cleanupValve" />
+        <ref bean="diagnosticReportingValve"/>
+        <ref bean="cleanupValve"/>
       </list>
     </property>
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Void" />
-    <property name="targetObject" ref="org.hippoecm.hst.core.container.PageModelPipeline" />
+    <constructor-arg value="java.lang.Void"/>
+    <property name="targetObject" ref="org.hippoecm.hst.core.container.PageModelPipeline"/>
     <property name="targetMethod" value="addPageModelApiPipelineByVersion"/>
     <property name="arguments">
       <list>
         <value>0.9</value>
-        <ref bean="pageModelPipeline.v09" />
+        <ref bean="pageModelPipeline.v09"/>
       </list>
     </property>
   </bean>
