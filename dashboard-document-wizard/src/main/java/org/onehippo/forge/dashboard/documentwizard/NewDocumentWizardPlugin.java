@@ -537,7 +537,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
          * Hook to be able to modify a newly created document in a subclass, e.g. to set custom properties based on
          * custom UI parts.
          */
-        protected Node processNewDocumentNode(Node documentNode) {
+        protected Node processNewDocumentNode(Node documentNode) throws RepositoryException {
             return documentNode;
         }
     }
