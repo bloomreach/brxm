@@ -32,6 +32,10 @@ describe('DateValue', () => {
       expect(dateValue.toDateString()).not.toBeEmpty();
     });
 
+    it('sets seconds and milliseconds to zero, even if they are initialized', () => {
+      expect(dateValue.toDateString()).toBe('2018-03-12T08:01:00.000+01:00');
+    });
+
     it('with focus on minutes field gives minutes not zero padded', () => {
       dateValue.focusMinutes();
       expect(dateValue.minutes).toBe(1);
@@ -184,6 +188,12 @@ describe('DateValue', () => {
     it('gets populated when set minutes is called', () => {
       dateValue.minutes = 1;
       expect(dateValue.date).not.toBe(null);
+    });
+
+    it('sets seconds and milliseconds to zero when a new date is initialized', () => {
+      dateValue.setToNow();
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
     });
   });
 });

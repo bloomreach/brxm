@@ -37,6 +37,8 @@ class DateValue {
 
   _init(initMoment) {
     this.moment = initMoment;
+    this.moment.seconds(0);
+    this.moment.milliseconds(0);
     if (this.userTimeZone) {
       this.moment.tz(this.userTimeZone);
     }
