@@ -20,11 +20,9 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
-import org.hippoecm.hst.site.HstServices;
 import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -39,13 +37,16 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
 
     private final static Logger log = LoggerFactory.getLogger(HtmlContentRewriter.class);
     private final HtmlCleaner htmlCleaner;
-    private final boolean removeAnchorTagOfBrokenLink;
 
-    public HtmlContentRewriter(final HtmlCleaner htmlCleaner, final boolean removeAnchorTagOfBrokenLink) {
+    private boolean removeAnchorTagOfBrokenLink;
+
+    public HtmlContentRewriter(final HtmlCleaner htmlCleaner) {
         this.htmlCleaner = htmlCleaner;
-        this.removeAnchorTagOfBrokenLink = removeAnchorTagOfBrokenLink;
     }
 
+    public void setRemoveAnchorTagOfBrokenLink(boolean removeAnchorTagOfBrokenLink) {
+        this.removeAnchorTagOfBrokenLink = removeAnchorTagOfBrokenLink;
+    }
 
     @Override
     public String rewrite(final String html, final Node node,

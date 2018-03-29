@@ -35,7 +35,7 @@
     <constructor-arg>
       <bean class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
     </constructor-arg>
-    <constructor-arg value="${pagemodelapi.v09.removeAnchorTagOfBrokenLink}"/>
+    <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v09.removeAnchorTagOfBrokenLink}"/>
   </bean>
 
   <bean id="pageModelAggregationValve" parent="aggregationValve"
