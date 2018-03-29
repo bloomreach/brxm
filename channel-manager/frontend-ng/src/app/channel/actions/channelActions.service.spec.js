@@ -423,4 +423,24 @@ describe('ChannelActionsService', () => {
     delete ConfigService.projectsEnabled;
     delete ProjectService.selectedProject.state;
   });
+
+  it('shows a disabled accept menu item if a branch is selected for a project not in review', () => {
+    ConfigService.projectsEnabled = true;
+    spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(false);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('accept').isVisible()).toBeTruthy();
+    expect(getItem('accept').isEnabled()).toBe(false);
+    delete ConfigService.projectsEnabled;
+  });
+
+  it('shows an enabled accept menu item if a branch is selected for a project in review', () => {
+    ConfigService.projectsEnabled = true;
+    ProjectService.selectedProject.state = 'IN_REVIEW';
+    spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(true);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('accept').isVisible()).toBeTruthy();
+    expect(getItem('accept').isEnabled()).toBe(true);
+    delete ConfigService.projectsEnabled;
+    delete ProjectService.selectedProject.state;
+  });
 });

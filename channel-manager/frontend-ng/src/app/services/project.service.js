@@ -135,6 +135,23 @@ class ProjectService {
       && this._isActionEnabled('rejectChannel');
   }
 
+  isAcceptEnabled() {
+    return this.selectedProject
+      && this.selectedProject.state === 'IN_REVIEW'
+      && this._isActionEnabled('approveChannel');
+  }
+
+  accept(channelId) {
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
+    return this.$http
+      .post(url, channelId)
+      .then((project) => { this.selectedProject = project; })
+      .catch(() => {
+        this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
+        this._callListeners(this.updateListeners);
+      });
+  }
+
   _isActionEnabled(action) {
     const channelInfo = this.selectedProject.channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;

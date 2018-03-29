@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,6 +95,13 @@ class ChannelActionsService extends MenuService {
         isEnabled: () => this.ProjectService.isRejectEnabled(),
         onClick: () => this._reject(),
       })
+      .addAction('accept', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
+        iconName: 'done',
+        isVisible: () => this._isBranch(),
+        isEnabled: () => this.ProjectService.isAcceptEnabled(),
+        onClick: () => this._accept(),
+      })
       .addDivider()
       .addAction('delete', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
@@ -170,6 +177,10 @@ class ChannelActionsService extends MenuService {
   _reject() {
     // TODO (meggermont): Open reject dialog
     console.log(`TODO: open reject dialog for '${this.ProjectService.selectedProject.name}'`);
+  }
+
+  _accept() {
+    this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]).catch
   }
 
   _discardChanges() {
