@@ -16,8 +16,7 @@
 
 import pickerModule from './picker/picker';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
-import siteMenuEditorDirective from './siteMenuEditor.directive';
-import SiteMenuEditorCtrl from './siteMenuEditor.controller';
+import siteMenuEditorComponent from './siteMenuEditor.component';
 import uiTreeModule from './tree/tree';
 
 const siteMenuEditorModule = angular
@@ -26,8 +25,7 @@ const siteMenuEditorModule = angular
     pickerModule.name,
     uiTreeModule.name,
   ])
-  .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .directive('siteMenuEditor', siteMenuEditorDirective)
-  .controller('SiteMenuEditorCtrl', SiteMenuEditorCtrl);
+  .component('siteMenuEditor', siteMenuEditorComponent)
+  .directive('selectAllOnFocus', selectAllOnFocusDirective);
 
 export default siteMenuEditorModule;

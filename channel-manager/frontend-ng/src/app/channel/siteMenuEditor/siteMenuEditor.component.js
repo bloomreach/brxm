@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
+import controller from './siteMenuEditor.controller';
 import template from './siteMenuEditor.html';
 
-function siteMenuEditorDirective() {
-  'ngInject';
+const siteMenuEditorComponent = {
+  controller,
+  bindings: {
+    menuUuid: '@',
+    onDone: '&',
+    onError: '&',
+    onSuccess: '&',
+  },
+  template,
+};
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      menuUuid: '@',
-      onDone: '&',
-      onSuccess: '&',
-      onError: '&',
-    },
-    template,
-    controller: 'SiteMenuEditorCtrl',
-    controllerAs: '$ctrl',
-  };
-}
-
-export default siteMenuEditorDirective;
+export default siteMenuEditorComponent;
