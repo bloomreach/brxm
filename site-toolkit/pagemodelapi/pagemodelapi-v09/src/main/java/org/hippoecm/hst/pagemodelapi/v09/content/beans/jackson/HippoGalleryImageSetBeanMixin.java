@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -33,13 +31,5 @@ public interface HippoGalleryImageSetBeanMixin extends HippoGalleryImageSetBean,
     @JsonProperty
     @Override
     String getDescription();
-
-    @JsonIgnore
-    @Override
-    HippoGalleryImageBean getThumbnail();
-
-    @JsonIgnore
-    @Override
-    HippoGalleryImageBean getOriginal();
 
 }

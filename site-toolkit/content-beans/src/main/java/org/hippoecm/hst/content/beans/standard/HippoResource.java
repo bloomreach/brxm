@@ -40,19 +40,23 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
 
     public static final String MIME_TYPE_HIPPO_BLANK = "application/vnd.hippo.blank";
 
+    @Override
     public String getMimeType() {
         return getProperty("jcr:mimeType");
     }
 
+    @Override
     public String getFilename() {
         return getProperty(HippoNodeType.HIPPO_FILENAME);
     }
 
+    @Override
     public BigDecimal getLengthKB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8 , DIVISOR_K_BYTE);
     }
 
+    @Override
     public BigDecimal getLengthMB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8, DIVISOR_M_BYTE);
@@ -72,7 +76,7 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
         return new BigDecimal(size).divide(divisor);
     }
 
-
+    @Override
     public long getLength() {
         if (this.getNode() == null) {
             log.info("Cannot get length for detached node");

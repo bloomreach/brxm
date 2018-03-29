@@ -15,18 +15,53 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public interface HippoGalleryImageBeanMixin extends HippoGalleryImageBean, HippoBeanMixin {
+public interface HippoGalleryImageBeanMixin extends HippoBeanMixin, HippoGalleryImageBean {
 
-    @JsonProperty
+    @JsonIgnore
     @Override
-    int getHeight();
+    String getRepresentationId();
 
-    @JsonProperty
+    @JsonIgnore
     @Override
-    int getWidth();
+    String getName();
+
+    @JsonIgnore
+    @Override
+    String getDisplayName();
+
+    @JsonIgnore
+    @Override
+    String getMimeType();
+
+    @JsonIgnore
+    @Override
+    String getFilename();
+
+    @JsonIgnore
+    @Override
+    long getLength();
+
+    @JsonIgnore
+    @Override
+    BigDecimal getLengthKB();
+
+    @JsonIgnore
+    @Override
+    BigDecimal getLengthMB();
+
+    @JsonIgnore
+    @Override
+    Calendar getLastModified();
+
+    @JsonIgnore
+    @Override
+    boolean isBlank();
 
 }
