@@ -130,7 +130,9 @@ class ProjectService {
   }
 
   isRejectEnabled() {
-    return this.selectedProject && this._isEnabled('rejectChannel');
+    return this.selectedProject
+      && this.selectedProject.state === 'IN_REVIEW'
+      && this._isActionEnabled('rejectChannel');
   }
 
   _isActionEnabled(action) {
