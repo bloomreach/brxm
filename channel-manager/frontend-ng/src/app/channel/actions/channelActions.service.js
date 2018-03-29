@@ -180,7 +180,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _accept() {
-    this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]).catch
+    this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]);
   }
 
   _discardChanges() {
