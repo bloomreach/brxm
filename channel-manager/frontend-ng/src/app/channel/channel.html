@@ -126,12 +126,12 @@
                    on-done="channelCtrl.hideSubpage()">
 </change-management>
 
-<menu-editor layout="column"
+<site-menu-editor layout="column"
              flex
-             ng-if="channelCtrl.currentSubpage == 'menu-editor'"
+             ng-if="channelCtrl.currentSubpage == 'site-menu-editor'"
              menu-uuid="{{channelCtrl.menuUuid}}"
              on-done="channelCtrl.hideSubpage()"
              on-error="channelCtrl.onSubpageError(key, params)">
-</menu-editor>
+</site-menu-editor>
 
 <mask state="channelCtrl.isComponentsOverlayDisplayed"></mask>

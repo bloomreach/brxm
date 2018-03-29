@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import menuEditorDirective from './editor.directive';
-import selectAllOnFocusDirective from './selectAllOnFocus.directive';
-import MenuEditorCtrl from './editor.controller';
-import uiTreeModule from './tree/tree';
 import pickerModule from './picker/picker';
+import selectAllOnFocusDirective from './selectAllOnFocus.directive';
+import siteMenuEditorDirective from './siteMenuEditor.directive';
+import SiteMenuEditorCtrl from './siteMenuEditor.controller';
+import uiTreeModule from './tree/tree';
 
-const channelSitemenuModule = angular
-  .module('hippo-cm.channel.sitemenu', [
-    uiTreeModule.name,
-    pickerModule.name,
+const siteMenuEditorModule = angular
+  .module('hippo-cm.channel.siteMenuEditor', [
     'focus-if',
+    pickerModule.name,
+    uiTreeModule.name,
   ])
-  .directive('menuEditor', menuEditorDirective)
   .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  .directive('siteMenuEditor', siteMenuEditorDirective)
+  .controller('SiteMenuEditorCtrl', SiteMenuEditorCtrl);
 
-export default channelSitemenuModule;
+export default siteMenuEditorModule;

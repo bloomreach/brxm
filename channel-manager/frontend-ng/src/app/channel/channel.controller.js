@@ -106,7 +106,7 @@ class ChannelCtrl {
 
   editMenu(menuUuid) {
     this.menuUuid = menuUuid;
-    this.showSubpage('menu-editor');
+    this.showSubpage('site-menu-editor');
   }
 
   getRenderVariant() {
