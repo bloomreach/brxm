@@ -109,7 +109,7 @@ class ProjectService {
         this._getChannels(),
       ])
       .then(() => {
-        const selectedProject = this.projects.find(project => project.id === this.projectId);
+        const selectedProject = this.allProjects.find(project => project.id === this.projectId);
         this.selectedProject = selectedProject;
         return this.selectedProject ? this._selectProject(this.selectedProject.id) : this._selectCore();
       });
@@ -118,22 +118,24 @@ class ProjectService {
   isContentOverlayEnabled() {
     // For now, to prevent all kinds of corner cases, we only enable the content overlay
     // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.selectedProject
-      || this.selectedProject.state === 'UNAPPROVED';
+    return !this.selectedProject || this.selectedProject.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
     return !this.selectedProject
       || this.selectedProject.state === 'UNAPPROVED'
-      || (this.selectedProject.state === 'IN_REVIEW' && this._isResetChannelEnabled());
-  }
-
-  _isResetChannelEnabled() {
-    const projectInfo = this.allProjects.find(p => p.id === this.selectedProject.id);
-    const channelInfo = projectInfo.channels.find(c => c.mountId === this.mountId);
+      || (this.selectedProject.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
     // The action resetChannel puts a channel back into review.
     // It is only enabled if a channel has been rejected and the project is in review.
-    return channelInfo.actions.resetChannel.enabled;
+  }
+
+  isRejectEnabled() {
+    return this.selectedProject && this._isEnabled('rejectChannel');
+  }
+
+  _isActionEnabled(action) {
+    const channelInfo = this.selectedProject.channels.find(c => c.mountId === this.mountId);
+    return channelInfo && channelInfo.actions[action].enabled;
   }
 
   _getProjects() {
