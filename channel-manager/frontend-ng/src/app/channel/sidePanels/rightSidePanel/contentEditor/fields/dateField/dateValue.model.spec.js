@@ -33,7 +33,8 @@ describe('DateValue', () => {
     });
 
     it('sets seconds and milliseconds to zero, even if they are initialized', () => {
-      expect(dateValue.toDateString()).toBe('2018-03-12T08:01:00.000+01:00');
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
     });
 
     it('with focus on minutes field gives minutes not zero padded', () => {
@@ -86,10 +87,10 @@ describe('DateValue', () => {
     });
 
     it('initializes the JavaScript date correctly for a non English locale', () => {
-      const dateValue = new DateValue('');
+      const dateValueNew = new DateValue('');
       const germanMoment = moment().locale('de');
-      dateValue._init(germanMoment);
-      expect(dateValue.jsDate.getTime()).not.toBeNaN();
+      dateValueNew._init(germanMoment);
+      expect(dateValueNew.jsDate.getTime()).not.toBeNaN();
     });
   });
 
