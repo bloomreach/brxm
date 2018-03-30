@@ -56,8 +56,8 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-io.version>2.5</commons-io.version>
 
-    <httpcomponents-httpcore.version>4.4.6</httpcomponents-httpcore.version>
-    <httpcomponents-httpclient.version>4.5.3</httpcomponents-httpclient.version>
+    <httpcomponents-httpcore.version>4.4.9</httpcomponents-httpcore.version>
+    <httpcomponents-httpclient.version>4.5.5</httpcomponents-httpclient.version>
 
     <spring.security.version>4.0.4.RELEASE</spring.security.version>
     <spring-security-jwt.version>1.0.4.RELEASE</spring-security-jwt.version>
