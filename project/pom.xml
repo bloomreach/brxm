@@ -165,15 +165,15 @@
   <!-- Where to publish the project data -->
   <distributionManagement>
     <repository>
-      <name>Hippo Maven 2 Repository</name>
-      <id>hippo-maven2</id>
-      <url>https://maven.onehippo.com/content/repositories/releases/</url>
+      <name>Hippo Maven 2 Enterprise Repository</name>
+      <id>hippo-maven2-enterprise</id>
+      <url>https://maven.onehippo.com/content/repositories/enterprise-releases/</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2 Snapshots Repository</name>
-      <url>https://maven.onehippo.com/content/repositories/snapshots/</url>
+      <name>Hippo Maven 2 Enterprise Snapshots</name>
+      <id>hippo-maven2-enterprise-snapshots</id>
+      <url>https://maven.onehippo.com/content/repositories/enterprise-snapshots/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
