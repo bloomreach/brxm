@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,9 +23,27 @@
     <version>4.3.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Test Suite Site Resources</name>
-  <description>Hippo Test Suite Site Resources</description>
-  <artifactId>hippo-testsuite-site-resources</artifactId>
+  <name>Hippo Test Suite API Docs</name>
+  <description>Hippo Test Suite API Docs</description>
+  <artifactId>hippo-testsuite-api-docs</artifactId>
   <packaging>war</packaging>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>webjars-servlet-2.x</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>api-docs</finalName>
+  </build>
 
 </project>

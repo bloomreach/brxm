@@ -14,3 +14,9 @@ definitions:
           hst:componentclassname: org.hippoecm.hst.demo.components.Block
           hst:template: block
           hst:xtype: HST.Item
+        /springBlock:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: springBlock
+          hst:parametersinfoclassname: org.hippoecm.hst.demo.components.BlockInfo
+          hst:template: block
+          hst:xtype: HST.Item

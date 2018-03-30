@@ -1,9 +1,7 @@
 definitions:
   config:
     /hst:hst/hst:hosts:
-      jcr:primaryType: hst:virtualhosts
       hst:cmspreviewprefix: _testsuiteExamplePrefix
-      hst:defaultcontextpath: /site
       hst:defaulthostname: localhost
       hst:diagnosticsenabled: false
       hst:homepage: home
@@ -89,6 +87,8 @@ definitions:
               hst:ismapped: true
               hst:nochannelinfo: true
               hst:namedpipeline: JaxrsRestPlainPipeline
+              hst:parameternames: [rest.product.siteLinkIncluded, rest.product.nodeLinkIncluded, rest.product.sortFields]
+              hst:parametervalues: ['true', 'true', 'demosite:product,-demosite:price']
               hst:types: rest
             /preview:
               jcr:primaryType: hst:mount

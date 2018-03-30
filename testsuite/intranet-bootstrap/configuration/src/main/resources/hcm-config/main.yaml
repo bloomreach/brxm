@@ -14,3 +14,5 @@ definitions:
         operation: add
         type: string
         value: [intranetpreviewuser]
+    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
+      watchedModules: [intranet-bootstrap/webfiles]

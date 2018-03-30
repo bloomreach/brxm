@@ -1,11 +1,4 @@
 definitions:
   config:
     /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
-      autoexport:enabled:
-        operation: override
-        type: boolean
-        value: false
-      autoexport:modules:
-        operation: add
-        type: string
-        value: ['intranet-bootstrap/content:/content/documents/intranet', 'intranet-bootstrap/configuration:/hippo:namespaces/intranet']
+      autoexport:enabled: false

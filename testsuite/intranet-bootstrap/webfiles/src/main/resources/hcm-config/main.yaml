@@ -1,5 +1,2 @@
 definitions:
-  config:
-    /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
-      watchedModules: [intranet-bootstrap/webfiles]
   webfilebundle: intranet
