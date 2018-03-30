@@ -99,6 +99,29 @@ class HippoIframeCtrl {
   }
 
   onLoad() {
+    const spa = this.iframeJQueryElement[0].contentWindow.SPA;
+
+    if (spa) {
+      this._initSinglePageApplication(spa);
+    } else {
+      this._analyzePage();
+    }
+  }
+
+  _initSinglePageApplication(spa) {
+    const publicApi = {
+      analyzePage: () => {
+        this._analyzePage();
+      },
+    };
+    try {
+      spa.init(publicApi);
+    } catch (error) {
+      console.error('Failed to initialize Single Page Application', error);
+    }
+  }
+
+  _analyzePage() {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
