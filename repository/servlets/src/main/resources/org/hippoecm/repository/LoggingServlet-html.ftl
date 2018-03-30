@@ -192,7 +192,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
     <div class="filter">
         <p>Filter loggers which contain:</p>
         <form action="#" method="get">
-            <input id="filter" type="search" value="net.sf.ehcache" name="query"/>
+            <input id="filter" type="search" value="" name="query"/>
             <a class="button" onclick="filter(document.getElementById('filter').value)">Filter</a>
         </form>
 
