@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,17 +34,21 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
+import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class NodePickerController implements IDetachable {
-    private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(NodePickerController.class);
+    private static final Logger log = LoggerFactory.getLogger(NodePickerController.class);
 
     private static final String LAST_VISITED = "last.visited";
+    private static final String ROOT_PATH = "root.path";
+    private static final String ROOT_PATHS = "root.paths";
+    private static final String STRICT_ROOT_PATH = "strict.root.path";
 
     private final IPluginContext context;
     private final NodePickerControllerSettings settings;
@@ -62,46 +66,45 @@ public abstract class NodePickerController implements IDetachable {
     private IModel<Node> lastModelVisited;
     private IModel<Node> baseModel;
 
-    public NodePickerController(IPluginContext context, NodePickerControllerSettings settings) {
+    public NodePickerController(final IPluginContext context, final NodePickerControllerSettings settings) {
         this.context = context;
         this.settings = settings;
 
         if (settings.isLastVisitedEnabled()) {
-           lastModelVisited = getLastVisitedFromPreferences();
+            lastModelVisited = getLastVisitedFromPreferences();
         }
         if (settings.hasBaseUUID()) {
-            String baseUUID = settings.getBaseUUID();
+            final String baseUUID = settings.getBaseUUID();
             try {
-                Node baseNode = UserSession.get().getJcrSession().getNodeByIdentifier(baseUUID);
+                final Node baseNode = UserSession.get().getJcrSession().getNodeByIdentifier(baseUUID);
                 baseModel = new JcrNodeModel(baseNode);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error("Could not create base model from UUID[" + baseUUID + "]", e);
             }
         }
     }
 
     public Component create(final String id) {
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+        final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
 
         final IClusterConfig template = pluginConfigService.getCluster(settings.getClusterName());
         final IPluginConfig parameters = settings.getClusterOptions();
-        control = context.newCluster(template, parameters);
 
+        control = context.newCluster(template, parameters);
         control.start();
 
-        IClusterConfig clusterConfig = control.getClusterConfig();
+        final IClusterConfig clusterConfig = control.getClusterConfig();
 
         final String selectionModelServiceId = clusterConfig.getString(settings.getSelectionServiceKey());
         selectionModelReference = context.getService(selectionModelServiceId, IModelReference.class);
         context.registerService(selectionModelObserver = new IObserver() {
-            private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return selectionModelReference;
             }
 
-            public void onEvent(Iterator events) {
+            public void onEvent(final Iterator events) {
                 setSelectedModel(selectionModelReference.getModel());
             }
 
@@ -116,18 +119,18 @@ public abstract class NodePickerController implements IDetachable {
                     return folderModelReference;
                 }
 
-                public void onEvent(Iterator events) {
+                public void onEvent(final Iterator events) {
                     setSelectedFolder(folderModelReference.getModel());
                 }
             }, IObserver.class.getName());
         }
 
-        renderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
+        renderer = context.getService(clusterConfig.getString(AbstractRenderService.WICKET_ID), IRenderService.class);
         renderer.bind(null, id);
         return renderer.getComponent();
     }
 
-    public void setSelectedFolder(final IModel<Node> model){
+    public void setSelectedFolder(final IModel<Node> model) {
         selectionModelReference.setModel(model);
         setSelectedModel(model);
         onFolderSelected(model);
@@ -145,18 +148,18 @@ public abstract class NodePickerController implements IDetachable {
      * TODO: We should try and see if the last-visited model is visible in the browser, if not, go on to default model
      **/
     public void initSelection() {
-        IModel<Node> initialModel = getInitialModel();
-        if(isValidSelection(initialModel)) {
+        final IModel<Node> initialModel = getInitialModel();
+        if (isValidSelection(initialModel)) {
             selectionModelReference.setModel(initialModel);
             return;
         }
 
-        if(settings.isLastVisitedEnabled() && lastModelVisited != null) {
+        if (settings.isLastVisitedEnabled() && lastModelVisited != null) {
             selectionModelReference.setModel(lastModelVisited);
             return;
         }
 
-        IModel<Node> defaultModel = getBaseModel();
+        final IModel<Node> defaultModel = getBaseModel();
         if (defaultModel != null) {
             selectionModelReference.setModel(defaultModel);
             return;
@@ -174,7 +177,7 @@ public abstract class NodePickerController implements IDetachable {
         return baseModel;
     }
 
-    private void setSelectedModel(IModel<Node> model) {
+    private void setSelectedModel(final IModel<Node> model) {
         selectedModel = model;
 
         onSelect(isValidSelection(model));
@@ -200,7 +203,7 @@ public abstract class NodePickerController implements IDetachable {
      *
      * @param isValid If the model is considered a valid selection model, value will be true, otherwise false.
      */
-    protected void onSelect(boolean isValid) {
+    protected void onSelect(final boolean isValid) {
     }
 
     /**
@@ -210,17 +213,17 @@ public abstract class NodePickerController implements IDetachable {
      * @param targetModel The model providing the node to be validated.
      * @return If the provided node is a valid dialog selection.
      */
-    protected boolean isValidSelection(IModel<Node> targetModel) {
+    protected boolean isValidSelection(final IModel<Node> targetModel) {
         if (targetModel == null) {
             return false;
         }
 
-        Node targetNode = targetModel.getObject();
+        final Node targetNode = targetModel.getObject();
 
         if (targetNode != null) {
             try {
                 return isValidNodeType(targetNode) && isLinkable(targetNode);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error(e.getMessage());
             }
         }
@@ -235,9 +238,9 @@ public abstract class NodePickerController implements IDetachable {
      * @return If this node is linkable
      * @throws RepositoryException Something went wrong in the repository
      */
-    protected boolean isLinkable(Node node) throws RepositoryException {
+    protected boolean isLinkable(final Node node) throws RepositoryException {
         // do not enable linking to not referenceable nodes
-        if (!node.isNodeType("mix:referenceable")) {
+        if (!node.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             return false;
         }
         // do not enable linking to hippo documents below hippo handle
@@ -271,8 +274,8 @@ public abstract class NodePickerController implements IDetachable {
             }
         }
 
-        if(settings.hasSelectableNodeTypes()) {
-            for (String allowedNodeType : settings.getSelectableNodeTypes()) {
+        if (settings.hasSelectableNodeTypes()) {
+            for (final String allowedNodeType : settings.getSelectableNodeTypes()) {
                 if (node.isNodeType(allowedNodeType)) {
                     return true;
                 }
@@ -326,8 +329,8 @@ public abstract class NodePickerController implements IDetachable {
      * @return A new JcrNodeModel pointing to the last visited location (a node path) or null
      */
     protected IModel<Node> getLastVisitedFromPreferences() {
-        IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
-        String lastVisited = store.getString(settings.getLastVisitedKey(), LAST_VISITED);
+        final IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+        final String lastVisited = store.getString(settings.getLastVisitedKey(), LAST_VISITED);
         if (lastVisited != null) {
             return new JcrNodeModel(lastVisited);
         }
@@ -344,20 +347,21 @@ public abstract class NodePickerController implements IDetachable {
         if (lastModelVisited != null && lastModelVisited.getObject() != null) {
             try {
                 Node node = lastModelVisited.getObject();
+                final Node parent = node.getParent();
                 if (settings.hasLastVisitedNodeTypes()) {
-                    Node root = UserSession.get().getJcrSession().getRootNode();
+                    final Node root = UserSession.get().getJcrSession().getRootNode();
                     while (!node.isSame(root)) {
-                        for (String nodeType : settings.getLastVisitedNodeTypes()) {
+                        for (final String nodeType : settings.getLastVisitedNodeTypes()) {
                             if (node.isNodeType(nodeType)) {
                                 storeLastVisited(node.getPath());
                                 return;
                             }
                         }
-                        node = node.getParent();
+                        node = parent;
                     }
                 } else {
-                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        node = node.getParent().getParent();
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = parent.getParent();
                     }
 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -365,19 +369,19 @@ public abstract class NodePickerController implements IDetachable {
                             //deleted
                             return;
                         }
-                        node = node.getParent();
+                        node = parent;
                     }
                     storeLastVisited(node.getPath());
                 }
 
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.warn("Could not save last-node-path-visited in preferences store");
             }
         }
     }
 
-    private void storeLastVisited(String path) {
-        IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+    private void storeLastVisited(final String path) {
+        final IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
         store.set(settings.getLastVisitedKey(), LAST_VISITED, path);
     }
 
@@ -393,11 +397,27 @@ public abstract class NodePickerController implements IDetachable {
         return null;
     }
 
-    public String[] getRootPaths() {
+    public String getRootPath() {
         if (control != null) {
-            IClusterConfig clusterConfig = control.getClusterConfig();
-            return clusterConfig.getStringArray("root.paths");
+            final IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getString(ROOT_PATH);
         }
         return null;
+    }
+
+    public String[] getRootPaths() {
+        if (control != null) {
+            final IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getStringArray(ROOT_PATHS);
+        }
+        return null;
+    }
+
+    public boolean isStrictRootPath() {
+        if (control != null) {
+            final IClusterConfig clusterConfig = control.getClusterConfig();
+            return clusterConfig.getBoolean(STRICT_ROOT_PATH);
+        }
+        return false;
     }
 }

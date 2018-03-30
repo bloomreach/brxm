@@ -32,15 +32,26 @@
         <td class="general-name">UUID: </td>
         <td><span wicket:id="uuid"/></td>
       </tr>
+      <tr>
+        <td><span class="icon fa fa-arrow-circle-o-up" /></td>
+        <td class="general-name">HCM Origin: </td>
+        <td><div wicket:id="origin"/></td>
+      </tr>
     </table>
     <h3 wicket:id="toggle-header-1">[Types]</h3>
     <table class="editor-types-table" id="toggle-box-1" style="display:block;">
       <tr class="type-primary">
         <td class="type-name">Primary: </td>
+        <td>
+          <span class="icon fa fa-arrow-circle-o-up" wicket:id="primarytypeorigin"/>
+        </td>
         <td class="type-value"><span wicket:id="primarytype"/></td>
       </tr>
       <tr class="type-mixin">
         <td class="type-name">Mixin: </td>
+        <td>
+          <span class="icon fa fa-arrow-circle-o-up" wicket:id="mixintypesorigin"/>
+        </td>
         <td class="type-value"><span wicket:id="types"/></td>
       </tr>
     </table>
@@ -54,6 +65,7 @@
             <span class="property-namespace" wicket:id="namespace">namespace</span><span class="property-name" wicket:id="name">Property name</span>
             &nbsp;
             <span wicket:id="type" class="property-type">Property type</span>
+            <span class="icon fa fa-arrow-circle-o-up" wicket:id="origin"/>
             <a wicket:id="delete">
               <span class="remove-icon fa fa-times"/>
             </a>

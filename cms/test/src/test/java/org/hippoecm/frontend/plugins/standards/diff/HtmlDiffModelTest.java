@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,22 +17,14 @@ package org.hippoecm.frontend.plugins.standards.diff;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.StringReader;
-
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.PluginPage;
+import org.htmlcleaner.HtmlCleaner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.outerj.daisy.diff.helper.NekoHtmlParser;
-import org.outerj.daisy.diff.helper.SaxBuffer;
-import org.outerj.daisy.diff.helper.SaxBuffer.SaxBit;
-import org.outerj.daisy.diff.helper.SaxBuffer.StartElement;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class HtmlDiffModelTest {
 
@@ -50,35 +42,23 @@ public class HtmlDiffModelTest {
         tester = null;
     }
     
-    static int countImages(String content) throws IOException, SAXException {
-        int count = 0;
-        NekoHtmlParser parser = new NekoHtmlParser();
-        InputSource source = new InputSource();
-        source.setCharacterStream(new StringReader(content));
-        SaxBuffer buffer = parser.parse(source);
-        for (SaxBit bit : buffer.getBits()) {
-            if (bit instanceof StartElement) {
-                if ("img".equals(((StartElement) bit).localName)) {
-                    count++;
-                }
-            }
-        }
-        return count;
+    static int countImages(String content) {
+        return new HtmlCleaner().clean(content).getElementsByName("img", true).length;
     }
 
     @Test
-    public void removedImageIsShown() throws Exception {
-        IModel<String> oldModel = new Model<String>("<html><body><img src=\"a\">abc</img></body></html>");
-        IModel<String> newModel = new Model<String>("<html><body></body></html>");
+    public void removedImageIsShown() {
+        IModel<String> oldModel = new Model<>("<html><body><img src=\"a\">abc</img></body></html>");
+        IModel<String> newModel = new Model<>("<html><body></body></html>");
         HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
         String content = dm.getObject();
         assertEquals(1, countImages(content));
     }
 
     @Test
-    public void addedImageIsShownOnce() throws Exception {
-        IModel<String> oldModel = new Model<String>("<html><body></body></html>");
-        IModel<String> newModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
+    public void addedImageIsShownOnce() {
+        IModel<String> oldModel = new Model<>("<html><body></body></html>");
+        IModel<String> newModel = new Model<>("<html><body><img src=\"a\" /></body></html>");
         HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
 
         String content = dm.getObject();
@@ -86,9 +66,9 @@ public class HtmlDiffModelTest {
     }
 
     @Test
-    public void constantImageIsShownOnce() throws Exception {
-        IModel<String> oldModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
-        IModel<String> newModel = new Model<String>("<html><body><img src=\"a\" /></body></html>");
+    public void constantImageIsShownOnce() {
+        IModel<String> oldModel = new Model<>("<html><body><img src=\"a\" /></body></html>");
+        IModel<String> newModel = new Model<>("<html><body><img src=\"a\" /></body></html>");
         HtmlDiffModel dm = new HtmlDiffModel(oldModel, newModel);
 
         String content = dm.getObject();

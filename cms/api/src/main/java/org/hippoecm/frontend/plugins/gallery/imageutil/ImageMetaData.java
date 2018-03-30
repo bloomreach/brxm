@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.sanselan.ImageInfo;
@@ -31,7 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.StreamReader;
 
 /**
  * Provides meta-data about an image: its color model, MIME type, and file name.
@@ -109,8 +114,10 @@ public class ImageMetaData implements IClusterable {
 
     private boolean isYCCK(final ReusableInputStream ris) throws IOException {
         try {
-            JpegSegmentReader reader = new JpegSegmentReader(ris, false);
-            byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
+            Set<JpegSegmentType> segmentTypes = new HashSet<>();
+            segmentTypes.add(JpegSegmentType.APPE);
+            JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(ris), segmentTypes);
+            byte[] appe = segmentData.getSegment(JpegSegmentType.APPE);
             return appe != null && appe[11] == 2;
         } catch (JpegProcessingException e1) {
             log.warn("Unable to read color space", e1);

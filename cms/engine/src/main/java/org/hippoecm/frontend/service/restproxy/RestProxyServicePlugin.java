@@ -31,6 +31,10 @@ import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.ProxyFactory;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.jaxrs.client.Client;
+import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -39,21 +43,24 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.service.restproxy.custom.json.deserializers.AnnotationJsonDeserializer;
+import org.hippoecm.frontend.service.restproxy.logging.RestProxyLoggingInInterceptor;
+import org.hippoecm.frontend.service.restproxy.logging.RestProxyLoggingOutInterceptor;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.cms7.services.cmscontext.CmsContextService;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
@@ -107,7 +114,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         } else {
             log.info("No context path set. #getContextPath will return null");
         }
-
 
         final String serviceId = config.getString(CONFIG_SERVICE_ID, DEFAULT_SERVICE_ID);
         log.info("Registering this service under id '{}'", serviceId);
@@ -201,11 +207,16 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         }
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource
-        WebClient.client(clientProxy)
-                .header(HEADER_CMS_CONTEXT_SERVICE_ID, cmsSessionContext.getCmsContextServiceId())
+        final Client client = WebClient.client(clientProxy);
+        client.header(HEADER_CMS_CONTEXT_SERVICE_ID, cmsSessionContext.getCmsContextServiceId())
                 .header(HEADER_CMS_SESSION_CONTEXT_ID, cmsSessionContext.getId())
                 .header(CMSREST_CMSHOST_HEADER, RequestUtils.getFarthestRequestHost(httpServletRequest))
                 .accept(MediaType.WILDCARD_TYPE);
+ 
+        // Enabling CXF logging from client-side
+        ClientConfiguration config = WebClient.getConfig(client);
+        config.getInInterceptors().add(new RestProxyLoggingInInterceptor());
+        config.getOutInterceptors().add(new RestProxyLoggingOutInterceptor());
 
         // default time out is 60000 ms;
 

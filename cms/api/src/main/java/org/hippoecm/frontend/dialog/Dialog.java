@@ -19,13 +19,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-public class Dialog<T> extends AbstractDialog<T> {
+public class Dialog<ModelType> extends AbstractDialog<ModelType> {
 
     public static final String BOTTOM_LEFT_ID = "bottom-left";
 
@@ -37,11 +40,14 @@ public class Dialog<T> extends AbstractDialog<T> {
     private IModel<?> titleModel;
     private IModel<String> title;
 
+    private ScriptAction<ModelType> cancelAction;
+    private ScriptAction<ModelType> closeAction;
+
     public Dialog() {
         this(null);
     }
 
-    public Dialog(final IModel<T> model) {
+    public Dialog(final IModel<ModelType> model) {
         super(model);
 
         setButtonCssClass("btn btn-default");
@@ -94,6 +100,29 @@ public class Dialog<T> extends AbstractDialog<T> {
 
     protected void setCssClass(final String cssClass) {
         this.cssClass = cssClass;
+    }
+
+    protected void setCancelAction(final ScriptAction<ModelType> cancelAction) {
+        this.cancelAction = cancelAction;
+    }
+
+    protected void setCloseAction(final ScriptAction<ModelType> closeAction) {
+        this.closeAction = closeAction;
+    }
+
+    @Override
+    public void onClose() {
+        final ScriptAction<ModelType> action = cancelled ? cancelAction : closeAction;
+        if (action != null) {
+            final String script = action.getJavaScript(getModelObject());
+            if (StringUtils.isNotBlank(script)) {
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (target != null) {
+                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(script));
+                }
+            }
+        }
+        super.onClose();
     }
 
     @Override

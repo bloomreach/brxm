@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,8 +23,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
 
+/**
+ * @deprecated Please use {@link DialogManager} instead.
+ */
+@Deprecated
 public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMap> extends Dialog<T> {
 
     private RichTextEditorAction<T> cancelAction;

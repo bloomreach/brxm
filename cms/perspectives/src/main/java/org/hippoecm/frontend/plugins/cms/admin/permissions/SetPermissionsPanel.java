@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.markup.html.basic.Label;
@@ -105,6 +106,11 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                     log.error("Failed to add permission", e);
                 }
             }
+
+            @Override
+            public boolean isEnabled() {
+                return selectedGroup != null && selectedRole != null;
+            }
         };
         hippoForm.add(submit);
 
@@ -112,14 +118,24 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         final DropDownChoice<String> roleChoice = new DropDownChoice<>("roles-select",
                 new PropertyModel<>(this, "selectedRole"), allRoles);
         roleChoice.setNullValid(false);
-        roleChoice.setRequired(true);
+        roleChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                target.add(submit);
+            }
+        });
         hippoForm.add(roleChoice);
 
         final List<Group> allGroups = Group.getAllGroups();
         final DropDownChoice<Group> groupChoice = new DropDownChoice<>("groups-select",
                 new PropertyModel<>(this, "selectedGroup"), allGroups, new ChoiceRenderer<>("groupname"));
         groupChoice.setNullValid(false);
-        groupChoice.setRequired(true);
+        groupChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            @Override
+            protected void onUpdate(final AjaxRequestTarget target) {
+                target.add(submit);
+            }
+        });
         hippoForm.add(groupChoice);
 
         add(hippoForm);

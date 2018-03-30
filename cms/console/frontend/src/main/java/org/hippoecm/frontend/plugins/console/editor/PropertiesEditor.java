@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,11 +35,27 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.plugins.console.behavior.OriginTitleBehavior;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.definition.ContentDefinition;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ConfigurationNode;
+import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.ModelItem;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.joining;
+import static org.onehippo.cm.model.util.ConfigurationModelUtils.getCategoryForNode;
+import static org.onehippo.cm.model.util.ConfigurationModelUtils.getCategoryForProperty;
 
 public class PropertiesEditor extends DataView<Property> {
 
@@ -48,6 +64,8 @@ public class PropertiesEditor extends DataView<Property> {
     static final Logger log = LoggerFactory.getLogger(PropertiesEditor.class);
 
     private String namespacePrefix;
+    // the (transient, not serializable) HCM ConfigurationService, which is repo-static, but not the model, which can be updated
+    private transient ConfigurationService cfgService;
 
     public PropertiesEditor(String id, IDataProvider<Property> model) {
         super(id, model);
@@ -61,6 +79,19 @@ public class PropertiesEditor extends DataView<Property> {
         } else {
             namespacePrefix = namespace + ":";
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        cfgService = null;
+    }
+
+    private ConfigurationService getConfigurationService() {
+        if (cfgService == null) {
+            cfgService = HippoServiceRegistry.getService(ConfigurationService.class);
+        }
+        return cfgService;
     }
 
     @Override
@@ -91,9 +122,78 @@ public class PropertiesEditor extends DataView<Property> {
 
             PropertyDefinition definition = model.getProperty().getDefinition();
             addLink.setVisible(definition.isMultiple() && !definition.isProtected());
+
+            // HCM config-tracing info
+            final ConfigurationModel cfgModel = getConfigurationService().getRuntimeConfigurationModel();
+            String origin = getPropertyOrigin(model.getProperty().getPath(), cfgModel);
+            item.add(new Label("origin", "").add(new OriginTitleBehavior(Model.of(origin))));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
+    }
+
+    public static String getPropertyOrigin(final String propertyPath, final ConfigurationModel cfgModel) {
+        String nodePath = StringUtils.substringBeforeLast(propertyPath, "/");
+        if (nodePath.equals("")) {
+            nodePath = "/";
+        }
+
+        // runtime nodes only have runtime properties
+        final ConfigurationItemCategory nodeCat = getCategoryForNode(nodePath, cfgModel);
+        if (nodeCat.equals(ConfigurationItemCategory.SYSTEM)) {
+            return "";
+        }
+
+        final String nodeOrigin = getNodeOrigin(nodePath, cfgModel);
+
+        final ConfigurationItemCategory propCat = getCategoryForProperty(propertyPath, cfgModel);
+        final JcrPath propertyJcrPath = JcrPaths.getPath(propertyPath);
+        final ConfigurationProperty cfgProperty = cfgModel.resolveProperty(propertyJcrPath);
+        String origin = "";
+        if ((propCat.equals(ConfigurationItemCategory.CONFIG) || propCat.equals(ConfigurationItemCategory.SYSTEM))
+                && cfgProperty != null) {
+            origin = cfgProperty.getDefinitions().stream().map(ModelItem::getOrigin).collect(joining("\n"));
+
+            // TODO: mark system-with-initial-value in a special way?
+        }
+        else if (propCat.equals(ConfigurationItemCategory.CONTENT)) {
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(propertyJcrPath);
+            origin = (def==null)
+                    ? "<content>"
+                    : def.getOrigin();
+        }
+        else if (propCat.equals(ConfigurationItemCategory.SYSTEM)) {
+            origin = "<system>";
+        }
+        else {
+            origin = "<config>";
+        }
+        return nodeOrigin.equals(origin)
+                ? ""
+                // double \n so we get nice spacing in the title tool-tip pop-up
+                : origin.replace("\n", "\n\n");
+    }
+
+    public static String getNodeOrigin(final String nodePath, final ConfigurationModel cfgModel) {
+        final ConfigurationItemCategory nodeCat = getCategoryForNode(nodePath, cfgModel);
+        String nodeOrigin = "";
+        final JcrPath jcrPath = JcrPaths.getPath(nodePath);
+        if (nodeCat.equals(ConfigurationItemCategory.CONFIG)) {
+            final ConfigurationNode cfgNode = cfgModel.resolveNode(jcrPath);
+            nodeOrigin = (cfgNode==null)
+                    ? "<config>"
+                    : cfgNode.getDefinitions().stream().map(ModelItem::getOrigin).collect(joining("\n"));
+        }
+        else if (nodeCat.equals(ConfigurationItemCategory.CONTENT)) {
+            final ContentDefinition def = cfgModel.getNearestContentDefinition(jcrPath);
+            nodeOrigin = (def==null)
+                    ? "<content>"
+                    : def.getOrigin();
+        }
+        else {
+            nodeOrigin = "<system>";
+        }
+        return nodeOrigin;
     }
 
     /**

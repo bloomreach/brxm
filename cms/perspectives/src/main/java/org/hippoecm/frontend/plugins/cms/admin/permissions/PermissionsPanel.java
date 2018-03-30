@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
@@ -42,35 +43,29 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.UserGroupListPanel;
 
 public class PermissionsPanel extends AdminBreadCrumbPanel {
 
-
-    private static final long serialVersionUID = 1L;
-
     /**
      * Visibility toggle so that either the link or the form is visible.
      */
     private boolean formVisible = false;
 
-    public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+    public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext pluginContext) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        List<String> roles = Group.getAllRoles();
-        List<IColumn<Domain, String>> columns = new ArrayList<IColumn<Domain, String>>();
+        final List<String> roles = Group.getAllRoles();
+        final List<IColumn<Domain, String>> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-header"), "name") {
-            private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
                                      final IModel<Domain> model) {
 
-                AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "name")) {
-                    private static final long serialVersionUID = 1L;
-
+                final AjaxLinkLabel action = new AjaxLinkLabel(componentId, PropertyModel.of(model, "name")) {
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
+                    public void onClick(final AjaxRequestTarget target) {
                         activate(new IBreadCrumbPanelFactory() {
-                            public BreadCrumbPanel create(String componentId,
-                                                          IBreadCrumbModel breadCrumbModel) {
+                            public BreadCrumbPanel create(final String componentId,
+                                                          final IBreadCrumbModel breadCrumbModel) {
                                 return new SetPermissionsPanel(componentId, breadCrumbModel, model);
                             }
                         });
@@ -81,23 +76,21 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         });
 
         for (final String role : roles) {
-            columns.add(new AbstractColumn<Domain, String>(new Model<String>("Role: " + role)) {
-                private static final long serialVersionUID = 1L;
+            columns.add(new AbstractColumn<Domain, String>(new Model<>("Role: " + role)) {
+                public void populateItem(final Item<ICellPopulator<Domain>> cellItem, final String componentId, final IModel<Domain> model) {
+                    final Domain domain = model.getObject();
+                    final ArrayList<User> userList = new ArrayList<>();
+                    final ArrayList<Group> groupList = new ArrayList<>();
 
-                public void populateItem(Item<ICellPopulator<Domain>> cellItem, String componentId, IModel<Domain> model) {
-                    Domain domain = model.getObject();
-                    ArrayList<User> userList = new ArrayList<User>();
-                    ArrayList<Group> groupList = new ArrayList<Group>();
-
-                    Domain.AuthRole authRole = domain.getAuthRoles().get(role);
+                    final Domain.AuthRole authRole = domain.getAuthRoles().get(role);
 
                     if (authRole != null) {
-                        for (String userName : authRole.getUsernames()) {
-                            User user = new User(userName);
+                        for (final String userName : authRole.getUsernames()) {
+                            final User user = new User(userName);
                             userList.add(user);
                         }
 
-                        for (String groupName : authRole.getGroupnames()) {
+                        for (final String groupName : authRole.getGroupnames()) {
                             final Group group = Group.getGroup(groupName);
                             if (group == null) {
                                 continue;
@@ -106,7 +99,8 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
                         }
                     }
 
-                    UserGroupListPanel listContainer = new UserGroupListPanel(componentId, userList, groupList);
+                    final UserGroupListPanel listContainer = new UserGroupListPanel(componentId, userList, groupList,
+                            pluginContext);
                     cellItem.add(listContainer);
                 }
             });
@@ -124,7 +118,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-permissions-title");
     }
 

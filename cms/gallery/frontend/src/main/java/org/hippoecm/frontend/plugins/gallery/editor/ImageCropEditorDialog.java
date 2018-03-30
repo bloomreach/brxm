@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropSettings;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
@@ -91,9 +93,24 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     private Dimension thumbnailDimension;
     private float compressionQuality;
     private final ImageCropSettings cropSettings;
+    @SuppressWarnings("unused")
+    private IPluginConfig config;
+    @SuppressWarnings("unused")
+    private IPluginContext context;
 
-    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
+    /**
+     * A dialog to crop an image variant.
+     *
+     * @param jcrImageNodeModel node where the variant to be cropped is stored.
+     * @param galleryProcessor with configuration for scaling parameters and dimensions.
+     * @param config Config of the instantiating Plugin.
+     * @param context Context of the instantiating Plugin.
+     */
+    public ImageCropEditorDialog(final IModel<Node> jcrImageNodeModel, final GalleryProcessor galleryProcessor, final IPluginConfig config, final IPluginContext context) {
         super(jcrImageNodeModel);
+
+        this.config = config;
+        this.context = context;
 
         setSize(DIALOG_SIZE);
         setTitleKey(DIALOG_TITLE);
@@ -202,6 +219,15 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         } catch (RepositoryException e) {
             log.info("Cannot retrieve compression quality.", e);
         }
+
+    }
+
+    /**
+     * @deprecated use {@link ImageCropEditorDialog(IModel, GalleryProcessor, IPluginConfig, IPluginContext)} instead.
+     */
+    @Deprecated
+    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
+        this(jcrImageNodeModel, galleryProcessor, null, null);
     }
 
     /**

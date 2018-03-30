@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -30,7 +29,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -38,14 +36,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.validator.StringValidator;
-import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
@@ -56,7 +52,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
     private final IModel<Group> model;
     private final ListView localList;
-    private final HippoForm form;
 
     public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
                            final IModel<Group> model) {
@@ -87,7 +82,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
-                        form.clearFeedbackMessages();
                         try {
                             if (group.getMembers().contains(user.getUsername())) {
                                 showInfo(getString("group-member-already-member", rowModel));
@@ -109,37 +103,29 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        form = new HippoForm("search-form");
-        form.setOutputMarkupId(true);
-        add(form);
-
         final UserDataProvider userDataProvider = new UserDataProvider();
-
-        final TextField<String> search = new TextField<>("search-query",
-                PropertyModel.of(userDataProvider, "searchTerm"));
-        search.add(StringValidator.minimumLength(1));
-        search.setRequired(false);
-        search.add(new DefaultFocusBehavior());
-        form.add(search);
-
         final AdminDataTable table = new AdminDataTable<>("table", allUserColumns, userDataProvider, 20);
         table.setOutputMarkupId(true);
         add(table);
 
-        form.add(new AjaxButton("search-button", form) {
+        final SearchTermPanel searchTermPanel = new SearchTermPanel("search-field") {
             @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+            public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
+                super.processSubmit(target, form, searchTerm);
+                userDataProvider.setSearchTerm(searchTerm);
                 target.add(table);
             }
-        });
+        };
+        add(searchTermPanel);
+
     }
 
     private void showError(final String msg) {
-        form.error(msg);
+        error(msg);
     }
 
     private void showInfo(final String msg) {
-        form.info(msg);
+        info(msg);
     }
 
     /**
@@ -166,12 +152,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    form.clearFeedbackMessages();
                     try {
                         group.removeMembership(username);
                         EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
                                 "removed user " + username + " from group " + group.getGroupname());
-
                         showInfo(getString("group-member-removed"));
                         localList.removeAll();
                     } catch (RepositoryException e) {

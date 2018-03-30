@@ -98,4 +98,9 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
         return false;
     }
 
+    @Override
+    protected boolean isLogLevelFieldEnabled() {
+        return true;
+    }
+
 }

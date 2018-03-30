@@ -19,7 +19,9 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -37,7 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.StreamReader;
 
 /**
  * This class extends a {@link Binary} class with extra information regarding images: filename, mimetype and
@@ -157,10 +162,12 @@ public class ImageBinary implements Binary {
     private boolean isYCCK() throws RepositoryException {
         InputStream stream = getStream();
         try {
-            JpegSegmentReader reader = new JpegSegmentReader(stream, false);
-            byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
+            Set<JpegSegmentType> segmentTypes = new HashSet<>();
+            segmentTypes.add(JpegSegmentType.APPE);
+            JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(stream), segmentTypes);
+            byte[] appe = segmentData.getSegment(JpegSegmentType.APPE);
             return appe != null && appe[11] == 2;
-        } catch (JpegProcessingException e1) {
+        } catch (IOException | JpegProcessingException e1) {
             log.warn("Unable to read color space", e1);
         } finally {
             IOUtils.closeQuietly(stream);

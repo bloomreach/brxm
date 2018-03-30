@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
-public abstract class BreadcrumbWidget<T> extends Panel {
+public abstract class BreadcrumbWidget<T> extends GenericPanel<List<IModel<T>>> {
 
     private static final String CRUMB_ID = "crumb";
 
@@ -44,7 +44,7 @@ public abstract class BreadcrumbWidget<T> extends Panel {
         final ListView<Breadcrumb> breadCrumbs = new ListView<Breadcrumb>("crumbs", breadcrumbModel) {
             @Override
             protected void populateItem(final ListItem<Breadcrumb> item) {
-                Breadcrumb crumb = item.getModelObject();
+                final Breadcrumb crumb = item.getModelObject();
                 item.add(crumb);
 
                 final String css = crumb.getCssClass();
@@ -63,16 +63,15 @@ public abstract class BreadcrumbWidget<T> extends Panel {
 
     @Override
     protected void onDetach() {
-        List<IModel<T>> items = getItems();
+        final List<IModel<T>> items = getItems();
         if (items != null) {
             items.forEach(IModel::detach);
         }
         super.onDetach();
     }
 
-    @SuppressWarnings("unchecked")
     protected List<IModel<T>> getItems() {
-        return (List<IModel<T>>) getDefaultModelObject();
+        return getModelObject();
     }
 
     protected Breadcrumb newLabel(final String id, final IModel<String> name, final IModel<T> model) {
@@ -108,25 +107,29 @@ public abstract class BreadcrumbWidget<T> extends Panel {
     private class BreadcrumbModel extends LoadableDetachableModel<List<Breadcrumb>> {
         @Override
         protected List<Breadcrumb> load() {
-            List<IModel<T>> items = getItems();
-            List<Breadcrumb> crumbsAndChevrons = new LinkedList<>();
+            final List<IModel<T>> items = getItems();
+            final List<Breadcrumb> crumbsAndChevrons = new LinkedList<>();
 
-            int numberOfItems = items.size();
-            int delta = numberOfItems - maxNumberOfItems;
-            int startIndex = delta >= 0 ? delta : 0;
+            final int numberOfItems = items.size();
+            final int delta = numberOfItems - maxNumberOfItems;
+            final int startIndex = delta >= 0 ? delta : 0;
 
             for (int i = startIndex; i < numberOfItems; i++) {
-                IModel<T> model = items.get(i);
-                IModel<String> name = getName(model);
+                final IModel<T> model = items.get(i);
+                final IModel<String> name = getName(model);
                 if (i == numberOfItems - 1) {
                     // last item is a label
                     crumbsAndChevrons.add(newLabel(CRUMB_ID, name, model));
                 } else {
-                    crumbsAndChevrons.add(newLink(CRUMB_ID, name, model));
+                    crumbsAndChevrons.add(newLinkOrLabel(CRUMB_ID, name, model));
                     crumbsAndChevrons.add(newSeparator(CRUMB_ID));
                 }
             }
             return crumbsAndChevrons;
         }
+    }
+
+    protected Breadcrumb newLinkOrLabel(final String crumbId, final IModel<String> name, final IModel<T> model) {
+        return newLink(crumbId, name, model);
     }
 }

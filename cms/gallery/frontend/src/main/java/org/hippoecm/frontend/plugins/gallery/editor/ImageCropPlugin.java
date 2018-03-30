@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
     private static final CssResourceReference CROP_SKIN = new CssResourceReference(ImageCropPlugin.class, "crop-plugin.css");
 
@@ -110,7 +110,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, processor));
+                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, processor, config, context));
                     }
                 });
             }
