@@ -11,10 +11,17 @@ definitions:
         /hipposys:types:
           jcr:primaryType: hipposys:types
         /frontend:renderer:
-          jcr:primaryType: frontend:plugin
-          browser.id: ${browser.id}
-          editor.id: ${editor.id}
-          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
         /hipposys:config:
           jcr:primaryType: nt:unstructured
           attic:
@@ -31,10 +38,17 @@ definitions:
         /hipposys:types:
           jcr:primaryType: hipposys:types
         /frontend:renderer:
-          jcr:primaryType: frontend:plugin
-          browser.id: ${browser.id}
-          editor.id: ${editor.id}
-          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
         /hipposys:config:
           jcr:primaryType: nt:unstructured
           attic:
@@ -47,10 +61,17 @@ definitions:
           type: name
           value: frontend:workflow
         /frontend:renderer:
-          jcr:primaryType: frontend:plugin
-          browser.id: ${browser.id}
-          editor.id: ${editor.id}
-          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
         /hipposys:config:
           modify-on-copy: ['./hippotranslation:id', $uuid]
       /folder-extended:
