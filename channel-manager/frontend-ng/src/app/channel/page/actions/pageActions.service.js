@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,8 @@ class PageActionsService extends MenuService {
 
   _deletePage() {
     const siteMapItem = this.SiteMapItemService.get();
-    this._confirmDelete(siteMapItem.name)
+    const hasSubPages = this.SiteMapItemService.hasSubPages();
+    this._confirmDelete(siteMapItem.name, hasSubPages)
       .then(() => {
         this.SiteMapItemService.deleteItem()
           .then(() => {
@@ -151,13 +152,17 @@ class PageActionsService extends MenuService {
     // do nothing on cancel
   }
 
-  _confirmDelete(page) {
+  _confirmDelete(page, hasSubPages) {
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE', { page }))
+      .textContent(this.$translate.instant(this._getPageDeleteMessage(hasSubPages), { page }))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _getPageDeleteMessage(hasSubPages) {
+    return (hasSubPages ? 'CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE' : 'CONFIRM_DELETE_SINGLE_PAGE_MESSAGE');
   }
 }
 
