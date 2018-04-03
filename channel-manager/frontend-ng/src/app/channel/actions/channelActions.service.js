@@ -175,8 +175,11 @@ class ChannelActionsService extends MenuService {
   }
 
   _reject() {
-    // TODO (meggermont): Open reject dialog
-    console.log(`TODO: open reject dialog for '${this.ProjectService.selectedProject.name}'`);
+    const channel = this.ChannelService.getChannel();
+    const channelId = channel.id.replace(/-preview$/, '');
+
+    this._showRejectPrompt(channel)
+      .then(message => this.ProjectService.reject(channelId, message));
   }
 
   _accept() {
@@ -256,6 +259,19 @@ class ChannelActionsService extends MenuService {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _showRejectPrompt(channel) {
+    const prompt = this.DialogService.prompt()
+      .title(this.$translate.instant('REJECT_CHANNEL_TITLE', {
+        channel,
+      }))
+      .textContent(this.$translate.instant('REJECT_CHANNEL_TEXT'))
+      .placeholder(this.$translate.instant('REJECT_CHANNEL_PLACEHOLDER'))
+      .cancel(this.$translate.instant('CANCEL'))
+      .ok(this.$translate.instant('OK'));
+
+    return this.DialogService.show(prompt);
   }
 
   _showDeleteProgress() {

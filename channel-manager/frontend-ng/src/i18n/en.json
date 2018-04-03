@@ -252,5 +252,8 @@
   "VIEWPORT_ANY_DEVICE": "Any device",
   "VIEWPORT_DESKTOP": "Desktop",
   "VIEWPORT_PHONE": "Phone",
-  "VIEWPORT_TABLET": "Tablet"
+  "VIEWPORT_TABLET": "Tablet",
+  "REJECT_CHANNEL_TITLE": "Reject channel '{{ channel.name }}'?",
+  "REJECT_CHANNEL_TEXT": "The channel will become editable, so that it can be improved based on your feedback.",
+  "REJECT_CHANNEL_PLACEHOLDER": "Feedback"
 }
