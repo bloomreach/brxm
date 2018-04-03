@@ -232,5 +232,6 @@
   "ERROR_WORKFLOW_ERROR": "更新失败，其他用户已更改此文档的状态",
   "ADD_TO_PROJECT": "添加到项目",
   "SHOW_CONTENT": "显示内容",
-  "SUBPAGE_PAGE_NEW_TITLE": "新页面"
+  "SUBPAGE_PAGE_NEW_TITLE": "新页面",
+  "SET_TO_TODAY": "设置为今天"
 }

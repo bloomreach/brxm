@@ -231,5 +231,6 @@
   "ERROR_WORKFLOW_ERROR": "Aktualisierung fehlgeschlagen, ein anderer Benutzer hat den Status dieses Dokuments geändert",
   "ADD_TO_PROJECT": "Zu Projekt hinzufügen",
   "SHOW_CONTENT": "Inhalt einblenden",
-  "SUBPAGE_PAGE_NEW_TITLE": "Neue Seite"
+  "SUBPAGE_PAGE_NEW_TITLE": "Neue Seite",
+  "SET_TO_TODAY": "Auf Heute einstellen"
 }

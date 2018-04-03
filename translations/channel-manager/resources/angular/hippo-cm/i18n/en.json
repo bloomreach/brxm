@@ -27,6 +27,7 @@
   "PUBLISH": "Publish",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "To fill out the mandatory fields and then save the document <a href='#' ng-click='{{clickAction}}'>continue in the content editor<\/a>",
   "ERROR_PAGE_PATH_EXISTS": "Failed to save page, the specified URL is already in use",
+  "SET_TO_TODAY": "Set to today",
   "ERROR_CARDINALITY_CHANGE": "Unable to save. The document contains invalid content",
   "CONTAINER_LOCKED_BY": "Locked by '{{user}}'",
   "TOOLBAR_BUTTON_PAGE": "Page",

@@ -232,5 +232,6 @@
   "ERROR_WORKFLOW_ERROR": "No se pudo actualizar, otro usuario ha cambiado el estado de este documento",
   "ADD_TO_PROJECT": "Añadir al proyecto",
   "SHOW_CONTENT": "Mostrar contenido",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nueva página"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nueva página",
+  "SET_TO_TODAY": "Fijado a hoy"
 }

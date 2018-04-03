@@ -232,5 +232,6 @@
   "ERROR_WORKFLOW_ERROR": "Kan niet updaten omdat een andere gebruiker de status van dit document heeft gewijzigd.",
   "ADD_TO_PROJECT": "Toevoegen aan project",
   "SHOW_CONTENT": "Toon content",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nieuwe pagina"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nieuwe pagina",
+  "SET_TO_TODAY": "Zet op vandaag"
 }

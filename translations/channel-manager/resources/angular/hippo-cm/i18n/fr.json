@@ -230,5 +230,6 @@
   "ERROR_WORKFLOW_ERROR": "Échec de la mise à jour ; un autre utilisateur a modifié l’état de ce document",
   "ADD_TO_PROJECT": "Ajouter au projet",
   "SHOW_CONTENT": "Afficher le contenu",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nouvelle page"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nouvelle page",
+  "SET_TO_TODAY": "Régler pour aujourd'hui"
 }
