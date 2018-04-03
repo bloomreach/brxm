@@ -20,6 +20,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.sitemenu.CommonMenu;
 
 /**
  * Decorator interface to allow custom decorators to add more metadata.
@@ -42,6 +43,15 @@ public interface MetadataDecorator {
      * @param metadataModel metadata model object to decorate
      */
     void decorateContentMetadata(HstRequestContext requestContext, HippoBean contentBean,
+            MetadataContributable metadataModel);
+
+    /**
+     * Decorate the given {@code commonMenu}'s {@code metadataModel}.
+     * @param requestContext HstRequestContext instance
+     * @param menu {@link CommonMenu} instance
+     * @param metadataModel metadata model object to decorate
+     */
+    void decorateCommonMenuMetadata(HstRequestContext requestContext, CommonMenu menu,
             MetadataContributable metadataModel);
 
 }

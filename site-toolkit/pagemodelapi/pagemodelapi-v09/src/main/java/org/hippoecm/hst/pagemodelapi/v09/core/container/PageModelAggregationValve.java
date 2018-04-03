@@ -29,9 +29,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
-import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -43,13 +40,15 @@ import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
-import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
+import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.core.sitemenu.CommonMenu;
+import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
+import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
+import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,7 +264,14 @@ public class PageModelAggregationValve extends AggregationValve {
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
                 final String name = entry.getKey();
                 final Object model = entry.getValue();
-                currentComponentWindowModel.putModel(name, model);
+
+                if (model instanceof CommonMenu) {
+                    final CommonMenuWrapperModel menuWrapperModel = new CommonMenuWrapperModel((CommonMenu) model);
+                    decorateCommonMenuMetadata(menuWrapperModel);
+                    currentComponentWindowModel.putModel(name, menuWrapperModel);
+                } else {
+                    currentComponentWindowModel.putModel(name, model);
+                }
             }
         }
 
@@ -358,6 +364,22 @@ public class PageModelAggregationValve extends AggregationValve {
 
         for (MetadataDecorator decorator : metadataDecorators) {
             decorator.decorateComponentWindowMetadata(hstRequest, hstResponse, model);
+        }
+    }
+
+    /**
+     * Invoke custom metadata decorators to give a chance to add more metadata for the component window.
+     * @param menuWrapperModel a wrapper model for a {@link CommonMenu}
+     */
+    private void decorateCommonMenuMetadata(final CommonMenuWrapperModel menuWrapperModel) {
+        if (CollectionUtils.isEmpty(metadataDecorators)) {
+            return;
+        }
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        for (MetadataDecorator decorator : metadataDecorators) {
+            decorator.decorateCommonMenuMetadata(requestContext, menuWrapperModel.getMenu(), menuWrapperModel);
         }
     }
 
