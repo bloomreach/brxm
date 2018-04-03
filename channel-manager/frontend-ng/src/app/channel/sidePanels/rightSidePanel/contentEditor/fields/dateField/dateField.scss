@@ -25,11 +25,19 @@
       width: 100%;
     }
   }
+
+  > label:not(.md-no-float):not(.md-container-ignore) {
+    pointer-events: none !important;
+    width: calc(100% - 81px);
+
+    > md-icon {
+      pointer-events: all;
+    }
+  }
 }
 
 date-field {
   .md-datepicker-input-container {
-    z-index: 2;
     border-bottom-width: 0;
 
     &.md-datepicker-focused {

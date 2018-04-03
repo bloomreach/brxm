@@ -167,6 +167,12 @@ function config(
       return m.isValid() ? m.format('L') : '';
     };
 
+  $mdDateLocaleProvider
+    .parseDate = (dateString) => {
+      const m = moment(dateString, 'L', true);
+      return m.isValid() ? m.toDate() : new Date(NaN);
+    };
+
   $mdIconProvider
     .icon('any-device', `images/any-device.svg${antiCache}`)
     .icon('attention', `images/attention.svg${antiCache}`)

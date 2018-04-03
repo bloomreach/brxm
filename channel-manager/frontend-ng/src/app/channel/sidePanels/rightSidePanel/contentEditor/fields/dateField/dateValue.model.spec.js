@@ -32,6 +32,11 @@ describe('DateValue', () => {
       expect(dateValue.toDateString()).not.toBeEmpty();
     });
 
+    it('sets seconds and milliseconds to zero, even if they are initialized', () => {
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
+    });
+
     it('with focus on minutes field gives minutes not zero padded', () => {
       dateValue.focusMinutes();
       expect(dateValue.minutes).toBe(1);
@@ -82,10 +87,10 @@ describe('DateValue', () => {
     });
 
     it('initializes the JavaScript date correctly for a non English locale', () => {
-      const dateValue = new DateValue('');
+      const dateValueNew = new DateValue('');
       const germanMoment = moment().locale('de');
-      dateValue._init(germanMoment);
-      expect(dateValue.jsDate.getTime()).not.toBeNaN();
+      dateValueNew._init(germanMoment);
+      expect(dateValueNew.jsDate.getTime()).not.toBeNaN();
     });
   });
 
@@ -184,6 +189,12 @@ describe('DateValue', () => {
     it('gets populated when set minutes is called', () => {
       dateValue.minutes = 1;
       expect(dateValue.date).not.toBe(null);
+    });
+
+    it('sets seconds and milliseconds to zero when a new date is initialized', () => {
+      dateValue.setToNow();
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
     });
   });
 });
