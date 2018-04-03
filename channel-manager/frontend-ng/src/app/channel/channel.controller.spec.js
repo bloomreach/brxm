@@ -29,11 +29,12 @@ describe('ChannelCtrl', () => {
   let HippoIframeService;
   let PageMetaDataService;
   let OverlayService;
+  let ProjectService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_, _OverlayService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_, _OverlayService_, _ProjectService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
@@ -42,6 +43,7 @@ describe('ChannelCtrl', () => {
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
       OverlayService = _OverlayService_;
+      ProjectService = _ProjectService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
@@ -202,4 +204,24 @@ describe('ChannelCtrl', () => {
     ChannelService.setToolbarDisplayed(false);
     expect(ChannelCtrl.isToolbarDisplayed()).toBe(false);
   });
+
+  it('should delegate isContentOverlayEnabled to ProjectService', () => {
+    let toggle = false;
+    spyOn(ProjectService, 'isContentOverlayEnabled').and.callFake(() => {
+        return (toggle = !toggle);
+    });
+    expect(ChannelCtrl.isContentOverlayEnabled).toBeTruthy();
+    expect(ChannelCtrl.isContentOverlayEnabled).toBeFalsy();
+  });
+
+  it('should delegate isComponentsOverlayEnabled to ProjectService', () => {
+    let toggle = false;
+    spyOn(ProjectService, 'isComponentsOverlayEnabled').and.callFake(() => {
+        return (toggle = !toggle);
+    });
+    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeTruthy();
+    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeFalsy();
+  });
+
+
 });
