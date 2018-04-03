@@ -229,7 +229,7 @@ describe('DateValue', () => {
     });
 
     describe('when empty for dateOnly and with configured timezone', () => {
-      it('sets the date value to the start of the day in the users\' timezone' , () => {
+      it('sets the date value to the start of the day in the users\' timezone', () => {
         const europeDateValue = new DateValue('', 'Europe/Amsterdam', true);
         europeDateValue.setToNow();
         expect(europeDateValue.moment.hours()).toBe(0);
