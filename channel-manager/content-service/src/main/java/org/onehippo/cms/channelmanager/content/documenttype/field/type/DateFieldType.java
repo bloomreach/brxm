@@ -29,7 +29,7 @@ public class DateFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
 
     public DateFieldType() {
-        setType(Type.DATE);
+        setType(Type.DATE_AND_TIME);
     }
 
     @Override

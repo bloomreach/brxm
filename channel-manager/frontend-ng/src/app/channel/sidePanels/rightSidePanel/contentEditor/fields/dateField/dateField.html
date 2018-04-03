@@ -23,7 +23,7 @@
                ng-blur="$ctrl.onFieldBlur()"/>
 
 <md-input-container class="qa-field"
-                    ng-if="::$ctrl.fieldType.type === 'DATE'">
+                    ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">
   <input ng-model="$ctrl.dateValue.hours"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
@@ -33,10 +33,10 @@
          ng-blur="$ctrl.onFieldBlur()">
 </md-input-container>
 
-<span ng-if="::$ctrl.fieldType.type === 'DATE'">:</span>
+<span ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">:</span>
 
 <md-input-container class="qa-field"
-                    ng-if="::$ctrl.fieldType.type === 'DATE'">
+                    ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">
   <input ng-model="$ctrl.dateValue.minutes"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
@@ -48,7 +48,7 @@
 </md-input-container>
 
 <md-button md-no-ink
-           ng-if="::$ctrl.fieldType.type === 'DATE'"
+           ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'"
            class="md-icon-button now-button"
            aria-label="{{ ::'SET_TO_NOW' | translate }}"
            ng-click="$ctrl.setToNow()"

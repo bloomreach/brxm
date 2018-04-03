@@ -162,7 +162,7 @@ public class DateFieldTypeTest {
 
         final Double oldValue1 = 1.0;
         final Double oldValue2 = 2.0;
-        node.setProperty(PROPERTY, new String[] {oldValue1 + "", oldValue2 + ""}, PropertyType.DATE);
+        node.setProperty(PROPERTY, new String[] {oldValue1 + "", oldValue2 + ""}, PropertyType.DATE_AND_TIME);
 
         final String invalidValue1 = "foo";
         final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
