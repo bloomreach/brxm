@@ -96,7 +96,8 @@
       </md-checkbox>
     </div>
 
-    <date-field ng-switch-when="DATE"
+    <date-field ng-switch-when="DATE|DATE_ONLY"
+                ng-switch-when-separator="|"
                 name="::$ctrl.getFieldName($index)"
                 field-type="::$ctrl.fieldType"
                 ng-model="fieldValue.value"

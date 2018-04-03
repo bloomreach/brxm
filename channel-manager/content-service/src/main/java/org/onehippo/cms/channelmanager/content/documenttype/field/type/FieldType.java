@@ -40,6 +40,7 @@ public interface FieldType {
         BOOLEAN,
         MULTILINE_STRING,
         DATE,
+        DATE_ONLY,
         HTML,
         CHOICE, // "content blocks"
         COMPOUND,

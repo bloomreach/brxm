@@ -22,7 +22,8 @@
                ng-focus="$ctrl.onFieldFocus()"
                ng-blur="$ctrl.onFieldBlur()"/>
 
-<md-input-container class="qa-field">
+<md-input-container class="qa-field"
+                    ng-if="::$ctrl.fieldType.type === 'DATE'">
   <input ng-model="$ctrl.dateValue.hours"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
@@ -31,8 +32,11 @@
          ng-focus="$ctrl.onFieldFocus()"
          ng-blur="$ctrl.onFieldBlur()">
 </md-input-container>
-:
-<md-input-container class="qa-field">
+
+<span ng-if="::$ctrl.fieldType.type === 'DATE'">:</span>
+
+<md-input-container class="qa-field"
+                    ng-if="::$ctrl.fieldType.type === 'DATE'">
   <input ng-model="$ctrl.dateValue.minutes"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
