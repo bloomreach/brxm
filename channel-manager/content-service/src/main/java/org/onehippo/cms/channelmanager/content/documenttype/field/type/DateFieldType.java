@@ -15,53 +15,9 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Calendar;
-
-import javax.jcr.PropertyType;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.ISO8601;
-import org.hippoecm.frontend.model.PropertyValueProvider;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-
-public class DateFieldType extends PrimitiveFieldType {
-
-    private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
+public class DateFieldType extends AbstractDateFieldType {
 
     public DateFieldType() {
         setType(Type.DATE_AND_TIME);
-    }
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.DATE;
-    }
-
-    @Override
-    protected String getDefault() {
-        return DEFAULT_DISPLAY_VALUE;
-    }
-
-    @Override
-    protected String fieldSpecificConversion(final String input) {
-        if (StringUtils.isBlank(input)) {
-            return PropertyValueProvider.EMPTY_DATE_VALUE;
-        } else {
-            return input;
-        }
-    }
-
-    @Override
-    protected FieldValue getFieldValue(final String value) {
-        if (StringUtils.isBlank(value)) {
-            return new FieldValue(StringUtils.EMPTY);
-        }
-
-        final Calendar calendar = ISO8601.parse(value);
-        if (calendar == null || calendar.getTime().equals(PropertyValueProvider.EMPTY_DATE)) {
-            return new FieldValue(StringUtils.EMPTY);
-        }
-
-        return new FieldValue(value);
     }
 }

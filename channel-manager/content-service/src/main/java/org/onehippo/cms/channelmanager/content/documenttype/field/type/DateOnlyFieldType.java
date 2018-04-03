@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-public class DateOnlyFieldType extends DateFieldType {
+public class DateOnlyFieldType extends AbstractDateFieldType {
 
     public DateOnlyFieldType() {
         setType(Type.DATE_ONLY);
