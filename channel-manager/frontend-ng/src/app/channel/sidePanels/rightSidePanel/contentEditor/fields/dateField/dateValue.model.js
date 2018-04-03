@@ -24,10 +24,10 @@ import moment from 'moment-timezone';
  * User time zone is taken into account to show the moment in time to the user as the moment in the users' time zone.
  */
 class DateValue {
-  constructor(dateString, dateOnly, userTimeZone) {
+  constructor(dateString, userTimeZone, dateOnly = false) {
     this.editMinutes = false;
-    this.dateOnly = dateOnly || false;
     this.userTimeZone = userTimeZone;
+    this.dateOnly = dateOnly;
 
     if (dateString === '') {
       this._initBlank();
@@ -40,12 +40,11 @@ class DateValue {
     this.moment = initMoment;
     this.moment.seconds(0);
     this.moment.milliseconds(0);
-    if (this.dateOnly) {
-      this.moment.hours(0);
-      this.moment.minutes(0);
-    }
     if (this.userTimeZone) {
       this.moment.tz(this.userTimeZone);
+    }
+    if (this.dateOnly) {
+      this.moment.startOf('day');
     }
     this._initJsDate();
   }

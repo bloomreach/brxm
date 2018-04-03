@@ -26,8 +26,8 @@ class DateFieldController {
   $onInit() {
     this.ngModel.$render = () => {
       this.dateValue = new DateValue(this.ngModel.$viewValue,
-        this.fieldType.type === 'DATE_ONLY',
-        this.ConfigService.timeZone);
+        this.ConfigService.timeZone,
+        this.fieldType.type === 'DATE_ONLY');
     };
   }
 

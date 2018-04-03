@@ -95,7 +95,7 @@ describe('DateValue', () => {
 
     describe('when populated for dateOnly', () => {
       beforeEach(() => {
-        dateValue = new DateValue('2018-03-12T08:01:50.041+01:00', true);
+        dateValue = new DateValue('2018-03-12T08:01:50.041+01:00', null, true);
       });
 
       it('sets hours and minutes to zero, even if they are part of the input value', () => {
@@ -114,10 +114,10 @@ describe('DateValue', () => {
       // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
-      dateValue = new DateValue(dateString, false, 'Europe/London');
+      dateValue = new DateValue(dateString, 'Europe/London');
       expect(dateValue.date.getDate()).toBe(31);
 
-      dateValue = new DateValue(dateString, false, 'Europe/Amsterdam');
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
       expect(dateValue.date.getDate()).toBe(1);
     });
 
@@ -126,10 +126,10 @@ describe('DateValue', () => {
       // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
-      dateValue = new DateValue(dateString, false, 'Europe/London');
+      dateValue = new DateValue(dateString, 'Europe/London');
       expect(dateValue.date.getMonth()).toBe(11);
 
-      dateValue = new DateValue(dateString, false, 'Europe/Amsterdam');
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
       expect(dateValue.date.getMonth()).toBe(0);
     });
 
@@ -138,10 +138,10 @@ describe('DateValue', () => {
       // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
-      dateValue = new DateValue(dateString, false, 'Europe/London');
+      dateValue = new DateValue(dateString, 'Europe/London');
       expect(dateValue.date.getFullYear()).toBe(2018);
 
-      dateValue = new DateValue(dateString, false, 'Europe/Amsterdam');
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
       expect(dateValue.date.getFullYear()).toBe(2019);
     });
 
@@ -150,10 +150,10 @@ describe('DateValue', () => {
       // in London this is December 31 in 2018 at 23:30
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
-      dateValue = new DateValue(dateString, false, 'Europe/London');
+      dateValue = new DateValue(dateString, 'Europe/London');
       expect(dateValue.hours).toBe(23);
 
-      dateValue = new DateValue(dateString, false, 'Europe/Amsterdam');
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
       expect(dateValue.hours).toBe(0);
     });
 
@@ -162,10 +162,10 @@ describe('DateValue', () => {
       // in Calcutta this is January 1 in 2019 at 5:00 (India timezone differs 5.5 hours with CET).
       const dateString = '2019-01-01T00:30:00.000+01:00';
 
-      dateValue = new DateValue(dateString, false, 'Asia/Calcutta');
+      dateValue = new DateValue(dateString, 'Asia/Calcutta');
       expect(dateValue.minutes).toBe('00'); // string due to zero padding
 
-      dateValue = new DateValue(dateString, false, 'Europe/Amsterdam');
+      dateValue = new DateValue(dateString, 'Europe/Amsterdam');
       expect(dateValue.minutes).toBe(30);
     });
   });
@@ -210,7 +210,7 @@ describe('DateValue', () => {
 
     describe('when empty for dateOnly', () => {
       beforeEach(() => {
-        dateValue = new DateValue('', true);
+        dateValue = new DateValue('', null, true);
       });
 
       it('sets hours, minutes, seconds and milliseconds to zero when a new day is initialized', () => {
@@ -225,7 +225,23 @@ describe('DateValue', () => {
         dateValue.date = new Date();
         expect(dateValue.moment.hours()).toBe(0);
         expect(dateValue.moment.minutes()).toBe(0);
-      })
+      });
+    });
+
+    describe('when empty for dateOnly and with configured timezone', () => {
+      it('sets the date value to the start of the day in the users\' timezone' , () => {
+        const europeDateValue = new DateValue('', 'Europe/Amsterdam', true);
+        europeDateValue.setToNow();
+        expect(europeDateValue.moment.hours()).toBe(0);
+        expect(europeDateValue.moment.minutes()).toBe(0);
+
+        const asiaDateValue = new DateValue('', 'Asia/Calcutta', true);
+        asiaDateValue.setToNow();
+        expect(asiaDateValue.moment.hours()).toBe(0);
+        expect(asiaDateValue.moment.minutes()).toBe(0);
+
+        expect(europeDateValue.moment.tz()).not.toBe(asiaDateValue.moment.tz());
+      });
     });
   });
 });
