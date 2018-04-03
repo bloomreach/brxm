@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -41,10 +42,11 @@ public class HasNoChildMountNodeValidator implements Validator {
 
     @Override
     public void validate(final HstRequestContext requestContext) throws RuntimeException {
-        final boolean hasMountWithChildren = mounts.stream()
-                .anyMatch(mount -> !mount.getChildMounts().isEmpty());
 
-        if (hasMountWithChildren) {
+        final boolean hasMountWithExplicitChildren = mounts.stream()
+                .anyMatch(mount -> mount.getChildMounts().stream().anyMatch(Mount::isExplicit));
+
+        if (hasMountWithExplicitChildren) {
             final Map<String, String> parameterMap = new HashMap<>();
             final Set<String> mountChildren = new LinkedHashSet<>();
 

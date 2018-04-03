@@ -538,4 +538,10 @@ public interface Mount {
      */
     Map<String, String> getResponseHeaders();
 
+    /**
+     * @return {@code true} if the configuration behind this {@link Mount} is explicitly configured. It returns {@code
+     * false} for {@link Mount} objects that are an implicit result, for example when the {@link Mount} is auto-created.
+     */
+    boolean isExplicit();
+
 }

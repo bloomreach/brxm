@@ -431,6 +431,12 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.getResponseHeaders();
         }
 
+        @Override
+        public boolean isExplicit() {
+            // although you might argue that a preview decorated mount is an implicit mount, we need to know in the
+            // channel mngr when we are dealing with an explicit configured Mount or not, hence we request the delegatee
+            return delegatee.isExplicit();
+        }
     }
 
     class PreviewDecoratedVirtualHost implements VirtualHost {

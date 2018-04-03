@@ -40,7 +40,6 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteFactory;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -61,6 +60,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPO
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class MountService implements ContextualizableMount, MutableMount {
@@ -639,6 +639,27 @@ public class MountService implements ContextualizableMount, MutableMount {
 
             }
         }
+
+        String pageModelApi = mount.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
+        if (pageModelApi == null) {
+            pageModelApi = ((VirtualHostService) virtualHost).getPageModelApi();
+        }
+        if (pageModelApi != null) {
+            if (childMountServices.containsKey(pageModelApi)) {
+                log.info("Skipping automatic resource api for path '{}' below mount '{}' because it has an explicitly " +
+                        "configured mount with the same path.", pageModelApi, this);
+            }else if (pageModelApi.contains("/")) {
+                log.error("Incorrect configured page model api value '{}'. / is not allowed in the path element",
+                        pageModelApi);
+            } else {
+                try {
+                    addMount(new PageModelApiMount(pageModelApi, this, hstNodeLoadingCache));
+                } catch (Exception e) {
+                    log.error("Cannot add PageModelApiMount for mount '{}'", this, e);
+                }
+            }
+        }
+
     }
 
     private void assertContentPathNotEmpty(final HstNode mount, final String contentPath) throws ModelLoadingException {
@@ -1062,6 +1083,11 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         return Collections.unmodifiableMap(responseHeaders);
+    }
+
+    @Override
+    public boolean isExplicit() {
+        return true;
     }
 
 }

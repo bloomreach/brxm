@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchem
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
 
 public class VirtualHostService implements MutableVirtualHost {
 
@@ -97,6 +98,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
     private final List<String> cmsLocations;
+    private final String pageModelApi;
     private Integer defaultPort;
     private final boolean cacheable;
     private String [] defaultResourceBundleIds;
@@ -295,6 +297,14 @@ public class VirtualHostService implements MutableVirtualHost {
             }
         }
 
+        if (virtualHostNode.getValueProvider().hasProperty(GENERAL_PROPERTY_PAGE_MODEL_API)) {
+            pageModelApi = virtualHostNode.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
+        } else if (parentHost != null) {
+            pageModelApi = parentHost.getPageModelApi();
+        } else {
+            pageModelApi = null;
+        }
+
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("[.]");
 
@@ -380,6 +390,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroupName;
         this.cmsLocations = cmsLocations;
+        this.pageModelApi = parent.pageModelApi;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
         this.schemeAgnostic = parent.schemeAgnostic;
@@ -508,6 +519,10 @@ public class VirtualHostService implements MutableVirtualHost {
 
     public List<String> getCmsLocations() {
         return cmsLocations;
+    }
+
+    String getPageModelApi() {
+        return pageModelApi;
     }
 
     public Integer getDefaultPort() {

@@ -762,6 +762,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             return Collections.emptyMap();
         }
 
+        @Override
+        public boolean isExplicit() {
+            // auto-created mount so not explicit
+            return false;
+        }
     }
 
 }

@@ -950,6 +950,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return Collections.emptyMap();
         }
 
+        @Override
+        public boolean isExplicit() {
+            // auto-created mount so not explicit
+            return false;
+        }
+
     }
 
 }

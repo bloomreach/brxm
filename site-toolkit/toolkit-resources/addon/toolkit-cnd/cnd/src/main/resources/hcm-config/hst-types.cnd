@@ -363,6 +363,8 @@
 // to hold all the 'free defined properties'
 - hst:defaultresourcebundleid (string)
 - hst:responseheaders (string) multiple
+// path element below which the page model api will become available
+- hst:pagemodelapi (string)
 - * (string)
 
 [hst:portmount] > nt:base, mix:referenceable
@@ -398,6 +400,8 @@
 // https://hostname but //hostname
 - hst:cdnhost (string)
 - hst:responseheaders (string) multiple
+// path element below which for every mount for this host (or sub host) the page model api will become available
+- hst:pagemodelapi (string)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
@@ -113,7 +115,14 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         }
         pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
         pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
-        pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
+
+        if (PAGE_MODEL_PIPELINE_NAME.equals(mount.getNamedPipeline())) {
+            // in case of PageModelApi pipeline, we need the parent mount to get the channel since the page model
+            // api pipeline never has a channel, see org.hippoecm.hst.configuration.hosting.PageModelApiMount.getChannel()
+            pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getParent().getChannel().getId());
+        } else {
+            pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
+        }
         pageMetaData.put(ChannelManagerConstants.HST_CONTEXT_PATH, mount.getContextPath());
         response.addEpilogue(createCommentWithAttr(pageMetaData, response));
     }
