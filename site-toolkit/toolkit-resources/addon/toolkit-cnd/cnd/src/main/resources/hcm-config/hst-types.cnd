@@ -34,6 +34,8 @@
 - hst:displayname (string)
 // the relative path to primary container
 - hst:primarycontainer (string)
+// prototype level application id which should be copied into a sitemap item on creation.
+- hst:applicationId (String)
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)

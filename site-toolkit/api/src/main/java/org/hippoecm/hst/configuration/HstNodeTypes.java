@@ -73,6 +73,7 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
+    String PROTOTYPE_META_PROPERTY_APPLICATION_ID = "hst:applicationId";
 
     String CONFIGURATION_PROPERTY_LOCKED = "hst:locked";
 

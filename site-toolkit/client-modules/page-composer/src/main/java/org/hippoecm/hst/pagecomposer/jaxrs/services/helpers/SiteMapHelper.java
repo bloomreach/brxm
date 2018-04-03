@@ -56,6 +56,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.PROTOTYPE_META_PROPERTY_APPLICATION_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_APPLICATION_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_MOVE_TO_SELF_OR_DESCENDANT;
@@ -198,6 +200,8 @@ public class SiteMapHelper extends AbstractHelper {
         // clone page definition
 
         final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
+        final String prototypeApplicationId = JcrUtils.getStringProperty(prototypePage,
+                PROTOTYPE_META_PROPERTY_APPLICATION_ID, null);
         final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
         Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
 
@@ -209,6 +213,11 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Set<String> modifiedRoles = siteMapItem.getRoles();
         setRoles(newSitemapNode, modifiedRoles);
+
+        if (prototypeApplicationId != null) {
+            newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_APPLICATION_ID, prototypeApplicationId);
+        }
+
         return newSitemapNode;
     }
 
