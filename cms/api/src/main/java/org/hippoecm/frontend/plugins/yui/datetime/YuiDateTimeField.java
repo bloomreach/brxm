@@ -85,7 +85,7 @@ public class YuiDateTimeField extends DateTimeField {
         // Remove existing behaviors from dateField
         dateField.getBehaviors().forEach(dateField::remove);
         // And add our own YuiDatePicker instead
-        dateField.add(new YuiDatePicker(settings));
+        dateField.add(new YuiDatePicker(this.settings));
 
         // Restrict the size of the input field to match the date pattern
         final int dateLength = calculateDateLength();
