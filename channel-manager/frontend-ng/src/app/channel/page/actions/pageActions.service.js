@@ -131,8 +131,8 @@ class PageActionsService extends MenuService {
 
   _deletePage() {
     const siteMapItem = this.SiteMapItemService.get();
-    const hasSubPages = this.SiteMapItemService.hasSubPages();
-    this._confirmDelete(siteMapItem.name, hasSubPages)
+    const numberOfChildren = this.SiteMapItemService.getNumberOfChildren();
+    this._confirmDelete(siteMapItem.name, numberOfChildren)
       .then(() => {
         this.SiteMapItemService.deleteItem()
           .then(() => {
@@ -152,17 +152,20 @@ class PageActionsService extends MenuService {
     // do nothing on cancel
   }
 
-  _confirmDelete(page, hasSubPages) {
+  _confirmDelete(page, numberOfChildren) {
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant(this._getPageDeleteMessage(hasSubPages), { page }))
+      .textContent(this._getPageDeleteMessage(page, numberOfChildren))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }
 
-  _getPageDeleteMessage(hasSubPages) {
-    return (hasSubPages ? 'CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE' : 'CONFIRM_DELETE_SINGLE_PAGE_MESSAGE');
+  _getPageDeleteMessage(page, numberOfChildren) {
+    if (numberOfChildren > 0) {
+      return this.$translate.instant('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE', { numberOfChildren, page });
+    }
+    return this.$translate.instant('CONFIRM_DELETE_SINGLE_PAGE_MESSAGE', { page });
   }
 }
 

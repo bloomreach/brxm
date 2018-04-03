@@ -162,19 +162,19 @@ describe('SiteMapItemService', () => {
     $rootScope.$digest();
   });
 
-  it('checks if the page has subpages', () => {
+  fit('checks if the page has subpages', () => {
     const siteMapItem = {
       numberOfChildren: 0,
     };
     HstService.doGet.and.returnValue($q.when({ data: siteMapItem }));
     SiteMapItemService.loadAndCache('siteMapId', 'siteMapItemId');
     $rootScope.$digest();
-    expect(SiteMapItemService.hasSubPages()).toBe(false);
+    expect(SiteMapItemService.getNumberOfChildren()).toBe(0);
 
     siteMapItem.numberOfChildren = 3;
     HstService.doGet.and.returnValue($q.when({ data: siteMapItem }));
     SiteMapItemService.loadAndCache('siteMapId', 'siteMapItemId');
     $rootScope.$digest();
-    expect(SiteMapItemService.hasSubPages()).toBe(true);
+    expect(SiteMapItemService.getNumberOfChildren()).toBe(3);
   });
 });

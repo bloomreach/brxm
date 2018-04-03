@@ -56,8 +56,8 @@ class SiteMapItemService {
     return this.hasItem() && !this.item.isHomePage && !this.isLocked() && this.item.workspaceConfiguration && !this.item.inherited;
   }
 
-  hasSubPages() {
-    return this.item.numberOfChildren > 0;
+  getNumberOfChildren() {
+    return this.item.numberOfChildren;
   }
 
   deleteItem() {
