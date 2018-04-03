@@ -15,9 +15,9 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-public class DateFieldType extends AbstractDateFieldType {
+public class DateAndTimeFieldType extends AbstractDateFieldType {
 
-    public DateFieldType() {
+    public DateAndTimeFieldType() {
         setType(Type.DATE_AND_TIME);
     }
 }

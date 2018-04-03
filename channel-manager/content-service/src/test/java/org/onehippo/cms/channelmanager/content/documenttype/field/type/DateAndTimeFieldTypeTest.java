@@ -24,8 +24,6 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
@@ -55,7 +53,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({JcrUtils.class, NamespaceUtils.class})
-public class DateFieldTypeTest {
+public class DateAndTimeFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
 
@@ -68,7 +66,7 @@ public class DateFieldTypeTest {
     @Test
     public void writeToSingleDate() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
         final Calendar oldValue = Calendar.getInstance();
         final String oldValueString = ValueFactoryImpl.getInstance().createValue(oldValue).getString();
         final Calendar newValue = Calendar.getInstance();
@@ -106,28 +104,28 @@ public class DateFieldTypeTest {
 
     @Test
     public void testGetFieldValueForNullValue() {
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue(null);
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForBlankValue() {
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue(" ");
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForUnparsableValue() {
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue("doesnotparse");
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForParsableValue() {
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue("2015-08-24T06:53:00.000Z");
         assertThat(fieldValue.getValue(), equalTo("2015-08-24T06:53:00.000Z"));
     }
@@ -144,7 +142,7 @@ public class DateFieldTypeTest {
         expect(node.setProperty(eq("test:id"), eq(invalidValue), eq(5))).andThrow(new ValueFormatException());
         replayAll();
 
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
@@ -154,7 +152,7 @@ public class DateFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DateFieldType();
+        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
