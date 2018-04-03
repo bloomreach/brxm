@@ -123,9 +123,17 @@ public class SiteMapItemRepresentation {
 
         parentLocation = findParentLocation(mount, item);
 
-        numberOfChildren = item.getChildren().size();
+        numberOfChildren = getTotalNumberOfChildren(item);
 
         return this;
+    }
+
+    private static int getTotalNumberOfChildren(final HstSiteMapItem parent) {
+        int numChildren = parent.getChildren().size();
+        for (final HstSiteMapItem item : parent.getChildren()) {
+            numChildren += getTotalNumberOfChildren(item);
+        }
+        return numChildren;
     }
 
     Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
