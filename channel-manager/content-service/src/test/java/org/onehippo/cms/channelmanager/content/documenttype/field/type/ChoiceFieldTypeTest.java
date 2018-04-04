@@ -37,7 +37,6 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
@@ -591,19 +590,17 @@ public class ChoiceFieldTypeTest {
                                                             final ContentTypeContext parentContext) {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final ContentTypeContext pc = parentContext != null ? parentContext : createMock(ContentTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
 
         PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
 
         expect(context.getParentContext()).andReturn(pc).anyTimes();
-        expect(context.getContentTypeItem()).andReturn(item);
         expect(context.getEditorConfigNode()).andReturn(Optional.ofNullable(node)).anyTimes();
         expect(pc.getResourceBundle()).andReturn(Optional.empty());
         expect(pc.getDocumentType()).andReturn(null);
-        expect(item.getName()).andReturn("choiceId");
-        expect(item.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(item.isMultiple()).andReturn(true).anyTimes();
+        expect(context.getName()).andReturn("choiceId");
+        expect(context.getValidators()).andReturn(Collections.emptyList()).anyTimes();
+        expect(context.isMultiple()).andReturn(true).anyTimes();
         expect(LocalizationUtils.determineFieldDisplayName("choiceId", Optional.empty(), Optional.ofNullable(node)))
                 .andReturn(Optional.empty());
         expect(LocalizationUtils.determineFieldHint("choiceId", Optional.empty(), Optional.ofNullable(node)))
@@ -614,7 +611,6 @@ public class ChoiceFieldTypeTest {
         if (parentContext == null) {
             replay(pc);
         }
-        replay(item);
         PowerMock.replayAll();
 
         return context;

@@ -233,7 +233,10 @@ public class ChoiceFieldUtilsTest {
 
         // Choice has a content type and gets instantiated, but turns out to be invalid and gets not added
         choiceMap.put("choice", choice);
+        expect(choice.getName()).andReturn("choiceName");
         expect(choice.getItemType()).andReturn("choiceType").anyTimes();
+        expect(choice.isProperty()).andReturn(false);
+        expect(choice.isMultiple()).andReturn(false);
         expect(choice.getValidators()).andReturn(Collections.emptyList());
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
         expect(compound.isCompoundType()).andReturn(false);
@@ -517,6 +520,8 @@ public class ChoiceFieldUtilsTest {
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
         final ContentType compound = createMock(ContentType.class);
         final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
+        final FieldTypeContext richTextFieldContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class,
+                "hippostd:html", "hippostd:html", false, false, Collections.emptyList(), childContext, null);
         final FieldsInformation fieldsInfo = FieldsInformation.allSupported();
 
         PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
@@ -529,9 +534,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isContentType("hippostd:html")).andReturn(true);
         expect(compound.getName()).andReturn("hippostd:html");
 
-        richTextField.initListBasedChoice("hippostd:html");
-        expectLastCall();
-
+        expect(richTextField.init(richTextFieldContext)).andReturn(FieldsInformation.allSupported());
         expect(richTextField.getDisplayName()).andReturn("bla");
 
         replay(parentContext, childContext, compound);

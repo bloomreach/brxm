@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -56,13 +55,10 @@ public class FormattedTextFieldTypeTest {
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
-        final ContentTypeItem contentTypeItem = EasyMock.createMock(ContentTypeItem.class);
-        expect(contentTypeItem.getName()).andReturn("myproject:htmlfield");
-        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(contentTypeItem.isMultiple()).andReturn(false).anyTimes();
-
         final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
-        expect(fieldContext.getContentTypeItem()).andReturn(contentTypeItem).anyTimes();
+        expect(fieldContext.getName()).andReturn("myproject:htmlfield");
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
@@ -74,7 +70,7 @@ public class FormattedTextFieldTypeTest {
         expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
         expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
-        replayAll(parentContext, fieldContext, contentTypeItem);
+        replayAll(parentContext, fieldContext);
 
         final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
         field.init(fieldContext);

@@ -21,15 +21,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
-import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
 
 public class FieldsInformationTest {
 
@@ -65,13 +61,7 @@ public class FieldsInformationTest {
     @Test
     public void addCustomOptionalField() {
         final FieldsInformation info = FieldsInformation.allSupported();
-
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        expect(contentTypeItem.getItemType()).andReturn("Test");
-        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
-        replayAll();
-
-        info.addUnsupportedField(contentTypeItem);
+        info.addUnsupportedField("Test", Collections.emptyList());
 
         assertFalse(info.isAllFieldsIncluded());
         assertTrue(info.getCanCreateAllRequiredFields());
@@ -82,13 +72,7 @@ public class FieldsInformationTest {
     @Test
     public void addCustomRequiredField() {
         final FieldsInformation info = FieldsInformation.allSupported();
-
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        expect(contentTypeItem.getItemType()).andReturn("Test");
-        expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("required"));
-        replayAll();
-
-        info.addUnsupportedField(contentTypeItem);
+        info.addUnsupportedField("Test", Collections.singletonList("required"));
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -99,13 +83,7 @@ public class FieldsInformationTest {
     @Test
     public void addReportableRequiredField() {
         final FieldsInformation info = FieldsInformation.allSupported();
-
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        expect(contentTypeItem.getItemType()).andReturn("DynamicDropdown");
-        expect(contentTypeItem.getValidators()).andReturn(Collections.singletonList("required"));
-        replayAll();
-
-        info.addUnsupportedField(contentTypeItem);
+        info.addUnsupportedField("DynamicDropdown", Collections.singletonList("required"));
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -116,19 +94,8 @@ public class FieldsInformationTest {
     @Test
     public void addMultipleReportableFields() {
         final FieldsInformation info = FieldsInformation.allSupported();
-
-        final ContentTypeItem optionalStaticDropdown = createMock(ContentTypeItem.class);
-        expect(optionalStaticDropdown.getItemType()).andReturn("StaticDropdown");
-        expect(optionalStaticDropdown.getValidators()).andReturn(Collections.emptyList());
-
-        final ContentTypeItem optionalDynamicDropdown = createMock(ContentTypeItem.class);
-        expect(optionalDynamicDropdown.getItemType()).andReturn("DynamicDropdown");
-        expect(optionalDynamicDropdown.getValidators()).andReturn(Collections.singletonList("required"));
-
-        replayAll();
-
-        info.addUnsupportedField(optionalStaticDropdown);
-        info.addUnsupportedField(optionalDynamicDropdown);
+        info.addUnsupportedField("StaticDropdown", Collections.emptyList());
+        info.addUnsupportedField("DynamicDropdown", Collections.singletonList("required"));
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
@@ -142,14 +109,9 @@ public class FieldsInformationTest {
     @Test
     public void addCompoundWithUnknownRequiredField() {
         final FieldsInformation info = FieldsInformation.allSupported();
-        final ContentTypeItem unknownRequired = createMock(ContentTypeItem.class);
-        expect(unknownRequired.getItemType()).andReturn("Test");
-        expect(unknownRequired.getValidators()).andReturn(Collections.singletonList("required"));
-
-        replayAll();
 
         final FieldsInformation compoundWithUnknownRequiredField = FieldsInformation.noneSupported();
-        compoundWithUnknownRequiredField.addUnsupportedField(unknownRequired);
+        compoundWithUnknownRequiredField.addUnsupportedField("Test", Collections.singletonList("required"));
         info.add(compoundWithUnknownRequiredField);
 
         assertFalse(info.isAllFieldsIncluded());

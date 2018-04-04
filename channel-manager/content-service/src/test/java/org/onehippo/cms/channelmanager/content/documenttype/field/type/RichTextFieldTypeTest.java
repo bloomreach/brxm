@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessor;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
@@ -74,7 +73,7 @@ public class RichTextFieldTypeTest {
     private Node document;
 
     @Before
-    public void setUp() throws RepositoryException {
+    public void setUp() {
         document = MockNode.root();
     }
 
@@ -87,13 +86,10 @@ public class RichTextFieldTypeTest {
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
-        final ContentTypeItem contentTypeItem = EasyMock.createMock(ContentTypeItem.class);
-        expect(contentTypeItem.getName()).andReturn(FIELD_NAME);
-        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(contentTypeItem.isMultiple()).andReturn(false).anyTimes();
-
         final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
-        expect(fieldContext.getContentTypeItem()).andReturn(contentTypeItem).anyTimes();
+        expect(fieldContext.getName()).andReturn(FIELD_NAME);
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
+        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
@@ -128,7 +124,7 @@ public class RichTextFieldTypeTest {
         expect(HtmlProcessorFactory.of(eq("richtext")))
                 .andReturn((HtmlProcessorFactory) () -> htmlProcessor != null ? htmlProcessor : HtmlProcessorFactory.NOOP).anyTimes();
 
-        replayAll(parentContext, fieldContext, contentTypeItem);
+        replayAll(parentContext, fieldContext);
 
         final RichTextFieldType field = new RichTextFieldType();
         field.init(fieldContext);
