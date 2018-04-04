@@ -46,7 +46,7 @@
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
-    <maven.plugin.jacoco.version>0.7.5.201505241946</maven.plugin.jacoco.version>
+    <maven.plugin.jacoco.version>0.8.1</maven.plugin.jacoco.version>
     <!-- Tells Sonar to run the unit tests -->
     <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
     <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
