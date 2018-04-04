@@ -186,6 +186,7 @@
   "SELECT_DOCUMENT": "Select document",
   "SELECT_DOCUMENT_LOCKED": "Cannot select document (component is locked)",
   "SET_TO_NOW": "Set to now",
+  "SET_TO_TODAY": "Set to today",
   "SHOW_COMPONENTS": "Show components",
   "SHOW_CONTENT": "Show content",
   "SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU": " (you)",
