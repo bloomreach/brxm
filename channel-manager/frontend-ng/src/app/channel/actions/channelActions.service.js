@@ -16,7 +16,6 @@
 
 import MenuService from '../menu/menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
-import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
 import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 
 class ChannelActionsService extends MenuService {
@@ -271,7 +270,7 @@ class ChannelActionsService extends MenuService {
           channelName: channel.name,
         },
       },
-      controller: RejectPromptCtrl,
+      controller: 'RejectPromptCtrl',
       controllerAs: '$ctrl',
       bindToController: true,
     });
