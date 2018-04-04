@@ -34,7 +34,6 @@ public class PrototypeRepresentation extends ComponentRepresentation {
 
     private String displayName;
     private String primaryContainer;
-    private String applicationId;
 
     public PrototypeRepresentation represent(HstComponentConfiguration componentConfiguration, PageComposerContextService pageComposerContextService) {
         super.represent(componentConfiguration, pageComposerContextService.getEditingMount());
@@ -47,8 +46,6 @@ public class PrototypeRepresentation extends ComponentRepresentation {
                     HstNodeTypes.PROTOTYPE_META_PROPERTY_DISPLAY_NAME, getName());
             primaryContainer = JcrUtils.getStringProperty(prototypeNode,
                     HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, null);
-            applicationId = JcrUtils.getStringProperty(prototypeNode,
-                    HstNodeTypes.PROTOTYPE_META_PROPERTY_APPLICATION_ID, null);
         } catch (ItemNotFoundException e) {
             String msg = String.format("Expected to find prototype for '%s' but UUID '%s' not found",
                     componentConfiguration.getCanonicalStoredLocation(), componentConfiguration.getCanonicalIdentifier());
@@ -76,13 +73,5 @@ public class PrototypeRepresentation extends ComponentRepresentation {
 
     public void setPrimaryContainer(final String primaryContainer) {
         this.primaryContainer = primaryContainer;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
     }
 }

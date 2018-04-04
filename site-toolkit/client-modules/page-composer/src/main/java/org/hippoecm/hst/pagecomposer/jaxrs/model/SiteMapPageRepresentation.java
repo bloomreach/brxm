@@ -35,7 +35,6 @@ public class SiteMapPageRepresentation {
     private boolean workspaceConfiguration;
     private boolean inherited;
     private String relativeContentPath;
-    private String applicationId;
 
     public SiteMapPageRepresentation represent(final HstSiteMapItem item,
                                                final String parentId,
@@ -64,7 +63,6 @@ public class SiteMapPageRepresentation {
         workspaceConfiguration = ((CanonicalInfo) item).isWorkspaceConfiguration();
         inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         relativeContentPath = item.getRelativeContentPath();
-        applicationId = item.getApplicationId();
         return this;
     }
 
@@ -146,13 +144,5 @@ public class SiteMapPageRepresentation {
 
     public void setRelativeContentPath(final String relativeContentPath) {
         this.relativeContentPath = relativeContentPath;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
     }
 }
