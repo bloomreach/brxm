@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('DialogService', () => {
+describe('DialogService', () => {
   let $mdDialog;
   let $window;
   let DialogService;
