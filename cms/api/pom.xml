@@ -37,7 +37,10 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>htmldiff</artifactId>
-      <version>${hippo.htmldiff.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlcleaner</groupId>
+      <artifactId>htmlcleaner</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.yui</groupId>

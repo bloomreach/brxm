@@ -108,6 +108,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
+    <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
@@ -200,6 +201,16 @@
         <artifactId>hippo-services</artifactId>
         <version>${hippo.services.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>net.sourceforge.htmlcleaner</groupId>
+        <artifactId>htmlcleaner</artifactId>
+        <version>${sf.htmlcleaner.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>htmldiff</artifactId>
+        <version>${hippo.htmldiff.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
