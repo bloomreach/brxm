@@ -16,6 +16,8 @@
 
 import MenuService from '../menu/menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
+import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
+import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 
 class ChannelActionsService extends MenuService {
   constructor(
@@ -262,16 +264,17 @@ class ChannelActionsService extends MenuService {
   }
 
   _showRejectPrompt(channel) {
-    const prompt = this.DialogService.prompt()
-      .title(this.$translate.instant('REJECT_CHANNEL_TITLE', {
-        channel,
-      }))
-      .textContent(this.$translate.instant('REJECT_CHANNEL_TEXT'))
-      .placeholder(this.$translate.instant('REJECT_CHANNEL_PLACEHOLDER'))
-      .cancel(this.$translate.instant('CANCEL'))
-      .ok(this.$translate.instant('OK'));
-
-    return this.DialogService.show(prompt);
+    return this.DialogService.show({
+      template: rejectPromptTemplate,
+      locals: {
+        translationData: {
+          channelName: channel.name,
+        },
+      },
+      controller: RejectPromptCtrl,
+      controllerAs: '$ctrl',
+      bindToController: true,
+    });
   }
 
   _showDeleteProgress() {
