@@ -145,7 +145,7 @@ class ProjectService {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
     return this.$http
       .post(url, channelId)
-      .then((project) => { this.selectedProject = project; })
+      .then((response) => { this.selectedProject = response.data; })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
         this._callListeners(this.updateListeners);
