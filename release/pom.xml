@@ -77,7 +77,8 @@
     <hippo.plugin.sitemap.version>4.3.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>4.3.0-SNAPSHOT</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>2.3.0-SNAPSHOT</hippo.addon-crisp.version>
-    <hippo.maven.plugin.l10n>${hippo.l10n-tooling.version}</hippo.maven.plugin.l10n>
+
+    <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
   </properties>
