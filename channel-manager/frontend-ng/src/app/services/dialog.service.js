@@ -34,6 +34,12 @@ class DialogService {
     });
   }
 
+  prompt() {
+    return this.$mdDialog.prompt({
+      onRemoving: () => this._removeMask(),
+    });
+  }
+
   show(dialog) {
     this._showMask();
 

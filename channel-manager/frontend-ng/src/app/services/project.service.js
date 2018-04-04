@@ -143,9 +143,30 @@ class ProjectService {
 
   accept(channelId) {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
+
     return this.$http
       .post(url, channelId)
       .then((response) => { this.selectedProject = response.data; })
+      .catch(() => {
+        this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
+        this._callListeners(this.updateListeners);
+      });
+  }
+
+  reject(channelId, message) {
+    const request = {
+      method: 'POST',
+      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/reject/${channelId}`,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      data: message,
+    };
+
+    return this.$http(request)
+      .then((response) => {
+        this.selectedProject = response.data;
+      })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
         this._callListeners(this.updateListeners);

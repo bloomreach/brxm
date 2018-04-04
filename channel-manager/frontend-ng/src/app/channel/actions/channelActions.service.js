@@ -16,6 +16,7 @@
 
 import MenuService from '../menu/menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
+import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 
 class ChannelActionsService extends MenuService {
   constructor(
@@ -175,8 +176,11 @@ class ChannelActionsService extends MenuService {
   }
 
   _reject() {
-    // TODO (meggermont): Open reject dialog
-    console.log(`TODO: open reject dialog for '${this.ProjectService.selectedProject.name}'`);
+    const channel = this.ChannelService.getChannel();
+    const channelId = channel.id.replace(/-preview$/, '');
+
+    this._showRejectPrompt(channel)
+      .then(message => this.ProjectService.reject(channelId, message));
   }
 
   _accept() {
@@ -256,6 +260,20 @@ class ChannelActionsService extends MenuService {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _showRejectPrompt(channel) {
+    return this.DialogService.show({
+      template: rejectPromptTemplate,
+      locals: {
+        translationData: {
+          channelName: channel.name,
+        },
+      },
+      controller: 'RejectPromptCtrl',
+      controllerAs: '$ctrl',
+      bindToController: true,
+    });
   }
 
   _showDeleteProgress() {
