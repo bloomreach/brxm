@@ -424,6 +424,22 @@ describe('ChannelActionsService', () => {
     delete ProjectService.selectedProject.state;
   });
 
+  it('shows a prompt on rejection of a channel', () => {
+    const channelId = 'testChannel';
+    const message = 'testMessage';
+
+    spyOn(ProjectService, 'reject');
+    ChannelService.getChannel.and.returnValue({
+      id: `${channelId}-preview`,
+    });
+    DialogService.show.and.returnValue($q.resolve(message));
+
+    ChannelActionsService._reject();
+    $rootScope.$digest();
+
+    expect(ProjectService.reject).toHaveBeenCalledWith(channelId, message);
+  });
+
   it('shows a disabled accept menu item if a branch is selected for a project not in review', () => {
     ConfigService.projectsEnabled = true;
     spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(false);
