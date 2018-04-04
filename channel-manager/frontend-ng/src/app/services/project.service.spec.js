@@ -19,6 +19,7 @@ describe('ProjectService', () => {
   let $httpBackend;
   let ConfigService;
   let ProjectService;
+  let FeedbackService;
 
   const mountId = '12';
   const projects = [
@@ -64,10 +65,12 @@ describe('ProjectService', () => {
       _ConfigService_,
       _HstService_,
       _ProjectService_,
+      _FeedbackService_,
     ) => {
       $httpBackend = _$httpBackend_;
       ConfigService = _ConfigService_;
       ProjectService = _ProjectService_;
+      FeedbackService = _FeedbackService_;
     });
 
     spyOn(ConfigService, 'getCmsContextPath').and.returnValue('/test/');
@@ -102,5 +105,36 @@ describe('ProjectService', () => {
   it('calls setproject if the selectedProject is a project', () => {
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${projects[1].id}`).respond(200, currentProject.id);
     ProjectService.updateSelectedProject(projects[1].id);
+  });
+
+  it('rejects a channel while providing a message', () => {
+    const channelId = 'testChannel';
+    const message = 'testMessage';
+    const rejectedProject = Object.assign({}, currentProject, {
+      id: 'rejectedProject',
+    });
+
+    $httpBackend
+      .expectPOST(`/test/ws/projects/${currentProject.id}/channel/reject/${channelId}`)
+      .respond(200, rejectedProject);
+
+    ProjectService.reject(channelId, message);
+    $httpBackend.flush();
+    expect(ProjectService.selectedProject).toEqual(rejectedProject);
+  });
+
+  it('updates channel when reject call fails', () => {
+    spyOn(FeedbackService, 'showError');
+    const channelId = 'testChannel';
+    const message = 'testMessage';
+
+    $httpBackend
+      .expectPOST(`/test/ws/projects/${currentProject.id}/channel/reject/${channelId}`)
+      .respond(500);
+
+    ProjectService.reject(channelId, message);
+    $httpBackend.flush();
+
+    expect(FeedbackService.showError).toHaveBeenCalled();
   });
 });

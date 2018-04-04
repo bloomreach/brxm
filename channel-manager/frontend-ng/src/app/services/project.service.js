@@ -164,7 +164,9 @@ class ProjectService {
     };
 
     return this.$http(request)
-      .then((project) => { this.selectedProject = project; })
+      .then((response) => {
+        this.selectedProject = response.data;
+      })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
         this._callListeners(this.updateListeners);
