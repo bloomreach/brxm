@@ -21,6 +21,7 @@ import java.util.Calendar;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public interface HippoGalleryImageBeanMixin extends HippoBeanMixin, HippoGalleryImageBean {
 
@@ -36,15 +37,15 @@ public interface HippoGalleryImageBeanMixin extends HippoBeanMixin, HippoGallery
     @Override
     String getDisplayName();
 
-    @JsonIgnore
+    @JsonProperty
     @Override
     String getMimeType();
 
-    @JsonIgnore
+    @JsonProperty
     @Override
     String getFilename();
 
-    @JsonIgnore
+    @JsonProperty
     @Override
     long getLength();
 
@@ -56,7 +57,7 @@ public interface HippoGalleryImageBeanMixin extends HippoBeanMixin, HippoGallery
     @Override
     BigDecimal getLengthMB();
 
-    @JsonIgnore
+    @JsonProperty
     @Override
     Calendar getLastModified();
 
