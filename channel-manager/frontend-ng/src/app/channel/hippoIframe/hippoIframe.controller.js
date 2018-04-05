@@ -113,6 +113,9 @@ class HippoIframeCtrl {
       createOverlay: () => {
         this._createOverlay();
       },
+      syncOverlay: () => {
+        this.OverlayService.sync();
+      },
     };
     try {
       spa.init(publicApi);
