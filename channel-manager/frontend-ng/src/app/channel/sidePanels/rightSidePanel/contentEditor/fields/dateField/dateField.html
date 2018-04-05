@@ -22,7 +22,8 @@
                ng-focus="$ctrl.onFieldFocus()"
                ng-blur="$ctrl.onFieldBlur()"/>
 
-<md-input-container class="qa-field">
+<md-input-container class="qa-field-date-hours"
+                    ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">
   <input ng-model="$ctrl.dateValue.hours"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
@@ -31,8 +32,11 @@
          ng-focus="$ctrl.onFieldFocus()"
          ng-blur="$ctrl.onFieldBlur()">
 </md-input-container>
-:
-<md-input-container class="qa-field">
+
+<span ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">:</span>
+
+<md-input-container class="qa-field-date-minutes"
+                    ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'">
   <input ng-model="$ctrl.dateValue.minutes"
          ng-change="$ctrl.valueChanged()"
          class="timepart"
@@ -45,8 +49,8 @@
 
 <md-button md-no-ink
            class="md-icon-button now-button"
-           aria-label="{{ ::'SET_TO_NOW' | translate }}"
+           aria-label="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}"
            ng-click="$ctrl.setToNow()"
-           title="{{ ::'SET_TO_NOW' | translate }}">
+           title="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}">
   <md-icon>sync</md-icon>
 </md-button>

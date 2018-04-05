@@ -24,13 +24,9 @@ import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 
-public class DateFieldType extends PrimitiveFieldType {
+public abstract class AbstractDateFieldType extends PrimitiveFieldType {
 
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
-
-    public DateFieldType() {
-        setType(Type.DATE);
-    }
 
     @Override
     protected int getPropertyType() {
