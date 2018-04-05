@@ -12,7 +12,7 @@
   "CONFIRM_DELETE_CHANNEL_TITLE": "Delete channel '{{channel}}'?",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
   "CONFIRM_DELETE_SINGLE_PAGE_MESSAGE": "Delete 1 page: '{{page}}'?",
-  "CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE": "Delete {{numberOfChildren}} pages: '{{page}}' and child pages?",
+  "CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE": "Delete {{numberOfPages}} pages: '{{page}}' and child pages?",
   "CONFIRM_DELETE_MENU_ITEM_MESSAGE": "Delete '{{menuItem}}'?",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all changes?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",

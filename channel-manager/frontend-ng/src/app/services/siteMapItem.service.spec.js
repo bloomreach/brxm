@@ -162,7 +162,7 @@ describe('SiteMapItemService', () => {
     $rootScope.$digest();
   });
 
-  fit('checks if the page has subpages', () => {
+  it('checks if the page has subpages', () => {
     const siteMapItem = {
       numberOfChildren: 0,
     };

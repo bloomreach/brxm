@@ -163,7 +163,7 @@ class PageActionsService extends MenuService {
 
   _getPageDeleteMessage(page, numberOfChildren) {
     if (numberOfChildren > 0) {
-      return this.$translate.instant('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE', { numberOfChildren, page });
+      return this.$translate.instant('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE', { numberOfPages: numberOfChildren + 1, page });
     }
     return this.$translate.instant('CONFIRM_DELETE_SINGLE_PAGE_MESSAGE', { page });
   }
