@@ -110,7 +110,7 @@
        target="_blank">RESTful Representation</a>
   </li>
   <li>
-    <hst:link var="resourceApiLink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="resourceapi"/>
+    <hst:link var="resourceApiLink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="site/resourceapi"/>
     <a href="${resourceApiLink}"
        target="_blank">Resource API Representation</a>
   </li>
