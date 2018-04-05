@@ -67,7 +67,10 @@ public class PageModelApiMount implements ContextualizableMount {
 
     @Override
     public String getAlias() {
-        return null;
+        if (parent.getAlias() == null) {
+            return null;
+        }
+        return parent.getAlias() + "/" + name;
     }
 
     @Override
