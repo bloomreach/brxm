@@ -39,15 +39,15 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -60,11 +60,11 @@ public class ChoiceFieldUtilsTest {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
 
         expect(context.getEditorConfigNode()).andReturn(Optional.empty());
-        replay(context);
+        replayAll();
 
         assertFalse(ChoiceFieldUtils.isChoiceField(context));
 
-        verify(context);
+        verifyAll();
     }
 
     @Test
@@ -73,11 +73,11 @@ public class ChoiceFieldUtilsTest {
         final Node node = MockNode.root();
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(node));
-        replay(context);
+        replayAll();
 
         assertFalse(ChoiceFieldUtils.isChoiceField(context));
 
-        verify(context);
+        verifyAll();
     }
 
     @Test
@@ -87,11 +87,11 @@ public class ChoiceFieldUtilsTest {
         node.setProperty("cpItemsPath", "bla");
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(node));
-        replay(context);
+        replayAll();
 
         assertTrue(ChoiceFieldUtils.isChoiceField(context));
 
-        verify(context);
+        verifyAll();
     }
 
     @Test
@@ -101,11 +101,11 @@ public class ChoiceFieldUtilsTest {
         node.setProperty("compoundList", "bla");
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(node));
-        replay(context);
+        replayAll();
 
         assertTrue(ChoiceFieldUtils.isChoiceField(context));
 
-        verify(context);
+        verifyAll();
     }
 
     @Test
@@ -115,11 +115,11 @@ public class ChoiceFieldUtilsTest {
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(node.hasProperty("cpItemsPath")).andThrow(new RepositoryException());
-        replay(context, node);
+        replayAll();
 
         assertFalse(ChoiceFieldUtils.isChoiceField(context));
 
-        verify(context, node);
+        verifyAll();
     }
 
     @Test
@@ -147,13 +147,11 @@ public class ChoiceFieldUtilsTest {
         expect(node.hasProperty("cpItemsPath")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(node)).andReturn("/bla");
 
-        replay(node);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(node);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
@@ -171,11 +169,11 @@ public class ChoiceFieldUtilsTest {
         node.setProperty("cpItemsPath", "nonexistent:type");
         expect(ContentTypeContext.getContentType("nonexistent:type")).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
@@ -202,13 +200,11 @@ public class ChoiceFieldUtilsTest {
         expect(choice.getItemType()).andReturn("choiceType");
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.empty());
 
-        replay(provider, choice);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(provider, choice);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
@@ -243,13 +239,11 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
 
-        replay(provider, choice, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(provider, choice, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertFalse(fieldsInfo.isAllFieldsIncluded());
@@ -284,13 +278,11 @@ public class ChoiceFieldUtilsTest {
         expectLastCall();
         expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
 
-        replay(provider, choice, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(provider, choice, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("choiceType"), equalTo(compoundField));
@@ -325,13 +317,11 @@ public class ChoiceFieldUtilsTest {
         expect(richTextField.init(compoundContext)).andReturn(FieldsInformation.allSupported());
         expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
 
-        replay(provider, choice, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(provider, choice, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("choiceType"), equalTo(richTextField));
@@ -360,13 +350,11 @@ public class ChoiceFieldUtilsTest {
         expect(node.hasProperty("compoundList")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(node)).andReturn("/bla");
 
-        replay(node);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, null);
 
-        verify(node);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
     }
@@ -389,13 +377,11 @@ public class ChoiceFieldUtilsTest {
         expect(ContentTypeContext.createFromParent("namespaced:three", parentContext)).andReturn(Optional.empty());
         expect(ContentTypeContext.createFromParent("prefix:four", parentContext)).andReturn(Optional.empty());
 
-        replay(parentContext, contentType);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(parentContext, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
@@ -420,13 +406,11 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
 
-        replay(parentContext, childContext, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(parentContext, childContext, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertTrue(choices.isEmpty());
         assertFalse(fieldsInfo.isAllFieldsIncluded());
@@ -457,13 +441,11 @@ public class ChoiceFieldUtilsTest {
         expectLastCall();
         expect(compoundField.getDisplayName()).andReturn("bla");
 
-        replay(parentContext, childContext, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(parentContext, childContext, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("compound:id"), equalTo(compoundField));
@@ -499,13 +481,11 @@ public class ChoiceFieldUtilsTest {
         compoundField.setDisplayName("Patched Display Name");
         expectLastCall();
 
-        replay(parentContext, childContext, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(parentContext, childContext, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("compound:id"), equalTo(compoundField));
@@ -537,13 +517,11 @@ public class ChoiceFieldUtilsTest {
         expect(richTextField.init(richTextFieldContext)).andReturn(FieldsInformation.allSupported());
         expect(richTextField.getDisplayName()).andReturn("bla");
 
-        replay(parentContext, childContext, compound);
-        PowerMock.replayAll();
+        replayAll();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices, fieldsInfo);
 
-        verify(parentContext, childContext, compound);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("hippostd:html"), equalTo(richTextField));
