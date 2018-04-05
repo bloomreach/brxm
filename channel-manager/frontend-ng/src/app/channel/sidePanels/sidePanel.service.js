@@ -15,12 +15,11 @@
  */
 
 class SidePanelService {
-  constructor($mdSidenav, $q, OverlayService) {
+  constructor($mdSidenav, $q) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
-    this.OverlayService = OverlayService;
     this.panels = { };
   }
 
@@ -45,10 +44,7 @@ class SidePanelService {
     const panel = this.panels[side];
     if (panel) {
       if (!this.isOpen(side)) {
-        return this.$mdSidenav(panel.sideNavComponentId).open()
-          .then(() => {
-            this.OverlayService.sync();
-          });
+        return this.$mdSidenav(panel.sideNavComponentId).open();
       }
     }
     return this.$q.resolve();
@@ -62,10 +58,7 @@ class SidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       const panel = this.panels[side];
-      return this.$mdSidenav(panel.sideNavComponentId).close()
-        .then(() => {
-          this.OverlayService.sync();
-        });
+      return this.$mdSidenav(panel.sideNavComponentId).close();
     }
     return this.$q.resolve();
   }

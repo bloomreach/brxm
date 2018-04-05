@@ -48,7 +48,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -174,15 +173,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.isProperty()).andReturn(true);
-        expect(item.getItemType()).andReturn("unknown").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.isProperty()).andReturn(true);
+        expect(fieldContext.getType()).andReturn("unknown").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -200,14 +197,12 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         replayAll();
 
@@ -226,15 +221,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.empty());
         replayAll();
@@ -254,15 +247,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of("Custom plugin"));
         replayAll();
@@ -282,15 +273,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.empty());
@@ -310,15 +299,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.singletonList("required"));
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.singletonList("required"));
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.empty());
@@ -338,16 +325,14 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final StringFieldType fieldType = createMock(StringFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        expect(item.getValidators()).andReturn(Collections.singletonList("unknown-validator"));
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
+        expect(fieldContext.getValidators()).andReturn(Collections.singletonList("unknown-validator"));
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
@@ -371,15 +356,13 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final StringFieldType fieldType = createMock(StringFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.getItemType()).andReturn("String");
+        expect(fieldContext.getType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
@@ -404,9 +387,6 @@ public class FieldTypeUtilsTest {
         final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext3 = createMock(FieldTypeContext.class);
-        final ContentTypeItem item1 = createMock(ContentTypeItem.class);
-        final ContentTypeItem item2 = createMock(ContentTypeItem.class);
-        final ContentTypeItem item3 = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final StringFieldType stringField1 = createMock(StringFieldType.class);
         final StringFieldType stringField2 = createMock(StringFieldType.class);
@@ -415,12 +395,9 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3));
-        expect(fieldContext1.getContentTypeItem()).andReturn(item1);
-        expect(item1.getItemType()).andReturn("String");
-        expect(fieldContext2.getContentTypeItem()).andReturn(item2);
-        expect(item2.getItemType()).andReturn("Text");
-        expect(fieldContext3.getContentTypeItem()).andReturn(item3);
-        expect(item3.getItemType()).andReturn("Label");
+        expect(fieldContext1.getType()).andReturn("String");
+        expect(fieldContext2.getType()).andReturn("Text");
+        expect(fieldContext3.getType()).andReturn("Label");
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext3.getEditorConfigNode()).andReturn(Optional.of(node));
@@ -459,8 +436,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
-        final ContentTypeItem item1 = createMock(ContentTypeItem.class);
-        final ContentTypeItem item2 = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final FormattedTextFieldType formattedTextField = createMock(FormattedTextFieldType.class);
         final RichTextFieldType richTextField = createMock(RichTextFieldType.class);
@@ -469,10 +444,8 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2));
 
-        expect(fieldContext1.getContentTypeItem()).andReturn(item1);
-        expect(item1.getItemType()).andReturn("Html");
-        expect(fieldContext2.getContentTypeItem()).andReturn(item2);
-        expect(item2.getItemType()).andReturn("hippostd:html");
+        expect(fieldContext1.getType()).andReturn("Html");
+        expect(fieldContext2.getType()).andReturn("hippostd:html");
 
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
@@ -510,16 +483,14 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("project:compoundtype").anyTimes();
-        expect(item.isProperty()).andReturn(false);
+        expect(fieldContext.getType()).andReturn("project:compoundtype").anyTimes();
+        expect(fieldContext.isProperty()).andReturn(false);
         expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         expect(ContentTypeContext.getContentType("project:compoundtype")).andReturn(Optional.of(contentType));
         expect(contentType.isCompoundType()).andReturn(true);
@@ -547,16 +518,14 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("project:compoundtype").anyTimes();
-        expect(item.isProperty()).andReturn(false);
+        expect(fieldContext.getType()).andReturn("project:compoundtype").anyTimes();
+        expect(fieldContext.isProperty()).andReturn(false);
         expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         expect(ContentTypeContext.getContentType("project:compoundtype")).andReturn(Optional.of(contentType));
         expect(contentType.isCompoundType()).andReturn(true);
@@ -583,16 +552,14 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("project:compoundtype").anyTimes();
-        expect(item.isProperty()).andReturn(false);
+        expect(fieldContext.getType()).andReturn("project:compoundtype").anyTimes();
+        expect(fieldContext.isProperty()).andReturn(false);
         expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         expect(ContentTypeContext.getContentType("project:compoundtype")).andReturn(Optional.of(contentType));
         expect(contentType.isCompoundType()).andReturn(true);
@@ -618,16 +585,14 @@ public class FieldTypeUtilsTest {
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final ChoiceFieldType fieldType = createMock(ChoiceFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.getItemType()).andReturn("project:choicefieldtype");
-        expect(item.isProperty()).andReturn(false);
+        expect(fieldContext.getType()).andReturn("project:choicefieldtype");
+        expect(fieldContext.isProperty()).andReturn(false);
         expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(true);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(CHOICE_FIELD_PLUGIN));
@@ -653,16 +618,13 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
-        final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(item.getItemType()).andReturn("project:compoundtype").anyTimes();
-        expect(item.isProperty()).andReturn(false);
-        expect(item.getValidators()).andReturn(Collections.emptyList());
+        expect(fieldContext.getType()).andReturn("project:compoundtype").anyTimes();
+        expect(fieldContext.isProperty()).andReturn(false);
+        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         expect(ContentTypeContext.getContentType("project:compoundtype")).andReturn(Optional.of(contentType));
         expect(contentType.isCompoundType()).andReturn(false);

@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -118,7 +119,7 @@ public class ChoiceFieldUtils {
                     choices.put(choiceId, choice);
                 } else {
                     // not all available choices are supported
-                    fieldsInfo.addUnsupportedField(item);
+                    fieldsInfo.addUnsupportedField(fieldContext.getName(), fieldContext.getValidators());
                 }
             });
         }
@@ -207,18 +208,30 @@ public class ChoiceFieldUtils {
             final CompoundFieldType compound = new CompoundFieldType();
             compound.initListBasedChoice(choiceContext, choiceId);
             return compound;
-        } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-            final RichTextFieldType richText = new RichTextFieldType();
-            // FIXME: this init call will not load configuration
-            richText.initListBasedChoice(choiceId);
-            return richText;
-        } else if(contentType.isContentType(GalleryPickerNodeType.NT_IMAGE_LINK)) {
-            // FIXME: this init call will not load configuration
-            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
-            imageLink.initListBasedChoice(choiceId);
-            return imageLink;
-
         }
+
+        final FieldTypeContext fieldContext = new FieldTypeContext(
+            choiceId,                // the ID of a list-based choice is both the field name
+            choiceId,                // and the JCR type
+            false,                   // a choice is always stored in a node
+            false,                   // a choice itself is never multiple
+            Collections.emptyList(), // a choice does not have any validators itself
+            choiceContext,           // the parent is the choice field
+            null                     // a choice does not have its own editor config node but uses the one from the type
+        );
+
+        if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+            final RichTextFieldType richText = new RichTextFieldType();
+            richText.init(fieldContext);
+            return richText;
+        }
+
+        if (contentType.isContentType(GalleryPickerNodeType.NT_IMAGE_LINK)) {
+            final ImageLinkFieldType imageLink = new ImageLinkFieldType();
+            imageLink.init(fieldContext);
+            return imageLink;
+        }
+
         return null;
     }
 

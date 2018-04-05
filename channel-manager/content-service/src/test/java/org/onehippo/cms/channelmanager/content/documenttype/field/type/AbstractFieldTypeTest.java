@@ -27,8 +27,8 @@ import javax.jcr.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -38,7 +38,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUti
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -249,7 +248,6 @@ public class AbstractFieldTypeTest {
     public void initOptionalNoLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.singletonList(FieldValidators.OPTIONAL);
 
@@ -264,16 +262,15 @@ public class AbstractFieldTypeTest {
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getContentTypeItem()).andReturn(item);
+        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getValidators()).andReturn(validators);
+        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
         expect(parentContext.getDocumentType()).andReturn(docType);
-        expect(item.getName()).andReturn("field:id");
-        expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(false).anyTimes();
 
         PowerMock.replayAll();
-        replay(fieldContext, parentContext, item);
+        replay(fieldContext, parentContext);
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -284,7 +281,7 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(1));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext, item);
+        verify(fieldContext, parentContext);
         PowerMock.verifyAll();
     }
 
@@ -292,7 +289,6 @@ public class AbstractFieldTypeTest {
     public void initMultipleWithLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.emptyList();
 
@@ -307,16 +303,15 @@ public class AbstractFieldTypeTest {
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getContentTypeItem()).andReturn(item);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
         expect(parentContext.getDocumentType()).andReturn(docType);
-        expect(item.getName()).andReturn("field:id");
-        expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(true).anyTimes();
+        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getValidators()).andReturn(validators);
+        expect(fieldContext.isMultiple()).andReturn(true).anyTimes();
 
         PowerMock.replayAll();
-        replay(fieldContext, parentContext, item);
+        replay(fieldContext, parentContext);
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -327,7 +322,7 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(Integer.MAX_VALUE));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext, item);
+        verify(fieldContext, parentContext);
         PowerMock.verifyAll();
     }
 
@@ -335,7 +330,6 @@ public class AbstractFieldTypeTest {
     public void initSingularNoLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
         final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.emptyList();
 
@@ -350,16 +344,15 @@ public class AbstractFieldTypeTest {
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getContentTypeItem()).andReturn(item);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
         expect(parentContext.getDocumentType()).andReturn(docType);
-        expect(item.getName()).andReturn("field:id");
-        expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(false).anyTimes();
+        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getValidators()).andReturn(validators);
+        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
 
         PowerMock.replayAll();
-        replay(fieldContext, parentContext, item);
+        replay(fieldContext, parentContext);
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -370,7 +363,7 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(1));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext, item);
+        verify(fieldContext, parentContext);
         PowerMock.verifyAll();
     }
 

@@ -28,13 +28,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -277,10 +276,6 @@ public class DocumentTypesServiceImplTest {
 
         expect(docType.getFields()).andReturn(fields);
 
-        final ContentTypeItem unknownRequired = createMock(ContentTypeItem.class);
-        expect(unknownRequired.getItemType()).andReturn("Test");
-        expect(unknownRequired.getValidators()).andReturn(Collections.singletonList("required"));
-
         final FieldsInformation fieldsInfo = new FieldsInformation();
 
         expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
@@ -303,7 +298,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        fieldsInfo.addUnsupportedField(unknownRequired);
+        fieldsInfo.addUnsupportedField("Test", Collections.singletonList("required"));
         assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
 
         verifyAll();
