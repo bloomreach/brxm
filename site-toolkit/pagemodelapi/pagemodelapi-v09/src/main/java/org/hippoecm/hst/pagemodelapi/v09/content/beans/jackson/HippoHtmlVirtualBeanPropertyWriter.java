@@ -15,33 +15,28 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.cfg.MapperConfig;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
-import com.fasterxml.jackson.databind.util.Annotations;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoHtmlBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
+import com.fasterxml.jackson.databind.util.Annotations;
+
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
-public class HippoHtmlVirtualBeanPropertyWriter extends VirtualBeanPropertyWriter {
+public class HippoHtmlVirtualBeanPropertyWriter extends AbstractVirtualBeanPropertyWriter<HippoHtmlBean, String> {
 
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(HippoHtmlVirtualBeanPropertyWriter.class);
 
-    @SuppressWarnings("unused")
     public HippoHtmlVirtualBeanPropertyWriter() {
         super();
     }
@@ -52,29 +47,16 @@ public class HippoHtmlVirtualBeanPropertyWriter extends VirtualBeanPropertyWrite
     }
 
     @Override
-    protected Object value(Object htmlBean, JsonGenerator gen, SerializerProvider prov) throws Exception {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-
-
-        final HippoHtmlBean hippoHtmlBean = (HippoHtmlBean) htmlBean;
-
+    protected String createValue(final HstRequestContext requestContext, final HippoHtmlBean hippoHtmlBean) throws Exception {
         if (requestContext == null) {
             return hippoHtmlBean.getContent();
         }
 
-        Mount siteMount;
-        Mount pageModelApiMount = requestContext.getResolvedMount().getMount();
-        if (!PAGE_MODEL_PIPELINE_NAME.equals(pageModelApiMount.getNamedPipeline())) {
-            log.warn("Expected request mount have named pipeline '{}' but was '{}'. Cannot do content rewriting properly.",
-                    PAGE_MODEL_PIPELINE_NAME, pageModelApiMount.getNamedPipeline());
+        final Mount siteMount = getSiteMountForCurrentPageModelApiRequest(requestContext);
+
+        if (siteMount == null) {
+            log.info("Cannot do content rewriting properly as there's no proper site mount for this request.");
             return hippoHtmlBean.getContent();
-        } else {
-            siteMount = pageModelApiMount.getParent();
-            if (siteMount == null) {
-                log.info("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
-                        "case for '{}'. Cannot do content rewriting properly.", pageModelApiMount);
-                return hippoHtmlBean.getContent();
-            }
         }
 
         final HtmlContentRewriter htmlContentRewriter = getComponentManager()
@@ -86,9 +68,8 @@ public class HippoHtmlVirtualBeanPropertyWriter extends VirtualBeanPropertyWrite
     }
 
     @Override
-    public VirtualBeanPropertyWriter withConfig(MapperConfig<?> config, AnnotatedClass declaringClass,
+    public VirtualBeanPropertyWriter createInstanceWithConfig(MapperConfig<?> config, AnnotatedClass declaringClass,
             BeanPropertyDefinition propDef, JavaType type) {
-        // Ref: jackson-databind-master/src/test/java/com/fasterxml/jackson/databind/ser/TestVirtualProperties.java
         return new HippoHtmlVirtualBeanPropertyWriter(propDef, declaringClass.getAnnotations(), type);
     }
 }

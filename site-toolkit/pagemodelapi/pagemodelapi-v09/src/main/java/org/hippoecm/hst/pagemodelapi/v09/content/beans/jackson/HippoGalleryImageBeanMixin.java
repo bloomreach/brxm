@@ -22,7 +22,15 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
+@JsonAppend(props = {
+        @JsonAppend.Prop(
+                name = "_links",
+                value = HippoGalleryImageBeanLinksVirtualBeanPropertyWriter.class
+        )
+}
+)
 public interface HippoGalleryImageBeanMixin extends HippoBeanMixin, HippoGalleryImageBean {
 
     @JsonIgnore
