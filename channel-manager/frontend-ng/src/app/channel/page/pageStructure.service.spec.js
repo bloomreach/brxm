@@ -22,7 +22,7 @@ describe('PageStructureService', () => {
   let PageMetaDataService;
   let ChannelService;
   let HstService;
-  let RenderingService;
+  let MarkupService;
   let HippoIframeService;
   let FeedbackService;
   let MaskService;
@@ -45,7 +45,7 @@ describe('PageStructureService', () => {
       _PageMetaDataService_,
       _ChannelService_,
       _HstService_,
-      _RenderingService_,
+      _MarkupService_,
       _HippoIframeService_,
       _FeedbackService_,
       _MaskService_,
@@ -59,7 +59,7 @@ describe('PageStructureService', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       HstService = _HstService_;
-      RenderingService = _RenderingService_;
+      MarkupService = _MarkupService_;
       HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
       MaskService = _MaskService_;
@@ -422,7 +422,7 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(''));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(''));
 
     PageStructureService.removeComponentById('aaaa');
 
@@ -668,7 +668,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -694,7 +694,7 @@ describe('PageStructureService', () => {
         </div>
       <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('component-no-markup');
     $rootScope.$digest();
 
@@ -716,7 +716,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -736,7 +736,7 @@ describe('PageStructureService', () => {
         <p>Re-rendered component B</p>
       <!-- { "HST-End": "true", "uuid": "bbbb" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     PageStructureService.renderComponent('bbbb');
     PageStructureService.renderComponent('bbbb');
@@ -748,12 +748,12 @@ describe('PageStructureService', () => {
 
   it('gracefully handles requests to re-render an unknown component', () => {
     spyOn($log, 'warn');
-    spyOn(RenderingService, 'fetchComponentMarkup');
+    spyOn(MarkupService, 'fetchComponentMarkup');
 
     PageStructureService.renderComponent('unknown-component');
 
     expect($log.warn).toHaveBeenCalled();
-    expect(RenderingService.fetchComponentMarkup).not.toHaveBeenCalled();
+    expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
   });
 
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
@@ -767,7 +767,7 @@ describe('PageStructureService', () => {
         </p>
       `;
     spyOn($log, 'error');
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -787,7 +787,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -808,7 +808,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -831,7 +831,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -853,7 +853,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     const propertiesMap = {
@@ -912,7 +912,7 @@ describe('PageStructureService', () => {
         <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-End": "true", "uuid": "container-nomarkup" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
@@ -928,7 +928,7 @@ describe('PageStructureService', () => {
     const updatedMarkup = `
       <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
       <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->`;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
@@ -968,7 +968,7 @@ describe('PageStructureService', () => {
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.getContainers().length).toBe(1);
       expect(PageStructureService.getContainers()[0]).toBe(newContainer);
@@ -1005,7 +1005,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
       done();
@@ -1031,7 +1031,7 @@ describe('PageStructureService', () => {
       `;
 
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
 
     PageStructureService.renderContainer(container).then(() => {
       expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
@@ -1057,7 +1057,7 @@ describe('PageStructureService', () => {
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
       done();
@@ -1083,7 +1083,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
       done();

@@ -31,9 +31,9 @@ describe('OverlayService', () => {
   let HippoIframeService;
   let HstComponentService;
   let hstCommentsProcessorService;
+  let MarkupService;
   let OverlayService;
   let PageStructureService;
-  let RenderingService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -51,9 +51,9 @@ describe('OverlayService', () => {
       _HippoIframeService_,
       _HstComponentService_,
       _hstCommentsProcessorService_,
+      _MarkupService_,
       _OverlayService_,
       _PageStructureService_,
-      _RenderingService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -69,7 +69,7 @@ describe('OverlayService', () => {
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
-      RenderingService = _RenderingService_;
+      MarkupService = _MarkupService_;
     });
 
     spyOn(CmsService, 'subscribe').and.callThrough();
@@ -263,7 +263,7 @@ describe('OverlayService', () => {
         <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
         <!-- { "HST-End": "true", "uuid": "cccc" } -->
       `;
-      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: emptyMarkup }));
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: emptyMarkup }));
 
       PageStructureService.renderComponent('cccc');
       $rootScope.$digest();
@@ -389,7 +389,7 @@ describe('OverlayService', () => {
           <p id="markup-in-component-a">Markup in component A that just got an experiment</p>
         <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
 
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
@@ -679,7 +679,7 @@ describe('OverlayService', () => {
           <p id="markup-in-component-a">Markup in component A without menu link</p>
         <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
 
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();

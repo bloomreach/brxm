@@ -33,7 +33,7 @@ class PageStructureService {
     HstService,
     MaskService,
     PageMetaDataService,
-    RenderingService) {
+    MarkupService) {
     'ngInject';
 
     // Injected
@@ -48,7 +48,7 @@ class PageStructureService {
     this.HstService = HstService;
     this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
-    this.RenderingService = RenderingService;
+    this.MarkupService = MarkupService;
 
     this.changeListeners = [];
     this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
@@ -287,7 +287,7 @@ class PageStructureService {
   renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
-      this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
+      this.MarkupService.fetchComponentMarkup(component, propertiesMap).then((response) => {
         // re-fetch component because a parallel renderComponent call may have updated the component's markup
         component = this.getComponentById(componentId);
 
@@ -335,7 +335,7 @@ class PageStructureService {
   }
 
   renderContainer(container) {
-    return this.RenderingService.fetchContainerMarkup(container)
+    return this.MarkupService.fetchContainerMarkup(container)
       .then(markup => this._updateContainer(container, markup));
   }
 
