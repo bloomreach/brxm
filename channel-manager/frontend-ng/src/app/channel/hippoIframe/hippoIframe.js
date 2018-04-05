@@ -16,26 +16,28 @@
 
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
-import HippoIframeService from './hippoIframe.service';
 import DragDropService from './dragDrop/dragDrop.service';
+import HippoIframeService from './hippoIframe.service';
 import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
 import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
+import RenderingService from './rendering/rendering.service';
 import ScrollService from './scrolling/scroll.service';
 import SpaService from './spa/spa.service';
 import ViewportService from './viewport/viewport.service';
 
 const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [])
-  .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
+  .directive('hippoIframe', hippoIframe)
+  .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
+  .service('OverlayService', OverlayService)
+  .service('RenderingService', RenderingService)
   .service('ScrollService', ScrollService)
   .service('SpaService', SpaService)
-  .service('DragDropService', DragDropService)
-  .service('ViewportService', ViewportService)
-  .service('OverlayService', OverlayService);
+  .service('ViewportService', ViewportService);
 
 export default channelHippoIframeModule;
