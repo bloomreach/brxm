@@ -28,7 +28,7 @@ describe('hippoIframeCtrl', () => {
   let PageStructureService;
   let ProjectService;
   let hippoIframeCtrl;
-  let hstCommentsProcessorService;
+  let HstCommentsProcessorService;
   let scope;
   const iframeDom = {
     defaultView: window,
@@ -58,7 +58,7 @@ describe('hippoIframeCtrl', () => {
       _PageMetaDataService_,
       _PageStructureService_,
       _ProjectService_,
-      _hstCommentsProcessorService_,
+      _HstCommentsProcessorService_,
     ) => {
       $compile = _$compile_;
       $q = _$q_;
@@ -73,7 +73,7 @@ describe('hippoIframeCtrl', () => {
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
       ProjectService = _ProjectService_;
-      hstCommentsProcessorService = _hstCommentsProcessorService_;
+      HstCommentsProcessorService = _HstCommentsProcessorService_;
       scope = $rootScope.$new();
     });
 
@@ -144,7 +144,7 @@ describe('hippoIframeCtrl', () => {
     const deferred = $q.defer();
 
     spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(hstCommentsProcessorService, 'run');
+    spyOn(HstCommentsProcessorService, 'run');
     spyOn(ChannelService, 'loadChannel').and.returnValue(deferred.promise);
     spyOn(hippoIframeCtrl, '_parseLinks');
     spyOn(hippoIframeCtrl, '_updateDragDrop');
@@ -158,7 +158,7 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$digest();
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
-    expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+    expect(HstCommentsProcessorService.run).toHaveBeenCalled();
 
     $rootScope.$digest();
 
@@ -176,7 +176,7 @@ describe('hippoIframeCtrl', () => {
   it('handles the loading of a new page', () => {
     spyOn(PageStructureService, 'clearParsedElements');
     spyOn(PageStructureService, 'attachEmbeddedLinks');
-    spyOn(hstCommentsProcessorService, 'run');
+    spyOn(HstCommentsProcessorService, 'run');
     spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
@@ -185,7 +185,7 @@ describe('hippoIframeCtrl', () => {
 
     expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
-    expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+    expect(HstCommentsProcessorService.run).toHaveBeenCalled();
     expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
     expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();

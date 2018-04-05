@@ -28,7 +28,7 @@ class PageStructureService {
     CmsService,
     FeedbackService,
     HippoIframeService,
-    hstCommentsProcessorService,
+    HstCommentsProcessorService,
     HstConstants,
     HstService,
     MaskService,
@@ -43,7 +43,7 @@ class PageStructureService {
     this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.HST = HstConstants;
     this.HstService = HstService;
     this.MaskService = MaskService;
@@ -94,7 +94,7 @@ class PageStructureService {
   }
 
   _registerContainer(commentDomElement, metaData) {
-    const container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+    const container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
     this.containers.push(container);
   }
 
@@ -106,7 +106,7 @@ class PageStructureService {
 
     const container = this.containers[this.containers.length - 1];
     try {
-      const component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+      const component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
       container.addComponent(component);
     } catch (exception) {
       this.$log.debug(exception, metaData);
@@ -430,13 +430,13 @@ class PageStructureService {
   _createContainer(jQueryNodeCollection) {
     let container = null;
 
-    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
       const type = metaData[this.HST.TYPE];
       try {
         switch (type) {
           case this.HST.TYPE_CONTAINER:
             if (!container) {
-              container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+              container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
             } else {
               this.$log.warn('More than one container in the DOM Element!');
               return;
@@ -451,7 +451,7 @@ class PageStructureService {
 
             try {
               container.addComponent(new ComponentElement(commentDomElement, metaData,
-                container, this.hstCommentsProcessorService));
+                container, this.HstCommentsProcessorService));
             } catch (exception) {
               this.$log.debug(exception, metaData);
             }
@@ -498,12 +498,12 @@ class PageStructureService {
   _createComponent(jQueryNodeCollection, container) {
     let component = null;
 
-    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
       const type = metaData[this.HST.TYPE];
       switch (type) {
         case this.HST.TYPE_COMPONENT:
           try {
-            component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+            component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
           } catch (exception) {
             this.$log.debug(exception, metaData);
           }

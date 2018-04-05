@@ -30,13 +30,13 @@ class HippoIframeCtrl {
     DomService,
     DragDropService,
     HippoIframeService,
+    HstCommentsProcessorService,
+    LinkProcessorService,
     OverlayService,
     PageMetaDataService,
     PageStructureService,
     ProjectService,
     ViewportService,
-    hstCommentsProcessorService,
-    linkProcessorService,
   ) {
     'ngInject';
 
@@ -58,8 +58,8 @@ class HippoIframeCtrl {
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.ViewportService = ViewportService;
-    this.hstCommentsProcessorService = hstCommentsProcessorService;
-    this.linkProcessorService = linkProcessorService;
+    this.HstCommentsProcessorService = HstCommentsProcessorService;
+    this.LinkProcessorService = LinkProcessorService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -222,7 +222,7 @@ class HippoIframeCtrl {
   }
 
   _parseHstComments() {
-    this.hstCommentsProcessorService.run(
+    this.HstCommentsProcessorService.run(
       this._getIframeDom(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService),
     );
@@ -242,7 +242,7 @@ class HippoIframeCtrl {
     const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
     const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
-    this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
+    this.LinkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
 
   getContainers() {

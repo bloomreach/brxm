@@ -30,7 +30,7 @@ describe('OverlayService', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
-  let hstCommentsProcessorService;
+  let HstCommentsProcessorService;
   let MarkupService;
   let OverlayService;
   let PageStructureService;
@@ -50,7 +50,7 @@ describe('OverlayService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
-      _hstCommentsProcessorService_,
+      _HstCommentsProcessorService_,
       _MarkupService_,
       _OverlayService_,
       _PageStructureService_,
@@ -66,7 +66,7 @@ describe('OverlayService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
-      hstCommentsProcessorService = _hstCommentsProcessorService_;
+      HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       MarkupService = _MarkupService_;
@@ -89,7 +89,7 @@ describe('OverlayService', () => {
 
       try {
         PageStructureService.clearParsedElements();
-        hstCommentsProcessorService.run(
+        HstCommentsProcessorService.run(
           iframeWindow.document,
           PageStructureService.registerParsedElement.bind(PageStructureService),
         );
