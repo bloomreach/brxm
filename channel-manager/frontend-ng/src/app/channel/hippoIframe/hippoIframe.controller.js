@@ -117,7 +117,7 @@ class HippoIframeCtrl {
     try {
       spa.init(publicApi);
     } catch (error) {
-      console.error('Failed to initialize Single Page Application', error);
+      this.$log.error('Failed to initialize Single Page Application', error);
     }
   }
 
