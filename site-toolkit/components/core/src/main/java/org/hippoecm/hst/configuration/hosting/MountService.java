@@ -644,7 +644,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (pageModelApi == null) {
             pageModelApi = ((VirtualHostService) virtualHost).getPageModelApi();
         }
-        if (pageModelApi != null) {
+
+        if (pageModelApi != null && isMapped() && !hasNoChannelInfo()) {
             if (childMountServices.containsKey(pageModelApi)) {
                 log.info("Skipping automatic resource api for path '{}' below mount '{}' because it has an explicitly " +
                         "configured mount with the same path.", pageModelApi, this);
