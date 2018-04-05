@@ -45,11 +45,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,6 +56,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -93,12 +94,9 @@ public class ChoiceFieldTypeTest {
         final ChoiceFieldType choice = new ChoiceFieldType();
         final FieldTypeContext context = prepareFieldTypeContextForInit(choice, null, null);
 
-        replay(context);
-
         FieldsInformation fieldsInfo = choice.init(context);
 
-        verify(context);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choice.getId(), equalTo("choiceId"));
         assertTrue(choice.getChoices().isEmpty());
@@ -119,13 +117,12 @@ public class ChoiceFieldTypeTest {
         ChoiceFieldUtils.populateListBasedChoices(eq(node), eq(parentContext), eq(choice.getChoices()), anyObject(FieldsInformation.class));
         expectLastCall();
 
-        replay(context, parentContext);
-        PowerMock.replayAll();
+        replayAll();
 
         FieldsInformation fieldsInfo = choice.init(context);
 
         verify(context);
-        PowerMock.verifyAll();
+        verifyAll();
 
         assertThat(choice.getId(), equalTo("choiceId"));
         assertTrue(choice.getChoices().isEmpty());
@@ -208,7 +205,7 @@ public class ChoiceFieldTypeTest {
         expect(node.getNodes("choice")).andThrow(new RepositoryException());
         expect(node.getPath()).andReturn("path/location");
 
-        replay(node);
+        replayAll();
 
         assertFalse(choice.readFrom(node).isPresent());
 
@@ -262,7 +259,7 @@ public class ChoiceFieldTypeTest {
         final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
 
         expect(node.getNodes("choice")).andThrow(new RepositoryException());
-        replay(node);
+        replayAll();
 
         try {
             choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
@@ -409,7 +406,7 @@ public class ChoiceFieldTypeTest {
     public void writeFieldOtherId() throws ErrorWithPayloadException {
         final Node node = createMock(Node.class);
         final FieldPath fieldPath = new FieldPath("other:id");
-        replay(node);
+        replayAll();
 
         assertFalse(choice.writeField(node, fieldPath, Collections.emptyList()));
         verify(node);
@@ -437,7 +434,7 @@ public class ChoiceFieldTypeTest {
         expect(node.hasNode("choice")).andReturn(true);
         expect(node.getNode("choice")).andThrow(new RepositoryException());
         expect(node.getPath()).andReturn("/test");
-        replay(node);
+        replayAll();
 
         try {
             choice.writeField(node, fieldPath, Collections.emptyList());
@@ -456,7 +453,7 @@ public class ChoiceFieldTypeTest {
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound1.writeFieldValue(choiceNode, new FieldPath("somefield"), fieldValues)).andReturn(true);
-        replay(compound1);
+        replayAll();
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
@@ -473,7 +470,7 @@ public class ChoiceFieldTypeTest {
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound1.writeFieldValue(choiceNode1, new FieldPath("somefield"), fieldValues)).andReturn(true);
-        replay(compound1);
+        replayAll();
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
@@ -490,7 +487,7 @@ public class ChoiceFieldTypeTest {
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound2.writeFieldValue(choiceNode2, new FieldPath("somefield"), fieldValues)).andReturn(true);
-        replay(compound2);
+        replayAll();
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
@@ -578,14 +575,6 @@ public class ChoiceFieldTypeTest {
         verifyAll();
     }
 
-    private void replayAll() {
-        replay(compound1, compound2);
-    }
-
-    private void verifyAll() {
-        verify(compound1, compound2);
-    }
-
     private FieldTypeContext prepareFieldTypeContextForInit(final ChoiceFieldType choice, final Node node,
                                                             final ContentTypeContext parentContext) {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
@@ -608,10 +597,7 @@ public class ChoiceFieldTypeTest {
         FieldTypeUtils.determineValidators(choice, null, Collections.emptyList());
         expectLastCall();
 
-        if (parentContext == null) {
-            replay(pc);
-        }
-        PowerMock.replayAll();
+        replayAll();
 
         return context;
     }

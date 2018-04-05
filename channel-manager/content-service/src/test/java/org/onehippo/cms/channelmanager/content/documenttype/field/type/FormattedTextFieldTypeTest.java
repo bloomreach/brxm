@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.ckeditor.CKEditorConfig;
@@ -36,6 +35,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -51,11 +51,11 @@ public class FormattedTextFieldTypeTest {
 
     private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson,
                                              final String defaultHtmlProcessorId, final String htmlProcessorId) {
-        final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
-        final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         expect(fieldContext.getName()).andReturn("myproject:htmlfield");
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
@@ -70,7 +70,7 @@ public class FormattedTextFieldTypeTest {
         expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
         expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
-        replayAll(parentContext, fieldContext);
+        replayAll();
 
         final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
         field.init(fieldContext);

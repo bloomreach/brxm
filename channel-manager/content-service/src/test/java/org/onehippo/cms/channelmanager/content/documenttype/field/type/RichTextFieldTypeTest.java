@@ -25,7 +25,6 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,8 +57,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
@@ -82,11 +81,11 @@ public class RichTextFieldTypeTest {
     }
 
     private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
-        final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
-        final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         expect(fieldContext.getName()).andReturn(FIELD_NAME);
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
@@ -124,7 +123,7 @@ public class RichTextFieldTypeTest {
         expect(HtmlProcessorFactory.of(eq("richtext")))
                 .andReturn((HtmlProcessorFactory) () -> htmlProcessor != null ? htmlProcessor : HtmlProcessorFactory.NOOP).anyTimes();
 
-        replayAll(parentContext, fieldContext);
+        replayAll();
 
         final RichTextFieldType field = new RichTextFieldType();
         field.init(fieldContext);
@@ -340,7 +339,7 @@ public class RichTextFieldTypeTest {
         PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
         FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
         expectLastCall().andThrow(new RepositoryException());
-        replay(FieldTypeUtils.class);
+        replayAll();
 
         addValue("<p>value</p>");
         final FieldValue newValue = new FieldValue("<p>changed</p>");
@@ -395,9 +394,9 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void processValueWhenReading() throws Exception {
-        final HtmlProcessor processor = EasyMock.createMock(HtmlProcessor.class);
+        final HtmlProcessor processor = createMock(HtmlProcessor.class);
         expect(processor.read(eq("<p>value</p>"), anyObject())).andReturn("<p>processed</p>");
-        replay(processor);
+        replayAll();
 
         final RichTextFieldType field = initField(processor);
 
@@ -411,9 +410,9 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void processValueWhenWriting() throws Exception {
-        final HtmlProcessor processor = EasyMock.createMock(HtmlProcessor.class);
+        final HtmlProcessor processor = createMock(HtmlProcessor.class);
         expect(processor.write(eq("<p>value</p>"), anyObject())).andReturn("<p>processed</p>");
-        replay(processor);
+        replayAll();
 
         final RichTextFieldType field = initField(processor);
 
