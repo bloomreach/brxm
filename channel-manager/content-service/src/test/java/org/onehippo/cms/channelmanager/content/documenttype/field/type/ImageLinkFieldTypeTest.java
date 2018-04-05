@@ -95,7 +95,7 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("nodetypes", new String[0]);
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
-        final FieldTypeContext context = new FieldTypeContext(null, null, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
         imageLink.init(context);
 
         final JsonNode imagePickerConfig = imageLink.getConfig().get("imagepicker");
@@ -106,12 +106,6 @@ public class ImageLinkFieldTypeTest {
         assertThat(imagePickerConfig.get("last.visited.key").asText(), equalTo("gallerypicker-imagelink"));
         assertThat(imagePickerConfig.get("nodetypes").size(), equalTo(0));
         assertThat(imagePickerConfig.get("validator.id").asText(), equalTo("service.gallery.image.validation"));
-    }
-
-    @Test
-    public void initListBasedChoice() {
-        imageLink.initListBasedChoice("my:choice");
-        assertThat(imageLink.getId(), equalTo("my:choice"));
     }
 
     @Test

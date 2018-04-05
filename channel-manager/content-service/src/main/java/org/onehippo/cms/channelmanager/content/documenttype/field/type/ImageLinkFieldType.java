@@ -98,10 +98,6 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
         return super.init(fieldContext);
     }
 
-    void initListBasedChoice(final String choiceId) {
-        setId(choiceId);
-    }
-
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
