@@ -17,26 +17,16 @@
 describe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
-  let ChannelService;
   let CmsService;
   let DialogService;
-  let DomService;
   let DragDropService;
   let HippoIframeService;
   let OverlayService;
-  let PageMetaDataService;
   let PageStructureService;
-  let ProjectService;
+  let RenderingService;
+  let SpaService;
   let hippoIframeCtrl;
-  let HstCommentsProcessorService;
   let scope;
-  const iframeDom = {
-    defaultView: window,
-    location: {
-      host: 'localhost',
-      protocol: 'http:',
-    },
-  };
 
   beforeEach(() => {
     let $compile;
@@ -47,55 +37,43 @@ describe('hippoIframeCtrl', () => {
       _$compile_,
       _$q_,
       _$rootScope_,
-      _ChannelService_,
-      _SidePanelService_,
       _CmsService_,
       _DialogService_,
-      _DomService_,
       _DragDropService_,
       _HippoIframeService_,
       _OverlayService_,
-      _PageMetaDataService_,
       _PageStructureService_,
-      _ProjectService_,
-      _HstCommentsProcessorService_,
+      _RenderingService_,
+      _SpaService_,
     ) => {
       $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       DialogService = _DialogService_;
-      DomService = _DomService_;
       DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
-      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
-      ProjectService = _ProjectService_;
-      HstCommentsProcessorService = _HstCommentsProcessorService_;
+      RenderingService = _RenderingService_;
+      SpaService = _SpaService_;
       scope = $rootScope.$new();
     });
 
-    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
-    spyOn(DragDropService, 'init');
-    spyOn(OverlayService, 'init');
     spyOn(OverlayService, 'onEditMenu');
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
-    scope.onEditContent = jasmine.createSpy('onEditContent');
 
     const el = angular.element(
       `<hippo-iframe show-components-overlay="false"
-                     show-content-overlay="true"
+                     show-content-overlay="false"
                      on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
-    spyOn(hippoIframeCtrl, '_getIframeDom').and.returnValue(iframeDom);
   });
 
   it('unsubscribes "delete-component" event when the scope is destroyed', () => {
@@ -140,108 +118,79 @@ describe('hippoIframeCtrl', () => {
     expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(mockComponent);
   });
 
-  it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
-    const deferred = $q.defer();
-
-    spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(HstCommentsProcessorService, 'run');
-    spyOn(ChannelService, 'loadChannel').and.returnValue(deferred.promise);
-    spyOn(hippoIframeCtrl, '_parseLinks');
-    spyOn(hippoIframeCtrl, '_updateDragDrop');
-    spyOn(HippoIframeService, 'signalPageLoadCompleted');
-    spyOn(ProjectService, 'getBaseChannelId').and.callFake(channelId => channelId);
-
-    spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
-    spyOn(ChannelService, 'getId').and.returnValue('channelY');
+  it('creates the overlay when loading a new page', () => {
+    spyOn(SpaService, 'detectSpa').and.returnValue(false);
+    spyOn(RenderingService, 'createOverlay');
 
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
-    expect(HstCommentsProcessorService.run).toHaveBeenCalled();
-
-    $rootScope.$digest();
-
-    expect(hippoIframeCtrl._updateDragDrop).toHaveBeenCalled();
-    expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
-    expect(ChannelService.getId).toHaveBeenCalled();
-
-    deferred.resolve();
-    $rootScope.$digest();
-
-    expect(hippoIframeCtrl._parseLinks).toHaveBeenCalled();
-    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+    expect(RenderingService.createOverlay).toHaveBeenCalled();
   });
 
-  it('handles the loading of a new page', () => {
-    spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(PageStructureService, 'attachEmbeddedLinks');
-    spyOn(HstCommentsProcessorService, 'run');
-    spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
-    spyOn(HippoIframeService, 'signalPageLoadCompleted');
+  it('initializes the SPA when a SPA is detected', () => {
+    spyOn(SpaService, 'detectSpa').and.returnValue(true);
+    spyOn(SpaService, 'initSpa');
 
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
-    expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
-    expect(HstCommentsProcessorService.run).toHaveBeenCalled();
-    expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
-    expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
-    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+    expect(SpaService.initSpa).toHaveBeenCalled();
   });
 
-  it('enables/disables drag-drop when the components overlay is toggled and the iframe finished loading', () => {
-    const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
-    const disableSpy = spyOn(DragDropService, 'disable');
+  it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
+    spyOn(RenderingService, 'updateDragDrop');
 
     HippoIframeService.pageLoaded = false;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
-    expect(enableSpy).not.toHaveBeenCalled();
-    expect(disableSpy).not.toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
-    expect(enableSpy).not.toHaveBeenCalled();
-    expect(disableSpy).not.toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
-    expect(enableSpy).toHaveBeenCalled();
-    expect(disableSpy).not.toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
 
-    enableSpy.calls.reset();
+    RenderingService.updateDragDrop.calls.reset();
     hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
-    expect(enableSpy).not.toHaveBeenCalled();
-    expect(disableSpy).toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
   });
 
-  it('attaches/detaches component mousedown handler when the components overlay is toggled', () => {
-    spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
-    spyOn(DragDropService, 'disable');
-    const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
-    const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
+  it('toggles the components overlay', () => {
+    spyOn(OverlayService, 'showComponentsOverlay');
 
-    HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
-    expect(attachSpy).toHaveBeenCalled();
-    expect(detachSpy).not.toHaveBeenCalled();
+    expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
 
-    attachSpy.calls.reset();
     hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
-    expect(attachSpy).not.toHaveBeenCalled();
-    expect(detachSpy).toHaveBeenCalled();
+    expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
+  });
+
+  it('toggles the content overlay', () => {
+    spyOn(OverlayService, 'showContentOverlay');
+
+    hippoIframeCtrl.showContentOverlay = true;
+    $rootScope.$digest();
+
+    expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(true);
+
+    hippoIframeCtrl.showContentOverlay = false;
+    $rootScope.$digest();
+
+    expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
   });
 
   it('calls its edit menu function when the overlay service wants to edit a menu', () => {
