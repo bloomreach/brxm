@@ -19,19 +19,16 @@ describe('SidePanelService', () => {
   let $q;
   let $rootScope;
   let leftSidePanel;
-  let OverlayService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
-    OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(leftSidePanel);
 
     angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
-      $provide.value('OverlayService', OverlayService);
     });
 
     inject((_SidePanelService_, _$q_, _$rootScope_) => {
@@ -118,22 +115,5 @@ describe('SidePanelService', () => {
     expect(() => {
       SidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
-  });
-
-  it('syncs the iframe once the side-panel has been opened and closed', () => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
-
-    leftSidePanel.isOpen.and.returnValue(false);
-    SidePanelService.open('left');
-    $rootScope.$digest();
-    expect(OverlayService.sync).toHaveBeenCalled();
-
-    OverlayService.sync.calls.reset();
-    leftSidePanel.isOpen.and.returnValue(true);
-
-    SidePanelService.close('left');
-    $rootScope.$digest();
-    expect(OverlayService.sync).toHaveBeenCalled();
   });
 });

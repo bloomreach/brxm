@@ -200,12 +200,12 @@ public class FieldTypeUtils {
             }
 
             if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+                allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
             }
             // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
             // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
-            allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+            allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
         }
 
         return Optional.empty();
@@ -223,14 +223,13 @@ public class FieldTypeUtils {
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
-        final ContentTypeItem item = context.getContentTypeItem();
-        final String itemType = item.getItemType();
+        final String itemType = context.getType();
 
         if (FIELD_TYPE_MAP.containsKey(itemType)) {
             return itemType;
         }
 
-        if (item.isProperty()) {
+        if (context.isProperty()) {
             // All supported property fields are part of the FIELD_TYPE_MAP, so this one is unsupported
             return null;
         }
@@ -239,15 +238,15 @@ public class FieldTypeUtils {
             return FIELD_TYPE_CHOICE;
         }
 
-        if (isCompound(item)) {
+        if (isCompound(context)) {
             return FIELD_TYPE_COMPOUND;
         }
 
         return null;
     }
 
-    private static boolean isCompound(final ContentTypeItem item) {
-        return ContentTypeContext.getContentType(item.getItemType())
+    private static boolean isCompound(final FieldTypeContext context) {
+        return ContentTypeContext.getContentType(context.getType())
                 .map(ContentType::isCompoundType)
                 .orElse(false);
     }
