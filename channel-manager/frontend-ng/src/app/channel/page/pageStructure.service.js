@@ -31,9 +31,10 @@ class PageStructureService {
     HstCommentsProcessorService,
     HstConstants,
     HstService,
+    MarkupService,
     MaskService,
     PageMetaDataService,
-    MarkupService) {
+  ) {
     'ngInject';
 
     // Injected
@@ -46,9 +47,9 @@ class PageStructureService {
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.HST = HstConstants;
     this.HstService = HstService;
+    this.MarkupService = MarkupService;
     this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
-    this.MarkupService = MarkupService;
 
     this.changeListeners = [];
     this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
