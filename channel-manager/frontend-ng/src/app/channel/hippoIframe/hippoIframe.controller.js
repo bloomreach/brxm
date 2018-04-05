@@ -104,14 +104,14 @@ class HippoIframeCtrl {
     if (spa) {
       this._initSinglePageApplication(spa);
     } else {
-      this._analyzePage();
+      this._createOverlay();
     }
   }
 
   _initSinglePageApplication(spa) {
     const publicApi = {
-      analyzePage: () => {
-        this._analyzePage();
+      createOverlay: () => {
+        this._createOverlay();
       },
     };
     try {
@@ -121,7 +121,7 @@ class HippoIframeCtrl {
     }
   }
 
-  _analyzePage() {
+  _createOverlay() {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
