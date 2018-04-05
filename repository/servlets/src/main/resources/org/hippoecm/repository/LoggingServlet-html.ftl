@@ -76,8 +76,8 @@ ${response.setContentType("text/html;charset=UTF-8")}
             if (value && value !== fieldValue) {
                 document.getElementById('filter').value = value;
             }
+            var rows = document.getElementById("loggers").getElementsByTagName("TR");
             if (value && value.length > 0) {
-                var rows = document.getElementById("loggers").getElementsByTagName("TR");
                 var size = rows.length;
                 var show = [];
                 var hide = [];
