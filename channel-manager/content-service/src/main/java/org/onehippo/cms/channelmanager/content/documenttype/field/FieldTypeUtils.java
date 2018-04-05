@@ -200,12 +200,12 @@ public class FieldTypeUtils {
             }
 
             if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnsupportedField(context.getName(), context.getValidators());
+                allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
             }
             // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
             // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
-            allFieldsInfo.addUnsupportedField(context.getName(), context.getValidators());
+            allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
         }
 
         return Optional.empty();

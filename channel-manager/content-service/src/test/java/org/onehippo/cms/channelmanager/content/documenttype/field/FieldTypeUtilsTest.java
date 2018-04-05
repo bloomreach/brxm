@@ -178,8 +178,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.isProperty()).andReturn(true);
-        expect(fieldContext.getName()).andReturn("unknown").anyTimes();
-        expect(fieldContext.getType()).andReturn("unknown").anyTimes();
+        expect(fieldContext.getType()).andReturn("unknown").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         replayAll();
 
@@ -202,8 +201,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         replayAll();
@@ -228,8 +226,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.empty());
@@ -255,8 +252,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of("Custom plugin"));
@@ -282,8 +278,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -309,8 +304,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.singletonList("required"));
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -337,8 +331,7 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("string").anyTimes();
-        expect(fieldContext.getType()).andReturn("String").anyTimes();
+        expect(fieldContext.getType()).andReturn("String").atLeastOnce();
         expect(fieldContext.getValidators()).andReturn(Collections.singletonList("unknown-validator"));
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -629,7 +622,6 @@ public class FieldTypeUtilsTest {
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
-        expect(fieldContext.getName()).andReturn("compound").anyTimes();
         expect(fieldContext.getType()).andReturn("project:compoundtype").anyTimes();
         expect(fieldContext.isProperty()).andReturn(false);
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
