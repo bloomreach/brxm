@@ -20,6 +20,8 @@ definitions:
           hst:defaultresourcebundleid: org.onehippo.hst.demo.resources.ProductResources,
             org.onehippo.hst.demo.resources.GeneralTranslationsBundle
           hst:schemeagnostic: true
+          hst:responseheaders: ['Access-Control-Allow-Origin: *']
+          hst:pagemodelapi: resourceapi
           /hst:root:
             jcr:primaryType: hst:mount
             hst:alias: site
@@ -27,11 +29,6 @@ definitions:
             hst:mountrest: restapi
             hst:parameternames: [exampleMountParam]
             hst:parametervalues: [testValue]
-            /resourceapi:
-              jcr:primaryType: hst:mount
-              hst:alias: resourceapi
-              hst:namedpipeline: PageModelPipeline
-              hst:responseheaders: ['Access-Control-Allow-Origin: *']
             /demosite_fr:
               jcr:primaryType: hst:mount
               hst:alias: fr_site
