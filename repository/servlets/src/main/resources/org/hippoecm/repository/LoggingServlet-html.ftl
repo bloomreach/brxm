@@ -69,12 +69,19 @@ ${response.setContentType("text/html;charset=UTF-8")}
   </style>
     <script type="application/javascript">
         function filter(value) {
-            var rows = document.getElementById("loggers").getElementsByTagName("TR");
+            if (value) {
+                value = value.replace(/[^A-Za-z0-9_$.]+/g, "");
+            }
+            var fieldValue = document.getElementById('filter');
+            if (value && value !== fieldValue) {
+                document.getElementById('filter').value = value;
+            }
             if (value && value.length > 0) {
+                var rows = document.getElementById("loggers").getElementsByTagName("TR");
                 var size = rows.length;
                 var show = [];
                 var hide = [];
-                for (var i = 0; i < rows.length; i++) {
+                for (var i = 0; i < size; i++) {
                     var row = rows[i];
                     var el = row.getElementsByTagName("SELECT");
                     if (el && el[0]) {
@@ -219,7 +226,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
   <input class="button" type="submit" value="Apply" />
 
-  <table summary="searchresult" border="1">
+      <table id="loggers" summary="searchresult" border="1">
     <tr>
       <th>Logger</th>
       <th>Current Level</th>
