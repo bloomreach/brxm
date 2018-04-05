@@ -15,12 +15,12 @@
  */
 
 class SpaService {
-  constructor($log, OverlayService, RenderingService) {
+  constructor($log, OverlayService, ChannelRenderingService) {
     'ngInject';
 
     this.$log = $log;
     this.OverlayService = OverlayService;
-    this.RenderingService = RenderingService;
+    this.ChannelRenderingService = ChannelRenderingService;
   }
 
   init(iframeJQueryElement) {
@@ -36,7 +36,7 @@ class SpaService {
     try {
       const publicApi = {
         createOverlay: () => {
-          this.RenderingService.createOverlay();
+          this.ChannelRenderingService.createOverlay();
         },
         syncOverlay: () => {
           this.OverlayService.sync();
@@ -46,6 +46,14 @@ class SpaService {
     } catch (error) {
       this.$log.error('Failed to initialize Single Page Application', error);
     }
+  }
+
+  renderComponent(componentId, parameters = {}) {
+    if (this.spa && angular.isFunction(this.spa.renderComponent)) {
+      // let the SPA render the component; if it returns false, we still render the component instead
+      return this.spa.renderComponent(componentId, parameters) !== false;
+    }
+    return false;
   }
 }
 

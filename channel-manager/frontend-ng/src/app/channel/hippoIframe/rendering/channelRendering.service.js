@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-class RenderingService {
+class ChannelRenderingService {
   constructor(
     $q,
     ChannelService,
@@ -146,4 +146,4 @@ class RenderingService {
   }
 }
 
-export default RenderingService;
+export default ChannelRenderingService;
