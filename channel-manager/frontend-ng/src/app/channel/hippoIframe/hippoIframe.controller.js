@@ -14,52 +14,40 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../styles/string/hippo-iframe.scss';
-
 class HippoIframeCtrl {
   constructor(
     $element,
     $log,
-    $q,
     $scope,
     $translate,
-    ChannelService,
     ConfigService,
     CmsService,
     DialogService,
-    DomService,
     DragDropService,
     HippoIframeService,
-    HstCommentsProcessorService,
-    LinkProcessorService,
     OverlayService,
-    PageMetaDataService,
     PageStructureService,
-    ProjectService,
+    RenderingService,
+    SpaService,
     ViewportService,
   ) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
-    this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
 
-    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
-    this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
-    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
-    this.ProjectService = ProjectService;
+    this.RenderingService = RenderingService;
+    this.SpaService = SpaService;
     this.ViewportService = ViewportService;
-    this.HstCommentsProcessorService = HstCommentsProcessorService;
-    this.LinkProcessorService = LinkProcessorService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -81,6 +69,8 @@ class HippoIframeCtrl {
     const canvasJQueryElement = $element.find('.channel-iframe-canvas');
     this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
 
+    this.SpaService.init(this.iframeJQueryElement);
+
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     this.CmsService.subscribe('delete-component', deleteComponentHandler);
     this.$scope.$on('$destroy', () => this.CmsService.unsubscribe('delete-component', deleteComponentHandler));
@@ -90,7 +80,7 @@ class HippoIframeCtrl {
     this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
       this.OverlayService.showComponentsOverlay(value);
       if (this.HippoIframeService.pageLoaded) {
-        this._updateDragDrop();
+        this.RenderingService.updateDragDrop();
       }
     });
     this.$scope.$watch('iframe.showContentOverlay', (value) => {
@@ -99,71 +89,11 @@ class HippoIframeCtrl {
   }
 
   onLoad() {
-    const spa = this.iframeJQueryElement[0].contentWindow.SPA;
-
-    if (spa) {
-      this._initSinglePageApplication(spa);
+    if (this.SpaService.detectSpa()) {
+      this.SpaService.initSpa();
     } else {
-      this._createOverlay();
+      this.RenderingService.createOverlay();
     }
-  }
-
-  _initSinglePageApplication(spa) {
-    const publicApi = {
-      createOverlay: () => {
-        this._createOverlay();
-      },
-      syncOverlay: () => {
-        this.OverlayService.sync();
-      },
-    };
-    try {
-      spa.init(publicApi);
-    } catch (error) {
-      this.$log.error('Failed to initialize Single Page Application', error);
-    }
-  }
-
-  _createOverlay() {
-    this.PageStructureService.clearParsedElements();
-    this._insertCss().then(() => {
-      if (this._isIframeDomPresent()) {
-        this._parseHstComments();
-        this._updateDragDrop();
-        this._updateChannelIfSwitched();
-        this._parseLinks();
-        this.HippoIframeService.signalPageLoadCompleted();
-      }
-    }, () => {
-      // stop progress indicator
-      this.HippoIframeService.signalPageLoadCompleted();
-    });
-    // TODO: handle error.
-    // show dialog explaining that for this channel, the CM can currently not be used,
-    // and return to the channel overview upon confirming?
-  }
-
-  _updateChannelIfSwitched() {
-    const channelToLoad = this._getChannelToLoad();
-    if (channelToLoad !== null) {
-      const path = this.PageMetaDataService.getPathInfo();
-      this.CmsService.publish('load-channel', channelToLoad, path);
-    }
-  }
-
-  _getChannelToLoad() {
-    const channelIdFromService = this.ChannelService.getId();
-    const channelIdFromPage = this.PageMetaDataService.getChannelId();
-
-    if (channelIdFromService === channelIdFromPage) {
-      return null;
-    }
-
-    if (this.ConfigService.projectsEnabled) {
-      const projectId = this.ChannelService.selectedProjectId;
-      return this.ProjectService.getBaseChannelId(projectId ? channelIdFromService : channelIdFromPage);
-    }
-    return channelIdFromPage;
   }
 
   deleteComponent(componentId) {
@@ -193,56 +123,6 @@ class HippoIframeCtrl {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
-  }
-
-  _updateDragDrop() {
-    if (this.showComponentsOverlay) {
-      this.DragDropService.enable()
-        .then(() => {
-          this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
-        });
-    } else {
-      this.DragDropService.disable();
-      this.OverlayService.detachComponentMouseDown();
-    }
-  }
-
-  _insertCss() {
-    try {
-      const iframeDom = this._getIframeDom();
-      if (!iframeDom) {
-        return this.$q.reject();
-      }
-      const iframeWindow = iframeDom.defaultView;
-      this.DomService.addCss(iframeWindow, hippoIframeCss);
-      return this.$q.resolve();
-    } catch (e) {
-      return this.$q.reject();
-    }
-  }
-
-  _parseHstComments() {
-    this.HstCommentsProcessorService.run(
-      this._getIframeDom(),
-      this.PageStructureService.registerParsedElement.bind(this.PageStructureService),
-    );
-    this.PageStructureService.attachEmbeddedLinks();
-  }
-
-  _isIframeDomPresent() {
-    return !!this._getIframeDom();
-  }
-
-  _getIframeDom() {
-    return this.iframeJQueryElement.contents()[0];
-  }
-
-  _parseLinks() {
-    const iframeDom = this._getIframeDom();
-    const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
-    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
-
-    this.LinkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
 
   getSrc() {

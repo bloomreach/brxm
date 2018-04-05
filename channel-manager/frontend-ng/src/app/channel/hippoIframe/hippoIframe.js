@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import HstCommentsProcessorService from './processing/hstCommentsProcessor.servi
 import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
 import ScrollService from './scrolling/scroll.service';
+import SpaService from './spa/spa.service';
 import ViewportService from './viewport/viewport.service';
 
 const channelHippoIframeModule = angular
@@ -32,6 +33,7 @@ const channelHippoIframeModule = angular
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
   .service('ScrollService', ScrollService)
+  .service('SpaService', SpaService)
   .service('DragDropService', DragDropService)
   .service('ViewportService', ViewportService)
   .service('OverlayService', OverlayService);
