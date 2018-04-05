@@ -170,8 +170,7 @@ public abstract class AbstractFieldType implements FieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
-        final ContentTypeItem item = fieldContext.getContentTypeItem();
-        final String fieldId = item.getName();
+        final String fieldId = fieldContext.getName();
 
         setId(fieldId);
 
@@ -181,20 +180,21 @@ public abstract class AbstractFieldType implements FieldType {
 
         setLocalizedLabels(resourceBundle, editorFieldConfig);
 
-        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
+        final List<String> validators = fieldContext.getValidators();
+        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), validators);
 
         // determine cardinality
-        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
+        if (validators.contains(FieldValidators.OPTIONAL)) {
             setMinValues(0);
             setMaxValues(1);
         }
 
-        if (item.isMultiple()) {
+        if (fieldContext.isMultiple()) {
             setMinValues(0);
             setMaxValues(Integer.MAX_VALUE);
         }
 
-        setMultiple(item.isMultiple());
+        setMultiple(fieldContext.isMultiple());
 
         return FieldsInformation.allSupported();
     }

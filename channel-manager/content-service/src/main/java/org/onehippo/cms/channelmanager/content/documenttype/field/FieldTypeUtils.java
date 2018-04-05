@@ -38,7 +38,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanFi
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateAndTimeFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateOnlyFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
@@ -112,7 +113,8 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Long", new TypeDescriptor(LongFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Double", new TypeDescriptor(DoubleFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Boolean", new TypeDescriptor(BooleanFieldType.class, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("Date", new TypeDescriptor(DateFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("Date", new TypeDescriptor(DateAndTimeFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("CalendarDate", new TypeDescriptor(DateOnlyFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
@@ -198,12 +200,12 @@ public class FieldTypeUtils {
             }
 
             if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+                allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
             }
             // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
             // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
-            allFieldsInfo.addUnsupportedField(context.getContentTypeItem());
+            allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
         }
 
         return Optional.empty();
@@ -221,14 +223,13 @@ public class FieldTypeUtils {
     }
 
     private static String determineFieldType(final FieldTypeContext context) {
-        final ContentTypeItem item = context.getContentTypeItem();
-        final String itemType = item.getItemType();
+        final String itemType = context.getType();
 
         if (FIELD_TYPE_MAP.containsKey(itemType)) {
             return itemType;
         }
 
-        if (item.isProperty()) {
+        if (context.isProperty()) {
             // All supported property fields are part of the FIELD_TYPE_MAP, so this one is unsupported
             return null;
         }
@@ -237,15 +238,15 @@ public class FieldTypeUtils {
             return FIELD_TYPE_CHOICE;
         }
 
-        if (isCompound(item)) {
+        if (isCompound(context)) {
             return FIELD_TYPE_COMPOUND;
         }
 
         return null;
     }
 
-    private static boolean isCompound(final ContentTypeItem item) {
-        return ContentTypeContext.getContentType(item.getItemType())
+    private static boolean isCompound(final FieldTypeContext context) {
+        return ContentTypeContext.getContentType(context.getType())
                 .map(ContentType::isCompoundType)
                 .orElse(false);
     }

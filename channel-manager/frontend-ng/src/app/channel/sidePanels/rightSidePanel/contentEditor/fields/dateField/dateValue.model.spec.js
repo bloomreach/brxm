@@ -32,6 +32,11 @@ describe('DateValue', () => {
       expect(dateValue.toDateString()).not.toBeEmpty();
     });
 
+    it('sets seconds and milliseconds to zero, even if they are part of the input value', () => {
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
+    });
+
     it('with focus on minutes field gives minutes not zero padded', () => {
       dateValue.focusMinutes();
       expect(dateValue.minutes).toBe(1);
@@ -82,10 +87,21 @@ describe('DateValue', () => {
     });
 
     it('initializes the JavaScript date correctly for a non English locale', () => {
-      const dateValue = new DateValue('');
+      const dateValueNew = new DateValue('');
       const germanMoment = moment().locale('de');
-      dateValue._init(germanMoment);
-      expect(dateValue.jsDate.getTime()).not.toBeNaN();
+      dateValueNew._init(germanMoment);
+      expect(dateValueNew.jsDate.getTime()).not.toBeNaN();
+    });
+
+    describe('when populated for dateOnly', () => {
+      beforeEach(() => {
+        dateValue = new DateValue('2018-03-12T08:01:50.041+01:00', null, true);
+      });
+
+      it('sets hours and minutes to zero, even if they are part of the input value', () => {
+        expect(dateValue.moment.hours()).toBe(0);
+        expect(dateValue.moment.minutes()).toBe(0);
+      });
     });
   });
 
@@ -184,6 +200,48 @@ describe('DateValue', () => {
     it('gets populated when set minutes is called', () => {
       dateValue.minutes = 1;
       expect(dateValue.date).not.toBe(null);
+    });
+
+    it('sets seconds and milliseconds to zero when a new date is initialized', () => {
+      dateValue.setToNow();
+      expect(dateValue.moment.seconds()).toBe(0);
+      expect(dateValue.moment.milliseconds()).toBe(0);
+    });
+
+    describe('when empty for dateOnly', () => {
+      beforeEach(() => {
+        dateValue = new DateValue('', null, true);
+      });
+
+      it('sets hours, minutes, seconds and milliseconds to zero when a new day is initialized', () => {
+        dateValue.setToNow();
+        expect(dateValue.moment.hours()).toBe(0);
+        expect(dateValue.moment.minutes()).toBe(0);
+        expect(dateValue.moment.seconds()).toBe(0);
+        expect(dateValue.moment.milliseconds()).toBe(0);
+      });
+
+      it('keeps hours and minutes to zero when the date is set', () => {
+        dateValue.date = new Date();
+        expect(dateValue.moment.hours()).toBe(0);
+        expect(dateValue.moment.minutes()).toBe(0);
+      });
+    });
+
+    describe('when empty for dateOnly and with configured timezone', () => {
+      it('sets the date value to the start of the day in the users\' timezone', () => {
+        const europeDateValue = new DateValue('', 'Europe/Amsterdam', true);
+        europeDateValue.setToNow();
+        expect(europeDateValue.moment.hours()).toBe(0);
+        expect(europeDateValue.moment.minutes()).toBe(0);
+
+        const asiaDateValue = new DateValue('', 'Asia/Calcutta', true);
+        asiaDateValue.setToNow();
+        expect(asiaDateValue.moment.hours()).toBe(0);
+        expect(asiaDateValue.moment.minutes()).toBe(0);
+
+        expect(europeDateValue.moment.tz()).not.toBe(asiaDateValue.moment.tz());
+      });
     });
   });
 });

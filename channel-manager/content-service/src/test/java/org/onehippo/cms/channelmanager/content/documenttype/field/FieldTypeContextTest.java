@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +38,13 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -64,11 +64,11 @@ public class FieldTypeContextTest {
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         assertFalse(FieldTypeContext.create(editorFieldConfigNode, context).isPresent());
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -80,13 +80,11 @@ public class FieldTypeContextTest {
 
         expect(context.getFieldScanningContexts()).andReturn(Collections.emptyList());
 
-        PowerMock.replayAll();
-        replay(context);
+        replayAll();
 
         assertFalse(FieldTypeContext.create(editorFieldConfigNode, context).isPresent());
 
-        verify(context);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -102,13 +100,11 @@ public class FieldTypeContextTest {
 
         expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
 
-        PowerMock.replayAll();
-        replay(context);
+        replayAll();
 
         assertFalse(FieldTypeContext.create(editorFieldConfigNode, context).isPresent());
 
-        verify(context);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -125,13 +121,11 @@ public class FieldTypeContextTest {
         expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
         expect(contentType.getItem("itemName")).andReturn(null);
 
-        PowerMock.replayAll();
-        replay(context, contentType);
+        replayAll();
 
         assertFalse(FieldTypeContext.create(editorFieldConfigNode, context).isPresent());
 
-        verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -149,16 +143,24 @@ public class FieldTypeContextTest {
         expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
         expect(contentType.getItem("itemName")).andReturn(contentTypeItem);
 
-        PowerMock.replayAll();
-        replay(context, contentType);
+        expect(contentTypeItem.getName()).andReturn("itemName");
+        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.isProperty()).andReturn(true);
+        expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
+
+        replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
+        assertThat(ftc.getName(), equalTo("itemName"));
+        assertThat(ftc.getType(), equalTo("my:item"));
+        assertThat(ftc.isProperty(), equalTo(true));
+        assertThat(ftc.isMultiple(), equalTo(false));
+        assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
         assertThat(ftc.getEditorConfigNode(), equalTo(Optional.of(editorFieldConfigNode)));
         assertThat(ftc.getParentContext(), equalTo(context));
-        assertThat(ftc.getContentTypeItem(), equalTo(contentTypeItem));
 
-        verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -180,16 +182,24 @@ public class FieldTypeContextTest {
         expect(context.getFieldScanningContexts()).andReturn(Arrays.asList(type1, type2));
         expect(contentType2.getItem("itemName")).andReturn(contentTypeItem);
 
-        PowerMock.replayAll();
-        replay(context, contentType2);
+        expect(contentTypeItem.getName()).andReturn("itemName");
+        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.isProperty()).andReturn(true);
+        expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
+
+        replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
+        assertThat(ftc.getName(), equalTo("itemName"));
+        assertThat(ftc.getType(), equalTo("my:item"));
+        assertThat(ftc.isProperty(), equalTo(true));
+        assertThat(ftc.isMultiple(), equalTo(false));
+        assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
         assertThat(ftc.getEditorConfigNode(), equalTo(Optional.of(editorFieldConfigNode)));
         assertThat(ftc.getParentContext(), equalTo(context));
-        assertThat(ftc.getContentTypeItem(), equalTo(contentTypeItem));
 
-        verify(context, contentType2);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -197,10 +207,22 @@ public class FieldTypeContextTest {
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
 
+        expect(contentTypeItem.getName()).andReturn("itemName");
+        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.isProperty()).andReturn(true);
+        expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
+
+        replayAll();
+
         final FieldTypeContext context = new FieldTypeContext(contentTypeItem, parentContext);
 
+        assertThat(context.getName(), equalTo("itemName"));
+        assertThat(context.getType(), equalTo("my:item"));
+        assertThat(context.isProperty(), equalTo(true));
+        assertThat(context.isMultiple(), equalTo(false));
+        assertThat(context.getValidators(), equalTo(Collections.emptyList()));
         assertFalse(context.getEditorConfigNode().isPresent());
-        assertThat(context.getContentTypeItem(), equalTo(contentTypeItem));
         assertThat(context.getParentContext(), equalTo(parentContext));
     }
 
@@ -209,52 +231,54 @@ public class FieldTypeContextTest {
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
-        final FieldTypeContext context = new FieldTypeContext(contentTypeItem, parentContext);
 
+        expect(contentTypeItem.getName()).andReturn("itemName");
         expect(contentTypeItem.getItemType()).andReturn("id");
+        expect(contentTypeItem.isProperty()).andReturn(true);
+        expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
         expect(ContentTypeContext.createFromParent("id", parentContext)).andReturn(Optional.of(childContext));
 
-        PowerMock.replayAll();
-        replay(contentTypeItem);
+        replayAll();
 
+        final FieldTypeContext context = new FieldTypeContext(contentTypeItem, parentContext);
         assertThat(context.createContextForCompound().get(), equalTo(childContext));
 
-        verify(contentTypeItem);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void getBooleanConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
         final Optional<Boolean> value = Optional.of(true);
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
 
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat(context.getBooleanConfig("test"), equalTo(value));
     }
 
     @Test
     public void getStringConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
         final Optional<String> value = Optional.of("value");
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
 
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat(context.getStringConfig("test"), equalTo(value));
     }
 
     @Test
     public void getMultipleStringConfig() {
-        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
         final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);
 
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat(context.getMultipleStringConfig("test"), equalTo(values));
     }
