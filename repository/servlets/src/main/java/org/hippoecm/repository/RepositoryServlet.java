@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,21 +28,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.*;
 import javax.jcr.observation.Event;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
+import javax.jcr.query.*;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -52,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
+import org.apache.jackrabbit.value.BinaryValue;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
@@ -434,6 +425,42 @@ public class RepositoryServlet extends HttpServlet {
 
                 QueryResult queryResult = query.execute();
                 templateParams.put("queryResult", queryResult);
+                final NodeIterator nodes = queryResult.getNodes();
+                final String[] columnNames = queryResult.getColumnNames();
+                templateParams.put("columnNames", columnNames);
+                // parse values:
+                final Data data = new Data();
+                templateParams.put("data", data);
+                final RowIterator rows = queryResult.getRows();
+                while (rows.hasNext()) {
+                    final DataRow dataRow = new DataRow();
+                    data.add(dataRow);
+
+                    final Row row = rows.nextRow();
+                    final Node node = row.getNode();
+                    for (String columnName : columnNames) {
+                        final Value value = row.getValue(columnName);
+                        // try to get value from node, e.g. multi values are not populated in rows:
+                        if (value == null) {
+                            if (node.hasProperty(columnName)) {
+                                final Property property = node.getProperty(columnName);
+                                if (property.isMultiple()) {
+                                    dataRow.add(extractMultiValue(property));
+                                } else {
+                                    final Value v = property.getValue();
+                                    addStringForValue(dataRow, v);
+                                }
+                            } else {
+                                dataRow.add("");
+
+                            }
+
+                        } else {
+                            addStringForValue(dataRow, value);
+                        }
+                    }
+
+                }
                 templateParams.put("queryResultTotalSize", ((HippoNodeIterator) queryResult.getNodes()).getTotalSize());
             }
 
@@ -477,6 +504,38 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
         }
+    }
+
+    private void addStringForValue(final DataRow dataRow, final Value value) throws RepositoryException {
+        if (value.getType() == BinaryValue.TYPE) {
+            dataRow.add("[binary: " + value.getBinary().getSize() + ']');
+        } else {
+            dataRow.add(value.getString());
+        }
+    }
+
+    private String extractMultiValue(final Property property) throws RepositoryException {
+        final Value[] values = property.getValues();
+        final StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        boolean first = true;
+        for (Value value : values) {
+            if (!first) {
+                builder.append(',');
+            }
+            first = false;
+            final int type = value.getType();
+            switch (type) {
+                case PropertyType.BINARY:
+                    builder.append("[binary: ").append(value.getBinary().getSize()).append(']');
+                    break;
+                default:
+                    builder.append(value.getString());
+                    break;
+            }
+        }
+        builder.append(']');
+        return builder.toString();
     }
 
     /**
@@ -560,6 +619,43 @@ public class RepositoryServlet extends HttpServlet {
             return queryString + " order by " + (isXPath ? "@" : "") + "jcr:score";
         }
         return queryString;
+    }
+
+    public class Data {
+        private List<DataRow> rows = new ArrayList<>();
+
+        public void add(final DataRow row) {
+            rows.add(row);
+        }
+
+        public List<DataRow> getRows() {
+            return rows;
+        }
+
+        public void setRows(final List<DataRow> rows) {
+            this.rows = rows;
+        }
+    }
+
+    public class DataRow {
+        private List<String> data = new ArrayList<>();
+
+        public void add(final String value) {
+            if (value == null) {
+                data.add("");
+            } else {
+                data.add(value);
+            }
+
+        }
+
+        public List<String> getData() {
+            return data;
+        }
+
+        public void setData(final List<String> data) {
+            this.data = data;
+        }
     }
 
 }

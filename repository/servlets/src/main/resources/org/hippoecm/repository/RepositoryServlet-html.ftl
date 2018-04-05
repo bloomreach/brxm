@@ -1,7 +1,7 @@
 <#ftl output_format="HTML">
 <!DOCTYPE html>
 <#--
-  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -257,26 +257,25 @@ ${response.setContentType("text/html;charset=UTF-8")}
       <table summary="searchresult" border="1">
         <tr>
           <th>#</th>
-          <#list queryResult.columnNames as columnName>
+          <#list columnNames as columnName>
             <th>${columnName}</th>
           </#list>
         </tr>
-        <#list queryResult.rows as row>
-          <#if row??>
+        <#list data.rows as row>
+            <#if row??>
             <tr>
-              <td>${row_index + 1}</td>
-              <#assign values = row.values>
-              <#if values??>
-                <#list row.values as value>
-                  <#if value?? && value.type != 2>
-                    <td>${value.string!}</td>
-                  <#else>
+                <td>${row_index + 1}</td>
+              <#if row.data??>
+                  <#list row.data as value>
+                      <#if value??>
+                        <td>${value!}</td>
+                      <#else>
                     <td></td>
-                  </#if>
-                </#list>
+                      </#if>
+                  </#list>
               </#if>
             </tr>
-          </#if>
+            </#if>
         </#list>
       </table>
     </#if>
