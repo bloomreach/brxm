@@ -161,7 +161,7 @@
       <plugin>
         <groupId>org.onehippo.cms.l10n</groupId>
         <artifactId>hippo-cms-l10n-maven-plugin</artifactId>
-        <version>${hippo.l10n-tooling.version}</version>
+        <version>${hippo.maven.plugin.l10n}</version>
         <configuration>
           <locales>${locales}</locales>
           <locale>${locale}</locale>
