@@ -20,14 +20,14 @@ class HippoIframeCtrl {
     $log,
     $scope,
     $translate,
-    ConfigService,
+    ChannelRenderingService,
     CmsService,
+    ConfigService,
     DialogService,
     DragDropService,
     HippoIframeService,
     OverlayService,
     PageStructureService,
-    RenderingService,
     SpaService,
     ViewportService,
   ) {
@@ -38,6 +38,7 @@ class HippoIframeCtrl {
     this.$scope = $scope;
     this.$translate = $translate;
 
+    this.ChannelRenderingService = ChannelRenderingService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
@@ -45,7 +46,6 @@ class HippoIframeCtrl {
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
-    this.RenderingService = RenderingService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
 
@@ -80,7 +80,7 @@ class HippoIframeCtrl {
     this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
       this.OverlayService.showComponentsOverlay(value);
       if (this.HippoIframeService.pageLoaded) {
-        this.RenderingService.updateDragDrop();
+        this.ChannelRenderingService.updateDragDrop();
       }
     });
     this.$scope.$watch('iframe.showContentOverlay', (value) => {
@@ -92,7 +92,7 @@ class HippoIframeCtrl {
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();
     } else {
-      this.RenderingService.createOverlay();
+      this.ChannelRenderingService.createOverlay();
     }
   }
 
