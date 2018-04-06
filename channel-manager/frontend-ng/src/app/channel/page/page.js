@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import ExtJsHandlerService from './extJsHandler.service';
 import MarkupService from './markup.service';
 import PageMetaDataService from './pageMetaData.service';
 import PageStructureService from './pageStructure.service';
-import run from './page.run';
 
 const channelPageModule = angular
   .module('hippo-cm.channel.page', [])
   .service('MarkupService', MarkupService)
-  .service('ExtJsHandlerService', ExtJsHandlerService)
   .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService)
-  .run(run);
+  .service('PageStructureService', PageStructureService);
 
 export default channelPageModule;

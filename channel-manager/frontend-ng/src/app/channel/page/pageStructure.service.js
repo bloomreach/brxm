@@ -546,22 +546,6 @@ class PageStructureService {
     this.FeedbackService.showError(errorKey, params);
     return this.HippoIframeService.reload().then(() => this.$q.reject());
   }
-
-  reloadChannel(errorResponse) {
-    let errorKey;
-    switch (errorResponse.error) {
-      case 'ITEM_ALREADY_LOCKED':
-        errorKey = 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED';
-        break;
-      case 'ITEM_NOT_FOUND':
-        errorKey = 'ERROR_COMPONENT_DELETED';
-        break;
-      default:
-        errorKey = 'ERROR_UPDATE_COMPONENT';
-    }
-
-    this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
-  }
 }
 
 export default PageStructureService;

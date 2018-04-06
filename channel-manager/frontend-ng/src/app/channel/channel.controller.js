@@ -21,31 +21,31 @@ class ChannelCtrl {
     $log,
     $rootScope,
     $stateParams,
-    $timeout,
     $translate,
-    OverlayService,
     ChannelActionsService,
     ChannelService,
+    CmsService,
     ConfigService,
     FeedbackService,
     HippoIframeService,
-    ProjectService,
+    OverlayService,
     PageActionsService,
     PageMetaDataService,
+    ProjectService,
     SidePanelService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
     this.$translate = $translate;
-    this.OverlayService = OverlayService;
     this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.OverlayService = OverlayService;
     this.PageActionsService = PageActionsService;
     this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
@@ -59,6 +59,31 @@ class ChannelCtrl {
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
       PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
     ];
+  }
+
+  $onInit() {
+    this.CmsService.subscribe('reload-channel', this._reloadChannel, this);
+  }
+
+  $onDestroy() {
+    this.CmsService.unsubscribe('reload-channel', this._reloadChannel, this);
+  }
+
+  _reloadChannel(errorResponse) {
+    let errorKey;
+    switch (errorResponse.error) {
+      case 'ITEM_ALREADY_LOCKED':
+        errorKey = 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED';
+        break;
+      case 'ITEM_NOT_FOUND':
+        errorKey = 'ERROR_COMPONENT_DELETED';
+        break;
+      default:
+        errorKey = 'ERROR_UPDATE_COMPONENT';
+    }
+
+    this.FeedbackService.showError(errorKey, errorResponse.parameterMap);
+    this.HippoIframeService.reload();
   }
 
   get isContentOverlayDisplayed() {
