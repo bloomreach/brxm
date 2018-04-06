@@ -57,13 +57,13 @@ class SpaService {
   }
 
   renderComponent(componentId, parameters = {}) {
-    if (this.spa && angular.isFunction(this.spa._renderComponent)) {
+    if (this.spa && angular.isFunction(this.spa.renderComponent)) {
       const component = this.PageStructureService.getComponentById(componentId);
       if (component) {
         // let the SPA render the component; if it returns false, we still render the component instead
-        return this.spa._renderComponent(component.getReferenceNamespace(), parameters) !== false;
+        return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
       }
-      this.$log.warn(`Failed to render unknown component with ID '${componentId}'`);
+      this.$log.warn(`SPA cannot render unknown component with ID '${componentId}'`);
     }
     return false;
   }
