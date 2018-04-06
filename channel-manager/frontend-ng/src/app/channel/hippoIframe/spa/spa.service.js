@@ -15,13 +15,13 @@
  */
 
 class SpaService {
-  constructor($log, DomService, OverlayService, ChannelRenderingService) {
+  constructor($log, ChannelRenderingService, DomService, OverlayService) {
     'ngInject';
 
     this.$log = $log;
+    this.ChannelRenderingService = ChannelRenderingService;
     this.DomService = DomService;
     this.OverlayService = OverlayService;
-    this.ChannelRenderingService = ChannelRenderingService;
   }
 
   init(iframeJQueryElement) {
