@@ -125,7 +125,16 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 return;
             }
 
-            if (httpSession == null) {
+
+            // if the (HST) http session already exists, it might be because the user logged out from cms and logged in with
+            // different user or logged in with same user again but the authorization rules for example changed (that is
+            // why the user for example logged out and in). However, now it can happen that we have stale jcr sessions
+            // still on the HttpSessionBoundJcrSessionHolder attribute of the HST http session. We need to clear these
+            // now actively
+            if (httpSession != null) {
+                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION, httpSession);
+                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
+            }else {
                 httpSession = servletRequest.getSession(true);
             }
 
@@ -141,10 +150,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
         servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
 
-        // We synchronize on http session to disallow concurrent requests for the Channel manager. Note it is questionable
-        // whether this is still needed : The synchronization originates from the time we did not use a (fresh) new jcr
-        // session for every CM request, which we now do....so perhaps removing this synchronization completely makes
-        // most sense. For now we keep it because we can't oversee the impact and thus need extensive testing
+        // We synchronize on http session to disallow concurrent requests for the Channel manager.
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
@@ -181,13 +187,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             } finally {
                 if (jcrSession != null) {
                     try {
-                        if (jcrSession.hasPendingChanges()) {
+                        if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
                             log.warn("JcrSession '{}' had pending changes at the end of the request. This should never be " +
                                     "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
                             jcrSession.refresh(false);
                         }
                     } catch (RepositoryException e) {
-                        log.warn("RepositoryException : {}", e.toString());
+                        log.error("RepositoryException while checking / clearing jcr session.", e);
                         throw new ContainerException(e);
                     }
                 }
