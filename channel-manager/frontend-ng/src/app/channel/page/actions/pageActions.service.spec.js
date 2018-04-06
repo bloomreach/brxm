@@ -212,7 +212,7 @@ describe('PageActionsService', () => {
   });
 
   it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
-    spyOn(SiteMapItemService, 'hasSubPages').and.returnValue(false);
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.when());
@@ -226,7 +226,7 @@ describe('PageActionsService', () => {
   });
 
   it('does nothing when not confirming the deletion of a page', () => {
-    spyOn(SiteMapItemService, 'hasSubPages').and.returnValue(false);
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
 
     DialogService.show.and.returnValue($q.reject());
     getItem('delete').onClick();
@@ -239,7 +239,7 @@ describe('PageActionsService', () => {
   });
 
   it('flashes a toast when failing to delete the current page', () => {
-    spyOn(SiteMapItemService, 'hasSubPages').and.returnValue(false);
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.reject());
@@ -254,7 +254,7 @@ describe('PageActionsService', () => {
   });
 
   it('shows the confirm delete single page message when the page has no subpages', () => {
-    spyOn(SiteMapItemService, 'hasSubPages').and.returnValue(false);
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
 
     DialogService.show.and.returnValue($q.when());
     getItem('delete').onClick();
@@ -263,7 +263,7 @@ describe('PageActionsService', () => {
   });
 
   it('shows the confirm delete multiple pages message when the page has subpages', () => {
-    spyOn(SiteMapItemService, 'hasSubPages').and.returnValue(true);
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(3);
 
     DialogService.show.and.returnValue($q.when());
     getItem('delete').onClick();
