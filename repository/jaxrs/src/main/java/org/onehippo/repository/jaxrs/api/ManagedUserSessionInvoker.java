@@ -32,8 +32,6 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.repository.jaxrs.api.UserJcrSessionHolder.JCR_SESSION_HOLDER_ATTR;
-
 /**
  * Provides and manages a JCR session authenticated for the current logged in user.
  * The name of the logged in user is read from the HTTP session attribute 'hippo:username'.
@@ -43,6 +41,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
 
     private static final Logger log = LoggerFactory.getLogger(ManagedUserSessionInvoker.class);
 
+    static final String JCR_SESSION_HOLDER_ATTR_NAME = ManagedUserSessionInvoker.class.getName() +".session";
     private static final String ATTRIBUTE_USER_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_SYSTEM_SESSION = ManagedUserSessionInvoker.class.getName() + ".SystemSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
@@ -106,18 +105,13 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
         final SimpleCredentials credentials = cmsSessionContext.getRepositoryCredentials();
         // we need to synchronize on httpSession because jcr session is not thread-safe *AND* the #getAttribute and
         // #setAttribute on http session are not allowed to be done concurrently in our case because of the valueUnbound
-        // for UserJcrSessionHolder
+        // for HttpSessionBoundJcrSessionHolder
         synchronized (httpSession) {
             try {
-                final UserJcrSessionHolder holder = (UserJcrSessionHolder) httpSession.getAttribute(JCR_SESSION_HOLDER_ATTR);
-                Session userSession = null;
-                if (holder != null) {
-                    userSession = holder.getSession();
-                }
-                if (userSession == null) {
-                    userSession = systemSession.getRepository().login(credentials);
-                    httpSession.setAttribute(JCR_SESSION_HOLDER_ATTR, new UserJcrSessionHolder(userSession));
-                }
+
+                final Session userSession = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(JCR_SESSION_HOLDER_ATTR_NAME,
+                        httpSession, credentials, systemSession.getRepository());
+
                 try {
                     servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
                     servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
