@@ -68,6 +68,7 @@ class HippoIframeCtrl {
     this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
 
     this.SpaService.init(this.iframeJQueryElement);
+    this.ChannelRenderingService.init(this.iframeJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     this.CmsService.subscribe('delete-component', deleteComponentHandler);
