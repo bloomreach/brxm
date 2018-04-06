@@ -123,6 +123,11 @@ public class LinkModel {
         if (siteMapItem.isContainerResource()) {
             linkType = "resource";
         } else {
+            final Mount linkMount = siteLink.getMount();
+            if (linkMount != null && linkMount != requestContext.getResolvedMount().getMount().getParent()) {
+                // this is a cross mount link since does not belong to the parent mount of the PageModelApi mount
+                return "external";
+            }
             final String linkApplicationId = siteMapItem.getApplicationId();
             // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
             // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
