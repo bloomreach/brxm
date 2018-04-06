@@ -76,10 +76,10 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl = el.controller('hippo-iframe');
   });
 
-  it('unsubscribes "delete-component" event when the scope is destroyed', () => {
+  it('unsubscribes "delete-component" event when the controller is destroyed', () => {
     spyOn(CmsService, 'unsubscribe');
-    scope.$destroy();
-    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function));
+    hippoIframeCtrl.$onDestroy();
+    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), hippoIframeCtrl);
   });
 
   it('shows the confirmation dialog and deletes selected component on confirmation', () => {

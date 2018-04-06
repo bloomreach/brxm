@@ -69,10 +69,6 @@ class HippoIframeCtrl {
 
     this.SpaService.init(this.iframeJQueryElement);
     this.ChannelRenderingService.init(this.iframeJQueryElement);
-
-    const deleteComponentHandler = componentId => this.deleteComponent(componentId);
-    this.CmsService.subscribe('delete-component', deleteComponentHandler);
-    this.$scope.$on('$destroy', () => this.CmsService.unsubscribe('delete-component', deleteComponentHandler));
   }
 
   $onInit() {
@@ -85,6 +81,12 @@ class HippoIframeCtrl {
     this.$scope.$watch('iframe.showContentOverlay', (value) => {
       this.OverlayService.showContentOverlay(value);
     });
+
+    this.CmsService.subscribe('delete-component', this.deleteComponent, this);
+  }
+
+  $onDestroy() {
+    this.CmsService.unsubscribe('delete-component', this.deleteComponent, this);
   }
 
   onLoad() {
