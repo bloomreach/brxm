@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,7 +35,12 @@ import org.onehippo.cms7.services.contenttype.ContentTypeItem;
  * FieldTypeContext groups and wraps sources of information about a document type field.
  */
 public class FieldTypeContext {
-    private final ContentTypeItem contentTypeItem;
+
+    private final String name;
+    private final String type;
+    private final boolean isProperty;
+    private final boolean isMultiple;
+    private final List<String> validators;
     private final Node editorConfigNode;
     private final ContentTypeContext parentContext;
 
@@ -81,19 +87,51 @@ public class FieldTypeContext {
         return item != null ? new FieldTypeContext(item, context, editorFieldConfigNode) : null;
     }
 
-    public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext,
+    public FieldTypeContext(final ContentTypeItem contentTypeItem,
+                            final ContentTypeContext parentContext,
                             final Node editorConfigNode) {
-        this.contentTypeItem = contentTypeItem;
-        this.parentContext = parentContext;
-        this.editorConfigNode = editorConfigNode;
+        this(contentTypeItem.getName(), contentTypeItem.getItemType(), contentTypeItem.isProperty(),
+                contentTypeItem.isMultiple(), contentTypeItem.getValidators(), parentContext, editorConfigNode);
     }
 
     public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext) {
         this(contentTypeItem, parentContext, null);
     }
 
-    public ContentTypeItem getContentTypeItem() {
-        return contentTypeItem;
+    public FieldTypeContext(final String name,
+                            final String type,
+                            final boolean isProperty,
+                            final boolean isMultiple,
+                            final List<String> validators,
+                            final ContentTypeContext parentContext,
+                            final Node editorConfigNode) {
+        this.name = name;
+        this.type = type;
+        this.isProperty = isProperty;
+        this.isMultiple = isMultiple;
+        this.validators = validators;
+        this.parentContext = parentContext;
+        this.editorConfigNode = editorConfigNode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public boolean isProperty() {
+        return isProperty;
+    }
+
+    public boolean isMultiple() {
+        return isMultiple;
+    }
+
+    public List<String> getValidators() {
+        return validators;
     }
 
     public ContentTypeContext getParentContext() {
@@ -105,8 +143,7 @@ public class FieldTypeContext {
     }
 
     public Optional<ContentTypeContext> createContextForCompound() {
-        final String id = getContentTypeItem().getItemType();
-        return ContentTypeContext.createFromParent(id, getParentContext());
+        return ContentTypeContext.createFromParent(this.type, getParentContext());
     }
 
     public Optional<Boolean> getBooleanConfig(final String propertyName) {

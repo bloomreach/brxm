@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@ public class NamespaceUtils {
     private static <T> Optional<T> getConfigPropertyFromType(final FieldTypeContext fieldContext,
                                                              final String propertyName,
                                                              final JcrPropertyReader<T> propertyReader) {
-        final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
+        final String fieldTypeId = fieldContext.getType();
         final Session session = fieldContext.getParentContext().getSession();
         return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
                 getPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName, propertyReader));

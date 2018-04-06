@@ -110,10 +110,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
     }
 
-    void initListBasedChoice(final String choiceId) {
-        setId(choiceId);
-    }
-
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final FieldsInformation fieldsInfo = super.init(fieldContext);

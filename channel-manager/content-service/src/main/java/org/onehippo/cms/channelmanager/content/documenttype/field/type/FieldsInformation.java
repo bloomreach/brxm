@@ -23,7 +23,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
 /**
  * Maintains information about fields in a content type. Used while parsing all fields in a document type.
@@ -34,7 +33,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 public class FieldsInformation {
 
     private static final List<String> REPORTABLE_MISSING_FIELD_TYPES = Arrays.asList(
-            "CalendarDate", "Docbase", "DynamicDropdown", "Reference", "StaticDropdown"
+            "Docbase", "DynamicDropdown", "Reference", "StaticDropdown"
     );
     private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList(
             "hippo:", "hippogallerypicker:", "hippostd:", "hipposys:", "hippotaxonomy:", "poll:", "selection:"
@@ -126,16 +125,15 @@ public class FieldsInformation {
      * Adds an unsupported field, i.e. a field of a type that is not (yet) implemented.
      * The information about fields will be updated accordingly.
      *
-     * @param item the content type item for the unsupported field
+     * @param fieldTypeName the name of the unsupported field
+     * @param validators    the validators of the unsupported field
      */
-    public void addUnsupportedField(final ContentTypeItem item) {
-        final String fieldTypeName = item.getItemType();
-
+    public void addUnsupportedField(final String fieldTypeName, final List<String> validators) {
         this.addUnsupportedField(fieldTypeName);
 
         // Unsupported fields cannot be created, so only when the unsupported field is not required
         // it may still be possible to create all required fields
-        final boolean isRequired = item.getValidators().contains(FieldValidators.REQUIRED);
+        final boolean isRequired = validators.contains(FieldValidators.REQUIRED);
         canCreateAllRequiredFields &= !isRequired;
 
         if (isRequired) {
