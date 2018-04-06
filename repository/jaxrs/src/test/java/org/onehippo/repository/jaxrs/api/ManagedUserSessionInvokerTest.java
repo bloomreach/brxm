@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,6 +43,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker.JCR_SESSION_HOLDER_ATTR_NAME;
 
 public class ManagedUserSessionInvokerTest {
     private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
@@ -121,6 +124,12 @@ public class ManagedUserSessionInvokerTest {
         final Repository repository = EasyMock.createMock(Repository.class);
         final Session userSession = EasyMock.createMock(Session.class);
 
+        // only first time we expect null to be returned
+        EasyMock.expect(httpSession.getAttribute(EasyMock.eq(JCR_SESSION_HOLDER_ATTR_NAME + '\uFFFF' + "tester"))).andReturn(null);
+        final Capture<HttpSessionBoundJcrSessionHolder> holder = Capture.newInstance();
+        httpSession.setAttribute(EasyMock.eq(JCR_SESSION_HOLDER_ATTR_NAME + '\uFFFF' + "tester"), EasyMock.capture(holder));
+        EasyMock.expectLastCall();
+
         EasyMock.expect(servletRequest.getSession(false)).andReturn(httpSession);
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         EasyMock.expect(context.getRepositoryCredentials()).andReturn(credentials);
@@ -132,10 +141,9 @@ public class ManagedUserSessionInvokerTest {
         EasyMock.expectLastCall();
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         EasyMock.expectLastCall();
-        userSession.logout();
-        EasyMock.expectLastCall();
 
         EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
+        EasyMock.expect(userSession.isLive()).andReturn(true);
 
         EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
         servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
@@ -149,10 +157,15 @@ public class ManagedUserSessionInvokerTest {
 
         EasyMock.verify(servletRequest, httpSession, context, systemSession, repository, userSession);
 
+        // after first invoke. the jcr session is expected to be stored in the http session attribute
+        final HttpSessionBoundJcrSessionHolder value = holder.getValue();
+        assertTrue("jcr session is expected to be stored in http session attr", userSession == value.getSession());
+
         assertThat("a map is returned", result instanceof Map);
         final Map<String, Object> map = (Map<String, Object>)result;
         assertEquals(map.get("exchange"), exchange);
         assertEquals(map.get("requestParams"), "test");
+
     }
 
     @Test
@@ -162,6 +175,8 @@ public class ManagedUserSessionInvokerTest {
         final HttpSession httpSession = EasyMock.createMock(HttpSession.class);
         final CmsSessionContext context = EasyMock.createMock(CmsSessionContext.class);
         final Repository repository = EasyMock.createMock(Repository.class);
+
+        EasyMock.expect(httpSession.getAttribute(EasyMock.eq(JCR_SESSION_HOLDER_ATTR_NAME + '\uFFFF' + "tester"))).andReturn(null);
 
         EasyMock.expect(servletRequest.getSession(false)).andReturn(httpSession);
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
@@ -196,6 +211,13 @@ public class ManagedUserSessionInvokerTest {
         final Repository repository = EasyMock.createMock(Repository.class);
         final Session userSession = EasyMock.createMock(Session.class);
 
+        // only first time we expect null to be returned
+        EasyMock.expect(httpSession.getAttribute(EasyMock.eq(JCR_SESSION_HOLDER_ATTR_NAME + '\uFFFF' + "tester"))).andReturn(null);
+
+        final Capture<HttpSessionBoundJcrSessionHolder> holder = Capture.newInstance();
+        httpSession.setAttribute(EasyMock.eq(JCR_SESSION_HOLDER_ATTR_NAME + '\uFFFF' + "tester"), EasyMock.capture(holder));
+        EasyMock.expectLastCall();
+
         EasyMock.expect(servletRequest.getSession(false)).andReturn(httpSession).anyTimes();
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         EasyMock.expect(context.getRepositoryCredentials()).andReturn(credentials);
@@ -208,8 +230,7 @@ public class ManagedUserSessionInvokerTest {
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         EasyMock.expectLastCall();
         EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
-        userSession.logout();
-        EasyMock.expectLastCall();
+        EasyMock.expect(userSession.isLive()).andReturn(true);
         EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
         servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
         EasyMock.expectLastCall();

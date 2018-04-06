@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.repository.jaxrs.api;
 
 import java.util.Locale;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -29,6 +28,7 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
 
     private static final Logger log = LoggerFactory.getLogger(ManagedUserSessionInvoker.class);
 
+    static final String JCR_SESSION_HOLDER_ATTR_NAME = ManagedUserSessionInvoker.class.getName() +".session";
     private static final String ATTRIBUTE_USER_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_SYSTEM_SESSION = ManagedUserSessionInvoker.class.getName() + ".SystemSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
@@ -65,6 +66,9 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
             return system;
         }
         try {
+            // system session does not need to be cached on http session attr like userSession since it is way cheaper
+            // to create (authorization rule and query very simple) than a user session and never
+            // requires remove authentication like for example LDAP
             system = systemSession.impersonate(new SimpleCredentials("system", new char[]{}));
             servletRequest.setAttribute(ATTRIBUTE_SYSTEM_SESSION, system);
         } catch (RepositoryException e) {
@@ -99,29 +103,37 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
         }
 
         final SimpleCredentials credentials = cmsSessionContext.getRepositoryCredentials();
-        try {
-            final Session userSession = systemSession.getRepository().login(credentials);
+        // we need to synchronize on httpSession because jcr session is not thread-safe *AND* the #getAttribute and
+        // #setAttribute on http session are not allowed to be done concurrently in our case because of the valueUnbound
+        // for HttpSessionBoundJcrSessionHolder
+        synchronized (httpSession) {
             try {
-                servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
-                servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
-                servletRequest.setAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST, getFarthestRequestHostInternal(servletRequest));
-                return invokeSuper(exchange, requestParams);
-            } finally {
-                final Session system = (Session) servletRequest.getAttribute(ATTRIBUTE_SYSTEM_SESSION);
-                if (system != null && system.isLive()) {
-                    if (system.hasPendingChanges()) {
-                        log.warn("Logging out system session that has pending changes.");
+
+                final Session userSession = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(JCR_SESSION_HOLDER_ATTR_NAME,
+                        httpSession, credentials, systemSession.getRepository()::login);
+
+                try {
+                    servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
+                    servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
+                    servletRequest.setAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST, getFarthestRequestHostInternal(servletRequest));
+                    return invokeSuper(exchange, requestParams);
+                } finally {
+                    final Session system = (Session) servletRequest.getAttribute(ATTRIBUTE_SYSTEM_SESSION);
+                    if (system != null && system.isLive()) {
+                        if (system.hasPendingChanges()) {
+                            log.warn("Logging out system session that has pending changes.");
+                        }
+                        system.logout();
                     }
-                    system.logout();
+                    if (userSession.hasPendingChanges()) {
+                        log.warn("User session should not have changes at the end of the request. Refreshing them now");
+                        userSession.refresh(false);
+                    }
                 }
-                if (userSession.hasPendingChanges()) {
-                    log.warn("Logging out user session that has pending changes.");
-                }
-                userSession.logout();
+            } catch (RepositoryException e) {
+                log.warn("Failed to create user session for '{}'", credentials.getUserID(), e);
+                return FORBIDDEN;
             }
-        } catch (RepositoryException e) {
-            log.warn("Failed to create user session for '{}'", credentials.getUserID(), e);
-            return FORBIDDEN;
         }
     }
 
