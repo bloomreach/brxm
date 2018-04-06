@@ -15,12 +15,10 @@
  */
 
 describe('hippoIframeCtrl', () => {
-  let $q;
   let $rootScope;
   let $window;
   let CmsService;
-  let DialogService;
-  let DragDropService;
+  let ContainerService;
   let HippoIframeService;
   let OverlayService;
   let PageStructureService;
@@ -36,12 +34,10 @@ describe('hippoIframeCtrl', () => {
     inject((
       $controller,
       _$compile_,
-      _$q_,
       _$rootScope_,
       _$window_,
       _CmsService_,
-      _DialogService_,
-      _DragDropService_,
+      _ContainerService_,
       _HippoIframeService_,
       _OverlayService_,
       _PageStructureService_,
@@ -49,12 +45,10 @@ describe('hippoIframeCtrl', () => {
       _SpaService_,
     ) => {
       $compile = _$compile_;
-      $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
-      DialogService = _DialogService_;
-      DragDropService = _DragDropService_;
+      ContainerService = _ContainerService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -79,14 +73,7 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl = el.controller('hippo-iframe');
   });
 
-  it('handles the render-component event from ExtJS', () => {
-    spyOn(hippoIframeCtrl, 'renderComponent');
-    hippoIframeCtrl.$onInit();
-    $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
-    expect(hippoIframeCtrl.renderComponent).toHaveBeenCalledWith('1234', { foo: 1, bar: 'a:b' });
-  });
-
-  describe('renderComponent', () => {
+  describe('render component', () => {
     beforeEach(() => {
       spyOn(SpaService, 'renderComponent');
       spyOn(PageStructureService, 'renderComponent');
@@ -95,7 +82,7 @@ describe('hippoIframeCtrl', () => {
     it('first tries to render a component via the SPA', () => {
       SpaService.renderComponent.and.returnValue(true);
 
-      hippoIframeCtrl.renderComponent('1234', { foo: 1 });
+      $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
 
       expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
       expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
@@ -104,10 +91,35 @@ describe('hippoIframeCtrl', () => {
     it('second renders a component via the PageStructureService', () => {
       SpaService.renderComponent.and.returnValue(false);
 
-      hippoIframeCtrl.renderComponent('1234', { foo: 1 });
+      $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
 
       expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+    });
+
+    it('does not respond to the render-component event anymore when destroyed', () => {
+      hippoIframeCtrl.$onDestroy();
+      $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
+
+      expect(SpaService.renderComponent).not.toHaveBeenCalled();
+      expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('delete component', () => {
+    beforeEach(() => {
+      spyOn(ContainerService, 'deleteComponent');
+    });
+
+    it('deletes a component via the ContainerService', () => {
+      $window.CMS_TO_APP.publish('delete-component', '1234');
+      expect(ContainerService.deleteComponent).toHaveBeenCalledWith('1234');
+    });
+
+    it('does not respond to the delete-component event anymore when destroyed', () => {
+      hippoIframeCtrl.$onDestroy();
+      $window.CMS_TO_APP.publish('delete-component', '1234');
+      expect(ContainerService.deleteComponent).not.toHaveBeenCalled();
     });
   });
 
@@ -115,42 +127,6 @@ describe('hippoIframeCtrl', () => {
     spyOn(CmsService, 'unsubscribe');
     hippoIframeCtrl.$onDestroy();
     expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), hippoIframeCtrl);
-  });
-
-  it('shows the confirmation dialog and deletes selected component on confirmation', () => {
-    const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-    spyOn(DragDropService, 'replaceContainer');
-    spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-    spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when({ oldContainer: 'old', newContainer: 'new' }));
-    spyOn(DialogService, 'show').and.returnValue($q.resolve());
-    spyOn(DialogService, 'confirm').and.callThrough();
-
-    hippoIframeCtrl.deleteComponent('1234');
-
-    scope.$digest();
-
-    expect(mockComponent.getLabel).toHaveBeenCalled();
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
-    expect(DragDropService.replaceContainer).toHaveBeenCalledWith('old', 'new');
-  });
-
-  it('shows component properties dialog after rejecting the delete operation', () => {
-    const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-    spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-    spyOn(PageStructureService, 'showComponentProperties');
-    spyOn(DialogService, 'show').and.returnValue($q.reject());
-    spyOn(DialogService, 'confirm').and.callThrough();
-
-    hippoIframeCtrl.deleteComponent('1234');
-
-    scope.$digest();
-
-    expect(mockComponent.getLabel).toHaveBeenCalled();
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(mockComponent);
   });
 
   it('creates the overlay when loading a new page', () => {

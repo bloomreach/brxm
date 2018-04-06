@@ -21,6 +21,7 @@ class HippoIframeCtrl {
     $scope,
     $translate,
     CmsService,
+    ContainerService,
     DialogService,
     DragDropService,
     HippoIframeService,
@@ -38,6 +39,7 @@ class HippoIframeCtrl {
     this.$translate = $translate;
 
     this.CmsService = CmsService;
+    this.ContainerService = ContainerService;
     this.DialogService = DialogService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
@@ -82,13 +84,13 @@ class HippoIframeCtrl {
       this.OverlayService.showContentOverlay(value);
     });
 
-    this.CmsService.subscribe('render-component', this.renderComponent, this);
-    this.CmsService.subscribe('delete-component', this.deleteComponent, this);
+    this.CmsService.subscribe('render-component', this._renderComponent, this);
+    this.CmsService.subscribe('delete-component', this._deleteComponent, this);
   }
 
   $onDestroy() {
-    this.CmsService.unsubscribe('render-component', this.renderComponent, this);
-    this.CmsService.unsubscribe('delete-component', this.deleteComponent, this);
+    this.CmsService.unsubscribe('render-component', this._renderComponent, this);
+    this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
   }
 
   onLoad() {
@@ -99,39 +101,14 @@ class HippoIframeCtrl {
     }
   }
 
-  renderComponent(componentId, propertiesMap) {
+  _renderComponent(componentId, propertiesMap) {
     if (!this.SpaService.renderComponent(componentId, propertiesMap)) {
       this.PageStructureService.renderComponent(componentId, propertiesMap);
     }
   }
 
-  deleteComponent(componentId) {
-    const selectedComponent = this.PageStructureService.getComponentById(componentId);
-    if (!selectedComponent) {
-      this.$log.warn(`Cannot delete unknown component with id:'${componentId}'`);
-      return;
-    }
-    this._confirmDelete(selectedComponent).then(
-      this._doDelete(componentId),
-      () => this.PageStructureService.showComponentProperties(selectedComponent),
-    );
-  }
-
-  _doDelete(componentId) {
-    return () => this.PageStructureService.removeComponentById(componentId)
-      .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
-      .finally(() => this.CmsService.publish('destroy-component-properties-window'));
-  }
-
-  _confirmDelete(selectedComponent) {
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
-        component: selectedComponent.getLabel(),
-      }))
-      .ok(this.$translate.instant('DELETE'))
-      .cancel(this.$translate.instant('CANCEL'));
-
-    return this.DialogService.show(confirm);
+  _deleteComponent(componentId) {
+    this.ContainerService.deleteComponent(componentId);
   }
 
   getSrc() {
