@@ -15,13 +15,14 @@
  */
 
 class SpaService {
-  constructor($log, ChannelRenderingService, DomService, OverlayService) {
+  constructor($log, ChannelRenderingService, DomService, OverlayService, PageStructureService) {
     'ngInject';
 
     this.$log = $log;
     this.ChannelRenderingService = ChannelRenderingService;
     this.DomService = DomService;
     this.OverlayService = OverlayService;
+    this.PageStructureService = PageStructureService;
   }
 
   init(iframeJQueryElement) {
@@ -56,9 +57,13 @@ class SpaService {
   }
 
   renderComponent(componentId, parameters = {}) {
-    if (this.spa && angular.isFunction(this.spa.renderComponent)) {
-      // let the SPA render the component; if it returns false, we still render the component instead
-      return this.spa.renderComponent(componentId, parameters) !== false;
+    if (this.spa && angular.isFunction(this.spa._renderComponent)) {
+      const component = this.PageStructureService.getComponentById(componentId);
+      if (component) {
+        // let the SPA render the component; if it returns false, we still render the component instead
+        return this.spa._renderComponent(component.getReferenceNamespace(), parameters) !== false;
+      }
+      this.$log.warn(`Failed to render unknown component with ID '${componentId}'`);
     }
     return false;
   }
