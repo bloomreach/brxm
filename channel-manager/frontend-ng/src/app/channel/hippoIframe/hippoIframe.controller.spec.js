@@ -17,6 +17,7 @@
 describe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
+  let $window;
   let ChannelRenderingService;
   let CmsService;
   let DialogService;
@@ -37,6 +38,7 @@ describe('hippoIframeCtrl', () => {
       _$compile_,
       _$q_,
       _$rootScope_,
+      _$window_,
       _ChannelRenderingService_,
       _CmsService_,
       _DialogService_,
@@ -49,6 +51,7 @@ describe('hippoIframeCtrl', () => {
       $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $window = _$window_;
       ChannelRenderingService = _ChannelRenderingService_;
       CmsService = _CmsService_;
       DialogService = _DialogService_;
@@ -74,6 +77,38 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
+  });
+
+  it('handles the render-component event from ExtJS', () => {
+    spyOn(hippoIframeCtrl, 'renderComponent');
+    hippoIframeCtrl.$onInit();
+    $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1, bar: 'a:b' });
+    expect(hippoIframeCtrl.renderComponent).toHaveBeenCalledWith('1234', { foo: 1, bar: 'a:b' });
+  });
+
+  describe('renderComponent', () => {
+    beforeEach(() => {
+      spyOn(SpaService, 'renderComponent');
+      spyOn(PageStructureService, 'renderComponent');
+    });
+
+    it('first tries to render a component via the SPA', () => {
+      SpaService.renderComponent.and.returnValue(true);
+
+      hippoIframeCtrl.renderComponent('1234', { foo: 1 });
+
+      expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+      expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+    });
+
+    it('second renders a component via the PageStructureService', () => {
+      SpaService.renderComponent.and.returnValue(false);
+
+      hippoIframeCtrl.renderComponent('1234', { foo: 1 });
+
+      expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+    });
   });
 
   it('unsubscribes "delete-component" event when the controller is destroyed', () => {

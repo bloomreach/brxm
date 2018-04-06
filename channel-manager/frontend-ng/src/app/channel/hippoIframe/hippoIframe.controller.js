@@ -82,10 +82,12 @@ class HippoIframeCtrl {
       this.OverlayService.showContentOverlay(value);
     });
 
+    this.CmsService.subscribe('render-component', this.renderComponent, this);
     this.CmsService.subscribe('delete-component', this.deleteComponent, this);
   }
 
   $onDestroy() {
+    this.CmsService.unsubscribe('render-component', this.renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this.deleteComponent, this);
   }
 
@@ -94,6 +96,12 @@ class HippoIframeCtrl {
       this.SpaService.initSpa();
     } else {
       this.ChannelRenderingService.createOverlay();
+    }
+  }
+
+  renderComponent(componentId, propertiesMap) {
+    if (!this.SpaService.renderComponent(componentId, propertiesMap)) {
+      this.PageStructureService.renderComponent(componentId, propertiesMap);
     }
   }
 
