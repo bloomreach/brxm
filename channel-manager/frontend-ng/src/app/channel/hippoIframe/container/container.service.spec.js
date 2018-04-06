@@ -22,6 +22,8 @@ describe('ContainerService', () => {
   let ContainerService;
   let DialogService;
   let DragDropService;
+  let FeedbackService;
+  let HippoIframeService;
   let PageStructureService;
 
   beforeEach(() => {
@@ -35,6 +37,8 @@ describe('ContainerService', () => {
       _ContainerService_,
       _DialogService_,
       _DragDropService_,
+      _FeedbackService_,
+      _HippoIframeService_,
       _PageStructureService_,
     ) => {
       $log = _$log_;
@@ -44,11 +48,50 @@ describe('ContainerService', () => {
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
       DragDropService = _DragDropService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
     });
   });
 
-  describe('deleteComponent', () => {
+  describe('add component', () => {
+    beforeEach(() => {
+      spyOn($log, 'info');
+      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'getContainerByOverlayElement');
+      spyOn(PageStructureService, 'showComponentProperties');
+      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
+        getContainer() {},
+        getLabel() {},
+      }));
+    });
+
+    it('adds a component to a container in the page structure', () => {
+      ContainerService.addComponent();
+      $rootScope.$apply();
+      expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
+    });
+
+    it('handles errors when thrown, upon adding a component to container', () => {
+      PageStructureService.addComponentToContainer.and.returnValue($q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      ContainerService.addComponent({ label: 'Banner' });
+      $rootScope.$apply();
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
+        component: 'Banner',
+      });
+    });
+
+    it('reloads the iframe if component contains head contributions', () => {
+      spyOn(PageStructureService, 'containsNewHeadContributions').and.returnValue(true);
+      ContainerService.addComponent();
+      $rootScope.$apply();
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+  });
+
+  describe('delete component', () => {
     it('shows the confirmation dialog and deletes selected component on confirmation', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       spyOn(DragDropService, 'replaceContainer');

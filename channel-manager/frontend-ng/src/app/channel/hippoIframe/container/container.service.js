@@ -15,7 +15,16 @@
  */
 
 class ContainerService {
-  constructor($log, $translate, CmsService, DialogService, DragDropService, PageStructureService) {
+  constructor(
+    $log,
+    $translate,
+    CmsService,
+    DialogService,
+    DragDropService,
+    FeedbackService,
+    HippoIframeService,
+    PageStructureService,
+  ) {
     'ngInject';
 
     this.$log = $log;
@@ -23,18 +32,35 @@ class ContainerService {
     this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.DragDropService = DragDropService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
   }
 
+  addComponent(catalogComponent, containerOverlayElement) {
+    const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
+
+    this.PageStructureService.addComponentToContainer(catalogComponent, container).then((newComponent) => {
+      if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
+        this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+        this.HippoIframeService.reload();
+      }
+    }).catch(() => {
+      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
+        component: catalogComponent.label,
+      });
+    });
+  }
+
   deleteComponent(componentId) {
-    const selectedComponent = this.PageStructureService.getComponentById(componentId);
-    if (!selectedComponent) {
+    const component = this.PageStructureService.getComponentById(componentId);
+    if (!component) {
       this.$log.warn(`Cannot delete unknown component with id '${componentId}'`);
       return;
     }
-    this._confirmDelete(selectedComponent).then(
+    this._confirmDelete(component).then(
       this._doDelete(componentId),
-      () => this.PageStructureService.showComponentProperties(selectedComponent),
+      () => this.PageStructureService.showComponentProperties(component),
     );
   }
 

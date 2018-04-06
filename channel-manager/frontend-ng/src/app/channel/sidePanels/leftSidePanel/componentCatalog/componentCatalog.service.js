@@ -17,6 +17,7 @@
 class ComponentCatalogService {
   constructor(
     $log,
+    ContainerService,
     FeedbackService,
     HippoIframeService,
     MaskService,
@@ -28,6 +29,7 @@ class ComponentCatalogService {
 
     this.$log = $log;
 
+    this.ContainerService = ContainerService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
@@ -85,27 +87,12 @@ class ComponentCatalogService {
     const containerOverlayElement = event.target;
 
     if (!container.isDisabled()) {
-      this.addComponentToContainer(this.selectedComponent, containerOverlayElement);
+      this.ContainerService.addComponent(this.selectedComponent, containerOverlayElement);
       delete this.selectedComponent;
     } else {
       // If container is disabled dont do anything
       event.stopPropagation();
     }
-  }
-
-  addComponentToContainer(component, containerOverlayElement) {
-    const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
-
-    this.PageStructureService.addComponentToContainer(component, container).then((newComponent) => {
-      if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
-        this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
-        this.HippoIframeService.reload();
-      }
-    }).catch(() => {
-      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
-        component: component.label,
-      });
-    });
   }
 }
 
