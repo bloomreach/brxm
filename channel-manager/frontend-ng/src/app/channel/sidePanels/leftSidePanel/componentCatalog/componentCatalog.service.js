@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@
 class ComponentCatalogService {
   constructor(
     $log,
-    SidePanelService,
+    FeedbackService,
     HippoIframeService,
     MaskService,
     OverlayService,
     PageStructureService,
-    FeedbackService,
+    SidePanelService,
   ) {
     'ngInject';
 
     this.$log = $log;
 
-    this.SidePanelService = SidePanelService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
-    this.FeedbackService = FeedbackService;
+    this.SidePanelService = SidePanelService;
   }
 
   getSelectedComponent() {
