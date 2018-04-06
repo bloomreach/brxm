@@ -35,6 +35,7 @@ import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.MatcherAssert.assertThat;

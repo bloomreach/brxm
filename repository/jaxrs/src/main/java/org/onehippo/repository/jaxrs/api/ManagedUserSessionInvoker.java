@@ -16,7 +16,6 @@
 package org.onehippo.repository.jaxrs.api;
 
 import java.util.Locale;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -29,6 +28,7 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +110,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
             try {
 
                 final Session userSession = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(JCR_SESSION_HOLDER_ATTR_NAME,
-                        httpSession, credentials, systemSession.getRepository());
+                        httpSession, credentials, systemSession.getRepository()::login);
 
                 try {
                     servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
