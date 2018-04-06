@@ -22,7 +22,6 @@ class HippoIframeCtrl {
     $translate,
     ChannelRenderingService,
     CmsService,
-    ConfigService,
     DialogService,
     DragDropService,
     HippoIframeService,
@@ -40,7 +39,6 @@ class HippoIframeCtrl {
 
     this.ChannelRenderingService = ChannelRenderingService;
     this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
