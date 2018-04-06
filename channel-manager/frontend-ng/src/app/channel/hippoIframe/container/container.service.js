@@ -24,6 +24,7 @@ class ContainerService {
     FeedbackService,
     HippoIframeService,
     PageStructureService,
+    SpaService,
   ) {
     'ngInject';
 
@@ -35,21 +36,26 @@ class ContainerService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
+    this.SpaService = SpaService;
   }
 
   addComponent(catalogComponent, containerOverlayElement) {
     const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
 
-    this.PageStructureService.addComponentToContainer(catalogComponent, container).then((newComponent) => {
-      if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
-        this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
-        this.HippoIframeService.reload();
-      }
-    }).catch(() => {
-      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
-        component: catalogComponent.label,
+    this.PageStructureService.addComponentToContainer(catalogComponent, container)
+      .then((newComponentId) => {
+        if (this.SpaService.detectedSpa()) {
+          // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
+          this.HippoIframeService.reload();
+          return true;
+        }
+        return this.PageStructureService.renderNewComponentInContainer(newComponentId, container);
+      })
+      .catch(() => {
+        this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
+          component: catalogComponent.label,
+        });
       });
-    });
   }
 
   deleteComponent(componentId) {

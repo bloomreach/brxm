@@ -389,7 +389,7 @@ class PageStructureService {
         (newComponentJson) => {
           this.ChannelService.recordOwnChange();
           // TODO: handle error when rendering container failed
-          return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
+          return newComponentJson.id;
         },
         (errorResponse) => {
           const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
@@ -397,6 +397,17 @@ class PageStructureService {
           params.component = catalogComponent.name;
           return this._showFeedbackAndReload(errorKey, params);
         });
+  }
+
+  renderNewComponentInContainer(newComponentId, container) {
+    return this.renderContainer(container)
+      .then(() => this.getComponentById(newComponentId))
+      .then((newComponent) => {
+        if (this.containsNewHeadContributions(newComponent.getContainer())) {
+          this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+          this.HippoIframeService.reload();
+        }
+      });
   }
 
   getContainerByOverlayElement(overlayElement) {

@@ -25,6 +25,7 @@ describe('ContainerService', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageStructureService;
+  let SpaService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -40,6 +41,7 @@ describe('ContainerService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageStructureService_,
+      _SpaService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
@@ -51,6 +53,7 @@ describe('ContainerService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
+      SpaService = _SpaService_;
     });
   });
 
@@ -59,17 +62,30 @@ describe('ContainerService', () => {
       spyOn($log, 'info');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'getContainerByOverlayElement');
-      spyOn(PageStructureService, 'showComponentProperties');
       spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
         getContainer() {},
         getLabel() {},
       }));
+      spyOn(PageStructureService, 'renderNewComponentInContainer');
+      spyOn(SpaService, 'detectedSpa');
     });
 
     it('adds a component to a container in the page structure', () => {
+      SpaService.detectedSpa.and.returnValue(false);
       ContainerService.addComponent();
-      $rootScope.$apply();
+      $rootScope.$digest();
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
+      expect(HippoIframeService.reload).not.toHaveBeenCalled();
+      expect(PageStructureService.renderNewComponentInContainer).toHaveBeenCalled();
+    });
+
+    it('reloads the iframe if there is an SPA', () => {
+      SpaService.detectedSpa.and.returnValue(true);
+      ContainerService.addComponent();
+      $rootScope.$digest();
+      expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(PageStructureService.renderNewComponentInContainer).not.toHaveBeenCalled();
     });
 
     it('handles errors when thrown, upon adding a component to container', () => {
@@ -77,17 +93,10 @@ describe('ContainerService', () => {
       spyOn(FeedbackService, 'showError');
 
       ContainerService.addComponent({ label: 'Banner' });
-      $rootScope.$apply();
+      $rootScope.$digest();
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
         component: 'Banner',
       });
-    });
-
-    it('reloads the iframe if component contains head contributions', () => {
-      spyOn(PageStructureService, 'containsNewHeadContributions').and.returnValue(true);
-      ContainerService.addComponent();
-      $rootScope.$apply();
-      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 

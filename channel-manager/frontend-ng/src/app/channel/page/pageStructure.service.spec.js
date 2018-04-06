@@ -606,6 +606,26 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
+  it('records a change when adding a new component to a container successfully', (done) => {
+    const catalogComponent = {
+      id: 'foo-bah',
+      name: 'Foo Bah Component',
+    };
+    const mockContainer = jasmine.createSpyObj(['getId']);
+    mockContainer.getId.and.returnValue('container-1');
+
+    spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
+
+    PageStructureService.addComponentToContainer(catalogComponent, mockContainer)
+      .then((newComponentId) => {
+        expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(newComponentId).toEqual('newUuid');
+        done();
+      });
+    $rootScope.$digest();
+  });
+
   it('prints parsed elements', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');

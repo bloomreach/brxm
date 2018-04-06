@@ -108,10 +108,6 @@ describe('ComponentCatalogService', () => {
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'getContainerByOverlayElement');
       spyOn(PageStructureService, 'showComponentProperties');
-      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
-        getContainer() {},
-        getLabel() {},
-      }));
     });
 
     it('handles container clicks', () => {

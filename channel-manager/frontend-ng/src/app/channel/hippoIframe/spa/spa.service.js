@@ -37,6 +37,10 @@ class SpaService {
       this.spa = iframeWindow.SPA;
     }
 
+    return this.detectedSpa();
+  }
+
+  detectedSpa() {
     return !!this.spa;
   }
 
