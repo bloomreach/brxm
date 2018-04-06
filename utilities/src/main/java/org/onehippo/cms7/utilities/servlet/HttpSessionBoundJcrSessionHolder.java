@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.utilities.servlet;
 
+import java.util.Enumeration;
+
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -102,6 +104,27 @@ public class HttpSessionBoundJcrSessionHolder implements HttpSessionActivationLi
         }
 
         return session;
+    }
+
+    /**
+     * Logs out all jcr sessions bound to the {@code httpSession} if the attribute under which
+     * the HttpSessionBoundJcrSessionHolder is stored in the http session starts with {@code httpSessionAttributeNamePrefix}
+     * @param httpSessionAttributeNamePrefix
+     * @param httpSession
+     */
+    public static void clearAllBoundJcrSessions(final String httpSessionAttributeNamePrefix,
+                                                final HttpSession httpSession) {
+        final Enumeration<String> attributeNames = httpSession.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            final String attributeName = attributeNames.nextElement();
+            if (attributeName.startsWith(httpSessionAttributeNamePrefix)) {
+                final Object attribute = httpSession.getAttribute(attributeName);
+                if (attribute instanceof HttpSessionBoundJcrSessionHolder) {
+                    // this will result in the valueUnbound logging out the jcr session if needed
+                    httpSession.removeAttribute(attributeName);
+                }
+            }
+        }
     }
 
     private HttpSessionBoundJcrSessionHolder(final Session session, final String httpSessionAttributeName) {
