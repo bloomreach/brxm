@@ -87,18 +87,20 @@ public class HttpSessionBoundJcrSessionHolder implements HttpSessionActivationLi
         if (holder != null) {
             session = holder.getSession();
         }
-        if (session == null) {
-            session = jcrSessionCreator.apply(credentials);
-            httpSession.setAttribute(httpSessionAttributeName, new HttpSessionBoundJcrSessionHolder(session, httpSessionAttributeName));
-        }
-        if (!session.isLive()) {
+
+        if (session != null && !session.isLive()) {
             log.info("Session '{}' has been logged out, logging in new session", session.getUserID());
-            session = jcrSessionCreator.apply(credentials);
-            // below results in a valueUnbound of the previous HttpSessionBoundJcrSessionHolder object bound to the
-            // http session, which will trigger a #logoutSession() which will result in nothing because the session
+            // below jcrSessionCreator.login(credentials) results in a valueUnbound of the previous
+            // HttpSessionBoundJcrSessionHolder object bound to the http session, which will trigger a #logoutSession()
+            // which will result in nothing because the session
             // instance bound to the previous HttpSessionBoundJcrSessionHolder is already not live any more
+        }
+
+        if (session == null || !session.isLive()) {
+            session = jcrSessionCreator.login(credentials);
             httpSession.setAttribute(httpSessionAttributeName, new HttpSessionBoundJcrSessionHolder(session, httpSessionAttributeName));
         }
+
         return session;
     }
 
@@ -119,7 +121,7 @@ public class HttpSessionBoundJcrSessionHolder implements HttpSessionActivationLi
     @Override
     public void valueBound(final HttpSessionBindingEvent event) {
         if (!httpSessionAttributeName.equals(event.getName())) {
-            log.error("Unexpected valueUnbound event for '{}'", event.getName());
+            log.error("Unexpected valueBound event for '{}'", event.getName());
         }
     }
 
@@ -154,6 +156,6 @@ public class HttpSessionBoundJcrSessionHolder implements HttpSessionActivationLi
     // not using java.util.function.Function since we need to be able to throw a RepositoryException
     @FunctionalInterface
     public interface JcrSessionCreator {
-        Session apply(Credentials credentials) throws RepositoryException;
+        Session login(Credentials credentials) throws RepositoryException;
     }
 }
