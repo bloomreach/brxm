@@ -32,7 +32,6 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <hippo.l10n-tooling.version>2.3.0-SNAPSHOT</hippo.l10n-tooling.version>
     <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
     <locales>fr,nl,de,zh,es</locales>
     <locale/>
