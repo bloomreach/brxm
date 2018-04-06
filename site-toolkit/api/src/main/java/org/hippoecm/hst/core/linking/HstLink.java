@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -103,12 +103,12 @@ public interface HstLink {
      * @return the path elements of this HstLink, which is the {@link #getPath()} splitted on slashes
      */
     String[] getPathElements();
-    
+
     /**
-     * @return the {@link Mount} that can represent this link. This might be an  {@link Mount} which is a different one then the
-     *  {@link Mount} the link was created in. This could result in a cross-domain (different hostname) link being created, depending
-     * on the backing {@link Mount#getVirtualHost()}. If no {@link Mount} is set, <code>null</code> can be returned
-     * 
+     * @return the {@link Mount} that can represent this link. This might be an  {@link Mount} which is a different one
+     * then the {@link Mount} the link was created in. This could result in a cross-domain (different hostname) link
+     * being created, depending on the backing {@link Mount#getVirtualHost()}. If no {@link Mount} is set,
+     * <code>null</code> can be returned
      */
     Mount getMount();
 
