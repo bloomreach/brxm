@@ -28,8 +28,7 @@ describe('ChannelRenderingService', () => {
   let ChannelRenderingService;
   let HstCommentsProcessorService;
 
-  const iframeDom = {
-    defaultView: window,
+  const iframeDocument = {
     location: {
       host: 'localhost',
       protocol: 'http:',
@@ -67,7 +66,8 @@ describe('ChannelRenderingService', () => {
       ProjectService = _ProjectService_;
     });
 
-    spyOn(ChannelRenderingService, '_getIframeDom').and.returnValue(iframeDom);
+    spyOn(DomService, 'getIframeDocument').and.returnValue(iframeDocument);
+    spyOn(DomService, 'getIframeWindow').and.returnValue(window);
   });
 
   describe('createOverlay', () => {
@@ -88,7 +88,7 @@ describe('ChannelRenderingService', () => {
 
       expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDom, jasmine.any(Function));
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(ChannelRenderingService.updateDragDrop).toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe('ChannelRenderingService', () => {
     });
 
     it('clears the parsed elements, then stops if the iframe DOM is not present', () => {
-      spyOn(ChannelRenderingService, '_isIframeDomPresent').and.returnValue(false);
+      spyOn(DomService, 'hasIframeDocument').and.returnValue(false);
 
       ChannelRenderingService.createOverlay();
       $rootScope.$digest();
@@ -120,9 +120,7 @@ describe('ChannelRenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(ChannelRenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
-
-      // TODO: is this intentional?
-      expect(HippoIframeService.signalPageLoadCompleted).not.toHaveBeenCalled();
+      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {

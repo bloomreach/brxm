@@ -15,10 +15,11 @@
  */
 
 class SpaService {
-  constructor($log, OverlayService, ChannelRenderingService) {
+  constructor($log, DomService, OverlayService, ChannelRenderingService) {
     'ngInject';
 
     this.$log = $log;
+    this.DomService = DomService;
     this.OverlayService = OverlayService;
     this.ChannelRenderingService = ChannelRenderingService;
   }
@@ -28,8 +29,14 @@ class SpaService {
   }
 
   detectSpa() {
-    this.spa = this.iframeJQueryElement.contentWindow.SPA;
-    return angular.isDefined(this.spa);
+    this.spa = null;
+
+    const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
+    if (iframeWindow) {
+      this.spa = iframeWindow.SPA;
+    }
+
+    return !!this.spa;
   }
 
   initSpa() {

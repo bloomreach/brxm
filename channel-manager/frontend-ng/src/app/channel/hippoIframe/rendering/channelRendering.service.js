@@ -56,13 +56,11 @@ class ChannelRenderingService {
   createOverlay() {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
-      if (this._isIframeDomPresent()) {
-        this._parseHstComments();
-        this.updateDragDrop();
-        this._updateChannelIfSwitched();
-        this._parseLinks();
-        this.HippoIframeService.signalPageLoadCompleted();
-      }
+      this._parseHstComments();
+      this.updateDragDrop();
+      this._updateChannelIfSwitched();
+      this._parseLinks();
+      this.HippoIframeService.signalPageLoadCompleted();
     }, () => {
       // stop progress indicator
       this.HippoIframeService.signalPageLoadCompleted();
@@ -74,11 +72,11 @@ class ChannelRenderingService {
 
   _insertCss() {
     try {
-      const iframeDom = this._getIframeDom();
-      if (!iframeDom) {
+      if (!this.DomService.hasIframeDocument(this.iframeJQueryElement)) {
+        // sometimes the iframe does not have a document, e.g. when viewing inline PDFs
         return this.$q.reject();
       }
-      const iframeWindow = iframeDom.defaultView;
+      const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
       this.DomService.addCss(iframeWindow, hippoIframeCss);
       return this.$q.resolve();
     } catch (e) {
@@ -86,17 +84,9 @@ class ChannelRenderingService {
     }
   }
 
-  _isIframeDomPresent() {
-    return !!this._getIframeDom();
-  }
-
-  _getIframeDom() {
-    return this.iframeJQueryElement.contents()[0];
-  }
-
   _parseHstComments() {
     this.HstCommentsProcessorService.run(
-      this._getIframeDom(),
+      this.DomService.getIframeDocument(this.iframeJQueryElement),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService),
     );
     this.PageStructureService.attachEmbeddedLinks();
@@ -138,11 +128,11 @@ class ChannelRenderingService {
   }
 
   _parseLinks() {
-    const iframeDom = this._getIframeDom();
-    const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
+    const iframeDocument = this.DomService.getIframeDocument(this.iframeJQueryElement);
+    const protocolAndHost = `${iframeDocument.location.protocol}//${iframeDocument.location.host}`;
     const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
-    this.LinkProcessorService.run(iframeDom, internalLinkPrefixes);
+    this.LinkProcessorService.run(iframeDocument, internalLinkPrefixes);
   }
 }
 
