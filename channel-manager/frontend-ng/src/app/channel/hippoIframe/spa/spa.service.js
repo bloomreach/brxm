@@ -15,14 +15,14 @@
  */
 
 class SpaService {
-  constructor($log, ChannelRenderingService, DomService, OverlayService, PageStructureService) {
+  constructor($log, DomService, OverlayService, PageStructureService, RenderingService) {
     'ngInject';
 
     this.$log = $log;
-    this.ChannelRenderingService = ChannelRenderingService;
     this.DomService = DomService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
+    this.RenderingService = RenderingService;
   }
 
   init(iframeJQueryElement) {
@@ -44,7 +44,7 @@ class SpaService {
     try {
       const publicApi = {
         createOverlay: () => {
-          this.ChannelRenderingService.createOverlay();
+          this.RenderingService.createOverlay();
         },
         syncOverlay: () => {
           this.OverlayService.sync();

@@ -16,7 +16,7 @@
 
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
-import ChannelRenderingService from './rendering/channelRendering.service';
+import RenderingService from './rendering/rendering.service';
 import DragDropService from './dragDrop/dragDrop.service';
 import HippoIframeService from './hippoIframe.service';
 import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
@@ -30,12 +30,12 @@ const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [])
   .controller('hippoIframeCtrl', HippoIframeCtrl)
   .directive('hippoIframe', hippoIframe)
-  .service('ChannelRenderingService', ChannelRenderingService)
   .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
   .service('OverlayService', OverlayService)
+  .service('RenderingService', RenderingService)
   .service('ScrollService', ScrollService)
   .service('SpaService', SpaService)
   .service('ViewportService', ViewportService);

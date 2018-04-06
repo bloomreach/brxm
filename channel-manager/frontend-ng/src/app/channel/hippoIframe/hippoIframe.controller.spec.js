@@ -18,13 +18,13 @@ describe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
   let $window;
-  let ChannelRenderingService;
   let CmsService;
   let DialogService;
   let DragDropService;
   let HippoIframeService;
   let OverlayService;
   let PageStructureService;
+  let RenderingService;
   let SpaService;
   let hippoIframeCtrl;
   let scope;
@@ -39,26 +39,26 @@ describe('hippoIframeCtrl', () => {
       _$q_,
       _$rootScope_,
       _$window_,
-      _ChannelRenderingService_,
       _CmsService_,
       _DialogService_,
       _DragDropService_,
       _HippoIframeService_,
       _OverlayService_,
       _PageStructureService_,
+      _RenderingService_,
       _SpaService_,
     ) => {
       $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
-      ChannelRenderingService = _ChannelRenderingService_;
       CmsService = _CmsService_;
       DialogService = _DialogService_;
       DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
+      RenderingService = _RenderingService_;
       SpaService = _SpaService_;
       scope = $rootScope.$new();
     });
@@ -155,12 +155,12 @@ describe('hippoIframeCtrl', () => {
 
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(false);
-    spyOn(ChannelRenderingService, 'createOverlay');
+    spyOn(RenderingService, 'createOverlay');
 
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(ChannelRenderingService.createOverlay).toHaveBeenCalled();
+    expect(RenderingService.createOverlay).toHaveBeenCalled();
   });
 
   it('initializes the SPA when a SPA is detected', () => {
@@ -174,30 +174,30 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
-    spyOn(ChannelRenderingService, 'updateDragDrop');
+    spyOn(RenderingService, 'updateDragDrop');
 
     HippoIframeService.pageLoaded = false;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
-    expect(ChannelRenderingService.updateDragDrop).not.toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
-    expect(ChannelRenderingService.updateDragDrop).not.toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     HippoIframeService.pageLoaded = true;
     hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
-    expect(ChannelRenderingService.updateDragDrop).toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
 
-    ChannelRenderingService.updateDragDrop.calls.reset();
+    RenderingService.updateDragDrop.calls.reset();
     hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
-    expect(ChannelRenderingService.updateDragDrop).toHaveBeenCalled();
+    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
   });
 
   it('toggles the components overlay', () => {

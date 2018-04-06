@@ -20,13 +20,13 @@ class HippoIframeCtrl {
     $log,
     $scope,
     $translate,
-    ChannelRenderingService,
     CmsService,
     DialogService,
     DragDropService,
     HippoIframeService,
     OverlayService,
     PageStructureService,
+    RenderingService,
     SpaService,
     ViewportService,
   ) {
@@ -37,13 +37,13 @@ class HippoIframeCtrl {
     this.$scope = $scope;
     this.$translate = $translate;
 
-    this.ChannelRenderingService = ChannelRenderingService;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
+    this.RenderingService = RenderingService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
 
@@ -68,14 +68,14 @@ class HippoIframeCtrl {
     this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
 
     this.SpaService.init(this.iframeJQueryElement);
-    this.ChannelRenderingService.init(this.iframeJQueryElement);
+    this.RenderingService.init(this.iframeJQueryElement);
   }
 
   $onInit() {
     this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
       this.OverlayService.showComponentsOverlay(value);
       if (this.HippoIframeService.pageLoaded) {
-        this.ChannelRenderingService.updateDragDrop();
+        this.RenderingService.updateDragDrop();
       }
     });
     this.$scope.$watch('iframe.showContentOverlay', (value) => {
@@ -95,7 +95,7 @@ class HippoIframeCtrl {
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();
     } else {
-      this.ChannelRenderingService.createOverlay();
+      this.RenderingService.createOverlay();
     }
   }
 

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-describe('ChannelRenderingService', () => {
+describe('RenderingService', () => {
   let $q;
   let $rootScope;
   let ChannelService;
   let DomService;
   let DragDropService;
   let HippoIframeService;
+  let HstCommentsProcessorService;
   let OverlayService;
   let PageMetaDataService;
   let PageStructureService;
   let ProjectService;
-  let ChannelRenderingService;
-  let HstCommentsProcessorService;
+  let RenderingService;
 
   const iframeDocument = {
     location: {
@@ -41,7 +41,6 @@ describe('ChannelRenderingService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _ChannelRenderingService_,
       _ChannelService_,
       _DomService_,
       _DragDropService_,
@@ -51,10 +50,10 @@ describe('ChannelRenderingService', () => {
       _PageMetaDataService_,
       _PageStructureService_,
       _ProjectService_,
+      _RenderingService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelRenderingService = _ChannelRenderingService_;
       ChannelService = _ChannelService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
@@ -64,6 +63,7 @@ describe('ChannelRenderingService', () => {
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
       ProjectService = _ProjectService_;
+      RenderingService = _RenderingService_;
     });
 
     spyOn(DomService, 'getIframeDocument').and.returnValue(iframeDocument);
@@ -75,7 +75,7 @@ describe('ChannelRenderingService', () => {
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'attachEmbeddedLinks');
       spyOn(HstCommentsProcessorService, 'run');
-      spyOn(ChannelRenderingService, 'updateDragDrop');
+      spyOn(RenderingService, 'updateDragDrop');
       spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
@@ -83,14 +83,14 @@ describe('ChannelRenderingService', () => {
     it('handles the loading of a new page', () => {
       spyOn(DomService, 'addCss');
 
-      ChannelRenderingService.createOverlay();
+      RenderingService.createOverlay();
       $rootScope.$digest();
 
       expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
-      expect(ChannelRenderingService.updateDragDrop).toHaveBeenCalled();
+      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -98,13 +98,13 @@ describe('ChannelRenderingService', () => {
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
       spyOn(DomService, 'addCss').and.throwError();
 
-      ChannelRenderingService.createOverlay();
+      RenderingService.createOverlay();
       $rootScope.$digest();
 
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
-      expect(ChannelRenderingService.updateDragDrop).not.toHaveBeenCalled();
+      expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -112,13 +112,13 @@ describe('ChannelRenderingService', () => {
     it('clears the parsed elements, then stops if the iframe DOM is not present', () => {
       spyOn(DomService, 'hasIframeDocument').and.returnValue(false);
 
-      ChannelRenderingService.createOverlay();
+      RenderingService.createOverlay();
       $rootScope.$digest();
 
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
-      expect(ChannelRenderingService.updateDragDrop).not.toHaveBeenCalled();
+      expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -127,27 +127,27 @@ describe('ChannelRenderingService', () => {
       const deferred = $q.defer();
 
       spyOn(ChannelService, 'loadChannel').and.returnValue(deferred.promise);
-      spyOn(ChannelRenderingService, '_parseLinks');
+      spyOn(RenderingService, '_parseLinks');
       spyOn(ProjectService, 'getBaseChannelId').and.callFake(channelId => channelId);
 
       spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
       spyOn(ChannelService, 'getId').and.returnValue('channelY');
 
-      ChannelRenderingService.createOverlay();
+      RenderingService.createOverlay();
       $rootScope.$digest();
 
       expect(HstCommentsProcessorService.run).toHaveBeenCalled();
 
       $rootScope.$digest();
 
-      expect(ChannelRenderingService.updateDragDrop).toHaveBeenCalled();
+      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
       expect(ChannelService.getId).toHaveBeenCalled();
 
       deferred.resolve();
       $rootScope.$digest();
 
-      expect(ChannelRenderingService._parseLinks).toHaveBeenCalled();
+      expect(RenderingService._parseLinks).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
   });
@@ -160,7 +160,7 @@ describe('ChannelRenderingService', () => {
 
     it('enables/disables drag-drop when the components overlay is toggled', () => {
       OverlayService.isComponentsOverlayDisplayed = true;
-      ChannelRenderingService.updateDragDrop();
+      RenderingService.updateDragDrop();
       $rootScope.$digest();
 
       expect(DragDropService.enable).toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('ChannelRenderingService', () => {
 
       DragDropService.enable.calls.reset();
       OverlayService.isComponentsOverlayDisplayed = false;
-      ChannelRenderingService.updateDragDrop();
+      RenderingService.updateDragDrop();
       $rootScope.$digest();
 
       expect(DragDropService.enable).not.toHaveBeenCalled();
@@ -180,7 +180,7 @@ describe('ChannelRenderingService', () => {
       spyOn(OverlayService, 'detachComponentMouseDown');
 
       OverlayService.isComponentsOverlayDisplayed = true;
-      ChannelRenderingService.updateDragDrop();
+      RenderingService.updateDragDrop();
       $rootScope.$digest();
 
       expect(OverlayService.attachComponentMouseDown).toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('ChannelRenderingService', () => {
 
       OverlayService.attachComponentMouseDown.calls.reset();
       OverlayService.isComponentsOverlayDisplayed = false;
-      ChannelRenderingService.updateDragDrop();
+      RenderingService.updateDragDrop();
       $rootScope.$digest();
 
       expect(OverlayService.attachComponentMouseDown).not.toHaveBeenCalled();
