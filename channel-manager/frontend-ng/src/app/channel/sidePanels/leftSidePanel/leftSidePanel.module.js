@@ -15,6 +15,7 @@
  */
 
 import leftSidePanelComponent from './leftSidePanel.component';
+import leftSidePanelService from './leftSidePanel.service';
 import leftSidePanelToggleComponent from './leftSidePanelToggle/leftSidePanelToggle.component';
 import componentCatalogModule from './componentCatalog/componentCatalog.module';
 import sitemapListingModule from './siteMapListing/siteMapListing.module';
@@ -25,7 +26,8 @@ const leftSidePanelModule = angular
     sitemapListingModule.name,
   ])
   .component('leftSidePanel', leftSidePanelComponent)
-  .component('leftSidePanelToggle', leftSidePanelToggleComponent);
+  .component('leftSidePanelToggle', leftSidePanelToggleComponent)
+  .service('LeftSidePanelService', leftSidePanelService);
 
 export default leftSidePanelModule.name;
 
