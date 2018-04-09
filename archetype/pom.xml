@@ -42,21 +42,6 @@
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <name>Hippo Maven 2 Repository</name>
-      <id>hippo-maven2</id>
-      <url>https://maven.onehippo.com/content/repositories/releases</url>
-      <uniqueVersion>false</uniqueVersion>
-    </repository>
-    <snapshotRepository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2 Snapshots Repository</name>
-      <url>https://maven.onehippo.com/content/repositories/snapshots</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
-
   <repositories>
     <repository>
       <id>hippo</id>
@@ -70,7 +55,6 @@
       </releases>
     </repository>
   </repositories>
-
 
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-project-archetype.git</connection>
