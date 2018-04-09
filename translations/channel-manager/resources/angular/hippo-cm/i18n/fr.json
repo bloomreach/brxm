@@ -24,6 +24,7 @@
   "PUBLISH": "Publier",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "Pour remplir les champs obligatoires et enregistrer ensuite le document, <a href='#' ng-click='{{clickAction}}'>continuez dans l’éditeur de contenu<\/a>",
   "ERROR_PAGE_PATH_EXISTS": "La page n'a pas pu être enregistrée: l'URL indiquée est déjà utilisée",
+  "SET_TO_TODAY": "Régler pour aujourd'hui",
   "ERROR_CARDINALITY_CHANGE": "Impossible de sauvegarder. Le document contient du contenu invalide.",
   "CONTAINER_LOCKED_BY": "Verrouillé par '{{user}}'",
   "TOOLBAR_BUTTON_PAGE": "Page",
@@ -102,7 +103,6 @@
   "SELECT_DOCUMENT_LOCKED": "Impossible de sélectionner le document (le composant est verrouillé)",
   "SELECT_DOCUMENT": "Sélectionner un document",
   "HIDE_COMPONENTS": "Masquer des composants",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "Supprimer '{{page}}'?",
   "SHOW_COMPONENTS": "Afficher des composants",
   "ERROR_MENU_MOVE_FAILED": "L'élément de menu n'a pas pu être déplacé",
   "SUBPAGE_PAGE_LABEL_TITLE": "Titre de la page",
@@ -230,6 +230,5 @@
   "ERROR_WORKFLOW_ERROR": "Échec de la mise à jour ; un autre utilisateur a modifié l’état de ce document",
   "ADD_TO_PROJECT": "Ajouter au projet",
   "SHOW_CONTENT": "Afficher le contenu",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nouvelle page",
-  "SET_TO_TODAY": "Régler pour aujourd'hui"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nouvelle page"
 }

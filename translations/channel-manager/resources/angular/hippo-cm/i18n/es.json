@@ -24,6 +24,7 @@
   "PUBLISH": "Publicar",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "Para rellenar los campos obligatorios y después guardar el documento <a href='#' ng-click='{{clickAction}}'>continúe en el editor de contenidos<\/a>",
   "ERROR_PAGE_PATH_EXISTS": "No se pudo guardar la página, la dirección URL especificada ya está en uso",
+  "SET_TO_TODAY": "Fijado a hoy",
   "ERROR_CARDINALITY_CHANGE": "No es posible guardar. El documento incluye contenido no válido",
   "CONTAINER_LOCKED_BY": "Bloqueado por '{{user}}'",
   "TOOLBAR_BUTTON_PAGE": "Página",
@@ -104,7 +105,6 @@
   "SELECT_DOCUMENT_LOCKED": "No es posible seleccionar el documento (el componente está bloqueado)",
   "SELECT_DOCUMENT": "Seleccionar documento",
   "HIDE_COMPONENTS": "Ocultar componentes",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "¿Eliminar '{{page}}'?",
   "SHOW_COMPONENTS": "Mostrar componentes",
   "ERROR_MENU_MOVE_FAILED": "No se pudo mover el elemento de menú",
   "SUBPAGE_PAGE_LABEL_TITLE": "Título de la página",
@@ -232,6 +232,5 @@
   "ERROR_WORKFLOW_ERROR": "No se pudo actualizar, otro usuario ha cambiado el estado de este documento",
   "ADD_TO_PROJECT": "Añadir al proyecto",
   "SHOW_CONTENT": "Mostrar contenido",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nueva página",
-  "SET_TO_TODAY": "Fijado a hoy"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nueva página"
 }

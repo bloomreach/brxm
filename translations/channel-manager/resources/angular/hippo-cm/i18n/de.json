@@ -24,6 +24,7 @@
   "PUBLISH": "Veröffentlichen",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "Um die Pflichtfelder auszufüllen und das Dokument dann zu speichern, <a href='#' ng-click='{{clickAction}}'>machen Sie im Inhaltseditor weiter<\/a>",
   "ERROR_PAGE_PATH_EXISTS": "Seite konnte nicht gespeichert werden. Die angegebene URL wird bereits verwendet",
+  "SET_TO_TODAY": "Auf Heute einstellen",
   "ERROR_CARDINALITY_CHANGE": "Speichern nicht möglich. Das Dokument enthält ungültigen Inhalt",
   "CONTAINER_LOCKED_BY": "Gesperrt von '{{user}}'",
   "TOOLBAR_BUTTON_PAGE": "Seite",
@@ -103,7 +104,6 @@
   "SELECT_DOCUMENT_LOCKED": "Kann Dokument nicht auswählen (Inhalt ist gesperrt)",
   "SELECT_DOCUMENT": "Dokument auswählen",
   "HIDE_COMPONENTS": "Komponenten ausblenden",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "Löschen von '{{page}}'?",
   "SHOW_COMPONENTS": "Komponenten einblenden",
   "ERROR_MENU_MOVE_FAILED": "Verschieben des Menüelements ist fehlgeschlagen",
   "SUBPAGE_PAGE_LABEL_TITLE": "Seitentitel",
@@ -231,6 +231,5 @@
   "ERROR_WORKFLOW_ERROR": "Aktualisierung fehlgeschlagen, ein anderer Benutzer hat den Status dieses Dokuments geändert",
   "ADD_TO_PROJECT": "Zu Projekt hinzufügen",
   "SHOW_CONTENT": "Inhalt einblenden",
-  "SUBPAGE_PAGE_NEW_TITLE": "Neue Seite",
-  "SET_TO_TODAY": "Auf Heute einstellen"
+  "SUBPAGE_PAGE_NEW_TITLE": "Neue Seite"
 }

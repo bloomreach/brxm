@@ -24,6 +24,7 @@
   "PUBLISH": "发布",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "要填写必填字段然后保存文档，请<a href='#' ng-click='{{clickAction}}'>在内容编辑器中继续操作<\/a>",
   "ERROR_PAGE_PATH_EXISTS": "保存页面失败，对应的URL正在被使用",
+  "SET_TO_TODAY": "设置为今天",
   "ERROR_CARDINALITY_CHANGE": "无法保存。该文档中包含无效的内容",
   "CONTAINER_LOCKED_BY": "由'{{user}}'锁定",
   "TOOLBAR_BUTTON_PAGE": "页码",
@@ -104,7 +105,6 @@
   "SELECT_DOCUMENT_LOCKED": "无法选择文档（组件被锁定）",
   "SELECT_DOCUMENT": "选择文档",
   "HIDE_COMPONENTS": "隐藏组件",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "是否删除'{{page}}'？",
   "SHOW_COMPONENTS": "显示组件",
   "ERROR_MENU_MOVE_FAILED": "移动菜单项失败",
   "SUBPAGE_PAGE_LABEL_TITLE": "页面标题",
@@ -232,6 +232,5 @@
   "ERROR_WORKFLOW_ERROR": "更新失败，其他用户已更改此文档的状态",
   "ADD_TO_PROJECT": "添加到项目",
   "SHOW_CONTENT": "显示内容",
-  "SUBPAGE_PAGE_NEW_TITLE": "新页面",
-  "SET_TO_TODAY": "设置为今天"
+  "SUBPAGE_PAGE_NEW_TITLE": "新页面"
 }

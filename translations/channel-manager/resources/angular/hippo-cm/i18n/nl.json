@@ -24,6 +24,7 @@
   "PUBLISH": "Wijzigingen publiceren",
   "NOT_ALL_MANDATORY_FIELDS_SHOWN_LINK": "Als u de verplichte velden wilt invullen en het document vervolgens wilt opslaan, <a href='#' ng-click='{{clickAction}}'>moet u de contenteditor gebruiken<\/a>.",
   "ERROR_PAGE_PATH_EXISTS": "Het opslaan van de pagina is mislukt omdat de gespecificeerde URL al in gebruik is",
+  "SET_TO_TODAY": "Zet op vandaag",
   "ERROR_CARDINALITY_CHANGE": "Het document kan niet worden opgeslagen want het bevat ongeldige inhoud.",
   "CONTAINER_LOCKED_BY": "In gebruik bij '{{user}}'",
   "TOOLBAR_BUTTON_PAGE": "Pagina",
@@ -104,7 +105,6 @@
   "SELECT_DOCUMENT_LOCKED": "Kan document niet selecteren (component is vergrendeld).",
   "SELECT_DOCUMENT": "Document selecteren",
   "HIDE_COMPONENTS": "Verberg componenten",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "Pagina '{{page}}' verwijderen?",
   "SHOW_COMPONENTS": "Toon componenten",
   "ERROR_MENU_MOVE_FAILED": "Het is niet gelukt het menu-item te verplaatsen",
   "SUBPAGE_PAGE_LABEL_TITLE": "Paginatitel",
@@ -232,6 +232,5 @@
   "ERROR_WORKFLOW_ERROR": "Kan niet updaten omdat een andere gebruiker de status van dit document heeft gewijzigd.",
   "ADD_TO_PROJECT": "Toevoegen aan project",
   "SHOW_CONTENT": "Toon content",
-  "SUBPAGE_PAGE_NEW_TITLE": "Nieuwe pagina",
-  "SET_TO_TODAY": "Zet op vandaag"
+  "SUBPAGE_PAGE_NEW_TITLE": "Nieuwe pagina"
 }
