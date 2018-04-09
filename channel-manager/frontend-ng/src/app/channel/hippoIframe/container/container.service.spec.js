@@ -124,6 +124,30 @@ describe('ContainerService', () => {
       expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
     });
 
+    it('shows the confirmation dialog and reloads the page if there is an SPA', () => {
+      const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
+      const oldContainer = {};
+      spyOn(SpaService, 'detectedSpa').and.returnValue(true);
+      spyOn(DragDropService, 'replaceContainer');
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
+      spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));
+      spyOn(DialogService, 'show').and.returnValue($q.resolve());
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(HippoIframeService, 'reload');
+      spyOn(CmsService, 'publish');
+
+      ContainerService.deleteComponent('1234');
+      $rootScope.$digest();
+
+      expect(mockComponent.getLabel).toHaveBeenCalled();
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
+      expect(DragDropService.replaceContainer).not.toHaveBeenCalled();
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
+    });
+
     it('shows component properties dialog after rejecting the delete operation', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);

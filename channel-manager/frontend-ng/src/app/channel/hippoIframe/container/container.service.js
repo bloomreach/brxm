@@ -83,8 +83,15 @@ class ContainerService {
 
   _doDelete(componentId) {
     return () => this.PageStructureService.removeComponentById(componentId)
-      .then(oldContainer => this.PageStructureService.updateContainer(oldContainer))
-      .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
+      .then((container) => {
+        if (this.SpaService.detectedSpa()) {
+          // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
+          this.HippoIframeService.reload();
+          return true;
+        }
+        return this.PageStructureService.updateContainer(container)
+          .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer));
+      })
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }
 }
