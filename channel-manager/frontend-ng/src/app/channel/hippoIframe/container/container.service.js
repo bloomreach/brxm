@@ -45,14 +45,7 @@ class ContainerService {
     const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
 
     this.PageStructureService.addComponentToContainer(catalogComponent, container)
-      .then((newComponentId) => {
-        if (this.SpaService.detectedSpa()) {
-          // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
-          this.HippoIframeService.reload();
-          return true;
-        }
-        return this.PageStructureService.renderNewComponentInContainer(newComponentId, container);
-      })
+      .then(newComponentId => this._reloadSpa() || this._renderNewComponent(newComponentId, container))
       .catch(() => {
         this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
           component: catalogComponent.label,
@@ -60,12 +53,29 @@ class ContainerService {
       });
   }
 
-  moveComponent(component, targetContainer, targetContainerNextComponent) {
-    return this.PageStructureService.moveComponent(component, targetContainer, targetContainerNextComponent)
-      .then(changedContainers => this.$q.all(changedContainers.map(container => this._updateContainer(container))));
+  _renderNewComponent(componentId, container) {
+    return this.PageStructureService.renderNewComponentInContainer(componentId, container);
   }
 
-  _updateContainer(container) {
+  _reloadSpa() {
+    if (this.SpaService.detectedSpa()) {
+      // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
+      this.HippoIframeService.reload();
+      return true;
+    }
+    return false;
+  }
+
+  moveComponent(component, targetContainer, targetContainerNextComponent) {
+    return this.PageStructureService.moveComponent(component, targetContainer, targetContainerNextComponent)
+      .then(changedContainers => this._reloadSpa() || this._renderContainers(changedContainers));
+  }
+
+  _renderContainers(changedContainers) {
+    return this.$q.all(changedContainers.map(container => this._renderContainer(container)));
+  }
+
+  _renderContainer(container) {
     return this.PageStructureService.renderContainer(container)
       .then(newContainer => this.DragDropService.replaceContainer(container, newContainer));
   }
@@ -95,15 +105,7 @@ class ContainerService {
 
   _doDelete(componentId) {
     return () => this.PageStructureService.removeComponentById(componentId)
-      .then((container) => {
-        if (this.SpaService.detectedSpa()) {
-          // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
-          this.HippoIframeService.reload();
-          return true;
-        }
-        return this.PageStructureService.updateContainer(container)
-          .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer));
-      })
+      .then(container => this._reloadSpa() || this._renderContainer(container))
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }
 }

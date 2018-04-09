@@ -232,18 +232,6 @@ class PageStructureService {
     this.ChannelService.recordOwnChange();
   }
 
-  /**
-   * Updates a container: fetch the markup and update all embedded links.
-   * @param oldContainer the container the update
-   * @returns an object with the old and new container.
-   */
-  updateContainer(oldContainer) {
-    return this.renderContainer(oldContainer).then((newContainer) => {
-      this._notifyChangeListeners();
-      return { oldContainer, newContainer };
-    });
-  }
-
   getComponentByOverlayElement(componentOverlayElement) {
     let component;
     this.containers.some((container) => {
@@ -346,7 +334,11 @@ class PageStructureService {
 
   renderContainer(container) {
     return this.MarkupService.fetchContainerMarkup(container)
-      .then(markup => this._updateContainer(container, markup));
+      .then(markup => this._updateContainer(container, markup))
+      .then((newContainer) => {
+        this._notifyChangeListeners();
+        return newContainer;
+      });
   }
 
   _updateContainer(oldContainer, newMarkup) {
