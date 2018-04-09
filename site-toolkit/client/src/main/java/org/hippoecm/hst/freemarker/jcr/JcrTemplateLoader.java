@@ -25,8 +25,16 @@ public class JcrTemplateLoader extends AbstractTemplateLoader {
         if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL)) {
             return null;
         }
+
         String absPath = templateSource.substring(ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL.length());
-        return getLoadingCache().get(absPath);
+
+        final RepositorySource repositorySource = getLoadingCache().get(absPath);
+
+        if (repositorySource == null || !repositorySource.isFound()) {
+            return null;
+        }
+
+        return repositorySource;
     }
 
 }

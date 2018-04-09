@@ -30,9 +30,17 @@ public class WebFileTemplateLoader extends AbstractTemplateLoader {
         if (templateSource == null || !templateSource.startsWith(ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL)) {
             return null;
         }
+
         String absPath = WebFileUtils.webFilePathToJcrPath(templateSource);
         log.info("Trying to load freemarker template for web file from '{}'", absPath);
-        return getLoadingCache().get(absPath);
+
+        final RepositorySource repositorySource = getLoadingCache().get(absPath);
+
+        if (repositorySource == null || !repositorySource.isFound()) {
+            return null;
+        }
+
+        return repositorySource;
     }
 
 }
