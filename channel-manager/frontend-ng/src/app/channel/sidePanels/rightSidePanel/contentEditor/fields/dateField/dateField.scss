@@ -17,18 +17,40 @@
 
 // left-align labels of date fields when focused, invalid, but when there is no value, the label sinks down on the field
 ._md-datepicker-floating-label._md-datepicker-has-calendar-icon {
+  > label > span {
+    max-width: 180px;
+    min-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 180px;
+  }
+
+  &.has-hint {
+    > label > span {
+      max-width: 140px;
+      min-width: 140px;
+      width: 140px;
+    }
+  }
+
   &.md-input-focused,
   &.md-input-has-value {
     > label:not(.md-no-float):not(.md-container-ignore) {
       left: 0;
       right: auto;
       width: 100%;
+
+      > span {
+        max-width: initial;
+        min-width: initial;
+        width: initial;
+      }
     }
   }
 
   > label:not(.md-no-float):not(.md-container-ignore) {
     pointer-events: none !important;
-    width: calc(100% - 81px);
 
     > md-icon {
       pointer-events: all;
