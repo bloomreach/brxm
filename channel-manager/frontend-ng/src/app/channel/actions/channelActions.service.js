@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import MenuService from '../menu/menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
+import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 
 class ChannelActionsService extends MenuService {
   constructor(
@@ -85,6 +86,23 @@ class ChannelActionsService extends MenuService {
         isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
         onClick: () => this._showManageChanges(),
       })
+      .addDivider({
+        isVisible: () => this._isBranch(),
+      })
+      .addAction('reject', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
+        iconName: 'clear',
+        isVisible: () => this._isBranch(),
+        isEnabled: () => this.ProjectService.isRejectEnabled(),
+        onClick: () => this._reject(),
+      })
+      .addAction('accept', {
+        translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
+        iconName: 'done',
+        isVisible: () => this._isBranch(),
+        isEnabled: () => this.ProjectService.isAcceptEnabled(),
+        onClick: () => this._accept(),
+      })
       .addDivider()
       .addAction('delete', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
@@ -101,7 +119,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _isBranch() {
-    return this.ConfigService.projectsEnabled && this.ProjectService.selectedProject;
+    return this.ProjectService.selectedProject && this.ConfigService.projectsEnabled;
   }
 
   // Settings
@@ -155,6 +173,18 @@ class ChannelActionsService extends MenuService {
         this.$log.info(response.message);
         this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
       });
+  }
+
+  _reject() {
+    const channel = this.ChannelService.getChannel();
+    const channelId = channel.id.replace(/-preview$/, '');
+
+    this._showRejectPrompt(channel)
+      .then(message => this.ProjectService.reject(channelId, message));
+  }
+
+  _accept() {
+    this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]);
   }
 
   _discardChanges() {
@@ -230,6 +260,20 @@ class ChannelActionsService extends MenuService {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _showRejectPrompt(channel) {
+    return this.DialogService.show({
+      template: rejectPromptTemplate,
+      locals: {
+        translationData: {
+          channelName: channel.name,
+        },
+      },
+      controller: 'RejectPromptCtrl',
+      controllerAs: '$ctrl',
+      bindToController: true,
+    });
   }
 
   _showDeleteProgress() {

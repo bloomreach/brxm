@@ -16,6 +16,7 @@
 
 <md-button class="btn-overlay-toggle md-icon-button"
            ng-click="$ctrl.setState(!$ctrl.state)"
+           ng-disabled="$ctrl.disabled"
            title="{{ $ctrl.tooltip }}">
   <md-icon ng-class="{ 'active': $ctrl.state }"
            md-svg-icon="{{ $ctrl.iconSvg }}">

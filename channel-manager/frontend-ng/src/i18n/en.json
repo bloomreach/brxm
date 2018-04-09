@@ -11,7 +11,8 @@
   "CONFIRM_DELETE_CHANNEL_MESSAGE": "You cannot undo this action.",
   "CONFIRM_DELETE_CHANNEL_TITLE": "Delete channel '{{channel}}'?",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
-  "CONFIRM_DELETE_PAGE_MESSAGE": "Delete '{{page}}'?",
+  "CONFIRM_DELETE_SINGLE_PAGE_MESSAGE": "Delete 1 page: '{{page}}'?",
+  "CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE": "Delete {{numberOfPages}} pages: '{{page}}' and child pages?",
   "CONFIRM_DELETE_MENU_ITEM_MESSAGE": "Delete '{{menuItem}}'?",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all changes?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",
@@ -163,6 +164,7 @@
   "PLACEHOLDER_DOCUMENT_TYPE": "Document Type",
   "PLACEHOLDER_DOCUMENT_URL": "URL",
   "PLACEHOLDER_SEARCH": "Search",
+  "PROJECT_OUT_OF_SYNC": "Project out of sync, reloading...",
   "PUBLISH": "Publish",
   "PUBLISH_ALL": "Publish all",
   "REMOVE": "Remove",
@@ -232,6 +234,8 @@
   "TOOLBAR_MENU_CHANNEL_PUBLISH": "Publish",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Submit",
   "TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES": "Manage changes",
+  "TOOLBAR_MENU_CHANNEL_REJECT": "Reject channel",
+  "TOOLBAR_MENU_CHANNEL_ACCEPT": "Accept channel",
   "TOOLBAR_MENU_CHANNEL_SETTINGS": "Settings",
   "TOOLBAR_MENU_PAGE_COPY": "Copy",
   "TOOLBAR_MENU_PAGE_DELETE": "Delete",
@@ -250,5 +254,8 @@
   "VIEWPORT_ANY_DEVICE": "Any device",
   "VIEWPORT_DESKTOP": "Desktop",
   "VIEWPORT_PHONE": "Phone",
-  "VIEWPORT_TABLET": "Tablet"
+  "VIEWPORT_TABLET": "Tablet",
+  "REJECT_CHANNEL_TITLE": "Reject channel '{{ channelName }}'?",
+  "REJECT_CHANNEL_TEXT": "The channel will become editable, so that it can be improved based on your feedback.",
+  "REJECT_CHANNEL_PLACEHOLDER": "Feedback"
 }

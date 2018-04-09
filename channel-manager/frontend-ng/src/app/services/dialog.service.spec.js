@@ -51,6 +51,12 @@ describe('DialogService', () => {
     expect($mdDialog.show).toHaveBeenCalledWith(confirmationDialog);
   });
 
+  it('uses $mdDialog to create a prompt dialog', () => {
+    const mockDialogPreset = {};
+    spyOn($mdDialog, 'prompt').and.returnValue(mockDialogPreset);
+    expect(DialogService.prompt()).toEqual(mockDialogPreset);
+  });
+
   it('sends a show-mask event to the CMS when a dialog is shown', () => {
     spyOn($window.APP_TO_CMS, 'publish');
     const confirmationDialog = DialogService.confirm();

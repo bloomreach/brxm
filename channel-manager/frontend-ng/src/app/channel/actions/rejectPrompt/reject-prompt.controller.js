@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-import template from './overlayToggle.html';
-import controller from './overlayToggle.controller';
+class RejectPromptCtrl {
+  constructor($mdDialog, translationData) {
+    'ngInject';
 
-const modeToggleComponent = {
-  restrict: 'E',
-  template,
-  controller,
-  bindings: {
-    name: '@',
-    state: '=',
-    disabled: '<',
-    defaultState: '=',
-    iconName: '@?',
-    iconSvg: '@?',
-    tooltip: '@?',
-  },
-};
+    this.$mdDialog = $mdDialog;
+    this.translationData = translationData;
+  }
 
-export default modeToggleComponent;
+  close(message) {
+    this.$mdDialog.hide(message);
+  }
+
+  cancel() {
+    this.$mdDialog.cancel();
+  }
+}
+
+export default RejectPromptCtrl;
