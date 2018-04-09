@@ -86,11 +86,13 @@ class HippoIframeCtrl {
 
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
+    this.DragDropService.onDrop(this._moveComponent.bind(this));
   }
 
   $onDestroy() {
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
+    this.DragDropService.offDrop();
   }
 
   onLoad() {
@@ -105,6 +107,10 @@ class HippoIframeCtrl {
     if (!this.SpaService.renderComponent(componentId, propertiesMap)) {
       this.PageStructureService.renderComponent(componentId, propertiesMap);
     }
+  }
+
+  _moveComponent(component, targetContainer, targetContainerNextComponent) {
+    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent);
   }
 
   _deleteComponent(componentId) {

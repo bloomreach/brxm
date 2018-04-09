@@ -408,6 +408,34 @@ class PageStructureService {
         });
   }
 
+  moveComponent(component, targetContainer, targetContainerNextComponent) {
+    // first update the page structure so the component is already 'moved' in the client-side state
+    const sourceContainer = component.getContainer();
+    sourceContainer.removeComponent(component);
+    targetContainer.addComponentBefore(component, targetContainerNextComponent);
+
+    const changedContainers = [sourceContainer];
+    if (sourceContainer.getId() !== targetContainer.getId()) {
+      changedContainers.push(targetContainer);
+    }
+
+    // next, push the updated container representation(s) to the backend
+    const backendCallPromises = changedContainers.map(container => this._storeContainer(container));
+
+    // last, record a channel change. The caller is responsible for re-rendering the changed container(s)
+    // so their meta-data is updated and we're sure they look right
+    return this.$q.all(backendCallPromises)
+      .then(() => this.ChannelService.recordOwnChange())
+      .then(() => changedContainers)
+      .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
+        component: component.getLabel(),
+      }));
+  }
+
+  _storeContainer(container) {
+    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
+  }
+
   renderNewComponentInContainer(newComponentId, container) {
     return this.renderContainer(container)
       .then(() => this.getComponentById(newComponentId))

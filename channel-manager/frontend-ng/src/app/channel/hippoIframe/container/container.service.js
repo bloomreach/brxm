@@ -17,6 +17,7 @@
 class ContainerService {
   constructor(
     $log,
+    $q,
     $translate,
     CmsService,
     DialogService,
@@ -29,6 +30,7 @@ class ContainerService {
     'ngInject';
 
     this.$log = $log;
+    this.$q = $q;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
@@ -56,6 +58,16 @@ class ContainerService {
           component: catalogComponent.label,
         });
       });
+  }
+
+  moveComponent(component, targetContainer, targetContainerNextComponent) {
+    return this.PageStructureService.moveComponent(component, targetContainer, targetContainerNextComponent)
+      .then(changedContainers => this.$q.all(changedContainers.map(container => this._updateContainer(container))));
+  }
+
+  _updateContainer(container) {
+    return this.PageStructureService.renderContainer(container)
+      .then(newContainer => this.DragDropService.replaceContainer(container, newContainer));
   }
 
   deleteComponent(componentId) {
