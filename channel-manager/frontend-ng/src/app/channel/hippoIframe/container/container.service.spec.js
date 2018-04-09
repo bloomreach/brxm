@@ -103,9 +103,12 @@ describe('ContainerService', () => {
   describe('delete component', () => {
     it('shows the confirmation dialog and deletes selected component on confirmation', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
+      const oldContainer = {};
+      const newContainer = {};
       spyOn(DragDropService, 'replaceContainer');
       spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-      spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when({ oldContainer: 'old', newContainer: 'new' }));
+      spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));
+      spyOn(PageStructureService, 'updateContainer').and.returnValue($q.when({ oldContainer, newContainer }));
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
       spyOn(DialogService, 'confirm').and.callThrough();
       spyOn(CmsService, 'publish');
@@ -117,7 +120,7 @@ describe('ContainerService', () => {
       expect(DialogService.confirm).toHaveBeenCalled();
       expect(DialogService.show).toHaveBeenCalled();
       expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
-      expect(DragDropService.replaceContainer).toHaveBeenCalledWith('old', 'new');
+      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(oldContainer, newContainer);
       expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
     });
 

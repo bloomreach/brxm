@@ -205,7 +205,7 @@ class PageStructureService {
   /**
    * Remove the component identified by given Id
    * @param componentId
-   * @return a promise with the object { oldContainer, newContainer }
+   * @return the container of the removed component
    */
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
@@ -215,10 +215,7 @@ class PageStructureService {
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
           this._onAfterRemoveComponent();
-          return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
-            this._notifyChangeListeners();
-            return { oldContainer, newContainer };
-          });
+          return oldContainer;
         },
         (errorResponse) => {
           const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_DELETE_COMPONENT';
@@ -233,6 +230,18 @@ class PageStructureService {
 
   _onAfterRemoveComponent() {
     this.ChannelService.recordOwnChange();
+  }
+
+  /**
+   * Updates a container: fetch the markup and update all embedded links.
+   * @param oldContainer the container the update
+   * @returns an object with the old and new container.
+   */
+  updateContainer(oldContainer) {
+    return this.renderContainer(oldContainer).then((newContainer) => {
+      this._notifyChangeListeners();
+      return { oldContainer, newContainer };
+    });
   }
 
   getComponentByOverlayElement(componentOverlayElement) {

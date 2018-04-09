@@ -70,12 +70,6 @@ class ContainerService {
     );
   }
 
-  _doDelete(componentId) {
-    return () => this.PageStructureService.removeComponentById(componentId)
-      .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
-      .finally(() => this.CmsService.publish('destroy-component-properties-window'));
-  }
-
   _confirmDelete(selectedComponent) {
     const confirm = this.DialogService.confirm()
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
@@ -85,6 +79,13 @@ class ContainerService {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _doDelete(componentId) {
+    return () => this.PageStructureService.removeComponentById(componentId)
+      .then(oldContainer => this.PageStructureService.updateContainer(oldContainer))
+      .then(({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer))
+      .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }
 }
 
