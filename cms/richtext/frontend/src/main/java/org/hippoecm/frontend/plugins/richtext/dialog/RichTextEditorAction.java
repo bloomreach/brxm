@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 package org.hippoecm.frontend.plugins.richtext.dialog;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.dialog.ScriptAction;
 
 /**
  * Represents an action on a rich text editor instance.
+ *
+ * @deprecated use {@link ScriptAction} instead
  */
+@Deprecated
 public interface RichTextEditorAction<ModelType> extends IClusterable {
 
     /**

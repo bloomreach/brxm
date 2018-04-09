@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ import org.hippoecm.repository.util.JcrUtils;
 
 public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
 
-    public NodeBreadcrumbWidget(final String id, IModel<Node> model, final String... roots) {
+    public NodeBreadcrumbWidget(final String id, final IModel<Node> model, final String... roots) {
         super(id, new NodeBreadcrumbModel(model, roots));
     }
 
-    public void update(IModel<Node> newModel) {
-        getModel().update(newModel);
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+    public void update(final IModel<Node> newModel) {
+        getNodeBreadcrumbModel().update(newModel);
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(this);
         }
@@ -51,7 +51,7 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
     protected IModel<String> getName(final IModel<Node> model) {
         final String name = new NodeNameModel(model).getObject();
         if (StringUtils.isEmpty(name)) {
-            String path = JcrUtils.getNodePathQuietly(model.getObject());
+            final String path = JcrUtils.getNodePathQuietly(model.getObject());
             if ("/".equals(path)) {
                 return Model.of("/");
             }
@@ -60,8 +60,8 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
         return Model.of(NodeNameCodec.decode(name));
     }
 
-    private NodeBreadcrumbModel getModel() {
-        return (NodeBreadcrumbModel) getDefaultModel();
+    private NodeBreadcrumbModel getNodeBreadcrumbModel() {
+        return (NodeBreadcrumbModel) getModel();
     }
 
     private static class NodeBreadcrumbModel extends LoadableDetachableModel<List<IModel<Node>>> {
@@ -69,7 +69,7 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
         private final HashSet<String> rootPaths = new HashSet<>();
         private IModel<Node> model;
 
-        public NodeBreadcrumbModel(IModel<Node> model, final String... roots) {
+        NodeBreadcrumbModel(final IModel<Node> model, final String... roots) {
             this.model = model;
 
             if (roots == null || roots.length == 0) {
@@ -107,7 +107,7 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
                 return null;
             }
 
-            List<IModel<Node>> items = new LinkedList<>();
+            final List<IModel<Node>> items = new LinkedList<>();
             items.add(0, model);
 
             if (!rootPaths.contains(path)) {
@@ -124,19 +124,19 @@ public abstract class NodeBreadcrumbWidget extends BreadcrumbWidget<Node> {
             return items;
         }
 
-        void update(IModel<Node> model) {
+        void update(final IModel<Node> model) {
             this.model = model;
         }
 
         private JcrNodeModel getParentJcrNodeModel(final IModel<Node> nodeModel) {
-            JcrNodeModel jcrNodeModel = nodeModel instanceof JcrNodeModel ? (JcrNodeModel) nodeModel :
+            final JcrNodeModel jcrNodeModel = nodeModel instanceof JcrNodeModel ? (JcrNodeModel) nodeModel :
                     new JcrNodeModel(nodeModel.getObject());
             return jcrNodeModel.getParentModel();
         }
 
         private boolean valid(final String path) {
             boolean valid = false;
-            for (String root : rootPaths) {
+            for (final String root : rootPaths) {
                 if (path.startsWith(root)) {
                     valid = true;
                     break;

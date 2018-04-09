@@ -121,8 +121,12 @@
     width: auto;
   }
 
-  .hippo-editor-field-boolean > input[type="checkbox"] + label {
-    margin-left: 8px;
+  .hippo-editor-field-boolean {
+    margin-bottom: 4px;
+
+    > input[type="checkbox"] + label {
+      margin-left: 8px;
+    }
   }
 
   input[type="submit"] {

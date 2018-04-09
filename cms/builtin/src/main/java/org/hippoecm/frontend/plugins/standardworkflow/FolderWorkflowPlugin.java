@@ -121,7 +121,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             renameDocumentArguments.setUriName(node.getName());
                             renameDocumentArguments.setTargetName(node.getDisplayName());
                             renameDocumentArguments.setNodeType(node.getPrimaryNodeType().getName());
-                       } catch (RepositoryException ex) {
+                        } catch (RepositoryException ex) {
                             log.error("Could not retrieve workflow document", ex);
                             renameDocumentArguments.setUriName(StringUtils.EMPTY);
                             renameDocumentArguments.setTargetName(StringUtils.EMPTY);

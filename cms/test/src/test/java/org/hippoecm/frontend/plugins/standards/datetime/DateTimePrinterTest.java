@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,102 +35,102 @@ import static org.junit.Assert.assertEquals;
 
 public class DateTimePrinterTest extends PluginTest {
 
-    private Date date70;
-    private Instant instant70;
-    private Calendar cal70;
+    private Date dateEpoch;
+    private Instant instantEpoch;
+    private Calendar calendarEpoch;
 
     private Locale locale = Locale.GERMANY;
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @Before
-    public void before() throws Exception {
-        UserSession session = EasyMock.createNiceMock(UserSession.class);
+    public void before() {
+        final UserSession session = EasyMock.createNiceMock(UserSession.class);
         EasyMock.expect(session.getLocale()).andAnswer(() -> locale).anyTimes();
         EasyMock.expect(session.getTimeZone()).andAnswer(() -> timeZone).anyTimes();
         EasyMock.replay(session);
         ThreadContext.setSession(session);
 
-        cal70 = Calendar.getInstance();
-        cal70.setTimeInMillis(0);
-        date70 = cal70.getTime();
-        instant70 = cal70.toInstant();
+        calendarEpoch = Calendar.getInstance();
+        calendarEpoch.setTimeInMillis(0);
+        dateEpoch = calendarEpoch.getTime();
+        instantEpoch = calendarEpoch.toInstant();
     }
 
     @Test
-    public void testNull() throws Exception{
+    public void testNull() {
         assertEquals("", DateTimePrinter.of((Date)null).print());
         assertEquals("", DateTimePrinter.of((Calendar)null).print());
         assertEquals("", DateTimePrinter.of((Instant)null).print());
     }
 
     @Test
-    public void testDate() throws Exception {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(date70).print());
+    public void testDate() {
+        assertEquals("01.01.1970 00:00", DateTimePrinter.of(dateEpoch).print());
     }
 
     @Test
-    public void testCalendar() throws Exception {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(cal70).print());
+    public void testCalendar() {
+        assertEquals("01.01.1970 00:00", DateTimePrinter.of(calendarEpoch).print());
     }
 
     @Test
-    public void testInstant() throws Exception {
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(instant70).print());
+    public void testInstant() {
+        assertEquals("01.01.1970 00:00", DateTimePrinter.of(instantEpoch).print());
     }
 
     @Test
-    public void testLocale() throws Exception {
+    public void testLocale() {
         locale = Locale.JAPAN;
-        assertEquals("1970/01/01 0:00", DateTimePrinter.of(date70).print());
+        assertEquals("1970/01/01 0:00", DateTimePrinter.of(dateEpoch).print());
     }
 
     @Test
-    public void testTimeZone() throws Exception {
+    public void testTimeZone() {
         timeZone = TimeZone.getTimeZone("America/Aruba"); // -4
-        assertEquals("31.12.1969 20:00", DateTimePrinter.of(date70).print());
+        assertEquals("31.12.1969 20:00", DateTimePrinter.of(dateEpoch).print());
     }
 
     @Test
-    public void testStyleShort() throws Exception {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(date70).print(FormatStyle.SHORT));
+    public void testStyleShort() {
+        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT));
     }
 
     @Test
-    public void testStyleMedium() throws Exception {
-        assertEquals("01.01.1970 00:00:00", DateTimePrinter.of(date70).print(FormatStyle.MEDIUM));
+    public void testStyleMedium() {
+        assertEquals("01.01.1970 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM));
     }
 
     @Test
-    public void testStyleLong() throws Exception {
-        assertEquals("1. Januar 1970 00:00:00 UTC", DateTimePrinter.of(date70).print(FormatStyle.LONG));
+    public void testStyleLong() {
+        assertEquals("1. Januar 1970 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG));
     }
 
     @Test
-    public void testStyleFull() throws Exception {
-        assertEquals("Donnerstag, 1. Januar 1970 00:00 Uhr UTC", DateTimePrinter.of(date70).print(FormatStyle.FULL));
+    public void testStyleFull() {
+        assertEquals("Donnerstag, 1. Januar 1970 00:00 Uhr UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL));
     }
 
     @Test
-    public void testDateStyle() throws Exception {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(date70).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.01.1970 00:00", DateTimePrinter.of(date70).print(FormatStyle.MEDIUM, FormatStyle.SHORT));
-        assertEquals("1. Januar 1970 00:00", DateTimePrinter.of(date70).print(FormatStyle.LONG, FormatStyle.SHORT));
-        assertEquals("Donnerstag, 1. Januar 1970 00:00", DateTimePrinter.of(date70).print(FormatStyle.FULL, FormatStyle.SHORT));
+    public void testDateStyle() {
+        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.01.1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.MEDIUM, FormatStyle.SHORT));
+        assertEquals("1. Januar 1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.LONG, FormatStyle.SHORT));
+        assertEquals("Donnerstag, 1. Januar 1970 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.FULL, FormatStyle.SHORT));
     }
 
     @Test
-    public void testTimeStyle() throws Exception {
-        assertEquals("01.01.70 00:00", DateTimePrinter.of(date70).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.01.70 00:00:00", DateTimePrinter.of(date70).print(FormatStyle.SHORT, FormatStyle.MEDIUM));
-        assertEquals("01.01.70 00:00:00 UTC", DateTimePrinter.of(date70).print(FormatStyle.SHORT, FormatStyle.LONG));
-        assertEquals("01.01.70 00:00 Uhr UTC", DateTimePrinter.of(date70).print(FormatStyle.SHORT, FormatStyle.FULL));
+    public void testTimeStyle() {
+        assertEquals("01.01.70 00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.01.70 00:00:00", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.MEDIUM));
+        assertEquals("01.01.70 00:00:00 UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.LONG));
+        assertEquals("01.01.70 00:00 Uhr UTC", DateTimePrinter.of(dateEpoch).print(FormatStyle.SHORT, FormatStyle.FULL));
     }
 
     @Test
-    public void testDST() throws Exception {
+    public void testDST() {
         timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
-        LocalDate dstInNL = LocalDate.of(2016, Month.MAY, 1);
-        Date dstDate = Date.from(dstInNL.atStartOfDay(timeZone.toZoneId()).toInstant());
+        final LocalDate dstInNL = LocalDate.of(2016, Month.MAY, 1);
+        final Date dstDate = Date.from(dstInNL.atStartOfDay(timeZone.toZoneId()).toInstant());
         assertEquals("01.05.16 00:00", DateTimePrinter.of(dstDate).print(FormatStyle.SHORT, FormatStyle.SHORT));
         assertEquals("01.05.16 00:00 (DST)", DateTimePrinter.of(dstDate).appendDST().print(FormatStyle.SHORT, FormatStyle.SHORT));
     }

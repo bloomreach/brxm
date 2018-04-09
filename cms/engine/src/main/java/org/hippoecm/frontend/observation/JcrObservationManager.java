@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +51,8 @@ public class JcrObservationManager implements ObservationManager {
     private final Map<EventListener, JcrListener> listeners;
 
     private JcrObservationManager() {
-        this.listeners = new WeakHashMap<EventListener, JcrListener>();
-        this.listenerQueue = new ReferenceQueue<EventListener>();
+        listeners = new WeakHashMap<>();
+        listenerQueue = new ReferenceQueue<>();
     }
     
     public void setUserData(String userData) throws RepositoryException {
@@ -86,7 +88,8 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
-            JcrListener realListener = new JcrListener(listenerQueue, states, session, listener);
+            JcrListener realListener = new JcrListener(listenerQueue, states, session, listener,
+                    (InternalCmsEventDispatcherService)HippoServiceRegistry.getService(CmsEventDispatcherService.class));
             try {
                 realListener.init(eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
                 synchronized (listeners) {
@@ -198,6 +201,7 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     public void processEvents() {
+        long start = System.currentTimeMillis();
         cleanup();
 
         UserSession session = UserSession.get();
@@ -249,6 +253,10 @@ public class JcrObservationManager implements ObservationManager {
             }
         } else {
             log.error("No session found");
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Processing events took '{}' ms. Current number of listeners is '{}'",
+                    (System.currentTimeMillis() - start), listeners.size());
         }
     }
 

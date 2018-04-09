@@ -77,7 +77,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
-           private RenameDocumentArguments renameDocumentArguments;
+            private RenameDocumentArguments renameDocumentArguments;
 
             @Override
             public String getSubMenu() {
@@ -189,11 +189,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     return new ExceptionDialog(ex);
                 }
                 return new DestinationDialog(Model.of(translate("copy-title")),
-                                             Model.of(translate("copy-name")),
-                                             PropertyModel.of(this, "name"),
-                                             destination,
-                                             getPluginContext(),
-                                             getPluginConfig()) {
+                        Model.of(translate("copy-name")),
+                        PropertyModel.of(this, "name"),
+                        destination,
+                        getPluginContext(),
+                        getPluginConfig()) {
                     {
                         setOkEnabled(true);
                     }

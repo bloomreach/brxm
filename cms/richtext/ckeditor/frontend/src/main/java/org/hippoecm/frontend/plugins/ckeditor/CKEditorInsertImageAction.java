@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import org.onehippo.ckeditor.HippoPicker;
-import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
+import org.hippoecm.frontend.dialog.ScriptAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
+import org.onehippo.ckeditor.HippoPicker;
 
 /**
  * Executes the CKEditor command to insert a picked image into an editor.
  */
-class CKEditorInsertImageAction implements RichTextEditorAction<RichTextEditorImageLink> {
+class CKEditorInsertImageAction implements ScriptAction<RichTextEditorImageLink> {
 
     private final String editorId;
 
@@ -32,7 +32,8 @@ class CKEditorInsertImageAction implements RichTextEditorAction<RichTextEditorIm
 
     @Override
     public String getJavaScript(final RichTextEditorImageLink imageLink) {
-        return "CKEDITOR.instances." + editorId + ".execCommand('" + HippoPicker.Image.COMMAND_INSERT_IMAGE + "', " + imageLink.toJsString() + ");";
+        return String.format("CKEDITOR.instances.%s.execCommand('%s', %s);", editorId,
+                HippoPicker.Image.COMMAND_INSERT_IMAGE, imageLink.toJsString());
     }
 
 }
