@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,14 +85,9 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new SaveDialog() {
-                    @Override
-                    public void onOk() {
-                        super.onOk();
-                        redrawEditor();
-                    }
-                };
+                return createSaveDialog();
             }
+            
         };
         saveDialogLink = new SaveDialogLink("save-dialog", new Model<>("Write changes to repository"), dialogFactory, dialogService);
         add(saveDialogLink);
@@ -193,7 +188,7 @@ public class MenuPlugin extends RenderPlugin {
 //        add(new DialogLink("t9ids-dialog", new Model<String>("Generate new t9 ids"), dialogFactory, dialogService));
     }
 
-    private void redrawEditor() {
+    protected void redrawEditor() {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             send(getPage(), Broadcast.DEPTH, new EditorUpdate(target));
@@ -221,5 +216,15 @@ public class MenuPlugin extends RenderPlugin {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem.forReference(SCRIPT_REFERENCE));
+    }
+
+    protected SaveDialog createSaveDialog() {
+        return new SaveDialog() {
+            @Override
+            public void onOk() {
+                super.onOk();
+                redrawEditor();
+            }
+        };
     }
 }
