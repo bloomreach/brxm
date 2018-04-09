@@ -30,5 +30,8 @@
 <@hst.include ref="header"/>
 <@hst.include ref="main"/>
 <@hst.headContributions categoryIncludes="scripts" xhtml=true/>
+
+<#include "noticefooter.ftl" ignore_missing=true />
+
 </body>
 </html>
