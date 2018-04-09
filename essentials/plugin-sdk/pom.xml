@@ -38,6 +38,7 @@
     <core.jdt.version>3.10.0</core.jdt.version>
     <mustache.version>0.8.16</mustache.version>
     <swagger.version>1.5.16</swagger.version>
+    <json-lib.version>2.4</json-lib.version>
   </properties>
 
   <modules>
@@ -137,6 +138,18 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>${json-lib.version}</version>
+        <classifier>jdk15</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
