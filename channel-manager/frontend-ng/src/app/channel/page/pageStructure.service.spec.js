@@ -1110,4 +1110,140 @@ describe('PageStructureService', () => {
     });
     $rootScope.$digest();
   });
+
+  describe('move component', () => {
+    function componentIds(container) {
+      return container.getComponents().map(component => component.getId());
+    }
+
+    it('can move the first component to the second position in the container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const componentA = container.getComponents()[0];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
+
+      PageStructureService.moveComponent(componentA, container, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('can move the second component to the first position in the container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const componentA = container.getComponents()[0];
+      const componentB = container.getComponents()[1];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
+
+      PageStructureService.moveComponent(componentB, container, componentA);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('can move a component to another container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container1)).toEqual(['aaaa', 'bbbb']);
+      expect(componentIds(container2)).toEqual([]);
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(componentIds(container1)).toEqual(['bbbb']);
+      expect(componentIds(container2)).toEqual(['aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved within a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const component = container.getComponents()[0];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValue($q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved out of a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.reject(), $q.resolve());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved into a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.resolve(), $q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+  });
 });

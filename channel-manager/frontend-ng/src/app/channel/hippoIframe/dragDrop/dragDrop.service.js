@@ -27,8 +27,6 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
-    FeedbackService,
-    HstService,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -41,8 +39,6 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
-    this.FeedbackService = FeedbackService;
-    this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;

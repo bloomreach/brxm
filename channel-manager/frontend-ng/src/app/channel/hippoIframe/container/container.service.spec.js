@@ -100,6 +100,30 @@ describe('ContainerService', () => {
     });
   });
 
+  describe('move component', () => {
+    it('moves components in the page structure, re-renders containers and updates the drag-drop logic', () => {
+      const component = {};
+      const sourceContainer = {};
+      const targetContainer = {};
+      const newContainerNextComponent = {};
+      const rerenderedSourceContainer = {};
+      const rerenderedTargetContainer = {};
+
+      spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
+      spyOn(PageStructureService, 'renderContainer').and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
+      spyOn(DragDropService, 'replaceContainer').and.returnValues($q.resolve(), $q.resolve());
+
+      ContainerService.moveComponent(component, targetContainer, newContainerNextComponent);
+      $rootScope.$digest();
+
+      expect(PageStructureService.moveComponent).toHaveBeenCalledWith(component, targetContainer, newContainerNextComponent);
+      expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
+      expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
+      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(sourceContainer, rerenderedSourceContainer);
+      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(targetContainer, rerenderedTargetContainer);
+    });
+  });
+
   describe('delete component', () => {
     it('shows the confirmation dialog and deletes selected component on confirmation', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
@@ -108,7 +132,7 @@ describe('ContainerService', () => {
       spyOn(DragDropService, 'replaceContainer');
       spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
       spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));
-      spyOn(PageStructureService, 'updateContainer').and.returnValue($q.when({ oldContainer, newContainer }));
+      spyOn(PageStructureService, 'renderContainer').and.returnValue($q.when(newContainer));
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
       spyOn(DialogService, 'confirm').and.callThrough();
       spyOn(CmsService, 'publish');
