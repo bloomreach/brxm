@@ -43,6 +43,8 @@ public class FileInstructionTest extends ResourceModifyingTest {
 
     @Test
     public void testProcess() throws Exception {
+        createModifiableDirectory("dummy"); // initialise project.basedir
+
         final String targetInput = "{{projectRoot}}/file_instruction_copy.txt";
         final String target = TemplateUtils.replaceTemplateData(targetInput, placeholderService.makePlaceholders());
         final File file = new File(target);
