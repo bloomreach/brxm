@@ -208,7 +208,8 @@ describe('ChannelCtrl', () => {
   it('should delegate isContentOverlayEnabled to ProjectService', () => {
     let toggle = false;
     spyOn(ProjectService, 'isContentOverlayEnabled').and.callFake(() => {
-        return (toggle = !toggle);
+      toggle = !toggle;
+      return toggle;
     });
     expect(ChannelCtrl.isContentOverlayEnabled).toBeTruthy();
     expect(ChannelCtrl.isContentOverlayEnabled).toBeFalsy();
@@ -217,11 +218,10 @@ describe('ChannelCtrl', () => {
   it('should delegate isComponentsOverlayEnabled to ProjectService', () => {
     let toggle = false;
     spyOn(ProjectService, 'isComponentsOverlayEnabled').and.callFake(() => {
-        return (toggle = !toggle);
+      toggle = !toggle;
+      return toggle;
     });
     expect(ChannelCtrl.isComponentsOverlayEnabled).toBeTruthy();
     expect(ChannelCtrl.isComponentsOverlayEnabled).toBeFalsy();
   });
-
-
 });
