@@ -34,7 +34,7 @@ class SpaService {
 
     const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
     if (iframeWindow) {
-      this.spa = iframeWindow.SPA;
+      this.spa = iframeWindow.SPA || null;
     }
 
     return this.detectedSpa();
