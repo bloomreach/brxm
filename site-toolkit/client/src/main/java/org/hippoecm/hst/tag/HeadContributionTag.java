@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -85,9 +86,11 @@ public class HeadContributionTag extends BodyTagSupport {
 
                     DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
                     DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                    reader = new StringReader(xmlText);
-                    Document doc = docBuilder.parse(new InputSource(reader));
-                    element = doc.getDocumentElement();
+                    if (StringUtils.isNotBlank(xmlText)) {
+                        reader = new StringReader(xmlText);
+                        Document doc = docBuilder.parse(new InputSource(reader));
+                        element = doc.getDocumentElement();
+                    }
                 } catch (Exception ex) {
                     throw new JspException(ex);
                 } finally {
