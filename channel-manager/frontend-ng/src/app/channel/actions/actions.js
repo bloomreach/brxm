@@ -16,24 +16,26 @@
 
 import ngMessages from 'angular-messages';
 
+import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
+import ChannelSettingsCtrl from './settings/settings.controller';
+import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
+import changeManagementDirective from './manageChanges/manageChanges.directive';
 import channelActionsService from './channelActions.service';
 import channelSettingsDirective from './settings/settings.directive';
-import ChannelSettingsCtrl from './settings/settings.controller';
-import propertyField from './settings/propertyField/propertyField.component';
 import helpIconDirective from './settings/helpIcon/helpIcon.directive';
-import changeManagementDirective from './manageChanges/manageChanges.directive';
-import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
+import propertyField from './settings/propertyField/propertyField.component';
 
 const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
     ngMessages,
   ])
-  .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
-  .directive('channelSettings', channelSettingsDirective)
   .component('propertyField', propertyField)
-  .directive('helpIcon', helpIconDirective)
   .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
+  .controller('RejectPromptCtrl', RejectPromptCtrl)
   .directive('changeManagement', changeManagementDirective)
+  .directive('channelSettings', channelSettingsDirective)
+  .directive('helpIcon', helpIconDirective)
   .service('ChannelActionsService', channelActionsService);
 
 export default channelActionsModule;

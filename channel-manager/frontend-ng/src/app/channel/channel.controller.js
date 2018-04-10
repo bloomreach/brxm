@@ -105,6 +105,14 @@ class ChannelCtrl {
     this.OverlayService.showComponentsOverlay(value);
   }
 
+  get isComponentsOverlayEnabled() {
+    return this.ProjectService.isComponentsOverlayEnabled();
+  }
+
+  get isContentOverlayEnabled() {
+    return this.ProjectService.isContentOverlayEnabled();
+  }
+
   isControlsDisabled() {
     return !this.isChannelLoaded() || !this.isPageLoaded();
   }

@@ -30,6 +30,7 @@ describe('ChannelCtrl', () => {
   let HippoIframeService;
   let PageMetaDataService;
   let OverlayService;
+  let ProjectService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -44,6 +45,7 @@ describe('ChannelCtrl', () => {
       _ChannelService_,
       _CmsService_,
       _OverlayService_,
+      _ProjectService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
@@ -54,6 +56,7 @@ describe('ChannelCtrl', () => {
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
       OverlayService = _OverlayService_;
+      ProjectService = _ProjectService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
@@ -213,6 +216,26 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.isToolbarDisplayed()).toBe(true);
     ChannelService.setToolbarDisplayed(false);
     expect(ChannelCtrl.isToolbarDisplayed()).toBe(false);
+  });
+
+  it('should delegate isContentOverlayEnabled to ProjectService', () => {
+    let toggle = false;
+    spyOn(ProjectService, 'isContentOverlayEnabled').and.callFake(() => {
+      toggle = !toggle;
+      return toggle;
+    });
+    expect(ChannelCtrl.isContentOverlayEnabled).toBeTruthy();
+    expect(ChannelCtrl.isContentOverlayEnabled).toBeFalsy();
+  });
+
+  it('should delegate isComponentsOverlayEnabled to ProjectService', () => {
+    let toggle = false;
+    spyOn(ProjectService, 'isComponentsOverlayEnabled').and.callFake(() => {
+      toggle = !toggle;
+      return toggle;
+    });
+    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeTruthy();
+    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeFalsy();
   });
 
   describe('reload-channel event from ExtJS', () => {

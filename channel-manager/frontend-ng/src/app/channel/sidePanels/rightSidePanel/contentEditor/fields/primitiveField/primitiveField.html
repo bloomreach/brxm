@@ -20,7 +20,7 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }">
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
@@ -150,7 +150,8 @@
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
-      <div ng-if="::$ctrl.fieldType.type === 'DATE'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+      <div ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
+      <div ng-if="::$ctrl.fieldType.type === 'DATE_ONLY'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>
     </div>
   </md-input-container>
 </div>

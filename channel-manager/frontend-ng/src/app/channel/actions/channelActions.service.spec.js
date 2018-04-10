@@ -282,7 +282,7 @@ describe('ChannelActionsService', () => {
 
   // second divider
   it('shows a divider between either the "settings" or the "change" option(s), and the "close" option', () => {
-    const divider = getItem('divider-1');
+    const divider = getItem('divider-2');
     expect(divider.isVisible()).toBe(true);
   });
 
@@ -402,5 +402,61 @@ describe('ChannelActionsService', () => {
     expect(DialogService.hide).toHaveBeenCalled();
     expect(DialogService.alert).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS', parameterMap);
+  });
+
+  it('shows a disabled reject menu item if a branch is selected for a project not in review', () => {
+    ConfigService.projectsEnabled = true;
+    spyOn(ProjectService, 'isRejectEnabled').and.returnValue(false);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('reject').isVisible()).toBeTruthy();
+    expect(getItem('reject').isEnabled()).toBe(false);
+    delete ConfigService.projectsEnabled;
+  });
+
+  it('shows an enabled reject menu item if a branch is selected for a project in review', () => {
+    ConfigService.projectsEnabled = true;
+    ProjectService.selectedProject.state = 'IN_REVIEW';
+    spyOn(ProjectService, 'isRejectEnabled').and.returnValue(true);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('reject').isVisible()).toBeTruthy();
+    expect(getItem('reject').isEnabled()).toBe(true);
+    delete ConfigService.projectsEnabled;
+    delete ProjectService.selectedProject.state;
+  });
+
+  it('shows a prompt on rejection of a channel', () => {
+    const channelId = 'testChannel';
+    const message = 'testMessage';
+
+    spyOn(ProjectService, 'reject');
+    ChannelService.getChannel.and.returnValue({
+      id: `${channelId}-preview`,
+    });
+    DialogService.show.and.returnValue($q.resolve(message));
+
+    ChannelActionsService._reject();
+    $rootScope.$digest();
+
+    expect(ProjectService.reject).toHaveBeenCalledWith(channelId, message);
+  });
+
+  it('shows a disabled accept menu item if a branch is selected for a project not in review', () => {
+    ConfigService.projectsEnabled = true;
+    spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(false);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('accept').isVisible()).toBeTruthy();
+    expect(getItem('accept').isEnabled()).toBe(false);
+    delete ConfigService.projectsEnabled;
+  });
+
+  it('shows an enabled accept menu item if a branch is selected for a project in review', () => {
+    ConfigService.projectsEnabled = true;
+    ProjectService.selectedProject.state = 'IN_REVIEW';
+    spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(true);
+    expect(getItem('divider-1').isVisible()).toBe(true);
+    expect(getItem('accept').isVisible()).toBeTruthy();
+    expect(getItem('accept').isEnabled()).toBe(true);
+    delete ConfigService.projectsEnabled;
+    delete ProjectService.selectedProject.state;
   });
 });
