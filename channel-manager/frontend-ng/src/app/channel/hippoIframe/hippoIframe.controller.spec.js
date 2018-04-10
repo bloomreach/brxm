@@ -19,6 +19,7 @@ describe('hippoIframeCtrl', () => {
   let $window;
   let CmsService;
   let ContainerService;
+  let DragDropService;
   let HippoIframeService;
   let OverlayService;
   let PageStructureService;
@@ -38,6 +39,7 @@ describe('hippoIframeCtrl', () => {
       _$window_,
       _CmsService_,
       _ContainerService_,
+      _DragDropService_,
       _HippoIframeService_,
       _OverlayService_,
       _PageStructureService_,
@@ -49,6 +51,7 @@ describe('hippoIframeCtrl', () => {
       $window = _$window_;
       CmsService = _CmsService_;
       ContainerService = _ContainerService_;
+      DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -58,6 +61,7 @@ describe('hippoIframeCtrl', () => {
     });
 
     spyOn(OverlayService, 'onEditMenu');
+    spyOn(DragDropService, 'onDrop');
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
@@ -103,6 +107,29 @@ describe('hippoIframeCtrl', () => {
 
       expect(SpaService.renderComponent).not.toHaveBeenCalled();
       expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('move component', () => {
+    let callback;
+
+    beforeEach(() => {
+      spyOn(ContainerService, 'moveComponent');
+      callback = DragDropService.onDrop.calls.mostRecent().args[0];
+    });
+
+    it('moves a component via the ContainerService', () => {
+      const component = {};
+      const targetContainer = {};
+      const targetContainerNextComponent = {};
+      callback(component, targetContainer, targetContainerNextComponent);
+      expect(ContainerService.moveComponent).toHaveBeenCalledWith(component, targetContainer, targetContainerNextComponent);
+    });
+
+    it('does not call the on-drop callback anymore when destroyed', () => {
+      spyOn(DragDropService, 'offDrop');
+      hippoIframeCtrl.$onDestroy();
+      expect(DragDropService.offDrop).toHaveBeenCalled();
     });
   });
 
