@@ -33,22 +33,42 @@ ${response.setContentType("text/html;charset=UTF-8")}
     #infotable { background-color: #cfcfcf }
     #error { background-color: #efef00; font-size: large; padding: 10px }
 
-    .filter {
-        padding: 10px 30px 30px;
+    .section {
+        padding: 0px 5px;
     }
-    .filter input, .filter select {
-        font-size: 16px;
-        height: 28px;
-        width: 800px;
+    .section p {
+        padding: 0px;
+        margin: 14px 0px 10px;
+    }
+    .section input, select {
+        font-size: 14px;
+        height: 24px;
+    }
+    .section input[type="search"] {
+      width: 560px;
+    }
 
+    .section input[type="submit"] {
+      padding: 6px 20px;
+      height: 28px;
     }
+
+    .section table {
+      margin-bottom: 10px;
+    }
+
+    .section table th, .section table td {
+      padding: 3px;
+      border: 0.5px solid black;
+    }
+
     .button {
         align-self: center;
-        padding: 8px 20px 8px 20px;
-        margin: 20px;
+        padding: 6px 12px;
+        margin: 0 5px 10px;
         color: #fff;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 16px;
+        font-size: 14px;
         letter-spacing: 1px;
         text-transform: uppercase;
         text-align: center;
@@ -162,19 +182,15 @@ ${response.setContentType("text/html;charset=UTF-8")}
       <h3>Request Information</h3>
       <table style="params" summary="request parameters">
         <tr>
-          <th>Name</th>
-          <th>Value</th>
-        </tr>
-        <tr>
-          <td>Context Path : </td>
+          <td>Context path: </td>
           <td><code>${request.contextPath!}</code></td>
         </tr>
         <tr>
-          <td>Servlet Path : </td>
+          <td>Servlet path: </td>
           <td><code>${request.servletPath!}</code></td>
         </tr>
         <tr>
-          <td>Request URI : </td>
+          <td>Request URI: </td>
           <td><code>${request.requestURI!}</code></td>
         </tr>
       </table>
@@ -189,80 +205,78 @@ ${response.setContentType("text/html;charset=UTF-8")}
 </#if>
 
 <#if loggerInUse??>
-    <hr>
-    <h3>Logging</h3>
-    <p>Logger in use : <code>${loggerInUse.class.name}</code></p>
+  <hr>
+  <h3>Logging</h3>
+  <div class="section">
+        <p>Logger in use: <code>${loggerInUse.class.name}</code></p>
+  </div>
 </#if>
 
 <#if loggerLevelInfosMap??>
   <hr>
-    <div class="filter">
-        <p>Filter loggers which contain:</p>
-        <form action="#" method="get">
-            <input id="filter" type="search" value="" name="query"/>
-            <a class="button" onclick="filter(document.getElementById('filter').value)">Filter</a>
-        </form>
-
-    </div>
-    <div class="filter">
-        <p>Set logging level to filtered loggers:</p>
-        <form action="#" method="get">
-            <select name="debugLevel" id="debugLevel">
-                <option value="TRACE">TRACE</option>
-                <option value="ALL">ALL</option>
-                <option value="ERROR">ERROR</option>
-                <option value="INFO">INFO</option>
-                <option value="FATAL">FATAL</option>
-                <option value="DEBUG">DEBUG</option>
-                <option value="OFF">OFF</option>
-                <option value="WARN" selected="selected">WARN</option>
-            </select>
-            <a class="button" onclick="setLevel()">Set level</a>
-        </form>
-    </div>
   <h3>Loggers</h3>
-
-  <form method="POST">
-
-  <input class="button" type="submit" value="Apply" />
-
-      <table id="loggers" summary="searchresult" border="1">
-    <tr>
-      <th>Logger</th>
-      <th>Current Level</th>
-      <th>New Level</th>
-    </tr>
-    <#list loggerLevelInfosMap?keys as loggerName>
-      <#assign loggerLevelInfo = loggerLevelInfosMap[loggerName]>
-      <#assign curLogLevel = loggerLevelInfo.effectiveLogLevel>
-      <tr>
-        <td>${loggerName!}</td>
-        <td>
-          <#if loggerLevelInfo.logLevel??>
-            ${curLogLevel!}
+  <div class="section">
+    <p>Filter loggers that contain:</p>
+    <form action="#" method="get">
+      <a class="button" onclick="filter(document.getElementById('filter').value)">Filter</a>
+      <input id="filter" type="search" value="" name="query"/>
+     </form>
+  </div>
+  <div class="section">
+    <p>Set logging levels for all visible loggers:</p>
+    <form action="#" method="get">
+      <a class="button" onclick="setLevel()">Set all</a>
+      <select name="debugLevel" id="debugLevel">
+        <#list logLevels as logLevel>
+          <#if "WARN" == "${logLevel!}">
+            <option value="${logLevel!}" selected="true">${logLevel!}</option>
           <#else>
-            ${curLogLevel!} (unset)
+            <option value="${logLevel!}">${logLevel!}</option>
           </#if>
-        </td>
-        <td>
-          <select name="ll" id="ll_${loggerName!}">
-            <#list logLevels as logLevel>
-              <#if "${curLogLevel!}" == "${logLevel!}">
-                <option value="${loggerName!}:${logLevel!}" selected="true">${logLevel!}</option>
+        </#list>
+      </select>
+    </form>
+  </div>
+
+  <div class="section">
+    <p>Apply levels:</p>
+    <form method="POST">
+      <input class="button" type="submit" value="Apply" />
+      <table id="loggers" summary="searchresult" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <th>Logger</th>
+          <th>Current Level</th>
+          <th>New Level</th>
+        </tr>
+        <#list loggerLevelInfosMap?keys as loggerName>
+          <#assign loggerLevelInfo = loggerLevelInfosMap[loggerName]>
+          <#assign curLogLevel = loggerLevelInfo.effectiveLogLevel>
+          <tr>
+            <td>${loggerName!}</td>
+            <td>
+              <#if loggerLevelInfo.logLevel??>
+                ${curLogLevel!}
               <#else>
-                <option value="${loggerName!}:${logLevel!}">${logLevel!}</option>
+                ${curLogLevel!} (unset)
               </#if>
-            </#list>
-          </select>
-        </td>
-      </tr>
-    </#list>
-  </table>
-
-  <input type="submit" class="button" value="Apply" />
-
-  </form>
-
+            </td>
+            <td>
+              <select name="ll" id="ll_${loggerName!}">
+                <#list logLevels as logLevel>
+                  <#if "${curLogLevel!}" == "${logLevel!}">
+                    <option value="${loggerName!}:${logLevel!}" selected="true">${logLevel!}</option>
+                  <#else>
+                    <option value="${loggerName!}:${logLevel!}">${logLevel!}</option>
+                  </#if>
+                </#list>
+              </select>
+            </td>
+          </tr>
+        </#list>
+      </table>
+      <input type="submit" class="button" value="Apply" />
+    </form>
+  </div>
 </#if>
 
 <br/>
