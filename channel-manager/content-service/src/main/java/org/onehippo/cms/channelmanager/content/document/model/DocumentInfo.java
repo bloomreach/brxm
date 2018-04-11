@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content.document.model;
 
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 /**
  * This bean carries information of a document, stored in the CMS.
@@ -35,6 +35,9 @@ public class DocumentInfo {
 
     // whether this document has auto-drafted changes that have not been saved to the preview variant yet
     private boolean dirty;
+
+    // maps to hippostd:publishableSummary (new, live, changed, or unknown)
+    private DocumentState state;
 
     public Type getType() {
         return type;
@@ -64,5 +67,13 @@ public class DocumentInfo {
 
     public void setDirty(final boolean dirty) {
         this.dirty = dirty;
+    }
+
+    public DocumentState getState() {
+        return state;
+    }
+
+    public void setState(final DocumentState state) {
+        this.state = state;
     }
 }

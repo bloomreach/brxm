@@ -90,3 +90,4 @@ No values available for node of type 'node:name'
 Failed to read nodes for image link type 'my:imagelink'
 Failed to read image link 'my:imagelink' from node '/my:imagelink'
 Failed to write image link field 'my:imagelink'
+Could not determine document state of variant

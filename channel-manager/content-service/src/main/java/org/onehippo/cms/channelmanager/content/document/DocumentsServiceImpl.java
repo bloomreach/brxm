@@ -41,9 +41,11 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentState;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentStateUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -105,6 +107,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         final Document document = assembleDocument(uuid, handle, docType);
+        setDocumentState(document, draft);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         final boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
@@ -219,7 +222,10 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(uuid, handle, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
-                .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
+                .ifPresent(node -> {
+                    setDocumentState(document, node);
+                    FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields());
+                });
         return document;
     }
 
@@ -378,6 +384,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(handle.getIdentifier(), handle, docType);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
+        setDocumentState(document, draft);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
     }
@@ -424,7 +431,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    private ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
+    private static void setDocumentState(final Document document, final Node variant) {
+        final DocumentState state = DocumentStateUtils.getDocumentState(variant);
+        document.getInfo().setState(state);
+    }
+
+    private static ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
         DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
             if (errorInfo.getParams() == null) {
                 errorInfo.setParams(new HashMap<>());
