@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.MissingResourceException;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,11 +29,13 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +72,8 @@ public class EventModel implements IComponentAssignedModel<String> {
                 throw new IllegalArgumentException("CurrentActivityPlugin can only process nodes of type hippolog:item.");
             }
 
+            node.setProperty("hippolog:timestamp",1523404800000l);
+
             this.dateFormat = dateFormat;
 
             this.time = node.getProperty("hippolog:timestamp").getLong();
@@ -91,6 +96,7 @@ public class EventModel implements IComponentAssignedModel<String> {
             }
             this.user = node.getProperty("hippolog:user").getString();
             this.nameModel = nameModel;
+
         } catch (RepositoryException e) {
             log.error("Could not parse event node", e);
         }
@@ -121,6 +127,8 @@ public class EventModel implements IComponentAssignedModel<String> {
     private String getRelativeTimeKey(final long then) {
 
         final long now = System.currentTimeMillis();
+        final UserSession session = UserSession.get();
+        TimeZone timeZone = session.getTimeZone();
 
         if (then > now-ONE_MINUTE) {
             return "one-minute";
@@ -138,11 +146,13 @@ public class EventModel implements IComponentAssignedModel<String> {
             return "hour";
         }
 
-        final Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance(timeZone);
 
-        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
         final long today = cal.getTimeInMillis();
 
         if (then > today) {
