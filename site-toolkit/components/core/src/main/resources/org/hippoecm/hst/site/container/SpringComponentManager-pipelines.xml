@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -100,6 +100,10 @@
     <property name="valveName" value="contextResolvingValve" />
   </bean>
 
+  <bean id="selectiveRenderingContextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SelectiveRenderingContextResolvingValve">
+    <property name="valveName" value="selectiveRenderingContextResolvingValve" />
+  </bean>
+
   <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
     <property name="valveName" value="localizationValve" />
   </bean>
@@ -143,11 +147,33 @@
     <property name="pageCache" ref="pageCache"/>
   </bean>
 
+  <bean id="defaultAggregationValveComposerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <ref bean="composerComponentWindowResponseAppenders" />
+    </property>
+  </bean>
+
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Boolean"/>
+    <property name="targetObject" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.autoreload.AutoReloadResponseAppender"/>
+    </property>
+  </bean>
+
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
-    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
+    <property name="componentWindowResponseAppenders" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
   </bean>
+
+  <bean id="selectiveRenderingAggregationValve" parent="aggregationValve"
+        class="org.hippoecm.hst.core.container.SelectiveRenderingAggregationValve">
+    <property name="valveName" value="selectiveRenderingAggregationValve"/>
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders" />
+  </bean>
+
 
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
     <property name="valveName" value="resourceServingValve" />
@@ -221,6 +247,34 @@
                 <ref bean="pageCachingValve"/>
                 <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />
+              </list>
+            </property>
+            <property name="cleanupValves">
+              <list>
+                <ref bean="diagnosticReportingValve" />
+                <ref bean="cleanupValve" />
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="SpaSitePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+            <property name="initializationValves">
+              <list>
+                <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
+              </list>
+            </property>
+            <property name="processingValves">
+              <list>
+                <ref bean="securityValve" />
+                <ref bean="subjectBasedSessionValve" />
+                <ref bean="jcrSessionStatefulConcurrencyValve"/>
+                <ref bean="selectiveRenderingContextResolvingValve" />
+                <ref bean="localizationValve" />
+                <ref bean="pageInfoRenderingValve" />
+                <ref bean="pageCachingValve"/>
+                <ref bean="selectiveRenderingAggregationValve" />
               </list>
             </property>
             <property name="cleanupValves">
@@ -342,6 +396,12 @@
              </property>
            </bean>
         </entry>
+
+        <!-- Page Model Pipeline -->
+        <entry key="PageModelPipeline">
+          <ref bean="org.hippoecm.hst.core.container.PageModelPipeline"/>
+        </entry>
+
         <!-- A noop pipeline -->
         <entry key="NoopPipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
@@ -356,5 +416,8 @@
     </property>
   </bean>
 
+  <bean id="org.hippoecm.hst.core.container.PageModelPipeline" class="org.hippoecm.hst.core.container.PageModelPipeline">
+    <property name="defaultPageModelApiVersion" value="${default.pagemodelapi.version}"/>
+  </bean>
 </beans>
 

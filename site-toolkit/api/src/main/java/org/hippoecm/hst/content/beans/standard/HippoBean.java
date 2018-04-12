@@ -73,6 +73,14 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     String getPath();
 
     /**
+     * Returns the canonical path
+     * @return
+     */
+    default String getComparePath() {
+        return getPath();
+    }
+
+    /**
      * Returns the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> when 
      * <p>
      * <ul>

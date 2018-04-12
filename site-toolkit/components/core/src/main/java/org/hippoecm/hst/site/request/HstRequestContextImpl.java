@@ -96,7 +96,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected ContentBeansTool contentBeansTool;
     protected HstSiteMenusManager siteMenusManager;
     protected boolean cachingObjectConverterEnabled;
-    protected Map<String, Object> attributes;
+    protected Map<String, Object> attributes = new HashMap<>();
     protected ContainerConfiguration containerConfiguration;
     protected Subject subject;
     protected Locale preferredLocale;
@@ -118,6 +118,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private boolean disposed;
     private boolean matchingFinished;
 
+    private Map<String, Object> modelsMap = new HashMap<>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -340,6 +342,45 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        checkStateValidity();
+
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Iterable<String> getModelNames() {
+        checkStateValidity();
+
+        return Collections.unmodifiableSet(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        checkStateValidity();
+
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        checkStateValidity();
+
+        setAttribute(name, model);
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        checkStateValidity();
+
+        if (modelsMap.remove(name) != null) {
+            removeAttribute(name);
+        }
+    }
+
     @Override
     public Object getAttribute(String name) {
         checkStateValidity();
@@ -377,9 +418,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
 
-        if (this.attributes != null) {
-            this.attributes.remove(name);
-        }
+        this.attributes.remove(name);
     }
 
     @Override
@@ -392,14 +431,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
         if (object == null) {
             removeAttribute(name);
-        }
-
-        if (this.attributes == null) {
-            synchronized (this) {
-                if (this.attributes == null) {
-                    this.attributes = new HashMap<String, Object>();
-                }
-            }
         }
 
         this.attributes.put(name, object);
@@ -869,7 +900,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         siteMenus = null;
         hstQueryManagerFactory = null;
         contentBeansTool = null;
-        attributes = null;
+        attributes.clear();
         containerConfiguration = null;
         subject = null;
         preferredLocale = null;

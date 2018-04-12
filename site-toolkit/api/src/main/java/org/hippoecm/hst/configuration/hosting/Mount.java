@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -345,6 +345,23 @@ public interface Mount {
     String getNamedPipeline();
 
     /**
+     * <p>
+     *     Expert: when {@link #isFinalPipeline()} returns {@code true}, it indicates that a matched {@link HstSiteMapItem}
+     *     cannot override the configured pipeline. Typically this is useful in case for example the mount is configured
+     *     to be some 'rest representation'. In that case, you do not want a site map item to configure a pipeline that
+     *     doesn't render a rest representation at all. In general, for normal site development, {@link #isFinalPipeline()}
+     *     returns false.
+     * </p>
+     * <p>
+     *     Note that final only applies to the site map items that might have a different explicitly configured pipeline
+     *     which then gets ignored. <strong>If</strong> this {@link Mount} has a child {@link Mount} ,the child {@link Mount}
+     *     can have a different pipeline value (and can be non-final)
+     * </p>
+     * @return {@code true} indicates that a specific value for the named pipeline on a {@link HstSiteMapItem} is ignored
+     */
+    boolean isFinalPipeline();
+
+    /**
      * the locale for this {@link Mount} or <code>null</code> when it does not contain one. Note that if an ancestor {@link Mount} contains a
      * locale, this value is inherited unless this {@link Mount} explicitly defines its own. The root {@link Mount} inherits the value from
      * the {@link VirtualHost} if the virtual host contains a locale
@@ -507,5 +524,24 @@ public interface Mount {
      */
     List<String> getCmsLocations();
 
+    /**
+     * <p>
+     *     Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     *     in any responses by the requests on this. They keys from the returned map are the header names.
+     * </p>
+     * <p>
+     *     Note that the header names returned by this method overwrites any already set headers during request processing
+     *     with the same name
+     * </p>
+     * @return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
+     * in any responses by the requests on this.
+     */
+    Map<String, String> getResponseHeaders();
+
+    /**
+     * @return {@code true} if the configuration behind this {@link Mount} is explicitly configured. It returns {@code
+     * false} for {@link Mount} objects that are an implicit result, for example when the {@link Mount} is auto-created.
+     */
+    boolean isExplicit();
 
 }

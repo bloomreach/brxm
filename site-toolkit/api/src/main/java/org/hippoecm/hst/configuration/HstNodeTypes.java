@@ -73,6 +73,7 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
+    String PROTOTYPE_META_PROPERTY_APPLICATION_ID = "hst:applicationId";
 
     String CONFIGURATION_PROPERTY_LOCKED = "hst:locked";
 
@@ -91,6 +92,9 @@ public interface HstNodeTypes {
     String GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
     String GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE = "hst:schemenotmatchresponsecode";
     String GENERAL_PROEPRTY_SCHEME_AGNOSTIC = "hst:schemeagnostic";
+    String GENERAL_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
+    String GENERAL_PROPERTY_PAGE_MODEL_API = "hst:pagemodelapi";
+
     String VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT = "hst:customhttpssupport";
 
     String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
@@ -117,6 +121,7 @@ public interface HstNodeTypes {
     String TEMPLATE_PROPERTY_SCRIPT = "hst:script";
 
     String SITEMAPITEM_PROPERTY_REF_ID = "hst:refId";
+    String SITEMAPITEM_PROPERTY_APPLICATION_ID = "hst:applicationId";
     String SITEMAPITEM_PROPERTY_VALUE = "hst:value";
     String SITEMAPITEM_PROPERTY_AUTHENTICATED = "hst:authenticated";
     String SITEMAPITEM_PROPERTY_ROLES = "hst:roles";

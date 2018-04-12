@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.servlet.http.Cookie;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Temporarily holds the current state of a HST response.
@@ -135,7 +136,7 @@ public interface HstResponseState
 
     void addProcessedHeadElement(Element headElement);
 
-    public void addPreambleNode(Comment comment);
+    void addPreambleNode(Comment comment);
 
     /**
      * Preamble {@link org.w3c.dom.Node}s are written before the rest of the content of this {@link HstResponseState}. Note that
@@ -143,9 +144,31 @@ public interface HstResponseState
      * any descendant @link org.w3c.dom.Node}s of <code>element</code>
      * @param element the element that is a preamble
      */
-    public void addPreambleNode(Element element);
+    void addPreambleNode(Element element);
+
+    /**
+     * Return unmodifiable preamble {@link org.w3c.dom.Node}s.
+     * @return unmodifiable preamble {@link org.w3c.dom.Node}s
+     */
+    List<Node> getPreambleNodes();
+
+    /**
+     * clears the currently available preamble nodes on the {@link HstResponseState}
+     */
+    void clearPreambleComments();
 
     void addEpilogueNode(Comment comment);
+
+    /**
+     * Return unmodifiable epilogue {@link org.w3c.dom.Node}s.
+     * @return unmodifiable epilogue {@link org.w3c.dom.Node}s
+     */
+    List<Node> getEpilogueNodes();
+
+    /**
+     * clears the currently available epilogue nodes on the {@link HstResponseState}
+     */
+    void clearEpilogueComments();
 
     void setWrapperElement(Element element);
     

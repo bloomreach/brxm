@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +58,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.hippoecm.hst.mock.util.IteratorEnumeration;
 
 public class MockHstRequestContext implements HstMutableRequestContext {
 
@@ -102,6 +104,9 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private HstQueryManager defaultHstQueryManager;
     private Map<Session, HstQueryManager> nonDefaultHstQueryManagers;
 
+    private Map<String, Object> modelsMap = new HashMap<String, Object>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
+
     private boolean disposed;
 
     public boolean isPreview() {
@@ -133,14 +138,48 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         this.servletResponse = servletResponse;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Iterable<String> getModelNames() {
+        return Collections.unmodifiableSet(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        modelsMap.remove(name);
+    }
+
     public Object getAttribute(String name) {
         checkStateValidity();
-        return this.attributes.get(name);
+        Object val = this.attributes.get(name);
+        if (val != null) {
+            return val;
+        }
+        return getModel(name);
     }
 
     public Enumeration<String> getAttributeNames() {
         checkStateValidity();
-        return this.attributes.keys();
+        Set<String> mergedAttrs = new HashSet<>(getModelsMap().keySet());
+        if (attributes != null) {
+            mergedAttrs.addAll(attributes.keySet());
+        }
+        return new IteratorEnumeration<String>(mergedAttrs.iterator());
     }
 
     public Map<String, Object> getAttributes() {

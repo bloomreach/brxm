@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@
     </property>
   </bean>
 
-  <bean id="htmlCleaner" class="org.hippoecm.hst.restapi.content.html.HtmlCleanerFactoryBean"/>
+  <bean id="htmlCleaner" class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
 
   <bean id="restApiHtmlParser" class="org.hippoecm.hst.restapi.content.html.RestApiHtmlParser">
     <property name="htmlCleaner" ref="htmlCleaner"/>

@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * The <CODE>HstResponse</CODE> defines the interface to assist a
@@ -335,12 +336,24 @@ public interface HstResponse extends HttpServletResponse {
     void addPreamble(Element element);
 
     /**
+     * Return unmodifiable preamble {@link org.w3c.dom.Node}s.
+     * @return unmodifiable preamble {@link org.w3c.dom.Node}s
+     */
+    List<Node> getPreambleNodes();
+
+    /**
      * Add an epilogue comment, which gets rendered at the end of the render window.
      *
      * @param comment the comment node
      */
     void addEpilogue(Comment comment);
-    
+
+    /**
+     * Return unmodifiable epilogue {@link org.w3c.dom.Node}s.
+     * @return unmodifiable epilogue {@link org.w3c.dom.Node}s
+     */
+    List<Node> getEpilogueNodes();
+
     /**
      * For single /subtree component rendering mode that has {@link HstComponentInfo#isStandalone()} equal to <code>false</code>, this
      * check can be used whether some {@link HstComponent} won't get its renderer called. In other words, this is for performance optimization 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,19 +20,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -46,16 +44,24 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -227,6 +233,10 @@ public class MountService implements ContextualizableMount, MutableMount {
     private Map<String, String> parameters;
 
     private HstSiteMapMatcher matcher;
+
+    private Map<String, String> responseHeaders;
+
+    private Set<String> finalPipelines = ImmutableSet.of(PAGE_MODEL_PIPELINE_NAME);
 
     public MountService(final HstNode mount,
                         final Mount parent,
@@ -523,6 +533,23 @@ public class MountService implements ContextualizableMount, MutableMount {
             defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
         }
 
+        if (mount.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = mount.getValueProvider().getStrings(GENERAL_PROPERTY_RESPONSE_HEADERS);
+            if (resHeaders.length != 0) {
+                responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
+            }
+        } else if (parent != null) {
+            Map<String, String> resHeaderMap = parent.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        } else {
+            Map<String, String> resHeaderMap = virtualHost.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        }
+
         if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_CHANNELPATH)) {
             log.warn("Property '{}' has been deprecated and is not used any more but still present on '{}'. " +
                     "Property will be ignored.",
@@ -612,6 +639,28 @@ public class MountService implements ContextualizableMount, MutableMount {
 
             }
         }
+
+        String pageModelApi = mount.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
+        if (pageModelApi == null) {
+            pageModelApi = ((VirtualHostService) virtualHost).getPageModelApi();
+        }
+
+        if (pageModelApi != null && isMapped() && !hasNoChannelInfo()) {
+            if (childMountServices.containsKey(pageModelApi)) {
+                log.info("Skipping automatic resource api for path '{}' below mount '{}' because it has an explicitly " +
+                        "configured mount with the same path.", pageModelApi, this);
+            }else if (pageModelApi.contains("/")) {
+                log.error("Incorrect configured page model api value '{}'. / is not allowed in the path element",
+                        pageModelApi);
+            } else {
+                try {
+                    addMount(new PageModelApiMount(pageModelApi, this, hstNodeLoadingCache));
+                } catch (Exception e) {
+                    log.error("Cannot add PageModelApiMount for mount '{}'", this, e);
+                }
+            }
+        }
+
     }
 
     private void assertContentPathNotEmpty(final HstNode mount, final String contentPath) throws ModelLoadingException {
@@ -855,6 +904,11 @@ public class MountService implements ContextualizableMount, MutableMount {
         return namedPipeline;
     }
 
+    @Override
+    public boolean isFinalPipeline() {
+        return finalPipelines.contains(getNamedPipeline());
+    }
+
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         // although code below is called concurrently, no need for synchronization or usage of volatile: worst
         // that can happen is that HstServices.getComponentManager().getComponent(HstManager.class.getName()); is
@@ -1021,6 +1075,20 @@ public class MountService implements ContextualizableMount, MutableMount {
         StringBuilder builder = new StringBuilder("MountService [jcrPath=");
         builder.append(jcrLocation).append(", hostName=").append(virtualHost.getHostName()).append("]");
         return  builder.toString();
+    }
+
+    @Override
+    public Map<String, String> getResponseHeaders() {
+        if (responseHeaders == null) {
+            return Collections.emptyMap();
+        }
+
+        return Collections.unmodifiableMap(responseHeaders);
+    }
+
+    @Override
+    public boolean isExplicit() {
+        return true;
     }
 
 }

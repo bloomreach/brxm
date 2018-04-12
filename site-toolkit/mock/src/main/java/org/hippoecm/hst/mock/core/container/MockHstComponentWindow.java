@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ public class MockHstComponentWindow implements HstComponentWindow {
     private HstComponentInfo componentInfo;
     private Map<String, Object> attributes;
     boolean visible = true;
+    private boolean containerWindow;
+    private boolean containerItemWindow;
 
     public void addComponentExcpetion(HstComponentException e) {
         componentExceptions.add(e);
@@ -300,4 +302,5 @@ public class MockHstComponentWindow implements HstComponentWindow {
     public void removeChildWindow(final HstComponentWindow window) {
         throw new UnsupportedOperationException("Not supported");
     }
+
 }

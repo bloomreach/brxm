@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -177,4 +177,26 @@ public interface ContainerConstants {
     String FREEMARKER_JCR_TEMPLATE_PROTOCOL = "jcr:";
     String FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL = "webfile:";
     String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
+
+
+    String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
+
+    /**
+     * Generic Link Name for the self.
+     */
+    String LINK_NAME_SELF = "self";
+
+    /**
+     * Generic Link Name for the site.
+     */
+    String LINK_NAME_SITE = "site";
+
+    /**
+     * Generic Link Name for the component rendering.
+     */
+    String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
+
+    String PAGE_MODEL_API_VERSION = "API-Version";
+
+
 }

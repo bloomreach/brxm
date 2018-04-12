@@ -17,6 +17,7 @@ package org.hippoecm.hst.container;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
@@ -173,6 +174,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         // Sets up the container request wrapper
         HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
+
         try {
 
             if (isAutoReloadEndpoint(containerRequest)) {
@@ -303,6 +305,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             HstContainerURL hstContainerUrl = createOrGetContainerURL(containerRequest, hstManager, requestContext, resolvedMount, res);
 
             final String farthestRequestScheme = getFarthestRequestScheme(req);
+
             if (resolvedMount.getMount().isMapped()) {
                 ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                 boolean processSiteMapItemHandlers = false;
@@ -404,6 +407,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         }
                     }
                     log.info("Start processing request for pipeline '{}' for {}", resolvedMount.getNamedPipeline(), containerRequest);
+                    writeDefaultResponseHeaders(requestContext, res);
                     requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                 }
             }
@@ -663,6 +667,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
 
         log.info("Start processing request for pipeline '{}' for {}", resolvedSiteMapItem.getNamedPipeline(), containerRequest);
+        writeDefaultResponseHeaders(requestContext, res);
         requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedSiteMapItem.getNamedPipeline());
 
         // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
@@ -729,4 +734,39 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return newResolvedSiteMapItem;
     }
 
+    /**
+     * Write default response headers which are set in sitemap item, mount or virtual host configuration.
+     * @param requestContext request context
+     * @param response http servlet response
+     */
+    private void writeDefaultResponseHeaders(final HstRequestContext requestContext, final HttpServletResponse response) {
+        final Map<String, String> headerMap = getDefaultResponseHeaders(requestContext);
+
+        if (headerMap != null) {
+            headerMap.forEach((name, value) -> {
+                response.setHeader(name, value);
+            });
+        }
+    }
+
+    /**
+     * Read HTTP Response headers configuration from sitemapitem or mount and return those as a name-value paired map.
+     * @param requestContext request context
+     * @return a name-value paired map from HTTP Response headers configuration from sitemapitem or mount.
+     */
+    private Map<String, String> getDefaultResponseHeaders(final HstRequestContext requestContext) {
+        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
+        if (resolvedSiteMapItem != null) {
+            return resolvedSiteMapItem.getHstSiteMapItem().getResponseHeaders();
+        } else {
+            ResolvedMount resolvedMount = requestContext.getResolvedMount();
+
+            if (resolvedMount != null) {
+                return resolvedMount.getMount().getResponseHeaders();
+            }
+        }
+
+        return null;
+    }
 }

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.ModelContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -29,7 +30,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * 
  * @version $Id$
  */
-public interface HstRequest extends HttpServletRequest {
+public interface HstRequest extends HttpServletRequest, ModelContributable {
     
     /**
      * String identifier for the HST action lifecycle phase.
@@ -75,7 +76,7 @@ public interface HstRequest extends HttpServletRequest {
      * @param referenceNamespace
      */
     Map<String, String []> getParameterMap(String referenceNamespace);
-    
+
     /**
      * Returns the attribute map of this component window.
      */
@@ -99,5 +100,5 @@ public interface HstRequest extends HttpServletRequest {
      * @see #RESOURCE_PHASE
      */
     String getLifecyclePhase();
-    
+
 }

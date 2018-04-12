@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +44,11 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
@@ -60,10 +61,12 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKE
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PAGE_TITLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_APPLICATION_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES;
@@ -110,6 +113,13 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
     private String refId;
+
+    /**
+     * in case this sitemap item belongs to an explicit application, like an explicit SPA, this can be stored in the
+     * applicationId. In general this value will be null
+     * Child items will inherit the value from a parent item
+     */
+    private String applicationId;
 
     private String pageTitle;
 
@@ -175,6 +185,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
 
+    private Map<String, String> responseHeaders;
+
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private boolean containsAny;
@@ -222,6 +234,12 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_REF_ID)) {
             refId = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_REF_ID));
+        }
+
+        if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_APPLICATION_ID)) {
+            applicationId = StringPool.get(node.getValueProvider().getString(SITEMAPITEM_PROPERTY_APPLICATION_ID));
+        } else if (parentItem != null) {
+            applicationId = parentItem.getApplicationId();
         }
 
         if(node.getValueProvider().hasProperty(SITEMAPITEM_PAGE_TITLE)) {
@@ -443,6 +461,23 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             users = new HashSet<>();
         }
 
+        if (node.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {
+            String[] resHeaders = node.getValueProvider().getStrings(GENERAL_PROPERTY_RESPONSE_HEADERS);
+            if (resHeaders.length != 0) {
+                responseHeaders = HttpHeaderUtils.parseHeaderLines(resHeaders);
+            }
+        } else if (parentItem != null) {
+            Map<String, String> resHeaderMap = parentItem.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        } else {
+            Map<String, String> resHeaderMap = mountSiteMapConfiguration.getResponseHeaders();
+            if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
+                responseHeaders = new LinkedHashMap<>(resHeaderMap);
+            }
+        }
+
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE)) {
             containerResource = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_CONTAINER_RESOURCE);
         } else if(parentItem != null) {
@@ -494,7 +529,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             }
         }
 
-        if(node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
+        if(!mountSiteMapConfiguration.isFinalPipeline() && node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             namedPipeline = node.getValueProvider().getString(SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if (parentItem != null) {
             namedPipeline = parentItem.getNamedPipeline();
@@ -614,8 +649,14 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return lockedOn;
     }
 
+    @Override
     public String getRefId() {
         return refId;
+    }
+
+    @Override
+    public String getApplicationId() {
+        return applicationId;
     }
 
     public String getRelativeContentPath() {
@@ -891,6 +932,15 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     public boolean isMarkedDeleted() {
         return markedDeleted;
+    }
+
+    @Override
+    public Map<String, String> getResponseHeaders() {
+        if (responseHeaders == null) {
+            return Collections.emptyMap();
+        }
+
+        return Collections.unmodifiableMap(responseHeaders);
     }
 
     /**

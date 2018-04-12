@@ -36,6 +36,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.core.ModelContributable;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -57,7 +58,7 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  * 
  * @version $Id$
  */
-public interface HstRequestContext {
+public interface HstRequestContext extends ModelContributable {
     
 	/** 
 	 * Returns the ServletContext for this request 
@@ -177,7 +178,7 @@ public interface HstRequestContext {
      * @return the {@link HstParameterInfoProxyFactory} 
      */
     HstParameterInfoProxyFactory getParameterInfoProxyFactory();
-    
+
     /**
      * Set an attribute to be shared among each HstComponent windows.
      * Because this attribute is not prefixed by the reference namespace of the HstComponent window,

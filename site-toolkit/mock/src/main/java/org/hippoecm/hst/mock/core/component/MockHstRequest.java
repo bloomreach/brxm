@@ -18,10 +18,9 @@ package org.hippoecm.hst.mock.core.component;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class MockHstRequest extends MockHstRequestBase implements HstRequest {
+public class MockHstRequest extends MockHstRequestBase {
 
     private String referencePath;
     private Map<String, Map<String, Object>> attributeMap = new HashMap<String, Map<String, Object>>();
@@ -30,11 +29,12 @@ public class MockHstRequest extends MockHstRequestBase implements HstRequest {
     private String resourceId;
     private String referenceNamespace;
     private String lifecyclePhase;
-    
+
     public void setReferencePath(String referencePath) {
         this.referencePath = referencePath;
     }
 
+    @Override
     public Map<String, Object> getAttributeMap() {
         return getAttributeMap(this.referencePath);
     }
@@ -86,4 +86,5 @@ public class MockHstRequest extends MockHstRequestBase implements HstRequest {
     public void setLifecyclePhase(String lifecyclePhase) {
         this.lifecyclePhase = lifecyclePhase;
     }
+
 }

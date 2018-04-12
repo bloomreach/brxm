@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@
 - hst:displayname (string)
 // the relative path to primary container
 - hst:primarycontainer (string)
+// prototype level application id which should be copied into a sitemap item on creation.
+- hst:applicationId (String)
 
 [hst:template] > nt:base, mix:referenceable, hst:descriptive
 - hst:renderpath (string)
@@ -167,6 +169,9 @@
 - hst:roles (string) multiple
 // refId must be unique within a single sitemap item tree. The property is optional
 - hst:refId (string)
+// in case of multiple kinds of applications within a single mount, like multiple SPAs, sitemap items can have an
+// application id.
+- hst:applicationId (String)
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:scheme (string)
@@ -181,6 +186,7 @@
 - hst:containerresource (boolean)
 // boolean when set to false can be used to explicitly skip a sitemap item in pages overview in channel mngr.
 - hst:hiddeninchannelmanager (boolean)
+- hst:responseheaders (string) multiple
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable
@@ -358,6 +364,9 @@
 - hst:cacheable (boolean)
 // to hold all the 'free defined properties'
 - hst:defaultresourcebundleid (string)
+- hst:responseheaders (string) multiple
+// path element below which the page model api will become available
+- hst:pagemodelapi (string)
 - * (string)
 
 [hst:portmount] > nt:base, mix:referenceable
@@ -392,6 +401,9 @@
 // cndhost is used in the URL if configured. The value is not allowed to contain the scheme, thus do not use http://hostname or
 // https://hostname but //hostname
 - hst:cdnhost (string)
+- hst:responseheaders (string) multiple
+// path element below which for every mount for this host (or sub host) the page model api will become available
+- hst:pagemodelapi (string)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms

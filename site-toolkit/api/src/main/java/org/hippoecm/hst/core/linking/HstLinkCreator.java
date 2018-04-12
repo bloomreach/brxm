@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -157,8 +157,8 @@ public interface HstLinkCreator {
      * @see #createCanonical(Node, HstRequestContext)
      */
     List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName);
-    
-    
+
+
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code>. Note that this HstLink creation does only take into account the
      * <code>mount</code> and not the current context.
@@ -171,6 +171,18 @@ public interface HstLinkCreator {
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mount</code> or <code>null</code> when no link for the node can be made in the <code>mount</code>
      */
     HstLink create(Node node, Mount mount);
+
+    /**
+     *
+     * @param node the jcr node for that should be translated into a HstLink
+     * @param mount the (sub)site for which the hstLink should be tried to be created for, and if it does not succeed
+     *              for this mount, depending on the value of {@code crossMount} try other mounts
+     * @param crossMount if <code>true</code> also mounts not belonging to the parameter {@code mount} are tried if the
+     *                   {@code mount} cannot return a link for the {@code node}.
+     * @return the {@link HstLink} for the jcr <code>node</code> or <code>null</code> when no link for the node can be found
+     * @see #create(Node, Mount) create(Node, Mount) only now also fallback to other mounts are supported if {@code crossMount} is {@core true}
+     */
+    HstLink create(Node node, Mount mount, boolean crossMount);
 
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code> and <code>preferredItem</code>.
