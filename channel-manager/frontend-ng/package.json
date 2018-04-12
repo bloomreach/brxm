@@ -25,12 +25,12 @@
     "@bloomreach/dragula": "3.7.2-br.3",
     "@uirouter/angularjs": "1.0.15",
     "@uirouter/visualizer": "6.0.0",
-    "angular": "1.5.11",
-    "angular-animate": "1.5.11",
-    "angular-aria": "1.5.11",
+    "angular": "1.6.9",
+    "angular-animate": "1.6.9",
+    "angular-aria": "1.6.9",
     "angular-local-storage": "0.7.1",
-    "angular-material": "1.1.5",
-    "angular-messages": "1.5.11",
+    "angular-material": "1.1.8",
+    "angular-messages": "1.6.9",
     "angular-translate": "2.17.0",
     "angular-translate-loader-static-files": "2.17.0",
     "angular-ui-tree": "2.22.6",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@bloomreach/frontend-build": "7.2.1",
-    "angular-mocks": "1.5.11",
+    "angular-mocks": "1.6.9",
     "gulp": "4.0.0",
     "gulp-hub": "4.2.0"
   }
