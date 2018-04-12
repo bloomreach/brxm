@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final int LIMIT = 100;
+    public static final int LIMIT = 300;
 
     private final String query;
     private int limit;

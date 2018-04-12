@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,12 +67,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final String GALLERY_PATH = "/content/gallery";
     private static final String IMAGE_QUERY_NAME = "image";
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
+    private static final String RESULT_LIMIT_PROPERTY = "result.limit";
+    private static final int DEFAULT_RESULT_LIMIT = -1;
 
     private final FolderModelService folderService;
     private final DocumentCollection collection;
     private final WebMarkupContainer sectionTop;
     private final String rootPath;
     private final IModel<Node> rootModel;
+    private final int limit;
 
     private IModel<Node> scopeModel;
     private String query;
@@ -83,6 +86,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         super(context, config);
 
         rootPath = config.getString("model.folder.root", "/");
+        limit = config.getInt(RESULT_LIMIT_PROPERTY, DEFAULT_RESULT_LIMIT);
         rootModel = new JcrNodeModel(rootPath);
         scopeModel = new JcrNodeModel(rootPath);
 
@@ -213,6 +217,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 sb.setWildcardSearch(true);
                 sb.setText(query);
                 sb.setIncludePrimaryTypes(getPluginConfig().getStringArray("nodetypes"));
+                sb.setLimit(limit);
                 collection.setSearchResult(sb.getResultModel());
             }
         }
