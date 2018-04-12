@@ -135,14 +135,14 @@ class SiteMenuEditorCtrl {
   showPicker(targetEvent) {
     const pickerTypes = [
       {
-        id: this.SiteMenuService.getSiteContentIdentifier(),
-        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
-        type: 'documents',
-      },
-      {
         id: this.SiteMenuService.getSiteMapIdentifier(),
         name: this.$translate.instant('PICKER_TYPE_SITEMAP_ITEMS'),
         type: 'pages',
+      },
+      {
+        id: this.SiteMenuService.getSiteContentIdentifier(),
+        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
+        type: 'documents',
       },
     ];
     const pickerCfg = {
