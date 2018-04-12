@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,6 +38,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
@@ -60,6 +61,9 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USE
  * </p>
  */
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
+
+    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION = CmsSecurityValve.class.getName() + ".CmsChannelManagerRestSession";
+    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION = CmsSecurityValve.class.getName() + ".CmsPreviewSession";
 
     private SessionSecurityDelegation sessionSecurityDelegation;
 
@@ -121,7 +125,16 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 return;
             }
 
-            if (httpSession == null) {
+
+            // if the (HST) http session already exists, it might be because the user logged out from cms and logged in with
+            // different user or logged in with same user again but the authorization rules for example changed (that is
+            // why the user for example logged out and in). However, now it can happen that we have stale jcr sessions
+            // still on the HttpSessionBoundJcrSessionHolder attribute of the HST http session. We need to clear these
+            // now actively
+            if (httpSession != null) {
+                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION, httpSession);
+                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
+            }else {
                 httpSession = servletRequest.getSession(true);
             }
 
@@ -137,20 +150,17 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
         servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
 
-        // We synchronize on http session to disallow concurrent requests for the Channel manager. Note it is questionable
-        // whether this is still needed : The synchronization originates from the time we did not use a (fresh) new jcr
-        // session for every CM request, which we now do....so perhaps removing this synchronization completely makes
-        // most sense. For now we keep it because we can't oversee the impact and thus need extensive testing
+        // We synchronize on http session to disallow concurrent requests for the Channel manager.
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
                 if (isCmsRestOrPageComposerRequest(servletRequest)) {
-                    jcrSession = createCmsChannelManagerRestSession(servletRequest);
+                    jcrSession = getOrCreateCmsChannelManagerRestSession(servletRequest);
                 } else {
                     // request preview website, for example in channel manager. The request is not
                     // a REST call
                     if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        jcrSession = createCmsPreviewSession(servletRequest);
+                        jcrSession = getOrCreateCmsPreviewSession(servletRequest);
                     } else {
                         // do not yet create a session. just use the one that the HST container will create later
                     }
@@ -176,7 +186,16 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 throw new ContainerException(e);
             } finally {
                 if (jcrSession != null) {
-                    jcrSession.logout();
+                    try {
+                        if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
+                            log.warn("JcrSession '{}' had pending changes at the end of the request. This should never be " +
+                                    "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
+                            jcrSession.refresh(false);
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("RepositoryException while checking / clearing jcr session.", e);
+                        throw new ContainerException(e);
+                    }
                 }
             }
         }
@@ -268,13 +287,15 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT));
     }
 
-    private Session createCmsChannelManagerRestSession(final HttpServletRequest request) throws LoginException, ContainerException {
+    private Session getOrCreateCmsChannelManagerRestSession(final HttpServletRequest request) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
+
         try {
-            final Credentials credentials = (Credentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
+            final SimpleCredentials credentials = (SimpleCredentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
+            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION,
+                    request.getSession(), credentials, sessionSecurityDelegation::getDelegatedSession);
             // This returns a plain session for credentials where access is not merged with for example preview user session
             // For cms rest calls to page composer or cms-rest we must *NEVER* combine the security with other sessions
-            Session session = sessionSecurityDelegation.getDelegatedSession(credentials);
             log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
         } catch (LoginException e) {
@@ -284,11 +305,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private Session createCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {
+    private Session getOrCreateCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
-        Credentials cmsUserCred = (Credentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
+        SimpleCredentials cmsUserCred = (SimpleCredentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
         try {
-            Session session = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCred, false);
+
+            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,
+                    request.getSession(), cmsUserCred, credentials -> sessionSecurityDelegation.createPreviewSecurityDelegate(credentials, false));
             log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
         } catch (LoginException e) {

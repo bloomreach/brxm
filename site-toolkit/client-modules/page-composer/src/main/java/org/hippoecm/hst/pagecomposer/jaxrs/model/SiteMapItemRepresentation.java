@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,8 +67,7 @@ public class SiteMapItemRepresentation {
     // is the canonical configuration, without inheritance (and thus the container might be present in inherited config only)
     private boolean hasContainerItemInPageDefinition;
 
-    private List<SiteMapItemRepresentation> children = new ArrayList<>();
-
+    private int numberOfChildren;
 
     public SiteMapItemRepresentation represent(final HstSiteMapItem item,
                                                final Mount mount,
@@ -87,7 +84,7 @@ public class SiteMapItemRepresentation {
         id = ((CanonicalInfo) item).getCanonicalIdentifier();
 
         this.pathInfo = HstSiteMapUtils.getPath(item, null);
-        final String homePagePathInfo =  HstSiteMapUtils.getPath(mount, mount.getHomePage());
+        final String homePagePathInfo = HstSiteMapUtils.getPath(mount, mount.getHomePage());
         if (this.pathInfo.equals(homePagePathInfo)) {
             this.pathInfo = "/";
             this.isHomePage = true;
@@ -126,8 +123,17 @@ public class SiteMapItemRepresentation {
 
         parentLocation = findParentLocation(mount, item);
 
-        return this;
+        numberOfChildren = getTotalNumberOfChildren(item);
 
+        return this;
+    }
+
+    private static int getTotalNumberOfChildren(final HstSiteMapItem parent) {
+        int numChildren = parent.getChildren().size();
+        for (final HstSiteMapItem item : parent.getChildren()) {
+            numChildren += getTotalNumberOfChildren(item);
+        }
+        return numChildren;
     }
 
     Location findParentLocation(final Mount mount, final HstSiteMapItem item) {
@@ -138,13 +144,13 @@ public class SiteMapItemRepresentation {
         if (item.getParentItem() == null) {
             return new Location(prefix + "/", null);
         } else {
-            pathInfo =  HstSiteMapUtils.getPath(item.getParentItem(), null);
+            pathInfo = HstSiteMapUtils.getPath(item.getParentItem(), null);
             if (pathInfo.equals(HstSiteMapUtils.getPath(mount, mount.getHomePage()))) {
                 pathInfo = "/";
             } else if (!pathInfo.startsWith("/")) {
                 pathInfo = "/" + pathInfo;
             }
-            return  new Location(prefix + pathInfo + "/", ((CanonicalInfo)item.getParentItem()).getCanonicalIdentifier());
+            return new Location(prefix + pathInfo + "/", ((CanonicalInfo) item.getParentItem()).getCanonicalIdentifier());
         }
     }
 
@@ -368,15 +374,6 @@ public class SiteMapItemRepresentation {
         this.roles = roles;
     }
 
-    public List<SiteMapItemRepresentation> getChildren() {
-        return children;
-    }
-
-    public void setChildren(final List<SiteMapItemRepresentation> children) {
-        this.children = children;
-    }
-
-
     public boolean getHasContainerItemInPageDefinition() {
         return hasContainerItemInPageDefinition;
     }
@@ -391,5 +388,13 @@ public class SiteMapItemRepresentation {
 
     public void setParentLocation(final Location parentLocation) {
         this.parentLocation = parentLocation;
+    }
+
+    public void setNumberOfChildren(final int numberOfChildren) {
+        this.numberOfChildren = numberOfChildren;
+    }
+
+    public int getNumberOfChildren() {
+        return numberOfChildren;
     }
 }
