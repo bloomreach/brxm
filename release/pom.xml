@@ -729,6 +729,19 @@
         <version>${hippo.hst.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>pagemodelapi</artifactId>
+        <version>${hippo.hst.version}</version>
+        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+        <artifactId>hst-pagemodelapi-v09</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+
       <!-- Hippo standard plugins -->
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
