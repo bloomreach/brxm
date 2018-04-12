@@ -18,10 +18,17 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.treepickerr
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.PickerType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation.Type;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,20 +37,42 @@ import static org.junit.Assert.assertTrue;
 
 public class ExpandedSiteMapTreePickerRepresentationTest extends AbstractTestTreePickerRepresentation {
 
-    private static final List<String> LEAFS = new ArrayList<>();
-    static {
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/handler_browser_redirecttest");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/handler_nooptest");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/handler_sitemapitem_redirecttest");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/multiplehandler_example");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/newsCtxOnly");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/newswith_linkrewriting_excluded");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/search");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/uniquelinks");
-        LEAFS.add("/hst:hst/hst:configurations/unittestproject/hst:sitemap/alsonews/news2");
+    private List<String> leafs;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+
+        leafs = new ArrayList<>();
+        getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "");
+
+        final HstSiteMap siteMap = RequestContextProvider.get().getResolvedMount().getMount().getHstSite().getSiteMap();
+
+        for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            addLeafs(hstSiteMapItem, leafs);
+        }
+    }
+
+    // a leaf is considered to be a sitemap item with no children or only wildcard children
+    private void addLeafs(final HstSiteMapItem item, final List<String> leafs) throws RepositoryException {
+        if (!item.isExplicitElement()) {
+            return;
+        }
+        if (item.getChildren().isEmpty()) {
+            leafs.add(((CanonicalInfo)item).getCanonicalPath());
+            return;
+        }
+        boolean isLeaf = true;
+        for (HstSiteMapItem child : item.getChildren()) {
+            if (child.isExplicitElement()) {
+                isLeaf = false;
+            }
+            addLeafs(child, leafs);
+        }
+        if (isLeaf) {
+            // still a leaf
+            leafs.add(((CanonicalInfo)item).getCanonicalPath());
+        }
     }
 
     @Test
@@ -97,7 +126,7 @@ public class ExpandedSiteMapTreePickerRepresentationTest extends AbstractTestTre
         assertSiteMapTreePickerRepresentationItems(items);
     }
 
-    private static void assertRootSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation representation) {
+    private void assertRootSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation representation) {
         assertTrue(representation instanceof SiteMapTreePickerRepresentation);
         assertEquals("unittestproject", representation.getNodeName());
         assertEquals("unittestproject", representation.getDisplayName());
@@ -112,21 +141,21 @@ public class ExpandedSiteMapTreePickerRepresentationTest extends AbstractTestTre
         assertEquals(18, representation.getItems().size());
     }
 
-    private static void assertSiteMapTreePickerRepresentationItems(final List<AbstractTreePickerRepresentation> items) {
+    private void assertSiteMapTreePickerRepresentationItems(final List<AbstractTreePickerRepresentation> items) {
         for (final AbstractTreePickerRepresentation item : items) {
             assertSiteMapTreePickerRepresentation(item);
         }
     }
 
-    private static void assertSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item) {
+    private void assertSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item) {
         assertSiteMapTreePickerRepresentation(item, false, 0);
     }
 
-    private static void assertSelectedSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item) {
+    private void assertSelectedSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item) {
         assertSiteMapTreePickerRepresentation(item, true, 0);
     }
 
-    private static void assertSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item,
+    private void assertSiteMapTreePickerRepresentation(final AbstractTreePickerRepresentation item,
                                                               final boolean selected, final int numberOfChildItems) {
         assertEquals(PickerType.PAGES.getName(), item.getPickerType());
         assertEquals(Type.PAGE.getName(), item.getType());
@@ -150,7 +179,7 @@ public class ExpandedSiteMapTreePickerRepresentationTest extends AbstractTestTre
         }
     }
 
-    private static boolean isLeaf(final AbstractTreePickerRepresentation item) {
-        return LEAFS.contains(item.getNodePath());
+    private boolean isLeaf(final AbstractTreePickerRepresentation item) {
+        return leafs.contains(item.getNodePath());
     }
 }
