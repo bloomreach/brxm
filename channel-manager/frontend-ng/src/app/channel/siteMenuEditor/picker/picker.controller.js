@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './picker.scss';
+
 class PickerCtrl {
   constructor($mdDialog, $filter, PickerService, locals) {
     'ngInject';
