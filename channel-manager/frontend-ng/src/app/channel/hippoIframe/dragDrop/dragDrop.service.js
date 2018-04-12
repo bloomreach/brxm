@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
-    FeedbackService,
-    HstService,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -41,14 +39,13 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
-    this.FeedbackService = FeedbackService;
-    this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
+    this.offDrop();
 
     PageStructureService.registerChangeListener(() => this._sync());
   }
@@ -59,6 +56,14 @@ class DragDropService {
 
     this.ScrollService.init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
+  }
+
+  onDrop(callback) {
+    this.onDropCallback = callback;
+  }
+
+  offDrop() {
+    this.onDropCallback = () => this.$q.resolve();
   }
 
   _sync() {
@@ -281,45 +286,10 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    // first update the page structure so the component is already 'moved' in the client-side state
-    sourceContainer.removeComponent(movedComponent);
-    targetContainer.addComponentBefore(movedComponent, targetNextComponent);
-
-    const changedContainers = [sourceContainer];
-    if (sourceContainer.getId() !== targetContainer.getId()) {
-      changedContainers.push(targetContainer);
-    }
-
-    // next, push the updated container representation(s) to the backend
-    const backendCallPromises = [];
-    changedContainers.forEach(container => backendCallPromises.push(this._updateContainer(container)));
-
-    // last, re-render the changed container(s) so their meta-data is updated and we're sure they look right
-    this.$q.all(backendCallPromises)
-      .then(() => this.ChannelService.recordOwnChange())
-      .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
-        component: movedComponent.getLabel(),
-      }))
+    this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
       .finally(() => {
-        this._renderContainers(changedContainers).finally(() => {
-          this.dropping = false;
-        });
+        this.dropping = false;
       });
-  }
-
-  _updateContainer(container) {
-    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
-  }
-
-  _renderContainers(containers) {
-    const renderPromises = [];
-    containers.forEach(container => renderPromises.push(this._renderContainer(container)));
-    return this.$q.all(renderPromises);
-  }
-
-  _renderContainer(container) {
-    return this.PageStructureService.renderContainer(container)
-      .then(newContainer => this.replaceContainer(container, newContainer));
   }
 
   _dispatchMouseDownInIframe($event, component) {

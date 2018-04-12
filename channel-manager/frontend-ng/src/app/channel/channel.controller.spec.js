@@ -21,6 +21,7 @@ describe('ChannelCtrl', () => {
   let $q;
   let $rootScope;
   let $timeout;
+  let $window;
   let ChannelCtrl;
   let ChannelService;
   let SidePanelService;
@@ -34,12 +35,24 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_, _OverlayService_, _ProjectService_) => {
+    inject((
+      $controller,
+      _$rootScope_,
+      _$timeout_,
+      _$q_,
+      _$window_,
+      _FeedbackService_,
+      _ChannelService_,
+      _CmsService_,
+      _OverlayService_,
+      _ProjectService_,
+    ) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $q = _$q_;
+      $window = _$window_;
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
       OverlayService = _OverlayService_;
@@ -223,5 +236,39 @@ describe('ChannelCtrl', () => {
     });
     expect(ChannelCtrl.isComponentsOverlayEnabled).toBeTruthy();
     expect(ChannelCtrl.isComponentsOverlayEnabled).toBeFalsy();
+  });
+
+  describe('reload-channel event from ExtJS', () => {
+    beforeEach(() => {
+      ChannelCtrl.$onInit();
+    });
+
+    it('handles the reload-channel event from ExtJS when an item is already locked', () => {
+      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', { lockedBy: 'admin' });
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('handles the reload-channel event from ExtJS when an item is not found', () => {
+      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_NOT_FOUND', parameterMap: { component: 'Banner' } });
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_COMPONENT_DELETED', { component: 'Banner' });
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('handles the reload-channel event from ExtJS when editing a component failed', () => {
+      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('is unsubscribed when the controller is destroyed', () => {
+      ChannelCtrl.$onDestroy();
+      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+      expect(FeedbackService.showError).not.toHaveBeenCalled();
+      expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    });
   });
 });

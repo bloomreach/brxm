@@ -28,12 +28,13 @@ class PageStructureService {
     CmsService,
     FeedbackService,
     HippoIframeService,
-    hstCommentsProcessorService,
+    HstCommentsProcessorService,
     HstConstants,
     HstService,
+    MarkupService,
     MaskService,
     PageMetaDataService,
-    RenderingService) {
+  ) {
     'ngInject';
 
     // Injected
@@ -43,12 +44,12 @@ class PageStructureService {
     this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.HST = HstConstants;
     this.HstService = HstService;
+    this.MarkupService = MarkupService;
     this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
-    this.RenderingService = RenderingService;
 
     this.changeListeners = [];
     this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
@@ -94,7 +95,7 @@ class PageStructureService {
   }
 
   _registerContainer(commentDomElement, metaData) {
-    const container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+    const container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
     this.containers.push(container);
   }
 
@@ -106,7 +107,7 @@ class PageStructureService {
 
     const container = this.containers[this.containers.length - 1];
     try {
-      const component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+      const component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
       container.addComponent(component);
     } catch (exception) {
       this.$log.debug(exception, metaData);
@@ -204,7 +205,7 @@ class PageStructureService {
   /**
    * Remove the component identified by given Id
    * @param componentId
-   * @return a promise with the object { oldContainer, newContainer }
+   * @return the container of the removed component
    */
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
@@ -214,10 +215,7 @@ class PageStructureService {
       return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
         .then(() => {
           this._onAfterRemoveComponent();
-          return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
-            this._notifyChangeListeners();
-            return { oldContainer, newContainer };
-          });
+          return oldContainer;
         },
         (errorResponse) => {
           const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_DELETE_COMPONENT';
@@ -287,7 +285,7 @@ class PageStructureService {
   renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
-      this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
+      this.MarkupService.fetchComponentMarkup(component, propertiesMap).then((response) => {
         // re-fetch component because a parallel renderComponent call may have updated the component's markup
         component = this.getComponentById(componentId);
 
@@ -335,8 +333,12 @@ class PageStructureService {
   }
 
   renderContainer(container) {
-    return this.RenderingService.fetchContainerMarkup(container)
-      .then(markup => this._updateContainer(container, markup));
+    return this.MarkupService.fetchContainerMarkup(container)
+      .then(markup => this._updateContainer(container, markup))
+      .then((newContainer) => {
+        this._notifyChangeListeners();
+        return newContainer;
+      });
   }
 
   _updateContainer(oldContainer, newMarkup) {
@@ -388,7 +390,7 @@ class PageStructureService {
         (newComponentJson) => {
           this.ChannelService.recordOwnChange();
           // TODO: handle error when rendering container failed
-          return this.renderContainer(container).then(() => this.getComponentById(newComponentJson.id));
+          return newComponentJson.id;
         },
         (errorResponse) => {
           const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
@@ -396,6 +398,45 @@ class PageStructureService {
           params.component = catalogComponent.name;
           return this._showFeedbackAndReload(errorKey, params);
         });
+  }
+
+  moveComponent(component, targetContainer, targetContainerNextComponent) {
+    // first update the page structure so the component is already 'moved' in the client-side state
+    const sourceContainer = component.getContainer();
+    sourceContainer.removeComponent(component);
+    targetContainer.addComponentBefore(component, targetContainerNextComponent);
+
+    const changedContainers = [sourceContainer];
+    if (sourceContainer.getId() !== targetContainer.getId()) {
+      changedContainers.push(targetContainer);
+    }
+
+    // next, push the updated container representation(s) to the backend
+    const backendCallPromises = changedContainers.map(container => this._storeContainer(container));
+
+    // last, record a channel change. The caller is responsible for re-rendering the changed container(s)
+    // so their meta-data is updated and we're sure they look right
+    return this.$q.all(backendCallPromises)
+      .then(() => this.ChannelService.recordOwnChange())
+      .then(() => changedContainers)
+      .catch(() => this.FeedbackService.showError('ERROR_MOVE_COMPONENT_FAILED', {
+        component: component.getLabel(),
+      }));
+  }
+
+  _storeContainer(container) {
+    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
+  }
+
+  renderNewComponentInContainer(newComponentId, container) {
+    return this.renderContainer(container)
+      .then(() => this.getComponentById(newComponentId))
+      .then((newComponent) => {
+        if (this.containsNewHeadContributions(newComponent.getContainer())) {
+          this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+          this.HippoIframeService.reload();
+        }
+      });
   }
 
   getContainerByOverlayElement(overlayElement) {
@@ -430,13 +471,13 @@ class PageStructureService {
   _createContainer(jQueryNodeCollection) {
     let container = null;
 
-    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
       const type = metaData[this.HST.TYPE];
       try {
         switch (type) {
           case this.HST.TYPE_CONTAINER:
             if (!container) {
-              container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+              container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
             } else {
               this.$log.warn('More than one container in the DOM Element!');
               return;
@@ -451,7 +492,7 @@ class PageStructureService {
 
             try {
               container.addComponent(new ComponentElement(commentDomElement, metaData,
-                container, this.hstCommentsProcessorService));
+                container, this.HstCommentsProcessorService));
             } catch (exception) {
               this.$log.debug(exception, metaData);
             }
@@ -498,12 +539,12 @@ class PageStructureService {
   _createComponent(jQueryNodeCollection, container) {
     let component = null;
 
-    this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
       const type = metaData[this.HST.TYPE];
       switch (type) {
         case this.HST.TYPE_COMPONENT:
           try {
-            component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+            component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
           } catch (exception) {
             this.$log.debug(exception, metaData);
           }
@@ -544,22 +585,6 @@ class PageStructureService {
   _showFeedbackAndReload(errorKey, params) {
     this.FeedbackService.showError(errorKey, params);
     return this.HippoIframeService.reload().then(() => this.$q.reject());
-  }
-
-  reloadChannel(errorResponse) {
-    let errorKey;
-    switch (errorResponse.error) {
-      case 'ITEM_ALREADY_LOCKED':
-        errorKey = 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED';
-        break;
-      case 'ITEM_NOT_FOUND':
-        errorKey = 'ERROR_COMPONENT_DELETED';
-        break;
-      default:
-        errorKey = 'ERROR_UPDATE_COMPONENT';
-    }
-
-    this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }
 

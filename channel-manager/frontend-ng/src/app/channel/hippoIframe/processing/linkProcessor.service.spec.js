@@ -18,7 +18,7 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('LinkProcessorService', () => {
-  let linkProcessorService;
+  let LinkProcessorService;
   let $document;
   let $window;
   const previewUrl = ['http://localhost:8080/site'];
@@ -26,10 +26,10 @@ describe('LinkProcessorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$document_, _$window_, _linkProcessorService_) => {
+    inject((_$document_, _$window_, _LinkProcessorService_) => {
       $document = _$document_;
       $window = _$window_;
-      linkProcessorService = _linkProcessorService_;
+      LinkProcessorService = _LinkProcessorService_;
     });
   });
 
@@ -51,7 +51,7 @@ describe('LinkProcessorService', () => {
 
   describe('running with a valid internalLinkPrefix', () => {
     it('should set attribute target to _blank for external links', () => {
-      linkProcessorService.run($document, previewUrl);
+      LinkProcessorService.run($document, previewUrl);
       expectTargetAttrToBeBlank('.qa-external-link');
       expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
     });
@@ -59,7 +59,7 @@ describe('LinkProcessorService', () => {
 
   describe('running with two valid internalLinkPrefixes', () => {
     it('should set attribute target to _blank for external links', () => {
-      linkProcessorService.run($document, ['http://localhost:8080/intranet', previewUrl[0]]);
+      LinkProcessorService.run($document, ['http://localhost:8080/intranet', previewUrl[0]]);
       expectTargetAttrToBeBlank('.qa-external-link');
       expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
     });
@@ -67,7 +67,7 @@ describe('LinkProcessorService', () => {
 
   describe('running with an undefined internalLinkPrefix', () => {
     it('should set attribute target to _blank for both internal and external links', () => {
-      linkProcessorService.run($document);
+      LinkProcessorService.run($document);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
       expectTargetAttrNotToBeBlank('.qa-local-link');
     });
@@ -75,7 +75,7 @@ describe('LinkProcessorService', () => {
 
   describe('running with a null internalLinkPrefix', () => {
     it('should set attribute target to _blank for both internal and external links', () => {
-      linkProcessorService.run($document, null);
+      LinkProcessorService.run($document, null);
       expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
       expectTargetAttrNotToBeBlank('.qa-local-link');
     });
@@ -85,7 +85,7 @@ describe('LinkProcessorService', () => {
     const nrOfExternalLinks = $j('.qa-external-link', $document).length;
     const confirmSpy = spyOn($window, 'confirm').and.returnValue(true);
 
-    linkProcessorService.run($document, previewUrl);
+    LinkProcessorService.run($document, previewUrl);
     $j('a', $document).click();
     expect(confirmSpy.calls.count()).toEqual(nrOfExternalLinks);
   });
@@ -93,7 +93,7 @@ describe('LinkProcessorService', () => {
   it('should prevent opening an external link if confirm is cancelled', () => {
     spyOn($window, 'confirm').and.returnValue(false);
 
-    linkProcessorService.run($document, previewUrl);
+    LinkProcessorService.run($document, previewUrl);
     $j('.qa-external-link', $document).each(function checkClick() {
       const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();
@@ -105,7 +105,7 @@ describe('LinkProcessorService', () => {
   it('should open an external link if confirm is ok', () => {
     spyOn($window, 'confirm').and.returnValue(true);
 
-    linkProcessorService.run($document, previewUrl);
+    LinkProcessorService.run($document, previewUrl);
     $j('.qa-external-link', $document).each(function checkClick() {
       const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,42 +15,39 @@
  */
 
 describe('ComponentCatalogService', () => {
-  let $q;
   let $log;
-  let $rootScope;
-  let SidePanelService;
+  let $q;
   let ComponentCatalogService;
+  let ContainerService;
   let HippoIframeService;
   let MaskService;
   let OverlayService;
   let PageStructureService;
-  let FeedbackService;
+  let SidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$q_,
       _$log_,
-      _$rootScope_,
-      _SidePanelService_,
+      _$q_,
       _ComponentCatalogService_,
+      _ContainerService_,
       _HippoIframeService_,
       _MaskService_,
       _OverlayService_,
       _PageStructureService_,
-      _FeedbackService_,
+      _SidePanelService_,
     ) => {
-      $q = _$q_;
       $log = _$log_;
-      $rootScope = _$rootScope_;
-      SidePanelService = _SidePanelService_;
+      $q = _$q_;
       ComponentCatalogService = _ComponentCatalogService_;
+      ContainerService = _ContainerService_;
       HippoIframeService = _HippoIframeService_;
       MaskService = _MaskService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
-      FeedbackService = _FeedbackService_;
+      SidePanelService = _SidePanelService_;
     });
   });
 
@@ -69,10 +66,10 @@ describe('ComponentCatalogService', () => {
       spyOn(OverlayService, 'disableAddMode');
       spyOn(OverlayService, 'offContainerClick');
       spyOn(OverlayService, 'showComponentsOverlay');
-      spyOn(ComponentCatalogService, 'addComponentToContainer');
+      spyOn(ContainerService, 'addComponent');
     });
 
-    it('should forward mask and zindexes handling and setup clickhandlers', () => {
+    it('should forward mask and z-indexes handling and setup click handlers', () => {
       ComponentCatalogService.selectComponent({ id: 'componentId' });
 
       expect(MaskService.mask).toHaveBeenCalled();
@@ -111,13 +108,9 @@ describe('ComponentCatalogService', () => {
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'getContainerByOverlayElement');
       spyOn(PageStructureService, 'showComponentProperties');
-      spyOn(PageStructureService, 'addComponentToContainer').and.returnValue($q.resolve({
-        getContainer() {},
-        getLabel() {},
-      }));
     });
 
-    it('should handle container click', () => {
+    it('handles container clicks', () => {
       let isDisabled = false;
       const mockContainer = {
         isDisabled() {
@@ -125,42 +118,22 @@ describe('ComponentCatalogService', () => {
         },
       };
       const mockEvent = jasmine.createSpyObj('mockEvent', ['target', 'stopPropagation']);
-      spyOn(ComponentCatalogService, 'addComponentToContainer');
+      spyOn(ContainerService, 'addComponent');
 
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
 
-      expect(ComponentCatalogService.addComponentToContainer).toHaveBeenCalled();
+      expect(ContainerService.addComponent).toHaveBeenCalled();
 
       isDisabled = true;
 
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
 
-      expect(ComponentCatalogService.addComponentToContainer).toHaveBeenCalled();
+      expect(ContainerService.addComponent).toHaveBeenCalled();
       expect(mockEvent.stopPropagation).toHaveBeenCalled();
     });
 
-    it('should add component to container', () => {
-      ComponentCatalogService.addComponentToContainer();
-      $rootScope.$apply();
-      expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
-    });
+    it('delegates to the ContainerService', () => {
 
-    it('should handle error when thrown, upon adding a component to container', () => {
-      PageStructureService.addComponentToContainer.and.returnValue($q.reject());
-      spyOn(FeedbackService, 'showError');
-
-      ComponentCatalogService.addComponentToContainer({ label: 'Banner' });
-      $rootScope.$apply();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
-        component: 'Banner',
-      });
-    });
-
-    it('should reload if component contains head contributions', () => {
-      spyOn(PageStructureService, 'containsNewHeadContributions').and.callFake(() => true);
-      ComponentCatalogService.addComponentToContainer();
-      $rootScope.$apply();
-      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 

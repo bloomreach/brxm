@@ -45,6 +45,10 @@ class ComponentElement extends PageStructureElement {
   getRenderVariant() {
     return this.metaData[HstConstants.RENDER_VARIANT] || HstConstants.DEFAULT_RENDER_VARIANT;
   }
+
+  getReferenceNamespace() {
+    return this.metaData[HstConstants.REFERENCE_NAMESPACE];
+  }
 }
 
 export default ComponentElement;
