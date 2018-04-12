@@ -136,7 +136,7 @@ public abstract class CommonComponent extends BaseHstComponent {
             bean = context.getContentBean();
         }
 
-        request.setAttribute(REQUEST_ATTR_DOCUMENT, bean);
+        request.setModel(REQUEST_ATTR_DOCUMENT, bean);
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class CommonComponent extends BaseHstComponent {
         final HstRequestContext context = request.getRequestContext();
         if (!Strings.isNullOrEmpty(documentPath)) {
             final HippoBean root = context.getSiteContentBaseBean();
-            request.setAttribute(REQUEST_ATTR_DOCUMENT, root.getBean(documentPath));
+            request.setModel(REQUEST_ATTR_DOCUMENT, root.getBean(documentPath));
         }
     }
 
@@ -172,7 +172,7 @@ public abstract class CommonComponent extends BaseHstComponent {
             return;
         }
 
-        request.setAttribute(REQUEST_ATTR_DOCUMENT, bean);
+        request.setModel(REQUEST_ATTR_DOCUMENT, bean);
     }
 
     /**

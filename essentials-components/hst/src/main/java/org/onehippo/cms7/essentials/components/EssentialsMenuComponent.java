@@ -53,7 +53,7 @@ public class EssentialsMenuComponent extends CommonComponent {
             return;
         }
         log.debug("Using site menu:[{}]", siteMenu);
-        request.setAttribute("menu", menu);
+        request.setModel("menu", menu);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 }

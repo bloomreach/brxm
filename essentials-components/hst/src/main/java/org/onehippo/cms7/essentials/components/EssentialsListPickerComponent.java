@@ -41,7 +41,7 @@ public class EssentialsListPickerComponent extends EssentialsListComponent {
         final int pageSize = getPageSize(request, paramInfo);
         final int page = getAnyIntParameter(request, REQUEST_PARAM_PAGE, 1);
         final Pageable<HippoDocument> pageable = getPageableFactory().createPageable(documentItems, page, pageSize);
-        request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+        request.setModel(REQUEST_ATTR_PAGEABLE, pageable);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 
