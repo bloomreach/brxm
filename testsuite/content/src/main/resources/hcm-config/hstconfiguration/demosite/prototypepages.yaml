@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:prototypepages:
+      jcr:primaryType: hst:pages
+      /homepage-like:
+        jcr:primaryType: hst:component
+        jcr:mixinTypes: ['hst:prototypemeta']
+        hst:displayname: Homepage Like
+        hst:referencecomponent: hst:pages/home
+        /body:
+          jcr:primaryType: hst:component
+          /content:
+            jcr:primaryType: hst:component
+            /banners-div:
+              jcr:primaryType: hst:containercomponent
+              hst:xtype: HST.vBox

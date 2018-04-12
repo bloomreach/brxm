@@ -55,7 +55,7 @@ ${document.title}
   </p>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
-    <@hst.cmseditlink hippobean=document/>
+    <@hst.manageContent hippobean=document/>
     <p>
         <#if isPreview>
             <span class="editable" id="demosite:summary">${document.summary}</span>

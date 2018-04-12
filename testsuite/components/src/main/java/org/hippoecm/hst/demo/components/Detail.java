@@ -86,7 +86,7 @@ public class Detail extends BaseHstComponent {
                 throw new HstComponentException("Could not forward the request to the error page.", e);
             }
         }
-        request.setAttribute("document", crBean);
+        request.setModel("document", crBean);
 
         try {
             HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean,

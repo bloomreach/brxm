@@ -19,6 +19,8 @@ import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +32,12 @@ public class Right extends BaseHstComponent{
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        request.setAttribute("crBean", request.getRequestContext().getContentBean());
-        
+        request.setModel("crBean", request.getRequestContext().getContentBean());
+
+        HstRequestContext requestContext = request.getRequestContext();
+        HstLink aboutUsLink = requestContext.getHstLinkCreator().createByRefId("aboutId",
+                requestContext.getResolvedMount().getMount());
+        request.setModel("aboutUsLink", aboutUsLink);
     }
 
 

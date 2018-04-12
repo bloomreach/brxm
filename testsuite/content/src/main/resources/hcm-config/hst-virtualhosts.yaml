@@ -20,6 +20,8 @@ definitions:
           hst:defaultresourcebundleid: org.onehippo.hst.demo.resources.ProductResources,
             org.onehippo.hst.demo.resources.GeneralTranslationsBundle
           hst:schemeagnostic: true
+          hst:responseheaders: ['Access-Control-Allow-Origin: *']
+          hst:pagemodelapi: resourceapi
           /hst:root:
             jcr:primaryType: hst:mount
             hst:alias: site

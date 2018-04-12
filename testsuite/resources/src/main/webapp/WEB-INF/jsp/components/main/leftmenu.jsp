@@ -106,8 +106,13 @@
   </li>
   <li>
     <hst:link var="restlink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"/>
-    <a href="${restlink}" 
+    <a href="${restlink}"
        target="_blank">RESTful Representation</a>
+  </li>
+  <li>
+    <hst:link var="resourceApiLink" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="site/resourceapi"/>
+    <a href="${resourceApiLink}"
+       target="_blank">Resource API Representation</a>
   </li>
 </ul>
 </div>

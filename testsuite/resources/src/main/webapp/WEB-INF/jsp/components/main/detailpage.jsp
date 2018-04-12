@@ -50,7 +50,7 @@
 
 <div class="yui-u">
   <c:if test="${isPreview}">
-    <hst:cmseditlink hippobean="${document}"/>
+    <hst:manageContent hippobean="${document}"/>
   </c:if>
   <p>
   <hst:componentRenderingURL var="componentRenderingURL"/>

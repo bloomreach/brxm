@@ -31,6 +31,7 @@ public class Archive extends AbstractSearchComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         HippoBean currentBean = request.getRequestContext().getContentBean();
+        request.setModel("currentBean", currentBean);
 
         // NOTE: It is intended to not catch NumberFormatException below.
         //       In order to test component exceptions more easily, you can just provide a non-number parameter for 'pageSize'.

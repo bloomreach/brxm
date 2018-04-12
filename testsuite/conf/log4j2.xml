@@ -139,6 +139,7 @@
     </Logger>
 
     <!-- Site logging -->
+
     <Logger additivity="false" name="org.hippoecm.hst" level="warn">
       <AppenderRef ref="site"/>
       <AppenderRef ref="intranet"/>
@@ -160,6 +161,11 @@
     <Logger additivity="false" name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info">
       <AppenderRef ref="site-diagnostics"/>
       <AppenderRef ref="intranet-diagnostics"/>
+      <AppenderRef ref="console"/>
+    </Logger>
+
+    <Logger additivity="false" name="org.hippoecm.hst.container.HstDelegateeFilterBean" level="debug">
+      <AppenderRef ref="site"/>
       <AppenderRef ref="console"/>
     </Logger>
 
