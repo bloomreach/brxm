@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 locales="nl de fr zh es"
-release="12.2.0"
+release="12.3.0"
 
 git clone git@code.onehippo.org:cms-community/hippo-cms-translations.git
 git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git
@@ -29,7 +29,20 @@ for module in $modules; do
 	    filename=target/${module}_${release}_${locale}.xlsx
         mvn -N hippo-cms-l10n:export -Dlocale=$locale -f $module/pom.xml
 		mv $module/export_$locale.xlsx $filename
+
+        # CSV output for stats
+        mvn -N hippo-cms-l10n:export -Dformat=csv -Dlocale=$locale -f $module/pom.xml > /dev/null
     done
 done
 
-zip -o -j translation_keys_bloomreach_experience_${release}.zip target/*
+zip -o -j target/translation_keys_bloomreach_experience_${release}.zip target/*.xlsx
+
+# print stats and clean up CSVs
+echo Translation statistics community/enterprise \(locale, lines, words, characters\):
+for module in $modules; do
+    for locale in $locales; do
+        echo -n "$locale"
+        cat $module/export_$locale.csv | tail -n +2 | sed -e 's/^[^,]*,"\(.*\)",.*/\1/' -e t -e 's/^[^,]*,\(.*\),.*/\1/' | wc
+    done
+    rm -rf $module
+done
