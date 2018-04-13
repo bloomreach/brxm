@@ -177,4 +177,6 @@ public interface ContainerConstants {
     String FREEMARKER_JCR_TEMPLATE_PROTOCOL = "jcr:";
     String FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL = "webfile:";
     String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
+
+    String REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME = "org.hippoecm.hst.container.previewSession";
 }
