@@ -525,11 +525,12 @@
      * Save all dirty forms in the panel
      * @param fireEvent
      */
-    saveAll: function (fireEvent = true) {
+    saveAll: function (fireEvent) {
       var dirtyEditors = this._getDirtyEditors(),
         savePromises = [],
         dirtyVariantIds = [],
-        activeVariantId = this.getActiveTab().variant.id;
+        activeVariantId = this.getActiveTab().variant.id,
+        doFire = Ext.isDefined(fireEvent) ? fireEvent : true;
 
       dirtyEditors.forEach(function(editor) {
         savePromises.push(editor.save());
@@ -542,7 +543,7 @@
           savedVariantIds = Ext.pluck(mapVariantIds, "newId");
 
         activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
-        if (fireEvent) {
+        if (doFire) {
           this._onSaved(savedVariantIds, activeVariantId);
         }
 
