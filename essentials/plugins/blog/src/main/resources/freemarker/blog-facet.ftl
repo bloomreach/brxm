@@ -23,17 +23,18 @@
   <#if facets??>
     <#assign facetLimit = 50>
 
-    <ul class="nav nav-list">
+    <ul class="nav">
       <#list facets.folders as facetvalue>
         <#if facetvalue.folders?? && (facetvalue.folders?size > 0)>
           <li><label class="nav-header">${facetvalue.name?html}</label>
-            <ul class="nav nav-list">
+            <ul class="nav">
               <#list facetvalue.folders as item>
                 <#if (item.leaf?? && item.leaf && (item.count > 0))>
                   <@hst.facetnavigationlink  current=facets remove=item var="removeLink"/>
-                  <li class="active">
-                    <a href="${removeLink}">${item.name?html}&nbsp;
-                        <span class="alert-danger"><@fmt.message key='facets.remove' var="remove"/>${remove?html}</span>
+                  <li class="open">
+                    <a href="${removeLink}">${item.name?html}&nbsp;&nbsp;
+                      <@fmt.message key='facets.remove' var="remove"/>
+                      <span class="alert-danger" title="${remove?html}"><strong>&nbsp;X&nbsp;</strong></span>
                     </a>
                   </li>
                 <#else>
