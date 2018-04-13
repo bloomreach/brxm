@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
- * ContextResolvingValve
+ * ContextResolvingValve.
  */
 public class ContextResolvingValve extends AbstractBaseOrderableValve {
     
@@ -52,7 +52,8 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
         }
 
         try {
-            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
+            HstComponentWindow rootComponentWindow = createRootComponentWindow(context, rootComponentConfig);
+
             final HstContainerURL baseURL = requestContext.getBaseURL();
             final String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
             final String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
@@ -99,6 +100,19 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
         
         // continue
         context.invokeNext();
+    }
+
+    /**
+     * Create root component window from {@code rootComponentConfig}.
+     * @param context valve context
+     * @param rootComponentConfig root component config
+     * @return root component window from {@code rootComponentConfig}
+     */
+    protected HstComponentWindow createRootComponentWindow(ValveContext context,
+            HstComponentConfiguration rootComponentConfig) {
+        HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(),
+                context.getRequestContext(), rootComponentConfig, getComponentFactory());
+        return rootComponentWindow;
     }
 
     private void notFound(final String type, final String componentRenderingWindowReferenceNamespace, final ValveContext context) throws ContainerException {

@@ -102,7 +102,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
      * @param html rich text with possible link references
      * @param hippoHtmlNode the node that has child nodes that contain references to JCR nodes
      * @param requestContext the context for the current request
-     * @param targetMount mount that the links must point to
+     * @param targetMount mount that the links preferably point to. Implementation can choose to support cross mount links
+     *                    as well or not.
      * @return rewritten html with URLs
      */
     @Override
@@ -428,7 +429,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
      * Create an HstLink to a referenced node in rich text.
      * @param referencedNode the node to create a link to
      * @param requestContext the context for the current request
-     * @param targetMount mount that the link must point to. may be null
+     * @param targetMount mount that the link by preference points to. may be null. If not null, a link for a different
+     *                    {@link Mount} might be returned
      * @return link to the referenced node and optional target mount. target mount is ignored in case links must be canonical.
      * @throws RepositoryException if no path can be retrieved from the referencedNode
      */
@@ -445,7 +447,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         if (targetMount == null) {
             return requestContext.getHstLinkCreator().create(referencedNode, requestContext);
         } else {
-            return requestContext.getHstLinkCreator().create(referencedNode, targetMount);
+            return requestContext.getHstLinkCreator().create(referencedNode, targetMount, true);
         }
     }
 

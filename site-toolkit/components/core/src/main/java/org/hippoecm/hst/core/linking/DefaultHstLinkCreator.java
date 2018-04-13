@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -201,10 +201,15 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return linkResolver.resolveAllCanonicals(type, hostGroupName);
     }
 
-    
+    @Override
     public HstLink create(Node node, Mount mount) {
+        return create(node, mount, false);
+    }
+
+    @Override
+    public HstLink create(final Node node, final Mount mount, final boolean crossMount) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
-        linkResolver.resolverProperties.tryOtherMounts = false;
+        linkResolver.resolverProperties.tryOtherMounts = crossMount;
         // when linking to a mount, we always want get a canonical link:
         linkResolver.resolverProperties.canonicalLink = true;
         return linkResolver.resolve();

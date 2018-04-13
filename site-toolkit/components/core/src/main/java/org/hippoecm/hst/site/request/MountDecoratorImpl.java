@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
@@ -48,6 +47,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,6 +277,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public boolean isFinalPipeline() {
+            return delegatee.isFinalPipeline();
+        }
+
+        @Override
         public String getPageNotFound() {
             return delegatee.getPageNotFound();
         }
@@ -421,6 +426,17 @@ public class MountDecoratorImpl implements MountDecorator {
             return  builder.toString();
         }
 
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return delegatee.getResponseHeaders();
+        }
+
+        @Override
+        public boolean isExplicit() {
+            // although you might argue that a preview decorated mount is an implicit mount, we need to know in the
+            // channel mngr when we are dealing with an explicit configured Mount or not, hence we request the delegatee
+            return delegatee.isExplicit();
+        }
     }
 
     class PreviewDecoratedVirtualHost implements VirtualHost {
@@ -567,6 +583,11 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public boolean isCustomHttpsSupported() {
             return delegatee.isCustomHttpsSupported();
+        }
+
+        @Override
+        public Map<String, String> getResponseHeaders() {
+            return delegatee.getResponseHeaders();
         }
     }
 

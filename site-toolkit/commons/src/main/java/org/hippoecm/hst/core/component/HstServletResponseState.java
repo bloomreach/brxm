@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,15 +43,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.DOMUtils;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.HeadElementUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.HstResponseStateUtils;
 import org.hippoecm.hst.util.JsonSerializer;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.WrapperElementUtils;
@@ -61,6 +61,9 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
 
@@ -715,11 +718,48 @@ public class HstServletResponseState implements HstResponseState {
         this.preambleElements.add(element);
     }
 
+    public List<Node> getPreambleNodes() {
+        if (preambleComments == null && preambleElements == null) {
+            return Collections.emptyList();
+        }
+        List<Node> preambleNodes = new LinkedList<>();
+        if (preambleComments != null) {
+            preambleNodes.addAll(preambleComments);
+        }
+        if (preambleElements != null) {
+            preambleNodes.addAll(preambleElements);
+        }
+        return Collections.unmodifiableList(preambleNodes);
+    }
+
+    @Override
+    public void clearPreambleComments() {
+        if (preambleComments == null) {
+            return;
+        }
+        preambleComments.clear();
+    }
+
+    @Override
+    public void clearEpilogueComments() {
+        if (epilogueComments == null) {
+            return;
+        }
+        epilogueComments.clear();
+    }
+
     public void addEpilogueNode(Comment comment) {
         if (epilogueComments == null) {
             epilogueComments = new ArrayList<>();
         }
         epilogueComments.add(comment);
+    }
+
+    public List<Node> getEpilogueNodes() {
+        if (epilogueComments == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(epilogueComments);
     }
 
     public void setWrapperElement(Element element) {
@@ -949,7 +989,7 @@ public class HstServletResponseState implements HstResponseState {
     private void printComments(final List<Comment> comments, final Writer writer) throws IOException {
         if (comments != null) {
             for (Comment comment : comments) {
-                writer.write("<!--" + comment.getTextContent() + "-->");
+                HstResponseStateUtils.printComment(comment, writer);
                 writer.flush();
             }
         }
@@ -985,15 +1025,7 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public Comment createComment(String comment) {
-        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder;
-        try {
-            docBuilder = dbfac.newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            return doc.createComment(comment);
-        } catch (ParserConfigurationException e) {
-            throw new DOMException((short) 0, "Initialization failure");
-        }
+        return DOMUtils.createComment(comment);
     }
 
     protected void setResponseLocale(Locale locale) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,13 +146,48 @@ public class SiteMapResource extends AbstractConfigResource {
     @GET
     @Path("/picker")
     public Response getSiteMapTreePicker() {
-        return tryGet(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                AbstractTreePickerRepresentation representation = SiteMapTreePickerRepresentation.representRequestSiteMap(getPageComposerContextService());
-                return ok("Sitemap loaded successfully", representation);
-            }
+        return tryGet(() -> {
+            final AbstractTreePickerRepresentation representation = SiteMapTreePickerRepresentation.representRequestSiteMap(getPageComposerContextService());
+            return ok("Sitemap loaded successfully", representation);
         });
+    }
+
+    /**
+     * @param siteMapItemRefIdOrPath
+     * @return the rest response to create the client tree for <code>siteMapPathInfo</code> : the response contains the
+     * sitemap tree with all ancestor <code>HstSiteMapItem</code>'s of parameter <code>siteMapitemRefIdorPath</code>
+     * expanded.
+     */
+    @GET
+    @Path("/picker/{siteMapItemRefIdOrPath: .*}")
+    public Response getSiteMapTreePicker(final @PathParam("siteMapItemRefIdOrPath") String siteMapItemRefIdOrPath) {
+        return tryGet(() -> {
+            final PageComposerContextService service = getPageComposerContextService();
+            final HstSiteMapItem item = getHstSiteMapItem(siteMapItemRefIdOrPath, service);
+            final AbstractTreePickerRepresentation representation = item != null
+                    ? SiteMapTreePickerRepresentation.representExpandedParentTree(service, item)
+                    : SiteMapTreePickerRepresentation.representRequestSiteMap(service);
+
+            return ok("Sitemap for item " + siteMapItemRefIdOrPath + " loaded successfully", representation);
+        });
+    }
+
+    private static HstSiteMapItem getHstSiteMapItem(final String siteMapItemRefIdOrPath, final PageComposerContextService service) {
+        if (StringUtils.isEmpty(siteMapItemRefIdOrPath)) {
+            return null;
+        }
+
+        final HstSite site = service.getEditingPreviewSite();
+        final HstSiteMap siteMap = site.getSiteMap();
+        HstSiteMapItem item = siteMap.getSiteMapItem(siteMapItemRefIdOrPath);
+        if (item == null) {
+            item = siteMap.getSiteMapItemById(siteMapItemRefIdOrPath);
+        }
+
+        if (item == null){
+            item = siteMap.getSiteMapItemByRefId(siteMapItemRefIdOrPath);
+        }
+        return item;
     }
 
     @POST
@@ -276,7 +311,7 @@ public class SiteMapResource extends AbstractConfigResource {
                            .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper));
             }
         }
-        
+
         if (StringUtils.isNotBlank(mountId)) {
             // validate target mount has preview and a workspace
             preValidators.add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService(), mountId));

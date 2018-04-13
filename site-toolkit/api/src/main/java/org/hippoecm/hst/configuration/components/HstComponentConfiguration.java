@@ -271,11 +271,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     String getXType();
 
     /**
-     * @return the {@link Type} of this component
-     */
-    Type getComponentType();
-
-    /**
      * The filter tag (see {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags}) for this
      * component.
      *
@@ -294,11 +289,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * {@link HstComponentConfiguration}s with
      */
     boolean isPrototype();
-
-    /**
-     * @return the label if present and <code>null</code> otherwise
-     */
-    String getLabel();
 
     /**
      * @return the icon path if present and <code>null</code> otherwise. The iconPath should be a path relative to the

@@ -15,19 +15,16 @@
  */
 package org.hippoecm.hst.utils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
+import org.hippoecm.hst.util.ParametersInfoUtils;
 
 public class ParameterUtils {
 
@@ -75,16 +72,11 @@ public class ParameterUtils {
             return parametersInfo;
         }
 
-        // first, try the new ParametersInfo annotation
-        ParametersInfo annotation = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
+        parametersInfo =  ParametersInfoUtils.createParametersInfo(component, componentConfig, request);
 
-        if (annotation == null) {
-            return null; 
+        if (parametersInfo != null) {
+            request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
         }
-
-        HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
-        parametersInfo =  parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, (HttpServletRequest)request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
-        request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
 
         return parametersInfo;
     }
@@ -98,22 +90,12 @@ public class ParameterUtils {
      * @param annotationClass the class of the annotation to find
      * @param <A> the annotation, or null if the annotation could not be found
      * @return
+     * @deprecated Use {@link ParametersInfoUtils#getParameterAnnotation(ParametersInfo, String, Class)}.
      */
+    @Deprecated
     public static <A extends Annotation> A getParameterAnnotation(final ParametersInfo parametersInfo,
                                                                   final String parameterName,
                                                                   final Class<A> annotationClass) {
-        if (parametersInfo == null || parameterName == null || annotationClass == null) {
-            return null;
-        }
-
-        final Class<?> paramsInfoClass = parametersInfo.type();
-        for (Method method: paramsInfoClass.getMethods()) {
-            final Parameter parameter = method.getAnnotation(Parameter.class);
-            if (parameter != null && parameter.name().equals(parameterName)) {
-                return method.getAnnotation(annotationClass);
-            }
-        }
-
-        return null;
+        return ParametersInfoUtils.getParameterAnnotation(parametersInfo, parameterName, annotationClass);
     }
 }

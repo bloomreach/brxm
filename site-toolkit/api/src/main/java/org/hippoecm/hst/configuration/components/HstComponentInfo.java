@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -94,4 +94,15 @@ public interface HstComponentInfo {
      * @return {@code true} when possible waste messages about this component should be suppressed
      */
     boolean isSuppressWasteMessage();
+
+    /**
+     * @return the label if present and <code>null</code> otherwise
+     */
+    String getLabel();
+
+    /**
+     * @return the {@link HstComponentConfiguration.Type} of this component
+     */
+    HstComponentConfiguration.Type getComponentType();
+
 }

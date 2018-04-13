@@ -32,6 +32,12 @@ public interface HippoResourceBean extends HippoBean {
     String getMimeType();
 
     /**
+     * Get the file name of this resource or null if unavailable.
+     * @return the file name of this resource or null if unavailable
+     */
+    String getFilename();
+
+    /**
      *
      * @return the number of bytes of binary stored in this resource
      */

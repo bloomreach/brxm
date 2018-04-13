@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,11 +86,12 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
         return (AbstractTreePickerRepresentation) representation.getData();
     }
 
-    protected AbstractTreePickerRepresentation createExpandedTreeSiteMapItemRepresentation(final String pathInfo,
-                                                                       final String requestConfigContentIdentifier) throws Exception {
+    protected AbstractTreePickerRepresentation createExpandedSiteMapRepresentation(final String pathInfo,
+                                                                       final String requestConfigContentIdentifier,
+                                                                       final String siteMapPathInfo) throws Exception {
         mockNewRequest(session, "localhost", pathInfo, requestConfigContentIdentifier);
-        final SiteMapItemResource siteMapItemResource = createSiteMapItemResource();
-        final Response response = siteMapItemResource.getSiteMapItemTreePicker();
+        final SiteMapResource siteMapResource = createSiteMapResource();
+        final Response response = siteMapResource.getSiteMapTreePicker(siteMapPathInfo);
         final ExtResponseRepresentation representation = (ExtResponseRepresentation) response.getEntity();
         assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
         return (AbstractTreePickerRepresentation) representation.getData();

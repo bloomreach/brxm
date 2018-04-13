@@ -36,7 +36,6 @@ public class SiteMapPageRepresentation {
     private boolean inherited;
     private String relativeContentPath;
 
-
     public SiteMapPageRepresentation represent(final HstSiteMapItem item,
                                                final String parentId,
                                                final String mountPath,
@@ -146,5 +145,4 @@ public class SiteMapPageRepresentation {
     public void setRelativeContentPath(final String relativeContentPath) {
         this.relativeContentPath = relativeContentPath;
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +57,7 @@ public class HasNoChildMountNodeValidatorTest {
     }
 
     @Test(expected = ClientException.class)
-    public void has_exception_when_validating_mount_with_child_mounts() throws Exception {
+    public void has_exception_when_validating_mount_with_explicit_child_mounts() throws Exception {
         final Mount childMountA = createMock(Mount.class);
         final Mount childMountB = createMock(Mount.class);
         final Mount childMountC = createMock(Mount.class);
@@ -72,6 +71,9 @@ public class HasNoChildMountNodeValidatorTest {
         expect(childMountA.getMountPath()).andReturn("/a").anyTimes();
         expect(childMountB.getMountPath()).andReturn("/b").anyTimes();
         expect(childMountC.getMountPath()).andReturn("/a").anyTimes();
+        expect(childMountA.isExplicit()).andReturn(true).anyTimes();
+        expect(childMountB.isExplicit()).andReturn(true).anyTimes();
+        expect(childMountC.isExplicit()).andReturn(true).anyTimes();
 
         replay(mountFoo, mountBah, channel, childMountA, childMountB, childMountC);
 
@@ -83,6 +85,31 @@ public class HasNoChildMountNodeValidatorTest {
             assertThat(e.getParameterMap().get("childMountList"), is("/a, /b"));
             throw e;
         }
+    }
+
+    @Test
+    public void no_exception_when_validating_mount_with_only_implicit_children_mounts() throws Exception {
+        final Mount childMountA = createMock(Mount.class);
+        final Mount childMountB = createMock(Mount.class);
+        final Mount childMountC = createMock(Mount.class);
+        final List<Mount> childMounts = Arrays.asList(childMountA, childMountB, childMountC);
+        final Channel channel = createMock(Channel.class);
+
+        expect(mountFoo.getChildMounts()).andReturn(childMounts).anyTimes();
+        expect(mountFoo.getChannel()).andReturn(channel).anyTimes();
+        expect(mountBah.getChildMounts()).andReturn(Collections.emptyList()).anyTimes();
+        expect(channel.getName()).andReturn("foo").anyTimes();
+        expect(childMountA.getMountPath()).andReturn("/a").anyTimes();
+        expect(childMountB.getMountPath()).andReturn("/b").anyTimes();
+        expect(childMountC.getMountPath()).andReturn("/a").anyTimes();
+        expect(childMountA.isExplicit()).andReturn(false).anyTimes();
+        expect(childMountB.isExplicit()).andReturn(false).anyTimes();
+        expect(childMountC.isExplicit()).andReturn(false).anyTimes();
+
+        replay(mountFoo, mountBah, channel, childMountA, childMountB, childMountC);
+
+        validator.validate(null);
+
     }
 
 }

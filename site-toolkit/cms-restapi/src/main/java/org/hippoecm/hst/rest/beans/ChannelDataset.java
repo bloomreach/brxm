@@ -42,7 +42,7 @@ public class ChannelDataset extends AbstractDataset {
     @XmlElementWrapper(name = "channels")
     @XmlElements(@XmlElement(name = "channel"))
     public List<Channel> getChannels() {
-        return (channels != null) ? Collections.unmodifiableList(channels) : Collections.emptyList();
+        return (channels != null) ? channels : Collections.emptyList();
     }
 
     public void setChannels(List<Channel> channels) {

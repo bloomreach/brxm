@@ -26,6 +26,7 @@ import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 public class MockHippoResourceBean extends MockHippoBean implements HippoResourceBean {
 
     private String mimeType;
+    private String filename;
     private long length;
     private Calendar cal;
     private boolean blank;
@@ -35,6 +36,16 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
     // 8 * 1024 * 1024 = 8388608
     private static final BigDecimal DIVISOR_M_BYTE = new BigDecimal(8388608);
 
+    @Override
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(final String filename) {
+        this.filename = filename;
+    }
+
+    @Override
     public long getLength() {
         return length;
     }
@@ -43,11 +54,13 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
         this.length = length;
     }
 
+    @Override
     public BigDecimal getLengthKB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8 , DIVISOR_K_BYTE);
     }
 
+    @Override
     public BigDecimal getLengthMB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8, DIVISOR_M_BYTE);
@@ -67,6 +80,7 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
         return new BigDecimal(size).divide(divisor);
     }
 
+    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -75,6 +89,7 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
         this.mimeType = mimeType;
     }
 
+    @Override
     public Calendar getLastModified() {
         return cal;
     }

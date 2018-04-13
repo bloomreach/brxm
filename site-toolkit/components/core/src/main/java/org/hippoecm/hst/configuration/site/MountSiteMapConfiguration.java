@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 
@@ -39,6 +40,7 @@ public class MountSiteMapConfiguration {
     private final String[] defaultSiteMapItemHandlerIds;
     private final String locale;
     private final String namedPipeline;
+    private final boolean finalPipeline;
     private final boolean cacheable;
     private final String scheme;
     private final boolean schemeAgnostic;
@@ -47,12 +49,14 @@ public class MountSiteMapConfiguration {
     private int hashCode;
     private final String mountContentPath;
     private final String mountContextPath;
+    private final Map<String, String> responseHeaders;
 
     public MountSiteMapConfiguration(Mount mount) {
         parameters = mount.getParameters();
         defaultSiteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
         locale = mount.getLocale();
         namedPipeline = mount.getNamedPipeline();
+        finalPipeline = mount.isFinalPipeline();
         cacheable = mount.isCacheable();
         scheme = mount.getScheme();
         schemeAgnostic = mount.isSchemeAgnostic();
@@ -61,6 +65,7 @@ public class MountSiteMapConfiguration {
         hashCode = computeHashCode();
         mountContentPath = mount.getContentPath();
         mountContextPath = mount.getContextPath();
+        responseHeaders = mount.getResponseHeaders();
     }
 
     public Map<String, String> getParameters() {
@@ -77,6 +82,10 @@ public class MountSiteMapConfiguration {
 
     public String getNamedPipeline() {
         return namedPipeline;
+    }
+
+    public boolean isFinalPipeline() {
+        return finalPipeline;
     }
 
     public boolean isCacheable() {
@@ -105,6 +114,10 @@ public class MountSiteMapConfiguration {
 
     public String getMountContextPath() {
         return mountContextPath;
+    }
+
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
     }
 
     @Override
@@ -139,6 +152,9 @@ public class MountSiteMapConfiguration {
         if (namedPipeline != null ? !namedPipeline.equals(that.namedPipeline) : that.namedPipeline != null) {
             return false;
         }
+        if (finalPipeline != that.isFinalPipeline()) {
+            return false;
+        }
         if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) {
             return false;
         }
@@ -149,6 +165,9 @@ public class MountSiteMapConfiguration {
             return false;
         }
         if (mountContextPath != null ? !mountContextPath.equals(that.mountContextPath) : that.mountContextPath != null) {
+            return false;
+        }
+        if (!Objects.equals(responseHeaders, that.responseHeaders)) {
             return false;
         }
 
@@ -172,6 +191,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (defaultResourceBundleIds != null ? Arrays.hashCode(defaultResourceBundleIds) : 0);
         result = 31 * result + (mountContentPath != null ? mountContentPath.hashCode() : 0);
         result = 31 * result + (mountContextPath != null ? mountContextPath.hashCode() : 0);
+        result = 31 * result + (responseHeaders != null ? responseHeaders.hashCode() : 0);
         return result;
     }
 }

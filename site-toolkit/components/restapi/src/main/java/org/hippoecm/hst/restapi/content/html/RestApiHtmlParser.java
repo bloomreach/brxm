@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,6 @@ public class RestApiHtmlParser {
                         log.debug("Remove query string '{}' for '{}' for content node '{}'", queryString, documentPath, htmlNode.getPrimaryItem());
                         documentPath = StringUtils.substringBefore(documentPath, "?");
                     }
-                    // NOTE do not include the current Mount as target mount since then cross mount hst links won't be resolved
                     final HstLink hstLink = getDocumentLink(documentPath, htmlNode, requestContext, null);
                     final Link apiLink;
                     if (hstLink == null) {
@@ -131,7 +130,6 @@ public class RestApiHtmlParser {
                 if (isEmpty(srcPath) || isExternal(srcPath)) {
                     continue;
                 } else {
-                    // NOTE do not include the current Mount as target mount since then cross mount hst links won't be resolved
                     HstLink binaryLink = getBinaryLink(srcPath, htmlNode, requestContext, null);
                     image.removeAttribute("src");
                     final String shortPath = shortenPath(srcPath, shortPathToSrcPathMap);

@@ -42,7 +42,7 @@ public class BlueprintDataset extends AbstractDataset {
     @XmlElementWrapper(name = "blueprints")
     @XmlElements(@XmlElement(name = "blueprint"))
     public List<Blueprint> getBlueprints() {
-        return (blueprints != null) ? Collections.unmodifiableList(blueprints) : Collections.emptyList();
+        return (blueprints != null) ? blueprints : Collections.emptyList();
     }
 
     public void setBlueprints(List<Blueprint> blueprints) {

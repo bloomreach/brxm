@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -61,12 +60,15 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
-    protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<String, Map<String, String []>>();
-    protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<String, Map<String, Object>>();
+    protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<>();
+    protected Map<String, Map<String, Object>> namespaceAttributesMap = new HashMap<>();
     protected HstComponentWindow componentWindow;
     protected String parameterNameComponentSeparator;
     protected boolean referenceNamespaceIgnored;
-    
+
+    private Map<String, Object> modelsMap = new HashMap<>();
+    private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
+
     public HstRequestImpl(HttpServletRequest servletRequest, HstRequestContext requestContext, HstComponentWindow componentWindow, String lifecyclePhase) {
         super(servletRequest);
         this.lifecyclePhase = lifecyclePhase;
@@ -168,7 +170,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public String getReferenceNamespace() {
         return this.componentWindow.getReferenceNamespace();
     }
-    
+
     public Map<String, Object> getAttributeMap(String referencePath) {
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
@@ -387,4 +389,34 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public String getLifecyclePhase() {
         return this.lifecyclePhase;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getModel(String name) {
+        return (T) getModelsMap().get(name);
+    }
+
+    @Override
+    public Iterable<String> getModelNames() {
+        return Collections.unmodifiableSet(getModelsMap().keySet());
+    }
+
+    @Override
+    public Map<String, Object> getModelsMap() {
+        return unmodifiableModelsMap;
+    }
+
+    @Override
+    public Object setModel(String name, Object model) {
+        setAttribute(name, model);
+        return modelsMap.put(name, model);
+    }
+
+    @Override
+    public void removeModel(String name) {
+        if (modelsMap.remove(name) != null) {
+            removeAttribute(name);
+        }
+    }
+
 }
