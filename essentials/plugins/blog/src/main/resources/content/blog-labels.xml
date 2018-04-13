@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -61,6 +61,8 @@
         <sv:property sv:multiple="true" sv:name="resourcebundle:descriptions" sv:type="String">
             <sv:value>Header used in "more blogs from same author", prefix to the author name.</sv:value>
             <sv:value>Message displayed when no other blogs from same author were found.</sv:value>
+            <sv:value/>
+            <sv:value/>
         </sv:property>
         <sv:property sv:name="resourcebundle:id" sv:type="String">
             <sv:value>essentials.blog</sv:value>
@@ -68,10 +70,14 @@
         <sv:property sv:multiple="true" sv:name="resourcebundle:keys" sv:type="String">
             <sv:value>blog.moreby</sv:value>
             <sv:value>blog.notfound</sv:value>
+            <sv:value>blog.read.post</sv:value>
+            <sv:value>blog.back.to.list</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="resourcebundle:messages" sv:type="String">
             <sv:value>More by</sv:value>
             <sv:value>No other posts found.</sv:value>
+            <sv:value>&gt; Read the entire blog post</sv:value>
+            <sv:value>&lt; Back to blog posts</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

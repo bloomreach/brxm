@@ -2,7 +2,7 @@
   "id": "blogPlugin",
   "name": "Blog",
   "icon": "/essentials/feature/images/blog-plugin-icon.png",
-  "introduction": "With Blog, you add complete blog functionality to your project. This feature will be installed as a set of drag-and-drop components in the component library of the Channel Manager. It can be configured to have a scheduled import from multiple data sources, e.g. RSS.",
+  "introduction": "With Blog, you add complete blog functionality to your project. This feature will be installed as a set of drag-and-drop components in the component library of the Channel Manager. It can be configured to have a scheduled import from multiple data sources, e.g. RSS. This feature contains an example of selecting content by using Facets.",
   "description": "<ul><li>This feature installs several new document types: Account (Compound), Author and Blog Document.</li><li>A structured document tree is created in the project: blog/&lt;year&gt;/&lt;month&gt;/&lt;blogdocument&gt; and blog/authors/&lt;author&gt;.</li><li>Several drag-and-drop components are added to the component library in the Channel Manager: Blog List, Blog posts by author and Facets.</li><li>Some sample blog articles and authors are installed and a page (with corresponding menu entry) with an example blog is created.</li></ul>",
   "imageUrls": [
     "/essentials/feature/images/screenshots/blog01.png",
