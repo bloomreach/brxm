@@ -112,10 +112,10 @@
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <classifier>jdk15</classifier>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.core</artifactId>
@@ -134,6 +134,10 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>    
 
     <!-- TEST -->
     <dependency>
