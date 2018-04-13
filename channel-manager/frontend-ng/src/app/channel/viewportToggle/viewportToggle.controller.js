@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+const DEFAULT_VIEWPORT_WIDTHS = {
+  desktop: 1280,
+  tablet: 720,
+  phone: 320,
+};
+
 class ViewportToggleCtrl {
   constructor($translate, ChannelService, ViewportService) {
     'ngInject';
@@ -30,6 +36,7 @@ class ViewportToggleCtrl {
 
   setViewports() {
     const viewportMap = this.ChannelService.getChannel().viewportMap;
+    const viewportWidths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
 
     this.viewports = [
       {
@@ -40,17 +47,17 @@ class ViewportToggleCtrl {
       {
         id: 'DESKTOP',
         icon: 'desktop',
-        width: viewportMap.desktop ? viewportMap.desktop : 1280,
+        width: viewportWidths.desktop,
       },
       {
         id: 'TABLET',
         icon: 'tablet',
-        width: viewportMap.tablet ? viewportMap.tablet : 720,
+        width: viewportWidths.tablet,
       },
       {
         id: 'PHONE',
         icon: 'phone',
-        width: viewportMap.phone ? viewportMap.phone : 320,
+        width: viewportWidths.phone,
       },
     ];
   }
