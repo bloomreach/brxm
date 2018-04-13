@@ -41,6 +41,7 @@
 
     <jsp-api.version>2.2</jsp-api.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <commons-lang3.version>3.5</commons-lang3.version>
     <dom4j.version>2.1.0</dom4j.version>
     <junit.version>4.12</junit.version>
     <filesync.override>false</filesync.override>
@@ -90,6 +91,12 @@
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>      
 
       <dependency>
         <groupId>org.freemarker</groupId>
