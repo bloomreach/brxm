@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,12 +73,22 @@
         handler: this.componentPropertiesPanel.deleteComponent
       });
 
-      this.closeButon = new Ext.Button({
+      this.closeButton = new Ext.Button({
         xtype: 'button',
         cls: 'btn btn-default qa-close-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-close'],
         scope: this,
         handler: this.close
+      });
+
+      this.saveCloseButton = new Ext.Button({
+        xtype: 'button',
+        cls: 'btn btn-default qa-save-close-button',
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save-close'],
+        scope: this,
+        handler: function () {
+          this.componentPropertiesPanel.saveAll(false).then(this.close.bind(this));
+        }
       });
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
@@ -90,7 +100,8 @@
           this.deleteComponentButton,
           {xtype: 'tbfill'},
           this.saveButton,
-          this.closeButon
+          this.closeButton,
+          this.saveCloseButton
         ]
       }));
     },
@@ -149,6 +160,7 @@
       }
 
       this.saveButton.setDisabled(disableSaveButton);
+      this.saveCloseButton.setDisabled(disableSaveButton);
     },
 
     showComponent: function (component, container, page) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -523,10 +523,9 @@
 
     /**
      * Save all dirty forms in the panel
-     * @param success
-     * @param fail
+     * @param fireEvent
      */
-    saveAll: function () {
+    saveAll: function (fireEvent = true) {
       var dirtyEditors = this._getDirtyEditors(),
         savePromises = [],
         dirtyVariantIds = [],
@@ -543,7 +542,9 @@
           savedVariantIds = Ext.pluck(mapVariantIds, "newId");
 
         activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
-        this._onSaved(savedVariantIds, activeVariantId);
+        if (fireEvent) {
+          this._onSaved(savedVariantIds, activeVariantId);
+        }
 
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
