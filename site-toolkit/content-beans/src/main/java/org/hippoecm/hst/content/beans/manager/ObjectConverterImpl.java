@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -34,20 +33,19 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class ObjectConverterImpl implements ObjectConverter {
@@ -253,7 +251,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         final VersionHistory versionHistory = getVersionHistory(requestContext, node, mount);
 
         if (versionHistory == null) {
-            // there is not history at all
+            // there is no history at all
             return node;
         }
 
@@ -276,6 +274,9 @@ public class ObjectConverterImpl implements ObjectConverter {
     private VersionHistory getVersionHistory(final HstRequestContext requestContext, final Node documentVariant, final Mount mount) throws RepositoryException {
         if (mount.isPreview()) {
             // document is already preview, so we can directly access the version history
+            if (!documentVariant.isNodeType(MIX_VERSIONABLE)) {
+                return null;
+            }
             return documentVariant.getSession().getWorkspace().getVersionManager().getVersionHistory(documentVariant.getPath());
         } else {
             final Session previewSession = (Session) requestContext.getAttribute(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME);
@@ -286,6 +287,9 @@ public class ObjectConverterImpl implements ObjectConverter {
 
             if (previewSession.nodeExists(documentVariant.getPath())) {
                 final Node previewVariant = previewSession.getNode(documentVariant.getPath());
+                if (!previewVariant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                    return null;
+                }
                 return previewSession.getWorkspace().getVersionManager().getVersionHistory(previewVariant.getPath());
             } else {
                 log.debug("There is no preview variant of '{}' hence cannot retrieve version history", documentVariant.getPath());
