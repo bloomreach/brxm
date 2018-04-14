@@ -23,8 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.ProxyFactory;
@@ -97,6 +97,7 @@ public class HippoBeanFrozenNodeUtils {
                         primaryNodeTypeInterceptor,
                         new Class[]{NodeType.class});
 
+        final HippoNodeWrapper wrapper = new HippoNodeWrapper();
 
         final Interceptor nodeInterceptor = invocation -> {
             final Method method = invocation.getMethod();
@@ -130,7 +131,8 @@ public class HippoBeanFrozenNodeUtils {
                     return proxyGetNodes(frozenNode, absWorkspacePath, (String) arguments[0]);
                 }
             } else if ("getCanonicalNode".equals(methodName)) {
-                return frozenNode;
+                // just return the proxy object itself since that is the canonical we are looking for
+                return wrapper.getHippoNode();
             } if ("getDisplayName".equals(methodName)) {
                 // TODO how to get the display name? Property lookup?
                 return frozenNode.getName();
@@ -150,26 +152,49 @@ public class HippoBeanFrozenNodeUtils {
         HippoNode pretenderNode = (HippoBeanFrozenNode) proxyFactory
                 .createInterceptorProxy(frozenNode, nodeInterceptor, new Class[]{HippoBeanFrozenNode.class});
 
+        wrapper.setHippoNode(pretenderNode);
+
         return pretenderNode;
     }
 
-    private static Boolean proxyIsNodeType(final Node frozenNode, final String nodeType) throws RepositoryException {
-        // TODO this does not check super types yet! Needs improvement. Most likely via the node type registry
+    private static class HippoNodeWrapper {
 
-        if (frozenNode.isNodeType(nodeType)) {
+        private HippoNode hippoNode;
+
+        public HippoNode getHippoNode() {
+            return hippoNode;
+        }
+
+        public void setHippoNode(final HippoNode hippoNode) {
+            this.hippoNode = hippoNode;
+        }
+    }
+
+    private static Boolean proxyIsNodeType(final Node frozenNode, final String isOfNodeType) throws RepositoryException {
+
+        if (frozenNode.isNodeType(isOfNodeType)) {
+            // we also return true if the check is whether we are dealing with a frozen node
             return TRUE;
         }
 
-        String frozenType = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+        final NodeTypeManager nodeTypeManager = frozenNode.getSession().getWorkspace().getNodeTypeManager();
 
-        if (nodeType.equals(frozenType)) {
+
+        final String originalTypeString = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+
+        // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
+        final NodeType originalType = nodeTypeManager.getNodeType(originalTypeString);
+
+        if (originalType.isNodeType(isOfNodeType)) {
             return TRUE;
         }
 
         for (NodeType mixinType : frozenNode.getMixinNodeTypes()) {
-            frozenType = mixinType.getName();
+            final String originalMixinTypeString = mixinType.getName();
+            // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
+            final NodeType originalMixinType = nodeTypeManager.getNodeType(originalMixinTypeString);
 
-            if (nodeType.equals(frozenType)) {
+            if (originalMixinType.isNodeType(isOfNodeType)) {
                 return TRUE;
             }
         }
