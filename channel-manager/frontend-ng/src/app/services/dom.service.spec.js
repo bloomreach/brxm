@@ -21,20 +21,17 @@ describe('DomService', () => {
   let BrowserService;
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
-  const documentMock = [{
-    location: {
-      pathname: '/app/root/index.html',
-      host: 'localhost:8080',
-    },
-  }];
-  documentMock.on = angular.noop;
-  documentMock.off = angular.noop;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     angular.mock.module(($provide) => {
-      $provide.value('$document', documentMock);
+      $provide.value('$document', [{
+        location: {
+          pathname: '/app/root/index.html',
+          host: 'localhost:8080',
+        },
+      }]);
     });
 
     inject((_BrowserService_, _DomService_) => {

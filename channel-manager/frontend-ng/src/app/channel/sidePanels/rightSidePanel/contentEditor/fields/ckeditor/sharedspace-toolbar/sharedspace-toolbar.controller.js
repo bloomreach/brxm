@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ class SharedSpaceToolbar {
 
     this.$rootScope = $rootScope;
     this.$element = $element;
+
+    this.isVisible = this.isVisible || false;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
     this.showBottomToolbar = null;
   }
 
   $onInit() {
-    this.isVisible = this.isVisible === true;
     this.SharedSpaceToolbarService.registerTriggerCallback(this.setToolbarVisible.bind(this));
     this.sharedSpaceElement = this.$element.find('.ckeditor-shared-space');
     this.rightSidePanelContent = $('.rightSidePanel-content');
