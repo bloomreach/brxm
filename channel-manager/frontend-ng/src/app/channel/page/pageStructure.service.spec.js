@@ -22,7 +22,7 @@ describe('PageStructureService', () => {
   let PageMetaDataService;
   let ChannelService;
   let HstService;
-  let RenderingService;
+  let MarkupService;
   let HippoIframeService;
   let FeedbackService;
   let MaskService;
@@ -45,7 +45,7 @@ describe('PageStructureService', () => {
       _PageMetaDataService_,
       _ChannelService_,
       _HstService_,
-      _RenderingService_,
+      _MarkupService_,
       _HippoIframeService_,
       _FeedbackService_,
       _MaskService_,
@@ -59,7 +59,7 @@ describe('PageStructureService', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       HstService = _HstService_;
-      RenderingService = _RenderingService_;
+      MarkupService = _MarkupService_;
       HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
       MaskService = _MaskService_;
@@ -422,7 +422,7 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(''));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(''));
 
     PageStructureService.removeComponentById('aaaa');
 
@@ -606,6 +606,26 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
+  it('records a change when adding a new component to a container successfully', (done) => {
+    const catalogComponent = {
+      id: 'foo-bah',
+      name: 'Foo Bah Component',
+    };
+    const mockContainer = jasmine.createSpyObj(['getId']);
+    mockContainer.getId.and.returnValue('container-1');
+
+    spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
+
+    PageStructureService.addComponentToContainer(catalogComponent, mockContainer)
+      .then((newComponentId) => {
+        expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+        expect(newComponentId).toEqual('newUuid');
+        done();
+      });
+    $rootScope.$digest();
+  });
+
   it('prints parsed elements', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
@@ -668,7 +688,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -694,7 +714,7 @@ describe('PageStructureService', () => {
         </div>
       <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('component-no-markup');
     $rootScope.$digest();
 
@@ -716,7 +736,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -736,7 +756,7 @@ describe('PageStructureService', () => {
         <p>Re-rendered component B</p>
       <!-- { "HST-End": "true", "uuid": "bbbb" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     PageStructureService.renderComponent('bbbb');
     PageStructureService.renderComponent('bbbb');
@@ -748,12 +768,12 @@ describe('PageStructureService', () => {
 
   it('gracefully handles requests to re-render an unknown component', () => {
     spyOn($log, 'warn');
-    spyOn(RenderingService, 'fetchComponentMarkup');
+    spyOn(MarkupService, 'fetchComponentMarkup');
 
     PageStructureService.renderComponent('unknown-component');
 
     expect($log.warn).toHaveBeenCalled();
-    expect(RenderingService.fetchComponentMarkup).not.toHaveBeenCalled();
+    expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
   });
 
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
@@ -767,7 +787,7 @@ describe('PageStructureService', () => {
         </p>
       `;
     spyOn($log, 'error');
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     PageStructureService.renderComponent('aaaa');
     $rootScope.$digest();
 
@@ -787,7 +807,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -808,7 +828,7 @@ describe('PageStructureService', () => {
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -831,7 +851,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     PageStructureService.renderComponent('aaaa');
@@ -853,7 +873,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
     const propertiesMap = {
@@ -912,7 +932,7 @@ describe('PageStructureService', () => {
         <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       <!-- { "HST-End": "true", "uuid": "container-nomarkup" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
@@ -928,7 +948,7 @@ describe('PageStructureService', () => {
     const updatedMarkup = `
       <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
       <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->`;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
@@ -968,7 +988,7 @@ describe('PageStructureService', () => {
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.getContainers().length).toBe(1);
       expect(PageStructureService.getContainers()[0]).toBe(newContainer);
@@ -1005,7 +1025,7 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
       done();
@@ -1031,7 +1051,7 @@ describe('PageStructureService', () => {
       `;
 
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
 
     PageStructureService.renderContainer(container).then(() => {
       expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
@@ -1057,7 +1077,7 @@ describe('PageStructureService', () => {
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
       done();
@@ -1083,11 +1103,147 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
       <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
       `;
-    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
       done();
     });
     $rootScope.$digest();
+  });
+
+  describe('move component', () => {
+    function componentIds(container) {
+      return container.getComponents().map(component => component.getId());
+    }
+
+    it('can move the first component to the second position in the container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const componentA = container.getComponents()[0];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
+
+      PageStructureService.moveComponent(componentA, container, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('can move the second component to the first position in the container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const componentA = container.getComponents()[0];
+      const componentB = container.getComponents()[1];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
+
+      PageStructureService.moveComponent(componentB, container, componentA);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('can move a component to another container', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent');
+      expect(componentIds(container1)).toEqual(['aaaa', 'bbbb']);
+      expect(componentIds(container2)).toEqual([]);
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(componentIds(container1)).toEqual(['bbbb']);
+      expect(componentIds(container2)).toEqual(['aaaa']);
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved within a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+
+      const container = PageStructureService.getContainers()[0];
+      const component = container.getComponents()[0];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValue($q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved out of a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.reject(), $q.resolve());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+
+    it('shows an error when a component is moved into a container that just got locked by another user', () => {
+      registerVBoxContainer();
+      registerVBoxComponent('componentA');
+      registerEmptyVBoxContainer();
+
+      const container1 = PageStructureService.getContainers()[0];
+      const component = container1.getComponents()[0];
+      const container2 = PageStructureService.getContainers()[1];
+
+      spyOn(HstService, 'updateHstComponent').and.returnValues($q.resolve(), $q.reject());
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.moveComponent(component, container2, undefined);
+      $rootScope.$digest();
+
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
+        component: 'component A',
+      });
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
   });
 });

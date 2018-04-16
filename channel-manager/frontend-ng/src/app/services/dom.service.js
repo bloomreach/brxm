@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,18 @@ class DomService {
     const location = this.$document[0].location;
     const appPath = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
     return `//${location.host}${appPath}`;
+  }
+
+  getIframeWindow(iframeJQueryElement) {
+    return iframeJQueryElement[0].contentWindow;
+  }
+
+  hasIframeDocument(iframeJQueryElement) {
+    return !!this.getIframeDocument(iframeJQueryElement);
+  }
+
+  getIframeDocument(iframeJQueryElement) {
+    return iframeJQueryElement.contents()[0];
   }
 
   addCss(window, css) {

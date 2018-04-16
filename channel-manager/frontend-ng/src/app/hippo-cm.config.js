@@ -25,11 +25,15 @@ function config(
   $mdDateLocaleProvider,
   $mdIconProvider,
   $mdThemingProvider,
+  $qProvider,
   $stateProvider,
   $translateProvider,
   $urlRouterProvider,
 ) {
   'ngInject';
+
+  // FIXME This suppresses all uncaught promises
+  $qProvider.errorOnUnhandledRejections(false);
 
   $urlRouterProvider.otherwise('/');
 

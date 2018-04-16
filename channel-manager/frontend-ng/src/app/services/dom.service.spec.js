@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,20 @@ describe('DomService', () => {
   let BrowserService;
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
+  const documentMock = [{
+    location: {
+      pathname: '/app/root/index.html',
+      host: 'localhost:8080',
+    },
+  }];
+  documentMock.on = angular.noop;
+  documentMock.off = angular.noop;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     angular.mock.module(($provide) => {
-      $provide.value('$document', [{
-        location: {
-          pathname: '/app/root/index.html',
-          host: 'localhost:8080',
-        },
-      }]);
+      $provide.value('$document', documentMock);
     });
 
     inject((_BrowserService_, _DomService_) => {
@@ -50,7 +53,31 @@ describe('DomService', () => {
     iframe.attr('src', `${fixturesPath}/services/dom.service.iframe.fixture.html`);
   }
 
-  it('should add a style file to the head', (done) => {
+  it('returns the window of an iframe', (done) => {
+    testInIframe((iframeWindow) => {
+      const iframe = $j('#testIframe');
+      expect(DomService.getIframeWindow(iframe)).toEqual(iframeWindow);
+      done();
+    });
+  });
+
+  it('knows whether an iframe has a document', (done) => {
+    testInIframe(() => {
+      const iframe = $j('#testIframe');
+      expect(DomService.hasIframeDocument(iframe)).toEqual(true);
+      done();
+    });
+  });
+
+  it('returns the document of an iframe', (done) => {
+    testInIframe((iframeWindow) => {
+      const iframe = $j('#testIframe');
+      expect(DomService.getIframeDocument(iframe)).toEqual(iframeWindow.document);
+      done();
+    });
+  });
+
+  it('adds a style file to the head', (done) => {
     testInIframe((iframeWindow) => {
       const cssFile = `${fixturesPath}/services/dom.service.fixture.css`;
       $j.get(cssFile).done((cssData) => {
@@ -62,7 +89,7 @@ describe('DomService', () => {
     });
   });
 
-  it('should add a CSS link tag to the head', (done) => {
+  it('adds a CSS link tag to the head', (done) => {
     testInIframe((iframeWindow) => {
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
@@ -78,7 +105,7 @@ describe('DomService', () => {
     });
   });
 
-  it('should add a script file to the body', (done) => {
+  it('adds a script file to the body', (done) => {
     testInIframe((iframeWindow) => {
       const script = `${fixturesPath}/services/dom.service.fixture.js`;
       expect(iframeWindow.DomServiceTestScriptLoaded).not.toBeDefined();
@@ -110,7 +137,7 @@ describe('DomService', () => {
     }
   }
 
-  it('should copy the computed style of an element', () => {
+  it('copies the computed style of an element', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -132,7 +159,7 @@ describe('DomService', () => {
     expect(target.css('width')).toEqual('42px');
   });
 
-  it('should copy the computed style of an element except excluded properties', () => {
+  it('copies the computed style of an element except excluded properties', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -144,7 +171,7 @@ describe('DomService', () => {
     expect(target.css('position')).toEqual('static');
   });
 
-  it('should copy the computed style of descendants', () => {
+  it('copies the computed style of descendants', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -153,7 +180,7 @@ describe('DomService', () => {
     expectEqualComputedStyle(source.find('*'), target.find('*'));
   });
 
-  it('should copy the computed style of descendants except excluded properties', () => {
+  it('copies the computed style of descendants except excluded properties', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -164,7 +191,7 @@ describe('DomService', () => {
     expect(target.find('ul').css('color')).toEqual('rgb(0, 0, 0)');
   });
 
-  it('should create a mousedown event', () => {
+  it('creates a mousedown event', () => {
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('mousedown');
     expect(mouseDownEvent.bubbles).toEqual(true);
@@ -173,7 +200,7 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('should create a mousedown event in Edge', () => {
+  it('creates a mousedown event in Edge', () => {
     spyOn(BrowserService, 'isEdge').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('pointerdown');
@@ -183,7 +210,7 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('should create a mousedown event in IE11', () => {
+  it('creates a mousedown event in IE11', () => {
     spyOn(BrowserService, 'isIE').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('MSPointerDown');
@@ -193,24 +220,24 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('should calculate the scroll bar width', () => {
+  it('calculates the scroll bar width', () => {
     const width = DomService.getScrollBarWidth();
     expect(width).toBeGreaterThan(-1);
   });
 
-  it('should check if an element is hidden on the page', () => {
+  it('checks if an element is hidden on the page', () => {
     $j('.shouldBeHidden').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(false);
     });
   });
 
-  it('should check if an element is visible on the page', () => {
+  it('checks if an element is visible on the page', () => {
     $j('.shouldBeVisible').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(true);
     });
   });
 
-  it('should check whether the body is visible', () => {
+  it('checks whether the body is visible', () => {
     expect(DomService.isVisible($j(document.body))).toBe(true);
   });
 

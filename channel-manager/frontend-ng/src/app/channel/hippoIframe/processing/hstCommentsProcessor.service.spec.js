@@ -18,13 +18,13 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('HstCommentsProcessorService', () => {
-  let hstCommentsProcessorService;
+  let HstCommentsProcessorService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_hstCommentsProcessorService_) => {
-      hstCommentsProcessorService = _hstCommentsProcessorService_;
+    inject((_HstCommentsProcessorService_) => {
+      HstCommentsProcessorService = _HstCommentsProcessorService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/processing/hstCommentsProcessor.service.fixture.html');
@@ -33,7 +33,7 @@ describe('HstCommentsProcessorService', () => {
   it('should process comments with DOM-walking', () => {
     const fixture = $j('#jasmine-fixtures')[0];
     const gatheredData = [];
-    hstCommentsProcessorService.processCommentsWithDomWalking(fixture, (element, json) => {
+    HstCommentsProcessorService.processCommentsWithDomWalking(fixture, (element, json) => {
       gatheredData.push(json);
     });
 
@@ -46,21 +46,21 @@ describe('HstCommentsProcessorService', () => {
   });
 
   it('should gracefully handle an undefined element when DOM-walking', () => {
-    expect(hstCommentsProcessorService.processCommentsWithDomWalking).not.toThrow();
+    expect(HstCommentsProcessorService.processCommentsWithDomWalking).not.toThrow();
   });
 
   it('should not invoke callback when JSON data is invalid', () => {
     const fixture = $j('#qa-invalid-json')[0];
     const observer = { callback: angular.noop };
     spyOn(observer, 'callback');
-    hstCommentsProcessorService.processCommentsWithDomWalking(fixture, observer.callback);
+    HstCommentsProcessorService.processCommentsWithDomWalking(fixture, observer.callback);
 
     expect(observer.callback).not.toHaveBeenCalled();
   });
 
   it('should not do anything where there is no document', () => {
     expect(() => {
-      hstCommentsProcessorService.run(undefined, () => {
+      HstCommentsProcessorService.run(undefined, () => {
         fail('callback should not have been called');
       });
     }).toThrow(new Error('DOM document is empty'));
