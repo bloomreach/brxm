@@ -100,11 +100,13 @@ describe('ProjectService', () => {
   it('selects the core if the selectedProject is not a project', () => {
     $httpBackend.expectDELETE('/test/ws/projects/activeProject').respond(200, currentProject.id);
     ProjectService.updateSelectedProject('something');
+    $httpBackend.flush();
   });
 
   it('calls setproject if the selectedProject is a project', () => {
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${projects[1].id}`).respond(200, currentProject.id);
     ProjectService.updateSelectedProject(projects[1].id);
+    $httpBackend.flush();
   });
 
   it('rejects a channel while providing a message', () => {
