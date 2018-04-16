@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.3.0-spaplus-SNAPSHOT</version>
+    <version>5.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-frontend-ng</artifactId>
@@ -45,7 +45,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>ci</commandlineArgs>
             </configuration>
           </execution>
           <execution>
