@@ -863,7 +863,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
-
+        expect(DocumentStateUtils.getDocumentState(draft)).andReturn(DocumentState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
@@ -879,6 +879,7 @@ public class DocumentsServiceImplTest {
         final Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale, emptyMap());
 
         assertThat(persistedDocument, equalTo(document));
+        assertThat(persistedDocument.getInfo().getState(), equalTo(DocumentState.CHANGED));
         verifyAll();
     }
 
@@ -903,6 +904,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(DocumentStateUtils.getDocumentState(draft)).andReturn(DocumentState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
@@ -921,6 +923,7 @@ public class DocumentsServiceImplTest {
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
         assertThat(persistedDocument.getFields(), equalTo(document.getFields()));
         assertThat(persistedDocument.getInfo().isDirty(), equalTo(false));
+        assertThat(persistedDocument.getInfo().getState(), equalTo(DocumentState.CHANGED));
         verifyAll();
     }
 

@@ -159,6 +159,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session)));
 
+        setDocumentState(document, draft);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
