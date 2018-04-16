@@ -21,18 +21,19 @@
   </form>
   <c:if test="${requestScope.facets ne null}">
     <c:set var="facetLimit" value="50"/>
-    <ul class="nav nav-list">
+    <ul class="nav">
       <c:forEach var="facetvalue" items="${requestScope.facets.folders}">
         <c:if test="${not empty facetvalue.folders}">
           <li><label class="nav-header"><c:out value="${facetvalue.name}"/></label>
-            <ul class="nav nav-list">
+            <ul class="nav">
               <c:forEach items="${facetvalue.folders}" var="item" varStatus="index">
                 <c:choose>
                   <c:when test="${item.leaf and item.count gt 0}">
                     <hst:facetnavigationlink remove="${item}" current="${requestScope.facets}" var="removeLink"/>
-                    <li class="active">
-                      <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;
-                        <span class="alert-danger"><fmt:message key='facets.remove' var="remove"/><c:out value="${remove}"/></span>
+                    <li class="open">
+                      <a href="${removeLink}"><c:out value="${item.name}"/>&nbsp;&nbsp;
+                        <fmt:message key='facets.remove' var="remove"/>
+                        <span class="alert-danger" title="<c:out value='${remove}'/>"><strong>&nbsp;X&nbsp;</strong></span>
                       </a>
                     </li>
                   </c:when>

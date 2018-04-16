@@ -2,6 +2,7 @@
 
 <%--@elvariable id="item" type="{{beansPackage}}.Blogpost"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<hst:setBundle basename="essentials.blog"/>
 <c:if test="${requestScope.pageable ne null}">
   <div>
     <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
@@ -15,6 +16,8 @@
           </p>
         </c:if>
         <p><c:out value="${item.introduction}"/></p>
+        <fmt:message key="blog.read.post" var="msg"/>
+        <a href="${link}"><c:out value="${msg}"/></a>
       </article>
     </c:forEach>
     <c:if test="${requestScope.cparam.showPagination}">

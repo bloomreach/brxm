@@ -41,7 +41,7 @@
       <sv:value>ipsum</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
-      <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</sv:value>
+      <sv:value>Aperiri insolens invenire vis id, ex vel rebum clita postulant. Fierent tractatos adversarium no eam, eam cu libris habemus placerat, partem accusata his ad. Ne vel inimicus referrentur.</sv:value>
     </sv:property>
     <sv:property sv:name="{{namespace}}:publicationdate" sv:type="Date">
       <sv:value>{{jcrDate}}</sv:value>
@@ -92,43 +92,25 @@
         <sv:value>&lt;html&gt;
           &lt;body&gt;
 
-          &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
-          roots in a piece of classical Latin literature from 45 BC, making it over 2000
-          years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
-          Virginia, looked up one of the more obscure Latin words, consectetur, from a
-          Lorem Ipsum passage, and going through the cites of the word in classical
-          literature, discovered the undoubtable source. Lorem Ipsum comes from sections
-          1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
-          Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
-          ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
-          "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+          &lt;p&gt;Pro rebum utinam laoreet ea. Altera denique per ne, eu vix elit omnium percipit.
+          Ius idque lorem te, munere eruditi et usu. Invenire ocurreret vis ea, vocent feugait
+          eu vel, omnium urbanitas no sea. Duo ridens scribentur ut, facer efficiendi eam ei,
+          sea primis putant cu.&lt;/p&gt;
 
-          &lt;p&gt;The standard chunk of Lorem Ipsum used since the 1500s is reproduced below
-          for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et
-          Malorum" by Cicero are also reproduced in their exact original form, accompanied
-          by English versions from the 1914 translation by H. Rackham.&lt;/p&gt;
+          &lt;p&gt;Summo alienum vim ut. Te option fuisset mea, mnesarchum neglegentur no eos. Ut
+          viderer impedit posidonium vim, alia deserunt mea ei. Nam purto tempor aperiam eu,
+          impedit nusquam his id. Ut stet viris pri, id porro molestie quaerendum cum. An pri
+          porro hendrerit temporibus.&lt;/p&gt;
 
-          &lt;p&gt;There are many variations of passages of Lorem Ipsum available, but the
-          majority have suffered alteration in some form, by injected humour, or
-          randomised words which don't look even slightly believable. If you are going to
-          use a passage of Lorem Ipsum, you need to be sure there isn't anything
-          embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the
-          Internet tend to repeat predefined chunks as necessary, making this the first
-          true generator on the Internet. It uses a dictionary of over 200 Latin words,
-          combined with a handful of model sentence structures, to generate Lorem Ipsum
-          which looks reasonable. The generated Lorem Ipsum is therefore always free from
-          repetition, injected humour, or non-characteristic words etc.&lt;/p&gt;
+          &lt;p&gt;Aliquam civibus volutpat an usu. Nec liber everti ei, est semper appellantur
+          comprehensam ei. At ius noster ponderum, nec porro salutandi prodesset ea. Ad duis
+          inimicus theophrastus mei. Duo cu veniam iisque laboramus.&lt;/p&gt;
 
-          &lt;p&gt;There are many variations of passages of Lorem Ipsum available, but the
-          majority have suffered alteration in some form, by injected humour, or
-          randomised words which don't look even slightly believable. If you are going to
-          use a passage of Lorem Ipsum, you need to be sure there isn't anything
-          embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the
-          Internet tend to repeat predefined chunks as necessary, making this the first
-          true generator on the Internet. It uses a dictionary of over 200 Latin words,
-          combined with a handful of model sentence structures, to generate Lorem Ipsum
-          which looks reasonable. The generated Lorem Ipsum is therefore always free from
-          repetition, injected humour, or non-characteristic words etc.&lt;/p&gt;
+          &lt;p&gt;Ut vel duis dolorum persequeris, sea agam brute menandri at, diam oporteat
+          moderatius eos in. Modus nemore percipitur eum ex, audiam referrentur in pri, id
+          numquam detracto consectetuer nec. Harum rationibus eu mei, quo suas commune ea,
+          vim esse disputationi eu. Malis gloriatur eu mel, eam cu perpetua liberavisse
+          accommodare. Ne est perpetua laboramus neglegentur, te sint reprehendunt ius.&lt;/p&gt;
 
           &lt;/body&gt;
           &lt;/html&gt;</sv:value>
