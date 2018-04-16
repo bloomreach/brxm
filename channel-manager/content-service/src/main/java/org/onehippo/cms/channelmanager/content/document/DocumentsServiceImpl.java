@@ -106,8 +106,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
-        final Document document = assembleDocument(uuid, handle, docType);
-        setDocumentState(document, draft);
+        final Document document = assembleDocument(uuid, handle, draft, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         final boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
@@ -159,7 +158,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session)));
 
-        setDocumentState(document, draft);
+        final PublicationState publicationState = PublicationStateUtils.getPublicationState(draft);
+        document.getInfo().setPublicationState(publicationState);
+
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
@@ -220,14 +221,14 @@ public class DocumentsServiceImpl implements DocumentsService {
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentType docType = getDocumentType(handle, locale);
-        final Document document = assembleDocument(uuid, handle, docType);
 
-        WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
-                .ifPresent(node -> {
-                    setDocumentState(document, node);
+        return WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
+                .map(node -> {
+                    final Document document = assembleDocument(uuid, handle, node, docType);
                     FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields());
-                });
-        return document;
+                    return document;
+                })
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
     }
 
     @Override
@@ -382,10 +383,9 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ResetContentException();
         }
 
-        final Document document = assembleDocument(handle.getIdentifier(), handle, docType);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
-        setDocumentState(document, draft);
+        final Document document = assembleDocument(handle.getIdentifier(), handle, draft, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
     }
@@ -416,12 +416,13 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static Document assembleDocument(final String uuid, final Node handle, final DocumentType docType) {
+    private static Document assembleDocument(final String uuid, final Node handle, final Node variant, final DocumentType docType) {
         final Document document = new Document();
         document.setId(uuid);
 
         final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
+        documentInfo.setPublicationState(PublicationStateUtils.getPublicationState(variant));
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
@@ -430,11 +431,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         document.setRepositoryPath(JcrUtils.getNodePathQuietly(handle));
 
         return document;
-    }
-
-    private static void setDocumentState(final Document document, final Node variant) {
-        final PublicationState state = PublicationStateUtils.getPublicationState(variant);
-        document.getInfo().setPublicationState(state);
     }
 
     private static ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
