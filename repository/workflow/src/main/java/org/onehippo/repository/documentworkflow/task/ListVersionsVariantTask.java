@@ -56,17 +56,17 @@ public class ListVersionsVariantTask extends AbstractDocumentTask {
             Node subject = getVariant().getNode(getWorkflowContext().getInternalWorkflowSession());
             if (subject.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                 final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
-                VersionHistory versionHistory = subject.getVersionHistory();
+                VersionHistory versionHistory = subject.getSession().getWorkspace()
+                        .getVersionManager().getVersionHistory(subject.getPath());
 
                 for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
                     Version version = iter.nextVersion();
                     if (version.getName().equals(JcrConstants.JCR_ROOT_VERSION)) {
                         continue;
                     }
-                    Set<String> labelsSet = new TreeSet<String>();
-                    String[] labels = versionHistory.getVersionLabels();
+                    Set<String> labelsSet = new TreeSet<>();
+                    String[] labels = versionHistory.getVersionLabels(version);
                     Collections.addAll(labelsSet, labels);
-                    labelsSet.add(version.getName());
                     listing.put(version.getCreated(), labelsSet);
                 }
                 return listing;
