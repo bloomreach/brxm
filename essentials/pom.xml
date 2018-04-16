@@ -42,6 +42,7 @@
     <jsp-api.version>2.2</jsp-api.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <dom4j.version>2.1.0</dom4j.version>
     <junit.version>4.12</junit.version>
     <filesync.override>false</filesync.override>
