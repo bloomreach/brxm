@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,38 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PickerCtrl', () => {
-  let $rootScope;
   let $mdDialog;
+  let $q;
+  let $rootScope;
   let PickerService;
   let getCtrl;
-
-  const testData = {
-    id: 'root',
-    items: [
-      { id: 'item1' },
-      { id: 'item2',
-        items: [
-          { id: 'item2-1' },
-        ],
-      },
-    ],
-  };
-
-  const testPickerTypes = [
-    { id: 'pickerTypeA', name: 'Type A', type: 'typeA' },
-    { id: 'pickerTypeB', name: 'Type B', type: 'typeB' },
-  ];
+  let testData;
+  let testPickerTypes;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    testData = {
+      id: 'root',
+      items: [
+        { id: 'item1' },
+        { id: 'item2',
+          items: [
+            { id: 'item2-1' },
+          ],
+        },
+      ],
+    };
+
+    testPickerTypes = [
+      { id: 'pickerTypeA', name: 'Type A', type: 'typeA' },
+      { id: 'pickerTypeB', name: 'Type B', type: 'typeB' },
+    ];
+
     inject(($controller, _$q_, _$rootScope_, _$mdDialog_) => {
-      $rootScope = _$rootScope_;
       $mdDialog = _$mdDialog_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
 
       PickerService = jasmine.createSpyObj('PickerService', [
         'loadDataForLink',
@@ -55,9 +59,9 @@ describe('PickerCtrl', () => {
         'getTree',
       ]);
 
-      getCtrl = (pickerTypes, initialLink, data = testData) => {
-        PickerService.getTree.and.returnValue([data]);
-        PickerService.loadDataForLink.and.returnValue(_$q_.when('typeB'));
+      getCtrl = (pickerTypes, initialLink, data = [testData], loadDataForLinkFake = () => $q.resolve('typeB')) => {
+        PickerService.getTree.and.returnValue(data);
+        PickerService.loadDataForLink.and.callFake(loadDataForLinkFake);
 
         const ctrl = $controller('PickerCtrl', {
           $scope: $rootScope.$new(),
@@ -76,7 +80,7 @@ describe('PickerCtrl', () => {
 
   it('should load initial data of first pickerType when created', () => {
     getCtrl(testPickerTypes);
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', undefined);
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
   });
 
   it('should select the first root item if none is set with initialLink', () => {
@@ -87,15 +91,61 @@ describe('PickerCtrl', () => {
   });
 
   it('should select the item referenced by initialLink', () => {
-    const testDataWithSelected = angular.copy(testData, {});
-    testDataWithSelected.items[1].items[0].selected = true;
+    testData.items[1].items[0].selected = true;
 
-    const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', testDataWithSelected);
+    const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', [testData]);
     expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(PickerCtrl.selectedItem).toBeDefined();
+    expect(PickerCtrl.selectedItem).toEqual(testData.items[1]);
+    expect(PickerCtrl.selectedDocument).toBeDefined();
+    expect(PickerCtrl.selectedDocument).toEqual(testData.items[1].items[0]);
+  });
+
+  it('should select the item referenced by initialLink by checking pickerTypes A and B', () => {
+    const testDataWithoutSelected = testData;
+    const testDataWithSelected = angular.copy(testData);
+    testDataWithSelected.items[1].items[0].selected = true;
+    const ctrlTestData = {
+      pickerTypeA: testDataWithoutSelected,
+      pickerTypeB: testDataWithSelected,
+    };
+
+    const ctrlItems = [];
+    const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', ctrlItems, (pickerTypeId) => {
+      ctrlItems[0] = ctrlTestData[pickerTypeId];
+      return $q.resolve(pickerTypeId);
+    });
+
+    expect(PickerService.loadDataForLink.calls.count()).toBe(2);
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
     expect(PickerCtrl.selectedItem).toBeDefined();
     expect(PickerCtrl.selectedItem).toEqual(testDataWithSelected.items[1]);
     expect(PickerCtrl.selectedDocument).toBeDefined();
     expect(PickerCtrl.selectedDocument).toEqual(testDataWithSelected.items[1].items[0]);
+  });
+
+  it('should fallback to pickerTypeA if the item referenced by initialLink is not found', () => {
+    const testDataWithoutSelected = testData;
+    const ctrlTestData = {
+      pickerTypeA: testDataWithoutSelected,
+      pickerTypeB: testDataWithoutSelected,
+    };
+
+    const ctrlItems = [];
+    const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', ctrlItems, (pickerTypeId) => {
+      ctrlItems[0] = ctrlTestData[pickerTypeId];
+      return $q.resolve(pickerTypeId);
+    });
+
+    expect(PickerService.loadDataForLink.calls.count()).toBe(3);
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
+
+    expect(PickerCtrl.selectedItem).toBeDefined();
+    expect(PickerCtrl.selectedItem).toEqual(testData);
+    expect(PickerCtrl.selectedDocument).toBeNull();
   });
 
   describe('changePickerType', () => {
