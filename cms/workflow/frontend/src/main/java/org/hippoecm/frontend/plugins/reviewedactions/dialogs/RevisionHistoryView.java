@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -131,6 +135,8 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         addTimeColumn(columns);
         addUserColumn(columns);
         addStateColumn(columns);
+        addVersionColumn(columns);
+        addLabelsColumn(columns);
 
         return new TableDefinition<>(columns);
     }
@@ -211,6 +217,93 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         });
         columns.add(column);
     }
+
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
+     * to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addVersionColumn(List<ListColumn<Revision>> columns) {
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-version")), "version");
+        column.setRenderer(new IListCellRenderer<Revision>() {
+            @Override
+            public Component getRenderer(String id, final IModel<Revision> model) {
+                IModel labelModel = new IModel() {
+                    @Override
+                    public Object getObject() {
+                        Revision revision = model.getObject();
+                        try {
+                            final Node node = revision.getDocument().getObject();
+                            if (node == null) {
+                                // TODO sometimes we get into this state, beats me why
+                                return "???";
+                            }
+                            return node.getName();
+                        } catch (RepositoryException e) {
+                            // TODO what todo? Log error and return ""? Or runtime exception
+                            return "";
+                        }
+                    }
+
+                    @Override
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    @Override
+                    public void detach() {
+                        model.detach();
+                    }
+                };
+                return new Label(id, labelModel);
+            }
+
+            public IObservable getObservable(IModel<Revision> model) {
+                return null;
+            }
+
+        });
+        columns.add(column);
+    }
+
+    /**
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
+     * to the list of columns.
+     * @param columns the list of columns.
+     */
+    private void addLabelsColumn(List<ListColumn<Revision>> columns) {
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-label")), "label");
+        column.setRenderer(new IListCellRenderer<Revision>() {
+            @Override
+            public Component getRenderer(String id, final IModel<Revision> model) {
+                IModel labelModel = new IModel() {
+                    @Override
+                    public Object getObject() {
+                        Revision revision = model.getObject();
+                        return revision.getLabels().stream().collect(Collectors.joining(","));
+                    }
+
+                    @Override
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    @Override
+                    public void detach() {
+                        model.detach();
+                    }
+                };
+                return new Label(id, labelModel);
+            }
+
+            public IObservable getObservable(IModel<Revision> model) {
+                return null;
+            }
+
+        });
+        columns.add(column);
+    }
+
 
     /**
      * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information to the list of columns.
