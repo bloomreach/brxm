@@ -103,8 +103,8 @@ class HstService {
 
     return q((resolve, reject) => {
       http({ method, url, headers, data })
-        .then(response => resolve(response.data))
-        .catch(error => reject(error.data));
+        .success(response => resolve(response))
+        .error(error => reject(error));
     });
   }
 

@@ -37,6 +37,7 @@ class RightSidePanelCtrl {
     this.localStorageService = localStorageService;
     this.RightSidePanelService = RightSidePanelService;
 
+    this.lastSavedWidth = null;
     this.isFullWidth = false;
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'));
