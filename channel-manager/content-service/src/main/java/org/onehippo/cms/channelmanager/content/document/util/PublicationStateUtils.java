@@ -20,34 +20,34 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.model.DocumentState;
+import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentStateUtils {
+public class PublicationStateUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentStateUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(PublicationStateUtils.class);
 
-    private DocumentStateUtils() {
+    private PublicationStateUtils() {
     }
 
     /**
-     * Returns the state of a document.
+     * Returns the publication state of a document.
      *
      * @param variant a variant node of the document (i.e. a child node of the document's handle node)
      *
-     * @return the document's state
+     * @return the document's publication state
      */
-    public static DocumentState getDocumentState(final Node variant) {
+    public static PublicationState getPublicationState(final Node variant) {
         try {
             if (variant.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
                 // hippostd:stateSummary is a mandatory property of the mixin hippostd:publishableSummary
                 final String stateSummary = variant.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString();
-                return DocumentState.valueOf(stateSummary.toUpperCase());
+                return PublicationState.valueOf(stateSummary.toUpperCase());
             }
         } catch (IllegalArgumentException | RepositoryException e) {
-            log.warn("Could not determine document state of variant '{}', assuming 'unknown'", JcrUtils.getNodePathQuietly(variant), e);
+            log.warn("Could not determine publication state of document variant '{}', assuming 'unknown'", JcrUtils.getNodePathQuietly(variant), e);
         }
-        return DocumentState.UNKNOWN;
+        return PublicationState.UNKNOWN;
     }
 }

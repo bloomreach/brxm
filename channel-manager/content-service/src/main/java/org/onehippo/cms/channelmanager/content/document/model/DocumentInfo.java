@@ -37,7 +37,7 @@ public class DocumentInfo {
     private boolean dirty;
 
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
-    private DocumentState state;
+    private PublicationState publicationState;
 
     public Type getType() {
         return type;
@@ -69,11 +69,11 @@ public class DocumentInfo {
         this.dirty = dirty;
     }
 
-    public DocumentState getState() {
-        return state;
+    public PublicationState getPublicationState() {
+        return publicationState;
     }
 
-    public void setState(final DocumentState state) {
-        this.state = state;
+    public void setPublicationState(final PublicationState publicationState) {
+        this.publicationState = publicationState;
     }
 }

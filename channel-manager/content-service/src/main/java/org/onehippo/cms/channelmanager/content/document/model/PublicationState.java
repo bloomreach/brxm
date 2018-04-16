@@ -18,9 +18,9 @@ package org.onehippo.cms.channelmanager.content.document.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * The state of a document. Maps to the JCR property hippostd:stateSummary.
+ * The publication state of a document. Maps to the JCR property hippostd:stateSummary.
  */
-public enum DocumentState {
+public enum PublicationState {
     UNKNOWN,
     NEW,
     LIVE,

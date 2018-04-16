@@ -41,11 +41,11 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.model.DocumentState;
+import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
-import org.onehippo.cms.channelmanager.content.document.util.DocumentStateUtils;
+import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -433,8 +433,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static void setDocumentState(final Document document, final Node variant) {
-        final DocumentState state = DocumentStateUtils.getDocumentState(variant);
-        document.getInfo().setState(state);
+        final PublicationState state = PublicationStateUtils.getPublicationState(variant);
+        document.getInfo().setPublicationState(state);
     }
 
     private static ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
