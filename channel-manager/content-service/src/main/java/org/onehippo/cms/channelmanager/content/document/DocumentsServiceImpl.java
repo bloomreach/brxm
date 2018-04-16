@@ -158,8 +158,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session)));
 
-        final PublicationState publicationState = PublicationStateUtils.getPublicationState(draft);
-        document.getInfo().setPublicationState(publicationState);
+        setDocumentState(document.getInfo(), draft);
 
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
@@ -422,7 +421,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
-        documentInfo.setPublicationState(PublicationStateUtils.getPublicationState(variant));
+        setDocumentState(documentInfo, variant);
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
@@ -431,6 +430,11 @@ public class DocumentsServiceImpl implements DocumentsService {
         document.setRepositoryPath(JcrUtils.getNodePathQuietly(handle));
 
         return document;
+    }
+
+    private static void setDocumentState(final DocumentInfo documentInfo, final Node variant) {
+        final PublicationState state = PublicationStateUtils.getPublicationState(variant);
+        documentInfo.setPublicationState(state);
     }
 
     private static ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
