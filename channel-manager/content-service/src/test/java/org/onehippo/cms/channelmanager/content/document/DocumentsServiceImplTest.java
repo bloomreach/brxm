@@ -41,9 +41,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -87,8 +89,17 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({WorkflowUtils.class, DocumentUtils.class, DocumentTypesService.class,
-        JcrUtils.class, EditingUtils.class, FieldTypeUtils.class, FolderUtils.class, DocumentNameUtils.class})
+@PrepareForTest({
+        DocumentNameUtils.class,
+        PublicationStateUtils.class,
+        DocumentTypesService.class,
+        DocumentUtils.class,
+        EditingUtils.class,
+        FieldTypeUtils.class,
+        FolderUtils.class,
+        JcrUtils.class,
+        WorkflowUtils.class
+})
 public class DocumentsServiceImplTest {
 
     private Session session;
@@ -98,7 +109,7 @@ public class DocumentsServiceImplTest {
     private HintsInspector hintsInspector;
 
     @Before
-    public void setup() throws RepositoryException {
+    public void setup() {
         session = createMock(Session.class);
         locale = new Locale("en");
         hintsInspector = createMock(HintsInspector.class);
@@ -106,6 +117,7 @@ public class DocumentsServiceImplTest {
         documentsService.setHintsInspector(hintsInspector);
 
         PowerMock.mockStatic(DocumentNameUtils.class);
+        PowerMock.mockStatic(PublicationStateUtils.class);
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
         PowerMock.mockStatic(EditingUtils.class);
@@ -419,6 +431,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -444,6 +457,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(false));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
 
         verifyAll();
     }
@@ -463,6 +477,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -489,6 +504,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(true));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
 
         verifyAll();
     }
@@ -847,7 +863,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
-
+        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
@@ -863,6 +879,7 @@ public class DocumentsServiceImplTest {
         final Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale, emptyMap());
 
         assertThat(persistedDocument, equalTo(document));
+        assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
         verifyAll();
     }
 
@@ -887,6 +904,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
@@ -905,6 +923,7 @@ public class DocumentsServiceImplTest {
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
         assertThat(persistedDocument.getFields(), equalTo(document.getFields()));
         assertThat(persistedDocument.getInfo().isDirty(), equalTo(false));
+        assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
         verifyAll();
     }
 
@@ -1365,6 +1384,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("document-url-name");
         expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)).andReturn(Optional.of(published));
+        expect(PublicationStateUtils.getPublicationState(published)).andReturn(PublicationState.LIVE);
         FieldTypeUtils.readFieldValues(eq(published), eq(Collections.emptyList()), isA(Map.class));
         expectLastCall();
 
@@ -1378,6 +1398,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getUrlName(), equalTo("document-url-name"));
         assertThat(document.getDisplayName(), equalTo("Document Display Name"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.LIVE));
 
         verifyAll();
     }
@@ -1566,6 +1587,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
+        expect(PublicationStateUtils.getPublicationState(documentDraft)).andReturn(PublicationState.LIVE);
 
         session.save();
         expectLastCall();
@@ -1583,6 +1605,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.LIVE));
         assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
@@ -1634,6 +1657,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
+        expect(PublicationStateUtils.getPublicationState(documentDraft)).andReturn(PublicationState.NEW);
 
         session.save();
         expectLastCall();
@@ -1652,6 +1676,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
         assertThat(document.getFields().size(), equalTo(0));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
 
         verifyAll();
     }
