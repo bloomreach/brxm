@@ -48,7 +48,7 @@
                  type="button"
                  ng-click="$ctrl.setManualUrlEditMode(true)"
                  class="qa-edit-url md-icon-button input-icon-button">
-        <md-icon>mode_edit</md-icon>
+        <md-icon md-font-icon="mdi-pencil"></md-icon>
       </md-button>
 
       <!-- Regenerate button -->
@@ -56,7 +56,7 @@
                  type="button"
                  ng-click="$ctrl.setManualUrlEditMode(false)"
                  class="qa-generate-url md-icon-button input-icon-button">
-        <md-icon>autorenew</md-icon>
+        <md-icon md-font-icon="mdi-autorenew"></md-icon>
       </md-button>
 
       <div ng-messages="$ctrl.form.url.$error">

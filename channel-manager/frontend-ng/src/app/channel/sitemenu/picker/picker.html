@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
              data-nodrag stop-propagation
              ng-click="hippoTree.toggle(this)"
              data-ng-if="item.expandable">
-            <md-icon class="material-icons" ng-class="{'rotate-left': collapsed}">arrow_drop_down</md-icon>
+            <md-icon md-font-icon="{{ collapsed ? 'mdi-menu-right' : 'mdi-menu-down' }}"></md-icon>
           </a>
           <span class="spacer" data-ng-if="!item.expandable"></span>
           <span class="angular-ui-tree-title-wrapper">

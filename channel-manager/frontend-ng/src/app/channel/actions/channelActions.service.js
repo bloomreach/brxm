@@ -57,21 +57,21 @@ class ChannelActionsService extends MenuService {
     })
       .addAction('settings', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
-        iconName: 'settings',
+        iconName: 'mdi-settings',
         isEnabled: () => this._isChannelSettingsAvailable(),
         onClick: () => this._showChannelSettings(),
       })
       .addDivider()
       .addAction('publish', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
-        iconName: 'publish',
+        iconName: 'mdi-publish',
         isVisible: () => !this._isBranch(),
         isEnabled: () => this._hasOwnChanges(),
         onClick: () => this._publish(),
       })
       .addAction('confirm', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_SUBMIT',
-        iconName: 'publish',
+        iconName: 'mdi-publish',
         isVisible: () => this._isBranch(),
         isEnabled: () => this._hasOwnChanges(),
         onClick: () => this._publish(),
@@ -91,14 +91,14 @@ class ChannelActionsService extends MenuService {
       })
       .addAction('reject', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
-        iconName: 'clear',
+        iconName: 'mdi-close',
         isVisible: () => this._isBranch(),
         isEnabled: () => this.ProjectService.isRejectEnabled(),
         onClick: () => this._reject(),
       })
       .addAction('accept', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
-        iconName: 'done',
+        iconName: 'mdi-check',
         isVisible: () => this._isBranch(),
         isEnabled: () => this.ProjectService.isAcceptEnabled(),
         onClick: () => this._accept(),
@@ -106,7 +106,7 @@ class ChannelActionsService extends MenuService {
       .addDivider()
       .addAction('delete', {
         translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
-        iconName: 'delete',
+        iconName: 'mdi-delete',
         isEnabled: () => this._isChannelDeletionAvailable(),
         onClick: () => this._deleteChannel(),
       })

@@ -22,9 +22,9 @@
       layout-align="start center"
       class="collapse-toggle field-title"
       ng-click="collapse.toggle()">
-    <md-icon class="material-icons collapse-icon"
-             ng-class="{'collapsed': collapse.isCollapsed}">
-      keyboard_arrow_down
+    <md-icon class="collapse-icon"
+             ng-class="{'collapsed': collapse.isCollapsed}"
+             md-font-icon="mdi-chevron-down">
     </md-icon>
 
     <span>
@@ -32,9 +32,9 @@
       <span ng-if="::$ctrl.fieldType.required">*</span>
     </span>
 
-    <md-icon ng-if="::$ctrl.fieldType.hint" class="hippo-hint-icon">
-      info_outline
-
+    <md-icon ng-if="::$ctrl.fieldType.hint"
+             class="hippo-hint-icon"
+             md-font-icon="mdi-information-outline">
       <md-tooltip>
         {{ ::$ctrl.fieldType.hint }}
       </md-tooltip>
