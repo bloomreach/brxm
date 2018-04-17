@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,15 +24,29 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
+import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.services.hst.Channel;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 public class ObjectConverterImpl implements ObjectConverter {
     
@@ -81,13 +95,17 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
         String nodePath = null;
         try {
-            nodePath  = node.getPath();
+            if (node instanceof HippoBeanFrozenNode) {
+                nodePath = ((HippoBeanFrozenNode)node).getFrozenNode().getPath();
+            } else {
+                nodePath = node.getPath();
+            }
             final Node relNode = JcrUtils.getNodeIfExists(node, relPath);
             if (relNode == null) {
                 log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
                 return null;
             }
-            if (relNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (relNode.isNodeType(NT_HANDLE)) {
                 // if its a handle, we want the child node. If the child node is not present,
                 // this node can be ignored
                 final Node document = JcrUtils.getNodeIfExists(relNode, relNode.getName());
@@ -133,36 +151,39 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
     
-    public Object getObject(Node node) throws ObjectBeanManagerException {
+    public Object getObject(final Node node) throws ObjectBeanManagerException {
+
         String jcrPrimaryNodeType;
         String path;
         try {
 
-            if (node.isSame(node.getSession().getRootNode()) && getAnnotatedClassFor("rep:root") == null) {
-                log.debug("Root node is not mapped to be resolved to a bean.");
+            final Node useNode = getActualNode(node);
+
+            if (useNode.isSame(useNode.getSession().getRootNode()) && getAnnotatedClassFor("rep:root") == null) {
+                log.debug("Root useNode is not mapped to be resolved to a bean.");
                 return null;
             }
 
-            if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
-                if(node.hasNode(node.getName())) {
-                    return getObject(node.getNode(node.getName()));
+            if(useNode.isNodeType(NT_HANDLE) ) {
+                if(useNode.hasNode(useNode.getName())) {
+                    return getObject(useNode.getNode(useNode.getName()));
                 } else {
                     return null;
                 }
             }
-            jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
+            jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
           
             if (proxyInterfacesOrDelegateeClass == null) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
-                    log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
+                    log.info("Encountered useNode of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
                             "removed from all content including from prototypes.");
                     return null;
                 }
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
                     
-                    if(!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+                    if(!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
                         continue;
                     }
                     // take the first fallback type
@@ -175,23 +196,106 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
             
             if (proxyInterfacesOrDelegateeClass != null) {
-                Object object = ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
+                Object object = ServiceFactory.create(useNode, proxyInterfacesOrDelegateeClass);
                 if (object instanceof NodeAware) {
-                    ((NodeAware) object).setNode(node);
+                    ((NodeAware) object).setNode(useNode);
                 }
                 if (object instanceof ObjectConverterAware) {
                     ((ObjectConverterAware) object).setObjectConverter(this);
                 }
                 return object;
             }
-            path = node.getPath();
+            path = useNode.getPath();
         } catch (RepositoryException e) {
             throw new ObjectBeanManagerException("Impossible to get the object from the repository", e);
         } catch (Exception e) {
-            throw new ObjectBeanManagerException("Impossible to convert the node", e);
+            throw new ObjectBeanManagerException("Impossible to convert the useNode", e);
         }
-        log.info("No Descriptor found for node '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
+        log.info("No Descriptor found for useNode '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
         return null;
+    }
+
+    protected Node getActualNode(final Node node) throws RepositoryException {
+        if (node instanceof HippoBeanFrozenNode) {
+            return node;
+        }
+
+        if (node.isNodeType(NT_FROZEN_NODE)) {
+            log.error("Unexpected {} node since we always expect a decorated node of type '{}'", NT_FROZEN_NODE,
+                    HippoBeanFrozenNode.class.getName(), new Exception(String.format("Unexpected frozen node for '{}'", node.getPath())));
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node, node.getPath());
+        }
+
+        if ((node instanceof HippoNode) && ((HippoNode) node).isVirtual()) {
+            log.info("We do not support versioned versions of virtual nodes right now");
+            return node;
+        }
+
+        if (!node.getParent().isNodeType(NT_HANDLE)) {
+            return node;
+        }
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            return node;
+        }
+
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        final Channel channel = mount.getChannel();
+        if (channel == null || channel.getBranchOf() == null) {
+            return node;
+        }
+
+        // should we serve a versioned history node or just workspace.
+
+        final VersionHistory versionHistory = getVersionHistory(requestContext, node, mount);
+
+        if (versionHistory == null) {
+            // there is no history at all
+            return node;
+        }
+
+        final String versionLabel;
+        if (mount.isPreview()) {
+            versionLabel = channel.getBranchId() + "-preview";
+        } else {
+            versionLabel = channel.getBranchId() + "-live";
+        }
+        if (!versionHistory.hasVersionLabel(versionLabel)) {
+            // no version specific variant present, return workspace node
+            return node;
+        }
+
+        final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
+        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath());
+
+    }
+
+    private VersionHistory getVersionHistory(final HstRequestContext requestContext, final Node documentVariant, final Mount mount) throws RepositoryException {
+        if (mount.isPreview()) {
+            // document is already preview, so we can directly access the version history
+            if (!documentVariant.isNodeType(MIX_VERSIONABLE)) {
+                return null;
+            }
+            return documentVariant.getSession().getWorkspace().getVersionManager().getVersionHistory(documentVariant.getPath());
+        } else {
+            final Session previewSession = (Session) requestContext.getAttribute(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME);
+            if (previewSession == null) {
+                log.error("There is no preview session available which is needed for version history lookup. Return null for version history");
+                return null;
+            }
+
+            if (previewSession.nodeExists(documentVariant.getPath())) {
+                final Node previewVariant = previewSession.getNode(documentVariant.getPath());
+                if (!previewVariant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                    return null;
+                }
+                return previewSession.getWorkspace().getVersionManager().getVersionHistory(previewVariant.getPath());
+            } else {
+                log.debug("There is no preview variant of '{}' hence cannot retrieve version history", documentVariant.getPath());
+                return null;
+            }
+        }
     }
 
     public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
@@ -199,7 +303,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         String path;
         try {
 
-            if(node.isNodeType(HippoNodeType.NT_HANDLE) ) {
+            if(node.isNodeType(NT_HANDLE) ) {
                 if(node.hasNode(node.getName())) {
                     return getPrimaryObjectType(node.getNode(node.getName()));
                 } else {

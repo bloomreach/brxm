@@ -199,4 +199,5 @@ public interface ContainerConstants {
     String PAGE_MODEL_API_VERSION = "API-Version";
 
 
+    String REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME = "org.hippoecm.hst.container.previewSession";
 }

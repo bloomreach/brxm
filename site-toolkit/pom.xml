@@ -60,6 +60,7 @@
 
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
+    <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
 
@@ -647,6 +648,13 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
 
