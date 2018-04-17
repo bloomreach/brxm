@@ -272,8 +272,9 @@ public class EssentialsListComponent extends CommonComponent {
      * @param filters list of filters under construction
      * @param request current HST request
      * @param query   query under construction, provider for new filters
+     * @throws FilterException
      */
-    protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) throws FilterException{
+    protected void contributeAndFilters(final List<BaseFilter> filters, final HstRequest request, final HstQuery query) throws FilterException {
         // empty
     }
 
@@ -284,8 +285,9 @@ public class EssentialsListComponent extends CommonComponent {
      *
      * @param query   query under construction
      * @param filters list of filters to be AND-ed
+     * @throws FilterException
      */
-    protected void applyAndFilters(final HstQuery query, final List<BaseFilter> filters) {
+    protected void applyAndFilters(final HstQuery query, final List<BaseFilter> filters) throws FilterException {
         final BaseFilter oldRootFilter = query.getFilter();
         if (oldRootFilter != null) {
             filters.add(oldRootFilter);
