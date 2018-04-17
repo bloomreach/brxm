@@ -58,6 +58,7 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
             final String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
             final String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
             final String componentRenderingWindowReferenceNamespace = baseURL.getComponentRenderingWindowReferenceNamespace();
+            final String partialWindowPath = requestContext.getPathSuffix();
 
             if (resourceWindowRef != null) {
                 rootComponentWindow = findComponentWindow(rootComponentWindow, resourceWindowRef);
@@ -84,6 +85,18 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
                 }
                 log.info("Found component rendering request '{}' targeting component '{}'.", context.getServletRequest(),
                         rootComponentWindow.getComponent().getComponentConfiguration());
+            } else if (partialWindowPath != null) {
+                HstComponentWindow partialWindow = findComponentWindowByNamePath(rootComponentWindow,
+                        partialWindowPath);
+                if (partialWindow != null) {
+                    rootComponentWindow = partialWindow;
+                    log.info("Found component for partial rendering request '{}' targeting component '{}'.",
+                            context.getServletRequest(),
+                            rootComponentWindow.getComponent().getComponentConfiguration());
+                } else {
+                    log.warn("Cannot find the component by the path, '{}', for partial page rendering."
+                            + "The default root component is rendered as fallback instead.", partialWindowPath);
+                }
             }
 
             context.setRootComponentWindow(rootComponentWindow);

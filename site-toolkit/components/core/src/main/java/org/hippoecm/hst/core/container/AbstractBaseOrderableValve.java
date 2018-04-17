@@ -257,6 +257,25 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         return componentWindow;
     }
 
+    protected HstComponentWindow findComponentWindowByNamePath(HstComponentWindow rootWindow, String namePath) {
+        HstComponentWindow componentWindow = null;
+
+        String [] names = StringUtils.split(namePath, "/");
+        HstComponentWindow curWindow = rootWindow;
+
+        for (String name : names) {
+            componentWindow = curWindow.getChildWindow(name);
+
+            if (componentWindow == null) {
+                return null;
+            }
+
+            curWindow = componentWindow;
+        }
+
+        return componentWindow;
+    }
+
     protected HstComponentWindow findErrorCodeSendingWindow(HstComponentWindow [] sortedComponentWindows) {
         for (HstComponentWindow window : sortedComponentWindows) {
             if (window.getResponseState().getErrorCode() > 0) {
