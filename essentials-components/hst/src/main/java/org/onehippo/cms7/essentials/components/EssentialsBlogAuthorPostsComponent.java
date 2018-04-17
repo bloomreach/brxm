@@ -59,7 +59,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                 // NOTE: most use-cases will only have one author,
                 // so for convenience purposes  also add first author on request
                 request.setAttribute("author", authors.get(0));
-                request.setAttribute("authors", authors);
+                request.setModel("authors", authors);
                 final Class<? extends HippoBean> clazz = getPrimaryType(context, document);
                 final EssentialsBlogAuthorPostsComponentInfo paramInfo = getComponentParametersInfo(request);
                 final int limit = paramInfo.getPageSize();
@@ -86,7 +86,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
                         break;
                     }
                     final Pageable<HippoBean> pageable = new DefaultPagination<>(beans);
-                    request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
+                    request.setModel(REQUEST_ATTR_PAGEABLE, pageable);
                 } catch (QueryException e) {
                     log.error("Error fetching posts by authors", e);
                 }

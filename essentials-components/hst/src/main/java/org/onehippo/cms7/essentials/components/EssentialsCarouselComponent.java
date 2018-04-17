@@ -41,7 +41,7 @@ public class EssentialsCarouselComponent extends CommonComponent {
         final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
         final List<HippoDocument> items = getCarouselItems(paramInfo);
-        request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
+        request.setModel(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
     }
 
     /**

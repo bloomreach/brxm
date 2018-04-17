@@ -44,7 +44,7 @@ public class EssentialsImageComponent extends CommonComponent {
         if (!Strings.isNullOrEmpty(documentPath)) {
             try {
                 final Object image = RequestContextProvider.get().getObjectBeanManager().getObject(documentPath);
-                request.setAttribute(REQUEST_ATTR_DOCUMENT, image);
+                request.setModel(REQUEST_ATTR_DOCUMENT, image);
             } catch (ObjectBeanManagerException e) {
                 if (log.isDebugEnabled()) {
                     log.error("Error getting image", e);
