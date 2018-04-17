@@ -126,7 +126,7 @@
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
-    <hippo.htmldiff.version>2.1.0-SNAPSHOT</hippo.htmldiff.version>
+    <hippo.htmldiff.version>2.0.0-SNAPSHOT</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.06</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.7.1-h12.3.0-SNAPSHOT</hippo.ckeditor.version>
 
