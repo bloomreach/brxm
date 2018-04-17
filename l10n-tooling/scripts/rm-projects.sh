@@ -14,5 +14,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-rm -rf hippo-cms-translations
-rm -rf hippo-cms-enterprise-translations
+rm -rf target/hippo-cms-translations
+rm -rf target/hippo-cms-enterprise-translations

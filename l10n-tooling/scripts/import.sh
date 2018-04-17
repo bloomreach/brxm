@@ -25,15 +25,17 @@
 locales="nl de fr zh es"
 release="12.2.0"
 
-git clone git@code.onehippo.org:cms-community/hippo-cms-translations.git
-git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git
+mkdir target
+
+git clone git@code.onehippo.org:cms-community-dev/hippo-cms-translations.git target/hippo-cms-translations
+git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git target/hippo-cms-enterprise-translations
 
 modules="hippo-cms-translations hippo-cms-enterprise-translations"
 
 for module in $modules; do
     for locale in $locales; do
 	    filename=../import/${module}_${release}_${locale}.xlsx
-        mvn -N hippo-cms-l10n:import -Dlocale=$locale -Dfile=$filename -f $module/pom.xml
+        mvn -N hippo-cms-l10n:import -Dlocale=$locale -Dfile=$filename -f target/$module/pom.xml
     done
 done
 

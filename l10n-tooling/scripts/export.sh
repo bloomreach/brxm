@@ -17,21 +17,21 @@
 locales="nl de fr zh es"
 release="12.3.0"
 
-git clone git@code.onehippo.org:cms-community/hippo-cms-translations.git
-git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git
+mkdir target
+
+git clone git@code.onehippo.org:cms-community-dev/hippo-cms-translations.git target/hippo-cms-translations
+git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git target/hippo-cms-enterprise-translations
 
 modules="hippo-cms-translations hippo-cms-enterprise-translations"
-
-mkdir target
 
 for module in $modules; do
     for locale in $locales; do
 	    filename=target/${module}_${release}_${locale}.xlsx
-        mvn -N hippo-cms-l10n:export -Dlocale=$locale -f $module/pom.xml
-		mv $module/export_$locale.xlsx $filename
+        mvn -N hippo-cms-l10n:export -Dlocale=$locale -f target/$module/pom.xml
+		mv target/$module/export_$locale.xlsx $filename
 
         # CSV output for stats
-        mvn -N hippo-cms-l10n:export -Dformat=csv -Dlocale=$locale -f $module/pom.xml > /dev/null
+        mvn -N hippo-cms-l10n:export -Dformat=csv -Dlocale=$locale -f target/$module/pom.xml > /dev/null
     done
 done
 
@@ -42,7 +42,7 @@ echo Translation statistics community/enterprise \(locale, lines, words, charact
 for module in $modules; do
     for locale in $locales; do
         echo -n "$locale"
-        cat $module/export_$locale.csv | tail -n +2 | sed -e 's/^[^,]*,"\(.*\)",.*/\1/' -e t -e 's/^[^,]*,\(.*\),.*/\1/' | wc
+        cat target/$module/export_$locale.csv | tail -n +2 | sed -e 's/^[^,]*,"\(.*\)",.*/\1/' -e t -e 's/^[^,]*,\(.*\),.*/\1/' | wc
     done
-    rm -rf $module
+    rm -rf target/$module
 done

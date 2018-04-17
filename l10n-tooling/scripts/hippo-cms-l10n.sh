@@ -15,7 +15,7 @@
 #  limitations under the License.
 
 locales="nl de fr zh es"
-release="12.1"
+release="12.3.0"
 workingfolder_base="$HOME/tmp"
 branch="master"
 
