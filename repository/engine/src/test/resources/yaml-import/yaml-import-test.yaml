@@ -1,0 +1,81 @@
+/testdoc:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  jcr:uuid: dfdef5fb-9b4b-44b1-a0de-0566da9f1c2b
+  hippo:name: TestDoc
+  /testdoc[1]:
+    jcr:primaryType: myhippoproject:FileDoc
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: f8dc118f-1a58-4f53-8ffe-cf0c02a9635d
+    hippo:availability: []
+    hippostd:state: draft
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2018-04-16T11:09:49.050+02:00
+    hippostdpubwf:lastModificationDate: 2018-04-16T11:09:49.050+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippotranslation:id: 3251e3c6-fb38-48f1-a840-f7dee5f1fbd8
+    hippotranslation:locale: en
+    myhippoproject:title: Doc Title
+    /myhippoproject:resource:
+      jcr:primaryType: hippo:resource
+      hippo:filename: Testdokument-1.pdf
+      hippo:text:
+        type: binary
+        resource: testdoc/testdoc[1]/resource/Testdokument-1.pdf
+      jcr:data:
+        type: binary
+        resource: testdoc/testdoc[1]/resource/Testdokument-1-1.pdf
+      jcr:encoding: UTF-8
+      jcr:lastModified: 2018-04-16T11:10:21.649+02:00
+      jcr:mimeType: application/pdf
+  /testdoc[2]:
+    jcr:primaryType: myhippoproject:FileDoc
+    jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+    jcr:uuid: 6552a0cb-33e9-4701-9041-9d469c5e6672
+    hippo:availability: [preview]
+    hippostd:state: unpublished
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2018-04-16T11:09:49.050+02:00
+    hippostdpubwf:lastModificationDate: 2018-04-16T11:10:27.160+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippotranslation:id: 3251e3c6-fb38-48f1-a840-f7dee5f1fbd8
+    hippotranslation:locale: en
+    myhippoproject:title: Doc Title
+    /myhippoproject:resource:
+      jcr:primaryType: hippo:resource
+      hippo:filename: Testdokument-1.pdf
+      hippo:text:
+        type: binary
+        resource: testdoc/testdoc[2]/resource/Testdokument-1.pdf
+      jcr:data:
+        type: binary
+        resource: testdoc/testdoc[2]/resource/Testdokument-1-1.pdf
+      jcr:encoding: UTF-8
+      jcr:lastModified: 2018-04-16T11:10:21.649+02:00
+      jcr:mimeType: application/pdf
+  /testdoc[3]:
+    jcr:primaryType: myhippoproject:FileDoc
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: c3e595c9-a58b-4fd2-83f7-b116eb1840b3
+    hippo:availability: [live]
+    hippostd:state: published
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2018-04-16T11:09:49.050+02:00
+    hippostdpubwf:lastModificationDate: 2018-04-16T11:10:27.160+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippostdpubwf:publicationDate: 2018-04-16T11:10:31.489+02:00
+    hippotranslation:id: 3251e3c6-fb38-48f1-a840-f7dee5f1fbd8
+    hippotranslation:locale: en
+    myhippoproject:title: Doc Title
+    /myhippoproject:resource:
+      jcr:primaryType: hippo:resource
+      hippo:filename: Testdokument-1.pdf
+      hippo:text:
+        type: binary
+        resource: testdoc/testdoc[3]/resource/Testdokument-1.pdf
+      jcr:data:
+        type: binary
+        resource: testdoc/testdoc[3]/resource/Testdokument-1-1.pdf
+      jcr:encoding: UTF-8
+      jcr:lastModified: 2018-04-16T11:10:21.649+02:00
+      jcr:mimeType: application/pdf

@@ -24,8 +24,6 @@ import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 
-import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
-
 public class ImportModuleContext extends ModuleContext {
 
     private Path moduleRoot;
@@ -42,7 +40,7 @@ public class ImportModuleContext extends ModuleContext {
     @Override
     public ResourceInputProvider getContentInputProvider() {
         if (contentInputProvider == null) {
-            contentInputProvider = new FileResourceInputProvider(getParentOrFsRoot(moduleRoot), StringUtils.EMPTY);
+            contentInputProvider = new FileResourceInputProvider(moduleRoot, StringUtils.EMPTY);
         }
         return contentInputProvider;
     }
