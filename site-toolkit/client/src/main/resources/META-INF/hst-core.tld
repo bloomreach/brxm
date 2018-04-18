@@ -1243,9 +1243,23 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>
+        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
+        replaced text output can be safely used in a markup result page.
+        By default escapeXml is set to true.
+      </description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
     <example><![CDATA[
       <%-- Replaces all the variables (e.g, ${company.name}) in the html output --%>
       <hst:messagesReplace>
+        ${document.title}
+      </hst:messagesReplace>
+      <hst:messagesReplace escapeXml="false">
         <hst:html hippohtml="${document.body}" />
       </hst:messagesReplace>
       ]]></example>
