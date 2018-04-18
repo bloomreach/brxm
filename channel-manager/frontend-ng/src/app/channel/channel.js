@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import channelActionsModule from './actions/actions';
 import channelMenuModule from './menu/menu';
 import channelSidePanelModule from './sidePanels/sidePanel';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import channelSitemenuModule from './sitemenu/editor';
+import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
 import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
 import projectToggleModule from './projectToggle/projectToggle.module';
@@ -41,7 +41,7 @@ const channelModule = angular
     channelMenuModule.name,
     channelSidePanelModule.name,
     channelHippoIframeModule.name,
-    channelSitemenuModule.name,
+    siteMenuEditorModule.name,
     channelRelevanceModule.name,
     projectToggleModule.name,
     viewportsModule.name,

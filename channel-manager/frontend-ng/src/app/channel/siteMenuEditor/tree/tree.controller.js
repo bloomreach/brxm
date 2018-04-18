@@ -19,7 +19,7 @@ class HippoTreeCtrl {
     'ngInject';
 
     this.$scope = $scope;
-    this.$filter = $filter;
+    this.getByPropertyFilter = $filter('getByProperty');
     this.renderTreeTemplate = $transclude;
 
     $scope.$watch(() => this.items, (newItems, oldItems) => {
@@ -35,7 +35,7 @@ class HippoTreeCtrl {
     item.collapsed = !item.collapsed;
 
     // when collapsing an item with a selected (grand)child, select the item itself
-    if (this.selectable !== false && item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
+    if (this.selectedItem && this.selectable !== false && item.collapsed && this.getByPropertyFilter(item.items, 'id', this.selectedItem.id, 'items')) {
       this.selectItem(item);
     }
 

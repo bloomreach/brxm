@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,53 +14,53 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('MenuEditor', () => {
-  let $q;
-  let $element;
-  let $scope;
-  let $rootScope;
+describe('SiteMenuEditor', () => {
   let $compile;
-  let SiteMenuService;
+  let $element;
+  let $q;
+  let $rootScope;
+  let $scope;
+
+  let ChannelService;
+  let ConfigService;
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
-  let ChannelService;
-  let ConfigService;
+  let SiteMenuService;
+
+  let $ctrl;
   let menu;
-  let MenuEditorCtrl;
   const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
   dialog.textContent.and.returnValue(dialog);
   dialog.ok.and.returnValue(dialog);
   dialog.cancel.and.returnValue(dialog);
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.siteMenuEditor');
 
     inject((
+      _$compile_,
       _$q_,
       _$rootScope_,
-      _$compile_,
-      _SiteMenuService_,
+      _ChannelService_,
+      _ConfigService_,
       _DialogService_,
       _FeedbackService_,
       _HippoIframeService_,
-      _ChannelService_,
-      _ConfigService_,
+      _SiteMenuService_,
     ) => {
+      $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $compile = _$compile_;
-      SiteMenuService = _SiteMenuService_;
+      ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
-      ChannelService = _ChannelService_;
-      ConfigService = _ConfigService_;
+      SiteMenuService = _SiteMenuService_;
     });
 
     menu = { items: [] };
@@ -81,18 +81,18 @@ describe('MenuEditor', () => {
     $scope.onDone = jasmine.createSpy('onDone');
     $scope.onError = jasmine.createSpy('onError');
     $scope.menuUuid = 'testUuid';
-    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </menu-editor>');
+    $element = angular.element('<site-menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </site-menu-editor>');
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('menuEditor');
+    return $element.controller('siteMenuEditor');
   }
 
   it('initializes correctly', () => {
-    MenuEditorCtrl = compileDirectiveAndGetController();
+    $ctrl = compileDirectiveAndGetController();
 
-    expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
-    expect(MenuEditorCtrl.items).toBe(menu.items);
+    expect($ctrl.menuUuid).toBe('testUuid');
+    expect($ctrl.items).toBe(menu.items);
   });
 
   it('returns to the main page when it fails to load the menu', () => {
@@ -112,22 +112,22 @@ describe('MenuEditor', () => {
   it('checks the locking status of the loaded menu', () => {
     ConfigService.cmsUser = 'testUser';
 
-    MenuEditorCtrl = compileDirectiveAndGetController();
-    expect(MenuEditorCtrl.isLockedByOther()).toBeFalsy();
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.isLockedByOther()).toBeFalsy();
 
     menu.lockedBy = 'testUser';
-    MenuEditorCtrl = compileDirectiveAndGetController();
-    expect(MenuEditorCtrl.isLockedByOther()).toBe(false);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.isLockedByOther()).toBe(false);
 
     menu.lockedBy = 'anotherUser';
-    MenuEditorCtrl = compileDirectiveAndGetController();
-    expect(MenuEditorCtrl.isLockedByOther()).toBe(true);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.isLockedByOther()).toBe(true);
   });
 
-  describe('MenuEditorCtrl', () => {
+  describe('SiteMenuEditorCtrl', () => {
     beforeEach(() => {
-      MenuEditorCtrl = compileDirectiveAndGetController();
-      MenuEditorCtrl.editingItem = {
+      $ctrl = compileDirectiveAndGetController();
+      $ctrl.editingItem = {
         id: 1,
         localParameters: {},
       };
@@ -138,36 +138,36 @@ describe('MenuEditor', () => {
         const item = {
           id: 12,
         };
-        MenuEditorCtrl._startEditingItem(item);
-        expect(MenuEditorCtrl.editingItem).toBe(item);
+        $ctrl._startEditingItem(item);
+        expect($ctrl.editingItem).toBe(item);
       });
     });
 
     describe('stopEditingItem', () => {
       it('stops editing an item', () => {
-        MenuEditorCtrl.editingItem = {
+        $ctrl.editingItem = {
           id: 12,
         };
-        MenuEditorCtrl.stopEditingItem();
-        expect(MenuEditorCtrl.editingItem).toBe(null);
+        $ctrl.stopEditingItem();
+        expect($ctrl.editingItem).toBe(null);
       });
     });
 
     describe('addItem', () => {
       it('should add an item', () => {
         spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.when({ id: 15 }));
-        spyOn(MenuEditorCtrl, '_startEditingItem');
+        spyOn($ctrl, '_startEditingItem');
 
-        MenuEditorCtrl.menuUuid = 33;
-        MenuEditorCtrl.editingItem = {
+        $ctrl.menuUuid = 33;
+        $ctrl.editingItem = {
           id: 12,
         };
-        MenuEditorCtrl.addItem();
-        expect(MenuEditorCtrl.isSaving.newItem).toBe(true);
+        $ctrl.addItem();
+        expect($ctrl.isSaving.newItem).toBe(true);
         expect(SiteMenuService.createEditableMenuItem).toHaveBeenCalled();
         $rootScope.$apply();
-        expect(MenuEditorCtrl.isSaving.newItem).toBeFalsy();
-        expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({
+        expect($ctrl.isSaving.newItem).toBeFalsy();
+        expect($ctrl._startEditingItem).toHaveBeenCalledWith({
           id: 15,
         });
       });
@@ -176,125 +176,125 @@ describe('MenuEditor', () => {
         const response = { key: 'value' };
         spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(response));
 
-        MenuEditorCtrl.addItem();
+        $ctrl.addItem();
         $rootScope.$apply();
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(response, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_CREATE_FAILED', $ctrl.errorMap);
       });
 
       it('flashes a catch-all toast when the add request is rejected for no specific reason', () => {
         spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject());
 
-        MenuEditorCtrl.addItem();
+        $ctrl.addItem();
         $rootScope.$digest();
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_CREATE_FAILED', $ctrl.errorMap);
       });
     });
 
     describe('toggleEditState', () => {
       it('calls the appropriate function after checking if an item is already being edited', () => {
         SiteMenuService.getEditableMenuItem.and.returnValue($q.when({ id: 15 }));
-        spyOn(MenuEditorCtrl, '_startEditingItem');
+        spyOn($ctrl, '_startEditingItem');
 
-        MenuEditorCtrl.editingItem = { id: 12 };
-        MenuEditorCtrl.toggleEditState({ id: 55 });
+        $ctrl.editingItem = { id: 12 };
+        $ctrl.toggleEditState({ id: 55 });
         expect(SiteMenuService.getEditableMenuItem).toHaveBeenCalledWith(55);
         $rootScope.$apply();
-        expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({ id: 15 });
+        expect($ctrl._startEditingItem).toHaveBeenCalledWith({ id: 15 });
       });
 
       it('calls stops editing an item if an item is already being edited', () => {
-        spyOn(MenuEditorCtrl, 'stopEditingItem');
-        MenuEditorCtrl.editingItem = { id: 12 };
-        MenuEditorCtrl.toggleEditState({ id: 12 });
-        expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
+        spyOn($ctrl, 'stopEditingItem');
+        $ctrl.editingItem = { id: 12 };
+        $ctrl.toggleEditState({ id: 12 });
+        expect($ctrl.stopEditingItem).toHaveBeenCalled();
       });
     });
 
     describe('onBack', () => {
       it('returns to the main page with no changes', () => {
         spyOn(HippoIframeService, 'reload');
-        spyOn(MenuEditorCtrl, 'onDone');
+        spyOn($ctrl, 'onDone');
 
-        MenuEditorCtrl.onBack();
+        $ctrl.onBack();
         expect(HippoIframeService.reload).not.toHaveBeenCalled();
         expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-        expect(MenuEditorCtrl.onDone).toHaveBeenCalled();
+        expect($ctrl.onDone).toHaveBeenCalled();
       });
 
       it('returns to the mainpage with changes', () => {
-        MenuEditorCtrl.saveItem();
+        $ctrl.saveItem();
         $rootScope.$apply();
 
         spyOn(HippoIframeService, 'reload');
-        spyOn(MenuEditorCtrl, 'onDone');
+        spyOn($ctrl, 'onDone');
 
-        MenuEditorCtrl.onBack();
+        $ctrl.onBack();
         expect(HippoIframeService.reload).toHaveBeenCalled();
         expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-        expect(MenuEditorCtrl.onDone).toHaveBeenCalled();
+        expect($ctrl.onDone).toHaveBeenCalled();
       });
     });
 
     describe('saveItem', () => {
       it('saves and closes the menu item open for editing', () => {
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // save the selected item
-        MenuEditorCtrl.saveItem();
-        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(MenuEditorCtrl.editingItem);
+        $ctrl.saveItem();
+        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith($ctrl.editingItem);
         $rootScope.$digest();
-        expect(MenuEditorCtrl.editingItem).toBeNull();
+        expect($ctrl.editingItem).toBeNull();
 
         // update channel when leaving the subpage after modification
-        MenuEditorCtrl.onBack();
+        $ctrl.onBack();
         expect(ChannelService.recordOwnChange).toHaveBeenCalled();
       });
 
       it('flashes a toast if the item name already exists', () => {
-        let response = { key: 'value' };
+        const response = { key: 'value' };
         SiteMenuService.saveMenuItem.and.returnValue($q.reject(response));
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // save the selected item
-        MenuEditorCtrl.saveItem();
+        $ctrl.saveItem();
         $rootScope.$digest();
 
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
-        expect(MenuEditorCtrl.editingItem).not.toBeNull();
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_SAVE_FAILED', $ctrl.errorMap);
+        expect($ctrl.editingItem).not.toBeNull();
       });
 
       it('flashes a catch-all toast when the save request is rejected without a specific reason', () => {
         SiteMenuService.saveMenuItem.and.returnValue($q.reject());
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // save the selected item
-        MenuEditorCtrl.saveItem();
+        $ctrl.saveItem();
         $rootScope.$digest();
 
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_SAVE_FAILED', $ctrl.errorMap);
       });
     });
 
     describe('deleteItem', () => {
       it('deletes the item open for editing', () => {
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // now request deletion
-        MenuEditorCtrl.deleteItem();
+        $ctrl.deleteItem();
         expect(DialogService.confirm).toHaveBeenCalled();
         expect(DialogService.show).toHaveBeenCalled();
 
@@ -302,10 +302,10 @@ describe('MenuEditor', () => {
         $rootScope.$digest();
         expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith('clickedId');
         // backend reports successful deletion
-        expect(MenuEditorCtrl.editingItem).toBeNull();
+        expect($ctrl.editingItem).toBeNull();
 
         // update channel when leaving the subpage after modification
-        MenuEditorCtrl.onBack();
+        $ctrl.onBack();
         expect(ChannelService.recordOwnChange).toHaveBeenCalled();
       });
 
@@ -313,11 +313,11 @@ describe('MenuEditor', () => {
         DialogService.show.and.returnValue($q.reject());
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // now request deletion
-        MenuEditorCtrl.deleteItem();
+        $ctrl.deleteItem();
         expect(DialogService.show).toHaveBeenCalled();
 
         // cancel deletion
@@ -331,17 +331,17 @@ describe('MenuEditor', () => {
         SiteMenuService.loadMenu.calls.reset();
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // request and confirm deletion
-        MenuEditorCtrl.deleteItem();
+        $ctrl.deleteItem();
         $rootScope.$digest();
 
         expect(SiteMenuService.loadMenu).toHaveBeenCalledWith('testUuid');
         expect(ChannelService.reload).toHaveBeenCalled();
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', $ctrl.errorMap);
       });
 
       it('flashes a catch-all toast when the deletion request is rejected for another reason', () => {
@@ -349,42 +349,42 @@ describe('MenuEditor', () => {
         SiteMenuService.deleteMenuItem.and.returnValue($q.reject(response));
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // request and confirm deletion
-        MenuEditorCtrl.deleteItem();
+        $ctrl.deleteItem();
         $rootScope.$digest();
 
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', $ctrl.errorMap);
       });
 
       it('flashes a catch-all toast when the deletion request is rejected without a specific reason', () => {
         SiteMenuService.deleteMenuItem.and.returnValue($q.reject());
 
         // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $ctrl.toggleEditState({ id: 'clickedId' });
         $rootScope.$digest();
 
         // request and confirm deletion
-        MenuEditorCtrl.deleteItem();
+        $ctrl.deleteItem();
         $rootScope.$digest();
 
         expect(FeedbackService.showErrorResponse)
-          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_DELETE_FAILED', $ctrl.errorMap);
       });
     });
 
     describe('hasLocalParameters', () => {
       it('returns false if there are not local parameters', () => {
-        expect(MenuEditorCtrl.hasLocalParameters()).toBe(false);
+        expect($ctrl.hasLocalParameters()).toBe(false);
       });
       it('returns true if there are local parameters', () => {
-        MenuEditorCtrl.editingItem.localParameters = {
+        $ctrl.editingItem.localParameters = {
           test: 1,
         };
-        expect(MenuEditorCtrl.hasLocalParameters()).toBe(true);
+        expect($ctrl.hasLocalParameters()).toBe(true);
       });
     });
   });

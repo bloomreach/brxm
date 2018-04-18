@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import template from './editor.html';
+import controller from './siteMenuEditor.controller';
+import template from './siteMenuEditor.html';
 
-function menuEditorDirective() {
-  'ngInject';
+const siteMenuEditorComponent = {
+  controller,
+  bindings: {
+    menuUuid: '@',
+    onDone: '&',
+    onError: '&',
+    onSuccess: '&',
+  },
+  template,
+};
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      menuUuid: '@',
-      onDone: '&',
-      onSuccess: '&',
-      onError: '&',
-    },
-    template,
-    controller: 'MenuEditorCtrl',
-    controllerAs: 'menuEditor',
-  };
-}
-
-export default menuEditorDirective;
+export default siteMenuEditorComponent;
