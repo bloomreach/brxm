@@ -34,7 +34,6 @@ import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.taglibs.standard.tag.common.fmt.BundleSupport;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.MessageUtils;
 import org.hippoecm.hst.utils.TagUtils;
 
@@ -54,7 +53,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
     protected String variableSuffix;
     protected Character escapeChar;
     protected String scope;
-    protected Boolean escapeXml = true;
+    protected boolean escapeMessageXml = true;
 
     @Override
     public int doStartTag() throws JspException{
@@ -97,11 +96,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
                     if (bundle != null) {
                         textContent = MessageUtils.replaceMessagesByBundle(bundle, textContent,
                                                                            variablePrefix, variableSuffix,
-                                                                           escapeChar);
-                    }
-
-                    if (escapeXml) {
-                        textContent = HstRequestUtils.escapeXml(textContent);
+                                                                           escapeChar, isEscapeMessageXml());
                     }
 
                     if (var == null) {
@@ -131,7 +126,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
         locale = null;
         localeString = null;
         scope = null;
-        escapeXml = true;
+        escapeMessageXml = true;
     }
 
     @Override
@@ -211,12 +206,12 @@ public class MessagesReplaceTag extends BodyTagSupport {
         this.scope = scope;
     }
 
-    public Boolean getEscapeXml() {
-        return escapeXml;
+    public boolean isEscapeMessageXml() {
+        return escapeMessageXml;
     }
 
-    public void setEscapeXml(Boolean escapeXml) {
-        this.escapeXml = escapeXml;
+    public void setEscapeMessageXml(boolean escapeMessageXml) {
+        this.escapeMessageXml = escapeMessageXml;
     }
 
     protected LocalizationContext getLocalizationContext() {

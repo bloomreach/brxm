@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ public class MessagesReplaceTagTest {
 
         final Map<String, String> bundleContent = new HashMap<>();
         bundleContent.put("example.title", "<script>alert('hi there')</script>");
+        bundleContent.put("example.subtitle", "<b>howdy?</b>");
         bundleContent.put("example.introduction", "This is an example introduction.");
         bundleContent.put("example.body", "<h1>Hello, World!</h1><p>This is the body.</p>");
 
@@ -66,12 +67,13 @@ public class MessagesReplaceTagTest {
 
     @Test
     public void testMessagesReplaceTagOutputWithoutEscaping() throws Exception {
-        messagesReplaceTag.setEscapeXml(false);
+        messagesReplaceTag.setEscapeMessageXml(false);
         messagesReplaceTag.doStartTag();
 
         final MockBodyContent bodyContent =
                 new MockBodyContent(
-                        "<p>${example.introduction}</p>\n"
+                        "<h2>${example.subtitle}</h2>\n"
+                        + "<p>${example.introduction}</p>\n"
                         + "<div>${example.body}</div>",
                         response);
 
@@ -79,8 +81,9 @@ public class MessagesReplaceTagTest {
         messagesReplaceTag.doEndTag();
 
         final String[] lines = StringUtils.split(response.getContentAsString(), "\n");
-        assertEquals("<p>This is an example introduction.</p>", lines[0]);
-        assertEquals("<div><h1>Hello, World!</h1><p>This is the body.</p></div>", lines[1]);
+        assertEquals("<h2><b>howdy?</b></h2>", lines[0]);
+        assertEquals("<p>This is an example introduction.</p>", lines[1]);
+        assertEquals("<div><h1>Hello, World!</h1><p>This is the body.</p></div>", lines[2]);
     }
 
     @Test
@@ -89,16 +92,16 @@ public class MessagesReplaceTagTest {
 
         final MockBodyContent bodyContent =
                 new MockBodyContent(
-                        "${example.title}\n"
-                        + "${example.introduction}",
+                        "<h1>${example.title}</h1>\n"
+                        + "<div>${example.introduction}</div>",
                         response);
 
         messagesReplaceTag.setBodyContent(bodyContent);
         messagesReplaceTag.doEndTag();
 
         final String[] lines = StringUtils.split(response.getContentAsString(), "\n");
-        assertEquals(HstRequestUtils.escapeXml("<script>alert('hi there')</script>"), lines[0]);
-        assertEquals(HstRequestUtils.escapeXml("This is an example introduction."), lines[1]);
+        assertEquals("<h1>" + HstRequestUtils.escapeXml("<script>alert('hi there')</script>") + "</h1>", lines[0]);
+        assertEquals("<div>" + HstRequestUtils.escapeXml("This is an example introduction.") + "</div>", lines[1]);
     }
 
 }

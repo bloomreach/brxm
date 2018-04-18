@@ -1245,11 +1245,11 @@
     </attribute>
     <attribute>
       <description>
-        Whether or not to escape &amp;,&gt;,&lt;,", and '. When escapeXml = true, the
-        replaced text output can be safely used in a markup result page.
-        By default escapeXml is set to true.
+        Whether or not to escape a message value having &amp;,&gt;,&lt;,", and '. When escapeMessageXml = true, the
+        replaced message text can be safely used as a tag attribute (e.g, href, src, etc.) value.
+        By default escapeMessageXml is set to true.
       </description>
-      <name>escapeXml</name>
+      <name>escapeMessageXml</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
