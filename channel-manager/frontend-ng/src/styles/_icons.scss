@@ -22,4 +22,21 @@
   min-height: 24px;
   min-width: 24px;
   width: 24px;
+
+  // Some icons are colored to be consistent with the rest of the CMS
+
+  &.mdi-check-circle {
+    // Green indicator for "live" documents
+    color: #3dcc3d;
+  }
+
+  &.mdi-minus-circle {
+    // Red indicator for "offline" documents
+    color: #ff4040;
+  }
+
+  &.mdi-alert {
+    // Yellow indicator for "changed compared to the live version"
+    color: #ffa733;
+  }
 }

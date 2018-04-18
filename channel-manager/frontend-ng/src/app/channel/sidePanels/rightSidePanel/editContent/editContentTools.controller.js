@@ -15,9 +15,9 @@
  */
 
 const PUBLICATION_STATE_ICON_NAMES = {
-  new: 'mdi-minus-circle-outline',
-  live: 'mdi-check-circle-outline',
-  changed: 'mdi-alert-outline',
+  new: 'mdi-minus-circle',
+  live: 'mdi-check-circle',
+  changed: 'mdi-alert',
   unknown: 'mdi-file-outline',
 };
 

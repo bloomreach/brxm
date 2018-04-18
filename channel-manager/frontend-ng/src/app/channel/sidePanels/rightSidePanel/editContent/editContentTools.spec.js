@@ -158,13 +158,13 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.isEditing.and.returnValue(true);
 
       ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'new' } });
-      expect($ctrl.getPublicationIconName()).toBe('mdi-minus-circle-outline');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-minus-circle');
 
       ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'live' } });
-      expect($ctrl.getPublicationIconName()).toBe('mdi-check-circle-outline');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-check-circle');
 
       ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'changed' } });
-      expect($ctrl.getPublicationIconName()).toBe('mdi-alert-outline');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-alert');
 
       ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'unknown' } });
       expect($ctrl.getPublicationIconName()).toBe('mdi-file-outline');
