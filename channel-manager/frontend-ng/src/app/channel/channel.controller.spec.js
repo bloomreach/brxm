@@ -208,7 +208,7 @@ describe('ChannelCtrl', () => {
     ChannelCtrl.editMenu('testUuid');
 
     expect(ChannelCtrl.menuUuid).toBe('testUuid');
-    expect(ChannelCtrl.currentSubpage).toBe('menu-editor');
+    expect(ChannelCtrl.currentSubpage).toBe('site-menu-editor');
   });
 
   it('should return channel toolbar display status', () => {

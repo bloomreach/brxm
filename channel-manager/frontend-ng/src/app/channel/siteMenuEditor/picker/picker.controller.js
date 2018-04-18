@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import './picker.scss';
+
 class PickerCtrl {
-  constructor($mdDialog, $filter, PickerService, locals) {
+  constructor($mdDialog, $q, PickerService, locals) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
-    this.$filter = $filter;
+    this.$q = $q;
     this.PickerService = PickerService;
     this.pickerTypes = locals.pickerTypes;
     this.initialLink = locals.initialLink;
@@ -32,12 +34,13 @@ class PickerCtrl {
     this.selectedItem = null;
     this.selectedDocument = null;
 
-    this.pickerType = this.pickerTypes[0];
-    this.PickerService.loadDataForLink(this.pickerTypes[0].id, this.initialLink)
-      .then((pickerType) => {
-        this.pickerType = this.pickerTypes.find(pt => pt.type === pickerType);
-        this._navigateToSelectedOrRoot();
-      });
+    if (!this.initialLink) {
+      this._loadInitialPicker();
+    } else {
+      this._loadSelectedPicker(this.pickerTypes[0].id, this.initialLink)
+        .then(itemFound => (itemFound ? true : this._loadSelectedPicker(this.pickerTypes[1].id, this.initialLink)))
+        .then(itemFound => (itemFound ? true : this._loadInitialPicker()));
+    }
 
     this.treeOptions = {
       displayItem: item => item.type === 'folder' || item.type === 'page',
@@ -49,6 +52,22 @@ class PickerCtrl {
         this.PickerService.getData(item);
       },
     };
+  }
+
+  _loadInitialPicker() {
+    this.PickerService.loadDataForLink(this.pickerTypes[0].id)
+      .then((pickerType) => {
+        this.pickerType = this.pickerTypes.find(pt => pt.type === pickerType);
+        this._navigateToRoot();
+      });
+  }
+
+  _loadSelectedPicker(pickerTypeId, link) {
+    return this.PickerService.loadDataForLink(pickerTypeId, link)
+      .then((pickerType) => {
+        this.pickerType = this.pickerTypes.find(pt => pt.type === pickerType);
+        return this._navigateToSelected(this.items);
+      });
   }
 
   changePickerType() {
@@ -72,16 +91,15 @@ class PickerCtrl {
     this.$mdDialog.hide(this.selectedDocument);
   }
 
-  _navigateToSelectedOrRoot() {
-    if (this.items && this.items.length) {
-      this._navigateToSelected(this.items);
-      if (this.selectedItem === null) {
-        this.selectedItem = this.items[0];
-      }
-    }
+  _navigateToRoot() {
+    this.selectedItem = this.items && this.items.length ? this.items[0] : null;
   }
 
   _navigateToSelected(items, parent) {
+    if (!items || items.length === 0) {
+      return false;
+    }
+
     return items.some((item) => {
       if (item.selected) {
         this.selectedItem = parent;
@@ -93,6 +111,12 @@ class PickerCtrl {
       }
       return false;
     });
+  }
+
+  _navigateToSelectedOrRoot() {
+    if (!this._navigateToSelected(this.items)) {
+      this._navigateToRoot();
+    }
   }
 }
 

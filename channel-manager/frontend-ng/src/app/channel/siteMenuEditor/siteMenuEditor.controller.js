@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class MenuEditorCtrl {
+class SiteMenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
     FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
@@ -135,14 +135,14 @@ class MenuEditorCtrl {
   showPicker(targetEvent) {
     const pickerTypes = [
       {
-        id: this.SiteMenuService.getSiteContentIdentifier(),
-        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
-        type: 'documents',
-      },
-      {
         id: this.SiteMenuService.getSiteMapIdentifier(),
         name: this.$translate.instant('PICKER_TYPE_SITEMAP_ITEMS'),
         type: 'pages',
+      },
+      {
+        id: this.SiteMenuService.getSiteContentIdentifier(),
+        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
+        type: 'documents',
       },
     ];
     const pickerCfg = {
@@ -214,4 +214,4 @@ class MenuEditorCtrl {
   }
 }
 
-export default MenuEditorCtrl;
+export default SiteMenuEditorCtrl;
