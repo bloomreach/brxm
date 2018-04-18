@@ -178,7 +178,6 @@ function config(
 
   $mdIconProvider
     .icon('any-device', `images/any-device.svg${antiCache}`)
-    .icon('attention', `images/attention.svg${antiCache}`)
     .icon('back', `images/back.svg${antiCache}`)
     .icon('close', `images/close.svg${antiCache}`)
     .icon('desktop', `images/desktop.svg${antiCache}`)
