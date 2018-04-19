@@ -187,7 +187,6 @@ public class HippoBeanFrozenNodeUtils {
 
         final String originalTypeString = frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
 
-        // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
         final NodeType originalType = nodeTypeManager.getNodeType(originalTypeString);
 
         if (originalType.isNodeType(sourceNodeType)) {
@@ -196,7 +195,6 @@ public class HippoBeanFrozenNodeUtils {
 
         for (NodeType mixinType : frozenNode.getMixinNodeTypes()) {
             final String originalMixinTypeString = mixinType.getName();
-            // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
             final NodeType originalMixinType = nodeTypeManager.getNodeType(originalMixinTypeString);
 
             if (originalMixinType.isNodeType(sourceNodeType)) {
@@ -248,7 +246,6 @@ public class HippoBeanFrozenNodeUtils {
     }
 
     private static NodeIterator proxyGetNodes(final Node frozenNode, final String absWorkspacePath, final String[] nameGlobs) throws RepositoryException {
-        // TODO make sure this is hit in integration test as well!! (get children of a node of type HippoBeanFrozenNode
         List<Node> childNodes = new LinkedList<>();
         Node childNode;
 
