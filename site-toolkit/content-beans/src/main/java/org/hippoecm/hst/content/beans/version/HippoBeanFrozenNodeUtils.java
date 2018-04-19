@@ -26,7 +26,6 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.commons.proxy.Interceptor;
-import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.ProxyFactory;
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNode;
@@ -136,8 +135,9 @@ public class HippoBeanFrozenNodeUtils {
                     // just return the proxy object itself since that is the canonical we are looking for
                     return wrapper.getHippoNode();
                 case "getDisplayName":
-                    // TODO how to get the display name? Property lookup?
-                    return frozenNode.getName();
+                    // Possibly a different name is stored on the handle with hippo:name *but* never on a frozenNode.
+                    // hence just return the name (HippoBean#getDisplayName()) also always returns just the node name
+                    return name;
                 case "pendingChanges":
                     return new EmptyNodeIterator();
                 case "isVirtual":
