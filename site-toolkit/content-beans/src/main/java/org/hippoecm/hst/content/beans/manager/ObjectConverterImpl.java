@@ -227,7 +227,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
 
         if ((node instanceof HippoNode) && ((HippoNode) node).isVirtual()) {
-            log.info("We do not support versioned versions of virtual nodes right now");
+            // TODO support virtual nodes for version history. (via virtual node to canonical to version history)
             return node;
         }
 
@@ -267,7 +267,11 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
 
         final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
-        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath());
+        if (node.getSession() == versionByLabel.getSession()) {
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath());
+        }
+        // node most likely belongs to live user session
+        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node.getSession().getNode(versionByLabel.getFrozenNode().getPath()), node.getPath());
 
     }
 
