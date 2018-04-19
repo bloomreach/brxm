@@ -219,13 +219,20 @@ public class HippoBeanFrozenNodeUtils {
             childNode = nodeIt.nextNode();
 
             if (childNode != null) {
-                // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, getPath(absWorkspacePath, childNode), childNode.getName());
                 childNodes.add(childNode);
             }
         }
 
         return new NodeIteratorAdapter(childNodes);
+    }
+
+    private static String getPath(final String absWorkspacePath, final Node childNode) throws RepositoryException {
+        String path = absWorkspacePath + "/" + childNode.getName();
+        if (childNode.getIndex() > 1) {
+            path += "[" + childNode.getIndex() + "]";
+        }
+        return path;
     }
 
     private static NodeIterator proxyGetNodes(final Node frozenNode, final String absWorkspacePath, final String namePattern) throws RepositoryException {
@@ -236,8 +243,7 @@ public class HippoBeanFrozenNodeUtils {
             childNode = nodeIt.nextNode();
 
             if (childNode != null) {
-                // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, getPath(absWorkspacePath, childNode), childNode.getName());
                 childNodes.add(childNode);
             }
         }
@@ -253,8 +259,7 @@ public class HippoBeanFrozenNodeUtils {
             childNode = nodeIt.nextNode();
 
             if (childNode != null) {
-                // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, getPath(absWorkspacePath, childNode), childNode.getName());
                 childNodes.add(childNode);
             }
         }

@@ -29,6 +29,7 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -36,11 +37,11 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.hst.core.container.ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME;
 
 public class TestVersionedBean extends AbstractBeanTestCase {
 
@@ -177,21 +179,12 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         assertThat(workspaceHomepage).isInstanceOf(PersistableTextPage.class);
     }
 
-    @Test
-    public void get_versioned_homepage_bean_for_christmas() throws Exception {
 
-        // without branch context
-        final PersistableTextPage workspaceHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        assertThat(workspaceHomePage.getBody().getContent()).isEqualTo("This is the content of the master homepage");
-
-        assertThat(workspaceHomePage.getTitle())
-                .as("Expected live workspace version")
-                .isEqualTo("The new master Title");
-
+    private void initContext(final String branch) throws RepositoryException {
 
         final Channel channel = createNiceMock(Channel.class);
         expect(channel.getBranchOf()).andStubReturn("unittestproject");
-        expect(channel.getBranchId()).andStubReturn("christmas");
+        expect(channel.getBranchId()).andStubReturn(branch);
 
         final Mount mount = createNiceMock(Mount.class);
         expect(mount.getChannel()).andStubReturn(channel);
@@ -208,11 +201,34 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         // on the request context I need to set a preview session because the preview session is only allowed to read
         // the variant via which we can access the version history!
         Session previewUser = null;
-        try {
-            previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
-            expect(requestContext.getAttribute(eq(ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME))).andStubReturn(previewUser);
 
-            replay(channel, mount, resolvedMount, requestContext);
+        previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
+        expect(requestContext.getAttribute(eq(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME))).andStubReturn(previewUser);
+
+        replay(channel, mount, resolvedMount, requestContext);
+
+    }
+
+    private void cleanupContext() {
+        Session previewSession = (Session)RequestContextProvider.get().getAttribute(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME);
+        if (previewSession != null && previewSession.isLive()) {
+            previewSession.logout();
+        }
+    }
+
+    @Test
+    public void get_versioned_homepage_bean_for_christmas() throws Exception {
+
+        // without branch context
+        final PersistableTextPage workspaceHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        assertThat(workspaceHomePage.getBody().getContent()).isEqualTo("This is the content of the master homepage");
+
+        assertThat(workspaceHomePage.getTitle())
+                .as("Expected live workspace version")
+                .isEqualTo("The new master Title");
+
+        try {
+            initContext("christmas");
 
             final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
 
@@ -250,7 +266,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
             final Object bean = versionedHomePage.getBean("unittestproject:body");
             assertThat(bean instanceof HippoHtml).isTrue();
 
-            assertThat(body.isSelf((HippoHtml)bean));
+            assertThat(body.isSelf((HippoHtml) bean));
 
             final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
             assertThat(childBeans.size()).isEqualTo(1);
@@ -293,11 +309,42 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
             assertThat(versionedHomePage.isDescendant(body)).isFalse();
             assertThat(body.isDescendant(versionedHomePage)).isTrue();
-
         } finally {
-            if (previewUser != null) {
-                previewUser.logout();
-            }
+            cleanupContext();
+        }
+
+    }
+
+    @Test
+    public void get_versioned_children_with_SNS_involved() throws Exception {
+
+        final Node previewVariant = WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final String bodyPath = previewVariant.getNode("unittestproject:body").getPath();
+        // create SNS
+        JcrUtils.copy(session, bodyPath, bodyPath);
+        session.save();
+
+        final DocumentWorkflow wf = WorkflowUtils.getWorkflow(homeHandle, "default", DocumentWorkflow.class)
+                .orElseThrow(() -> new WorkflowException("Could not get workflow"));
+
+        changeTitleContentAndCommit(homeHandle, wf, "The Christmas Title", "This is the content of the Christmas homepage");
+
+        wf.version();
+        versionHistoryHome.addVersionLabel("1.4", "christmas-live", true);
+
+
+        try {
+            initContext("christmas");
+
+            final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+
+            final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
+            assertThat(childBeans.size()).isEqualTo(2);
+
+            assertThat(childBeans.get(0).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
+            assertThat(childBeans.get(1).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body[2]");
+        } finally {
+            cleanupContext();
         }
     }
 }
