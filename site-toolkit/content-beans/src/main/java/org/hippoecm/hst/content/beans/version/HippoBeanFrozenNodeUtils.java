@@ -1,12 +1,12 @@
 /*
  *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,8 +30,7 @@ import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.ProxyFactory;
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.repository.util.JcrConstants;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -40,27 +39,26 @@ import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
 /**
  * Utility to handle versioned, frozen node (nt:frozenNode).
- * <P>
+ * <p>
  * For example, a version is stored, embedding a frozen node which contains the versioned document variant content,
  * in locations like '/jcr:system/jcr:versionStorage/91/90/1d/91901d8f-d6ab-480a-a693-a6e459a678c3/1.0/jcr:frozenNode',
  * where '1.0' node is of 'nt:version' jcr primary type and 'jcr:frozenNode' is the node containing the versioned
  * document variant node content.
  * </P>
- * <P>
+ * <p>
  * Note that HST Content Beans module doesn't allow to map between beans and frozen nodes by default.
  * Therefore, this utility class provides a way to proxy a frozen node instance to pretend as a non-frozen node instance.
  * </P>
  */
 public class HippoBeanFrozenNodeUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(HippoBeanFrozenNodeUtils.class);
-
     private HippoBeanFrozenNodeUtils() {
     }
 
     /**
      * Returns a proxy which pretends to be non-frozen node from the {@code frozenNode}.
-     * @param frozenNode frozen node
+     *
+     * @param frozenNode       frozen node
      * @param absWorkspacePath the workspace path of the frozen node. Note that at this workspace path there might not be
      *                         a node present
      * @return a proxy which pretends to be non-frozen node from the {@code frozenNode}
@@ -68,12 +66,11 @@ public class HippoBeanFrozenNodeUtils {
      */
     public static HippoNode getWorkspaceFrozenNode(final Node frozenNode, final String absWorkspacePath) throws RepositoryException {
         if (absWorkspacePath.startsWith("/jcr:system")) {
-            log.error("absWorkspacePath should always be a workspace path but was '{}'", absWorkspacePath,
-                    new Throwable("absWorkspacePath should never be a jcr:system path"));
+            throw new IllegalArgumentException(String.format("absWorkspacePath should never be a jcr:system path but it was %s", absWorkspacePath));
         }
 
         if (!frozenNode.isNodeType(NT_FROZEN_NODE)) {
-            throw new IllegalArgumentException("frozenNode must be type of nt:frozenNode!");
+            throw new IllegalArgumentException(String.format("frozenNode must be type of %s!", NT_FROZEN_NODE));
         }
 
         ProxyFactory proxyFactory = new ProxyFactory();
@@ -85,7 +82,7 @@ public class HippoBeanFrozenNodeUtils {
                 final String methodName = method.getName();
 
                 if ("getName".equals(methodName)) {
-                    return frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+                    return frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
                 }
 
                 return invocation.proceed();
@@ -101,52 +98,52 @@ public class HippoBeanFrozenNodeUtils {
 
         final Interceptor nodeInterceptor = invocation -> {
             final Method method = invocation.getMethod();
-            //final Class<?> declaringClass = method.getDeclaringClass();
             final String methodName = method.getName();
-            final Object [] arguments = invocation.getArguments();
+            final Object[] arguments = invocation.getArguments();
 
-            if ("getPrimaryNodeType".equals(methodName)) {
-                return primaryNodeTypeProxy;
-            } if ("getPath".equals(methodName)) {
-                return absWorkspacePath;
-            } else if ("isNodeType".equals(methodName)) {
-                return proxyIsNodeType(frozenNode, (String) arguments[0]);
-            } else if ("getParent".equals(methodName)) {
-                final String parentWorkspacePath = substringBeforeLast(absWorkspacePath, "/");
-                final Node parent = frozenNode.getParent();
-                if (parent.isNodeType(NT_FROZEN_NODE)) {
-                    return getWorkspaceFrozenNode(parent, parentWorkspacePath);
-                }
-                // parent is not a frozen node hence return the workspace parent because this parent is meant to
-                // be fetched
-                return frozenNode.getSession().getNode(parentWorkspacePath);
-            } else if ("getNode".equals(methodName)) {
-                return proxyGetNode(frozenNode, absWorkspacePath, (String) arguments[0]);
-            } else if ("getNodes".equals(methodName)) {
-                if (arguments == null || arguments.length == 0) {
-                    return proxyGetNodes(frozenNode, absWorkspacePath);
-                } else if (arguments[0] != null && arguments[0].getClass().isArray()) {
-                    return proxyGetNodes(frozenNode, absWorkspacePath, (String []) arguments[0]);
-                } else {
-                    return proxyGetNodes(frozenNode, absWorkspacePath, (String) arguments[0]);
-                }
-            } else if ("getCanonicalNode".equals(methodName)) {
-                // just return the proxy object itself since that is the canonical we are looking for
-                return wrapper.getHippoNode();
-            } if ("getDisplayName".equals(methodName)) {
-                // TODO how to get the display name? Property lookup?
-                return frozenNode.getName();
-            } else if ("pendingChanges".equals(methodName)) {
-                return new EmptyNodeIterator();
-            } else if ("isVirtual".equals(methodName)) {
-                return FALSE;
-            } else if ("recomputeDerivedData".equals(methodName)) {
-                return FALSE;
-            } else if ("getFrozenNode".equals(methodName)) {
-                return frozenNode;
+            switch (methodName) {
+                case "getPrimaryNodeType":
+                    return primaryNodeTypeProxy;
+                case "getPath":
+                    return absWorkspacePath;
+                case "isNodeType":
+                    return proxyIsNodeType(frozenNode, (String) arguments[0]);
+                case "getParent":
+                    final String parentWorkspacePath = substringBeforeLast(absWorkspacePath, "/");
+                    final Node parent = frozenNode.getParent();
+                    if (parent.isNodeType(NT_FROZEN_NODE)) {
+                        return getWorkspaceFrozenNode(parent, parentWorkspacePath);
+                    }
+                    // parent is not a frozen node hence return the workspace parent because this parent is meant to
+                    // be fetched
+                    return frozenNode.getSession().getNode(parentWorkspacePath);
+                case "getNode":
+                    return proxyGetNode(frozenNode, absWorkspacePath, (String) arguments[0]);
+                case "getNodes":
+                    if (arguments == null || arguments.length == 0) {
+                        return proxyGetNodes(frozenNode, absWorkspacePath);
+                    } else if (arguments[0] != null && arguments[0].getClass().isArray()) {
+                        return proxyGetNodes(frozenNode, absWorkspacePath, (String[]) arguments[0]);
+                    } else {
+                        return proxyGetNodes(frozenNode, absWorkspacePath, (String) arguments[0]);
+                    }
+                case "getCanonicalNode":
+                    // just return the proxy object itself since that is the canonical we are looking for
+                    return wrapper.getHippoNode();
+                case "getDisplayName":
+                    // TODO how to get the display name? Property lookup?
+                    return frozenNode.getName();
+                case "pendingChanges":
+                    return new EmptyNodeIterator();
+                case "isVirtual":
+                    return FALSE;
+                case "recomputeDerivedData":
+                    return FALSE;
+                case "getFrozenNode":
+                    return frozenNode;
+                default:
+                    return invocation.proceed();
             }
-
-            return invocation.proceed();
         };
 
         HippoNode pretenderNode = (HippoBeanFrozenNode) proxyFactory
@@ -170,22 +167,21 @@ public class HippoBeanFrozenNodeUtils {
         }
     }
 
-    private static Boolean proxyIsNodeType(final Node frozenNode, final String isOfNodeType) throws RepositoryException {
+    private static Boolean proxyIsNodeType(final Node frozenNode, final String sourceNodeType) throws RepositoryException {
 
-        if (frozenNode.isNodeType(isOfNodeType)) {
+        if (frozenNode.isNodeType(sourceNodeType)) {
             // we also return true if the check is whether we are dealing with a frozen node
             return TRUE;
         }
 
         final NodeTypeManager nodeTypeManager = frozenNode.getSession().getWorkspace().getNodeTypeManager();
 
-
-        final String originalTypeString = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+        final String originalTypeString = frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
 
         // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
         final NodeType originalType = nodeTypeManager.getNodeType(originalTypeString);
 
-        if (originalType.isNodeType(isOfNodeType)) {
+        if (originalType.isNodeType(sourceNodeType)) {
             return TRUE;
         }
 
@@ -194,7 +190,7 @@ public class HippoBeanFrozenNodeUtils {
             // TODO can nodetype be removed but still present in version history? Most likely not. To be sure, try / catch below
             final NodeType originalMixinType = nodeTypeManager.getNodeType(originalMixinTypeString);
 
-            if (originalMixinType.isNodeType(isOfNodeType)) {
+            if (originalMixinType.isNodeType(sourceNodeType)) {
                 return TRUE;
             }
         }
@@ -242,7 +238,7 @@ public class HippoBeanFrozenNodeUtils {
         return new NodeIteratorAdapter(childNodes);
     }
 
-    private static NodeIterator proxyGetNodes(final Node frozenNode, final String absWorkspacePath, final String [] nameGlobs) throws RepositoryException {
+    private static NodeIterator proxyGetNodes(final Node frozenNode, final String absWorkspacePath, final String[] nameGlobs) throws RepositoryException {
         // TODO make sure this is hit in integration test as well!! (get children of a node of type HippoBeanFrozenNode
         List<Node> childNodes = new LinkedList<>();
         Node childNode;

@@ -69,7 +69,11 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         super.setUp();
         versionManager = session.getWorkspace().getVersionManager();
         homeHandle = session.getNode("/unittestcontent/documents/unittestproject/common/homepage");
-        createVersionHistoryFixture();
+        if (WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).isPresent()) {
+            // Test fixture already created
+        } else {
+            createVersionHistoryFixture();
+        }
         objectConverter = getObjectConverter();
         obm = new ObjectBeanManagerImpl(session, objectConverter);
     }
@@ -119,7 +123,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         assertThat(doc2.getNode(session).getName()).isEqualTo("1.1");
         versionHistoryAboutUs.addVersionLabel("1.1", "christmas-live", true);
 
-        changeTitleAndCommit(aboutUsHandle, wf2, "The master Title About us");;
+        changeTitleAndCommit(aboutUsHandle, wf2, "The master Title About us");
 
         wf2.version();
         versionHistoryAboutUs.addVersionLabel("1.2", "master-live", true);
@@ -129,6 +133,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         wf2.publish();
         // overrides the 1.0 christmas-live version
         versionHistoryAboutUs.addVersionLabel("1.3", "christmas-live", true);
+
+        confirm_version_fixture();
     }
 
     private void changeTitleAndCommit(final Node handle, final DocumentWorkflow wf, final String newTitle) throws RepositoryException, WorkflowException, RemoteException {
@@ -148,8 +154,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         wf.commitEditableInstance();
     }
 
-    @Test
-    public void confirm_version_fixture() throws RepositoryException {
+    private void confirm_version_fixture() throws RepositoryException {
 
         final Version homeMaster = versionHistoryHome.getVersionByLabel("master-live");
         assertThat(homeMaster.getName()).isEqualTo("1.3");
@@ -175,7 +180,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
     public void get_versioned_homepage_bean_for_christmas() throws Exception {
 
         // without branch context
-        final PersistableTextPage workspaceHomePage = (PersistableTextPage)obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        final PersistableTextPage workspaceHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         assertThat(workspaceHomePage.getBody().getContent()).isEqualTo("This is the content of the master homepage");
 
         assertThat(workspaceHomePage.getTitle())
