@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -242,8 +243,23 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
             final HippoHtml body = versionedHomePage.getBody();
 
+            assertThat(body.getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
+
             assertThat(body.getContent()).isEqualTo("This is the content of the christmas homepage");
 
+            final Object bean = versionedHomePage.getBean("unittestproject:body");
+            assertThat(bean instanceof HippoHtml).isTrue();
+
+            assertThat(body.isSelf((HippoHtml)bean));
+
+            final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
+            assertThat(childBeans.size()).isEqualTo(1);
+            assertThat(childBeans.get(0).isSelf(body));
+
+            final List<HippoBean> allChildren = versionedHomePage.getChildBeans(HippoBean.class);
+
+            assertThat(allChildren.size()).isEqualTo(1);
+            assertThat(allChildren.get(0).isSelf(body));
 
             final PersistableTextPage versionedHomePageViaBody = (PersistableTextPage) body.getParentBean();
 
