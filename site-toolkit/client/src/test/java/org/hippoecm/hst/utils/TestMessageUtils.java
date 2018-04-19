@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
  */
 package org.hippoecm.hst.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ResourceBundle;
 
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * TestMessageUtils
@@ -53,6 +54,14 @@ public class TestMessageUtils {
 
     private static final String DOLLAR_SIGN_TEST_EXPECTED_MESSAGE = 
         "The annual payment is $500.";
+
+    private static final String ESCAPABLE_GREETING_VALUE = "<script>alert('hi there!');</script>";
+
+    private static final String ESCAPABLE_TEST_MESSAGE_EXPR = "<h1>${escapable.greeting}</h1>";
+
+    private static final String EXPECTED_UNESCAPED_TEST_MESSAGE = "<h1>" + ESCAPABLE_GREETING_VALUE + "</h1>";
+
+    private static final String EXPECTED_ESCAPED_TEST_MESSAGE = "<h1>" + HstRequestUtils.escapeXml(ESCAPABLE_GREETING_VALUE) + "</h1>";
 
     @Before
     public void before() throws Exception {
@@ -140,5 +149,16 @@ public class TestMessageUtils {
         assertEquals(DOLLAR_SIGN_TEST_EXPECTED_MESSAGE, replacedMessage);
     }
 
+    @Test
+    public void testEscaping() throws Exception {
+        String replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, ESCAPABLE_TEST_MESSAGE_EXPR, "${", "}", '\\', true);
+        assertEquals(EXPECTED_ESCAPED_TEST_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, ESCAPABLE_TEST_MESSAGE_EXPR, "${", "}", '\\', false);
+        assertEquals(EXPECTED_UNESCAPED_TEST_MESSAGE, replacedMessage);
+
+        replacedMessage = MessageUtils.replaceMessages(BUNDLE_NAME, ESCAPABLE_TEST_MESSAGE_EXPR, "${", "}", '\\');
+        assertEquals(EXPECTED_UNESCAPED_TEST_MESSAGE, replacedMessage);
+    }
 }
 
