@@ -23,18 +23,19 @@
 # If no errors, git commit and push the 2 translation modules
 
 locales="nl de fr zh es"
-release="12.2.0"
+release="12.4.0"
+branch="release/12.4"
 
 mkdir target
 
-git clone git@code.onehippo.org:cms-community-dev/hippo-cms-translations.git target/hippo-cms-translations
-git clone git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git target/hippo-cms-enterprise-translations
+git clone -b ${branch} git@code.onehippo.org:cms-community-dev/hippo-cms-translations.git target/hippo-cms-translations
+git clone -b ${branch} git@code.onehippo.org:cms-enterprise/hippo-cms-enterprise-translations.git target/hippo-cms-enterprise-translations
 
 modules="hippo-cms-translations hippo-cms-enterprise-translations"
 
 for module in $modules; do
     for locale in $locales; do
-	    filename=../import/${module}_${release}_${locale}.xlsx
+	    filename=../../import/${module}_${release}_${locale}.xlsx
         mvn -N hippo-cms-l10n:import -Dlocale=$locale -Dfile=$filename -f target/$module/pom.xml
     done
 done
