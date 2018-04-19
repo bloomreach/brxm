@@ -238,6 +238,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
             assertThat(node).isInstanceOf(HippoBeanFrozenNode.class);
 
+            assertThat(node.getName()).isEqualTo("homepage");
+
             final HippoHtml body = versionedHomePage.getBody();
 
             assertThat(body.getContent()).isEqualTo("This is the content of the christmas homepage");
@@ -276,8 +278,6 @@ public class TestVersionedBean extends AbstractBeanTestCase {
             assertThat(versionedHomePage.isDescendant(body)).isFalse();
             assertThat(body.isDescendant(versionedHomePage)).isTrue();
 
-            // TODO confirmation wrt identifier....how does this work out for 'editing content' in CM? Most likely
-            // TODO we need the workspace identifer??? To be investigated
         } finally {
             if (previewUser != null) {
                 previewUser.logout();

@@ -223,7 +223,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         if (node.isNodeType(NT_FROZEN_NODE)) {
             log.error("Unexpected {} node since we always expect a decorated node of type '{}'", NT_FROZEN_NODE,
                     HippoBeanFrozenNode.class.getName(), new Exception(String.format("Unexpected frozen node for '{}'", node.getPath())));
-            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node, node.getPath());
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node, node.getPath(), node.getName());
         }
 
         if ((node instanceof HippoNode) && ((HippoNode) node).isVirtual()) {
@@ -268,10 +268,10 @@ public class ObjectConverterImpl implements ObjectConverter {
 
         final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
         if (node.getSession() == versionByLabel.getSession()) {
-            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath());
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath(), node.getName());
         }
         // node most likely belongs to live user session
-        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node.getSession().getNode(versionByLabel.getFrozenNode().getPath()), node.getPath());
+        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node.getSession().getNode(versionByLabel.getFrozenNode().getPath()), node.getPath(), node.getName());
 
     }
 

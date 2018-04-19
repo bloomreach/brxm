@@ -34,6 +34,8 @@ import org.onehippo.repository.util.JcrConstants;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 
@@ -64,7 +66,7 @@ public class HippoBeanFrozenNodeUtils {
      * @return a proxy which pretends to be non-frozen node from the {@code frozenNode}
      * @throws RepositoryException if unexpected repository exception occurs
      */
-    public static HippoNode getWorkspaceFrozenNode(final Node frozenNode, final String absWorkspacePath) throws RepositoryException {
+    public static HippoNode getWorkspaceFrozenNode(final Node frozenNode, final String absWorkspacePath, final String name) throws RepositoryException {
         if (absWorkspacePath.startsWith("/jcr:system")) {
             throw new IllegalArgumentException(String.format("absWorkspacePath should never be a jcr:system path but it was %s", absWorkspacePath));
         }
@@ -75,18 +77,15 @@ public class HippoBeanFrozenNodeUtils {
 
         ProxyFactory proxyFactory = new ProxyFactory();
 
-        final Interceptor primaryNodeTypeInterceptor = new Interceptor() {
-            @Override
-            public Object intercept(Invocation invocation) throws Throwable {
-                final Method method = invocation.getMethod();
-                final String methodName = method.getName();
+        final Interceptor primaryNodeTypeInterceptor = invocation -> {
+            final Method method = invocation.getMethod();
+            final String methodName = method.getName();
 
-                if ("getName".equals(methodName)) {
-                    return frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
-                }
-
-                return invocation.proceed();
+            if ("getName".equals(methodName)) {
+                return frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
             }
+
+            return invocation.proceed();
         };
 
         final NodeType primaryNodeTypeProxy =
@@ -106,13 +105,19 @@ public class HippoBeanFrozenNodeUtils {
                     return primaryNodeTypeProxy;
                 case "getPath":
                     return absWorkspacePath;
+                case "getName":
+                    return name;
                 case "isNodeType":
                     return proxyIsNodeType(frozenNode, (String) arguments[0]);
                 case "getParent":
                     final String parentWorkspacePath = substringBeforeLast(absWorkspacePath, "/");
                     final Node parent = frozenNode.getParent();
                     if (parent.isNodeType(NT_FROZEN_NODE)) {
-                        return getWorkspaceFrozenNode(parent, parentWorkspacePath);
+                        // the frozen node does not contain the original node name. The workspace node name can
+                        // have been removed already. Hence, all we can return is part behind the last '/' in
+                        // absWorkspacePath and remove potential index holder in the path (eg [2])
+                        // substringBefore '[' is good enough since AFAIK not allowed in a name
+                        return getWorkspaceFrozenNode(parent, parentWorkspacePath, getNodeNameFromPath(parentWorkspacePath));
                     }
                     // parent is not a frozen node hence return the workspace parent because this parent is meant to
                     // be fetched
@@ -152,6 +157,10 @@ public class HippoBeanFrozenNodeUtils {
         wrapper.setHippoNode(pretenderNode);
 
         return pretenderNode;
+    }
+
+    private static String getNodeNameFromPath(final String parentWorkspacePath) {
+        return substringBefore(substringAfterLast(parentWorkspacePath, "/"), "[");
     }
 
     private static class HippoNodeWrapper {
@@ -200,7 +209,7 @@ public class HippoBeanFrozenNodeUtils {
 
     private static Node proxyGetNode(final Node frozenNode, final String absWorkspacePath, final String relPath) throws RepositoryException {
         Node childFrozenNode = frozenNode.getNode(relPath);
-        Node pretendingChild = getWorkspaceFrozenNode(childFrozenNode, absWorkspacePath + "/" + relPath);
+        Node pretendingChild = getWorkspaceFrozenNode(childFrozenNode, absWorkspacePath + "/" + relPath, getNodeNameFromPath(relPath));
         return pretendingChild;
     }
 
@@ -213,7 +222,7 @@ public class HippoBeanFrozenNodeUtils {
 
             if (childNode != null) {
                 // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
                 childNodes.add(childNode);
             }
         }
@@ -230,7 +239,7 @@ public class HippoBeanFrozenNodeUtils {
 
             if (childNode != null) {
                 // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
                 childNodes.add(childNode);
             }
         }
@@ -248,7 +257,7 @@ public class HippoBeanFrozenNodeUtils {
 
             if (childNode != null) {
                 // TODO SNS should get an index in the path?
-                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName());
+                childNode = getWorkspaceFrozenNode(childNode, absWorkspacePath + "/" + childNode.getName(), childNode.getName());
                 childNodes.add(childNode);
             }
         }
