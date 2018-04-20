@@ -46,7 +46,7 @@
     <hippo.configuration-management.version>1.4.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.4.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.4.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.ckeditor.version>4.7.1-h12.3.0-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.7.1-h12.3.0</hippo.ckeditor.version>
     <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>5.4.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.4.0-SNAPSHOT</hippo.hst.version>
