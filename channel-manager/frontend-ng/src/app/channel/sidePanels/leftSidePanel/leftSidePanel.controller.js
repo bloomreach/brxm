@@ -33,8 +33,6 @@ class LeftSidePanelCtrl {
     this.LeftSidePanelService = LeftSidePanelService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
-
-    this.lastSavedWidth = null;
   }
 
   $onInit() {
