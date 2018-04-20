@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -159,6 +160,54 @@ public class EditingUtilsTest {
 
         hints.put("rename", Boolean.TRUE);
         assertTrue(EditingUtils.canRenameDocument(workflow));
+    }
+
+    @Test
+    public void isActionAvailable() throws Exception {
+        final Workflow workflow = createMock(Workflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.isActionAvailable(workflow, "action"));
+
+        hints.put("action", Boolean.FALSE);
+        assertFalse(EditingUtils.isActionAvailable(workflow, "action"));
+
+        hints.put("action", Boolean.TRUE);
+        assertTrue(EditingUtils.isActionAvailable(workflow, "action"));
+
+        hints.put("action", "aap");
+        assertFalse(EditingUtils.isActionAvailable(workflow, "action"));
+    }
+
+    @Test
+    public void isRequestActionAvailable() throws Exception {
+        final Workflow workflow = createMock(Workflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertFalse(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
+
+        HashMap requests = new HashMap();
+        hints.put("requests", requests);
+        assertFalse(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
+
+        HashMap request = new HashMap();
+        requests.put("uuid", request);
+        assertFalse(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
+
+        request.put("action", Boolean.FALSE);
+        assertFalse(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
+
+        request.put("action", Boolean.TRUE);
+        assertTrue(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
+
+        request.put("action", "aap");
+        assertFalse(EditingUtils.isRequestActionAvailable(workflow, "action", "uuid"));
     }
 
     @Test

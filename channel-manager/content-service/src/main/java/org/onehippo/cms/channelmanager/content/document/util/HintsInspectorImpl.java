@@ -25,13 +25,13 @@ import javax.jcr.Session;
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
-public class HintsInspectorImpl implements HintsInspector {
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_IN_USE_BY;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUESTS;
 
-    private static final String HINT_IN_USE_BY = "inUseBy";
-    private static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
-    private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
-    private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
-    private static final String HINT_REQUESTS = "requests";
+public class HintsInspectorImpl implements HintsInspector {
 
     @Override
     public boolean canCreateDraft(Map<String, Serializable> hints) {

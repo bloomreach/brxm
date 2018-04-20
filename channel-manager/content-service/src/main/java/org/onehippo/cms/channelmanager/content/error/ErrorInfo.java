@@ -79,16 +79,18 @@ public class ErrorInfo {
     public enum Reason {
         ALREADY_DELETED,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        CORE_PROJECT,
         DOES_NOT_EXIST,
         INVALID_DATA,
         INVALID_TEMPLATE_QUERY,
         NAME_ALREADY_EXISTS,
         NO_HOLDER,
+        MULTIPLE_REQUESTS,
+        NO_REQUEST_PENDING,
         NOT_A_DOCUMENT,
         NOT_A_FOLDER,
         OTHER_HOLDER,
         PART_OF_PROJECT,
-        CORE_PROJECT,
         PROJECT_INVALID_STATE,
         PROJECT_NOT_FOUND,
         REQUEST_PENDING,
@@ -97,6 +99,7 @@ public class ErrorInfo {
         TEMPLATE_QUERY_NOT_FOUND,
         UNKNOWN_VALIDATOR,
         WORKFLOW_ERROR,
-        // add more specific failure reasons here.
+        WORKFLOW_ACTION_NOT_AVAILABLE,
+        WORKFLOW_ACTION_NOT_IMPLEMENTED,
     }
 }
