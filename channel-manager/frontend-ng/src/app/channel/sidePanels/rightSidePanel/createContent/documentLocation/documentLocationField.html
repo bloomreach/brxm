@@ -26,7 +26,7 @@
           <span ng-repeat="folder in $ctrl.folders track by folder.path"
                 ng-class="{ 'highlight': folder.exists }"><span>/</span>{{::folder.displayName }}</span>
         </div>
-        <md-icon class="material-icons">search</md-icon>
+        <md-icon md-font-icon="mdi-magnify"></md-icon>
       </div>
       <input ng-model="$ctrl.path"
              name="path"

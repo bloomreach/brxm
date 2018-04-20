@@ -173,9 +173,11 @@ function config(
       return m.isValid() ? m.toDate() : new Date(NaN);
     };
 
+  $mdIconProvider.fontSet('materialdesignicons', 'mdi');
+  $mdIconProvider.defaultFontSet('mdi');
+
   $mdIconProvider
     .icon('any-device', `images/any-device.svg${antiCache}`)
-    .icon('attention', `images/attention.svg${antiCache}`)
     .icon('back', `images/back.svg${antiCache}`)
     .icon('close', `images/close.svg${antiCache}`)
     .icon('desktop', `images/desktop.svg${antiCache}`)
