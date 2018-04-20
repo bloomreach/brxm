@@ -97,18 +97,6 @@ md-toolbar.hippo-toolbar {
       font-weight: normal;
     }
   }
-
-  .changes-button {
-    margin-left: 0;
-    margin-right: 4px;
-    padding-right: 20px;
-
-    md-icon {
-      fill: $toolbar-channel-changes-color;
-      left: 4px;
-      position: relative;
-    }
-  }
 }
 
 md-toolbar > md-progress-linear {
