@@ -64,11 +64,6 @@ class ContentEditorCtrl {
     return this.ContentEditor.isDocumentDirty();
   }
 
-  canDocumentBePublished() {
-//    return this.ContentEditor.canDocumentBePublished();
-    return true;
-  }
-
   getFieldTypes() {
     return this.ContentEditor.getDocumentType().fields;
   }

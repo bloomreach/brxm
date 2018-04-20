@@ -112,10 +112,6 @@ class ContentEditorService {
     this.documentDirty = true;
   }
 
-  canDocumentBePublished() {
-    return this.documentCanBePublished;
-  }
-
   getPublicationState() {
     return this.documentPublicationState;
   }
