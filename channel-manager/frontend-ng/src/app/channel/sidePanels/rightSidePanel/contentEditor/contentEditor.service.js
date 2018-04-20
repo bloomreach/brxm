@@ -112,6 +112,14 @@ class ContentEditorService {
     this.documentDirty = true;
   }
 
+  canDocumentBePublished() {
+    return this.documentCanBePublished;
+  }
+
+  getPublicationState() {
+    return this.documentPublicationState;
+  }
+
   getError() {
     return this.error;
   }
@@ -177,6 +185,8 @@ class ContentEditorService {
     this.document = document;
     this.documentType = documentType;
     this.documentDirty = document.info && document.info.dirty;
+    this.documentCanBePublished = document.info && document.info.canBePublished;
+    this.documentPublicationState = document.info && document.info.publicationState;
     delete this.error;
   }
 

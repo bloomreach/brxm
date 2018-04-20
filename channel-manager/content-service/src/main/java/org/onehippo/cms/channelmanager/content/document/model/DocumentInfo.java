@@ -36,6 +36,8 @@ public class DocumentInfo {
     // whether this document has auto-drafted changes that have not been saved to the preview variant yet
     private boolean dirty;
 
+    private boolean canBePublished;
+
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
     private PublicationState publicationState;
 
@@ -67,6 +69,15 @@ public class DocumentInfo {
 
     public void setDirty(final boolean dirty) {
         this.dirty = dirty;
+    }
+
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    public boolean isCanBePublished() {
+        return canBePublished;
+    }
+
+    public void setCanBePublished(final boolean canBePublished) {
+        this.canBePublished = canBePublished;
     }
 
     public PublicationState getPublicationState() {

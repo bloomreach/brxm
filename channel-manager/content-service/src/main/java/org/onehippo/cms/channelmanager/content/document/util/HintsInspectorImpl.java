@@ -31,6 +31,7 @@ public class HintsInspectorImpl implements HintsInspector {
     private static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    private static final String HINT_PUBLISH = "publish";
     private static final String HINT_REQUESTS = "requests";
 
     @Override
@@ -46,6 +47,11 @@ public class HintsInspectorImpl implements HintsInspector {
     @Override
     public boolean canDeleteDraft(Map<String, Serializable> hints) {
         return isActionAvailable(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
+    }
+
+    @Override
+    public boolean canPublish(final Map<String, Serializable> hints) {
+        return isActionAvailable(hints, HINT_PUBLISH);
     }
 
     @Override

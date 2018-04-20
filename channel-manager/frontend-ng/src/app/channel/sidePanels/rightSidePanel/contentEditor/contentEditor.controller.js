@@ -49,12 +49,24 @@ class ContentEditorCtrl {
     return this.ContentEditor.isEditing();
   }
 
+  isPublishAllowed() {
+    if (this.isSaveAllowed()) {
+      return true;
+    }
+    return this.ContentEditor.getPublicationState() === 'new' || this.ContentEditor.getPublicationState() === 'changed';
+  }
+
   isSaveAllowed() {
     return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.allowSave;
   }
 
   _isDocumentDirty() {
     return this.ContentEditor.isDocumentDirty();
+  }
+
+  canDocumentBePublished() {
+//    return this.ContentEditor.canDocumentBePublished();
+    return true;
   }
 
   getFieldTypes() {
@@ -79,6 +91,10 @@ class ContentEditorCtrl {
         this.form.$setPristine();
         this.onSave();
       });
+  }
+
+  publish() {
+    console.log('PUBLISH ACTION TO BE IMPLEMENTED');
   }
 }
 

@@ -50,6 +50,15 @@ public interface HintsInspector {
     boolean canDeleteDraft(Map<String, Serializable> hints);
 
     /**
+    /**
+     * Check if a document can be published, given its workflow hints.
+     *
+     * @param hints workflow hints
+     * @return true if document can be published, false otherwise
+     */
+    boolean canPublish(Map<String, Serializable> hints);
+
+    /**
      * Determine the reason why editing failed for the present workflow hints.
      *
      * @param hints   workflow hints
