@@ -91,3 +91,6 @@ Failed to read nodes for image link type 'my:imagelink'
 Failed to read image link 'my:imagelink' from node '/my:imagelink'
 Failed to write image link field 'my:imagelink'
 Could not determine publication state of document
+Document workflow action 'actionNotYetImplemented' is not implemented
+Cancel request received but no pending request found for 'uuid'.
+Multiple request nodes found for 'uuid'. This situation is not supported.

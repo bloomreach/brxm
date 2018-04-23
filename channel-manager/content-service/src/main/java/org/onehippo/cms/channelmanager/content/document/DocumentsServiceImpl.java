@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -41,15 +40,15 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
-import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
+import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -60,7 +59,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.error.ResetContentException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -71,6 +69,7 @@ import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
 public class DocumentsServiceImpl implements DocumentsService {
@@ -349,7 +348,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
+    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException {
         try {
             log.info("Archiving document '{}'", uuid);
             documentWorkflow.delete();
@@ -359,7 +358,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
+    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) throws InternalServerErrorException {
         try {
             log.info("Erasing document '{}'", uuid);
             folderWorkflow.delete(handle.getName());
@@ -389,18 +388,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(handle.getIdentifier(), handle, draft, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
-    }
-
-    private static Node getHandle(final String uuid, final Session session) throws ErrorWithPayloadException {
-        return DocumentUtils.getHandle(uuid, session)
-                .filter(DocumentsServiceImpl::isValidHandle)
-                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
-    }
-
-    private static boolean isValidHandle(final Node handle) {
-        return DocumentUtils.getVariantNodeType(handle)
-                .filter(type -> !type.equals(HippoNodeType.NT_DELETED))
-                .isPresent();
     }
 
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {

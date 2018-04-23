@@ -45,7 +45,7 @@
                            aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
-                  <md-icon class="material-icons step md-18">{{ collapsed ? 'add' : 'remove' }}</md-icon>
+                  <md-icon class="mdi-18" md-font-icon="{{ collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
                 </md-button>
                 <div ng-class="{'empty-tree-item': hippoTree.isEmpty(this)}">{{ item.title }}</div>
               </div>
@@ -54,8 +54,8 @@
                            class="md-icon-button"
                            aria-label="{{ ::'EDIT' | translate }}"
                            ng-click="$ctrl.toggleEditState(item)">
-                  <md-icon class="material-icons step md-18">
-                    {{ $ctrl.editingItem.id === item.id ? 'expand_less' : 'expand_more' }}
+                  <md-icon class="mdi-18"
+                           md-font-icon="{{ $ctrl.editingItem.id === item.id ? 'mdi-chevron-up' : 'mdi-chevron-down' }}">
                   </md-icon>
                 </md-button>
               </div>
@@ -169,8 +169,8 @@
              ng-click="$ctrl.addItem()"
              ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
     <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
-             class="material-icons step md-18">
-      add
+             class="mdi-18"
+             md-font-icon="mdi-plus">
     </md-icon>
     <md-tooltip md-direction="top">
       {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}

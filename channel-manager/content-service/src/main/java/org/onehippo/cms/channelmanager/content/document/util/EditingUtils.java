@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,15 +45,16 @@ import org.slf4j.LoggerFactory;
 public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
-    private static final String HINT_IN_USE_BY = "inUseBy";
-    private static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
-    private static final String HINT_DELETE = "delete";
-    private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
-    private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+
+    static final String HINT_IN_USE_BY = "inUseBy";
+    static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
+    static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
+    static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    static final String HINT_REQUESTS = "requests";
+
     private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_PUBLISH = "publish";
     private static final String HINT_RENAME = "rename";
-    private static final String HINT_REQUESTS = "requests";
 
     private EditingUtils() {
     }
@@ -133,7 +134,23 @@ public class EditingUtils {
             final Map<String, Serializable> hints = workflow.hints();
             return hints.containsKey(action) && ((Boolean) hints.get(action));
 
-        } catch (WorkflowException | RemoteException | RepositoryException e) {
+        } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
+            log.warn("Failed reading hints from workflow", e);
+        }
+        return false;
+    }
+
+    public static boolean isRequestActionAvailable(final Workflow workflow, final String action, final String requestIdentifier) {
+        try {
+            final Map<String, Serializable> hints = workflow.hints();
+            if (hints.containsKey("requests")) {
+                final Map requestsMap = (Map) hints.get("requests");
+                if (requestsMap.containsKey(requestIdentifier)) {
+                    final Map actions = (Map) requestsMap.get(requestIdentifier);
+                    return actions.containsKey(action) && ((Boolean) actions.get(action));
+                }
+            }
+        } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
             log.warn("Failed reading hints from workflow", e);
         }
         return false;
