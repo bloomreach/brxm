@@ -211,6 +211,21 @@ public class EditingUtilsTest {
     }
 
     @Test
+    public void isHintActionAvailable() {
+        final Map<String, Serializable> hints = new HashMap<>();
+        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+
+        hints.put("action", Boolean.FALSE);
+        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+
+        hints.put("action", Boolean.TRUE);
+        assertTrue(EditingUtils.isHintActionAvailable(hints, "action"));
+
+        hints.put("action", "no-boolean");
+        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+    }
+
+    @Test
     public void hasPreview() throws Exception {
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();

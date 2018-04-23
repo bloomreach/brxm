@@ -434,6 +434,58 @@ public class DocumentsServiceImplTest {
         expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
+
+        FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        expect(docType.getId()).andReturn("document:type");
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.getFields()).andReturn(fields).anyTimes();
+
+        expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
+        expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
+        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
+
+        FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
+        expectLastCall();
+
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
+
+        replayAll(docType);
+        EasyMock.replay(hintsInspector, workflow);
+
+        final Document document = documentsService.createDraft(uuid, session, locale, emptyMap());
+        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getUrlName(), equalTo("url-name"));
+        assertThat(document.getDisplayName(), equalTo("Display Name"));
+        assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
+        assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
+        assertThat(document.getInfo().isDirty(), equalTo(false));
+        assertThat(document.getInfo().isCanPublish(), equalTo(false));
+        assertThat(document.getInfo().isCanRequestPublication(), equalTo(false));
+        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
+
+        verifyAll();
+    }
+
+    @Test
+    public void createDraftSuccessCanPublish() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node draft = createMock(Node.class);
+        final Node unpublished = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentType docType = provideDocumentType(handle);
+        final List<FieldType> fields = Collections.emptyList();
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
+        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
+        expect(workflow.hints()).andReturn(emptyMap());
+        expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -445,6 +497,8 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
         expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(true);
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(true);
         expectLastCall();
 
         replayAll(docType);
@@ -457,6 +511,8 @@ public class DocumentsServiceImplTest {
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(false));
+        assertThat(document.getInfo().isCanPublish(), equalTo(true));
+        assertThat(document.getInfo().isCanRequestPublication(), equalTo(true));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
 
         verifyAll();
@@ -491,8 +547,12 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
         expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         expect(docType.getFields()).andReturn(fields);
+
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
+
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         replayAll(docType);
         EasyMock.replay(hintsInspector, workflow);
@@ -860,13 +920,19 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
         expect(EditingUtils.copyToPreviewAndKeepEditing(workflow, session)).andReturn(Optional.of(draft));
+
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
+
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
         expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
+
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
+
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
@@ -906,8 +972,12 @@ public class DocumentsServiceImplTest {
 
         expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
+
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
+
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();

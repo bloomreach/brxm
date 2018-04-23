@@ -121,7 +121,7 @@ class ContentEditorService {
   }
 
   isPublishAllowed() {
-    return this.canBePublished || this.canBeRequestedToPublish;
+    return this.canPublish || this.canRequestPublication;
   }
 
   _loadDocument(id) {
@@ -181,8 +181,8 @@ class ContentEditorService {
     this.document = document;
     this.documentType = documentType;
     this.documentDirty = document.info && document.info.dirty;
-    this.canBePublished = document.info && document.info.canBePublished;
-    this.canBeRequestedToPublish = document.info && document.info.canBeRequestedToPublish;
+    this.canPublish = document.info && document.info.canPublish;
+    this.canRequestPublication = document.info && document.info.canRequestPublication;
     delete this.error;
   }
 

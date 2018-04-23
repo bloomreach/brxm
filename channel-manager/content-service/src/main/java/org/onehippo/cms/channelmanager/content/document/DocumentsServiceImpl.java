@@ -70,6 +70,9 @@ import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkf
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_PUBLISH;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
 public class DocumentsServiceImpl implements DocumentsService {
@@ -117,7 +120,8 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
 
         document.getInfo().setDirty(isDirty);
-        document.getInfo().setAvailablePublicationActions(hints);
+        document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
@@ -163,7 +167,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
-        document.getInfo().setAvailablePublicationActions(hints);
+        document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
