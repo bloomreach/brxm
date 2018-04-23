@@ -251,6 +251,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
+        expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.CHANGED);
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andStubReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(false);
@@ -264,6 +265,7 @@ public class DocumentsServiceImplTest {
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
+            assertThat(errorInfo.getParams().get("publicationState"), equalTo(PublicationState.CHANGED));
         }
 
         verifyAll();
@@ -2134,6 +2136,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
 
+        expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.UNKNOWN);
+
         final EditableWorkflow workflow = createMock(DocumentWorkflow.class);
         expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(EditableWorkflow.class))).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
@@ -2153,6 +2157,8 @@ public class DocumentsServiceImplTest {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
             assertThat(payload.getParams(), is(contextPayload));
+            assertThat(payload.getParams().get("displayName"), equalTo("Display Name"));
+            assertThat(payload.getParams().get("publicationState"), equalTo(PublicationState.UNKNOWN));
         }
     }
 

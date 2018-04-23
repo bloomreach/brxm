@@ -92,7 +92,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         if (!hintsInspector.canCreateDraft(hints)) {
             throw hintsInspector
                     .determineEditingFailure(hints, session)
-                    .map(errorInfo -> withDocumentName(errorInfo, handle))
+                    .map(errorInfo -> withDocumentInfo(errorInfo, handle))
                     .map(ForbiddenException::new)
                     .orElseGet(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         }
@@ -424,13 +424,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         documentInfo.setPublicationState(state);
     }
 
-    private static ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
-        DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-            if (errorInfo.getParams() == null) {
-                errorInfo.setParams(new HashMap<>());
-            }
-            errorInfo.getParams().put("displayName", displayName);
-        });
+    private static ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final Node handle) {
+        DocumentUtils.getDisplayName(handle).ifPresent(displayName -> errorInfo.addParam("displayName", displayName));
+
+        final PublicationState publicationState = PublicationStateUtils.getPublicationStateFromHandle(handle);
+        errorInfo.addParam("publicationState", publicationState);
+
         return errorInfo;
     }
 
