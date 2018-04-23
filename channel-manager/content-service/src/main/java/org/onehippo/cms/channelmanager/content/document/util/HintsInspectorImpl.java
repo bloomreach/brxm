@@ -25,12 +25,6 @@ import javax.jcr.Session;
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_IN_USE_BY;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUESTS;
-
 public class HintsInspectorImpl implements HintsInspector {
 
     private static final String HINT_IN_USE_BY = "inUseBy";
@@ -52,11 +46,6 @@ public class HintsInspectorImpl implements HintsInspector {
     @Override
     public boolean canDeleteDraft(Map<String, Serializable> hints) {
         return isActionAvailable(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
-    }
-
-    @Override
-    public boolean canPublish(final Map<String, Serializable> hints) {
-        return isActionAvailable(hints, HINT_PUBLISH);
     }
 
     @Override

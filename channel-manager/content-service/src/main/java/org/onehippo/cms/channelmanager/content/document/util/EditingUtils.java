@@ -50,10 +50,11 @@ public class EditingUtils {
     static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    static final String HINT_PUBLISH = "publish";
     static final String HINT_REQUESTS = "requests";
 
+    private static final String HINT_DELETE = "delete";
     private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
-    private static final String HINT_PUBLISH = "publish";
     private static final String HINT_RENAME = "rename";
 
     private EditingUtils() {
