@@ -76,7 +76,7 @@ const ERROR_MAP = {
 };
 
 class ContentEditorService {
-  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService) {
+  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService, WorkflowService) {
     'ngInject';
 
     this.$q = $q;
@@ -86,6 +86,7 @@ class ContentEditorService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
+    this.WorkflowService = WorkflowService;
   }
 
   open(documentId) {
@@ -373,6 +374,56 @@ class ContentEditorService {
     delete this.documentDirty;
     delete this.error;
     delete this.killed;
+  }
+
+  confirmPublication() {
+    const title = this.$translate.instant(this.documentDirty
+      ? 'PUBLISH_DIRTY_DOCUMENT_TITLE'
+      : 'PUBLISH_DOCUMENT_TITLE');
+    const textContent = this.$translate.instant(this.documentDirty
+      ? 'PUBLISH_DIRTY_DOCUMENT_TEXT'
+      : 'PUBLISH_DOCUMENT_TEXT', { documentName: this.document.displayName });
+    const ok = this.$translate.instant(this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH');
+    const cancel = this.$translate.instant('CANCEL');
+
+    const confirm = this.DialogService.confirm()
+      .title(title)
+      .textContent(textContent)
+      .ok(ok)
+      .cancel(cancel);
+
+    return this.DialogService.show(confirm);
+  }
+
+  publish() {
+    const documentId = this.documentId;
+    let published = false;
+    return this.ContentService
+      .deleteDraft(documentId)
+      .catch((error) => {
+        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        return this.$q.reject();
+      })
+      .then(() => this.WorkflowService.createWorkflowAction(documentId, 'publish'))
+      .then(() => {
+        published = true;
+        this.FeedbackService.showNotification('DOCUMENT_PUBLISHED', { documentName: this.document.displayName });
+      })
+      .catch((error) => {
+        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        // publishing failed, so the best we can do is create a new draft; don't reject the promise chain
+      })
+      .then(() => this.ContentService.createDraft(documentId))
+      .then((draftDocument) => {
+        this._onLoadSuccess(draftDocument, this.documentType);
+        return published
+          ? this.$q.resolve()
+          : this.$q.reject();
+      })
+      .catch((error) => {
+        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        return this.$q.reject();
+      });
   }
 }
 
