@@ -79,7 +79,7 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.jackrabbit.version>2.16.1-h1-SNAPSHOT</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.1-h1</hippo.jackrabbit.version>
     <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>5.4.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>1.4.0-SNAPSHOT</hippo.configuration-management.version>
