@@ -58,6 +58,11 @@
       {{ $ctrl.closeButtonLabel() }}
     </md-button>
 
+    <md-button class="qa-publish"
+               ng-click="$ctrl.publish()">
+      {{ ::'PUBLISH' | translate }}
+    </md-button>
+
     <md-button class="qa-save"
                ng-click="$ctrl.save()"
                ng-disabled="!$ctrl.isSaveAllowed()">

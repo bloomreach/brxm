@@ -74,11 +74,19 @@ class ContentEditorCtrl {
   }
 
   save() {
-    this.ContentEditor.save()
+    return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.onSave();
       });
+  }
+
+  publish() {
+    return this.ContentEditor.confirmPublication()
+      .then(() => (this.ContentEditor.isDocumentDirty()
+        ? this.save().then(() => this.ContentEditor.publish())
+        : this.ContentEditor.publish()),
+      );
   }
 }
 
