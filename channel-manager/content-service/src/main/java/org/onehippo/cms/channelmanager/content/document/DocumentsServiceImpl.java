@@ -118,7 +118,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
 
         document.getInfo().setDirty(isDirty);
-        document.getInfo().setCanBePublished(hintsInspector.canPublish(hints));
+        document.getInfo().setAvailablePublicationActions(hints);
 
         return document;
     }
@@ -164,7 +164,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
-        document.getInfo().setCanBePublished(hintsInspector.canPublish(hints));
+        document.getInfo().setAvailablePublicationActions(hints);
 
         return document;
     }

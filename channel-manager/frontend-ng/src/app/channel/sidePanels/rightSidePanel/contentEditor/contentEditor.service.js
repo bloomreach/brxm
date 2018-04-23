@@ -112,16 +112,16 @@ class ContentEditorService {
     this.documentDirty = true;
   }
 
-  getPublicationState() {
-    return this.documentPublicationState;
-  }
-
   getError() {
     return this.error;
   }
 
   isEditing() {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
+  }
+
+  isPublishAllowed() {
+    return this.canBePublished || this.canBeRequestedToPublish;
   }
 
   _loadDocument(id) {
@@ -181,8 +181,8 @@ class ContentEditorService {
     this.document = document;
     this.documentType = documentType;
     this.documentDirty = document.info && document.info.dirty;
-    this.documentCanBePublished = document.info && document.info.canBePublished;
-    this.documentPublicationState = document.info && document.info.publicationState;
+    this.canBePublished = document.info && document.info.canBePublished;
+    this.canBeRequestedToPublish = document.info && document.info.canBeRequestedToPublish;
     delete this.error;
   }
 

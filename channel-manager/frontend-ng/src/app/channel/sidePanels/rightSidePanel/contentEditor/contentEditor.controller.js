@@ -53,7 +53,7 @@ class ContentEditorCtrl {
     if (this.isSaveAllowed()) {
       return true;
     }
-    return this.ContentEditor.getPublicationState() === 'new' || this.ContentEditor.getPublicationState() === 'changed';
+    return this.ContentEditor.isPublishAllowed();
   }
 
   isSaveAllowed() {

@@ -51,6 +51,7 @@ public class EditingUtils {
     private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
+    private static final String HINT_PUBLISH = "publish";
     private static final String HINT_RENAME = "rename";
     private static final String HINT_REQUESTS = "requests";
 
@@ -127,7 +128,7 @@ public class EditingUtils {
         return isActionAvailable(workflow, HINT_PREVIEW_AVAILABLE);
     }
 
-    private static boolean isActionAvailable(final Workflow workflow, final String action) {
+    public static boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
             final Map<String, Serializable> hints = workflow.hints();
             return hints.containsKey(action) && ((Boolean) hints.get(action));

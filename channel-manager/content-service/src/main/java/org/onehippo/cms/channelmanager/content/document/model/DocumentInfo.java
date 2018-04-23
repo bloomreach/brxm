@@ -16,6 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content.document.model;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -38,6 +41,9 @@ public class DocumentInfo {
 
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
     private PublicationState publicationState;
+
+    private boolean canBePublished;
+    private boolean canBeRequestedToPublish;
 
     public Type getType() {
         return type;
@@ -75,5 +81,18 @@ public class DocumentInfo {
 
     public void setPublicationState(final PublicationState publicationState) {
         this.publicationState = publicationState;
+    }
+
+    public boolean isCanBePublished() {
+        return canBePublished;
+    }
+
+    public boolean isCanBeRequestedToPublish() {
+        return canBeRequestedToPublish;
+    }
+
+    public void setAvailablePublicationActions(final Map<String, Serializable> hints) {
+        canBePublished = hints.containsKey("publish") && ((Boolean) hints.get("publish"));
+        canBeRequestedToPublish = hints.containsKey("requestPublication") && ((Boolean) hints.get("requestPublication"));
     }
 }
