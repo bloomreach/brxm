@@ -38,7 +38,7 @@ public class PublicationStateUtils {
      *
      * @return the document's publication state
      */
-    public static PublicationState getPublicationState(final Node variant) {
+    public static PublicationState getPublicationStateFromVariant(final Node variant) {
         try {
             if (variant.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
                 // hippostd:stateSummary is a mandatory property of the mixin hippostd:publishableSummary

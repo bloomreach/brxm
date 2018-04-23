@@ -33,37 +33,37 @@ public class PublicationStateUtilsTest {
     @Test
     public void getDocumentStateNew() throws Exception {
         final MockNode newNode = createDocumentVariant("new");
-        assertThat(PublicationStateUtils.getPublicationState(newNode), equalTo(PublicationState.NEW));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(newNode), equalTo(PublicationState.NEW));
     }
 
     @Test
     public void getDocumentStateLive() throws Exception {
         final MockNode liveNode = createDocumentVariant("live");
-        assertThat(PublicationStateUtils.getPublicationState(liveNode), equalTo(PublicationState.LIVE));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(liveNode), equalTo(PublicationState.LIVE));
     }
 
     @Test
     public void getDocumentStateChanged() throws Exception {
         final MockNode changedNode = createDocumentVariant("changed");
-        assertThat(PublicationStateUtils.getPublicationState(changedNode), equalTo(PublicationState.CHANGED));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(changedNode), equalTo(PublicationState.CHANGED));
     }
 
     @Test
     public void getDocumentStateUnknown() throws Exception {
         final MockNode unknownNode = createDocumentVariant("unknown");
-        assertThat(PublicationStateUtils.getPublicationState(unknownNode), equalTo(PublicationState.UNKNOWN));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(unknownNode), equalTo(PublicationState.UNKNOWN));
     }
 
     @Test
     public void getCustomDocumentState() throws Exception {
         final MockNode customNode = createDocumentVariant("custom");
-        assertThat(PublicationStateUtils.getPublicationState(customNode), equalTo(PublicationState.UNKNOWN));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(customNode), equalTo(PublicationState.UNKNOWN));
     }
 
     @Test
     public void getDocumentStateOfImage() throws Exception {
         final MockNode imageSet = MockNode.root().addNode("hippo.png", "hippogallery:imageset");
-        assertThat(PublicationStateUtils.getPublicationState(imageSet), equalTo(PublicationState.UNKNOWN));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(imageSet), equalTo(PublicationState.UNKNOWN));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PublicationStateUtilsTest {
         expect(brokenNode.getPath()).andThrow(new RepositoryException());
         replayAll();
 
-        assertThat(PublicationStateUtils.getPublicationState(brokenNode), equalTo(PublicationState.UNKNOWN));
+        assertThat(PublicationStateUtils.getPublicationStateFromVariant(brokenNode), equalTo(PublicationState.UNKNOWN));
     }
 
     private static MockNode createDocumentVariant(final String stateSummary) throws RepositoryException {

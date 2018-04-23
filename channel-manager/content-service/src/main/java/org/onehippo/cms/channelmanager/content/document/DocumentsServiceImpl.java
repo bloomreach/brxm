@@ -420,7 +420,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private static void setDocumentState(final DocumentInfo documentInfo, final Node variant) {
-        final PublicationState state = PublicationStateUtils.getPublicationState(variant);
+        final PublicationState state = PublicationStateUtils.getPublicationStateFromVariant(variant);
         documentInfo.setPublicationState(state);
     }
 
