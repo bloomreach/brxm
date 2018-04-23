@@ -27,11 +27,12 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_IN_USE_BY;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUESTS;
 
 public class HintsInspectorImpl implements HintsInspector {
+
+    private static final String HINT_IN_USE_BY = "inUseBy";
+    private static final String HINT_REQUESTS = "requests";
 
     @Override
     public boolean canCreateDraft(Map<String, Serializable> hints) {

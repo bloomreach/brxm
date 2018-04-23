@@ -18,7 +18,6 @@ package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,8 +31,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
@@ -46,11 +43,9 @@ public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
 
-    static final String HINT_IN_USE_BY = "inUseBy";
     static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
-    static final String HINT_REQUESTS = "requests";
 
     private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_DELETE = "delete";
@@ -154,34 +149,6 @@ public class EditingUtils {
             log.warn("Failed reading hints from workflow", e);
         }
         return false;
-    }
-
-    /**
-     * Determine the reason why editing failed for the present workflow.
-     *
-     * @param workflow workflow for the current user on a specific document
-     * @param session  current user's JCR session
-     * @return Specific reason or nothing (unknown), wrapped in an Optional
-     */
-    public static Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
-        try {
-            final Map<String, Serializable> hints = workflow.hints();
-            if (hints.containsKey(HINT_IN_USE_BY)) {
-                final Map<String, Serializable> params = new HashMap<>();
-                final String userId = (String) hints.get(HINT_IN_USE_BY);
-                params.put("userId", userId);
-                getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
-
-                return Optional.of(new ErrorInfo(Reason.OTHER_HOLDER, params));
-            }
-
-            if (hints.containsKey(HINT_REQUESTS)) {
-                return Optional.of(new ErrorInfo(Reason.REQUEST_PENDING));
-            }
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to retrieve hints for workflow '{}'", workflow, e);
-        }
-        return Optional.empty();
     }
 
     /**
