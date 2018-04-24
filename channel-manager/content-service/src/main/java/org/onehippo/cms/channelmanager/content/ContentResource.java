@@ -175,9 +175,9 @@ public class ContentResource {
 
     @POST
     @Path("workflows/documents/{documentId}/{action}")
-    public Response publishDocument(@PathParam("documentId") final String documentId,
-                                    @PathParam("action") final String action,
-                                    @Context final HttpServletRequest servletRequest) {
+    public Response executeDocumentWorkflowAction(@PathParam("documentId") final String documentId,
+                                                  @PathParam("action") final String action,
+                                                  @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
             workflowService.executeDocumentWorkflowAction(documentId, action, session, getPayload(servletRequest));
             return null;
