@@ -396,30 +396,18 @@ class ContentEditorService {
   }
 
   publish() {
-    const documentId = this.documentId;
-    let published = false;
     return this.ContentService
-      .deleteDraft(documentId)
-      .catch((error) => {
-        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
-        return this.$q.reject();
-      })
-      .then(() => this.WorkflowService.createWorkflowAction(documentId, 'publish'))
-      .then(() => {
-        published = true;
-        this.FeedbackService.showNotification('DOCUMENT_PUBLISHED', { documentName: this.document.displayName });
-      })
-      .catch((error) => {
-        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
-        // publishing failed, so the best we can do is create a new draft; don't reject the promise chain
-      })
-      .then(() => this.ContentService.createDraft(documentId))
-      .then((draftDocument) => {
-        this._onLoadSuccess(draftDocument, this.documentType);
-        return published
-          ? this.$q.resolve()
-          : this.$q.reject();
-      })
+      .deleteDraft(this.documentId)
+      .then(() =>
+        this.WorkflowService.createWorkflowAction(this.documentId, 'publish')
+          .then(() => this.FeedbackService.showNotification('DOCUMENT_PUBLISHED', { documentName: this.document.displayName }))
+          .finally(() =>
+            this.ContentService.createDraft(this.documentId)
+              .then((draftDocument) => {
+                this._onLoadSuccess(draftDocument, this.documentType);
+              }),
+          ),
+      )
       .catch((error) => {
         this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
         return this.$q.reject();
