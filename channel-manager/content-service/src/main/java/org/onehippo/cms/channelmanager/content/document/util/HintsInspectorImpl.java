@@ -30,22 +30,24 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_IN_USE_BY;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUESTS;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
+
 
 public class HintsInspectorImpl implements HintsInspector {
 
     @Override
     public boolean canCreateDraft(Map<String, Serializable> hints) {
-        return isActionAvailable(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
+        return isHintActionAvailable(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     @Override
     public boolean canUpdateDraft(Map<String, Serializable> hints) {
-        return isActionAvailable(hints, HINT_COMMIT_EDITABLE_INSTANCE);
+        return isHintActionAvailable(hints, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     @Override
     public boolean canDeleteDraft(Map<String, Serializable> hints) {
-        return isActionAvailable(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
+        return isHintActionAvailable(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
     @Override
@@ -65,9 +67,5 @@ public class HintsInspectorImpl implements HintsInspector {
 
     protected Optional<ErrorInfo> errorInfo(ErrorInfo.Reason reason, Map<String, Serializable> params) {
         return Optional.of(new ErrorInfo(reason, params));
-    }
-
-    private boolean isActionAvailable(Map<String, Serializable> hints, final String action) {
-        return hints.containsKey(action) && ((Boolean) hints.get(action));
     }
 }

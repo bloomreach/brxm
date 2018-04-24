@@ -46,14 +46,17 @@ public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
 
+    public static final String HINT_PUBLISH = "publish";
+    public static final String HINT_REQUEST_PUBLICATION = "requestPublication";
+
     static final String HINT_IN_USE_BY = "inUseBy";
     static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     static final String HINT_REQUESTS = "requests";
 
-    private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_DELETE = "delete";
+    private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_RENAME = "rename";
 
     private EditingUtils() {
@@ -129,12 +132,18 @@ public class EditingUtils {
         return isActionAvailable(workflow, HINT_PREVIEW_AVAILABLE);
     }
 
+    /**
+     * Check a workflow to see if an action is available.
+     *
+     * @param workflow the workflow to check
+     * @param action name of the action to check for
+     * @return true if the action is present as a workflow hint and its value is true
+     */
     public static boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
             final Map<String, Serializable> hints = workflow.hints();
-            return hints.containsKey(action) && ((Boolean) hints.get(action));
-
-        } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
+            return isHintActionAvailable(hints, action);
+        } catch (RemoteException | RepositoryException | WorkflowException e) {
             log.warn("Failed reading hints from workflow", e);
         }
         return false;
@@ -146,12 +155,28 @@ public class EditingUtils {
             if (hints.containsKey("requests")) {
                 final Map requestsMap = (Map) hints.get("requests");
                 if (requestsMap.containsKey(requestIdentifier)) {
-                    final Map actions = (Map) requestsMap.get(requestIdentifier);
-                    return actions.containsKey(action) && ((Boolean) actions.get(action));
+                    final Map requestHints = (Map) requestsMap.get(requestIdentifier);
+                    return isHintActionAvailable(requestHints, action);
                 }
             }
         } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
             log.warn("Failed reading hints from workflow", e);
+        }
+        return false;
+    }
+
+    /**
+     * Check if an action is available as hint.
+     *
+     * @param hints map of workflow hints
+     * @param action name of the action to check for
+     * @return true if the hints map contains the action and its value is true
+     */
+    public static boolean isHintActionAvailable(final Map<String, Serializable> hints, final String action) {
+        try {
+            return hints.containsKey(action) && ((Boolean) hints.get(action));
+        } catch (ClassCastException e) {
+            log.warn("Hint '{}' not stored as Boolean", action, e);
         }
         return false;
     }
@@ -231,20 +256,12 @@ public class EditingUtils {
     }
 
     /**
-     * Copy the (validated) draft to the preview, and re-obtain the editable instance.
+     * Commit the editable instance in the workflow.
      *
-     * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for re-obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
+     * @param workflow Editable workflow for the document to commit the instance for
      */
-    public static Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
-        try {
-            workflow.commitEditableInstance();
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
-            return Optional.empty();
-        }
-
-        return createDraft(workflow, session);
+    public static void commitEditableInstance(final EditableWorkflow workflow) throws RepositoryException,
+            RemoteException, WorkflowException {
+        workflow.commitEditableInstance();
     }
 }
