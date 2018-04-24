@@ -393,6 +393,8 @@ class ContentEditorService {
     delete this.document;
     delete this.documentType;
     delete this.documentDirty;
+    delete this.canPublish;
+    delete this.canRequestPublication;
     delete this.publicationState;
     delete this.error;
     delete this.killed;
