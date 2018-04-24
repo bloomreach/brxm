@@ -32,7 +32,7 @@ public class DocumentHandleUtils {
                 .orElseThrow(() -> new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)));
     }
 
-    private static boolean isValidHandle(final Node handle) {
+    static boolean isValidHandle(final Node handle) {
         return DocumentUtils.getVariantNodeType(handle)
                 .filter(type -> !type.equals(HippoNodeType.NT_DELETED))
                 .isPresent();

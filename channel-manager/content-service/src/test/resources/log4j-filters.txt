@@ -95,3 +95,5 @@ Document workflow action 'actionNotYetImplemented' is not implemented
 Cancel request received but no pending request found for 'uuid'.
 Multiple request nodes found for 'uuid'. This situation is not supported.
 Hint 'no-boolean' not stored as Boolean
+Hint 'action' not stored as Boolean
+Cannot determine publication state of document handle

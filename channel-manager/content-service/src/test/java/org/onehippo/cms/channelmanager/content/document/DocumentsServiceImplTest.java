@@ -248,6 +248,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
+        expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.CHANGED);
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andStubReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(false);
@@ -260,6 +261,7 @@ public class DocumentsServiceImplTest {
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
+            assertThat(errorInfo.getParams().get("publicationState"), equalTo(PublicationState.CHANGED));
         }
 
         verifyAll();
@@ -422,7 +424,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
-        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
 
@@ -473,7 +475,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
-        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -522,7 +524,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
-        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.NEW);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canCreateDraft(emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -857,7 +859,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        EditingUtils.commitEditableInstance(workflow);
+        workflow.commitEditableInstance();
         expectLastCall().andThrow(new WorkflowException("bla"));
 
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
@@ -901,15 +903,14 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
-        EditingUtils.commitEditableInstance(workflow);
-        expectLastCall();
+        expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
-        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
@@ -949,14 +950,13 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
-        EditingUtils.commitEditableInstance(workflow);
-        expectLastCall();
+        expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
         expect(EditingUtils.createDraft(workflow, session)).andReturn(Optional.of(draft));
-        expect(PublicationStateUtils.getPublicationState(draft)).andReturn(PublicationState.CHANGED);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
@@ -1429,7 +1429,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("document-url-name");
         expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)).andReturn(Optional.of(published));
-        expect(PublicationStateUtils.getPublicationState(published)).andReturn(PublicationState.LIVE);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(published)).andReturn(PublicationState.LIVE);
         FieldTypeUtils.readFieldValues(eq(published), eq(Collections.emptyList()), isA(Map.class));
         expectLastCall();
 
@@ -1635,7 +1635,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
-        expect(PublicationStateUtils.getPublicationState(documentDraft)).andReturn(PublicationState.LIVE);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(documentDraft)).andReturn(PublicationState.LIVE);
 
         session.save();
         expectLastCall();
@@ -1704,7 +1704,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
-        expect(PublicationStateUtils.getPublicationState(documentDraft)).andReturn(PublicationState.NEW);
+        expect(PublicationStateUtils.getPublicationStateFromVariant(documentDraft)).andReturn(PublicationState.NEW);
 
         session.save();
         expectLastCall();
@@ -2194,6 +2194,8 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
 
+        expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.UNKNOWN);
+
         final EditableWorkflow workflow = createMock(DocumentWorkflow.class);
         expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(EditableWorkflow.class))).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
@@ -2213,6 +2215,8 @@ public class DocumentsServiceImplTest {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
             assertThat(payload.getParams(), is(contextPayload));
+            assertThat(payload.getParams().get("displayName"), equalTo("Display Name"));
+            assertThat(payload.getParams().get("publicationState"), equalTo(PublicationState.UNKNOWN));
         }
 
         verifyAll();

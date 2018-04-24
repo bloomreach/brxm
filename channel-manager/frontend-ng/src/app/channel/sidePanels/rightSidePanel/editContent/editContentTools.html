@@ -23,7 +23,8 @@
 
 <md-button class="md-icon-button qa-view-in-content-perspective"
            aria-label="{{ $ctrl.getPublicationIconTooltip() | translate }}"
-           ng-disabled="!$ctrl.isEditing() || $ctrl.isDisabled()"
+           ng-if="!$ctrl.isDisabled()"
+           ng-disabled="!$ctrl.isPublicationStateAvailable()"
            ng-click="$ctrl.openContentEditor('view')"
            title="{{ $ctrl.getPublicationIconTooltip() | translate }}">
   <md-icon md-font-icon="{{ $ctrl.getPublicationIconName() }}"></md-icon>
