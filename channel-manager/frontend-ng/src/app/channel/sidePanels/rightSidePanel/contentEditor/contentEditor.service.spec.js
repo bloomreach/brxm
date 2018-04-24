@@ -911,7 +911,7 @@ describe('ContentEditorService', () => {
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('DOCUMENT_PUBLISHED', { documentName: 'Test' });
     });
 
-    it('display an error if publication fails', () => {
+    it('displays an error if publication fails', () => {
       WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
 
       ContentEditor.publish();
