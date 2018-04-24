@@ -19,10 +19,7 @@ class WorkflowService {
     'ngInject';
 
     this.$http = $http;
-    this.ConfigService = ConfigService;
-    this.PathService = PathService;
-
-    this.baseUrl = `${this.ConfigService.getCmsContextPath()}ws/content/workflows/documents`;
+    this.baseUrl = PathService.concatPaths(ConfigService.getCmsContextPath(), '/ws/content/workflows/documents');
   }
 
   createWorkflowAction(documentId, actionId) {
