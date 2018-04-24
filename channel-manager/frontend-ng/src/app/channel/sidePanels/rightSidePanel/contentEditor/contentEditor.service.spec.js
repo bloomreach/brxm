@@ -141,31 +141,38 @@ describe('ContentEditorService', () => {
     });
 
     it('and allows publication when it can be published', () => {
-      testDocument.info.canPublish = 'true';
+      testDocument.info.canPublish = true;
 
       ContentEditor.open('test');
       $rootScope.$digest();
 
-      expect(ContentEditor.isPublishAllowed()).toBeTruthy();
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
     });
 
     it('and allows publication when request publication is enabled', () => {
-      testDocument.info.canRequestPublication = 'true';
+      testDocument.info.canRequestPublication = true;
 
       ContentEditor.open('test');
       $rootScope.$digest();
 
-      expect(ContentEditor.isPublishAllowed()).toBeTruthy();
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
     });
 
     it('and does not allow publication when it cannot be published and no request for publication can be filed', () => {
-      testDocument.info.canPublish = 'false';
-      testDocument.info.canRequestPublication = 'false';
+      testDocument.info.canPublish = false;
+      testDocument.info.canRequestPublication = false;
 
       ContentEditor.open('test');
       $rootScope.$digest();
 
-      expect(ContentEditor.isPublishAllowed()).toBe('false');
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
+    });
+
+    it('and does not allow publication when no publication info is available', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
     });
 
     describe('and sets an error when it', () => {
