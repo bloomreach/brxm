@@ -171,7 +171,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         try {
-            EditingUtils.commitEditableInstance(workflow);
+            workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session));
         }

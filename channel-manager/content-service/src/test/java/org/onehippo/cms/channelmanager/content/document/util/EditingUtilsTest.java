@@ -313,26 +313,4 @@ public class EditingUtilsTest {
 
         verify(workflow, session);
     }
-
-    @Test(expected = WorkflowException.class)
-    public void commitEditabelInstanceWithException() throws Exception {
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-
-        expect(workflow.commitEditableInstance()).andThrow(new WorkflowException("bla"));
-        replay(workflow);
-
-        EditingUtils.commitEditableInstance(workflow);
-    }
-
-    @Test
-    public void copyToPreviewAndKeepEditing() throws Exception {
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        expect(workflow.commitEditableInstance()).andReturn(null);
-
-        replay(workflow);
-
-        EditingUtils.commitEditableInstance(workflow);
-
-        verify(workflow);
-    }
 }

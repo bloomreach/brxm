@@ -221,14 +221,4 @@ public class EditingUtils {
         }
         return Optional.empty();
     }
-
-    /**
-     * Commit the editable instance in the workflow.
-     *
-     * @param workflow Editable workflow for the document to commit the instance for
-     */
-    public static void commitEditableInstance(final EditableWorkflow workflow) throws RepositoryException,
-            RemoteException, WorkflowException {
-        workflow.commitEditableInstance();
-    }
 }

@@ -859,7 +859,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        EditingUtils.commitEditableInstance(workflow);
+        workflow.commitEditableInstance();
         expectLastCall().andThrow(new WorkflowException("bla"));
 
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
@@ -903,8 +903,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
-        EditingUtils.commitEditableInstance(workflow);
-        expectLastCall();
+        expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
@@ -951,8 +950,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDraft(emptyMap())).andReturn(true);
-        EditingUtils.commitEditableInstance(workflow);
-        expectLastCall();
+        expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
