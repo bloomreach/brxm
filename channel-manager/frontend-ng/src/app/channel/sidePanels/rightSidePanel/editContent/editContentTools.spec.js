@@ -32,7 +32,7 @@ describe('EditContentToolsCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocument', 'getDocumentId', 'getError', 'isEditing',
+        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 
@@ -153,46 +153,53 @@ describe('EditContentToolsCtrl', () => {
     expect($ctrl.uiCanExit()).toBe(true);
   });
 
+  it('knows whether the publication state is available', () => {
+    ContentEditor.getPublicationState.and.returnValue('new');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue('unknown');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue(undefined);
+    expect($ctrl.isPublicationStateAvailable()).toBe(false);
+  });
+
   describe('the publication icon name', () => {
     it('is based on the publication state of the document', () => {
-      ContentEditor.isEditing.and.returnValue(true);
-
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'new' } });
+      ContentEditor.getPublicationState.and.returnValue('new');
       expect($ctrl.getPublicationIconName()).toBe('mdi-minus-circle');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'live' } });
+      ContentEditor.getPublicationState.and.returnValue('live');
       expect($ctrl.getPublicationIconName()).toBe('mdi-check-circle');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'changed' } });
+      ContentEditor.getPublicationState.and.returnValue('changed');
       expect($ctrl.getPublicationIconName()).toBe('mdi-alert');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'unknown' } });
-      expect($ctrl.getPublicationIconName()).toBe('mdi-file-outline');
+      ContentEditor.getPublicationState.and.returnValue('unknown');
+      expect($ctrl.getPublicationIconName()).toBe('');
     });
     it('is empty when there is no document', () => {
-      ContentEditor.getDocument.and.returnValue(null);
+      ContentEditor.getPublicationState.and.returnValue(undefined);
       expect($ctrl.getPublicationIconName()).toBe('');
     });
   });
 
   describe('the publication icon tooltip', () => {
     it('is based on the publication state of the document', () => {
-      ContentEditor.isEditing.and.returnValue(true);
-
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'new' } });
+      ContentEditor.getPublicationState.and.returnValue('new');
       expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_NEW_TOOLTIP');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'live' } });
+      ContentEditor.getPublicationState.and.returnValue('live');
       expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_LIVE_TOOLTIP');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'changed' } });
+      ContentEditor.getPublicationState.and.returnValue('changed');
       expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_CHANGED_TOOLTIP');
 
-      ContentEditor.getDocument.and.returnValue({ info: { publicationState: 'unknown' } });
+      ContentEditor.getPublicationState.and.returnValue('unknown');
       expect($ctrl.getPublicationIconTooltip()).toBe('');
     });
     it('is empty when there is no document', () => {
-      ContentEditor.getDocument.and.returnValue(null);
+      ContentEditor.getPublicationState.and.returnValue(undefined);
       expect($ctrl.getPublicationIconTooltip()).toBe('');
     });
   });
