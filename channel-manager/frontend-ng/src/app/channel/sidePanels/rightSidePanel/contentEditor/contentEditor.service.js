@@ -90,6 +90,7 @@ class ContentEditorService {
   }
 
   open(documentId) {
+    this.close();
     return this._loadDocument(documentId);
   }
 
@@ -109,6 +110,10 @@ class ContentEditorService {
     return this.documentDirty;
   }
 
+  getPublicationState() {
+    return this.publicationState;
+  }
+
   markDocumentDirty() {
     this.documentDirty = true;
   }
@@ -119,6 +124,10 @@ class ContentEditorService {
 
   isEditing() {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
+  }
+
+  isPublishAllowed() {
+    return this.canPublish || this.canRequestPublication;
   }
 
   _loadDocument(id) {
@@ -177,7 +186,12 @@ class ContentEditorService {
   _onLoadSuccess(document, documentType) {
     this.document = document;
     this.documentType = documentType;
+
     this.documentDirty = document.info && document.info.dirty;
+    this.canPublish = document.info && document.info.canPublish;
+    this.canRequestPublication = document.info && document.info.canRequestPublication;
+    this.publicationState = document.info && document.info.publicationState;
+
     delete this.error;
   }
 
@@ -198,6 +212,10 @@ class ContentEditorService {
       const errorInfo = response.data;
       errorKey = errorInfo.reason;
       params = this._extractErrorParams(errorInfo);
+
+      if (errorInfo.params) {
+        this.publicationState = errorInfo.params.publicationState;
+      }
     } else if (response.status === 404) {
       errorKey = 'NOT_FOUND';
     } else {
@@ -255,13 +273,17 @@ class ContentEditorService {
     if (!angular.isDefined(errorInfo.params)) {
       return undefined;
     }
+
     const params = angular.copy(errorInfo.params);
+
     const user = params.userName || params.userId;
     if (user) {
       params.user = user;
       delete params.userId;
       delete params.userName;
     }
+
+    delete params.publicationState;
 
     if (errorInfo.reason === 'PART_OF_PROJECT') {
       params.projectName = errorInfo.params.projectName;
@@ -372,6 +394,9 @@ class ContentEditorService {
     delete this.document;
     delete this.documentType;
     delete this.documentDirty;
+    delete this.canPublish;
+    delete this.canRequestPublication;
+    delete this.publicationState;
     delete this.error;
     delete this.killed;
   }

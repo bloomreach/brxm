@@ -39,6 +39,9 @@ public class DocumentInfo {
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
     private PublicationState publicationState;
 
+    private boolean canPublish;
+    private boolean canRequestPublication;
+
     public Type getType() {
         return type;
     }
@@ -75,5 +78,21 @@ public class DocumentInfo {
 
     public void setPublicationState(final PublicationState publicationState) {
         this.publicationState = publicationState;
+    }
+
+    public boolean isCanPublish() {
+        return canPublish;
+    }
+
+    public boolean isCanRequestPublication() {
+        return canRequestPublication;
+    }
+
+    public void setCanPublish(final boolean canPublish) {
+        this.canPublish = canPublish;
+    }
+
+    public void setCanRequestPublication(final boolean canRequestPublication) {
+        this.canRequestPublication = canRequestPublication;
     }
 }

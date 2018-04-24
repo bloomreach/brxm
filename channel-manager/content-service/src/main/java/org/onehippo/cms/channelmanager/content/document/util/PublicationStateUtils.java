@@ -34,11 +34,30 @@ public class PublicationStateUtils {
     /**
      * Returns the publication state of a document.
      *
+     * @param handle the handle node of the document
+     *
+     * @return the document's publication state
+     */
+    public static PublicationState getPublicationStateFromHandle(final Node handle) {
+        if (DocumentHandleUtils.isValidHandle(handle)) {
+            try {
+                final Node randomVariant = handle.getNode(handle.getName());
+                return getPublicationStateFromVariant(randomVariant);
+            } catch (RepositoryException e) {
+                log.warn("Cannot determine publication state of document handle '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            }
+        }
+        return PublicationState.UNKNOWN;
+    }
+
+    /**
+     * Returns the publication state of a document.
+     *
      * @param variant a variant node of the document (i.e. a child node of the document's handle node)
      *
      * @return the document's publication state
      */
-    public static PublicationState getPublicationState(final Node variant) {
+    public static PublicationState getPublicationStateFromVariant(final Node variant) {
         try {
             if (variant.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
                 // hippostd:stateSummary is a mandatory property of the mixin hippostd:publishableSummary

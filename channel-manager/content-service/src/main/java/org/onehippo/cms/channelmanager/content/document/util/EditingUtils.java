@@ -18,7 +18,6 @@ package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,8 +31,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
@@ -46,14 +43,15 @@ public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
 
-    static final String HINT_IN_USE_BY = "inUseBy";
+    public static final String HINT_PUBLISH = "publish";
+    public static final String HINT_REQUEST_PUBLICATION = "requestPublication";
+
     static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
-    static final String HINT_REQUESTS = "requests";
 
-    private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_DELETE = "delete";
+    private static final String HINT_PREVIEW_AVAILABLE = "previewAvailable";
     private static final String HINT_RENAME = "rename";
 
     private EditingUtils() {
@@ -129,12 +127,18 @@ public class EditingUtils {
         return isActionAvailable(workflow, HINT_PREVIEW_AVAILABLE);
     }
 
+    /**
+     * Check a workflow to see if an action is available.
+     *
+     * @param workflow the workflow to check
+     * @param action name of the action to check for
+     * @return true if the action is present as a workflow hint and its value is true
+     */
     public static boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
             final Map<String, Serializable> hints = workflow.hints();
-            return hints.containsKey(action) && ((Boolean) hints.get(action));
-
-        } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
+            return isHintActionAvailable(hints, action);
+        } catch (RemoteException | RepositoryException | WorkflowException e) {
             log.warn("Failed reading hints from workflow", e);
         }
         return false;
@@ -146,8 +150,8 @@ public class EditingUtils {
             if (hints.containsKey("requests")) {
                 final Map requestsMap = (Map) hints.get("requests");
                 if (requestsMap.containsKey(requestIdentifier)) {
-                    final Map actions = (Map) requestsMap.get(requestIdentifier);
-                    return actions.containsKey(action) && ((Boolean) actions.get(action));
+                    final Map requestHints = (Map) requestsMap.get(requestIdentifier);
+                    return isHintActionAvailable(requestHints, action);
                 }
             }
         } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
@@ -157,31 +161,19 @@ public class EditingUtils {
     }
 
     /**
-     * Determine the reason why editing failed for the present workflow.
+     * Check if an action is available as hint.
      *
-     * @param workflow workflow for the current user on a specific document
-     * @param session  current user's JCR session
-     * @return Specific reason or nothing (unknown), wrapped in an Optional
+     * @param hints map of workflow hints
+     * @param action name of the action to check for
+     * @return true if the hints map contains the action and its value is true
      */
-    public static Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
+    public static boolean isHintActionAvailable(final Map<String, Serializable> hints, final String action) {
         try {
-            final Map<String, Serializable> hints = workflow.hints();
-            if (hints.containsKey(HINT_IN_USE_BY)) {
-                final Map<String, Serializable> params = new HashMap<>();
-                final String userId = (String) hints.get(HINT_IN_USE_BY);
-                params.put("userId", userId);
-                getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
-
-                return Optional.of(new ErrorInfo(Reason.OTHER_HOLDER, params));
-            }
-
-            if (hints.containsKey(HINT_REQUESTS)) {
-                return Optional.of(new ErrorInfo(Reason.REQUEST_PENDING));
-            }
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to retrieve hints for workflow '{}'", workflow, e);
+            return hints.containsKey(action) && ((Boolean) hints.get(action));
+        } catch (ClassCastException e) {
+            log.warn("Hint '{}' not stored as Boolean", action, e);
         }
-        return Optional.empty();
+        return false;
     }
 
     /**
@@ -228,23 +220,5 @@ public class EditingUtils {
             log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);
         }
         return Optional.empty();
-    }
-
-    /**
-     * Copy the (validated) draft to the preview, and re-obtain the editable instance.
-     *
-     * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for re-obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
-     */
-    public static Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
-        try {
-            workflow.commitEditableInstance();
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
-            return Optional.empty();
-        }
-
-        return createDraft(workflow, session);
     }
 }

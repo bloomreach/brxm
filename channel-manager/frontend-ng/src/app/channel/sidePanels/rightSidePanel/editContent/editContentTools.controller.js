@@ -18,7 +18,7 @@ const PUBLICATION_STATE_ICON_NAMES = {
   new: 'mdi-minus-circle',
   live: 'mdi-check-circle',
   changed: 'mdi-alert',
-  unknown: 'mdi-file-outline',
+  unknown: '',
 };
 
 const PUBLICATION_STATE_ICON_TOOLTIPS = {
@@ -47,6 +47,10 @@ class EditContentToolsCtrl {
     return this.ContentEditor.isEditing();
   }
 
+  isPublicationStateAvailable() {
+    return !!this.ContentEditor.getPublicationState();
+  }
+
   getPublicationIconName() {
     return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES);
   }
@@ -56,11 +60,8 @@ class EditContentToolsCtrl {
   }
 
   _getPublicationStateValue(map) {
-    if (this.isEditing()) {
-      const publicationState = this.ContentEditor.getDocument().info.publicationState;
-      return map[publicationState];
-    }
-    return '';
+    const publicationState = this.ContentEditor.getPublicationState();
+    return map[publicationState] || map.unknown;
   }
 
   openContentEditor(exitMode) {

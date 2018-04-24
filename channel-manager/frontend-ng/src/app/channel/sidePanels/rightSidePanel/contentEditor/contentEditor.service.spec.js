@@ -54,6 +54,7 @@ describe('ContentEditorService', () => {
       type: {
         id: 'ns:testdocument',
       },
+      publicationState: 'live',
     },
     fields: {
       'ns:string': [
@@ -118,11 +119,13 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocument()).toEqual(testDocument);
       expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
       expect(ContentEditor.isDocumentDirty()).toBeFalsy();
+      expect(ContentEditor.isPublishAllowed()).toBeFalsy();
       expect(ContentEditor.isEditing()).toBe(true);
+      expect(ContentEditor.getPublicationState()).toBe('live');
       expect(ContentEditor.getError()).toBeUndefined();
     }
 
-    it('and does not report unsupported fields when there are none', () => {
+    it('does not report unsupported fields when there are none', () => {
       ContentEditor.open('test');
       $rootScope.$digest();
 
@@ -140,6 +143,53 @@ describe('ContentEditorService', () => {
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingUnsupportedFields', {
         unsupportedFieldTypes: 'Date,selection:selection',
       });
+    });
+
+    it('closes the previous document', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      testDocument.id = 'test2';
+      ContentEditor.open('test2');
+
+      expect(ContentEditor.getDocument()).toBeUndefined();
+      expect(ContentEditor.getPublicationState()).toBeUndefined();
+      $rootScope.$digest();
+    });
+
+    it('and allows publication when it can be published', () => {
+      testDocument.info.canPublish = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and allows publication when request publication is enabled', () => {
+      testDocument.info.canRequestPublication = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and does not allow publication when it cannot be published and no request for publication can be filed', () => {
+      testDocument.info.canPublish = false;
+      testDocument.info.canRequestPublication = false;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
+    });
+
+    it('and does not allow publication when no publication info is available', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
     });
 
     describe('and sets an error when it', () => {
@@ -208,6 +258,7 @@ describe('ContentEditorService', () => {
             displayName: 'Display Name',
             userId: 'jtester',
             userName: 'John Tester',
+            publicationState: 'changed',
           },
         };
         ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -219,6 +270,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBe('changed');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
@@ -259,6 +311,7 @@ describe('ContentEditorService', () => {
           reason: 'REQUEST_PENDING',
           params: {
             displayName: 'Display Name',
+            publicationState: 'new',
           },
         };
         ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -270,6 +323,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
@@ -292,6 +346,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
           messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
@@ -307,6 +362,7 @@ describe('ContentEditorService', () => {
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentEditor.getPublicationState()).toBeUndefined();
         expectError({
           titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
           messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
