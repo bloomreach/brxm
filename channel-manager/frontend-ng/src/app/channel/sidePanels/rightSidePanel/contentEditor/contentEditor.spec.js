@@ -36,8 +36,15 @@ describe('ContentEditorCtrl', () => {
     });
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'getDocument', 'getDocumentType', 'getError', 'isDocumentDirty', 'isEditing',
-      'markDocumentDirty', 'save',
+      'confirmPublication',
+      'getDocument',
+      'getDocumentType',
+      'getError',
+      'isDocumentDirty',
+      'isEditing',
+      'markDocumentDirty',
+      'publish',
+      'save',
     ]);
 
     $scope = $rootScope.$new();
@@ -136,6 +143,61 @@ describe('ContentEditorCtrl', () => {
     it('is "close" when the document is not dirty', () => {
       ContentEditor.isDocumentDirty.and.returnValue(false);
       expect($ctrl.closeButtonLabel()).toBe('CLOSE');
+    });
+  });
+
+  describe('publish', () => {
+    it('shows a confirmation dialog', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+
+      $ctrl.publish();
+      $rootScope.$digest();
+
+      expect(ContentEditor.confirmPublication).toHaveBeenCalled();
+    });
+
+    it('does not publish nor save if the confirmation dialog is cancelled', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmPublication.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $rootScope.$digest();
+
+      expect(ContentEditor.save).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+    });
+
+    it('publishes if the confirmation dialog is confirmed', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $rootScope.$digest();
+
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+    });
+
+    it('saves the form of a dirty document, prior to publishing', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.save.and.returnValue($q.resolve());
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+
+      $ctrl.publish();
+      $rootScope.$digest();
+
+      expect(ContentEditor.save).toHaveBeenCalled();
+      expect(form.$setPristine).toHaveBeenCalled();
+      expect(onSave).toHaveBeenCalled();
+    });
+
+    it('does not publish if saving fails', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.save.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $rootScope.$digest();
+
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
   });
 });

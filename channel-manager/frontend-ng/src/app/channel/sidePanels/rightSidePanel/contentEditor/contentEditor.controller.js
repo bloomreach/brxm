@@ -81,7 +81,7 @@ class ContentEditorCtrl {
   }
 
   save() {
-    this.ContentEditor.save()
+    return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.onSave();
@@ -89,7 +89,11 @@ class ContentEditorCtrl {
   }
 
   publish() {
-    console.log('PUBLISH ACTION TO BE IMPLEMENTED');
+    return this.ContentEditor.confirmPublication()
+      .then(() => (this.ContentEditor.isDocumentDirty()
+        ? this.save().then(() => this.ContentEditor.publish())
+        : this.ContentEditor.publish()),
+      );
   }
 }
 

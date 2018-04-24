@@ -325,37 +325,37 @@ public class ContentResourceTest extends CXFTest {
                 .statusCode(200)
                 .body(equalTo("some-content-name"));
     }
-/*
 
     @Test
-    public void publishDocument() throws Exception {
-        final String requestedUuid = "requested-uuid";
-        final Document testDocument = createDocument(requestedUuid);
+    public void executeDocumentWorkflowAction() throws Exception {
+        final String documentId = "uuid";
 
-        expect(documentsService.publishDocument(requestedUuid, userSession, locale, emptyMap())).andReturn(testDocument);
-        replay(documentsService);
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        expectLastCall();
+
+        replay(workflowService);
 
         when()
-                .put("/documents/" + requestedUuid + "/publish")
-                .then()
-                .statusCode(200);
+                .put("/documents/" + documentId + "/publish")
+        .then()
+                .statusCode(201);
     }
 
     @Test
-    public void publishDocumentNotFound() throws Exception {
-        final String requestedId = "ns:testdocument";
+    public void executeDocumentWorkflowActionAndDocumentNotFound() throws Exception {
+        final String documentId = "uuid";
 
-        expect(documentsService.publishDocument(requestedId, userSession, locale, emptyMap()))
-                .andThrow(new NotFoundException());
-        replay(documentsService);
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        expectLastCall().andThrow(new NotFoundException());
+
+        replay(workflowService);
 
         when()
-                .put("/documents/" + requestedId + "/publish")
-                .then()
+                .put("/documents/" + documentId + "/publish")
+        .then()
                 .statusCode(404);
     }
 
-*/
     private String normalizeJsonResource(final String resourcePath) {
         final InputStream resourceStream = ContentResourceTest.class.getResourceAsStream(resourcePath);
         return new BufferedReader(new InputStreamReader(resourceStream))
