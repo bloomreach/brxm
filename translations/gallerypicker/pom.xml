@@ -25,7 +25,7 @@
   
   <name>Hippo Plugin Gallery Picker Translations</name>
   <artifactId>hippo-plugin-gallerypicker-l10n</artifactId>
-  <version>4.3.0-SNAPSHOT</version>
+  <version>4.4.0-SNAPSHOT</version>
   
   <dependencies>
     <dependency>
