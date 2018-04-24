@@ -75,6 +75,15 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
+/**
+ * Implementation class for retrieving and storing Document information.
+ * <p/>
+ * The repository Workflow actions are designed to support the situation that when a document is being edited, hardly
+ * any other actions are available, e.g. publication. This Service supports a different case: while a
+ * document is presented as editable, we also want to present a Publish button. Checking the workflow actions on the
+ * editable instance of a document will not give the correct available workflow actions. This implementation takes
+ * that situation into account by retrieving the workflow actions from a Document that is not yet in edit mode.
+ */
 public class DocumentsServiceImpl implements DocumentsService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
@@ -120,6 +129,8 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
 
         document.getInfo().setDirty(isDirty);
+        // we must use the hints that were retrieved before the editable instance was obtained from the workflow,
+        // see the class level javadoc.
         document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
 
@@ -159,16 +170,25 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
-                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session)));
+        try {
+            EditingUtils.commitEditableInstance(workflow);
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session));
+        }
 
-        setDocumentState(document.getInfo(), draft);
+        // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
+        final EditableWorkflow newWorkflow = getEditableWorkflow(handle);
+        final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
 
-        FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
+        final Node newDraft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+
+        setDocumentState(document.getInfo(), newDraft);
+
+        FieldTypeUtils.readFieldValues(newDraft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
-        document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
-        document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
+        document.getInfo().setCanPublish(isHintActionAvailable(newHints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionAvailable(newHints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }

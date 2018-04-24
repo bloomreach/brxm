@@ -176,7 +176,7 @@ public class EditingUtils {
         try {
             return hints.containsKey(action) && ((Boolean) hints.get(action));
         } catch (ClassCastException e) {
-            log.warn("Hints not stored as Boolean", e);
+            log.warn("Hint '{}' not stored as Boolean", action, e);
         }
         return false;
     }
@@ -256,20 +256,12 @@ public class EditingUtils {
     }
 
     /**
-     * Copy the (validated) draft to the preview, and re-obtain the editable instance.
+     * Commit the editable instance in the workflow.
      *
-     * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for re-obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
+     * @param workflow Editable workflow for the document to commit the instance for
      */
-    public static Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session) {
-        try {
-            workflow.commitEditableInstance();
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
-            return Optional.empty();
-        }
-
-        return createDraft(workflow, session);
+    public static void commitEditableInstance(final EditableWorkflow workflow) throws RepositoryException,
+            RemoteException, WorkflowException {
+        workflow.commitEditableInstance();
     }
 }

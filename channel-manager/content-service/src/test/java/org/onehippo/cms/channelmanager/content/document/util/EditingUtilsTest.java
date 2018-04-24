@@ -405,38 +405,25 @@ public class EditingUtilsTest {
         verify(workflow, session);
     }
 
-    @Test
-    public void copyToPreviewAndKeepEditingWithException() throws Exception {
+    @Test(expected = WorkflowException.class)
+    public void commitEditabelInstanceWithException() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final Session session = createMock(Session.class);
 
         expect(workflow.commitEditableInstance()).andThrow(new WorkflowException("bla"));
-        expect(session.getUserID()).andReturn("bla");
-        replay(workflow, session);
+        replay(workflow);
 
-        assertFalse(EditingUtils.copyToPreviewAndKeepEditing(workflow, session).isPresent());
-
-        verify(workflow, session);
+        EditingUtils.commitEditableInstance(workflow);
     }
 
     @Test
     public void copyToPreviewAndKeepEditing() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final Session session = createMock(Session.class);
-        final Document document = createMock(Document.class);
-        final Node draft = createMock(Node.class);
-
         expect(workflow.commitEditableInstance()).andReturn(null);
-        expect(workflow.obtainEditableInstance()).andReturn(document);
-        expect(document.getNode(session)).andReturn(draft);
-        replay(workflow, document);
 
-        final Optional<Node> draftOptional = EditingUtils.copyToPreviewAndKeepEditing(workflow, session);
-        assertThat("Draft should be present", draftOptional.isPresent());
-        if (draftOptional.isPresent()) {
-            assertThat(draftOptional.get(), equalTo(draft));
-        }
+        replay(workflow);
 
-        verify(workflow, document);
+        EditingUtils.commitEditableInstance(workflow);
+
+        verify(workflow);
     }
 }
