@@ -49,6 +49,13 @@ class ContentEditorCtrl {
     return this.ContentEditor.isEditing();
   }
 
+  isPublishAllowed() {
+    if (this.isSaveAllowed()) {
+      return true;
+    }
+    return this.ContentEditor.isPublishAllowed();
+  }
+
   isSaveAllowed() {
     return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.allowSave;
   }
@@ -79,6 +86,10 @@ class ContentEditorCtrl {
         this.form.$setPristine();
         this.onSave();
       });
+  }
+
+  publish() {
+    console.log('PUBLISH ACTION TO BE IMPLEMENTED');
   }
 }
 

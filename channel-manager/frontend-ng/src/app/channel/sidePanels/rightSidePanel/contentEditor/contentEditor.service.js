@@ -125,6 +125,10 @@ class ContentEditorService {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
   }
 
+  isPublishAllowed() {
+    return this.canPublish || this.canRequestPublication;
+  }
+
   _loadDocument(id) {
     this._setDocumentId(id);
 
@@ -183,6 +187,8 @@ class ContentEditorService {
     this.documentType = documentType;
 
     this.documentDirty = document.info && document.info.dirty;
+    this.canPublish = document.info && document.info.canPublish;
+    this.canRequestPublication = document.info && document.info.canRequestPublication;
     this.publicationState = document.info && document.info.publicationState;
 
     delete this.error;

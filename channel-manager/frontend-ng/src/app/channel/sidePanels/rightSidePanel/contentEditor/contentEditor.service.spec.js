@@ -116,6 +116,7 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocument()).toEqual(testDocument);
       expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
       expect(ContentEditor.isDocumentDirty()).toBeFalsy();
+      expect(ContentEditor.isPublishAllowed()).toBeFalsy();
       expect(ContentEditor.isEditing()).toBe(true);
       expect(ContentEditor.getPublicationState()).toBe('live');
       expect(ContentEditor.getError()).toBeUndefined();
@@ -151,6 +152,41 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocument()).toBeUndefined();
       expect(ContentEditor.getPublicationState()).toBeUndefined();
       $rootScope.$digest();
+    });
+
+    it('and allows publication when it can be published', () => {
+      testDocument.info.canPublish = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and allows publication when request publication is enabled', () => {
+      testDocument.info.canRequestPublication = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and does not allow publication when it cannot be published and no request for publication can be filed', () => {
+      testDocument.info.canPublish = false;
+      testDocument.info.canRequestPublication = false;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
+    });
+
+    it('and does not allow publication when no publication info is available', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
     });
 
     describe('and sets an error when it', () => {
