@@ -336,9 +336,9 @@ public class ContentResourceTest extends CXFTest {
         replay(workflowService);
 
         when()
-                .put("/documents/" + documentId + "/publish")
+                .post("/workflows/documents/" + documentId + "/publish")
         .then()
-                .statusCode(201);
+                .statusCode(204);
     }
 
     @Test
@@ -351,7 +351,7 @@ public class ContentResourceTest extends CXFTest {
         replay(workflowService);
 
         when()
-                .put("/documents/" + documentId + "/publish")
+                .post("/workflows/documents/" + documentId + "/publish")
         .then()
                 .statusCode(404);
     }
