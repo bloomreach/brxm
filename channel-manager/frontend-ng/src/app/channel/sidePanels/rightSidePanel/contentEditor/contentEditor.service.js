@@ -402,17 +402,13 @@ class ContentEditorService {
   }
 
   confirmPublication() {
-    const title = this.$translate.instant(this.documentDirty
-      ? 'PUBLISH_DIRTY_DOCUMENT_TITLE'
-      : 'PUBLISH_DOCUMENT_TITLE');
     const textContent = this.$translate.instant(this.documentDirty
-      ? 'PUBLISH_DIRTY_DOCUMENT_TEXT'
-      : 'PUBLISH_DOCUMENT_TEXT', { documentName: this.document.displayName });
+      ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT'
+      : 'CONFIRM_PUBLISH_DOCUMENT', { documentName: this.document.displayName });
     const ok = this.$translate.instant(this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH');
     const cancel = this.$translate.instant('CANCEL');
 
     const confirm = this.DialogService.confirm()
-      .title(title)
       .textContent(textContent)
       .ok(ok)
       .cancel(cancel);
@@ -425,7 +421,7 @@ class ContentEditorService {
       .deleteDraft(this.documentId)
       .then(() =>
         this.WorkflowService.createWorkflowAction(this.documentId, 'publish')
-          .then(() => this.FeedbackService.showNotification('DOCUMENT_PUBLISHED', { documentName: this.document.displayName }))
+          .then(() => this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: this.document.displayName }))
           .finally(() =>
             this.ContentService.createDraft(this.documentId)
               .then((draftDocument) => {

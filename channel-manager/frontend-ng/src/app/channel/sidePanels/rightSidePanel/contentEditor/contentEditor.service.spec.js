@@ -895,8 +895,7 @@ describe('ContentEditorService', () => {
       const publishDialog = ContentEditor.confirmPublication();
 
       expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('PUBLISH_DOCUMENT_TITLE');
-      expect($translate.instant).toHaveBeenCalledWith('PUBLISH_DOCUMENT_TEXT', {
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
         documentName: 'Test',
       });
       expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
@@ -909,8 +908,7 @@ describe('ContentEditorService', () => {
       const saveAndPublishDialog = ContentEditor.confirmPublication();
 
       expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('PUBLISH_DIRTY_DOCUMENT_TITLE');
-      expect($translate.instant).toHaveBeenCalledWith('PUBLISH_DIRTY_DOCUMENT_TEXT', {
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
         documentName: 'Test',
       });
       expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
@@ -964,7 +962,7 @@ describe('ContentEditorService', () => {
       ContentEditor.publish();
       $rootScope.$digest();
 
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('DOCUMENT_PUBLISHED', { documentName: 'Test' });
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
     });
 
     it('displays an error if publication fails', () => {
