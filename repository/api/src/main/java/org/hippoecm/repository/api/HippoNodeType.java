@@ -503,4 +503,8 @@ public interface HippoNodeType {
     public static final String HIPPO_NAME = "hippo:name";
 
     public static final String HIPPOSYS_MODULE_CONFIG = "hipposys:moduleconfig";
+
+    String NT_HIPPO_VERSION_INFO = "hippo:versioninfo";
+
+    String HIPPO_VERSION_HISTORY_PROPERTY = "hippo:versionhistory";
 }

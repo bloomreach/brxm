@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 
 /**
  * Custom workflow task for creating a JCR version of a document variant node.
@@ -53,6 +57,13 @@ public class VersionVariantTask extends AbstractDocumentTask {
 
         // ensure no pending changes which would fail the checkin
         workflowSession.save();
-        return new Document(targetNode.checkin());
+        final Node handle = targetNode.getParent();
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            handle.addMixin(NT_HIPPO_VERSION_INFO);
+            final String versionHistoryIdentifier = targetNode.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier();
+            handle.setProperty(HIPPO_VERSION_HISTORY_PROPERTY, versionHistoryIdentifier);
+            // will be saved later by WorkflowManagerImpl.WorkflowInvocationHandler#invoke
+        }
+        return new Document(targetNode.getSession().getWorkspace().getVersionManager().checkin(targetNode.getPath()));
     }
 }

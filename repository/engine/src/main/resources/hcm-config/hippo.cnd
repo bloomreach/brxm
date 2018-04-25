@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2015 Hippo
+ * Copyright 2007-2018 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,9 @@
 - hippo:discriminator (string) multiple // deprecated
 + * (hippo:document) = hippo:document multiple version
 + hippo:request (hippo:request) multiple ignore
+
+[hippo:versioninfo] mixin
+- hippo:versionhistory (string) mandatory
 
 [hippo:hardhandle] > mix:versionable mixin
 
