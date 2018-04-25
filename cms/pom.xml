@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4-SNAPSHOT</version>
+    <version>29.4</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -85,7 +85,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.jackrabbit.version>2.16.1-h1-SNAPSHOT</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.1-h1</hippo.jackrabbit.version>
     <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.4.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.4.0-SNAPSHOT</hippo.services.version>
@@ -126,9 +126,9 @@
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
-    <hippo.htmldiff.version>2.0.0-SNAPSHOT</hippo.htmldiff.version>
+    <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.06</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.7.1-h12.3.0-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.7.1-h12.3.0</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 
