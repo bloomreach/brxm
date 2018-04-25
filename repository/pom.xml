@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4-SNAPSHOT</version>
+    <version>29.4</version>
   </parent>
 
   <name>Repository</name>
@@ -73,14 +73,14 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.jackrabbit.version>2.16.1-h1-SNAPSHOT</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>1.3.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.commons.version>4.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>4.3.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>4.3.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.utilities.version>4.3.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.jackrabbit.version>2.16.1-h1</hippo.jackrabbit.version>
+    <hippo.configuration-management.version>1.4.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.4.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.4.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.utilities.version>4.4.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.06</hippo.jcrdiff.version>
-    <hippo.testutils.version>1.3.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>1.4.0-SNAPSHOT</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>
