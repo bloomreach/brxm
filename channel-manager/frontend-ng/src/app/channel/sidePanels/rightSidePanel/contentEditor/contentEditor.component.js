@@ -29,6 +29,7 @@ const contentEditorComponent = {
     allowSave: '<',
     cancelLabel: '@?',
     closeLabel: '@?',
+    enablePublish: '<',
     onClose: '&',
     onSave: '&',
     onSwitchEditor: '&',

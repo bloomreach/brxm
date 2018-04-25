@@ -59,7 +59,7 @@
     </md-button>
 
     <md-button class="qa-publish"
-               ng-if="$ctrl.isEditing()"
+               ng-if="$ctrl.enablePublish && $ctrl.isEditing()"
                ng-click="$ctrl.publish()"
                ng-disabled="!$ctrl.isPublishAllowed()">
       {{ ::'PUBLISH' | translate }}
