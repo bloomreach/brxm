@@ -389,18 +389,6 @@ class ContentEditorService {
     return this.$q.resolve();
   }
 
-  close() {
-    delete this.documentId;
-    delete this.document;
-    delete this.documentType;
-    delete this.documentDirty;
-    delete this.canPublish;
-    delete this.canRequestPublication;
-    delete this.publicationState;
-    delete this.error;
-    delete this.killed;
-  }
-
   confirmPublication() {
     const textContent = this.$translate.instant(this.documentDirty
       ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT'
@@ -433,6 +421,18 @@ class ContentEditorService {
         this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
         return this.$q.reject();
       });
+  }
+
+  close() {
+    delete this.documentId;
+    delete this.document;
+    delete this.documentType;
+    delete this.documentDirty;
+    delete this.canPublish;
+    delete this.canRequestPublication;
+    delete this.publicationState;
+    delete this.error;
+    delete this.killed;
   }
 }
 
