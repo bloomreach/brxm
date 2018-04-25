@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sitemapitem</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>5365cd54-e2cb-440f-b8a0-4fe4a1c16532</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
     <sv:value>hst:pages/product-search</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:pagetitle" sv:type="String">
+    <sv:value>Product Search Results</sv:value>
   </sv:property>
   <sv:property sv:name="hst:refId" sv:type="String">
     <sv:value>product-search</sv:value>
