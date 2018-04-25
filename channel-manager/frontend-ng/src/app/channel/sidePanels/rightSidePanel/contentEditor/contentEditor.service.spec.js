@@ -891,30 +891,66 @@ describe('ContentEditorService', () => {
       DialogService.show.and.returnValue(showPromise);
     });
 
-    it('shows a "publish" confirmation dialog', () => {
-      const publishDialog = ContentEditor.confirmPublication();
-
-      expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
-        documentName: 'Test',
+    describe('when a user can publish', () => {
+      beforeEach(() => {
+        ContentEditor.canPublish = true;
       });
-      expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(publishDialog).toBe(showPromise);
+
+      it('shows a "publish" confirmation dialog', () => {
+        const publishDialog = ContentEditor.confirmPublication();
+
+        expect(DialogService.confirm).toHaveBeenCalled();
+        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
+          documentName: 'Test',
+        });
+        expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(publishDialog).toBe(showPromise);
+      });
+
+      it('shows a "save and publish" confirmation dialog', () => {
+        ContentEditor.markDocumentDirty();
+        const saveAndPublishDialog = ContentEditor.confirmPublication();
+
+        expect(DialogService.confirm).toHaveBeenCalled();
+        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
+          documentName: 'Test',
+        });
+        expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(saveAndPublishDialog).toBe(showPromise);
+      });
     });
 
-    it('shows a "save and publish" confirmation dialog', () => {
-      ContentEditor.markDocumentDirty();
-      const saveAndPublishDialog = ContentEditor.confirmPublication();
-
-      expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
-        documentName: 'Test',
+    describe('when a user can request publication', () => {
+      beforeEach(() => {
+        ContentEditor.canRequestPublication = true;
       });
-      expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(saveAndPublishDialog).toBe(showPromise);
-      ContentEditor.markDocumentDirty();
+
+      it('shows a "request publication" confirmation dialog', () => {
+        const requestPublicationDialog = ContentEditor.confirmPublication();
+
+        expect(DialogService.confirm).toHaveBeenCalled();
+        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
+          documentName: 'Test',
+        });
+        expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(requestPublicationDialog).toBe(showPromise);
+      });
+
+      it('shows a "save and request publication" confirmation dialog', () => {
+        ContentEditor.markDocumentDirty();
+        const saveAndPublishDialog = ContentEditor.confirmPublication();
+
+        expect(DialogService.confirm).toHaveBeenCalled();
+        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT', {
+          documentName: 'Test',
+        });
+        expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_REQUEST_PUBLICATION');
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(saveAndPublishDialog).toBe(showPromise);
+      });
     });
   });
 
@@ -934,95 +970,194 @@ describe('ContentEditorService', () => {
       };
       ContentService.deleteDraft.and.returnValue($q.resolve());
       WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
-      ContentService.createDraft.and.returnValue($q.resolve(newDoc));
     });
 
-    it('deletes the draft', () => {
-      ContentEditor.publish();
+    describe('when a user can publish', () => {
+      beforeEach(() => {
+        ContentEditor.canPublish = true;
+        ContentService.createDraft.and.returnValue($q.resolve(newDoc));
+      });
 
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+      it('deletes the draft', () => {
+        ContentEditor.publish();
+
+        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+      });
+
+      it('does not execute workflow action if delete draft fails', () => {
+        ContentService.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
+      });
+
+      it('executes the publish document workflow action', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'publish');
+      });
+
+      it('notifies the user of a successful publication action', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
+      });
+
+      it('displays an error if publication fails', () => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showNotification).not.toHaveBeenCalled();
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PUBLISH_DOCUMENT_FAILED', { documentName: 'Test' });
+      });
+
+      it('creates a new draft after publication succeeds', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentEditor.document).toBe(newDoc);
+      });
+
+      it('creates a new draft if publication fails', () => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentEditor.document).toBe(newDoc);
+      });
+
+      it('sets an error if create draft fails', () => {
+        ContentService.createDraft.and.returnValue($q.reject(errorObject));
+
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getError()).toEqual({
+          titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
+          messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+          linkToContentEditor: true,
+        });
+      });
+
+      it('resolves when publication is successful', (done) => {
+        ContentEditor.publish().then((done));
+        $rootScope.$digest();
+      });
+
+      it('rejects when publication fails', (done) => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish().catch(done);
+        $rootScope.$digest();
+      });
+
+      it('rejects when deleteDraft fails', (done) => {
+        ContentService.deleteDraft.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish().catch(done);
+        $rootScope.$digest();
+      });
+
+      it('resolves when createDraft fails', (done) => {
+        ContentService.createDraft.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish().then(done);
+        $rootScope.$digest();
+      });
     });
 
-    it('does not execute workflow action if delete draft fails', () => {
-      ContentService.deleteDraft.and.returnValue($q.reject());
-      ContentEditor.publish();
-      $rootScope.$digest();
+    describe('when a user can request publication', () => {
+      const expectedDraftError = {
+        data: {
+          reason: 'REQUEST_PENDING',
+        },
+      };
 
-      expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
-    });
+      beforeEach(() => {
+        ContentEditor.canRequestPublication = true;
+        ContentService.createDraft.and.returnValue($q.reject(expectedDraftError));
+      });
 
-    it('executes the publish document workflow action', () => {
-      ContentEditor.publish();
-      $rootScope.$digest();
+      it('deletes the draft', () => {
+        ContentEditor.publish();
 
-      expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'publish');
-    });
+        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+      });
 
-    it('notifies the user of a successful publication action', () => {
-      ContentEditor.publish();
-      $rootScope.$digest();
+      it('does not execute workflow action if delete draft fails', () => {
+        ContentService.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.publish();
+        $rootScope.$digest();
 
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
-    });
+        expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
+      });
 
-    it('displays an error if publication fails', () => {
-      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+      it('executes the requestPublication document workflow action', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
 
-      ContentEditor.publish();
-      $rootScope.$digest();
+        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'requestPublication');
+      });
 
-      expect(FeedbackService.showNotification).not.toHaveBeenCalled();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error-reason', 'error-params');
-    });
+      it('notifies the user of a successful publication request', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
 
-    it('creates a new draft after publication succeeds', () => {
-      ContentEditor.publish();
-      $rootScope.$digest();
+        expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_PUBLICATION_REQUESTED', { documentName: 'Test' });
+      });
 
-      expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
-      expect(ContentEditor.document).toBe(newDoc);
-    });
+      it('displays an error if publication request fails', () => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
 
-    it('creates a new draft if publication fails', () => {
-      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish();
+        $rootScope.$digest();
 
-      ContentEditor.publish();
-      $rootScope.$digest();
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
+      });
 
-      expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
-      expect(ContentEditor.document).toBe(newDoc);
-    });
+      it('fails to create a new draft after publication request succeeds', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
 
-    it('displays an error if create draft fails', () => {
-      ContentService.createDraft.and.returnValue($q.reject(errorObject));
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentEditor.document).toBeUndefined();
+        expect(FeedbackService.showError).not.toHaveBeenCalled();
+        expect(ContentEditor.getError()).toEqual({
+          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
+          messageParams: {
+            displayName: 'Display Name',
+          },
+        });
+      });
 
-      ContentEditor.publish();
-      $rootScope.$digest();
+      it('resolves when publication request is successful', (done) => {
+        ContentEditor.publish().then((done));
+        $rootScope.$digest();
+      });
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error-reason', 'error-params');
-    });
+      it('rejects when publication request fails', (done) => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish().catch(done);
+        $rootScope.$digest();
+      });
 
-    it('resolves when publication is successful', (done) => {
-      ContentEditor.publish().then((done));
-      $rootScope.$digest();
-    });
+      it('rejects when deleteDraft fails', (done) => {
+        ContentService.deleteDraft.and.returnValue($q.reject(errorObject));
+        ContentEditor.publish().catch(done);
+        $rootScope.$digest();
+      });
 
-    it('rejects when publication fails', (done) => {
-      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
-      ContentEditor.publish().catch(done);
-      $rootScope.$digest();
-    });
-
-    it('rejects when create draft fails', (done) => {
-      ContentService.deleteDraft.and.returnValue($q.reject(errorObject));
-      ContentEditor.publish().catch(done);
-      $rootScope.$digest();
-    });
-
-    it('rejects when createDraft fails', (done) => {
-      ContentService.createDraft.and.returnValue($q.reject(errorObject));
-      ContentEditor.publish().catch(done);
-      $rootScope.$digest();
+      it('resolves when createDraft fails', (done) => {
+        ContentEditor.publish().then(done);
+        $rootScope.$digest();
+      });
     });
   });
 });
