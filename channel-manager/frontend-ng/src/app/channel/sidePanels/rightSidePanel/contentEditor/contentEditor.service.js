@@ -406,31 +406,19 @@ class ContentEditorService {
   }
 
   _confirmPublicationTextKey() {
-    switch (true) {
-      default:
-      case this.canPublish && !this.documentDirty:
-        return 'CONFIRM_PUBLISH_DOCUMENT';
-      case this.canPublish && this.documentDirty:
-        return 'CONFIRM_PUBLISH_DIRTY_DOCUMENT';
-      case !this.canPublish && !this.documentDirty:
-        return 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
-      case !this.canPublish && this.documentDirty:
-        return 'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT';
+    if (this.canPublish) {
+      return this.documentDirty ?
+        'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
     }
+    return this.documentDirty ?
+      'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
   }
 
   _confirmPublicationOkKey() {
-    switch (true) {
-      default:
-      case this.canPublish && !this.documentDirty:
-        return 'PUBLISH';
-      case this.canPublish && this.documentDirty:
-        return 'SAVE_AND_PUBLISH';
-      case !this.canPublish && !this.documentDirty:
-        return 'REQUEST_PUBLICATION';
-      case !this.canPublish && this.documentDirty:
-        return 'SAVE_AND_REQUEST_PUBLICATION';
+    if (this.canPublish) {
+      return this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
     }
+    return this.documentDirty ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
   }
 
   publish() {
