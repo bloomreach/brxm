@@ -51,6 +51,10 @@
 [hippo:versioninfo] mixin
 - hippo:versionhistory (string) mandatory
 
+[hippo:branchInfo]  mixin
+ - hippo:branchId (string) mandatory
+ - hippo:branchName (string) mandatory
+
 [hippo:hardhandle] > mix:versionable mixin
 
 [hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin

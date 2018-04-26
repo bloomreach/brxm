@@ -507,4 +507,8 @@ public interface HippoNodeType {
     String NT_HIPPO_VERSION_INFO = "hippo:versioninfo";
 
     String HIPPO_VERSION_HISTORY_PROPERTY = "hippo:versionhistory";
+
+    String HIPPO_MIXIN_BRANCH_INFO = "hippo:branchInfo";
+    String HIPPO_PROPERTY_BRANCH_ID = "hippo:branchId";
+    String HIPPO_PROPERTY_BRANCH_NAME = "hippo:branchName";
 }
