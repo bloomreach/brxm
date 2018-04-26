@@ -138,7 +138,18 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
+    public void saveDraft(final String uuid, final Document document, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
+            throws ErrorWithPayloadException {
+        saveDraft(uuid, document, session, locale, contextPayload, true);
+    }
+
+    @Override
     public Document updateDraft(final String uuid, final Document document, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
+            throws ErrorWithPayloadException {
+        return saveDraft(uuid, document, session, locale, contextPayload, false);
+    }
+
+    private Document saveDraft(final String uuid, final Document document, final Session session, final Locale locale, final Map<String, Serializable> contextPayload, final boolean saveOnly)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
@@ -174,6 +185,10 @@ public class DocumentsServiceImpl implements DocumentsService {
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session));
+        }
+
+        if (saveOnly) {
+            return null;
         }
 
         // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.

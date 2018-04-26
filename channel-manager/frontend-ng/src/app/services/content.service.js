@@ -37,6 +37,10 @@ class ContentService {
     return this._send('PUT', ['documents', doc.id, 'draft'], doc);
   }
 
+  saveDraftStopEditing(doc) {
+    return this._send('PUT', ['documents', doc.id, 'saveDraft'], doc);
+  }
+
   deleteDraft(id) {
     return this._send('DELETE', ['documents', id, 'draft']);
   }

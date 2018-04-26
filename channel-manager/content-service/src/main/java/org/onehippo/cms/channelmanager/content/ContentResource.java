@@ -92,6 +92,17 @@ public class ContentResource {
     }
 
     @PUT
+    @Path("documents/{id}/saveDraft")
+    public Response saveDraftDocument(@PathParam("id") final String id, final Document document,
+                                        @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT,
+                (session, locale) -> {
+            documentService.saveDraft(id, document, session, locale, getPayload(servletRequest));
+            return null;
+        });
+    }
+
+    @PUT
     @Path("documents/{documentId}/draft/{fieldPath:.*}")
     public Response updateDraftField(@PathParam("documentId") final String documentId,
                                      @PathParam("fieldPath") final String fieldPath,

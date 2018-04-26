@@ -55,7 +55,7 @@ class Step2Controller {
 
   save() {
     this.RightSidePanelService.startLoading();
-    this.ContentEditor.save()
+    this.ContentEditor.saveStopEditing()
       .then(() => {
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
