@@ -16,27 +16,62 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.Date;
+import java.util.Optional;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_REQUEST;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowIntegrationTest {
 
     @Test
     public void publishPublishesDocument() throws Exception {
         assumeTrue(!isLive());
+
+        assertFalse(handle.isNodeType(NT_HIPPO_VERSION_INFO));
+
+        assertEquals("unpublished", JcrUtils.getStringProperty(document, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"preview"} , JcrUtils.getMultipleStringProperty(document, HIPPO_AVAILABILITY, null));
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
         assertTrue("Document not live after publication", isLive());
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        assertEquals("unpublished", JcrUtils.getStringProperty(preview, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"preview"} , JcrUtils.getMultipleStringProperty(preview, HIPPO_AVAILABILITY, null));
+
+        final Node live = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+        assertEquals("published", JcrUtils.getStringProperty(live, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"live"} , JcrUtils.getMultipleStringProperty(live, HIPPO_AVAILABILITY, null));
+
+        assertTrue(preview.isNodeType(MIX_VERSIONABLE));
+        assertFalse(live.isNodeType(MIX_VERSIONABLE));
+
+        assertTrue("Publication should lead to a jcr version checkin, and after that the handle node should have " +
+                "information about the version history node.", handle.isNodeType(NT_HIPPO_VERSION_INFO));
+        assertEquals(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(), preview.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier());
     }
 
     @Test
