@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -53,7 +52,6 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -67,7 +65,6 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.util.PathUtils;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +84,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
-    protected Session previewSession;
     protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
@@ -205,33 +201,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         } else if (!session.isLive()) {
             throw new HstComponentException("Invalid session.");
         }
-        return session;
-    }
-
-    public Session getPreviewSession() {
-        checkStateValidity();
-
-        if (previewSession == null) {
-            final ContextCredentialsProvider credsProvider = getContextCredentialsProvider();
-            if (credsProvider != null) {
-                final SimpleCredentials previewCredentials = (SimpleCredentials) credsProvider.getPreviewCredentials(this);
-                try {
-                    previewSession = this.repository.login(previewCredentials);
-                } catch (RepositoryException e) {
-                    log.error("Login Exception for session for userID {}. Cannot create preview session.", previewCredentials.getUserID());
-                }
-            } else {
-                try {
-                    previewSession = this.repository.login();
-                } catch (RepositoryException e) {
-                    log.error("Login Exception for anonymous login.");
-                }
-            }
-
-        } else if (!previewSession.isLive()) {
-            throw new HstComponentException("Invalid session.");
-        }
-        return previewSession;
+        return this.session;
     }
 
     @Override
@@ -244,23 +214,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setResolvedMount(ResolvedMount resolvedMount) {
         checkStateValidity();
         this.resolvedMount = resolvedMount;
-        if (isChannelBranch(resolvedMount) && !resolvedMount.getMount().isPreview()) {
-            // we need an extra preview session to be available for version history lookup
-            setAttribute(ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME , getPreviewSession());
         }
-    }
-
-    private boolean isChannelBranch(final ResolvedMount resolvedMount) {
-        final HstSite hstSite = resolvedMount.getMount().getHstSite();
-        if (hstSite == null) {
-             return false;
-        }
-        final Channel channel = hstSite.getChannel();
-        if (channel == null) {
-            return false;
-        }
-        return channel.getBranchOf() != null;
-    }
 
     @Override
     public ResolvedMount getResolvedMount() {

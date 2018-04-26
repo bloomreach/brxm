@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,7 +30,6 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -50,15 +50,19 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hippoecm.hst.core.container.ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
+import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
 
 public class TestVersionedBean extends AbstractBeanTestCase {
 
     private ObjectConverter objectConverter;
     private ObjectBeanManager obm;
+    private Session previewUser;
 
     private Node homeHandle;
     private Node aboutUsHandle;
@@ -72,13 +76,42 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         super.setUp();
         versionManager = session.getWorkspace().getVersionManager();
         homeHandle = session.getNode("/unittestcontent/documents/unittestproject/common/homepage");
-        if (WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).isPresent()) {
-            // Test fixture already created
-        } else {
-            createVersionHistoryFixture();
-        }
+
+        aboutUsHandle = session.getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");
+
+        // make backups to restore later
+        JcrUtils.copy(session, homeHandle.getPath(), homeHandle.getPath() + "-copy");
+        JcrUtils.copy(session, aboutUsHandle.getPath(), aboutUsHandle.getPath() + "-copy");
+        session.save();
+
+        createVersionHistoryFixture();
+
         objectConverter = getObjectConverter();
-        obm = new ObjectBeanManagerImpl(session, objectConverter);
+
+        previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
+
+        obm = new ObjectBeanManagerImpl(previewUser, objectConverter);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+
+        ModifiableRequestContextProvider.clear();
+
+        if (previewUser != null && previewUser.isLive()) {
+            previewUser.logout();
+        }
+        homeHandle.remove();
+        aboutUsHandle.remove();
+
+        JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/common/homepage-copy",
+                "/unittestcontent/documents/unittestproject/common/homepage");
+        JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us-copy",
+                "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");
+
+        session.save();
+
+        super.tearDown();
     }
 
     /**
@@ -95,7 +128,6 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         versionHistoryHome = versionManager.getVersionHistory(
                 WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).get().getPath());
 
-
         final Document doc = wf.version();
         assertThat(doc.getNode(session).getName()).isEqualTo("1.1");
         versionHistoryHome.addVersionLabel("1.1", "christmas-live", true);
@@ -111,8 +143,6 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         wf.publish();
         // overrides the 1.1 master-live version
         versionHistoryHome.addVersionLabel("1.3", "master-live", true);
-
-        aboutUsHandle = session.getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");
 
         final DocumentWorkflow wf2 = WorkflowUtils.getWorkflow(aboutUsHandle, "default", DocumentWorkflow.class)
                 .orElseThrow(() -> new WorkflowException("Could not get workflow"));
@@ -147,6 +177,19 @@ public class TestVersionedBean extends AbstractBeanTestCase {
     private void changeTitleContentAndCommit(final Node handle, final DocumentWorkflow wf, final String newTitle,
                                              final String newContent) throws RepositoryException, WorkflowException, RemoteException {
         wf.obtainEditableInstance();
+        // assert after obtainEditableInstance the preview variant is present, is versionable AND that the handle also
+        // has version info
+        final Optional<Node> previewVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED);
+        assertThat(previewVariant.orElse(null)).isNotNull();
+        assertThat(previewVariant.get().isNodeType(MIX_VERSIONABLE)).isTrue();
+        final Node versionHistoryNode = previewVariant.get().getProperty(JCR_VERSION_HISTORY).getNode();
+        assertThat(versionHistoryNode.getPrimaryNodeType().getName())
+                .isEqualTo(NT_VERSION_HISTORY);
+
+        assertThat(handle.isNodeType(NT_HIPPO_VERSION_INFO)).isTrue();
+        assertThat(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString())
+                .isEqualTo(versionHistoryNode.getIdentifier());
+
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         draft.setProperty("unittestproject:title", newTitle);
         if (newContent != null) {
@@ -198,22 +241,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         ModifiableRequestContextProvider.set(requestContext);
 
-        // on the request context I need to set a preview session because the preview session is only allowed to read
-        // the variant via which we can access the version history!
-        Session previewUser = null;
-
-        previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
-        expect(requestContext.getAttribute(eq(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME))).andStubReturn(previewUser);
-
         replay(channel, mount, resolvedMount, requestContext);
 
-    }
-
-    private void cleanupContext() {
-        Session previewSession = (Session)RequestContextProvider.get().getAttribute(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME);
-        if (previewSession != null && previewSession.isLive()) {
-            previewSession.logout();
-        }
     }
 
     @Test
@@ -227,91 +256,88 @@ public class TestVersionedBean extends AbstractBeanTestCase {
                 .as("Expected live workspace version")
                 .isEqualTo("The new master Title");
 
-        try {
-            initContext("christmas");
+        initContext("christmas");
 
-            final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
 
-            assertThat(versionedHomePage.getTitle())
-                    .as("Expected versioned christmas edition")
-                    .isEqualTo("The christmas Title");
+        assertThat(versionedHomePage.getTitle())
+                .as("Expected versioned christmas edition")
+                .isEqualTo("The christmas Title");
 
-            final String versionedHomePagePath = versionedHomePage.getPath();
+        final String versionedHomePagePath = versionedHomePage.getPath();
 
-            assertThat(versionedHomePagePath)
-                    .as("Although the provided node is a versioned node, the path should still be the workspace path" +
-                            "for example for link rewriting")
-                    .startsWith("/unittestcontent");
+        assertThat(versionedHomePagePath)
+                .as("Although the provided node is a versioned node, the path should still be the workspace path" +
+                        "for example for link rewriting")
+                .startsWith("/unittestcontent");
 
-            assertThat(versionedHomePage.getNode()).isInstanceOf(HippoBeanFrozenNode.class);
+        assertThat(versionedHomePage.getNode()).isInstanceOf(HippoBeanFrozenNode.class);
 
-            assertThat(((HippoBeanFrozenNode) versionedHomePage.getNode()).getFrozenNode().getPath())
-                    .as("The real backing node is the frozen node with a version history path")
-                    .startsWith("/jcr:system");
+        assertThat(((HippoBeanFrozenNode) versionedHomePage.getNode()).getFrozenNode().getPath())
+                .as("The real backing node is the frozen node with a version history path")
+                .startsWith("/jcr:system");
 
-            assertThat(versionedHomePagePath).isEqualTo(workspaceHomePage.getPath());
+        assertThat(versionedHomePagePath).isEqualTo(workspaceHomePage.getPath());
 
-            final Node node = versionedHomePage.getNode();
+        final Node node = versionedHomePage.getNode();
 
-            assertThat(node).isInstanceOf(HippoBeanFrozenNode.class);
+        assertThat(node).isInstanceOf(HippoBeanFrozenNode.class);
 
-            assertThat(node.getName()).isEqualTo("homepage");
+        assertThat(node.getName()).isEqualTo("homepage");
 
-            final HippoHtml body = versionedHomePage.getBody();
+        final HippoHtml body = versionedHomePage.getBody();
 
-            assertThat(body.getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
+        assertThat(body.getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
 
-            assertThat(body.getContent()).isEqualTo("This is the content of the christmas homepage");
+        assertThat(body.getContent()).isEqualTo("This is the content of the christmas homepage");
 
-            final Object bean = versionedHomePage.getBean("unittestproject:body");
-            assertThat(bean instanceof HippoHtml).isTrue();
+        final Object bean = versionedHomePage.getBean("unittestproject:body");
+        assertThat(bean instanceof HippoHtml).isTrue();
 
-            assertThat(body.isSelf((HippoHtml) bean));
+        assertThat(body.isSelf((HippoHtml) bean));
 
-            final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
-            assertThat(childBeans.size()).isEqualTo(1);
-            assertThat(childBeans.get(0).isSelf(body));
+        final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
+        assertThat(childBeans.size()).isEqualTo(1);
+        assertThat(childBeans.get(0).isSelf(body));
 
-            final List<HippoBean> allChildren = versionedHomePage.getChildBeans(HippoBean.class);
+        final List<HippoBean> allChildren = versionedHomePage.getChildBeans(HippoBean.class);
 
-            assertThat(allChildren.size()).isEqualTo(1);
-            assertThat(allChildren.get(0).isSelf(body));
+        assertThat(allChildren.size()).isEqualTo(1);
+        assertThat(allChildren.get(0).isSelf(body));
 
-            final PersistableTextPage versionedHomePageViaBody = (PersistableTextPage) body.getParentBean();
+        final PersistableTextPage versionedHomePageViaBody = (PersistableTextPage) body.getParentBean();
 
-            assertThat(versionedHomePageViaBody.getTitle())
-                    .as("Expected versioned christmas edition")
-                    .isEqualTo("The christmas Title");
-
-
-            assertThat(versionedHomePageViaBody.isSelf(versionedHomePage)).isTrue();
-
-            final HippoBean expectedFolderBean = versionedHomePage.getParentBean();
-
-            assertThat(expectedFolderBean).isInstanceOf(HippoFolderBean.class);
-
-            assertThat(expectedFolderBean.getNode()).isNotInstanceOfAny(HippoBeanFrozenNode.class);
-
-            assertThat(expectedFolderBean.getNode().getPath())
-                    .as("Expected parent of a HippoDocumentBean from version history is the " +
-                            "parent of the handle of document variant in workspace")
-                    .isEqualTo(workspaceHomePage.getNode().getParent().getParent().getPath());
-            assertThat(versionedHomePagePath).startsWith(expectedFolderBean.getNode().getPath());
+        assertThat(versionedHomePageViaBody.getTitle())
+                .as("Expected versioned christmas edition")
+                .isEqualTo("The christmas Title");
 
 
-            final HippoBean expectedFolderBean2 = versionedHomePageViaBody.getParentBean();
+        assertThat(versionedHomePageViaBody.isSelf(versionedHomePage)).isTrue();
 
-            assertThat(expectedFolderBean.isSelf(expectedFolderBean2)).isTrue();
+        final HippoBean expectedFolderBean = versionedHomePage.getParentBean();
 
-            assertThat(versionedHomePage.isAncestor(body)).isTrue();
-            assertThat(body.isAncestor(versionedHomePage)).isFalse();
-            assertThat(versionedHomePageViaBody.isAncestor(body)).isTrue();
+        assertThat(expectedFolderBean).isInstanceOf(HippoFolderBean.class);
 
-            assertThat(versionedHomePage.isDescendant(body)).isFalse();
-            assertThat(body.isDescendant(versionedHomePage)).isTrue();
-        } finally {
-            cleanupContext();
-        }
+        assertThat(expectedFolderBean.getNode()).isNotInstanceOfAny(HippoBeanFrozenNode.class);
+
+        assertThat(expectedFolderBean.getNode().getPath())
+                .as("Expected parent of a HippoDocumentBean from version history is the " +
+                        "parent of the handle of document variant in workspace")
+                .isEqualTo(workspaceHomePage.getNode().getParent().getParent().getPath());
+        assertThat(versionedHomePagePath).startsWith(expectedFolderBean.getNode().getPath());
+
+
+        final HippoBean expectedFolderBean2 = versionedHomePageViaBody.getParentBean();
+
+        assertThat(expectedFolderBean.isSelf(expectedFolderBean2)).isTrue();
+
+        assertThat(versionedHomePage.isAncestor(body)).isTrue();
+        assertThat(body.isAncestor(versionedHomePage)).isFalse();
+        assertThat(versionedHomePageViaBody.isAncestor(body)).isTrue();
+
+        assertThat(versionedHomePage.isDescendant(body)).isFalse();
+        assertThat(body.isDescendant(versionedHomePage)).isTrue();
+
 
     }
 
@@ -322,6 +348,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         final String bodyPath = previewVariant.getNode("unittestproject:body").getPath();
         // create SNS
         JcrUtils.copy(session, bodyPath, bodyPath);
+
         session.save();
 
         final DocumentWorkflow wf = WorkflowUtils.getWorkflow(homeHandle, "default", DocumentWorkflow.class)
@@ -332,19 +359,15 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         wf.version();
         versionHistoryHome.addVersionLabel("1.4", "christmas-live", true);
 
+        initContext("christmas");
 
-        try {
-            initContext("christmas");
+        final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
 
-            final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
+        final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
+        assertThat(childBeans.size()).isEqualTo(2);
 
-            final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
-            assertThat(childBeans.size()).isEqualTo(2);
+        assertThat(childBeans.get(0).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
+        assertThat(childBeans.get(1).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body[2]");
 
-            assertThat(childBeans.get(0).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
-            assertThat(childBeans.get(1).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body[2]");
-        } finally {
-            cleanupContext();
-        }
     }
 }

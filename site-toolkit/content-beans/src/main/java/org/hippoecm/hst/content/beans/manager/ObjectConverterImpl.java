@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -24,8 +25,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -40,13 +39,15 @@ import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.hst.Channel;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME;
+import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
+import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
 
 public class ObjectConverterImpl implements ObjectConverter {
     
@@ -231,7 +232,14 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        if (!node.getParent().isNodeType(NT_HANDLE)) {
+        final Node handle = node.getParent();
+        if (!handle.isNodeType(NT_HANDLE)) {
+            // node is not a variant below the handle
+            return node;
+        }
+
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            // no version history information on handle, return
             return node;
         }
 
@@ -247,59 +255,44 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
 
         // should we serve a versioned history node or just workspace.
+        try {
+            final Node versionHistory = node.getSession().getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
+            if (!versionHistory.isNodeType(NT_VERSION_HISTORY)) {
+                log.warn("'{}/@{}' does not point to a node of type '{}' which is not allowed. Correct the handle manually.",
+                        handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
+                return node;
+            }
 
-        final VersionHistory versionHistory = getVersionHistory(requestContext, node, mount);
+            final String versionLabel;
+            if (mount.isPreview()) {
+                versionLabel = channel.getBranchId() + "-preview";
+            } else {
+                versionLabel = channel.getBranchId() + "-live";
+            }
 
-        if (versionHistory == null) {
-            // there is no history at all
+            final Optional<Node> version = getVersionForLabel(versionHistory, versionLabel);
+            if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
+                return node;
+            }
+
+            log.info("Found version '{}' to use for rendering.", version.get().getPath());
+
+            final Node frozenNode = version.get().getNode(JCR_FROZEN_NODE);
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(frozenNode, node.getPath(), node.getName());
+
+        } catch (ItemNotFoundException e) {
+            log.warn("Version history node with id stored on '{}/@{}' does not exist. Correct the handle manually.",
+                    handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY);
             return node;
         }
-
-        final String versionLabel;
-        if (mount.isPreview()) {
-            versionLabel = channel.getBranchId() + "-preview";
-        } else {
-            versionLabel = channel.getBranchId() + "-live";
-        }
-        if (!versionHistory.hasVersionLabel(versionLabel)) {
-            // no version specific variant present, return workspace node
-            return node;
-        }
-
-        final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
-        if (node.getSession() == versionByLabel.getSession()) {
-            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(versionByLabel.getFrozenNode(), node.getPath(), node.getName());
-        }
-        // node most likely belongs to live user session
-        return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node.getSession().getNode(versionByLabel.getFrozenNode().getPath()), node.getPath(), node.getName());
 
     }
 
-    private VersionHistory getVersionHistory(final HstRequestContext requestContext, final Node documentVariant, final Mount mount) throws RepositoryException {
-        if (mount.isPreview()) {
-            // document is already preview, so we can directly access the version history
-            if (!documentVariant.isNodeType(MIX_VERSIONABLE)) {
-                return null;
-            }
-            return documentVariant.getSession().getWorkspace().getVersionManager().getVersionHistory(documentVariant.getPath());
-        } else {
-            final Session previewSession = (Session) requestContext.getAttribute(REQUEST_CONTEXT_PREVIEW_SESSION_ATTR_NAME);
-            if (previewSession == null) {
-                log.error("There is no preview session available which is needed for version history lookup. Return null for version history");
-                return null;
-            }
-
-            if (previewSession.nodeExists(documentVariant.getPath())) {
-                final Node previewVariant = previewSession.getNode(documentVariant.getPath());
-                if (!previewVariant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-                    return null;
-                }
-                return previewSession.getWorkspace().getVersionManager().getVersionHistory(previewVariant.getPath());
-            } else {
-                log.debug("There is no preview variant of '{}' hence cannot retrieve version history", documentVariant.getPath());
-                return null;
-            }
+    private Optional<Node> getVersionForLabel(final Node versionHistory, final String versionLabel) throws RepositoryException {
+        if (!versionHistory.hasProperty(JCR_VERSIONLABELS + "/" + versionLabel)) {
+           return Optional.empty();
         }
+        return Optional.of(versionHistory.getProperty(JCR_VERSIONLABELS + "/" + versionLabel).getNode());
     }
 
     public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
