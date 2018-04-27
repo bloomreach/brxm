@@ -26,8 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.repository.bootstrap.util.BundleFileInfo;
-import org.onehippo.repository.bootstrap.util.BundleInfo;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;

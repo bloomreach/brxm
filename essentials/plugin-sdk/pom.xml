@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.4.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Plugin SDK</name>
@@ -38,6 +38,7 @@
     <core.jdt.version>3.10.0</core.jdt.version>
     <mustache.version>0.8.16</mustache.version>
     <swagger.version>1.5.16</swagger.version>
+    <json-lib.version>2.4</json-lib.version>
   </properties>
 
   <modules>
@@ -92,6 +93,62 @@
         <groupId>org.apache.maven.archetype</groupId>
         <artifactId>archetype-common</artifactId>
         <version>${maven-archetype.version}</version>
+        <!-- archetype-common is only used/needed for reading/writing Pom files.
+             unnecessary transitive dependencies beyond that basic functionality
+             are excluded below, except for maven-core and maven-artifact which
+             are used for other features.
+             when updating to a newer archetype-common versions these exclusions
+             need to be checked/sanitized again -->
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-artifact-transfer</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-provider-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven.archetype</groupId>
+            <artifactId>archetype-catalog</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.maven.archetype</groupId>
+            <artifactId>archetype-descriptor</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-component-annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-velocity</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>net.sourceforge.jchardet</groupId>
+            <artifactId>jchardet</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
@@ -137,6 +194,23 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson2-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.json-lib</groupId>
+        <artifactId>json-lib</artifactId>
+        <version>${json-lib.version}</version>
+        <classifier>jdk15</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
