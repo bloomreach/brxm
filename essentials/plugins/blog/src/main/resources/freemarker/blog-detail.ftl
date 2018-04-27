@@ -1,6 +1,7 @@
 <#include "../../include/imports.ftl">
 
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Blogpost" -->
+<@hst.setBundle basename="essentials.blog"/>
 <#if document??>
   <div class="has-edit-button">
     <@hst.manageContent hippobean=document/>
@@ -15,5 +16,7 @@
     <div>
       <@hst.html hippohtml=document.content />
     </div>
+    <@hst.link var="link" siteMapItemRefId="blog-list"/>
+    <a href="${link}"><@fmt.message key="blog.back.to.list" var="msg"/>${msg?html}</a>
   </div>
 </#if>

@@ -1,6 +1,7 @@
 <#include "../../../include/imports.ftl">
 
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
+<@hst.setBundle basename="essentials.blog"/>
 <#if pageable?? && pageable?has_content>
 <div>
   <#list pageable.items as item>
@@ -19,6 +20,7 @@
         <#if item.introduction??>
           <p>${item.introduction?html}</p>
         </#if>
+        <a href="${link}"><@fmt.message key="blog.read.post" var="msg"/>${msg?html}</a>
       </div>
     </div>
   </#list>

@@ -54,7 +54,7 @@
         <sv:value>desc</sv:value>
         <sv:value>on</sv:value>
         <sv:value>off</sv:value>
-        <sv:value>1</sv:value>
+        <sv:value>2</sv:value>
         <sv:value/>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
