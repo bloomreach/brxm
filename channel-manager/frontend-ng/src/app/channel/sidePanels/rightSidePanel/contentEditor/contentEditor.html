@@ -55,7 +55,7 @@
 
     <md-button class="qa-close"
                ng-click="$ctrl.onClose()">
-      {{ $ctrl.closeButtonLabel() }}
+      {{ ::$ctrl.closeLabel | translate }}
     </md-button>
 
     <md-button class="qa-publish"
