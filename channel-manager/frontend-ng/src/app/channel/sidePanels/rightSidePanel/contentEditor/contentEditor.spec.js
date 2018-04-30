@@ -41,6 +41,7 @@ describe('ContentEditorCtrl', () => {
       'getError',
       'isDocumentDirty',
       'isEditing',
+      'isPublishAllowed',
       'markDocumentDirty',
       'publish',
       'save',
@@ -76,6 +77,16 @@ describe('ContentEditorCtrl', () => {
 
     ContentEditor.isEditing.and.returnValue(false);
     expect($ctrl.isEditing()).toBe(false);
+  });
+
+  it('knows when publish is allowed', () => {
+    [true, false].forEach((editorAllowsPublish) => {
+      [true, false].forEach((dirty) => {
+        ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
+        ContentEditor.isDocumentDirty.and.returnValue(dirty);
+        expect($ctrl.isPublishAllowed()).toBe(editorAllowsPublish && !dirty);
+      });
+    });
   });
 
   it('knows when save is allowed', () => {

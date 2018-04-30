@@ -49,10 +49,7 @@ class ContentEditorCtrl {
   }
 
   isPublishAllowed() {
-    if (this.isSaveAllowed()) {
-      return true;
-    }
-    return this.ContentEditor.isPublishAllowed();
+    return this.ContentEditor.isPublishAllowed() && !this._isDocumentDirty();
   }
 
   isSaveAllowed() {
