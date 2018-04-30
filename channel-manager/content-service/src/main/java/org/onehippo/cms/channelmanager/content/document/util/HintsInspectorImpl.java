@@ -28,7 +28,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 
 
 public class HintsInspectorImpl implements HintsInspector {
@@ -38,17 +38,17 @@ public class HintsInspectorImpl implements HintsInspector {
 
     @Override
     public boolean canCreateDraft(Map<String, Serializable> hints) {
-        return isHintActionAvailable(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
+        return isHintActionTrue(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     @Override
     public boolean canUpdateDraft(Map<String, Serializable> hints) {
-        return isHintActionAvailable(hints, HINT_COMMIT_EDITABLE_INSTANCE);
+        return isHintActionTrue(hints, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     @Override
     public boolean canDeleteDraft(Map<String, Serializable> hints) {
-        return isHintActionAvailable(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
+        return isHintActionTrue(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
     @Override

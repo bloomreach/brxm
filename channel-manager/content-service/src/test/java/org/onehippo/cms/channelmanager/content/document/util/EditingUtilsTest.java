@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
@@ -32,8 +31,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
@@ -213,16 +210,16 @@ public class EditingUtilsTest {
     @Test
     public void isHintActionAvailable() {
         final Map<String, Serializable> hints = new HashMap<>();
-        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+        assertFalse(EditingUtils.isHintActionTrue(hints, "action"));
 
         hints.put("action", Boolean.FALSE);
-        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+        assertFalse(EditingUtils.isHintActionTrue(hints, "action"));
 
         hints.put("action", Boolean.TRUE);
-        assertTrue(EditingUtils.isHintActionAvailable(hints, "action"));
+        assertTrue(EditingUtils.isHintActionTrue(hints, "action"));
 
         hints.put("action", "no-boolean");
-        assertFalse(EditingUtils.isHintActionAvailable(hints, "action"));
+        assertFalse(EditingUtils.isHintActionTrue(hints, "action"));
     }
 
     @Test
