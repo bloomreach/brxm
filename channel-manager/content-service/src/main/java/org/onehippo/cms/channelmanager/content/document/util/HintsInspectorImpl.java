@@ -61,7 +61,9 @@ public class HintsInspectorImpl implements HintsInspector {
             return errorInfo(ErrorInfo.Reason.OTHER_HOLDER, params);
         }
         if (hints.containsKey(HINT_REQUESTS)) {
-            return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, null);
+            final Map<String, Serializable> requests = new HashMap<>();
+            requests.put(HINT_REQUESTS, hints.get(HINT_REQUESTS));
+            return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, requests);
         }
         return Optional.empty();
     }
