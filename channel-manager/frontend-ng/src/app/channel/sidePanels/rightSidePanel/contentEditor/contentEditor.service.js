@@ -33,6 +33,11 @@ const ERROR_MAP = {
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
+  NOT_EDITABLE: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    linkToContentEditor: true,
+    messageKey: 'FEEDBACK_NOT_EDITABLE_MESSAGE',
+  },
   NOT_FOUND: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',

@@ -28,6 +28,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionFalse;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 
 
@@ -60,11 +61,17 @@ public class HintsInspectorImpl implements HintsInspector {
             UserUtils.getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
             return errorInfo(ErrorInfo.Reason.OTHER_HOLDER, params);
         }
+
         if (hints.containsKey(HINT_REQUESTS)) {
             final Map<String, Serializable> requests = new HashMap<>();
             requests.put(HINT_REQUESTS, hints.get(HINT_REQUESTS));
             return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, requests);
         }
+
+        if (isHintActionFalse(hints, HINT_OBTAIN_EDITABLE_INSTANCE)) {
+            return errorInfo(ErrorInfo.Reason.NOT_EDITABLE, null);
+        }
+
         return Optional.empty();
     }
 
