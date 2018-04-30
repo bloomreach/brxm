@@ -27,7 +27,6 @@ const contentEditorComponent = {
   },
   bindings: {
     allowSave: '<',
-    cancelLabel: '@?',
     closeLabel: '@?',
     enablePublish: '<',
     onClose: '&',

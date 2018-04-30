@@ -22,7 +22,6 @@ describe('ContentEditorCtrl', () => {
 
   let $ctrl;
   let $scope;
-  let cancelLabel;
   let form;
   let onSave;
 
@@ -42,6 +41,7 @@ describe('ContentEditorCtrl', () => {
       'getError',
       'isDocumentDirty',
       'isEditing',
+      'isPublishAllowed',
       'markDocumentDirty',
       'publish',
       'save',
@@ -49,13 +49,12 @@ describe('ContentEditorCtrl', () => {
 
     $scope = $rootScope.$new();
 
-    cancelLabel = 'CANCEL';
     form = jasmine.createSpyObj('form', ['$setPristine']);
     onSave = jasmine.createSpy('onSave');
 
     $ctrl = $componentController('contentEditor',
       { $scope, ContentEditor },
-      { cancelLabel, form, onSave },
+      { form, onSave },
     );
     $rootScope.$digest();
   });
@@ -78,6 +77,16 @@ describe('ContentEditorCtrl', () => {
 
     ContentEditor.isEditing.and.returnValue(false);
     expect($ctrl.isEditing()).toBe(false);
+  });
+
+  it('knows when publish is allowed', () => {
+    [true, false].forEach((editorAllowsPublish) => {
+      [true, false].forEach((dirty) => {
+        ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
+        ContentEditor.isDocumentDirty.and.returnValue(dirty);
+        expect($ctrl.isPublishAllowed()).toBe(editorAllowsPublish && !dirty);
+      });
+    });
   });
 
   it('knows when save is allowed', () => {
@@ -132,18 +141,6 @@ describe('ContentEditorCtrl', () => {
 
     expect(form.$setPristine).not.toHaveBeenCalled();
     expect(onSave).not.toHaveBeenCalled();
-  });
-
-  describe('close button label', () => {
-    it('is the cancel label when the document is dirty', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(true);
-      expect($ctrl.closeButtonLabel()).toBe(cancelLabel);
-    });
-
-    it('is "close" when the document is not dirty', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(false);
-      expect($ctrl.closeButtonLabel()).toBe('CLOSE');
-    });
   });
 
   describe('publish', () => {
