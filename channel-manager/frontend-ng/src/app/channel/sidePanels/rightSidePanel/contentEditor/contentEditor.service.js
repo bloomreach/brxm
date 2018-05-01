@@ -261,35 +261,6 @@ class ContentEditorService {
       .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
   }
 
-  saveStopEditing() {
-    return this._saveDraftStopEditing()
-      .catch((response) => {
-        let params;
-        let errorKey = 'ERROR_UNABLE_TO_SAVE';
-
-        if (this._isErrorInfo(response.data)) {
-          const errorInfo = response.data;
-          errorKey = `ERROR_${errorInfo.reason}`;
-          params = this._extractErrorParams(errorInfo);
-        } else if (this._isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
-        }
-
-        if (params) {
-          this.FeedbackService.showError(errorKey, params);
-        } else {
-          this.FeedbackService.showError(errorKey);
-        }
-
-        return this.$q.reject(); // tell the caller that saving has failed.
-      });
-  }
-
-  _saveDraftStopEditing() {
-    return this.ContentService.saveDraftStopEditing(this.document);
-  }
-
   _isDocument(obj) {
     return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
   }

@@ -47,9 +47,6 @@ public interface DocumentsService {
      */
     Document createDraft(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
-
-    void saveDraft(String uuid, Document document, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
-
     /**
      * Update the draft version of a document, and keep it locked for further editing.
      * <p>
