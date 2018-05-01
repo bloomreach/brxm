@@ -33,21 +33,21 @@ content-editor {
     min-height: 0;
   }
 
-  // neutralize ng-animate's animations to prevent it taking time when the button is hidden
-  .flash-me.ng-animate {
-    animation: none !important;
-  }
-
   .flash-me {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
     animation-name: flash-orange;
     animation-duration: 700ms;
     animation-timing-function: ease-in-out;
   }
 
   @keyframes flash-orange {
-    0% {background-color: transparent}
-    50% {background-color: rgba(255, 167, 51, 0.6)}
-    100% {background-color: transparent}
+    0% { background-color: inherit; }
+    50% { background-color: rgba(255, 167, 51, .6); }
+    100% { background-color: inherit; }
   }
 
   .has-focused-field {
