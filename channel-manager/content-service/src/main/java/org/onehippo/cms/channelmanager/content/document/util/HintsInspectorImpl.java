@@ -20,11 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.PUBLISH;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
@@ -63,9 +67,10 @@ public class HintsInspectorImpl implements HintsInspector {
         }
 
         if (hints.containsKey(HINT_REQUESTS)) {
-            final Map<String, Serializable> requests = new HashMap<>();
-            requests.put(HINT_REQUESTS, hints.get(HINT_REQUESTS));
-            return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, requests);
+            if (hasCancelablePublicationRequest(hints, session)) {
+                return errorInfo(ErrorInfo.Reason.CANCELABLE_PUBLICATION_REQUEST_PENDING, null);
+            }
+            return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, null);
         }
 
         if (isHintActionFalse(hints, HINT_OBTAIN_EDITABLE_INSTANCE)) {
@@ -73,6 +78,25 @@ public class HintsInspectorImpl implements HintsInspector {
         }
 
         return Optional.empty();
+    }
+
+    private boolean hasCancelablePublicationRequest(final Map<String, Serializable> hints, final Session session) {
+        final Map<String, Serializable> hintRequests = (Map<String, Serializable>) hints.get(HINT_REQUESTS);
+        for (final Map.Entry<String, Serializable> entry : hintRequests.entrySet()) {
+            final Map<String, Boolean> entryMap = (Map<String, Boolean>) entry.getValue();
+            if (entryMap.containsKey("cancelRequest")) {
+                final String requestNodeId = entry.getKey();
+                try {
+                    final Node requestNode = session.getNodeByIdentifier(requestNodeId);
+                    final String type = requestNode.getProperty(HIPPOSTDPUBWF_TYPE).getString();
+                    if (type.equals(PUBLISH)) {
+                        return true;
+                    }
+                } catch (final RepositoryException ignore) {
+                }
+            }
+        }
+        return false;
     }
 
     protected Optional<ErrorInfo> errorInfo(ErrorInfo.Reason reason, Map<String, Serializable> params) {

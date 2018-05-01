@@ -82,6 +82,7 @@ public class ErrorInfo {
 
     public enum Reason {
         ALREADY_DELETED,
+        CANCELABLE_PUBLICATION_REQUEST_PENDING,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         CORE_PROJECT,
         DOES_NOT_EXIST,
