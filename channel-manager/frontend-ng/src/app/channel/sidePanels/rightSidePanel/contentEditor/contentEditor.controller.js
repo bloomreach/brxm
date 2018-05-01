@@ -31,7 +31,6 @@ class ContentEditorCtrl {
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
 
-    this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }
 
@@ -52,10 +51,7 @@ class ContentEditorCtrl {
   }
 
   isPublishAllowed() {
-    if (this.isSaveAllowed()) {
-      return true;
-    }
-    return this.ContentEditor.isPublishAllowed();
+    return this.ContentEditor.isPublishAllowed() && !this._isDocumentDirty();
   }
 
   isSaveAllowed() {
@@ -76,10 +72,6 @@ class ContentEditorCtrl {
 
   getError() {
     return this.ContentEditor.getError();
-  }
-
-  closeButtonLabel() {
-    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
   }
 
   save() {
