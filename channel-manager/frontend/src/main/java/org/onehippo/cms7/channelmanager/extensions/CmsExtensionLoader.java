@@ -17,8 +17,14 @@ package org.onehippo.cms7.channelmanager.extensions;
 
 import java.util.List;
 
+/**
+ * Loads available CMS extensions.
+ */
 public interface CmsExtensionLoader {
 
+    /**
+     * @return all available CMS extensions, or an empty list if no extensions are available.
+     */
     List<CmsExtension> loadCmsExtensions();
 
 }
