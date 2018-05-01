@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -39,9 +40,12 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.channelmanager.extensions.CmsExtension;
+import org.onehippo.cms7.channelmanager.extensions.HardcodedCmsExtensionLoader;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +54,9 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule;
 
 @ExtClass("Hippo.ChannelManager.ChannelEditor.ChannelEditor")
 public class ChannelEditor extends ExtPanel {
@@ -60,6 +67,11 @@ public class ChannelEditor extends ExtPanel {
 
     private static final String OPEN_DOCUMENT_EVENT = "open-document";
     private static final String CLOSE_DOCUMENT_EVENT = "close-document";
+
+    private static final ObjectMapper JSON_ORG_OBJECT_MAPPER = new ObjectMapper();
+    static {
+        JSON_ORG_OBJECT_MAPPER.registerModule(new JsonOrgModule());
+    }
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -195,6 +207,13 @@ public class ChannelEditor extends ExtPanel {
         properties.put("linkPickerWicketUrl", linkPicker.getBehavior().getCallbackUrl().toString());
         properties.put("imageVariantPickerWicketUrl", this.imageVariantPicker.getBehavior().getCallbackUrl().toString());
         properties.put("imagePickerWicketUrl", this.imagePicker.getBehavior().getCallbackUrl().toString());
+        properties.put("extensions", loadExtensions());
+    }
+
+    private JSONArray loadExtensions() {
+        final HardcodedCmsExtensionLoader loader = new HardcodedCmsExtensionLoader();
+        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        return JSON_ORG_OBJECT_MAPPER.convertValue(extensions, JSONArray.class);
     }
 
     @Override
