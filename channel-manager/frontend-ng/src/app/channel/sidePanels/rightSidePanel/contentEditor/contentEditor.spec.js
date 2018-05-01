@@ -57,7 +57,7 @@ describe('ContentEditorCtrl', () => {
       { $scope, ContentEditor },
       { cancelLabel, form, onSave },
     );
-    $rootScope.$digest();
+    $scope.$digest();
   });
 
   it('marks the content editor dirty when the form becomes dirty', () => {
@@ -118,7 +118,7 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.resolve());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).toHaveBeenCalled();
     expect(onSave).toHaveBeenCalled();
@@ -128,7 +128,7 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.reject());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).not.toHaveBeenCalled();
     expect(onSave).not.toHaveBeenCalled();
@@ -151,7 +151,7 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.confirmPublication).toHaveBeenCalled();
     });
@@ -161,19 +161,19 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.reject());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.save).not.toHaveBeenCalled();
       expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
 
     it('publishes if the confirmation dialog is confirmed', () => {
-      ContentEditor.confirmPublication.and.returnValue($q.reject());
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
-      expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).toHaveBeenCalled();
     });
 
     it('saves the form of a dirty document, prior to publishing', () => {
@@ -182,11 +182,12 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.save).toHaveBeenCalled();
       expect(form.$setPristine).toHaveBeenCalled();
       expect(onSave).toHaveBeenCalled();
+      expect(ContentEditor.publish).toHaveBeenCalled();
     });
 
     it('does not publish if saving fails', () => {
@@ -195,7 +196,7 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.save.and.returnValue($q.reject());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
