@@ -1169,6 +1169,24 @@ describe('ContentEditorService', () => {
     });
 
     describe('when a user can cancel a request for publication', () => {
+      let expectedDraftError;
+
+      beforeEach(() => {
+        expectedDraftError = {
+          data: {
+            reason: 'CANCELABLE_PUBLICATION_REQUEST_PENDING',
+            params: {
+              displayName: 'Test',
+            },
+          },
+        };
+
+        CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
+        ContentService.createDraft.and.returnValue($q.reject(expectedDraftError));
+        ContentEditor.open('test');
+        $rootScope.$digest();
+      });
+
       it('executes a cancelRequest workflow call', () => {
         ContentEditor.cancelRequestPublication();
 

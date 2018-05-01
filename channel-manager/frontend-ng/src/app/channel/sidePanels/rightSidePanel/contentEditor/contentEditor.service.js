@@ -476,7 +476,12 @@ class ContentEditorService {
         this._loadDocument(this.documentId);
       })
       .catch(() => {
-        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: this.document.displayName });
+        const errorData = {
+          documentName: this.error && this.error.messageParams && this.error.messageParams.displayName
+            ? this.error.messageParams.displayName
+            : null,
+        };
+        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', errorData);
         return this.$q.reject();
       });
   }
