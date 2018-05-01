@@ -374,7 +374,7 @@ class ContentEditorService {
 
   deleteDraft() {
     if (this.isEditing() && !this.killed) {
-      return this.ContentService.deleteDraft(this.document.id);
+      return this.ContentService.discardChanges(this.document.id);
     }
     return this.$q.resolve();
   }
@@ -418,7 +418,7 @@ class ContentEditorService {
 
   publish() {
     return this.ContentService
-      .deleteDraft(this.documentId)
+      .discardChanges(this.documentId)
       .then(() =>
         this.WorkflowService.createWorkflowAction(this.documentId, 'publish')
           .then(() => this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: this.document.displayName }))

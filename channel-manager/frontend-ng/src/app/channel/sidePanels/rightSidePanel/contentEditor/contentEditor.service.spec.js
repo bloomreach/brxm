@@ -77,7 +77,7 @@ describe('ContentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft', 'deleteDocument']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'discardChanges', 'deleteDocument']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
     WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
@@ -738,17 +738,17 @@ describe('ContentEditorService', () => {
       ContentEditor.document = testDocument;
       ContentEditor.documentType = testDocumentType;
 
-      ContentService.deleteDraft.and.returnValue($q.resolve());
+      ContentService.discardChanges.and.returnValue($q.resolve());
 
       ContentEditor.deleteDraft();
       $rootScope.$digest();
 
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith(testDocument.id);
+      expect(ContentService.discardChanges).toHaveBeenCalledWith(testDocument.id);
     });
 
     it('does not happens when no document is being edited', (done) => {
       ContentEditor.deleteDraft().then(() => {
-        expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+        expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -760,7 +760,7 @@ describe('ContentEditorService', () => {
       ContentEditor.kill();
 
       ContentEditor.deleteDraft().then(() => {
-        expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+        expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -865,7 +865,7 @@ describe('ContentEditorService', () => {
       ContentEditor.deleteDraft();
       $rootScope.$digest();
 
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+      expect(ContentService.discardChanges).not.toHaveBeenCalled();
 
       ContentEditor.close();
 
@@ -875,7 +875,7 @@ describe('ContentEditorService', () => {
       ContentEditor.deleteDraft();
       $rootScope.$digest();
 
-      expect(ContentService.deleteDraft).toHaveBeenCalled();
+      expect(ContentService.discardChanges).toHaveBeenCalled();
     });
   });
 
@@ -932,7 +932,7 @@ describe('ContentEditorService', () => {
       ContentEditor.document = {
         displayName: 'Test',
       };
-      ContentService.deleteDraft.and.returnValue($q.resolve());
+      ContentService.discardChanges.and.returnValue($q.resolve());
       WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
       ContentService.createDraft.and.returnValue($q.resolve(newDoc));
     });
@@ -940,11 +940,11 @@ describe('ContentEditorService', () => {
     it('deletes the draft', () => {
       ContentEditor.publish();
 
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+      expect(ContentService.discardChanges).toHaveBeenCalledWith('test-id');
     });
 
     it('does not execute workflow action if delete draft fails', () => {
-      ContentService.deleteDraft.and.returnValue($q.reject());
+      ContentService.discardChanges.and.returnValue($q.reject());
       ContentEditor.publish();
       $rootScope.$digest();
 
@@ -1014,7 +1014,7 @@ describe('ContentEditorService', () => {
     });
 
     it('rejects when create draft fails', (done) => {
-      ContentService.deleteDraft.and.returnValue($q.reject(errorObject));
+      ContentService.discardChanges.and.returnValue($q.reject(errorObject));
       ContentEditor.publish().catch(done);
       $rootScope.$digest();
     });

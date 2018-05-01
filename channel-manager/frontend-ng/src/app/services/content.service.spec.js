@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ describe('ContentService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  it('can create a draft', () => {
+  it('can obtain an editable document', () => {
     const docInfo = {
       id: '123',
       info: {
@@ -53,7 +53,7 @@ describe('ContentService', () => {
     };
     let result = null;
 
-    $httpBackend.expectPOST('/test/ws/content/documents/123/draft').respond(200, docInfo);
+    $httpBackend.expectGET('/test/ws/content/documents/123/editable').respond(200, docInfo);
     ContentService.createDraft('123').then((returned) => {
       result = returned;
     });
@@ -62,7 +62,7 @@ describe('ContentService', () => {
     expect(result).toEqual(docInfo);
   });
 
-  it('can save a draft', () => {
+  it('can update an editable document', () => {
     const doc = {
       id: '123',
       fields: {
@@ -71,7 +71,7 @@ describe('ContentService', () => {
     };
     let result = null;
 
-    $httpBackend.expectPUT('/test/ws/content/documents/123/draft').respond(200, doc);
+    $httpBackend.expectPUT('/test/ws/content/documents/123/editable').respond(200, doc);
     ContentService.saveDraft(doc).then((saved) => {
       result = saved;
     });
@@ -80,24 +80,24 @@ describe('ContentService', () => {
     expect(result).toEqual(doc);
   });
 
-  it('can delete a draft', () => {
+  it('can discard changes in an editable document', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
 
-    $httpBackend.expectDELETE('/test/ws/content/documents/123/draft').respond(200);
-    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    $httpBackend.expectDELETE('/test/ws/content/documents/123/editable').respond(200);
+    ContentService.discardChanges('123').then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).toHaveBeenCalled();
     expect(failureCallback).not.toHaveBeenCalled();
   });
 
-  it('fails to delete a draft', () => {
+  it('fails to discard changes in an editable document', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
 
-    $httpBackend.expectDELETE('/test/ws/content/documents/123/draft').respond(403);
-    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    $httpBackend.expectDELETE('/test/ws/content/documents/123/editable').respond(403);
+    ContentService.discardChanges('123').then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).not.toHaveBeenCalled();
@@ -119,12 +119,12 @@ describe('ContentService', () => {
     expect(result).toEqual(docType);
   });
 
-  it('can draft a field', () => {
+  it('can update a field', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield', fieldValue).respond(200);
+    $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield', fieldValue).respond(200);
     ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
@@ -132,12 +132,12 @@ describe('ContentService', () => {
     expect(failureCallback).not.toHaveBeenCalled();
   });
 
-  it('can draft a child field', () => {
+  it('can update a child field', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield/childfield', fieldValue).respond(200);
+    $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield/childfield', fieldValue).respond(200);
     ContentService.draftField('123', 'somefield/childfield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
@@ -145,12 +145,12 @@ describe('ContentService', () => {
     expect(failureCallback).not.toHaveBeenCalled();
   });
 
-  it('can draft a field with a numbered suffix', () => {
+  it('can update a field with a numbered suffix', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/choice%5B2%5D', fieldValue).respond(200);
+    $httpBackend.expectPUT('/test/ws/content/documents/123/editable/choice%5B2%5D', fieldValue).respond(200);
     ContentService.draftField('123', 'choice[2]', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
@@ -158,12 +158,12 @@ describe('ContentService', () => {
     expect(failureCallback).not.toHaveBeenCalled();
   });
 
-  it('fails to draft a field', () => {
+  it('fails to update a field', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield', fieldValue).respond(403);
+    $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield', fieldValue).respond(403);
     ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
@@ -185,20 +185,20 @@ describe('ContentService', () => {
     expect(result).toHaveBeenCalledTimes(2);
   });
 
-  it('sends draft requests synchronously and in order', () => {
+  it('sends editable instance requests synchronously and in order', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
     const doc = { id: '123' };
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.when('POST', '/test/ws/content/documents/123/draft').respond(200, 'create');
-    $httpBackend.when('PUT', '/test/ws/content/documents/123/draft').respond(200, 'save');
-    $httpBackend.when('DELETE', '/test/ws/content/documents/123/draft').respond(200, 'delete');
-    $httpBackend.when('PUT', '/test/ws/content/documents/123/draft/fieldA', fieldValue).respond(200, 'updateField');
+    $httpBackend.when('GET', '/test/ws/content/documents/123/editable').respond(200, 'create');
+    $httpBackend.when('PUT', '/test/ws/content/documents/123/editable').respond(200, 'save');
+    $httpBackend.when('DELETE', '/test/ws/content/documents/123/editable').respond(200, 'delete');
+    $httpBackend.when('PUT', '/test/ws/content/documents/123/editable/fieldA', fieldValue).respond(200, 'updateField');
 
     ContentService.createDraft(doc.id).then(successCallback, failureCallback);
     ContentService.saveDraft(doc).then(successCallback, failureCallback);
-    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    ContentService.discardChanges('123').then(successCallback, failureCallback);
     ContentService.draftField('123', 'fieldA', fieldValue).then(successCallback, failureCallback);
 
     $httpBackend.flush();
