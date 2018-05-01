@@ -155,6 +155,56 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
     }
 
     @Test
+    public void insert_filter_mapping() throws Exception {
+        final List<String> urlPatterns = Arrays.asList("/foo/*", "/bar/baz/*");
+        final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
+
+        final String before = contentOf(webxml);
+        assertFalse(before.contains("<filter-name>DummyFilter</filter-name>"));
+        assertFalse(before.contains("<url-pattern>/foo/*</url-pattern>"));
+        assertFalse(before.contains("<url-pattern>/bar/baz/*</url-pattern>"));
+
+        assertTrue(service.insertFilterMapping(Module.SITE, "DummyFilter", urlPatterns, "HstFilter"));
+
+        final String after = contentOf(webxml);
+        assertTrue(after.lastIndexOf("DummyFilter") < after.lastIndexOf("HstFilter"));
+    }
+
+    @Test
+    public void insert_filter_mapping_first() throws Exception {
+        final List<String> urlPatterns = Arrays.asList("/foo/*", "/bar/baz/*");
+        final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
+
+        final String before = contentOf(webxml);
+        assertFalse(before.contains("<filter-name>DummyFilter</filter-name>"));
+        assertFalse(before.contains("<url-pattern>/foo/*</url-pattern>"));
+        assertFalse(before.contains("<url-pattern>/bar/baz/*</url-pattern>"));
+
+        assertTrue(service.insertFilterMapping(Module.SITE, "DummyFilter", urlPatterns, "Console"));
+
+        final String after = contentOf(webxml);
+        assertTrue(after.lastIndexOf("DummyFilter") < after.lastIndexOf("Console"));
+    }
+
+    @Test
+    public void insert_filter_mapping_last() throws Exception {
+        final List<String> urlPatterns = Arrays.asList("/foo/*", "/bar/baz/*");
+        final File webxml = createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
+
+        final String before = contentOf(webxml);
+        assertFalse(before.contains("<filter-name>DummyFilter</filter-name>"));
+        assertFalse(before.contains("<url-pattern>/foo/*</url-pattern>"));
+        assertFalse(before.contains("<url-pattern>/bar/baz/*</url-pattern>"));
+
+        assertTrue(service.insertFilterMapping(Module.SITE, "DummyFilter", urlPatterns, "Absent"));
+
+        final String after = contentOf(webxml);
+        assertEquals(1, StringUtils.countMatches(after, "<filter-name>DummyFilter</filter-name>"));
+        assertEquals(1, StringUtils.countMatches(after, "<url-pattern>/foo/*</url-pattern>"));
+        assertEquals(1, StringUtils.countMatches(after, "<url-pattern>/bar/baz/*</url-pattern>"));
+    }
+
+    @Test
     public void add_dispatchers_filter_mapping_absent() throws Exception {
         createModifiableFile("/services/webxml/pom1.xml", SITE_WEB_XML);
 
