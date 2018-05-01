@@ -47,6 +47,12 @@ const ERROR_MAP = {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
   },
+  CANCELABLE_PUBLICATION_REQUEST_PENDING: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE',
+    cancelRequest: true,
+    color: 'hippo-grey-200',
+  },
   REQUEST_PENDING: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
@@ -460,6 +466,17 @@ class ContentEditorService {
       )
       .catch(() => {
         this.FeedbackService.showError(errorKey, messageParams);
+        return this.$q.reject();
+      });
+  }
+
+  cancelRequestPublication() {
+    return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
+      .then(() => {
+        this._loadDocument(this.documentId);
+      })
+      .catch(() => {
+        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: this.document.displayName });
         return this.$q.reject();
       });
   }

@@ -95,6 +95,10 @@ class ContentEditorCtrl {
         : this.ContentEditor.publish()),
       );
   }
+
+  cancelRequestPublication() {
+    return this.ContentEditor.cancelRequestPublication();
+  }
 }
 
 export default ContentEditorCtrl;

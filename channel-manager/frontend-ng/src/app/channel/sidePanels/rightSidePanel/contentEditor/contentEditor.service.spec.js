@@ -26,56 +26,76 @@ describe('ContentEditorService', () => {
   let FieldService;
   let WorkflowService;
 
-  const stringField = {
-    id: 'ns:string',
-    type: 'STRING',
-  };
-  const multipleStringField = {
-    id: 'ns:multiplestring',
-    type: 'STRING',
-    multiple: true,
-  };
-  const emptyMultipleStringField = {
-    id: 'ns:emptymultiplestring',
-    type: 'STRING',
-    multiple: true,
-  };
-  const testDocumentType = {
-    id: 'ns:testdocument',
-    fields: [
-      stringField,
-      multipleStringField,
-      emptyMultipleStringField,
-    ],
-  };
-  const testDocument = {
-    id: 'test',
-    info: {
-      type: {
-        id: 'ns:testdocument',
-      },
-      publicationState: 'live',
-    },
-    fields: {
-      'ns:string': [
-        {
-          value: 'String value',
-        },
-      ],
-      'ns:multiplestring': [
-        {
-          value: 'One',
-        },
-        {
-          value: 'Two',
-        },
-      ],
-      'ns:emptymultiplestring': [],
-    },
-  };
+  let stringField;
+  let multipleStringField;
+  let emptyMultipleStringField;
+  let testDocumentType;
+  let testDocument;
+
+  function expectDocumentLoaded() {
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+
+    expect(ContentEditor.getDocument()).toEqual(testDocument);
+    expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
+    expect(ContentEditor.isDocumentDirty()).toBeFalsy();
+    expect(ContentEditor.isPublishAllowed()).toBeFalsy();
+    expect(ContentEditor.isEditing()).toBe(true);
+    expect(ContentEditor.getPublicationState()).toBe('live');
+    expect(ContentEditor.getError()).toBeUndefined();
+  }
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    stringField = {
+      id: 'ns:string',
+      type: 'STRING',
+    };
+    multipleStringField = {
+      id: 'ns:multiplestring',
+      type: 'STRING',
+      multiple: true,
+    };
+    emptyMultipleStringField = {
+      id: 'ns:emptymultiplestring',
+      type: 'STRING',
+      multiple: true,
+    };
+    testDocumentType = {
+      id: 'ns:testdocument',
+      fields: [
+        stringField,
+        multipleStringField,
+        emptyMultipleStringField,
+      ],
+    };
+    testDocument = {
+      id: 'test',
+      info: {
+        type: {
+          id: 'ns:testdocument',
+        },
+        publicationState: 'live',
+      },
+      fields: {
+        'ns:string': [
+          {
+            value: 'String value',
+          },
+        ],
+        'ns:multiplestring': [
+          {
+            value: 'One',
+          },
+          {
+            value: 'Two',
+          },
+        ],
+        'ns:emptymultiplestring': [],
+      },
+    };
 
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft', 'deleteDocument']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
@@ -110,20 +130,6 @@ describe('ContentEditorService', () => {
       ContentService.createDraft.and.returnValue($q.resolve(testDocument));
       ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     });
-
-    function expectDocumentLoaded() {
-      expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-      expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
-
-      expect(ContentEditor.getDocument()).toEqual(testDocument);
-      expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
-      expect(ContentEditor.isDocumentDirty()).toBeFalsy();
-      expect(ContentEditor.isPublishAllowed()).toBeFalsy();
-      expect(ContentEditor.isEditing()).toBe(true);
-      expect(ContentEditor.getPublicationState()).toBe('live');
-      expect(ContentEditor.getError()).toBeUndefined();
-    }
 
     it('does not report unsupported fields when there are none', () => {
       ContentEditor.open('test');
@@ -189,7 +195,7 @@ describe('ContentEditorService', () => {
       ContentEditor.open('test');
       $rootScope.$digest();
 
-      expect(ContentEditor.isPublishAllowed()).toBe(false);
+      expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     });
 
     describe('and sets an error when it', () => {
@@ -964,7 +970,7 @@ describe('ContentEditorService', () => {
     const newDoc = { id: 'new-doc' };
 
     beforeEach(() => {
-      ContentEditor.documentId = 'test-id';
+      ContentEditor.documentId = 'test';
       ContentEditor.document = {
         displayName: 'Test',
       };
@@ -981,7 +987,7 @@ describe('ContentEditorService', () => {
       it('deletes the draft', () => {
         ContentEditor.publish();
 
-        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
       });
 
       it('does not execute workflow action if delete draft fails', () => {
@@ -996,7 +1002,7 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'publish');
+        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'publish');
       });
 
       it('notifies the user of a successful publication action', () => {
@@ -1020,7 +1026,7 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBe(newDoc);
       });
 
@@ -1030,7 +1036,7 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBe(newDoc);
       });
 
@@ -1073,13 +1079,15 @@ describe('ContentEditorService', () => {
     });
 
     describe('when a user can request publication', () => {
-      const expectedDraftError = {
-        data: {
-          reason: 'REQUEST_PENDING',
-        },
-      };
+      let expectedDraftError;
 
       beforeEach(() => {
+        expectedDraftError = {
+          data: {
+            reason: 'REQUEST_PENDING',
+          },
+        };
+
         ContentEditor.canRequestPublication = true;
         ContentService.createDraft.and.returnValue($q.reject(expectedDraftError));
       });
@@ -1087,7 +1095,7 @@ describe('ContentEditorService', () => {
       it('deletes the draft', () => {
         ContentEditor.publish();
 
-        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
       });
 
       it('does not execute workflow action if delete draft fails', () => {
@@ -1102,7 +1110,7 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'requestPublication');
+        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'requestPublication');
       });
 
       it('notifies the user of a successful publication request', () => {
@@ -1125,7 +1133,7 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBeUndefined();
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         expect(ContentEditor.getError()).toEqual({
@@ -1157,6 +1165,43 @@ describe('ContentEditorService', () => {
       it('resolves when createDraft fails', (done) => {
         ContentEditor.publish().then(done);
         $rootScope.$digest();
+      });
+    });
+
+    describe('when a user can cancel a request for publication', () => {
+      it('executes a cancelRequest workflow call', () => {
+        ContentEditor.cancelRequestPublication();
+
+        expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test', 'cancelRequest');
+      });
+
+      it('shows an error and rejects if cancelRequest workflow call fails', (done) => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject());
+        ContentEditor.cancelRequestPublication().catch(done);
+        $rootScope.$digest();
+
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
+      });
+
+      it('shows an error and rejects if cancelRequest workflow call fails', (done) => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.reject());
+        ContentEditor.cancelRequestPublication().catch(done);
+        $rootScope.$digest();
+
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
+      });
+
+      it('(re)loads the document and document type after a successful workflow call', () => {
+        WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
+
+        CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
+        ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+        ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+
+        ContentEditor.cancelRequestPublication();
+        $rootScope.$digest();
+
+        expectDocumentLoaded();
       });
     });
   });
