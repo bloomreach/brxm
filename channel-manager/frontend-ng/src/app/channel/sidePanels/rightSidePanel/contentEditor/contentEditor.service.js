@@ -76,7 +76,7 @@ const ERROR_MAP = {
 };
 
 class ContentEditorService {
-  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService) {
+  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService, WorkflowService) {
     'ngInject';
 
     this.$q = $q;
@@ -86,9 +86,11 @@ class ContentEditorService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
+    this.WorkflowService = WorkflowService;
   }
 
   open(documentId) {
+    this.close();
     return this._loadDocument(documentId);
   }
 
@@ -108,6 +110,10 @@ class ContentEditorService {
     return this.documentDirty;
   }
 
+  getPublicationState() {
+    return this.publicationState;
+  }
+
   markDocumentDirty() {
     this.documentDirty = true;
   }
@@ -118,6 +124,10 @@ class ContentEditorService {
 
   isEditing() {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
+  }
+
+  isPublishAllowed() {
+    return this.canPublish || this.canRequestPublication;
   }
 
   _loadDocument(id) {
@@ -176,7 +186,12 @@ class ContentEditorService {
   _onLoadSuccess(document, documentType) {
     this.document = document;
     this.documentType = documentType;
+
     this.documentDirty = document.info && document.info.dirty;
+    this.canPublish = document.info && document.info.canPublish;
+    this.canRequestPublication = document.info && document.info.canRequestPublication;
+    this.publicationState = document.info && document.info.publicationState;
+
     delete this.error;
   }
 
@@ -197,6 +212,10 @@ class ContentEditorService {
       const errorInfo = response.data;
       errorKey = errorInfo.reason;
       params = this._extractErrorParams(errorInfo);
+
+      if (errorInfo.params) {
+        this.publicationState = errorInfo.params.publicationState;
+      }
     } else if (response.status === 404) {
       errorKey = 'NOT_FOUND';
     } else {
@@ -254,13 +273,17 @@ class ContentEditorService {
     if (!angular.isDefined(errorInfo.params)) {
       return undefined;
     }
+
     const params = angular.copy(errorInfo.params);
+
     const user = params.userName || params.userId;
     if (user) {
       params.user = user;
       delete params.userId;
       delete params.userName;
     }
+
+    delete params.publicationState;
 
     if (errorInfo.reason === 'PART_OF_PROJECT') {
       params.projectName = errorInfo.params.projectName;
@@ -371,8 +394,45 @@ class ContentEditorService {
     delete this.document;
     delete this.documentType;
     delete this.documentDirty;
+    delete this.canPublish;
+    delete this.canRequestPublication;
+    delete this.publicationState;
     delete this.error;
     delete this.killed;
+  }
+
+  confirmPublication() {
+    const textContent = this.$translate.instant(this.documentDirty
+      ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT'
+      : 'CONFIRM_PUBLISH_DOCUMENT', { documentName: this.document.displayName });
+    const ok = this.$translate.instant(this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH');
+    const cancel = this.$translate.instant('CANCEL');
+
+    const confirm = this.DialogService.confirm()
+      .textContent(textContent)
+      .ok(ok)
+      .cancel(cancel);
+
+    return this.DialogService.show(confirm);
+  }
+
+  publish() {
+    return this.ContentService
+      .deleteDraft(this.documentId)
+      .then(() =>
+        this.WorkflowService.createWorkflowAction(this.documentId, 'publish')
+          .then(() => this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: this.document.displayName }))
+          .finally(() =>
+            this.ContentService.createDraft(this.documentId)
+              .then((draftDocument) => {
+                this._onLoadSuccess(draftDocument, this.documentType);
+              }),
+          ),
+      )
+      .catch((error) => {
+        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+        return this.$q.reject();
+      });
   }
 }
 

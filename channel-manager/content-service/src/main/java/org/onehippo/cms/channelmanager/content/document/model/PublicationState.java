@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.onehippo.cms.channelmanager.content.document.model;
 
-import './contentEditor.scss';
-import controller from './contentEditor.controller';
-import template from './contentEditor.html';
+import com.fasterxml.jackson.annotation.JsonValue;
 
-const contentEditorComponent = {
-  controller,
-  template,
-  transclude: {
-    message: '?contentEditorMessage',
-    extraButton: '?contentEditorExtraButton',
-  },
-  bindings: {
-    allowSave: '<',
-    closeLabel: '@?',
-    enablePublish: '<',
-    onClose: '&',
-    onSave: '&',
-    onSwitchEditor: '&',
-  },
-};
+/**
+ * The publication state of a document. Maps to the JCR property hippostd:stateSummary.
+ */
+public enum PublicationState {
+    UNKNOWN,
+    NEW,
+    LIVE,
+    CHANGED;
 
-export default contentEditorComponent;
+    @JsonValue
+    public String getLowerCase() {
+        return this.name().toLowerCase();
+    }
+}

@@ -23,16 +23,16 @@
       <span flex></span>
 
       <md-button class="md-icon-button" ng-click="$ctrl.openEditNameUrlDialog()">
-        <md-icon class="btn-edit-document-title qa-edit-url">mode_edit</md-icon>
+        <md-icon class="btn-edit-document-title qa-edit-url" md-font-icon="mdi-pencil"></md-icon>
       </md-button>
     </div>
   </md-toolbar>
 
   <content-editor flex="grow"
                   layout="column"
-                  cancel-label="{{ ::'DISCARD' | translate }}"
                   close-label="{{ ::'DISCARD' | translate }}"
                   allow-save="$ctrl.allMandatoryFieldsShown()"
+                  enable-publish="false"
                   on-switch-editor="$ctrl.switchEditor()"
                   on-save="$ctrl.save()"
                   on-close="$ctrl.close()">

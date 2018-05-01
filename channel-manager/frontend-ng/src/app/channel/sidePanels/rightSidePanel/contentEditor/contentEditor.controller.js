@@ -29,7 +29,6 @@ class ContentEditorCtrl {
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
 
-    this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }
 
@@ -47,6 +46,10 @@ class ContentEditorCtrl {
 
   isEditing() {
     return this.ContentEditor.isEditing();
+  }
+
+  isPublishAllowed() {
+    return this.ContentEditor.isPublishAllowed() && !this._isDocumentDirty();
   }
 
   isSaveAllowed() {
@@ -69,16 +72,20 @@ class ContentEditorCtrl {
     return this.ContentEditor.getError();
   }
 
-  closeButtonLabel() {
-    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
-  }
-
   save() {
-    this.ContentEditor.save()
+    return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.onSave();
       });
+  }
+
+  publish() {
+    return this.ContentEditor.confirmPublication()
+      .then(() => (this.ContentEditor.isDocumentDirty()
+        ? this.save().then(() => this.ContentEditor.publish())
+        : this.ContentEditor.publish()),
+      );
   }
 }
 

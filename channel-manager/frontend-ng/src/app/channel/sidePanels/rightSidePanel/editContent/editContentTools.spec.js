@@ -32,7 +32,7 @@ describe('EditContentToolsCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'getError', 'isEditing',
+        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 
@@ -151,5 +151,56 @@ describe('EditContentToolsCtrl', () => {
 
   it('always allows exiting the ui-router state when no button has been clicked', () => {
     expect($ctrl.uiCanExit()).toBe(true);
+  });
+
+  it('knows whether the publication state is available', () => {
+    ContentEditor.getPublicationState.and.returnValue('new');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue('unknown');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue(undefined);
+    expect($ctrl.isPublicationStateAvailable()).toBe(false);
+  });
+
+  describe('the publication icon name', () => {
+    it('is based on the publication state of the document', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-minus-circle');
+
+      ContentEditor.getPublicationState.and.returnValue('live');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-check-circle');
+
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-alert');
+
+      ContentEditor.getPublicationState.and.returnValue('unknown');
+      expect($ctrl.getPublicationIconName()).toBe('');
+    });
+    it('is empty when there is no document', () => {
+      ContentEditor.getPublicationState.and.returnValue(undefined);
+      expect($ctrl.getPublicationIconName()).toBe('');
+    });
+  });
+
+  describe('the publication icon tooltip', () => {
+    it('is based on the publication state of the document', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_NEW_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('live');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_LIVE_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_CHANGED_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('unknown');
+      expect($ctrl.getPublicationIconTooltip()).toBe('');
+    });
+    it('is empty when there is no document', () => {
+      ContentEditor.getPublicationState.and.returnValue(undefined);
+      expect($ctrl.getPublicationIconTooltip()).toBe('');
+    });
   });
 });

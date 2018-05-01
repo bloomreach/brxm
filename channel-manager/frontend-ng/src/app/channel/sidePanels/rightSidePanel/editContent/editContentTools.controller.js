@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+const PUBLICATION_STATE_ICON_NAMES = {
+  new: 'mdi-minus-circle',
+  live: 'mdi-check-circle',
+  changed: 'mdi-alert',
+  unknown: '',
+};
+
+const PUBLICATION_STATE_ICON_TOOLTIPS = {
+  new: 'DOCUMENT_NEW_TOOLTIP',
+  live: 'DOCUMENT_LIVE_TOOLTIP',
+  changed: 'DOCUMENT_CHANGED_TOOLTIP',
+  unknown: '',
+};
+
 class EditContentToolsCtrl {
   constructor($q, CmsService, ContentEditor, EditContentService) {
     'ngInject';
@@ -31,6 +45,23 @@ class EditContentToolsCtrl {
 
   isEditing() {
     return this.ContentEditor.isEditing();
+  }
+
+  isPublicationStateAvailable() {
+    return !!this.ContentEditor.getPublicationState();
+  }
+
+  getPublicationIconName() {
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES);
+  }
+
+  getPublicationIconTooltip() {
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS);
+  }
+
+  _getPublicationStateValue(map) {
+    const publicationState = this.ContentEditor.getPublicationState();
+    return map[publicationState] || map.unknown;
   }
 
   openContentEditor(exitMode) {

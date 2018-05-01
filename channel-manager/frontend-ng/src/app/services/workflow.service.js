@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-import './contentEditor.scss';
-import controller from './contentEditor.controller';
-import template from './contentEditor.html';
+class WorkflowService {
+  constructor($http, ConfigService, PathService) {
+    'ngInject';
 
-const contentEditorComponent = {
-  controller,
-  template,
-  transclude: {
-    message: '?contentEditorMessage',
-    extraButton: '?contentEditorExtraButton',
-  },
-  bindings: {
-    allowSave: '<',
-    closeLabel: '@?',
-    enablePublish: '<',
-    onClose: '&',
-    onSave: '&',
-    onSwitchEditor: '&',
-  },
-};
+    this.$http = $http;
+    this.baseUrl = PathService.concatPaths(ConfigService.getCmsContextPath(), '/ws/content/workflows/documents');
+  }
 
-export default contentEditorComponent;
+  createWorkflowAction(documentId, actionId) {
+    const url = encodeURI(`${this.baseUrl}/${documentId}/${actionId}`);
+    return this.$http
+      .post(url)
+      .then(response => response.data);
+  }
+}
+
+export default WorkflowService;

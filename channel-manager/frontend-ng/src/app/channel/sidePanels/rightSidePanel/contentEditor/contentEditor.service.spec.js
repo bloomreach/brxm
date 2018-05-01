@@ -24,6 +24,7 @@ describe('ContentEditorService', () => {
   let DialogService;
   let FeedbackService;
   let FieldService;
+  let WorkflowService;
 
   const stringField = {
     id: 'ns:string',
@@ -53,6 +54,7 @@ describe('ContentEditorService', () => {
       type: {
         id: 'ns:testdocument',
       },
+      publicationState: 'live',
     },
     fields: {
       'ns:string': [
@@ -76,13 +78,15 @@ describe('ContentEditorService', () => {
     angular.mock.module('hippo-cm');
 
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft', 'deleteDocument']);
-    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
+    WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('FieldService', FieldService);
+      $provide.value('WorkflowService', WorkflowService);
     });
 
     inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _ContentEditor_, _DialogService_) => {
@@ -115,11 +119,13 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.getDocument()).toEqual(testDocument);
       expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
       expect(ContentEditor.isDocumentDirty()).toBeFalsy();
+      expect(ContentEditor.isPublishAllowed()).toBeFalsy();
       expect(ContentEditor.isEditing()).toBe(true);
+      expect(ContentEditor.getPublicationState()).toBe('live');
       expect(ContentEditor.getError()).toBeUndefined();
     }
 
-    it('and does not report unsupported fields when there are none', () => {
+    it('does not report unsupported fields when there are none', () => {
       ContentEditor.open('test');
       $rootScope.$digest();
 
@@ -137,6 +143,53 @@ describe('ContentEditorService', () => {
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingUnsupportedFields', {
         unsupportedFieldTypes: 'Date,selection:selection',
       });
+    });
+
+    it('closes the previous document', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      testDocument.id = 'test2';
+      ContentEditor.open('test2');
+
+      expect(ContentEditor.getDocument()).toBeUndefined();
+      expect(ContentEditor.getPublicationState()).toBeUndefined();
+      $rootScope.$digest();
+    });
+
+    it('and allows publication when it can be published', () => {
+      testDocument.info.canPublish = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and allows publication when request publication is enabled', () => {
+      testDocument.info.canRequestPublication = true;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(true);
+    });
+
+    it('and does not allow publication when it cannot be published and no request for publication can be filed', () => {
+      testDocument.info.canPublish = false;
+      testDocument.info.canRequestPublication = false;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
+    });
+
+    it('and does not allow publication when no publication info is available', () => {
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.isPublishAllowed()).toBe(false);
     });
 
     describe('and sets an error when it', () => {
@@ -205,6 +258,7 @@ describe('ContentEditorService', () => {
             displayName: 'Display Name',
             userId: 'jtester',
             userName: 'John Tester',
+            publicationState: 'changed',
           },
         };
         ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -216,6 +270,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBe('changed');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
@@ -256,6 +311,7 @@ describe('ContentEditorService', () => {
           reason: 'REQUEST_PENDING',
           params: {
             displayName: 'Display Name',
+            publicationState: 'new',
           },
         };
         ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -267,6 +323,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
@@ -289,6 +346,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getPublicationState()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
           messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
@@ -304,6 +362,7 @@ describe('ContentEditorService', () => {
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentEditor.getPublicationState()).toBeUndefined();
         expectError({
           titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
           messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
@@ -817,6 +876,153 @@ describe('ContentEditorService', () => {
       $rootScope.$digest();
 
       expect(ContentService.deleteDraft).toHaveBeenCalled();
+    });
+  });
+
+  describe('confirmPublication', () => {
+    const showPromise = {};
+
+    beforeEach(() => {
+      ContentEditor.document = {
+        displayName: 'Test',
+      };
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'confirm').and.callThrough();
+      DialogService.show.and.returnValue(showPromise);
+    });
+
+    it('shows a "publish" confirmation dialog', () => {
+      const publishDialog = ContentEditor.confirmPublication();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(publishDialog).toBe(showPromise);
+    });
+
+    it('shows a "save and publish" confirmation dialog', () => {
+      ContentEditor.markDocumentDirty();
+      const saveAndPublishDialog = ContentEditor.confirmPublication();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(saveAndPublishDialog).toBe(showPromise);
+      ContentEditor.markDocumentDirty();
+    });
+  });
+
+  describe('publish', () => {
+    const errorObject = {
+      data: {
+        reason: 'error-reason',
+        params: 'error-params',
+      },
+    };
+    const newDoc = { id: 'new-doc' };
+
+    beforeEach(() => {
+      ContentEditor.documentId = 'test-id';
+      ContentEditor.document = {
+        displayName: 'Test',
+      };
+      ContentService.deleteDraft.and.returnValue($q.resolve());
+      WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
+      ContentService.createDraft.and.returnValue($q.resolve(newDoc));
+    });
+
+    it('deletes the draft', () => {
+      ContentEditor.publish();
+
+      expect(ContentService.deleteDraft).toHaveBeenCalledWith('test-id');
+    });
+
+    it('does not execute workflow action if delete draft fails', () => {
+      ContentService.deleteDraft.and.returnValue($q.reject());
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(WorkflowService.createWorkflowAction).not.toHaveBeenCalled();
+    });
+
+    it('executes the publish document workflow action', () => {
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(WorkflowService.createWorkflowAction).toHaveBeenCalledWith('test-id', 'publish');
+    });
+
+    it('notifies the user of a successful publication action', () => {
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
+    });
+
+    it('displays an error if publication fails', () => {
+      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showNotification).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error-reason', 'error-params');
+    });
+
+    it('creates a new draft after publication succeeds', () => {
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+      expect(ContentEditor.document).toBe(newDoc);
+    });
+
+    it('creates a new draft if publication fails', () => {
+      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(ContentService.createDraft).toHaveBeenCalledWith('test-id');
+      expect(ContentEditor.document).toBe(newDoc);
+    });
+
+    it('displays an error if create draft fails', () => {
+      ContentService.createDraft.and.returnValue($q.reject(errorObject));
+
+      ContentEditor.publish();
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_error-reason', 'error-params');
+    });
+
+    it('resolves when publication is successful', (done) => {
+      ContentEditor.publish().then((done));
+      $rootScope.$digest();
+    });
+
+    it('rejects when publication fails', (done) => {
+      WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
+      ContentEditor.publish().catch(done);
+      $rootScope.$digest();
+    });
+
+    it('rejects when create draft fails', (done) => {
+      ContentService.deleteDraft.and.returnValue($q.reject(errorObject));
+      ContentEditor.publish().catch(done);
+      $rootScope.$digest();
+    });
+
+    it('rejects when createDraft fails', (done) => {
+      ContentService.createDraft.and.returnValue($q.reject(errorObject));
+      ContentEditor.publish().catch(done);
+      $rootScope.$digest();
     });
   });
 });

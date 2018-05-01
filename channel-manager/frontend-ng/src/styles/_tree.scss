@@ -136,16 +136,6 @@
     border: 0;
     display: inline-block;
     padding: 0;
-
-    md-icon {
-      transition-duration: .2s;
-      transition-property: transform;
-
-      // TODO: temporary workaround for missing right-arrow
-      &.rotate-left {
-        transform: rotate(-90deg);
-      }
-    }
   }
 
   .angular-ui-tree-title-wrapper md-icon {

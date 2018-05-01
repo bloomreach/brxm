@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
+import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces("application/json")
@@ -62,11 +63,16 @@ public class ContentResource {
 
     private final SessionRequestContextProvider sessionRequestContextProvider;
     private final DocumentsService documentService;
+    private final WorkflowService workflowService;
     private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
-    public ContentResource(final SessionRequestContextProvider userSessionProvider, final DocumentsService documentsService, final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
+    public ContentResource(final SessionRequestContextProvider userSessionProvider,
+                           final DocumentsService documentsService,
+                           final WorkflowService workflowService,
+                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
+        this.workflowService = workflowService;
         this.contextPayloadService = contextPayloadService;
     }
 
@@ -163,6 +169,17 @@ public class ContentResource {
     public Response deleteDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
             documentService.deleteDocument(id, session, locale);
+            return null;
+        });
+    }
+
+    @POST
+    @Path("workflows/documents/{documentId}/{action}")
+    public Response executeDocumentWorkflowAction(@PathParam("documentId") final String documentId,
+                                                  @PathParam("action") final String action,
+                                                  @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+            workflowService.executeDocumentWorkflowAction(documentId, action, session, getPayload(servletRequest));
             return null;
         });
     }

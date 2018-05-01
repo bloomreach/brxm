@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -43,11 +42,13 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
+import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -58,7 +59,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.error.ResetContentException;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -69,8 +69,21 @@ import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
+import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_PUBLISH;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
+/**
+ * Implementation class for retrieving and storing Document information.
+ * <p/>
+ * The repository Workflow actions are designed to support the situation that when a document is being edited, hardly
+ * any other actions are available, e.g. publication. This Service supports a different case: while a
+ * document is presented as editable, we also want to present a Publish button. Checking the workflow actions on the
+ * editable instance of a document will not give the correct available workflow actions. This implementation takes
+ * that situation into account by retrieving the workflow actions from a Document that is not yet in edit mode.
+ */
 public class DocumentsServiceImpl implements DocumentsService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
@@ -91,7 +104,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         if (!hintsInspector.canCreateDraft(hints)) {
             throw hintsInspector
                     .determineEditingFailure(hints, session)
-                    .map(errorInfo -> withDocumentName(errorInfo, handle))
+                    .map(errorInfo -> withDocumentInfo(errorInfo, handle))
                     .map(ForbiddenException::new)
                     .orElseGet(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         }
@@ -104,7 +117,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
-        final Document document = assembleDocument(uuid, handle, docType);
+        final Document document = assembleDocument(uuid, handle, draft, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         final boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
@@ -116,6 +129,10 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
 
         document.getInfo().setDirty(isDirty);
+        // we must use the hints that were retrieved before the editable instance was obtained from the workflow,
+        // see the class level javadoc.
+        document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
@@ -153,12 +170,25 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
-                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session)));
+        try {
+            workflow.commitEditableInstance();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session));
+        }
 
-        FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
+        // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
+        final EditableWorkflow newWorkflow = getEditableWorkflow(handle);
+        final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
+
+        final Node newDraft = EditingUtils.createDraft(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+
+        setDocumentState(document.getInfo(), newDraft);
+
+        FieldTypeUtils.readFieldValues(newDraft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
+        document.getInfo().setCanPublish(isHintActionAvailable(newHints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionAvailable(newHints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
@@ -216,11 +246,14 @@ public class DocumentsServiceImpl implements DocumentsService {
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentType docType = getDocumentType(handle, locale);
-        final Document document = assembleDocument(uuid, handle, docType);
 
-        WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
-                .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
-        return document;
+        return WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
+                .map(node -> {
+                    final Document document = assembleDocument(uuid, handle, node, docType);
+                    FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields());
+                    return document;
+                })
+                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
     }
 
     @Override
@@ -340,7 +373,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
+    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException {
         try {
             log.info("Archiving document '{}'", uuid);
             documentWorkflow.delete();
@@ -350,7 +383,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) throws InternalServerErrorException, NotFoundException, MethodNotAllowed {
+    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) throws InternalServerErrorException {
         try {
             log.info("Erasing document '{}'", uuid);
             folderWorkflow.delete(handle.getName());
@@ -375,23 +408,11 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ResetContentException();
         }
 
-        final Document document = assembleDocument(handle.getIdentifier(), handle, docType);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Document document = assembleDocument(handle.getIdentifier(), handle, draft, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
-    }
-
-    private static Node getHandle(final String uuid, final Session session) throws ErrorWithPayloadException {
-        return DocumentUtils.getHandle(uuid, session)
-                .filter(DocumentsServiceImpl::isValidHandle)
-                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
-    }
-
-    private static boolean isValidHandle(final Node handle) {
-        return DocumentUtils.getVariantNodeType(handle)
-                .filter(type -> !type.equals(HippoNodeType.NT_DELETED))
-                .isPresent();
     }
 
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
@@ -408,12 +429,13 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static Document assembleDocument(final String uuid, final Node handle, final DocumentType docType) {
+    private static Document assembleDocument(final String uuid, final Node handle, final Node variant, final DocumentType docType) {
         final Document document = new Document();
         document.setId(uuid);
 
         final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
+        setDocumentState(documentInfo, variant);
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
@@ -424,13 +446,17 @@ public class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    private ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
-        DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-            if (errorInfo.getParams() == null) {
-                errorInfo.setParams(new HashMap<>());
-            }
-            errorInfo.getParams().put("displayName", displayName);
-        });
+    private static void setDocumentState(final DocumentInfo documentInfo, final Node variant) {
+        final PublicationState state = PublicationStateUtils.getPublicationStateFromVariant(variant);
+        documentInfo.setPublicationState(state);
+    }
+
+    private static ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final Node handle) {
+        DocumentUtils.getDisplayName(handle).ifPresent(displayName -> errorInfo.addParam("displayName", displayName));
+
+        final PublicationState publicationState = PublicationStateUtils.getPublicationStateFromHandle(handle);
+        errorInfo.addParam("publicationState", publicationState);
+
         return errorInfo;
     }
 

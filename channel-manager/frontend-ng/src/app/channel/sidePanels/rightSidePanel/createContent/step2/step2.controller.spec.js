@@ -102,6 +102,7 @@ describe('Create content step 2 controller', () => {
 
   it('saves the contentEditor and finishes create-content', () => {
     spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+    spyOn(ContentEditor, 'deleteDraft').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
     spyOn(CreateContentService, 'finish');
     $ctrl.save();
@@ -109,6 +110,7 @@ describe('Create content step 2 controller', () => {
     expect(ContentEditor.save).toHaveBeenCalled();
     $rootScope.$digest();
     expect($ctrl.documentIsSaved).toBe(true);
+    expect(ContentEditor.deleteDraft).toHaveBeenCalled();
     expect(FeedbackService.showNotification).toHaveBeenCalled();
     expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');

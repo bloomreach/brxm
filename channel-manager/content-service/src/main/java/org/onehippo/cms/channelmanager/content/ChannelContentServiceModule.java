@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
@@ -50,10 +51,12 @@ import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     private final DocumentsServiceImpl documentsService;
+    private final WorkflowServiceImpl workflowsService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
     public ChannelContentServiceModule() {
         this.documentsService = new DocumentsServiceImpl();
+        this.workflowsService = new WorkflowServiceImpl();
         this.contextPayloadService = request -> Optional.ofNullable(CmsSessionContext.getContext(request.getSession()).getContextPayload()).orElse(Collections.emptyMap());
         addEventListener(new HippoNamespacesEventListener() {
             @Override
@@ -80,7 +83,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
     @Override
     protected Object getRestResource(final SessionRequestContextProvider sessionRequestContextProvider) {
-        return new ContentResource(sessionRequestContextProvider, documentsService, contextPayloadService);
+        return new ContentResource(sessionRequestContextProvider, documentsService, workflowsService, contextPayloadService);
     }
 
     private abstract static class HippoNamespacesEventListener extends JcrEventListener {
