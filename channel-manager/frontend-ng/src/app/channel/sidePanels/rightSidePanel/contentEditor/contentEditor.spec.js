@@ -45,6 +45,7 @@ describe('ContentEditorCtrl', () => {
       'markDocumentDirty',
       'publish',
       'save',
+      'cancelRequestPublication',
     ]);
 
     $scope = $rootScope.$new();
@@ -134,6 +135,17 @@ describe('ContentEditorCtrl', () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
+  it('shows the loading indicator while saving and resets it once done', () => {
+    ContentEditor.save.and.returnValue($q.resolve());
+    spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+    $ctrl.save();
+    $scope.$digest();
+
+    expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+    expect($ctrl.loading).toBe(false);
+  });
+
   describe('close button label', () => {
     it('is the cancel label when the document is dirty', () => {
       ContentEditor.isDocumentDirty.and.returnValue(true);
@@ -199,6 +211,30 @@ describe('ContentEditorCtrl', () => {
       $scope.$digest();
 
       expect(ContentEditor.publish).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading indicator while publishing and resets it once done', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
+    });
+  });
+
+  describe('cancelRequestPublication', () => {
+    it('cancels the publication request showing a loading indicator', () => {
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.cancelRequestPublication();
+      $scope.$digest();
+
+      expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
     });
   });
 });

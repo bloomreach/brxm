@@ -472,9 +472,6 @@ class ContentEditorService {
 
   cancelRequestPublication() {
     return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
-      .then(() => {
-        this._loadDocument(this.documentId);
-      })
       .catch(() => {
         const errorData = {
           documentName: this.error && this.error.messageParams && this.error.messageParams.displayName
@@ -483,7 +480,8 @@ class ContentEditorService {
         };
         this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', errorData);
         return this.$q.reject();
-      });
+      })
+      .then(() => this._loadDocument(this.documentId));
   }
 
   close() {

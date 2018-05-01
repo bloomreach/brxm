@@ -30,6 +30,7 @@ const contentEditorComponent = {
     cancelLabel: '@?',
     closeLabel: '@?',
     enablePublish: '<',
+    loading: '=',
     onClose: '&',
     onSave: '&',
     onSwitchEditor: '&',

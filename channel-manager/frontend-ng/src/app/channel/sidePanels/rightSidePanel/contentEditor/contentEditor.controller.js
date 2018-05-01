@@ -16,6 +16,7 @@
 
 class ContentEditorCtrl {
   constructor(
+    $q,
     $scope,
     $translate,
     ContentEditor,
@@ -24,6 +25,7 @@ class ContentEditorCtrl {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$scope = $scope;
     this.ContentEditor = ContentEditor;
     this.ConfigService = ConfigService;
@@ -81,23 +83,36 @@ class ContentEditorCtrl {
   }
 
   save() {
-    return this.ContentEditor.save()
-      .then(() => {
-        this.form.$setPristine();
-        this.onSave();
-      });
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.onSave();
+        }));
   }
 
   publish() {
     return this.ContentEditor.confirmPublication()
-      .then(() => (this.ContentEditor.isDocumentDirty()
-        ? this.save().then(() => this.ContentEditor.publish())
-        : this.ContentEditor.publish()),
-      );
+      .then(() => this._doPublish());
+  }
+
+  _doPublish() {
+    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+      ? this.save().then(() => this.ContentEditor.publish())
+      : this.ContentEditor.publish()),
+    );
   }
 
   cancelRequestPublication() {
-    return this.ContentEditor.cancelRequestPublication();
+    return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
+  }
+
+  showLoadingIndicator(promise) {
+    this.loading = true;
+    return this.$q.resolve(promise())
+      .finally(() => {
+        this.loading = false;
+      });
   }
 }
 
