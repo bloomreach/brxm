@@ -45,6 +45,7 @@
     <property name="valveName" value="pageModelAggregationValve"/>
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
     <property name="defaultMaxContentReferenceLevel" value="${pagemodelapi.v09.defaultMaxContentReferenceLevel}"/>
+    <property name="apiDocPath" value="${pagemodelapi.v09.apiDocPath}" />
   </bean>
 
   <bean id="pageModelPipeline.v09" class="org.hippoecm.hst.core.container.HstSitePipeline">
