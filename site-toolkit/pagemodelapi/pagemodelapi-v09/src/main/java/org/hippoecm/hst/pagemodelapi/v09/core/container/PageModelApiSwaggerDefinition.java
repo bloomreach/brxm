@@ -56,9 +56,9 @@ public interface PageModelApiSwaggerDefinition {
 
     String GET_AGGREGATED_PAGE_MODEL_DESC = "Retrieve a aggregated page model for the resolved SiteMapItem.";
 
-    String GET_AGGREGATED_PAGE_MODEL_HELPER_DESC = "Helper to retrieve a aggregated page model for the resolved SiteMapItem.";
+    String GET_AGGREGATED_PAGE_MODEL_HELPER_DESC = "Test helper to retrieve a aggregated page model by specifying path segements separately for the resolved SiteMapItem.";
 
-    String API_HELPER_OPERATION_TAG = "API Helpers";
+    String API_HELPER_OPERATION_TAG = "API Test Helpers";
 
     String PATH_INFO_SEGMENT_DESC = "A path segment in the pathInfo to be used in HST SiteMapItem matching";
 

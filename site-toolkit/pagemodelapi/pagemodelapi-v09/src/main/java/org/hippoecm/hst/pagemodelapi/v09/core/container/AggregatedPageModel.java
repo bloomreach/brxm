@@ -31,10 +31,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Aggregated page model which represents the whole output in the page model pipeline request processing.
  */
 @JsonPropertyOrder({ "id", "_meta", "_links", "page", "content" })
+@ApiModel(description = "Aggregated page model from Page Model JSON API requests.")
 class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     private JsonNode pageNode;
@@ -50,6 +54,10 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     @JsonProperty("page")
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty(
+            value = "Root page property in JSON object. For details, look up the online documentation about Page Model JSON API.",
+            dataType = "object"
+            )
     public JsonNode getPageNode() {
         return pageNode;
     }
@@ -60,6 +68,10 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     @JsonProperty("content")
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty(
+            value = "Content section property in JSON object. For details, look up the online documentation about Page Model JSON API.",
+            dataType = "object"
+            )
     public JsonNode getContentNode() {
         return contentNode;
     }

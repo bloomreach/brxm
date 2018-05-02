@@ -17,9 +17,6 @@ package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -27,8 +24,15 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
+@ApiModel(description = "Link model.")
 public class LinkModel {
 
     private static Logger log = LoggerFactory.getLogger(LinkModel.class);
@@ -60,21 +64,25 @@ public class LinkModel {
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Location of the link.")
     public String getHref() {
         return href;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Type of the link.")
     public String getType() {
         return type;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Relationship name of the link.")
     public String getRel() {
         return rel;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Title of the link.")
     public String getTitle() {
         return title;
     }
