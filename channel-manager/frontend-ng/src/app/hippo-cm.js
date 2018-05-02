@@ -31,6 +31,7 @@ import CmsService from './services/cms.service';
 import ConfigService from './services/config.service';
 import ContentService from './services/content.service';
 import DialogService from './services/dialog.service';
+import ExtensionService from './services/extension.service';
 import HstComponentService from './services/hstComponent.service';
 import HstService from './services/hst.service';
 import SessionService from './services/session.service';
@@ -76,6 +77,7 @@ const hippoCmng = angular
   .service('ConfigService', ConfigService)
   .service('ContentService', ContentService)
   .service('DialogService', DialogService)
+  .service('ExtensionService', ExtensionService)
   .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
   .service('SessionService', SessionService)

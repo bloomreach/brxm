@@ -21,6 +21,7 @@ class PageActionsService extends MenuService {
     $translate,
     ChannelService,
     DialogService,
+    ExtensionService,
     FeedbackService,
     HippoIframeService,
     PageMetaDataService,
@@ -35,6 +36,7 @@ class PageActionsService extends MenuService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
+    this.ExtensionService = ExtensionService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
@@ -42,12 +44,25 @@ class PageActionsService extends MenuService {
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
 
-    this.defineMenu('page', {
+    this._initMenu();
+  }
+
+  _initMenu() {
+    const menu = this.defineMenu('page', {
       translationKey: 'TOOLBAR_BUTTON_PAGE',
       isVisible: () => this._canEditChannel(),
       isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
-    })
+    });
+
+    if (this._hasPageExtensions()) {
+      menu.addAction('info', {
+        translationKey: 'TOOLBAR_MENU_PAGE_INFO',
+        onClick: () => this._pageInfo(),
+      });
+    }
+
+    menu
       .addAction('properties', {
         translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
         isEnabled: () => this._canEditPage(),
@@ -82,6 +97,10 @@ class PageActionsService extends MenuService {
     this.ChannelService.loadPageModifiableChannels();
   }
 
+  _pageInfo() {
+    console.log('TODO: show page extensions in right side-panel');
+  }
+
   _pageProperties() {
     this.showSubPage('page-properties');
   }
@@ -96,6 +115,10 @@ class PageActionsService extends MenuService {
 
   _newPage() {
     this.showSubPage('page-new');
+  }
+
+  _hasPageExtensions() {
+    return this.ExtensionService.hasExtensions('page');
   }
 
   _canEditChannel() {

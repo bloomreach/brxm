@@ -24,6 +24,7 @@ describe('PageActionsService', () => {
 
   let ChannelService;
   let DialogService;
+  let ExtensionService;
   let FeedbackService;
   let HippoIframeService;
   let PageActionsService;
@@ -47,6 +48,7 @@ describe('PageActionsService', () => {
       _$translate_,
       _ChannelService_,
       _DialogService_,
+      _ExtensionService_,
       _FeedbackService_,
       _HippoIframeService_,
       _PageActionsService_,
@@ -60,6 +62,7 @@ describe('PageActionsService', () => {
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
+      ExtensionService = _ExtensionService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageActionsService = _PageActionsService_;
@@ -84,6 +87,7 @@ describe('PageActionsService', () => {
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'loadPageModifiableChannels');
     spyOn(ChannelService, 'getPageModifiableChannels');
+    spyOn(ExtensionService, 'hasExtensions');
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
@@ -117,6 +121,25 @@ describe('PageActionsService', () => {
 
     expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
     expect(ChannelService.loadPageModifiableChannels).toHaveBeenCalled();
+  });
+
+  // info
+  describe('the "info" option', () => {
+    it('shows the "info" option when there are page extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(true);
+      PageActionsService._initMenu();
+
+      const info = getItem('info');
+      expect(info).toBeDefined();
+    });
+
+    it('hides the "info" option when there are no page extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(false);
+      PageActionsService._initMenu();
+
+      const info = getItem('info');
+      expect(info).not.toBeDefined();
+    });
   });
 
   // properties
