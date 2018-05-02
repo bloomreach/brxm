@@ -1201,14 +1201,6 @@ describe('ContentEditorService', () => {
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
       });
 
-      it('shows an error and rejects if cancelRequest workflow call fails', (done) => {
-        WorkflowService.createWorkflowAction.and.returnValue($q.reject());
-        ContentEditor.cancelRequestPublication().catch(done);
-        $rootScope.$digest();
-
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
-      });
-
       it('(re)loads the document and document type after a successful workflow call', () => {
         WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
 
