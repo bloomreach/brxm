@@ -33,21 +33,25 @@ content-editor {
     min-height: 0;
   }
 
-  .flash-me {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-    animation-name: flash-orange;
-    animation-duration: 700ms;
-    animation-timing-function: ease-in-out;
+  .animate-bump.ng-enter {
+    animation-name: bump;
+    animation-duration: .3s;
   }
 
-  @keyframes flash-orange {
-    0% { background-color: inherit; }
-    50% { background-color: rgba(255, 167, 51, .6); }
-    100% { background-color: inherit; }
+  @keyframes bump {
+    0% {
+      animation-timing-function: ease-in;
+      transform: scale(1);
+    }
+
+    50% {
+      animation-timing-function: ease-out;
+      transform: scale(1.1);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   .has-focused-field {

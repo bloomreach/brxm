@@ -58,10 +58,9 @@
       {{ ::$ctrl.closeLabel | translate }}
     </md-button>
 
-    <md-button class="qa-publish"
+    <md-button class="qa-publish animate-bump"
                ng-if="$ctrl.isPublishAllowed()"
                ng-click="$ctrl.publish()">
-      <div class="flash-me"></div>
       {{ ::'PUBLISH' | translate }}
     </md-button>
 
