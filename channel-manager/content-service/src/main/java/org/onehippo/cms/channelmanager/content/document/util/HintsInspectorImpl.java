@@ -26,6 +26,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.PUBLISH;
@@ -40,6 +42,8 @@ public class HintsInspectorImpl implements HintsInspector {
 
     private static final String HINT_IN_USE_BY = "inUseBy";
     private static final String HINT_REQUESTS = "requests";
+
+    private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
 
     @Override
     public boolean canCreateDraft(Map<String, Serializable> hints) {
@@ -92,7 +96,9 @@ public class HintsInspectorImpl implements HintsInspector {
                     if (type.equals(PUBLISH)) {
                         return true;
                     }
-                } catch (final RepositoryException ignore) {
+                } catch (final RepositoryException e) {
+                    log.warn("Failed to determine whether node with identifier '{}' is a cancelable publication request, assuming it's not",
+                            requestNodeId, e);
                 }
             }
         }
