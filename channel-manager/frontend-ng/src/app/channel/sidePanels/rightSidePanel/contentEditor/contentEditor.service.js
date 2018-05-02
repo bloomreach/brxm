@@ -481,7 +481,7 @@ class ContentEditorService {
         this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', errorData);
         return this.$q.reject();
       })
-      .then(() => this._loadDocument(this.documentId));
+      .finally(() => this._loadDocument(this.documentId));
   }
 
   close() {

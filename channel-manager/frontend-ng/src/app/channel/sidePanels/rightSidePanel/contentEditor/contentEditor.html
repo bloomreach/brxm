@@ -28,19 +28,19 @@
     <h4 class="qa-feedback-title">{{::$ctrl.getError().titleKey | translate}}</h4>
 
     <p class="qa-feedback-message"
-       translate="{{::$ctrl.getError().messageKey}}"
-       translate-values="{{::$ctrl.getError().messageParams}}">
+       translate="{{ $ctrl.getError().messageKey }}"
+       translate-values="{{ $ctrl.getError().messageParams }}">
     </p>
 
     <div layout
          layout-align="end center">
-      <md-button ng-if="::$ctrl.getError().linkToContentEditor"
+      <md-button ng-if="$ctrl.getError().linkToContentEditor"
                  ng-click="$ctrl.onSwitchEditor()">
         <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
         {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
       </md-button>
 
-      <md-button ng-if="::$ctrl.getError().cancelRequest"
+      <md-button ng-if="$ctrl.getError().cancelRequest"
                  ng-click="$ctrl.cancelRequestPublication()">
         {{ ::'FEEDBACK_CANCEL_REQUEST' | translate }}
       </md-button>

@@ -54,7 +54,7 @@
   "ERROR_ADD_COMPONENT": "Cannot add '{{component}}'",
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'",
   "ERROR_ALREADY_DELETED": "Failed to delete. The document was previously deleted",
-  "ERROR_CANCEL_REQUEST_PUBLICATION_FAILED": "Failed to cancel publication request for '{{documentName}}'",
+  "ERROR_CANCEL_REQUEST_PUBLICATION_FAILED": "Publication request not found for '{{documentName}}'",
   "ERROR_CARDINALITY_CHANGE": "Unable to save. The document contains invalid content",
   "ERROR_CHANGE_PUBLICATION_FAILED": "Failed to publish changes",
   "ERROR_CHANGE_DISCARD_FAILED": "Failed to discard changes",
