@@ -33,6 +33,27 @@ content-editor {
     min-height: 0;
   }
 
+  .animate-bump.ng-enter {
+    animation-name: bump;
+    animation-duration: .3s;
+  }
+
+  @keyframes bump {
+    0% {
+      animation-timing-function: ease-in;
+      transform: scale(1);
+    }
+
+    50% {
+      animation-timing-function: ease-out;
+      transform: scale(1.1);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
   .has-focused-field {
     border-color: $blue-500 !important;
 
