@@ -28,6 +28,13 @@ const PUBLICATION_STATE_ICON_TOOLTIPS = {
   unknown: '',
 };
 
+const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
+  new: 'VisualEditingOfflineIcon',
+  live: 'VisualEditingOnlineIcon',
+  changed: 'VisualEditingAlertIcon',
+  unknown: 'VisualEditingUnknownIcon',
+};
+
 class EditContentToolsCtrl {
   constructor($q, CmsService, ContentEditor, EditContentService) {
     'ngInject';
@@ -59,12 +66,13 @@ class EditContentToolsCtrl {
     return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS);
   }
 
-  _getPublicationStateValue(map) {
-    const publicationState = this.ContentEditor.getPublicationState();
+  _getPublicationStateValue(map, state) {
+    const publicationState = state || this.ContentEditor.getPublicationState();
     return map[publicationState] || map.unknown;
   }
 
   openContentEditor(exitMode) {
+    this.publicationStateOnExit = this.ContentEditor.getPublicationState();
     this.exitMode = exitMode;
     this.EditContentService.stopEditing();
   }
@@ -86,7 +94,9 @@ class EditContentToolsCtrl {
   _viewContent() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
     this.ContentEditor.close();
-    this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    // this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    const statisticEventName = this._getPublicationStateValue(REPORT_USAGE_STATISTIC_EVENT_NAMES, this.publicationStateOnExit);
+    this.CmsService.reportUsageStatistic(statisticEventName);
   }
 
   _editContent() {

@@ -18,6 +18,7 @@ class ContentEditorCtrl {
   constructor(
     $scope,
     $translate,
+    CmsService,
     ContentEditor,
     ConfigService,
     ProjectService,
@@ -25,6 +26,7 @@ class ContentEditorCtrl {
     'ngInject';
 
     this.$scope = $scope;
+    this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
@@ -81,11 +83,18 @@ class ContentEditorCtrl {
   }
 
   publish() {
+    this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => (this.ContentEditor.isDocumentDirty()
-        ? this.save().then(() => this.ContentEditor.publish())
-        : this.ContentEditor.publish()),
-      );
+      .then(() => {
+        if (this.ContentEditor.isDocumentDirty()) {
+          this.save().then(() => this.ContentEditor.publish());
+        } else {
+          this.ContentEditor.publish();
+        }
+        this.CmsService.reportUsageStatistic('VisualEditingLightboxPublish');
+      },
+      )
+      .catch(() => this.CmsService.reportUsageStatistic('VisualEditingLightboxCancel'));
   }
 }
 
