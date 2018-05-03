@@ -25,6 +25,9 @@
   <sv:property sv:name="hst:refId" sv:type="String">
     <sv:value>blog-list</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:pagetitle" sv:type="String">
+    <sv:value>List of Blog Posts</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>blog</sv:value>
   </sv:property>
@@ -56,6 +59,9 @@
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/bloglist</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:pagetitle" sv:type="String">
+      <sv:value>Faceted List of Blog Posts</sv:value>
     </sv:property>
     <sv:property sv:name="hst:relativecontentpath" sv:type="String">
       <sv:value>blogFacets</sv:value>
