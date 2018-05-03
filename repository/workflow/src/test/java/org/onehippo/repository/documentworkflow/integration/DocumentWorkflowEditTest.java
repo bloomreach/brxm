@@ -15,14 +15,18 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,8 +43,8 @@ import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -54,6 +58,17 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
 
     @Test
     public void firstEditOfPublishedOnlyDocumentCreatesInitialVersion() throws Exception {
+        firstEditOfPublishedOnlyDocumentAssertions();
+    }
+
+    @Test
+    public void firstEditOfPublishedOnlyDocumentWithoutAvailabilityCreatesInitialVersion() throws Exception {
+        document.getProperty(HIPPO_AVAILABILITY).remove();
+        session.save();
+    }
+
+
+    private void firstEditOfPublishedOnlyDocumentAssertions() throws RepositoryException, WorkflowException, RemoteException {
         Node variant = getVariant(PUBLISHED);
 
         assertNull(variant);
@@ -65,11 +80,15 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         }
         // change unpublished only variant into published only variant
         variant.setProperty(HIPPOSTD_STATE, PUBLISHED);
+        if (document.hasProperty(HIPPO_AVAILABILITY)) {
+            document.setProperty(HIPPO_AVAILABILITY, new String[]{"live"});
+        }
         session.save();
         VersionManager versionManager = session.getWorkspace().getVersionManager();
         try {
             // this should now fail
             versionManager.getVersionHistory(variant.getPath());
+            fail("versionManager.getVersionHistory should had failed");
         }
         catch (UnsupportedRepositoryOperationException e) {
             // expected because published variant (now) should no longer be versioned.
