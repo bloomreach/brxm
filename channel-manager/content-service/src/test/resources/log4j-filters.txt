@@ -97,3 +97,4 @@ Multiple request nodes found for 'uuid'. This situation is not supported.
 Hint 'no-boolean' not stored as Boolean
 Hint 'action' not stored as Boolean
 Cannot determine publication state of document handle
+Failed to determine whether node with identifier 'request-node-id' is a cancelable publication request, assuming it's not
