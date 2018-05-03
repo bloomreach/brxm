@@ -17,6 +17,7 @@
 class EditContentMainCtrl {
   constructor(
     $q,
+    $scope,
     $translate,
     CmsService,
     ConfigService,
@@ -24,18 +25,35 @@ class EditContentMainCtrl {
     EditContentService,
     HippoIframeService,
     ProjectService,
+    RightSidePanelService,
   ) {
     'ngInject';
 
     this.$q = $q;
+    this.$scope = $scope;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
+    this.RightSidePanelService = RightSidePanelService;
 
     this.closing = false;
+  }
+
+  $onInit() {
+    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        this.RightSidePanelService.startLoading();
+      } else {
+        this.RightSidePanelService.stopLoading();
+      }
+    });
   }
 
   notAllFieldsShown() {

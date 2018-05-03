@@ -18,6 +18,7 @@
 package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,22 +26,24 @@ import java.util.Optional;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
 import static java.util.Collections.emptyMap;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 public class HintsInspectorImplTest {
 
@@ -109,7 +112,7 @@ public class HintsInspectorImplTest {
     public void determineEditingFailureRequestPending() throws Exception {
         final Session session = createMock(Session.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        hints.put("requests", Boolean.TRUE);
+        hints.put("requests", (Serializable) Collections.EMPTY_MAP);
 
         final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
@@ -118,6 +121,56 @@ public class HintsInspectorImplTest {
             assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
             assertNull(errorInfo.getParams());
         }
+    }
+
+    @Test
+    public void determineEditingFailureCancelRequestPublicationPending() throws Exception {
+        final Session session = createMock(Session.class);
+        final MockNode requestNode = new MockNode("requestNode");
+        requestNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, HippoStdPubWfNodeType.PUBLISH);
+        expect(session.getNodeByIdentifier("request-node-id")).andReturn(requestNode);
+        replayAll();
+
+        final Map<String, Serializable> hints = new HashMap<>();
+        final Map<String, Serializable> requests = new HashMap<>();
+        final Map<String, Boolean> request = new HashMap<>();
+        hints.put("requests", (Serializable) requests);
+        requests.put("request-node-id", (Serializable) request);
+        request.put("cancelRequest", Boolean.TRUE);
+
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()) {
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.CANCELABLE_PUBLICATION_REQUEST_PENDING));
+            assertNull(errorInfo.getParams());
+        }
+
+        verifyAll();
+    }
+
+    @Test
+    public void determineEditingFailureCancelRequestPublicationPendingWithoutRequestNode() throws Exception {
+        final Session session = createMock(Session.class);
+        expect(session.getNodeByIdentifier("request-node-id")).andThrow(new RepositoryException("Node with identifier 'request-node-id' does not exist"));
+        replayAll();
+
+        final Map<String, Serializable> hints = new HashMap<>();
+        final Map<String, Serializable> requests = new HashMap<>();
+        final Map<String, Boolean> request = new HashMap<>();
+        hints.put("requests", (Serializable) requests);
+        requests.put("request-node-id", (Serializable) request);
+        request.put("cancelRequest", Boolean.TRUE);
+
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()) {
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.REQUEST_PENDING));
+            assertNull(errorInfo.getParams());
+        }
+
+        verifyAll();
     }
 
     @Test
@@ -134,7 +187,7 @@ public class HintsInspectorImplTest {
         expect(securityService.getUser("admin")).andReturn(user);
         expect(user.getFirstName()).andReturn(" John ");
         expect(user.getLastName()).andReturn(" Doe ");
-        replay(session, workspace, securityService, user);
+        replayAll();
 
         final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
@@ -146,7 +199,7 @@ public class HintsInspectorImplTest {
         }
 
 
-        verify(session, workspace, securityService, user);
+        verifyAll();
     }
 
     @Test
@@ -158,7 +211,7 @@ public class HintsInspectorImplTest {
 
         expect(session.getWorkspace()).andReturn(workspace);
         expect(workspace.getSecurityService()).andThrow(new RepositoryException());
-        replay(session, workspace);
+        replayAll();
 
         final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
@@ -169,7 +222,7 @@ public class HintsInspectorImplTest {
             assertNull(errorInfo.getParams().get("userName"));
         }
 
-        verify(session, workspace);
+        verifyAll();
     }
 
 }
