@@ -22,7 +22,7 @@
     <sv:value>hst:pages/faqlist</sv:value>
   </sv:property>
   <sv:property sv:name="hst:pagetitle" sv:type="String">
-    <sv:value>List of FAQ Documents</sv:value>
+    <sv:value>List of FAQ's</sv:value>
   </sv:property>
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>faq</sv:value>

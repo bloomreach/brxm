@@ -23,7 +23,7 @@
     <sv:value>hst:pages/newslist</sv:value>
   </sv:property>
   <sv:property sv:name="hst:pagetitle" sv:type="String">
-    <sv:value>List of News</sv:value>
+    <sv:value>List of News Items</sv:value>
   </sv:property>
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>news</sv:value>

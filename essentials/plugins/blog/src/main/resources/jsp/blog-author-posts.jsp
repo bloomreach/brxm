@@ -31,6 +31,6 @@
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${requestScope.editMode and requestScope.pageable eq null}">
   <div>
-    <img src="<hst:link path='/images/essentials/catalog-component-icons/blogposts-by-author.png'/>"> Click to edit Blogposts by Author
+    <img src="<hst:link path='/images/essentials/catalog-component-icons/blogposts-by-author.png'/>"> Click to edit Blog Posts by Author
   </div>
 </c:if>

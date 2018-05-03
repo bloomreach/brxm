@@ -23,7 +23,7 @@
     <sv:value>hst:pages/pagenotfound</sv:value>
   </sv:property>
   <sv:property sv:name="hst:pagetitle" sv:type="String">
-    <sv:value>Page Not Found</sv:value>
+    <sv:value>Not Found Page</sv:value>
   </sv:property>
   <sv:property sv:name="hst:refId" sv:type="String">
     <sv:value>pagenotfound</sv:value>

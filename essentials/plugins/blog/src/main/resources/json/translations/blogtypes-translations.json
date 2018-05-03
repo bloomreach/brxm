@@ -2,7 +2,7 @@
   "hippo:types":   {
     "{{namespace}}:blogpost":     {
       "en":       {
-        "jcr:name": "Blogpost",
+        "jcr:name": "Blog Post",
         "{{namespace}}:categories": "Categories",
         "{{namespace}}:authors": "Author(s)",
         "{{namespace}}:content": "Content",

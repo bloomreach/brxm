@@ -23,7 +23,7 @@
     <sv:value>hst:pages/contentlist</sv:value>
   </sv:property>
   <sv:property sv:name="hst:pagetitle" sv:type="String">
-    <sv:value>List of Simple Content Documents</sv:value>
+    <sv:value>List of Simple Documents</sv:value>
   </sv:property>
   <sv:property sv:name="hst:relativecontentpath" sv:type="String">
     <sv:value>content</sv:value>
