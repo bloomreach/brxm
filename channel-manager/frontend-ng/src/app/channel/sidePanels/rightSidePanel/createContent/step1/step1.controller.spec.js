@@ -81,13 +81,13 @@ describe('Create content step 1 controller', () => {
     const document = { displayName: 'document-name' };
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';
-    spyOn(Step1Service, 'createDraft').and.returnValue($q.resolve(document));
+    spyOn(Step1Service, 'createDocument').and.returnValue($q.resolve(document));
     spyOn(CreateContentService, 'next');
 
     $ctrl.submit();
     $rootScope.$digest();
 
-    expect(Step1Service.createDraft).toHaveBeenCalled();
+    expect(Step1Service.createDocument).toHaveBeenCalled();
     expect(CreateContentService.next).toHaveBeenCalledWith(document, 'test-url', 'test-locale');
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent1Create');
   });

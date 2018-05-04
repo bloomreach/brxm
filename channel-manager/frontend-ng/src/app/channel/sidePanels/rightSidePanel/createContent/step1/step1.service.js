@@ -91,7 +91,7 @@ class Step1Service {
     }
   }
 
-  createDraft() {
+  createDocument() {
     const document = {
       name: this.name,
       slug: this.url,
