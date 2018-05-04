@@ -546,8 +546,21 @@
       <!-- the checking-out state becomes active when an unpublished document variant exists -->
       <state id="can-checkout-branch">
         <transition event="checkoutBranch">
-          <hippo:version variant="unpublished"/>
-          <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+          <!-- on the workflowContext.result put the list of branches that exist -->
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be checkout because it doesn\'t exist'"/>
+
+          <if cond="unpublished.isBranch(_event.data?.branchId)">
+            <!-- return the same DocumentVariant object we already had -->
+            <script>
+              workflowContext.setResult(unpublished);
+            </script>
+          <else/>
+            <hippo:version variant="unpublished"/>
+            <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+          </if>
         </transition>
 
       </state>

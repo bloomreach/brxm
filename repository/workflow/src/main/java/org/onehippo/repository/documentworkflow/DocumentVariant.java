@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,10 +25,15 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+
 /**
  * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
  */
 public class DocumentVariant extends Document {
+
+    public static final String CORE_BRANCH_ID = "core";
 
     public DocumentVariant() {
     }
@@ -84,6 +89,17 @@ public class DocumentVariant extends Document {
 
     public String[] getAvailability() throws RepositoryException {
         return getStringsProperty(HippoNodeType.HIPPO_AVAILABILITY);
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isBranch(final String branch) throws RepositoryException {
+        if (branch == null) {
+            throw new IllegalArgumentException("Branch is not allowed to be null");
+        }
+        if (getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            return branch.equals(getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        }
+        return branch.equals(CORE_BRANCH_ID);
     }
 
     public boolean isAvailable(String environment) throws RepositoryException {

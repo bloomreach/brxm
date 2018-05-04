@@ -16,8 +16,10 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import javax.jcr.Node;
+import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -71,6 +73,12 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+
+        assertTrue(versionHistory.hasVersionLabel("core-preview"));
+
+        final long numberOfVersions = versionHistory.getAllVersions().getSize();
+
         // now we should be able to checkout core
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -80,6 +88,11 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertFalse(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertFalse(preview.hasProperty(HIPPO_PROPERTY_BRANCH_ID));
 
+        // as a result of the checkout we expect also 'foo' to be checkin into version history
+        assertEquals(numberOfVersions + 1, versionHistory.getAllVersions().getSize());
+
+        assertTrue(versionHistory.hasVersionLabel("foo-preview"));
+
         // checkout foo again
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -87,6 +100,9 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         }
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+
+        // as a result of the checkout of 'foo' we exect a checkin of core
+        assertEquals(numberOfVersions + 2, versionHistory.getAllVersions().getSize());
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.obtainEditableInstance();
@@ -100,10 +116,11 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         }
     }
 
-
     @Test
     public void checkout_non_existing_branch_results_in_workflow_exception() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+        final long numberOfVersions = versionHistory.getAllVersions().getSize();
 
         // below triggers the core-preview to be versioned
         {
@@ -111,9 +128,34 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
                 final DocumentWorkflow workflow = getDocumentWorkflow(handle);
                 workflow.checkoutBranch("foo");
             } catch (WorkflowException e) {
-                assertEquals("version label 'foo-preview' does not exist in version history so cannot checkout branch 'foo'",
+                assertEquals("Branch 'foo' cannot be checkout because it doesn't exist",
                         e.getMessage());
+                assertEquals("In case of a failed checkout, no new version should be created",
+                        numberOfVersions, versionHistory.getAllVersions().getSize());
             }
         }
+    }
+
+    @Test
+    public void checkout_of_branch_which_is_already_preview_is_NOOP() throws Exception {
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+
+        // below triggers the core-preview to be versioned
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.branch("foo", "Foo");
+        }
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+        final long numberOfVersions = versionHistory.getAllVersions().getSize();
+
+        // checkout branch which is already checked out should be NOOP
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            final Document document = workflow.checkoutBranch("foo");
+            assertTrue("Even NOOP should return a Document wrapping the preview node",
+                    document.getNode(session).isSame(preview));
+        }
+        assertEquals("In case the preview is already checked out, no new version should have been created",
+                numberOfVersions, versionHistory.getAllVersions().getSize());
     }
 }

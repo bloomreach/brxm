@@ -92,7 +92,7 @@ public class BranchTask extends AbstractDocumentTask {
                 return new Document(targetNode);
             }
         }
-        if (branchId.equals(CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+        if (branchId.equals(DocumentVariant.CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // preview already core. Nothing to do
             return new Document(targetNode);
         }

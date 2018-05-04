@@ -80,8 +80,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
     }
 
 
-    protected static final String CORE_BRANCH_ID = "core";
-
     private DocumentHandle documentHandle;
     private WorkflowContext workflowContext;
 
