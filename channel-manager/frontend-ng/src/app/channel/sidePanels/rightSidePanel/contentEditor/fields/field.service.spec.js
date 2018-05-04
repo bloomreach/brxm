@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,28 +28,28 @@ describe('field service', () => {
     });
   });
 
-  it('should start draft timer for field', () => {
+  it('should start a save timer for field', () => {
     spyOn(FieldService, '_clearFieldTimer');
-    spyOn(FieldService, 'draftField');
+    spyOn(FieldService, 'saveField');
     FieldService.setDocumentId('mockDocumentId');
 
-    expect(FieldService.activeDraftTimers).toEqual({});
+    expect(FieldService.activeSaveTimers).toEqual({});
 
-    FieldService.startDraftTimer('mockFieldName', 'mockValue');
+    FieldService.startSaveTimer('mockFieldName', 'mockValue');
 
     expect(FieldService._clearFieldTimer).toHaveBeenCalled();
 
     $timeout.flush();
-    expect(FieldService.draftField).toHaveBeenCalled();
+    expect(FieldService.saveField).toHaveBeenCalled();
   });
 
-  it('should draft field', () => {
+  it('should save a field', () => {
     spyOn(ContentService, 'saveField');
     spyOn(FieldService, '_clearFieldTimer');
     spyOn(FieldService, '_cleanupTimers');
     FieldService.setDocumentId('mockDocumentId');
 
-    FieldService.draftField('mockFieldName', 'mockValue');
+    FieldService.saveField('mockFieldName', 'mockValue');
 
     expect(FieldService._clearFieldTimer).toHaveBeenCalled();
     expect(FieldService._cleanupTimers).toHaveBeenCalled();
@@ -57,21 +57,21 @@ describe('field service', () => {
   });
 
   it('should clear field timer if exists', () => {
-    FieldService.activeDraftTimers.mockDocumentId = {};
-    FieldService.activeDraftTimers.mockDocumentId.mockFieldName = () => { angular.noop(); };
+    FieldService.activeSaveTimers.mockDocumentId = {};
+    FieldService.activeSaveTimers.mockDocumentId.mockFieldName = () => { angular.noop(); };
 
     spyOn($timeout, 'cancel');
 
     FieldService._clearFieldTimer('mockDocumentId', 'mockFieldName');
 
     expect($timeout.cancel).toHaveBeenCalled();
-    expect(FieldService.activeDraftTimers.mockDocumentId).toEqual({});
+    expect(FieldService.activeSaveTimers.mockDocumentId).toEqual({});
   });
 
   it('should clean up timers', () => {
-    FieldService.activeDraftTimers.mockDocumentId = {};
+    FieldService.activeSaveTimers.mockDocumentId = {};
     FieldService._cleanupTimers('mockDocumentId');
-    expect(FieldService.activeDraftTimers.mockDocumentId).not.toBeDefined();
+    expect(FieldService.activeSaveTimers.mockDocumentId).not.toBeDefined();
   });
 
   it('should set document id', () => {
