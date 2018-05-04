@@ -76,7 +76,7 @@ public class VersionVariantTask extends AbstractDocumentTask {
         final Session workflowSession = targetNode.getSession();
         workflowSession.save();
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
-        final Version checkedIn = versionManager.checkin(targetNode.getPath());
+        final Version checkedIn = versionManager.checkpoint(targetNode.getPath());
 
         final Node handle = targetNode.getParent();
         if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
