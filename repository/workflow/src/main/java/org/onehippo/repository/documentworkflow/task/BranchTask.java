@@ -20,27 +20,28 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.apache.jackrabbit.JcrConstants;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.Utilities;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_ROOTVERSION;
+import static org.apache.commons.lang3.ArrayUtils.contains;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
-import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 
 public class BranchTask extends AbstractDocumentTask {
 
+    static final Logger log = LoggerFactory.getLogger(BranchTask.class);
     private static final long serialVersionUID = 1L;
 
     private DocumentVariant variant;
@@ -104,6 +105,19 @@ public class BranchTask extends AbstractDocumentTask {
             // the 'core' branch just means removing the branch info
             targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
         } else {
+            final Node handle = targetNode.getParent();
+            if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+                handle.addMixin(NT_HIPPO_VERSION_INFO);
+            }
+
+            final String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
+            if (contains(branches, branchId)) {
+                 log.warn("Handle property '{}' already contains branchId '{}' which is unexpected since the branch should " +
+                         "have been created before then.", HIPPO_BRANCHES_PROPERTY, branchId);
+            } else {
+                handle.setProperty(HIPPO_BRANCHES_PROPERTY, ArrayUtils.add(branches, branchId));
+            }
+
             if (!targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
                 targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
             }

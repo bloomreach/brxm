@@ -504,9 +504,10 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_MODULE_CONFIG = "hipposys:moduleconfig";
 
-    String NT_HIPPO_VERSION_INFO = "hippo:versioninfo";
+    String NT_HIPPO_VERSION_INFO = "hippo:versionInfo";
 
-    String HIPPO_VERSION_HISTORY_PROPERTY = "hippo:versionhistory";
+    String HIPPO_VERSION_HISTORY_PROPERTY = "hippo:versionHistory";
+    String HIPPO_BRANCHES_PROPERTY = "hippo:branches";
 
     String HIPPO_MIXIN_BRANCH_INFO = "hippo:branchInfo";
     String HIPPO_PROPERTY_BRANCH_ID = "hippo:branchId";

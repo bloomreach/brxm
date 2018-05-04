@@ -48,8 +48,9 @@
 + * (hippo:document) = hippo:document multiple version
 + hippo:request (hippo:request) multiple ignore
 
-[hippo:versioninfo] mixin
-- hippo:versionhistory (string) mandatory
+[hippo:versionInfo] mixin
+- hippo:versionHistory (string) mandatory
+- hippo:branches (string) multiple
 
 [hippo:branchInfo]  mixin
  - hippo:branchId (string) mandatory

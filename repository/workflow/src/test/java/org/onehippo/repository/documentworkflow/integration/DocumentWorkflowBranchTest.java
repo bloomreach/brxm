@@ -28,11 +28,16 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -96,6 +101,13 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertTrue("preview variant is expected to have branch info.", preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Foo Bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
+
+        assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
+        assertEquals("Expected handle version property to point to version history of preview node",
+                handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
+                preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
+
+        assertArrayEquals(new String[]{"foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
     }
 
     @Test
@@ -139,6 +151,13 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
 
         assertEquals("foo bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Foo Bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
+
+        assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
+        assertEquals("Expected handle version property to point to version history of preview node",
+                handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
+                preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
+
+        assertArrayEquals(new String[]{"foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
     }
 
     @Test

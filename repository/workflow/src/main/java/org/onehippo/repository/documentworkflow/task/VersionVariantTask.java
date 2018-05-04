@@ -81,9 +81,16 @@ public class VersionVariantTask extends AbstractDocumentTask {
         final Node handle = targetNode.getParent();
         if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
             handle.addMixin(NT_HIPPO_VERSION_INFO);
-            final String versionHistoryIdentifier = targetNode.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier();
+        }
+        final String versionHistoryIdentifier = targetNode.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier();
+        if (handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
+            if (!versionHistoryIdentifier.equals(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString())) {
+                // version identief has changed on preview...not normal but can be result of manually removing the versionable
+                // mix. Setting the new value
+                handle.setProperty(HIPPO_VERSION_HISTORY_PROPERTY, versionHistoryIdentifier);
+            }
+        } else {
             handle.setProperty(HIPPO_VERSION_HISTORY_PROPERTY, versionHistoryIdentifier);
-            // will be saved later by WorkflowManagerImpl.WorkflowInvocationHandler#invoke
         }
 
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
