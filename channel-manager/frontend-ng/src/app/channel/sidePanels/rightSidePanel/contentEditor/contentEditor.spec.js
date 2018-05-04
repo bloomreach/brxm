@@ -39,7 +39,6 @@ describe('ContentEditorCtrl', () => {
     spyOn(CmsService, 'reportUsageStatistic');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'isCanPublish',
       'confirmPublication',
       'getDocument',
       'getDocumentType',
@@ -174,7 +173,6 @@ describe('ContentEditorCtrl', () => {
     it('does not publish nor save if the confirmation dialog is cancelled for a publication', () => {
       ContentEditor.isDocumentDirty.and.returnValue(true);
       ContentEditor.confirmPublication.and.returnValue($q.reject());
-      ContentEditor.isCanPublish.and.returnValue(true);
 
       $ctrl.publish();
       $scope.$digest();
@@ -182,13 +180,11 @@ describe('ContentEditorCtrl', () => {
       expect(ContentEditor.save).not.toHaveBeenCalled();
       expect(ContentEditor.publish).not.toHaveBeenCalled();
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxCancel');
     });
 
     it('does not publish nor save if the confirmation dialog is cancelled for a request publication', () => {
       ContentEditor.isDocumentDirty.and.returnValue(true);
       ContentEditor.confirmPublication.and.returnValue($q.reject());
-      ContentEditor.isCanPublish.and.returnValue(false);
 
       $ctrl.publish();
       $scope.$digest();
@@ -196,7 +192,6 @@ describe('ContentEditorCtrl', () => {
       expect(ContentEditor.save).not.toHaveBeenCalled();
       expect(ContentEditor.publish).not.toHaveBeenCalled();
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxRequestPubCancel');
     });
 
     it('publishes if the confirmation dialog is confirmed', () => {

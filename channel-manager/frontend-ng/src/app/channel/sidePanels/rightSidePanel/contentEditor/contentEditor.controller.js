@@ -88,8 +88,7 @@ class ContentEditorCtrl {
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish())
-      .catch(() => this._reportPublishCancelAction());
+      .then(() => this._doPublish());
   }
 
   _doPublish() {
@@ -97,11 +96,6 @@ class ContentEditorCtrl {
       ? this.save().then(() => this.ContentEditor.publish())
       : this.ContentEditor.publish()),
     );
-  }
-
-  _reportPublishCancelAction() {
-    const eventName = this.ContentEditor.isCanPublish() ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
-    this.CmsService.reportUsageStatistic(eventName);
   }
 
   cancelRequestPublication() {
