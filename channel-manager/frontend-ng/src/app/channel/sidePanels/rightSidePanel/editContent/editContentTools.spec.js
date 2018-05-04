@@ -141,7 +141,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.getDocumentId.and.returnValue(documentId);
     });
 
-    fit('reports that the offline icon is used to go to the content editor', () => {
+    it('reports that the offline icon is used to go to the content editor', () => {
       ContentEditor.getPublicationState.and.returnValue('new');
       $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
