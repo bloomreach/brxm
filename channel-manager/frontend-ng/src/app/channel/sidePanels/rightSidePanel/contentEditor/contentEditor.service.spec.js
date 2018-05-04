@@ -97,7 +97,7 @@ describe('ContentEditorService', () => {
       },
     };
 
-    ContentService = jasmine.createSpyObj('ContentService', ['getEditableDocument', 'getDocumentType', 'saveDraft', 'discardChanges', 'deleteDocument']);
+    ContentService = jasmine.createSpyObj('ContentService', ['getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
     WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
@@ -450,13 +450,13 @@ describe('ContentEditorService', () => {
       const savedDoc = {
         id: '123',
       };
-      ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
+      ContentService.saveDocument.and.returnValue($q.resolve(savedDoc));
 
       ContentEditor.document = testDocument;
       ContentEditor.markDocumentDirty();
       ContentEditor.save();
 
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
       $rootScope.$digest();
 
@@ -470,7 +470,7 @@ describe('ContentEditorService', () => {
       ContentEditor.save();
       $rootScope.$digest();
 
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(ContentService.saveDocument).not.toHaveBeenCalled();
     });
 
     describe('shows error feedback when it', () => {
@@ -478,13 +478,13 @@ describe('ContentEditorService', () => {
         const response = {
           reason: 'TEST',
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -498,13 +498,13 @@ describe('ContentEditorService', () => {
             userId: 'tester',
           },
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -519,13 +519,13 @@ describe('ContentEditorService', () => {
             userName: 'Joe Tester',
           },
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -544,7 +544,7 @@ describe('ContentEditorService', () => {
             },
           ];
 
-          ContentService.saveDraft.and.returnValue($q.reject({ data: saveResponse }));
+          ContentService.saveDocument.and.returnValue($q.reject({ data: saveResponse }));
 
           ContentEditor.document = testDocument;
           ContentEditor.documentType = testDocumentType;
@@ -557,7 +557,7 @@ describe('ContentEditorService', () => {
 
           ContentEditor.save();
 
-          expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+          expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
           $rootScope.$digest();
 
@@ -571,7 +571,7 @@ describe('ContentEditorService', () => {
 
           ContentEditor.save();
 
-          expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+          expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
           $rootScope.$digest();
 
@@ -587,13 +587,13 @@ describe('ContentEditorService', () => {
       });
 
       it('fails because there is no data returned', () => {
-        ContentService.saveDraft.and.returnValue($q.reject({}));
+        ContentService.saveDocument.and.returnValue($q.reject({}));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -672,7 +672,7 @@ describe('ContentEditorService', () => {
     it('shows a dialog and saves changes', (done) => {
       ContentEditor.markDocumentDirty();
       DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+      ContentService.saveDocument.and.returnValue($q.resolve(testDocument));
 
       ContentEditor.confirmSaveOrDiscardChanges('TEST_MESSAGE_KEY').then((action) => {
         expect(action).toBe('SAVE');
@@ -681,7 +681,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
         done();
       });
       $rootScope.$digest();
@@ -698,7 +698,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).not.toHaveBeenCalled();
+        expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -714,7 +714,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).not.toHaveBeenCalled();
+        expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();

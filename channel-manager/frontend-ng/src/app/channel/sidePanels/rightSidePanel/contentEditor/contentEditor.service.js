@@ -271,7 +271,7 @@ class ContentEditorService {
     if (!this.documentDirty) {
       return this.$q.resolve();
     }
-    return this.ContentService.saveDraft(this.document)
+    return this.ContentService.saveDocument(this.document)
       .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
   }
 

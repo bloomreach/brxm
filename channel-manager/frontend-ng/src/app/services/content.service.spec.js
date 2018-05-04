@@ -72,7 +72,7 @@ describe('ContentService', () => {
     let result = null;
 
     $httpBackend.expectPUT('/test/ws/content/documents/123/editable').respond(200, doc);
-    ContentService.saveDraft(doc).then((saved) => {
+    ContentService.saveDocument(doc).then((saved) => {
       result = saved;
     });
     $httpBackend.flush();
@@ -197,7 +197,7 @@ describe('ContentService', () => {
     $httpBackend.when('PUT', '/test/ws/content/documents/123/editable/fieldA', fieldValue).respond(200, 'updateField');
 
     ContentService.getEditableDocument(doc.id).then(successCallback, failureCallback);
-    ContentService.saveDraft(doc).then(successCallback, failureCallback);
+    ContentService.saveDocument(doc).then(successCallback, failureCallback);
     ContentService.discardChanges('123').then(successCallback, failureCallback);
     ContentService.draftField('123', 'fieldA', fieldValue).then(successCallback, failureCallback);
 

@@ -33,7 +33,7 @@ class ContentService {
     return this._send('GET', ['documents', id, 'editable']);
   }
 
-  saveDraft(doc) {
+  saveDocument(doc) {
     return this._send('PUT', ['documents', doc.id, 'editable'], doc);
   }
 
