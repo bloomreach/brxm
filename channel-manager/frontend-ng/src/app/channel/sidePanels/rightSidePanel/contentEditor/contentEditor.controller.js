@@ -100,7 +100,7 @@ class ContentEditorCtrl {
   }
 
   _reportPublishCancelAction() {
-    const eventName = this.ContentEditor.isCanPublish() ?  'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
+    const eventName = this.ContentEditor.isCanPublish() ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
     this.CmsService.reportUsageStatistic(eventName);
   }
 

@@ -1012,6 +1012,13 @@ describe('ContentEditorService', () => {
         expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
       });
 
+      it('reports a publication event', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxPublish');
+      });
+
       it('displays an error if publication fails', () => {
         WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
 
@@ -1118,6 +1125,13 @@ describe('ContentEditorService', () => {
         $rootScope.$digest();
 
         expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_PUBLICATION_REQUESTED', { documentName: 'Test' });
+      });
+
+      it('reports a request publication event', () => {
+        ContentEditor.publish();
+        $rootScope.$digest();
+
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxRequestPub');
       });
 
       it('displays an error if publication request fails', () => {

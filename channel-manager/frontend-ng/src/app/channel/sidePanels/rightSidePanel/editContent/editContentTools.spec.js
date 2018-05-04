@@ -84,7 +84,7 @@ describe('EditContentToolsCtrl', () => {
       expect(ContentEditor.deleteDraft).toHaveBeenCalled();
       expect(CmsService.publish).toHaveBeenCalledWith('open-content', documentId, 'view');
       expect(ContentEditor.close).toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentPublish');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingUnknownIcon');
     }
 
     it('succeeds', (done) => {
@@ -129,6 +129,39 @@ describe('EditContentToolsCtrl', () => {
           expectSuccess();
           done();
         });
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports that the offline icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOfflineIcon');
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports that the online icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('live');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOnlineIcon');
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports that the alert icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingAlertIcon');
       });
       $rootScope.$digest();
     });

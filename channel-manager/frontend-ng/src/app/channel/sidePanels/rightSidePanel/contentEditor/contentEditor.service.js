@@ -506,7 +506,7 @@ class ContentEditorService {
   }
 
   _reportPublishAction() {
-    const eventName = this.canPublish ?  'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
+    const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
     this.CmsService.reportUsageStatistic(eventName);
   }
 }
