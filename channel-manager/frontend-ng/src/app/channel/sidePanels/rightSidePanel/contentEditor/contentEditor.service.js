@@ -145,7 +145,7 @@ class ContentEditorService {
     this._setDocumentId(id);
 
     return this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
+      .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
           if (this._hasFields(document)) {
             return this.loadDocumentType(document);
@@ -444,7 +444,7 @@ class ContentEditorService {
         this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
           .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
           .finally(() =>
-            this.ContentService.createDraft(this.documentId)
+            this.ContentService.getEditableDocument(this.documentId)
               .then((draftDocument) => {
                 this._onLoadSuccess(draftDocument, this.documentType);
               })

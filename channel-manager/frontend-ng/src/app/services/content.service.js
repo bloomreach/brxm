@@ -29,7 +29,7 @@ class ContentService {
     this._running = false;
   }
 
-  createDraft(id) {
+  getEditableDocument(id) {
     return this._send('GET', ['documents', id, 'editable']);
   }
 
