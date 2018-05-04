@@ -251,8 +251,8 @@ describe('ContentEditorService', () => {
         expect(ContentService.getEditableDocument).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-          messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
           linkToContentEditor: true,
         });
       });
@@ -1048,8 +1048,8 @@ describe('ContentEditorService', () => {
 
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-          messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
           linkToContentEditor: true,
         });
       });
@@ -1079,17 +1079,17 @@ describe('ContentEditorService', () => {
     });
 
     describe('when a user can request publication', () => {
-      let expectedDraftError;
+      let expectedDocumentError;
 
       beforeEach(() => {
-        expectedDraftError = {
+        expectedDocumentError = {
           data: {
             reason: 'REQUEST_PENDING',
           },
         };
 
         ContentEditor.canRequestPublication = true;
-        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDraftError));
+        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
       });
 
       it('discards the document', () => {
@@ -1169,10 +1169,10 @@ describe('ContentEditorService', () => {
     });
 
     describe('when a user can cancel a request for publication', () => {
-      let expectedDraftError;
+      let expectedDocumentError;
 
       beforeEach(() => {
-        expectedDraftError = {
+        expectedDocumentError = {
           data: {
             reason: 'CANCELABLE_PUBLICATION_REQUEST_PENDING',
             params: {
@@ -1182,7 +1182,7 @@ describe('ContentEditorService', () => {
         };
 
         CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDraftError));
+        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
         ContentEditor.open('test');
         $rootScope.$digest();
       });

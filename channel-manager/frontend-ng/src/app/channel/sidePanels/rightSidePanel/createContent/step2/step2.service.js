@@ -94,7 +94,7 @@ class Step2Service {
     };
 
     return this.DialogService.show(dialog)
-      .then(dialogData => this.setDraftNameUrl(document.id, dialogData)
+      .then(dialogData => this.setDocumentNameUrl(document.id, dialogData)
         .then((result) => {
           document.displayName = result.displayName;
           this.documentUrl = result.urlName;
@@ -105,7 +105,7 @@ class Step2Service {
         }));
   }
 
-  setDraftNameUrl(documentId, data) {
+  setDocumentNameUrl(documentId, data) {
     const nameUrl = { displayName: data.name, urlName: data.url };
     return this.ContentService._send('PUT', ['documents', documentId], nameUrl);
   }

@@ -153,7 +153,7 @@ class ContentEditorService {
           return this.$q.reject(this._noContentResponse(document));
         })
         .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDraftInvalid());
+      .catch(() => this._setErrorDocumentInvalid());
   }
 
   _setDocumentId(id) {
@@ -186,11 +186,11 @@ class ContentEditorService {
     };
   }
 
-  _setErrorDraftInvalid() {
+  _setErrorDocumentInvalid() {
     this._clearDocument();
     this.error = {
-      titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+      titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+      messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
       linkToContentEditor: true,
     };
   }
@@ -452,7 +452,7 @@ class ContentEditorService {
                 if (this.canPublish) {
                   // Document published. Getting an editable document should not have failed, so set the same error as
                   // when getting an editable document fails.
-                  this._setErrorDraftInvalid();
+                  this._setErrorDocumentInvalid();
                 } else {
                   // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
                   // error and remove the document so the 'document not editable' message is shown and the editor is

@@ -23,7 +23,7 @@ class FieldService {
 
     this.documentId = null;
     this.activeSaveTimers = {};
-    this.AUTODRAFT_DELAY = 2000;
+    this.AUTOSAVE_DELAY = 2000;
 
     this._focusedInput = null;
     this._customFocusCallback = null;
@@ -80,7 +80,7 @@ class FieldService {
 
     this.activeSaveTimers[documentId][fieldName] = this.$timeout(() => {
       this.saveField(fieldName, fieldValue, documentId);
-    }, this.AUTODRAFT_DELAY);
+    }, this.AUTOSAVE_DELAY);
   }
 
   saveField(fieldName, fieldValue, documentId = this.getDocumentId()) {
