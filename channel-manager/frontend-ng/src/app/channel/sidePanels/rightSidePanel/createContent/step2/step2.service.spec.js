@@ -163,7 +163,7 @@ describe('Step2Service', () => {
       expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining({ locals }));
     });
 
-    it('sets the draft name/url after closing', () => {
+    it('sets the document name/url after closing', () => {
       ContentEditor.document = { displayName: 'test-display-name', id: 'test-document-id' };
       const dialogData = { name: 'new-display-name', url: 'new-url' };
       spyOn(DialogService, 'show').and.returnValue($q.resolve(dialogData));

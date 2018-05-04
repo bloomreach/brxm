@@ -78,7 +78,7 @@ class EditContentService {
 
   _onCloseChannel() {
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
-      .then(() => this.ContentEditor.deleteDraft())
+      .then(() => this.ContentEditor.discardChanges())
       .then(() => this.ContentEditor.close());
   }
 }

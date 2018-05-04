@@ -32,7 +32,7 @@ describe('EditContentToolsCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
+        'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 
@@ -81,7 +81,7 @@ describe('EditContentToolsCtrl', () => {
 
     function expectSuccess() {
       expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
-      expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
       expect(CmsService.publish).toHaveBeenCalledWith('open-content', documentId, 'view');
       expect(ContentEditor.close).toHaveBeenCalled();
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentPublish');
@@ -89,7 +89,7 @@ describe('EditContentToolsCtrl', () => {
 
     it('succeeds', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expectSuccess();
@@ -108,13 +108,13 @@ describe('EditContentToolsCtrl', () => {
       $rootScope.$digest();
     });
 
-    it('fails because the draft cannot be deleted', (done) => {
+    it('fails because the changes cannot be discarded', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.reject());
+      ContentEditor.discardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().catch(() => {
         expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
-        expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+        expect(ContentEditor.discardChanges).toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
