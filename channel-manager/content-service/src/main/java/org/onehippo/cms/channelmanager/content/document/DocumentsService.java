@@ -35,7 +35,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 public interface DocumentsService {
 
     /**
-     * Creates a draft version of a document and locks it for editing by the current CMS user.
+     * Retrieves an editable version of a document and locks it for editing by the current CMS user.
      * <p>
      * If all goes well, the document's content is returned.
      *
@@ -43,29 +43,29 @@ public interface DocumentsService {
      * @param session user-authenticated, invocation-scoped JCR session
      * @param locale  Locale of the CMS user
      * @return JSON-serializable representation of the parts supported for exposing
-     * @throws ErrorWithPayloadException If creation of the draft failed
+     * @throws ErrorWithPayloadException If obtaining the editable instance failed
      */
-    Document createDraft(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+    Document obtainEditableDocument(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
-     * Update the draft version of a document, and keep it locked for further editing.
+     * Updates the editable version of a document, and keep it locked for further editing.
      * <p>
      * The persisted document may differ from the posted one (e.g. when fields are subject to additional processing
      * before being persisted).
      *
-     * @param uuid     UUID of the document to be updated
-     * @param document Document containing the to-be-persisted content
-     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                 pending.
-     * @param locale   Locale of the CMS user
+     * @param uuid           UUID of the document to be updated
+     * @param document       Document containing the to-be-persisted content
+     * @param session        user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
+     *                       pending.
+     * @param locale         Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
-     * @return JSON-serializable representation of the persisted document
-     * @throws ErrorWithPayloadException If updating the draft failed
+     * @return JSON-serializable representation of the persisted document.
+     * @throws ErrorWithPayloadException If updating the editable document failed
      */
-    Document updateDraft(String uuid, Document document, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
-     * Update a single field value in the draft version of a document.
+     * Update a single field value in the editable version of a document.
      * <p>
      * The persisted value may differ from the posted one (e.g. when fields are subject to additional processing before
      * being persisted).
@@ -77,20 +77,21 @@ public interface DocumentsService {
      *                    pending.
      * @param locale      Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
-     * @throws ErrorWithPayloadException If updating the draft failed
+     * @throws ErrorWithPayloadException If updating the field failed
      */
-    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+    void updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
-     * Delete the draft version of a document, such that it is available for others to edit.
-     *
-     * @param uuid    UUID of the document for which to delete the draft
-     * @param session user-authenticated, invocation-scoped JCR session
-     * @param locale  Locale of the CMS user
+     * Discard the editable version of a document, such that it is available for others to edit. The changes that were
+     * saved in fields after obtaining the editable version of the document are discarded.
+     * <p/>
+     * @param uuid           UUID of the document to be released
+     * @param session        user-authenticated, invocation-scoped JCR session
+     * @param locale         Locale of the CMS user
      * @param contextPayload the context payload from the Cms session context
-     * @throws ErrorWithPayloadException If deleting the draft failed
+     * @throws ErrorWithPayloadException If releasing the editable instance failed
      */
-    void deleteDraft(String uuid, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+    void discardEditableDocument(String uuid, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Read the published variant of a document

@@ -139,7 +139,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -159,7 +159,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -179,7 +179,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -201,7 +201,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -229,7 +229,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -257,7 +257,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
@@ -283,7 +283,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -313,7 +313,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -344,7 +344,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -371,7 +371,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -401,7 +401,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, emptyMap());
+            documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -447,7 +447,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document document = documentsService.createDraft(uuid, session, locale, emptyMap());
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -495,7 +495,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document document = documentsService.createDraft(uuid, session, locale, emptyMap());
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -547,7 +547,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document document = documentsService.createDraft(uuid, session, locale, emptyMap());
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -569,7 +569,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -592,7 +592,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -618,7 +618,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -646,7 +646,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -678,7 +678,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -706,7 +706,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -735,7 +735,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
@@ -769,7 +769,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -803,7 +803,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -838,7 +838,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e.getPayload(), equalTo(document));
@@ -877,7 +877,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+            documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -926,7 +926,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
 
         assertThat(persistedDocument, equalTo(document));
         assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
@@ -972,7 +972,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale, emptyMap());
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, emptyMap());
 
         assertThat(persistedDocument.getId(), equalTo(document.getId()));
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
@@ -994,7 +994,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1018,7 +1018,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1045,7 +1045,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1074,7 +1074,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1107,7 +1107,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -1136,7 +1136,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1166,7 +1166,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
@@ -1200,7 +1200,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -1231,7 +1231,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
 
         verifyAll();
     }
@@ -1261,7 +1261,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
 
         verifyAll();
     }
@@ -1292,7 +1292,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateDraftField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1302,15 +1302,16 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void deleteDraftNotAHandle() throws Exception {
+    public void discardChangesNotAHandle() throws Exception {
         final String uuid = "uuid";
+        final Document document = new Document();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentsService.deleteDraft(uuid, session, locale, emptyMap());
+            documentsService.discardEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1322,6 +1323,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void deleteDraftNoWorkflow() throws Exception {
         final String uuid = "uuid";
+        final Document document = new Document();
         final Node handle = createMock(Node.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
@@ -1332,7 +1334,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDraft(uuid, session, locale, emptyMap());
+            documentsService.discardEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1346,6 +1348,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void deleteDraftNotDeletable() throws Exception {
         final String uuid = "uuid";
+        final Document document = new Document();
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
@@ -1358,7 +1361,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDraft(uuid, session, locale, emptyMap());
+            documentsService.discardEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1372,6 +1375,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void deleteDraftDisposeFailure() throws Exception {
         final String uuid = "uuid";
+        final Document document = new Document();
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
@@ -1386,7 +1390,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDraft(uuid, session, locale, emptyMap());
+            documentsService.discardEditableDocument(uuid, session, locale, emptyMap());
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1398,6 +1402,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void deleteDraftSuccess() throws Exception {
         final String uuid = "uuid";
+        final Document document = new Document();
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
@@ -1411,7 +1416,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.deleteDraft(uuid, session, locale, emptyMap());
+        documentsService.discardEditableDocument(uuid, session, locale, emptyMap());
 
         verifyAll();
     }
@@ -2210,7 +2215,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDraft(uuid, session, locale, contextPayload);
+            documentsService.obtainEditableDocument(uuid, session, locale, contextPayload);
         } catch (ForbiddenException e) {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
