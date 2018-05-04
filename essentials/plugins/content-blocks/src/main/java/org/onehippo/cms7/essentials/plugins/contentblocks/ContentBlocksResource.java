@@ -16,16 +16,20 @@
 
 package org.onehippo.cms7.essentials.plugins.contentblocks;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.Compound;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksField;
+import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentType;
+import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
+import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
+import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -36,28 +40,13 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
-import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
-import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.Compound;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksField;
-import org.onehippo.cms7.essentials.plugins.contentblocks.model.DocumentType;
-import org.onehippo.cms7.essentials.plugins.contentblocks.updater.UpdateRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -69,6 +58,7 @@ public class ContentBlocksResource {
     private static final String ERROR_MSG = "The Content Blocks plugin encountered an error, check the log messages for more info.";
     private static final String NODE_OPTIONS = "cluster.options";
     private static final String PROP_CAPTION = "caption";
+    private static final String PROP_FIELD = "field";
     private static final String PROP_COMPOUNDLIST = "compoundList";
     private static final String PROP_MAXITEMS = "maxitems";
     private static final String PROP_PATH = "hipposysedit:path";
@@ -201,7 +191,12 @@ public class ContentBlocksResource {
             while (it.hasNext()) {
                 final Node fieldNode = it.nextNode();
                 final ContentBlocksField field = new ContentBlocksField();
-                field.setName(fieldNode.getProperty(PROP_CAPTION).getString());
+                field.setName(fieldNode.getProperty(PROP_FIELD).getString());
+                if (fieldNode.hasProperty(PROP_CAPTION)) {
+                    field.setCaption(fieldNode.getProperty(PROP_CAPTION).getString());
+                } else {
+                    field.setCaption(field.getName());
+                }
                 field.setPickerType(fieldNode.getProperty(PROP_PICKERTYPE).getString());
                 if (fieldNode.getNode(NODE_OPTIONS).hasProperty(PROP_MAXITEMS)) {
                     field.setMaxItems(Long.parseLong(fieldNode.getNode(NODE_OPTIONS).getProperty(PROP_MAXITEMS).getString()));
@@ -211,7 +206,7 @@ public class ContentBlocksResource {
                 contentBlocksFields.add(field);
             }
         } catch (RepositoryException e) {
-            log.warn("Problem populating content blocks fields for primary type '" + primaryType + "'.", e);
+            log.warn("Problem populating content blocks fields for primary type '{}'.", primaryType, e);
         }
         docType.setContentBlocksFields(contentBlocksFields);
     }
@@ -233,10 +228,10 @@ public class ContentBlocksResource {
             final NodeIterator it = findContentBlockFields(primaryType, session);
             while (it.hasNext()) {
                 final Node fieldNode = it.nextNode();
-                final String fieldName = fieldNode.getProperty(PROP_CAPTION).getString();
+                final String fieldName = fieldNode.getProperty(PROP_FIELD).getString();
                 boolean updated = false;
                 for (ContentBlocksField field : docType.getContentBlocksFields()) {
-                    if (fieldName.equals(field.getOriginalName())) {
+                    if (fieldName.equals(field.getName())) {
                         updated = true;
                         docType.getContentBlocksFields().remove(field);
                         updateField(fieldNode, docType, field, updaters);
@@ -249,7 +244,7 @@ public class ContentBlocksResource {
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Problem retrieving existing content blocks fields for document type '" + primaryType + "'.", e);
+            log.warn("Problem retrieving existing content blocks fields for document type '{}'.", primaryType, e);
             throw new ContentBlocksException(ERROR_MSG);
         }
 
@@ -296,7 +291,7 @@ public class ContentBlocksResource {
                     fieldType = "${cluster.id}.left.item";
                     break;
                 default:
-                    log.error("Can't determine layout of document type " + docType.getName() + ".");
+                    log.error("Can't determine layout of document type {}.", docType.getName());
                     throw new ContentBlocksException(errorMsg);
             }
 
@@ -305,7 +300,7 @@ public class ContentBlocksResource {
 
             data.put("name", newNodeName);
             data.put("namespace", settingsService.getSettings().getProjectNamespace());
-            data.put("caption", field.getName());
+            data.put("caption", field.getCaption());
             data.put("pickerType", field.getPickerType());
             data.put("compoundList", makeCompoundList(field));
             data.put("fieldType", fieldType);
@@ -318,7 +313,7 @@ public class ContentBlocksResource {
 
             // Set maxitems
             if (field.getMaxItems() > 0) {
-                final Node options = editorTemplateNode.getNode(field.getName() + "/" + NODE_OPTIONS);
+                final Node options = editorTemplateNode.getNode(field.getName() + '/' + NODE_OPTIONS);
                 options.setProperty(PROP_MAXITEMS, field.getMaxItems());
             }
         } catch (RepositoryException e) {
@@ -356,14 +351,15 @@ public class ContentBlocksResource {
 
                 final String namespace = settingsService.getSettings().getProjectNamespace();
                 final String oldNodePath = nodeTypeNode.getProperty(PROP_PATH).getString();
-                final String newNodePath = namespace + ":" + newNodeName;
+                final String newNodePath = namespace + ':' + newNodeName;
                 nodeTypeNode = JcrUtils.copy(nodeTypeNode, newNodeName, nodeTypeNode.getParent());
                 nodeTypeNode.setProperty(PROP_PATH, newNodePath);
                 oldNodeTypeNode.remove();
 
                 final String oldNodeCaption = fieldNode.getProperty(PROP_CAPTION).getString();
                 fieldNode = JcrUtils.copy(fieldNode, newNodeName, fieldNode.getParent());
-                fieldNode.setProperty("field", newNodeName);
+                fieldNode.setProperty(PROP_FIELD, newNodeName);
+                fieldNode.setProperty(PROP_CAPTION, field.getCaption());
                 oldFieldNode.remove();
 
                 // schedule updater to fix existing content
@@ -377,7 +373,7 @@ public class ContentBlocksResource {
                 updaters.add(new UpdateRequest("/content-updater.xml", vars));
             }
 
-            fieldNode.setProperty(PROP_CAPTION, field.getName());
+            fieldNode.setProperty(PROP_CAPTION, field.getCaption());
             fieldNode.setProperty(PROP_PICKERTYPE, field.getPickerType());
             fieldNode.setProperty(PROP_COMPOUNDLIST, makeCompoundList(field));
 
@@ -452,8 +448,8 @@ public class ContentBlocksResource {
     }
 
     private Node getNodeTypeNode(final Node fieldNode) throws RepositoryException {
-        final String nodeTypeName = fieldNode.getProperty("field").getString();
-        return fieldNode.getParent().getParent().getParent().getNode(HIPPOSYSEDIT_NODETYPE + "/" + nodeTypeName);
+        final String nodeTypeName = fieldNode.getProperty(PROP_FIELD).getString();
+        return fieldNode.getParent().getParent().getParent().getNode(HIPPOSYSEDIT_NODETYPE + '/' + nodeTypeName);
     }
 
     private NodeIterator findContentBlockFields(final String primaryType, final Session session) throws RepositoryException {
@@ -473,7 +469,7 @@ public class ContentBlocksResource {
                 return session.getNode("/hippo:namespaces/system/" + docTypeName);
             }
         } catch (RepositoryException e) {
-            log.error("Problem retrieving the document type node for '" + docTypeName + "'.", e);
+            log.error("Problem retrieving the document type node for '{}'.", docTypeName, e);
             throw new ContentBlocksException(ERROR_MSG);
         }
     }
@@ -482,7 +478,7 @@ public class ContentBlocksResource {
         try {
             return docTypeNode.getNode(HIPPOSYSEDIT_NODETYPE);
         } catch (RepositoryException e) {
-            log.error("Document type " + docTypeName + " is missing nodetype node'.");
+            log.error("Document type {} is missing nodetype node'.", docTypeName);
             throw new ContentBlocksException(ERROR_MSG);
         }
     }
@@ -491,7 +487,7 @@ public class ContentBlocksResource {
         try {
             return docTypeNode.getNode(EDITOR_TEMPLATES_NODE);
         } catch (RepositoryException e) {
-            log.error("Document type " + docTypeName + " is missing editor template node.");
+            log.error("Document type {} is missing editor template node.", docTypeName);
             throw new ContentBlocksException(ERROR_MSG);
         }
     }

@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ContentBlocksField {
     private String name;
-    private String originalName;
+    private String caption;
     private String pickerType;
     private long maxItems;
     private List<String> compoundRefs;
@@ -33,12 +33,12 @@ public class ContentBlocksField {
         this.name = name;
     }
 
-    public String getOriginalName() {
-        return originalName;
+    public String getCaption() {
+        return caption;
     }
 
-    public void setOriginalName(final String originalName) {
-        this.originalName = originalName;
+    public void setCaption(final String caption) {
+        this.caption = caption;
     }
 
     public String getPickerType() {
