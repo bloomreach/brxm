@@ -157,7 +157,7 @@ describe('Create content step 2 controller', () => {
       expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
     });
 
-    it('does not delete the draft if confirmDiscardChanges is canceled', (done) => {
+    it('does not discard the changes if confirmDiscardChanges is canceled', (done) => {
       ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().then(

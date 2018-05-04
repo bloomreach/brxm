@@ -108,7 +108,7 @@ describe('EditContentToolsCtrl', () => {
       $rootScope.$digest();
     });
 
-    it('fails because the draft cannot be deleted', (done) => {
+    it('fails because the changes cannot be discarded', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.discardChanges.and.returnValue($q.reject());
 

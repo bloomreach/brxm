@@ -163,7 +163,7 @@ describe('Step1Service', () => {
   });
 
   describe('createDraft', () => {
-    it('executes a "documents" backend call to create a draft', (done) => {
+    it('executes a "documents" backend call to create a document', (done) => {
       Step1Service.name = 'test-name';
       Step1Service.url = 'test-url';
       Step1Service.templateQuery = 'test-tpl-query';
@@ -182,9 +182,9 @@ describe('Step1Service', () => {
       });
     });
 
-    it('handles create-draft backend errors', () => {
+    it('handles create-document backend errors', () => {
       spyOn(FeedbackService, 'showError');
-      expectError(() => Step1Service.createDraft(), {}, 'Unexpected error creating new draft document');
+      expectError(() => Step1Service.createDraft(), {}, 'Unexpected error creating a new document');
       expectError(() => Step1Service.createDraft(), {
         data: {
           reason: 'the_cause',

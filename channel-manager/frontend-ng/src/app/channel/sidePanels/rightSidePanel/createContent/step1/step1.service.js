@@ -92,7 +92,7 @@ class Step1Service {
   }
 
   createDraft() {
-    const draft = {
+    const document = {
       name: this.name,
       slug: this.url,
       templateQuery: this.templateQuery,
@@ -100,8 +100,8 @@ class Step1Service {
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
     };
-    return this.ContentService._send('POST', ['documents'], draft)
-      .catch(error => this._onError(error, 'Unexpected error creating new draft document'));
+    return this.ContentService._send('POST', ['documents'], document)
+      .catch(error => this._onError(error, 'Unexpected error creating a new document'));
   }
 
   getFolders(path) {

@@ -125,7 +125,7 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
         ContentEditor.discardChanges.and.returnValue($q.reject());
 
@@ -164,7 +164,7 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after saving changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
         ContentEditor.discardChanges.and.returnValue($q.reject());
 
@@ -192,7 +192,7 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
         ContentEditor.discardChanges.and.returnValue($q.reject());
 

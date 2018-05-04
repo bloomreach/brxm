@@ -77,7 +77,7 @@ describe('Create content step 1 controller', () => {
     expect(Step1Service.rootPath).toBe('test-rootPath');
   });
 
-  it('creates a draft and passes it on to the next step together with url and locale', () => {
+  it('gets an editable document and passes it on to the next step together with url and locale', () => {
     const document = { displayName: 'document-name' };
     Step1Service.url = 'test-url';
     Step1Service.locale = 'test-locale';

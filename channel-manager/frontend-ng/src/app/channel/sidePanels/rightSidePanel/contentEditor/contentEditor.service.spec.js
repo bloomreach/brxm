@@ -241,7 +241,7 @@ describe('ContentEditorService', () => {
         });
       });
 
-      it('opens a document with pending invalid changes in the draft', () => {
+      it('opens a document with pending invalid changes in the editable document', () => {
         CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
 
         ContentEditor.open('test');
@@ -739,7 +739,7 @@ describe('ContentEditorService', () => {
     });
   });
 
-  describe('delete draft', () => {
+  describe('discard document', () => {
     it('happens when a document is edited and the editor is not killed', () => {
       ContentEditor.document = testDocument;
       ContentEditor.documentType = testDocumentType;
@@ -984,13 +984,13 @@ describe('ContentEditorService', () => {
         ContentService.getEditableDocument.and.returnValue($q.resolve(newDoc));
       });
 
-      it('deletes the draft', () => {
+      it('discards the document changes', () => {
         ContentEditor.publish();
 
         expect(ContentService.discardChanges).toHaveBeenCalledWith('test');
       });
 
-      it('does not execute workflow action if delete draft fails', () => {
+      it('does not execute workflow action if discard changes fails', () => {
         ContentService.discardChanges.and.returnValue($q.reject());
         ContentEditor.publish();
         $rootScope.$digest();

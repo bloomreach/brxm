@@ -445,17 +445,18 @@ class ContentEditorService {
           .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
           .finally(() =>
             this.ContentService.getEditableDocument(this.documentId)
-              .then((draftDocument) => {
-                this._onLoadSuccess(draftDocument, this.documentType);
+              .then((saveDocument) => {
+                this._onLoadSuccess(saveDocument, this.documentType);
               })
               .catch((response) => {
                 if (this.canPublish) {
-                  // Document published. Creating the draft should not have failed, so set the same error as when
-                  // opening a document fails.
+                  // Document published. Getting an editable document should not have failed, so set the same error as
+                  // when getting an editable document fails.
                   this._setErrorDraftInvalid();
                 } else {
-                  // Publication requested. Creating the draft is expected to fail; _onLoadFailure will set an error and
-                  // remove the document so the 'document not editable' message is shown and the editor is removed.
+                  // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
+                  // error and remove the document so the 'document not editable' message is shown and the editor is
+                  // removed.
                   this._onLoadFailure(response);
                 }
                 // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
