@@ -45,6 +45,7 @@ describe('ContentEditorCtrl', () => {
       'markDocumentDirty',
       'publish',
       'save',
+      'cancelRequestPublication',
     ]);
 
     $scope = $rootScope.$new();
@@ -56,7 +57,7 @@ describe('ContentEditorCtrl', () => {
       { $scope, ContentEditor },
       { form, onSave },
     );
-    $rootScope.$digest();
+    $scope.$digest();
   });
 
   it('marks the content editor dirty when the form becomes dirty', () => {
@@ -127,7 +128,7 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.resolve());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).toHaveBeenCalled();
     expect(onSave).toHaveBeenCalled();
@@ -137,10 +138,21 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.reject());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).not.toHaveBeenCalled();
     expect(onSave).not.toHaveBeenCalled();
+  });
+
+  it('shows the loading indicator while saving and resets it once done', () => {
+    ContentEditor.save.and.returnValue($q.resolve());
+    spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+    $ctrl.save();
+    $scope.$digest();
+
+    expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+    expect($ctrl.loading).toBe(false);
   });
 
   describe('publish', () => {
@@ -148,7 +160,7 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.confirmPublication).toHaveBeenCalled();
     });
@@ -158,19 +170,19 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.reject());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.save).not.toHaveBeenCalled();
       expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
 
     it('publishes if the confirmation dialog is confirmed', () => {
-      ContentEditor.confirmPublication.and.returnValue($q.reject());
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
-      expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).toHaveBeenCalled();
     });
 
     it('saves the form of a dirty document, prior to publishing', () => {
@@ -179,11 +191,12 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.save).toHaveBeenCalled();
       expect(form.$setPristine).toHaveBeenCalled();
       expect(onSave).toHaveBeenCalled();
+      expect(ContentEditor.publish).toHaveBeenCalled();
     });
 
     it('does not publish if saving fails', () => {
@@ -192,9 +205,33 @@ describe('ContentEditorCtrl', () => {
       ContentEditor.save.and.returnValue($q.reject());
 
       $ctrl.publish();
-      $rootScope.$digest();
+      $scope.$digest();
 
       expect(ContentEditor.publish).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading indicator while publishing and resets it once done', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
+    });
+  });
+
+  describe('cancelRequestPublication', () => {
+    it('cancels the publication request showing a loading indicator', () => {
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.cancelRequestPublication();
+      $scope.$digest();
+
+      expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
     });
   });
 });

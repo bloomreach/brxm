@@ -16,6 +16,7 @@
 
 class ContentEditorCtrl {
   constructor(
+    $q,
     $scope,
     $translate,
     CmsService,
@@ -25,6 +26,7 @@ class ContentEditorCtrl {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$scope = $scope;
     this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
@@ -75,17 +77,22 @@ class ContentEditorCtrl {
   }
 
   save() {
-    return this.ContentEditor.save()
-      .then(() => {
-        this.form.$setPristine();
-        this.onSave();
-      });
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.onSave();
+        }));
   }
 
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => {
+      .then(() => this._doPublish());
+  }
+
+  _doPublish() {
+    return this.showLoadingIndicator(() => {
         if (this.ContentEditor.isDocumentDirty()) {
           this.save().then(() => this.ContentEditor.publish());
         } else {
@@ -93,8 +100,20 @@ class ContentEditorCtrl {
         }
         this.CmsService.reportUsageStatistic('VisualEditingLightboxPublish');
       },
-      )
+    )
       .catch(() => this.CmsService.reportUsageStatistic('VisualEditingLightboxCancel'));
+  }
+
+  cancelRequestPublication() {
+    return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
+  }
+
+  showLoadingIndicator(promise) {
+    this.loading = true;
+    return this.$q.resolve(promise())
+      .finally(() => {
+        this.loading = false;
+      });
   }
 }
 

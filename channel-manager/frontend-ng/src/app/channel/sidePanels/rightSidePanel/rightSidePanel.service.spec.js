@@ -15,27 +15,66 @@
  */
 
 describe('RightSidePanelService', () => {
+  let $timeout;
   let RightSidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_RightSidePanelService_) => {
+    inject((_$timeout_, _RightSidePanelService_) => {
+      $timeout = _$timeout_;
       RightSidePanelService = _RightSidePanelService_;
     });
   });
 
   it('initializes correctly', () => {
-    expect(RightSidePanelService.isLoading()).toEqual(false);
+    expect(RightSidePanelService.isLoading()).toBe(false);
     expect(RightSidePanelService.getTitle()).toEqual('');
+    expect(RightSidePanelService.loadingPromise).toBeNull();
   });
 
-  it('manages loading', () => {
-    RightSidePanelService.startLoading();
-    expect(RightSidePanelService.isLoading()).toEqual(true);
+  describe('startLoading', () => {
+    it('starts after a timeout', () => {
+      RightSidePanelService.startLoading();
 
-    RightSidePanelService.stopLoading();
-    expect(RightSidePanelService.isLoading()).toEqual(false);
+      expect(RightSidePanelService.isLoading()).toBe(false);
+      expect(RightSidePanelService.loadingPromise).not.toBeNull();
+
+      $timeout.flush();
+      expect(RightSidePanelService.loadingPromise).toBeNull();
+      expect(RightSidePanelService.isLoading()).toBe(true);
+    });
+
+    it('does not set a timeout when already loading', () => {
+      RightSidePanelService.startLoading();
+      $timeout.flush();
+
+      RightSidePanelService.startLoading();
+      expect(RightSidePanelService.loadingPromise).toBeNull();
+      expect(RightSidePanelService.isLoading()).toBe(true);
+    });
+  });
+
+  describe('stopLoading', () => {
+    it('stops directly', () => {
+      RightSidePanelService.startLoading();
+      $timeout.flush();
+      RightSidePanelService.stopLoading();
+      expect(RightSidePanelService.loadingPromise).toBeNull();
+      expect(RightSidePanelService.isLoading()).toBe(false);
+    });
+
+    it('cancels the timeout', () => {
+      RightSidePanelService.startLoading();
+      RightSidePanelService.stopLoading();
+      expect(RightSidePanelService.loadingPromise).toBeNull();
+      expect(RightSidePanelService.isLoading()).toBe(false);
+
+      $timeout.flush();
+      expect(RightSidePanelService.isLoading()).toBe(false);
+
+      $timeout.verifyNoPendingTasks();
+    });
   });
 
   it('manages the title', () => {

@@ -72,7 +72,7 @@ import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkf
 import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_PUBLISH;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
-import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionAvailable;
+import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
 
 /**
@@ -95,7 +95,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document createDraft(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
+    public Document obtainEditableDocument(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
@@ -131,14 +131,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         document.getInfo().setDirty(isDirty);
         // we must use the hints that were retrieved before the editable instance was obtained from the workflow,
         // see the class level javadoc.
-        document.getInfo().setCanPublish(isHintActionAvailable(hints, HINT_PUBLISH));
-        document.getInfo().setCanRequestPublication(isHintActionAvailable(hints, HINT_REQUEST_PUBLICATION));
+        document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
 
     @Override
-    public Document updateDraft(final String uuid, final Document document, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
+    public Document updateEditableDocument(final String uuid, final Document document, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
@@ -187,14 +187,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         FieldTypeUtils.readFieldValues(newDraft, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
-        document.getInfo().setCanPublish(isHintActionAvailable(newHints, HINT_PUBLISH));
-        document.getInfo().setCanRequestPublication(isHintActionAvailable(newHints, HINT_REQUEST_PUBLICATION));
+        document.getInfo().setCanPublish(isHintActionTrue(newHints, HINT_PUBLISH));
+        document.getInfo().setCanRequestPublication(isHintActionTrue(newHints, HINT_REQUEST_PUBLICATION));
 
         return document;
     }
 
     @Override
-    public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+    public void updateEditableField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
@@ -223,7 +223,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDraft(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
+    public void discardEditableDocument(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
