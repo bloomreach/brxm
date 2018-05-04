@@ -535,10 +535,10 @@
       <state id="no-checkout-branch">
         <!-- event-less transition to 'eligible-for-checkout-branch' state when an unpublished document variant exists
              and not being edited -->
-        <transition target="eligible-for-checkout-branch" cond="!editing and !!unpublished"/>
+        <transition target="can-checkout-branch" cond="!editing and !!unpublished"/>
       </state>
       <!-- the checking-out state becomes active when an unpublished document variant exists -->
-      <state id="eligible-for-checkout-branch">
+      <state id="can-checkout-branch">
         <transition event="checkoutBranch">
           <hippo:version variant="unpublished"/>
           <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
