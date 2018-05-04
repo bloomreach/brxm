@@ -178,12 +178,12 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 workflow.branch("foo bar", "Foo Bar");
                 fail("Branch already exists so exception expected");
             } catch (WorkflowException e) {
-                assertEquals("TargetLabel 'foo bar-preview' does already exist in version history hence cannot create branch for 'foo bar'",
+                assertEquals("Branch 'foo bar' already exists",
                         e.getMessage());
-                assertEquals("Branching to branch for which the preview already exists did still result in an extra version",
-                        3L, versionHistory.getAllVersions().getSize());
+                assertEquals("Branching to branch for which the preview already exists should not result in an extra version",
+                        2L, versionHistory.getAllVersions().getSize());
 
-                assertTrue(versionHistory.hasVersionLabel("foo bar-preview"));
+                assertFalse(versionHistory.hasVersionLabel("foo bar-preview"));
             }
         }
     }
@@ -201,11 +201,11 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 workflow.branch("core", null);
                 fail("Branching core is in general not needed and should not be possible when preview is for core");
             } catch (WorkflowException e) {
-                assertEquals("TargetLabel 'core-preview' does already exist in version history hence cannot create branch for 'core'",
+                assertEquals("Branch 'core' already exists",
                         e.getMessage());
-                assertEquals("Branching to core is not allowed but did create a version",
-                        2L, versionHistory.getAllVersions().getSize());
-                assertTrue(versionHistory.hasVersionLabel("core-preview"));
+                assertEquals("Branching to core is not allowed and should not have created version",
+                        1L, versionHistory.getAllVersions().getSize());
+                assertFalse(versionHistory.hasVersionLabel("core-preview"));
             }
         }
     }

@@ -26,33 +26,49 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.apache.jackrabbit.JcrConstants;
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 
 public class ListBranchesTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
     public static final String CORE_BRANCH_ID = "core";
 
-    private DocumentVariant variant;
+    private DocumentVariant unpublished;
+    private DocumentVariant published;
+    private DocumentVariant draft;
 
-    public DocumentVariant getVariant() {
-        return variant;
+    public void setUnpublished(DocumentVariant unpublished) {
+        this.unpublished = unpublished;
     }
 
-    public void setVariant(DocumentVariant variant) {
-        this.variant = variant;
+    public void setPublished(final DocumentVariant published) {
+        this.published = published;
     }
 
-   @Override
+    public void setDraft(final DocumentVariant draft) {
+        this.draft = draft;
+    }
+
+    private DocumentVariant getVariant() {
+        if (unpublished != null) {
+            return unpublished;
+        }
+        if (published != null) {
+            return published;
+        }
+        if (draft != null) {
+            return draft;
+        }
+        return null;
+    }
+
+
+    @Override
     protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
@@ -69,6 +85,10 @@ public class ListBranchesTask extends AbstractDocumentTask {
         } else {
             // current preview is for core
             branches.add(CORE_BRANCH_ID);
+        }
+
+        if (!targetNode.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            return branches;
         }
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();

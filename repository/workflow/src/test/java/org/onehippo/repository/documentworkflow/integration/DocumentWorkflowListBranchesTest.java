@@ -112,6 +112,36 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
     }
 
     @Test
+    public void listBranches_when_there_is_only_live() throws Exception {
+        final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        toBecomeLive.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
+        toBecomeLive.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
+        toBecomeLive.removeMixin(MIX_VERSIONABLE);
+        session.save();
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            final Set<String> branches = workflow.listBranches();
+            assertEquals(1, branches.size());
+            assertTrue(branches.contains(CORE_BRANCH_ID));
+        }
+    }
+
+    @Test
+    public void listBranches_when_there_is_only_draft() throws Exception {
+        final Node toBecomeDraft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        toBecomeDraft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        toBecomeDraft.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
+        toBecomeDraft.removeMixin(MIX_VERSIONABLE);
+        session.save();
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            final Set<String> branches = workflow.listBranches();
+            assertEquals(1, branches.size());
+            assertTrue(branches.contains(CORE_BRANCH_ID));
+        }
+    }
+
+    @Test
     public void listBranches_only_returns_branches_which_are_real_branches() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
 

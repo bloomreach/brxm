@@ -497,7 +497,7 @@
 
       <!-- target-less transition to report a list of available branches of the document -->
       <transition event="listBranches">
-        <hippo:listBranches variant="unpublished" />
+        <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
       </transition>
 
       <!-- the initial no-branchable state is used and active to indicate branchable operations are currently not
@@ -511,7 +511,13 @@
       <state id="branchable">
         <!-- target-less transition to create a new branch for the current unpublished variant -->
         <transition event="branch">
-          <if cond="!unpublished and published">
+          <!-- on the workflowContext.result put the list of branches that already exist -->
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' already exists'"/>
+
+          <if cond="!unpublished and !!published">
             <!-- if no unpublished variant exists yet, copy it from the published variant -->
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
             <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>

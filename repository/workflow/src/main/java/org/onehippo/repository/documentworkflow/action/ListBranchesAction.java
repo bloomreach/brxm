@@ -18,7 +18,6 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.BranchTask;
 import org.onehippo.repository.documentworkflow.task.ListBranchesTask;
 
 /**
@@ -29,13 +28,30 @@ public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesT
 
     private static final long serialVersionUID = 1L;
 
-    public String getVariant() {
-        return getParameter("variantExpr");
+    public String getUnpublished() {
+        return getParameter("unpublishedExpr");
     }
 
     @SuppressWarnings("unused")
-    public void setVariant(String variant) {
-        setParameter("variantExpr", variant);
+    public void setUnpublished(String unpublished) {
+        setParameter("unpublishedExpr", unpublished);
+    }
+
+    public String getPublished() {
+        return getParameter("publishedExpr");
+    }
+
+    @SuppressWarnings("unused")
+    public void setPublished(String published) {
+        setParameter("publishedExpr", published);
+    }
+    public String getDraft() {
+        return getParameter("draftExpr");
+    }
+
+    @SuppressWarnings("unused")
+    public void setDraft(String draft) {
+        setParameter("draftExpr", draft);
     }
 
     @Override
@@ -46,6 +62,8 @@ public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesT
     @Override
     protected void initTask(ListBranchesTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setVariant(eval(getVariant()));
+        task.setUnpublished(eval(getUnpublished()));
+        task.setPublished(eval(getPublished()));
+        task.setDraft(eval(getDraft()));
     }
 }
