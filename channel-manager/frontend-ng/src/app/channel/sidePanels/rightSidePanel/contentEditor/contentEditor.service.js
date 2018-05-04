@@ -386,7 +386,7 @@ class ContentEditorService {
       || this.killed; // editor was killed, don't show dialog
   }
 
-  deleteDraft() {
+  discardChanges() {
     if (this.isEditing() && !this.killed) {
       return this.ContentService.discardChanges(this.document.id);
     }

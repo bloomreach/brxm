@@ -746,14 +746,14 @@ describe('ContentEditorService', () => {
 
       ContentService.discardChanges.and.returnValue($q.resolve());
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).toHaveBeenCalledWith(testDocument.id);
     });
 
     it('does not happens when no document is being edited', (done) => {
-      ContentEditor.deleteDraft().then(() => {
+      ContentEditor.discardChanges().then(() => {
         expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
@@ -765,7 +765,7 @@ describe('ContentEditorService', () => {
       ContentEditor.documentType = testDocumentType;
       ContentEditor.kill();
 
-      ContentEditor.deleteDraft().then(() => {
+      ContentEditor.discardChanges().then(() => {
         expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
@@ -868,7 +868,7 @@ describe('ContentEditorService', () => {
 
       ContentEditor.kill();
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).not.toHaveBeenCalled();
@@ -878,7 +878,7 @@ describe('ContentEditorService', () => {
       ContentEditor.document = testDocument;
       ContentEditor.documentType = testDocumentType;
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).toHaveBeenCalled();
