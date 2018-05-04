@@ -71,6 +71,18 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.VersionVariantAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /listBranches:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ListBranchesAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /branch:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.BranchAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /checkoutBranch:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.CheckoutBranchAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /listVersions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction

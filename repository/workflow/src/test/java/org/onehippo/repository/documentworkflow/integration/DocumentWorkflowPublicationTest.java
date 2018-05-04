@@ -16,20 +16,16 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.Date;
-import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
@@ -72,6 +68,14 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
         assertTrue("Publication should lead to a jcr version checkin, and after that the handle node should have " +
                 "information about the version history node.", handle.isNodeType(NT_HIPPO_VERSION_INFO));
         assertEquals(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(), preview.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier());
+
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+
+        assertTrue(versionHistory.hasVersionLabel("core-live"));
+        assertTrue(versionHistory.hasVersionLabel("core-preview"));
+
+        assertTrue("After publication, expected core-live and core-preview both point to the last checked in version",
+                versionHistory.getVersionByLabel("core-live").isSame(versionHistory.getVersionByLabel("core-preview")));
     }
 
     @Test

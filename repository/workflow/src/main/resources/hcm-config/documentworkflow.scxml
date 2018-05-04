@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -351,7 +351,7 @@
           <!-- mark the published variant as published and set its availability to (only) 'live' -->
           <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
           <!-- create a JCR version of the published document via the unpublished variant -->
-          <hippo:version variant="unpublished"/>
+          <hippo:version variant="unpublished" trigger="publication"/>
         </transition>
 
         <!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate -->
@@ -411,7 +411,7 @@
             <!-- if no unpublished variant exists yet, copy it from the published variant -->
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
           </if>
-          <!-- ensure the unpublished variant to be versionable set its availability to (only) 'live' -->
+          <!-- ensure the unpublished variant to be versionable set its availability to (only) 'preview' -->
           <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
           <!-- remove all availabilities from the published variant -->
           <hippo:configVariant variant="published" availabilities=""/>
@@ -487,6 +487,66 @@
       </state>
 
     </state>
+
+    <state id="branching">
+
+      <onentry>
+        <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published)"/>
+        <hippo:action action="listBranches" enabledExpr="true"/>
+      </onentry>
+
+      <!-- target-less transition to report a list of available branches of the document -->
+      <transition event="listBranches">
+        <hippo:listBranches variant="unpublished" />
+      </transition>
+
+      <!-- the initial no-branchable state is used and active to indicate branchable operations are currently not
+           allowed or possible because there is no unpublished or published document variant yet -->
+      <state id="no-branchable">
+        <!-- event-less transition to branchable state when an unpublished OR published document variant exists -->
+        <transition target="branchable" cond="!editing and (!!unpublished or !!published)"/>
+      </state>
+
+      <!-- the branchable state becomes active when an unpublished document variant exists -->
+      <state id="branchable">
+        <!-- target-less transition to create a new branch for the current unpublished variant -->
+        <transition event="branch">
+          <if cond="!unpublished and published">
+            <!-- if no unpublished variant exists yet, copy it from the published variant -->
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+            <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+            <hippo:configVariant variant="published" availabilities="live"/>
+          </if>
+
+          <hippo:version variant="unpublished"/>
+          <hippo:branch variant="unpublished" branchId="_event.data?.branchId" branchName="_event.data?.branchName"/>
+        </transition>
+
+      </state>
+
+    </state>
+
+    <state id="checking-out-branch">
+      <onentry>
+        <hippo:action action="checkoutBranch" enabledExpr="!editing and !!unpublished"/>
+      </onentry>
+      <!-- the initial no-branching state is used and active to indicate checking-out operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
+      <state id="no-checkout-branch">
+        <!-- event-less transition to 'eligible-for-checkout-branch' state when an unpublished document variant exists
+             and not being edited -->
+        <transition target="eligible-for-checkout-branch" cond="!editing and !!unpublished"/>
+      </state>
+      <!-- the checking-out state becomes active when an unpublished document variant exists -->
+      <state id="eligible-for-checkout-branch">
+        <transition event="checkoutBranch">
+          <hippo:version variant="unpublished"/>
+          <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+        </transition>
+
+      </state>
+    </state>
+
 
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like
          move and rename -->

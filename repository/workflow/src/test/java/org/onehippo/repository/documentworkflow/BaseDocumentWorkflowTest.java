@@ -25,11 +25,14 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction;
+import org.onehippo.repository.documentworkflow.action.BranchAction;
+import org.onehippo.repository.documentworkflow.action.CheckoutBranchAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
 import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
+import org.onehippo.repository.documentworkflow.action.ListBranchesAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
 import org.onehippo.repository.scxml.LogEventAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
@@ -89,6 +92,9 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listBranches", ListBranchesAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "branch", BranchAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "checkoutBranch", CheckoutBranchAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);

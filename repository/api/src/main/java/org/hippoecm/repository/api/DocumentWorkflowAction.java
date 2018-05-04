@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,18 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("retrieveVersion");
     }
 
+    public static DocumentWorkflowAction listBranches() {
+        return new DocumentWorkflowAction("listBranches");
+    }
+
+    public static DocumentWorkflowAction branch() {
+        return new DocumentWorkflowAction("branch");
+    }
+
+    public static DocumentWorkflowAction checkoutBranch() {
+        return new DocumentWorkflowAction("checkoutBranch");
+    }
+
     public static DocumentWorkflowAction none() {
         return new DocumentWorkflowAction("None");
     }
@@ -157,7 +169,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         DATE("date"),
         TARGET_DOCUMENT("target"),
         REQUEST("request"),
-        REASON("reason");
+        REASON("reason"),
+        BRANCH_ID("branchId"),
+        BRANCH_NAME("branchName"),
+        ;
 
         private final String key;
 

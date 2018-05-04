@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,9 @@ public class HintsBuilder {
     public static String ACTION_RESTORE_VERSION = "restoreVersion";
     public static String ACTION_VERSION_RESTORE_TO = "versionRestoreTo";
     public static String ACTION_REQUEST_DELETE = "requestDelete";
+    public static String ACTION_LIST_BRANCHES = "listBranches";
+    public static String ACTION_BRANCH = "branch";
+    public static String ACTION_CHECKOUT_BRANCH = "checkoutBranch";
     public static String ACTION_DELETE = "delete";
     public static String ACTION_MOVE = "move";
     public static String ACTION_RENAME = "rename";
@@ -191,6 +194,21 @@ public class HintsBuilder {
 
     public HintsBuilder requestDelete(boolean requestDelete) {
         actions.put(ACTION_REQUEST_DELETE, requestDelete);
+        return this;
+    }
+
+    public HintsBuilder listBranches() {
+        actions.put(ACTION_LIST_BRANCHES, true);
+        return this;
+    }
+
+    public HintsBuilder branch(final boolean branchable) {
+        actions.put(ACTION_BRANCH, branchable);
+        return this;
+    }
+
+    public HintsBuilder checkoutBranch(final boolean eligibleForCheckout) {
+        actions.put(ACTION_CHECKOUT_BRANCH, eligibleForCheckout);
         return this;
     }
 

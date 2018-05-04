@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,13 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.task.VersionVariantTask;
+import org.onehippo.repository.documentworkflow.task.BranchTask;
 
 /**
- * VersionVariantAction is a custom DocumentWorkflow SCXML state machine action for creating a new JCR version for the
- * specified document variant.
- * <p>
- * A {@link org.hippoecm.repository.api.Document} wrapper object for the newly versioned target node is returned as
- * SCXML state machine execution {@link org.onehippo.repository.scxml.SCXMLWorkflowContext#getResult() result}.
- * </p>
- * <p>
- * The execution of this task is delegated to its corresponding {@link VersionVariantTask}.
+ *
  * </p>
  */
-public class VersionVariantAction extends AbstractDocumentTaskAction<VersionVariantTask> {
+public class BranchAction extends AbstractDocumentTaskAction<BranchTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,24 +37,36 @@ public class VersionVariantAction extends AbstractDocumentTaskAction<VersionVari
         setParameter("variantExpr", variant);
     }
 
-    public String getTrigger() {
-        return getParameter("trigger");
+    @SuppressWarnings("unused")
+    public String getBranchId() {
+        return getParameter("branchIdExpr");
     }
 
     @SuppressWarnings("unused")
-    public void setTrigger(final String trigger) {
-        setParameter("trigger", trigger);
+    public void setBranchId(String branchIdExpr) {
+        setParameter("branchIdExpr", branchIdExpr);
+    }
+
+    @SuppressWarnings("unused")
+    public String getBranchName() {
+        return getParameter("branchNameExpr");
+    }
+
+    @SuppressWarnings("unused")
+    public void setBranchName(String branchNameExpr) {
+        setParameter("branchNameExpr", branchNameExpr);
     }
 
     @Override
-    protected VersionVariantTask createWorkflowTask() {
-        return new VersionVariantTask();
+    protected BranchTask createWorkflowTask() {
+        return new BranchTask();
     }
 
     @Override
-    protected void initTask(VersionVariantTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(BranchTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setVariant(eval(getVariant()));
-        task.setTrigger(getTrigger());
+        task.setBranchId(eval(getBranchId()));
+        task.setBranchName(eval(getBranchName()));
     }
 }

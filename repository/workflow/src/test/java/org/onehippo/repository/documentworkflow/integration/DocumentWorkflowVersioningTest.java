@@ -22,12 +22,14 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -83,6 +85,21 @@ public class DocumentWorkflowVersioningTest extends AbstractDocumentWorkflowInte
             final Document version = workflow.retrieveVersion(entry.getKey());
             assertEquals(++counter, version.getNode(session).getProperty("counter").getLong());
         }
+    }
+
+    @Test
+    public void version_document_results_in_core_preview_label() throws Exception {
+        final DocumentWorkflow workflow = getDocumentWorkflow();
+        workflow.version();
+
+        final Map<Calendar, Set<String>> history = workflow.listVersions();
+        assertEquals(1, history.size());
+        assertTrue("In the labels we expect 'core-preview' after version",
+                history.values().iterator().next().contains("core-preview"));
+
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+        versionHistory.hasVersionLabel("core-preview");
     }
 
     @Test

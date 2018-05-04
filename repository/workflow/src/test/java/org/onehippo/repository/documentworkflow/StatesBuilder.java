@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,10 @@ public class StatesBuilder {
     public static String STATE_TERMINATEABLE = "terminateable";
     public static String STATE_NO_COPY = "no-copy";
     public static String STATE_COPYABLE = "copyable";
+    public static String STATE_BRANCHABLE = "branchable";
+    public static String STATE_NO_BRANCHABLE = "no-branchable";
+    public static String STATE_NO_CHECKOUT_BRANCH = "no-checkout-branch";
+    public static String STATE_ELIGIBLE_FOR_CHECKOUT_BRANCH = "eligible-for-checkout-branch";
     public static String STATE_LOGEVENT = "logEvent";
 
     private TreeSet<String> states = new TreeSet<>();
@@ -138,4 +142,25 @@ public class StatesBuilder {
         states.add(STATE_LOGEVENT);
         return this;
     }
+
+    public StatesBuilder branchable() {
+        states.add(STATE_BRANCHABLE);
+        return this;
+    }
+
+    public StatesBuilder noBranchable() {
+        states.add(STATE_NO_BRANCHABLE);
+        return this;
+    }
+
+    public StatesBuilder noCheckoutBranch() {
+        states.add(STATE_NO_CHECKOUT_BRANCH);
+        return this;
+    }
+    public StatesBuilder eligibleForCheckoutBranch() {
+        states.add(STATE_ELIGIBLE_FOR_CHECKOUT_BRANCH);
+        return this;
+    }
+
+
 }

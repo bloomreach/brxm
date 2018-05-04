@@ -20,11 +20,16 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
@@ -37,6 +42,7 @@ public class VersionVariantTask extends AbstractDocumentTask {
     private static final long serialVersionUID = 1L;
 
     private DocumentVariant variant;
+    private String trigger;
 
     public DocumentVariant getVariant() {
         return variant;
@@ -46,17 +52,32 @@ public class VersionVariantTask extends AbstractDocumentTask {
         this.variant = variant;
     }
 
+    public void setTrigger(final String trigger) {
+        this.trigger = trigger;
+    }
+
     @Override
-    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
+
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
         Node targetNode = getVariant().getNode(workflowSession);
 
+        final Version checkedIn = createVersion(targetNode, trigger);
+        return new Document(checkedIn);
+
+    }
+
+    protected Version createVersion(final Node targetNode, final String trigger) throws RepositoryException, WorkflowException {
         // ensure no pending changes which would fail the checkin
+        final Session workflowSession = targetNode.getSession();
         workflowSession.save();
+        final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
+        final Version checkedIn = versionManager.checkin(targetNode.getPath());
+
         final Node handle = targetNode.getParent();
         if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
             handle.addMixin(NT_HIPPO_VERSION_INFO);
@@ -64,6 +85,30 @@ public class VersionVariantTask extends AbstractDocumentTask {
             handle.setProperty(HIPPO_VERSION_HISTORY_PROPERTY, versionHistoryIdentifier);
             // will be saved later by WorkflowManagerImpl.WorkflowInvocationHandler#invoke
         }
-        return new Document(targetNode.getSession().getWorkspace().getVersionManager().checkin(targetNode.getPath()));
+
+        final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
+
+        final String branchId;
+
+        if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            branchId = targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
+        } else {
+            branchId = "core";
+        }
+
+        final String[] branchLabels;
+        if ("publication".equals(trigger)) {
+            branchLabels = new String[] {branchId + "-preview", branchId + "-live"};
+        } else {
+            branchLabels = new String[] {branchId + "-preview"};
+        }
+
+        for (String branchLabel : branchLabels) {
+            versionHistory.addVersionLabel(checkedIn.getName(), branchLabel, true);
+        }
+
+        return checkedIn;
     }
+
+
 }

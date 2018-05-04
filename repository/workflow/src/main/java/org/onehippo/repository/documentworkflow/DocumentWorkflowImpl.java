@@ -38,6 +38,8 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DESTINATION;
@@ -356,6 +358,24 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         return (Document)triggerAction(DocumentWorkflowAction.retrieveVersion().addEventPayload(DATE,historic));
+    }
+
+    @Override
+    public Set<String> listBranches() throws WorkflowException, RepositoryException {
+        return (Set) triggerAction(DocumentWorkflowAction.listBranches());
+    }
+
+    @Override
+    public Document branch(final String brandId, final String branchName) throws WorkflowException, RepositoryException {
+        return (Document) triggerAction(DocumentWorkflowAction.branch()
+                .addEventPayload(BRANCH_ID,brandId)
+                .addEventPayload(BRANCH_NAME, branchName));
+    }
+
+    @Override
+    public Document checkoutBranch(final String brandId) throws WorkflowException, RepositoryException {
+        return (Document) triggerAction(DocumentWorkflowAction.checkoutBranch()
+                .addEventPayload(BRANCH_ID,brandId));
     }
 
     @Override
