@@ -243,7 +243,7 @@ class ContentEditorService {
   }
 
   save() {
-    return this._saveDraft()
+    return this._saveDocument()
       .catch((response) => {
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
@@ -267,7 +267,7 @@ class ContentEditorService {
       });
   }
 
-  _saveDraft() {
+  _saveDocument() {
     if (!this.documentDirty) {
       return this.$q.resolve();
     }
@@ -352,7 +352,7 @@ class ContentEditorService {
       .then((action) => {
         switch (action) {
           case 'SAVE':
-            return this._saveDraft()
+            return this._saveDocument()
               .then(() => action); // let caller know that changes have been saved
           default:
             return this.$q.resolve(action); // let caller know that changes have not been saved
