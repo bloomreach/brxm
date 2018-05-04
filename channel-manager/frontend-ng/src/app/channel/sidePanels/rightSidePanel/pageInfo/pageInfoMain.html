@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<md-nav-bar nav-bar-aria-label="{{ ::'PAGE_INFO_TABS_ARIA_LABEL' | translate }}"
+            md-selected-nav-item="$ctrl.selectedExtensionId">
+  <md-nav-item ng-repeat="extension in $ctrl.extensions track by extension.id"
+               name="{{ ::extension.id }}"
+               aria-label="{{ ::extension.displayName }}"
+               md-nav-click="$ctrl.selectedExtensionId = extension.id">
+    {{ ::extension.displayName }}
+  </md-nav-item>
+</md-nav-bar>
+
+<ui-view ng-repeat="extension in $ctrl.extensions track by extension.id"
+         ng-show="$ctrl.selectedExtensionId === extension.id"
+         name="{{ ::extension.id }}"
+         flex
+         layout="column">
+</ui-view>
+
+<md-toolbar class="page-info-bottom-toolbar">
+  <div class="md-toolbar-tools"
+       layout-align="end center">
+    <md-button class="qa-close"
+               ng-click="$ctrl.close()">
+      {{ 'CLOSE' | translate }}
+    </md-button>
+  </div>
+</md-toolbar>

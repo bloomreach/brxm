@@ -46,7 +46,7 @@ class RightSidePanelCtrl {
     $element.on('keydown', (e) => {
       if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
         e.stopImmediatePropagation();
-        $state.go('^');
+        $state.go('hippo-cm.channel');
       }
     });
   }
@@ -54,8 +54,8 @@ class RightSidePanelCtrl {
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
 
-    this.$transitions.onBefore({ to: 'hippo-cm.channel.*' }, () => this._openPanel());
-    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel' }, () => this._closePanel());
+    this.$transitions.onBefore({ to: 'hippo-cm.channel.**' }, () => this._openPanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
   }
 
   onResize(newWidth) {
