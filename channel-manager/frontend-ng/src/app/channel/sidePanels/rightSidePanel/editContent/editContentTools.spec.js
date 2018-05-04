@@ -132,9 +132,18 @@ describe('EditContentToolsCtrl', () => {
       });
       $rootScope.$digest();
     });
+  });
 
-    it('reports that the offline icon is used to go to the content editor', () => {
+  describe('report statistics when clicking the status icon', () => {
+    const documentId = '42';
+
+    beforeEach(() => {
+      ContentEditor.getDocumentId.and.returnValue(documentId);
+    });
+
+    fit('reports that the offline icon is used to go to the content editor', () => {
       ContentEditor.getPublicationState.and.returnValue('new');
+      $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.deleteDraft.and.returnValue($q.resolve());
 
@@ -146,6 +155,7 @@ describe('EditContentToolsCtrl', () => {
 
     it('reports that the online icon is used to go to the content editor', () => {
       ContentEditor.getPublicationState.and.returnValue('live');
+      $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.deleteDraft.and.returnValue($q.resolve());
 
@@ -157,6 +167,7 @@ describe('EditContentToolsCtrl', () => {
 
     it('reports that the alert icon is used to go to the content editor', () => {
       ContentEditor.getPublicationState.and.returnValue('changed');
+      $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.deleteDraft.and.returnValue($q.resolve());
 

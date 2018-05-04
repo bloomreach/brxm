@@ -59,15 +59,14 @@ class EditContentToolsCtrl {
   }
 
   getPublicationIconName() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES);
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES, this.ContentEditor.getPublicationState());
   }
 
   getPublicationIconTooltip() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS);
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS, this.ContentEditor.getPublicationState());
   }
 
-  _getPublicationStateValue(map, state) {
-    const publicationState = state || this.ContentEditor.getPublicationState();
+  _getPublicationStateValue(map, publicationState) {
     return map[publicationState] || map.unknown;
   }
 
