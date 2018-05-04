@@ -129,6 +129,10 @@ class ContentEditorService {
     this.documentDirty = true;
   }
 
+  isCanPublish() {
+    return this.canPublish;
+  }
+
   getError() {
     return this.error;
   }
@@ -443,6 +447,7 @@ class ContentEditorService {
       .then(() =>
         this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
           .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
+          .then(() => this._reportPublishAction())
           .finally(() =>
             this.ContentService.createDraft(this.documentId)
               .then((draftDocument) => {
@@ -498,6 +503,11 @@ class ContentEditorService {
     delete this.canPublish;
     delete this.canRequestPublication;
     delete this.publicationState;
+  }
+
+  _reportPublishAction() {
+    const eventName = this.canPublish ?  'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
+    this.CmsService.reportUsageStatistic(eventName);
   }
 }
 

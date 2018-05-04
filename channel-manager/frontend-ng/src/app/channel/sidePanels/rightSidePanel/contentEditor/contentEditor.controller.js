@@ -88,23 +88,24 @@ class ContentEditorCtrl {
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish());
+      .then(() => this._doPublish())
+      .catch(() => this._reportPublishCancelAction());
   }
 
   _doPublish() {
-    return this.showLoadingIndicator(() => {
-        if (this.ContentEditor.isDocumentDirty()) {
-          this.save().then(() => this.ContentEditor.publish());
-        } else {
-          this.ContentEditor.publish();
-        }
-        this.CmsService.reportUsageStatistic('VisualEditingLightboxPublish');
-      },
-    )
-      .catch(() => this.CmsService.reportUsageStatistic('VisualEditingLightboxCancel'));
+    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+      ? this.save().then(() => this.ContentEditor.publish())
+      : this.ContentEditor.publish()),
+    );
+  }
+
+  _reportPublishCancelAction() {
+    const eventName = this.ContentEditor.isCanPublish() ?  'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
+    this.CmsService.reportUsageStatistic(eventName);
   }
 
   cancelRequestPublication() {
+    this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
     return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
   }
 
