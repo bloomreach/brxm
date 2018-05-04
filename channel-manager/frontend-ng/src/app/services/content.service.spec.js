@@ -125,7 +125,7 @@ describe('ContentService', () => {
     const fieldValue = [{ value: 'bla' }];
 
     $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield', fieldValue).respond(200);
-    ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
+    ContentService.saveField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).toHaveBeenCalled();
@@ -138,7 +138,7 @@ describe('ContentService', () => {
     const fieldValue = [{ value: 'bla' }];
 
     $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield/childfield', fieldValue).respond(200);
-    ContentService.draftField('123', 'somefield/childfield', fieldValue).then(successCallback, failureCallback);
+    ContentService.saveField('123', 'somefield/childfield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).toHaveBeenCalled();
@@ -151,7 +151,7 @@ describe('ContentService', () => {
     const fieldValue = [{ value: 'bla' }];
 
     $httpBackend.expectPUT('/test/ws/content/documents/123/editable/choice%5B2%5D', fieldValue).respond(200);
-    ContentService.draftField('123', 'choice[2]', fieldValue).then(successCallback, failureCallback);
+    ContentService.saveField('123', 'choice[2]', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('ContentService', () => {
     const fieldValue = [{ value: 'bla' }];
 
     $httpBackend.expectPUT('/test/ws/content/documents/123/editable/somefield', fieldValue).respond(403);
-    ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
+    ContentService.saveField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(successCallback).not.toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe('ContentService', () => {
     ContentService.getEditableDocument(doc.id).then(successCallback, failureCallback);
     ContentService.saveDocument(doc).then(successCallback, failureCallback);
     ContentService.discardChanges('123').then(successCallback, failureCallback);
-    ContentService.draftField('123', 'fieldA', fieldValue).then(successCallback, failureCallback);
+    ContentService.saveField('123', 'fieldA', fieldValue).then(successCallback, failureCallback);
 
     $httpBackend.flush();
 

@@ -44,7 +44,7 @@ describe('field service', () => {
   });
 
   it('should draft field', () => {
-    spyOn(ContentService, 'draftField');
+    spyOn(ContentService, 'saveField');
     spyOn(FieldService, '_clearFieldTimer');
     spyOn(FieldService, '_cleanupTimers');
     FieldService.setDocumentId('mockDocumentId');
@@ -53,7 +53,7 @@ describe('field service', () => {
 
     expect(FieldService._clearFieldTimer).toHaveBeenCalled();
     expect(FieldService._cleanupTimers).toHaveBeenCalled();
-    expect(ContentService.draftField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
+    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
   });
 
   it('should clear field timer if exists', () => {

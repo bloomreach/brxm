@@ -41,7 +41,7 @@ class ContentService {
     return this._send('DELETE', ['documents', id, 'editable']);
   }
 
-  draftField(documentId, fieldName, value) {
+  saveField(documentId, fieldName, value) {
     return this._send('PUT', ['documents', documentId, 'editable', fieldName], value);
   }
 

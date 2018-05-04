@@ -85,7 +85,7 @@ class FieldService {
 
   draftField(fieldName, fieldValue, documentId = this.getDocumentId()) {
     this._clearFieldTimer(documentId, fieldName);
-    this.ContentService.draftField(documentId, fieldName, fieldValue);
+    this.ContentService.saveField(documentId, fieldName, fieldValue);
     this._cleanupTimers(documentId);
   }
 
