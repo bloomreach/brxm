@@ -460,7 +460,7 @@ class ContentEditorService {
                   this._onLoadFailure(response);
                 }
                 // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
-                // action has succeeded. The error that has been set will make it clear to the user that the draft
+                // action has succeeded. The error that has been set will make it clear to the user that the document
                 // could not be created.
               }),
           ),

@@ -219,7 +219,7 @@ describe('EditContentMainCtrl', () => {
 
     it('succeeds when switching editor ', (done) => {
       // because the editor is already closed in switchEditor(),
-      // no confirmation dialog will be shown and no draft will be deleted
+      // no confirmation dialog will be shown and no document will be discarded
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
       ContentEditor.discardChanges.and.returnValue($q.resolve());
 
