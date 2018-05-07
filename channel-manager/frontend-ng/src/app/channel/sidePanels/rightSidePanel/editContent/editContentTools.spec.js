@@ -145,7 +145,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.getPublicationState.and.returnValue('new');
       $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOfflineIcon');
@@ -157,7 +157,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.getPublicationState.and.returnValue('live');
       $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOnlineIcon');
@@ -169,7 +169,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.getPublicationState.and.returnValue('changed');
       $ctrl.openContentEditor('view');
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingAlertIcon');
