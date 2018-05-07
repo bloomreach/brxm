@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px">
   <path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M9.5,21.5a1,1,0,0,0,1-1V6.4a1,1,0,0,0-1-.9H2.5a1,1,0,0,0-1,.9V20.6a1,1,0,0,0,1,.9Z"/>
   <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="1" y1="17.5" x2="10" y2="17.5"/>
   <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="5" y1="19.5" x2="7" y2="19.5"/>
