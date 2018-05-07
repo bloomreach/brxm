@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,5 +25,17 @@
   md-input-container label:not(.md-no-float):not(.md-container-ignore),
   md-input-container .md-placeholder {
     width: auto;
+  }
+}
+
+.chrome {
+  // Chrome resets the scroll position of an iframe if an ancestor of the iframe is hidden using display:none
+  // To retain the scroll position, we mark these ancestors with "retain-iframe-scroll-position-when-hiding-in-chrome"
+  // and hide the element using the workaround below.
+  .retain-iframe-scroll-position-when-hiding-in-chrome.ng-hide:not(.ng-hide-animate) {
+    display: block !important;
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
   }
 }

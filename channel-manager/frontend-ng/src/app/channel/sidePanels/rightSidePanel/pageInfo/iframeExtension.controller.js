@@ -15,9 +15,10 @@
  */
 
 class IframeExtensionCtrl {
-  constructor($uiRouterGlobals, ExtensionService) {
+  constructor($element, $uiRouterGlobals, ExtensionService) {
     'ngInject';
 
+    this.$element = $element;
     this.$uiRouterGlobals = $uiRouterGlobals;
     this.ExtensionService = ExtensionService;
   }
@@ -25,8 +26,14 @@ class IframeExtensionCtrl {
   $onInit() {
     const extensionId = this.$uiRouterGlobals.params.extensionId;
     this.extension = this.ExtensionService.getExtension(extensionId);
-
+    this.url = this.extension.urlPath;
     this.pageUrl = this.$uiRouterGlobals.params.pageUrl;
+
+    this.extensionIframe = this.$element.children('.iframe-extension')[0];
+    $(this.extensionIframe).on('load', () => this._onIframeLoaded());
+  }
+
+  _onIframeLoaded() {
   }
 }
 

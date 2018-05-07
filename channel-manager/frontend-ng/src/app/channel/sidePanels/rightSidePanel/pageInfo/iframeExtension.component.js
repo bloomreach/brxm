@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './iframeExtension.scss';
 import controller from './iframeExtension.controller';
 import template from './iframeExtension.html';
 

@@ -1,4 +1,4 @@
-// Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'styles/variables';
-@import 'styles/browser_hacks';
-@import 'styles/button-toggle';
-@import 'styles/buttons';
-@import 'styles/iframe';
-@import 'styles/overlay';
-@import 'styles/lists';
-@import 'styles/mask';
-@import 'styles/subpage';
-@import 'styles/toast';
-@import 'styles/tree';
-@import 'styles/picker';
-@import 'styles/toolbar';
-@import 'styles/tooltips';
-@import 'styles/typography';
+.iframe-extension {
+  border: 0;
+  height: 100%;
+  margin: 0;
+  width: 100%;
+}
