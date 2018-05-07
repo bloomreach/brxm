@@ -19,6 +19,7 @@ describe('RightSidePanel', () => {
   let $q;
   let $rootScope;
   let $state;
+  let $stateRegistry;
   let ChannelService;
   let CmsService;
   let RightSidePanelService;
@@ -31,11 +32,12 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _ChannelService_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$stateRegistry_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
+      $stateRegistry = _$stateRegistry_;
       ChannelService = _ChannelService_;
       RightSidePanelService = _RightSidePanelService_;
     });
@@ -141,6 +143,21 @@ describe('RightSidePanel', () => {
     SidePanelService.open.and.returnValue($q.resolve());
 
     $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $rootScope.$digest();
+
+    expect($element.hasClass('sidepanel-open')).toBe(true);
+    expect($element.css('width')).toBe('800px');
+    expect($element.css('max-width')).toBe('800px');
+  });
+
+  it('opens the panel when transitioning to state "hippo-cm.channel.**"', () => {
+    $stateRegistry.register({ name: 'hippo-cm.channel.page-info.test' });
+
+    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
+    $ctrl.$onInit();
+    SidePanelService.open.and.returnValue($q.resolve());
+
+    $state.go('hippo-cm.channel.page-info.test');
     $rootScope.$digest();
 
     expect($element.hasClass('sidepanel-open')).toBe(true);
