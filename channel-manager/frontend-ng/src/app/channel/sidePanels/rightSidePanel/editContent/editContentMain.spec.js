@@ -16,38 +16,57 @@
 
 describe('EditContentMainCtrl', () => {
   let $q;
-  let $rootScope;
+  let $scope;
   let CmsService;
   let ContentEditor;
   let EditContentService;
   let HippoIframeService;
+  let RightSidePanelService;
 
   let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$q_, _$rootScope_) => {
+    inject(($controller, _$q_, $rootScope) => {
       $q = _$q_;
-      $rootScope = _$rootScope_;
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId',
+        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocumentId',
         'getDocumentType', 'isDocumentDirty', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+      RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
 
-      const $scope = $rootScope.$new();
-      $ctrl = $controller('editContentMainCtrl', {
+      $scope = $rootScope.$new();
+      $ctrl = $controller('editContentMainCtrl as $ctrl', {
         $scope,
         CmsService,
         ContentEditor,
         EditContentService,
         HippoIframeService,
+        RightSidePanelService,
       });
+
+      $ctrl.$onInit();
+      $scope.$digest();
     });
+  });
+
+  it('starts loading when "loading" is set to true', () => {
+    expect(RightSidePanelService.startLoading).not.toHaveBeenCalled();
+    $ctrl.loading = true;
+    $scope.$digest();
+    expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+  });
+
+  it('stops loading when "loading" is set to false', () => {
+    expect(RightSidePanelService.stopLoading).not.toHaveBeenCalled();
+    $ctrl.loading = false;
+    $scope.$digest();
+    expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
   it('knows when not all fields are shown', () => {
@@ -95,28 +114,28 @@ describe('EditContentMainCtrl', () => {
 
       it('succeeds when discarding changes', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
       it('fails when discarding changes is canceled', (done) => {
@@ -126,65 +145,65 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
     });
 
     describe('when opening another document', () => {
       it('succeeds when saving changes and reloads the iframe', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after saving changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
       it('succeeds when discarding changes', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
 
       it('fails when save or discard changes is canceled', (done) => {
@@ -194,18 +213,18 @@ describe('EditContentMainCtrl', () => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
           done();
         });
-        $rootScope.$digest();
+        $scope.$digest();
       });
     });
 
     it('succeeds when switching editor ', (done) => {
       // because the editor is already closed in switchEditor(),
-      // no confirmation dialog will be shown and no draft will be deleted
+      // no confirmation dialog will be shown and no document will be discarded
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(done);
-      $rootScope.$digest();
+      $scope.$digest();
     });
   });
 });

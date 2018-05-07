@@ -442,8 +442,8 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall();
 
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         replayAll();
 
@@ -489,8 +489,8 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("url-name");
         expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(true);
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(true);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(true);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(true);
         expectLastCall();
 
         replayAll();
@@ -542,8 +542,8 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(unpublished), eq(fields), isA(Map.class));
         expectLastCall().andAnswer(() -> ((Map) getCurrentArguments()[2]).put("extraField", new FieldValue("value")));
 
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         replayAll();
 
@@ -916,8 +916,8 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
 
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
@@ -962,8 +962,8 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
         expectLastCall();
 
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
-        expect(EditingUtils.isHintActionAvailable(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
+        expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();

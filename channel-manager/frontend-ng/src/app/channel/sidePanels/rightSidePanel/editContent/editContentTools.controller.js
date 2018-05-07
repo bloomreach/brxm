@@ -28,6 +28,13 @@ const PUBLICATION_STATE_ICON_TOOLTIPS = {
   unknown: '',
 };
 
+const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
+  new: 'VisualEditingOfflineIcon',
+  live: 'VisualEditingOnlineIcon',
+  changed: 'VisualEditingAlertIcon',
+  unknown: 'VisualEditingUnknownIcon',
+};
+
 class EditContentToolsCtrl {
   constructor($q, CmsService, ContentEditor, EditContentService) {
     'ngInject';
@@ -52,19 +59,19 @@ class EditContentToolsCtrl {
   }
 
   getPublicationIconName() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES);
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES, this.ContentEditor.getPublicationState());
   }
 
   getPublicationIconTooltip() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS);
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS, this.ContentEditor.getPublicationState());
   }
 
-  _getPublicationStateValue(map) {
-    const publicationState = this.ContentEditor.getPublicationState();
+  _getPublicationStateValue(map, publicationState) {
     return map[publicationState] || map.unknown;
   }
 
   openContentEditor(exitMode) {
+    this.publicationStateOnExit = this.ContentEditor.getPublicationState();
     this.exitMode = exitMode;
     this.EditContentService.stopEditing();
   }
@@ -72,7 +79,7 @@ class EditContentToolsCtrl {
   uiCanExit() {
     if (this.exitMode === 'view') {
       return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-        .then(() => this.ContentEditor.deleteDraft())
+        .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())
         .finally(() => this._clearExitMode());
     } else if (this.exitMode === 'edit') {
@@ -86,7 +93,8 @@ class EditContentToolsCtrl {
   _viewContent() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
     this.ContentEditor.close();
-    this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    const statisticEventName = this._getPublicationStateValue(REPORT_USAGE_STATISTIC_EVENT_NAMES, this.publicationStateOnExit);
+    this.CmsService.reportUsageStatistic(statisticEventName);
   }
 
   _editContent() {

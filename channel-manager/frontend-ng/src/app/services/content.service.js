@@ -29,11 +29,11 @@ class ContentService {
     this._running = false;
   }
 
-  createDraft(id) {
+  getEditableDocument(id) {
     return this._send('GET', ['documents', id, 'editable']);
   }
 
-  saveDraft(doc) {
+  saveDocument(doc) {
     return this._send('PUT', ['documents', doc.id, 'editable'], doc);
   }
 
@@ -41,7 +41,7 @@ class ContentService {
     return this._send('DELETE', ['documents', id, 'editable']);
   }
 
-  draftField(documentId, fieldName, value) {
+  saveField(documentId, fieldName, value) {
     return this._send('PUT', ['documents', documentId, 'editable', fieldName], value);
   }
 

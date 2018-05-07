@@ -137,7 +137,7 @@ public class EditingUtils {
     public static boolean isActionAvailable(final Workflow workflow, final String action) {
         try {
             final Map<String, Serializable> hints = workflow.hints();
-            return isHintActionAvailable(hints, action);
+            return isHintActionTrue(hints, action);
         } catch (RemoteException | RepositoryException | WorkflowException e) {
             log.warn("Failed reading hints from workflow", e);
         }
@@ -151,7 +151,7 @@ public class EditingUtils {
                 final Map requestsMap = (Map) hints.get("requests");
                 if (requestsMap.containsKey(requestIdentifier)) {
                     final Map requestHints = (Map) requestsMap.get(requestIdentifier);
-                    return isHintActionAvailable(requestHints, action);
+                    return isHintActionTrue(requestHints, action);
                 }
             }
         } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
@@ -161,15 +161,31 @@ public class EditingUtils {
     }
 
     /**
-     * Check if an action is available as hint.
+     * Check if an action is available as hint with value true.
      *
      * @param hints map of workflow hints
      * @param action name of the action to check for
      * @return true if the hints map contains the action and its value is true
      */
-    public static boolean isHintActionAvailable(final Map<String, Serializable> hints, final String action) {
+    public static boolean isHintActionTrue(final Map<String, Serializable> hints, final String action) {
         try {
             return hints.containsKey(action) && ((Boolean) hints.get(action));
+        } catch (ClassCastException e) {
+            log.warn("Hint '{}' not stored as Boolean", action, e);
+        }
+        return false;
+    }
+
+    /**
+     * Check if an action is available as hint and has value false.
+     *
+     * @param hints map of workflow hints
+     * @param action name of the action to check for
+     * @return true if the hints map contains the action and its value is false
+     */
+    public static boolean isHintActionFalse(final Map<String, Serializable> hints, final String action) {
+        try {
+            return hints.containsKey(action) && !((Boolean) hints.get(action));
         } catch (ClassCastException e) {
             log.warn("Hint '{}' not stored as Boolean", action, e);
         }
