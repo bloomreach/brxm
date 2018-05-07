@@ -26,13 +26,13 @@ public class HardcodedCmsExtensionLoader implements CmsExtensionLoader {
         testExtension1.setId("test1");
         testExtension1.setDisplayName("Test One");
         testExtension1.setContext(CmsExtensionContext.PAGE);
-        testExtension1.setUrlPath("/site/_cmsinternal/testextension");
+        testExtension1.setUrlPath("/site/_cmsinternal/test-extension");
 
         final CmsExtensionBean testExtension2 = new CmsExtensionBean();
         testExtension2.setId("test2");
         testExtension2.setDisplayName("Test Two");
         testExtension2.setContext(CmsExtensionContext.PAGE);
-        testExtension2.setUrlPath("/site/_cmsinternal/testextension");
+        testExtension2.setUrlPath("/site/_cmsinternal/test-extension");
 
         return Arrays.asList(testExtension1, testExtension2);
     }
