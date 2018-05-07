@@ -32,6 +32,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 
 /**
@@ -100,7 +101,7 @@ public class VersionVariantTask extends AbstractDocumentTask {
         if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             branchId = targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
         } else {
-            branchId = "core";
+            branchId = CORE_BRANCH_ID;
         }
 
         final String[] branchLabels;

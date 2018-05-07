@@ -23,7 +23,6 @@ import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -31,6 +30,7 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.ArrayUtils.add;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
@@ -38,6 +38,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 
 public class BranchTask extends AbstractDocumentTask {
 
@@ -69,7 +70,7 @@ public class BranchTask extends AbstractDocumentTask {
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        if (branchId == null || (branchName == null && !"core".equals(branchId))) {
+        if (branchId == null || (branchName == null && !CORE_BRANCH_ID.equals(branchId))) {
             throw new WorkflowException("Both branchId and branchName need to be provided");
         }
 
@@ -92,13 +93,13 @@ public class BranchTask extends AbstractDocumentTask {
                 return new Document(targetNode);
             }
         }
-        if (branchId.equals(DocumentVariant.CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+        if (branchId.equals(CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // preview already core. Nothing to do
             return new Document(targetNode);
         }
 
         JcrUtils.ensureIsCheckedOut(targetNode);
-        if ("core".equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+        if (CORE_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // to be sure also remove the properties since hippo document is relaxed
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
@@ -113,14 +114,12 @@ public class BranchTask extends AbstractDocumentTask {
             final String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
             if (contains(branches, branchId)) {
                  log.warn("Handle property '{}' already contains branchId '{}' which is unexpected since the branch should " +
-                         "have been created before then.", HIPPO_BRANCHES_PROPERTY, branchId);
+                         "have already been created.", HIPPO_BRANCHES_PROPERTY, branchId);
             } else {
-                handle.setProperty(HIPPO_BRANCHES_PROPERTY, ArrayUtils.add(branches, branchId));
+                handle.setProperty(HIPPO_BRANCHES_PROPERTY, add(branches, branchId));
             }
 
-            if (!targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-                targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-            }
+            targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
         }

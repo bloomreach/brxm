@@ -503,52 +503,44 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
 
     /**
      *
-     * @return The {@link Set} of unique branches in version history
+     * @return The {@link Set} of branches in version history
      *
-     * @throws WorkflowException
-     * @throws RepositoryException
-     * @throws RepositoryException
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      */
-    Set<String> listBranches() throws WorkflowException, RepositoryException, RepositoryException;
+    Set<String> listBranches() throws WorkflowException;
 
     /**
      * <p>
      *     Branches this document. During branching the following will happen
      *     <ol>
      *         <li>
-     *             The current preview will be version into version history. If the current preview is for a branchId x, the
-     *             x-preview version label will be moved to the newly version. If the current preview is for core,
-     *             the core-preview version label will be moved to the newly created version.
+     *             The current preview will be versioned into version history. If the current preview is for a branchId
+     *             x, the x-preview version label will be moved to the newly created version. If the current preview is
+     *             for core, the core-preview version label will be moved to the newly created version.
      *         </li>
      *         <li>
-     *             The preview will be marked to be for branch {@code branchId}. If the {@code branchId} is equal to 'core',
-     *             the result will be that from the preview the branch information is removed.
+     *             The preview will be marked to be for branch {@code branchId}. If the {@code branchId} is equal to
+     *             'core', the result will be that the branch information is removed from the preview.
      *         </li>
      *     </ol>
      * </p>
-     * @param brandId the id of the branch that will be stored on the document variant
+     * @param branchId the id of the branch that will be stored on the document variant
      * @param branchName the name that will be stored on the document variant for the branch
      * @return {@link Document} wrapping the workspace preview node variant
      * @throws WorkflowException In case the {@code branchId} already exists or branching is not allowed in the current
      *                           document state
-     * @throws RepositoryException
-     * @throws RemoteException
      */
-    Document branch(String brandId, String branchName) throws WorkflowException, RepositoryException, RemoteException;
+    Document branch(String branchId, String branchName) throws WorkflowException;
 
     /**
-     *  <p>
-     *      Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
-     *      if no such version exists. Before a version from version history is restored, the preview gets versioned
-     *  </p>
+     * Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
+     * if no such version exists. Before a version from version history is restored, the preview gets versioned.
      *
      *  @return {@link Document} wrapping the workspace preview node variant
      *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch
      *                            is not allowed in the current document state
-     * @throws RepositoryException
-     * @throws RemoteException
      */
-    Document checkoutBranch(String brandId) throws WorkflowException, RepositoryException, RemoteException;
+    Document checkoutBranch(String branchId) throws WorkflowException;
 
     /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}

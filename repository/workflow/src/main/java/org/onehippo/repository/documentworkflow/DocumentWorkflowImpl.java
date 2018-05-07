@@ -361,21 +361,21 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public Set<String> listBranches() throws WorkflowException, RepositoryException {
-        return (Set) triggerAction(DocumentWorkflowAction.listBranches());
+    public Set<String> listBranches() throws WorkflowException {
+        return (Set<String>) triggerAction(DocumentWorkflowAction.listBranches());
     }
 
     @Override
-    public Document branch(final String brandId, final String branchName) throws WorkflowException, RepositoryException {
+    public Document branch(final String branchId, final String branchName) throws WorkflowException {
         return (Document) triggerAction(DocumentWorkflowAction.branch()
-                .addEventPayload(BRANCH_ID,brandId)
+                .addEventPayload(BRANCH_ID, branchId)
                 .addEventPayload(BRANCH_NAME, branchName));
     }
 
     @Override
-    public Document checkoutBranch(final String brandId) throws WorkflowException, RepositoryException {
+    public Document checkoutBranch(final String branchId) throws WorkflowException {
         return (Document) triggerAction(DocumentWorkflowAction.checkoutBranch()
-                .addEventPayload(BRANCH_ID,brandId));
+                .addEventPayload(BRANCH_ID, branchId));
     }
 
     @Override

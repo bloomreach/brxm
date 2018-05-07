@@ -550,7 +550,7 @@
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 
           <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be checkout because it doesn\'t exist'"/>
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be checked out because it doesn\'t exist'"/>
 
           <if cond="unpublished.isBranch(_event.data?.branchId)">
             <!-- return the same DocumentVariant object we already had -->

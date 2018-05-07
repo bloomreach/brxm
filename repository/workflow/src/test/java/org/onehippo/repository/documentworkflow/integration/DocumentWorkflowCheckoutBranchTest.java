@@ -128,7 +128,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
                 final DocumentWorkflow workflow = getDocumentWorkflow(handle);
                 workflow.checkoutBranch("foo");
             } catch (WorkflowException e) {
-                assertEquals("Branch 'foo' cannot be checkout because it doesn't exist",
+                assertEquals("Branch 'foo' cannot be checked out because it doesn't exist",
                         e.getMessage());
                 assertEquals("In case of a failed checkout, no new version should be created",
                         numberOfVersions, versionHistory.getAllVersions().getSize());

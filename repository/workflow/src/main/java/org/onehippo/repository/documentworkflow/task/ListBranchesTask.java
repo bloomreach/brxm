@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.documentworkflow.task;
 
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,11 +31,11 @@ import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 
 public class ListBranchesTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
-    public static final String CORE_BRANCH_ID = "core";
 
     private DocumentVariant unpublished;
     private DocumentVariant published;
@@ -69,7 +68,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
 
 
     @Override
-    protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    protected Object doExecute() throws WorkflowException, RepositoryException {
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
@@ -104,7 +103,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
                final Version version = versionHistory.getVersionByLabel(label);
                final Node frozenNode = version.getFrozenNode();
                if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
-                   // found a real branch (instead of a label for a non-branch
+                   // found a real branch instead of a label for a non-branch
                    branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
                }
            }

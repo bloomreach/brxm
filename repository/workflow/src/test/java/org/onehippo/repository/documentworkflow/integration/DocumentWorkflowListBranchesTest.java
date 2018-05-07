@@ -32,7 +32,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.task.ListBranchesTask.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIntegrationTest {
