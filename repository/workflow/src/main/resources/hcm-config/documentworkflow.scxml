@@ -539,7 +539,7 @@
       <!-- the initial no-branching state is used and active to indicate checking-out operations are currently not
            allowed or possible because there is no unpublished document variant yet -->
       <state id="no-checkout-branch">
-        <!-- event-less transition to 'eligible-for-checkout-branch' state when an unpublished document variant exists
+        <!-- event-less transition to 'can-checkout-branch' state when an unpublished document variant exists
              and not being edited -->
         <transition target="can-checkout-branch" cond="!editing and !!unpublished"/>
       </state>

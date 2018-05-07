@@ -40,7 +40,7 @@ public class StatesBuilder {
     public static String STATE_BRANCHABLE = "branchable";
     public static String STATE_NO_BRANCHABLE = "no-branchable";
     public static String STATE_NO_CHECKOUT_BRANCH = "no-checkout-branch";
-    public static String STATE_ELIGIBLE_FOR_CHECKOUT_BRANCH = "eligible-for-checkout-branch";
+    public static String STATE_CAN_CHECKOUT_BRANCH = "can-checkout-branch";
     public static String STATE_LOGEVENT = "logEvent";
 
     private TreeSet<String> states = new TreeSet<>();
@@ -157,8 +157,8 @@ public class StatesBuilder {
         states.add(STATE_NO_CHECKOUT_BRANCH);
         return this;
     }
-    public StatesBuilder eligibleForCheckoutBranch() {
-        states.add(STATE_ELIGIBLE_FOR_CHECKOUT_BRANCH);
+    public StatesBuilder canCheckoutBranch() {
+        states.add(STATE_CAN_CHECKOUT_BRANCH);
         return this;
     }
 

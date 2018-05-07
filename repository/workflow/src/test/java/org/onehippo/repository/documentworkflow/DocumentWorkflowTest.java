@@ -170,7 +170,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -187,7 +187,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -202,7 +202,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -217,7 +217,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -511,7 +511,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -529,7 +529,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -544,7 +544,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -561,7 +561,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -579,7 +579,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -597,7 +597,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -619,7 +619,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -637,7 +637,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -659,7 +659,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -677,7 +677,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -697,7 +697,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -713,7 +713,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -729,7 +729,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -744,7 +744,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -763,7 +763,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -778,7 +778,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
     }
@@ -842,7 +842,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -863,7 +863,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -879,7 +879,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -896,7 +896,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -913,7 +913,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
     }
@@ -979,7 +979,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -995,7 +995,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().copyable()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -1011,7 +1011,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -1028,7 +1028,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -1045,7 +1045,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().noEdit().requested().noPublish().depublishable().versionable().noTerminate().copyable()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
     }
@@ -1088,7 +1088,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
 
@@ -1104,7 +1104,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
-                .branchable().eligibleForCheckoutBranch()
+                .branchable().canCheckoutBranch()
                 .states()
         );
     }
