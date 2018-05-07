@@ -15,19 +15,25 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class HardcodedCmsExtensionLoader implements CmsExtensionLoader {
 
     @Override
     public List<CmsExtension> loadCmsExtensions() {
-        final CmsExtensionBean testExtension = new CmsExtensionBean();
-        testExtension.setId("test");
-        testExtension.setDisplayName("Test");
-        testExtension.setContext(CmsExtensionContext.PAGE);
-        testExtension.setUrlPath("/site/_cmsinternal/testextension");
+        final CmsExtensionBean testExtension1 = new CmsExtensionBean();
+        testExtension1.setId("test1");
+        testExtension1.setDisplayName("Test One");
+        testExtension1.setContext(CmsExtensionContext.PAGE);
+        testExtension1.setUrlPath("/site/_cmsinternal/testextension");
 
-        return Collections.singletonList(testExtension);
+        final CmsExtensionBean testExtension2 = new CmsExtensionBean();
+        testExtension2.setId("test2");
+        testExtension2.setDisplayName("Test Two");
+        testExtension2.setContext(CmsExtensionContext.PAGE);
+        testExtension2.setUrlPath("/site/_cmsinternal/testextension");
+
+        return Arrays.asList(testExtension1, testExtension2);
     }
 }

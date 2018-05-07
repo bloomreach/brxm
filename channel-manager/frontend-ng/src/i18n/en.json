@@ -153,6 +153,8 @@
   "NOTIFICATION_DOCUMENT_SAVED": "Document saved",
   "NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT": "Document selected for '{{componentName}}'",
   "OK": "OK",
+  "PAGE_INFO_TITLE": "Page {{pageUrl}}",
+  "PAGE_INFO_TABS_ARIA_LABEL": "Page Info Links",
   "PICKER_EMPTY_TREE": "No documents are available",
   "PICKER_LISTING_NAME": "Name",
   "PICKER_SELECT": "Select link type",

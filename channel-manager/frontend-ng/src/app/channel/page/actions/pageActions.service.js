@@ -24,6 +24,7 @@ class PageActionsService extends MenuService {
     ExtensionService,
     FeedbackService,
     HippoIframeService,
+    PageInfoService,
     PageMetaDataService,
     SessionService,
     SiteMapItemService,
@@ -39,6 +40,7 @@ class PageActionsService extends MenuService {
     this.ExtensionService = ExtensionService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageInfoService = PageInfoService;
     this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
     this.SiteMapItemService = SiteMapItemService;
@@ -98,7 +100,9 @@ class PageActionsService extends MenuService {
   }
 
   _pageInfo() {
-    console.log('TODO: show page extensions in right side-panel');
+    // TODO: provide the full page URLs (live and preview) instead of just the path relative to the channel's mount
+    const pageUrl = this.PageMetaDataService.getPathInfo();
+    this.PageInfoService.showPageInfo(pageUrl);
   }
 
   _pageProperties() {

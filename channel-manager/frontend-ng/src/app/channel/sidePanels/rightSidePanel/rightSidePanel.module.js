@@ -16,17 +16,20 @@
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import rightSidePanelService from './rightSidePanel.service';
+
+import createContentModule from './createContent/createContent.module';
 import contentEditorModule from './contentEditor/contentEditor.module';
 import editContentModule from './editContent/editContent.module';
 import resizeHandleModule from '../resizeHandle/resizeHandle.module';
-import createContentModule from './createContent/createContent.module';
+import pageInfoModule from './pageInfo/pageInfo.module';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
     contentEditorModule,
+    createContentModule,
     editContentModule,
     resizeHandleModule,
-    createContentModule,
+    pageInfoModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
   .service('RightSidePanelService', rightSidePanelService);

@@ -34,6 +34,13 @@ class ExtensionService {
     }
     return [];
   }
+
+  getExtension(id) {
+    if (this.ConfigService.extensions) {
+      return this.ConfigService.extensions.find(extension => extension.id === id);
+    }
+    return undefined;
+  }
 }
 
 export default ExtensionService;
