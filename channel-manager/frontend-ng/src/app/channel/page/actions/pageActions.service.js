@@ -26,6 +26,7 @@ class PageActionsService extends MenuService {
     HippoIframeService,
     PageInfoService,
     PageMetaDataService,
+    PathService,
     SessionService,
     SiteMapItemService,
     SiteMapService,
@@ -42,6 +43,7 @@ class PageActionsService extends MenuService {
     this.HippoIframeService = HippoIframeService;
     this.PageInfoService = PageInfoService;
     this.PageMetaDataService = PageMetaDataService;
+    this.PathService = PathService;
     this.SessionService = SessionService;
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
@@ -100,8 +102,9 @@ class PageActionsService extends MenuService {
   }
 
   _pageInfo() {
-    // TODO: provide the full page URLs (live and preview) instead of just the path relative to the channel's mount
-    const pageUrl = this.PageMetaDataService.getPathInfo();
+    const channelBaseUrl = this.ChannelService.getChannel().url;
+    const pagePath = this.PageMetaDataService.getPathInfo();
+    const pageUrl = this.PathService.concatPaths(channelBaseUrl, pagePath);
     this.PageInfoService.showPageInfo(pageUrl);
   }
 
