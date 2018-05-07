@@ -129,10 +129,6 @@ class ContentEditorService {
     this.documentDirty = true;
   }
 
-  isCanPublish() {
-    return this.canPublish;
-  }
-
   getError() {
     return this.error;
   }
@@ -417,7 +413,16 @@ class ContentEditorService {
       .ok(ok)
       .cancel(cancel);
 
-    return this.DialogService.show(confirm);
+    return this.DialogService.show(confirm)
+      .catch(() => {
+        this._reportPublishCancelAction();
+        return this.$q.reject();
+      });
+  }
+
+  _reportPublishCancelAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
+    this.CmsService.reportUsageStatistic(eventName);
   }
 
   _confirmPublicationTextKey() {
@@ -475,6 +480,11 @@ class ContentEditorService {
       });
   }
 
+  _reportPublishAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
+    this.CmsService.reportUsageStatistic(eventName);
+  }
+
   cancelRequestPublication() {
     return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
       .catch(() => {
@@ -503,11 +513,6 @@ class ContentEditorService {
     delete this.canPublish;
     delete this.canRequestPublication;
     delete this.publicationState;
-  }
-
-  _reportPublishAction() {
-    const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
-    this.CmsService.reportUsageStatistic(eventName);
   }
 }
 

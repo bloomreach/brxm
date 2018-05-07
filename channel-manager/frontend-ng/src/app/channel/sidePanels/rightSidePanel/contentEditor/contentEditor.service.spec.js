@@ -886,9 +886,10 @@ describe('ContentEditorService', () => {
   });
 
   describe('confirmPublication', () => {
-    const showPromise = {};
+    let showPromise;
 
     beforeEach(() => {
+      showPromise = $q.resolve();
       ContentEditor.document = {
         displayName: 'Test',
       };
@@ -902,29 +903,47 @@ describe('ContentEditorService', () => {
         ContentEditor.canPublish = true;
       });
 
-      it('shows a "publish" confirmation dialog', () => {
-        const publishDialog = ContentEditor.confirmPublication();
-
-        expect(DialogService.confirm).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
-          documentName: 'Test',
+      it('shows a "publish" confirmation dialog', (done) => {
+        ContentEditor.confirmPublication().then(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
         });
-        expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
-        expect(DialogService.show).toHaveBeenCalled();
-        expect(publishDialog).toBe(showPromise);
+        $rootScope.$digest();
       });
 
-      it('shows a "save and publish" confirmation dialog', () => {
+      it('shows a "save and publish" confirmation dialog', (done) => {
         ContentEditor.markDocumentDirty();
-        const saveAndPublishDialog = ContentEditor.confirmPublication();
-
-        expect(DialogService.confirm).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
-          documentName: 'Test',
+        ContentEditor.confirmPublication().then(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DIRTY_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
         });
-        expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_PUBLISH');
-        expect(DialogService.show).toHaveBeenCalled();
-        expect(saveAndPublishDialog).toBe(showPromise);
+        $rootScope.$digest();
+      });
+
+      it('reports an event when cancel-publish has been clicked', (done) => {
+        DialogService.show.and.returnValue($q.reject());
+
+        ContentEditor.confirmPublication().catch(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_PUBLISH_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('PUBLISH');
+          expect(DialogService.show).toHaveBeenCalled();
+          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxCancel');
+          done();
+        });
+        $rootScope.$digest();
       });
     });
 
@@ -933,29 +952,47 @@ describe('ContentEditorService', () => {
         ContentEditor.canRequestPublication = true;
       });
 
-      it('shows a "request publication" confirmation dialog', () => {
-        const requestPublicationDialog = ContentEditor.confirmPublication();
-
-        expect(DialogService.confirm).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
-          documentName: 'Test',
+      it('shows a "request publication" confirmation dialog', (done) => {
+        ContentEditor.confirmPublication().then(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
         });
-        expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
-        expect(DialogService.show).toHaveBeenCalled();
-        expect(requestPublicationDialog).toBe(showPromise);
+        $rootScope.$digest();
       });
 
-      it('shows a "save and request publication" confirmation dialog', () => {
+      it('shows a "save and request publication" confirmation dialog', (done) => {
         ContentEditor.markDocumentDirty();
-        const saveAndPublishDialog = ContentEditor.confirmPublication();
-
-        expect(DialogService.confirm).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT', {
-          documentName: 'Test',
+        ContentEditor.confirmPublication().then(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_REQUEST_PUBLICATION');
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
         });
-        expect($translate.instant).toHaveBeenCalledWith('SAVE_AND_REQUEST_PUBLICATION');
-        expect(DialogService.show).toHaveBeenCalled();
-        expect(saveAndPublishDialog).toBe(showPromise);
+        $rootScope.$digest();
+      });
+
+      it('reports an event when cancel-publication-request has been clicked', (done) => {
+        DialogService.show.and.returnValue($q.reject());
+
+        ContentEditor.confirmPublication().catch(() => {
+          expect(DialogService.confirm).toHaveBeenCalled();
+          expect($translate.instant).toHaveBeenCalledWith('CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT', {
+            documentName: 'Test',
+          });
+          expect($translate.instant).toHaveBeenCalledWith('REQUEST_PUBLICATION');
+          expect(DialogService.show).toHaveBeenCalled();
+          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingLightboxRequestPubCancel');
+          done();
+        });
+        $rootScope.$digest();
       });
     });
   });
