@@ -18,6 +18,7 @@ describe('ContentEditorCtrl', () => {
   let $componentController;
   let $q;
   let $rootScope;
+  let CmsService;
   let ContentEditor;
 
   let $ctrl;
@@ -28,11 +29,14 @@ describe('ContentEditorCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _CmsService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
     });
+
+    spyOn(CmsService, 'reportUsageStatistic');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
       'confirmPublication',
@@ -163,9 +167,10 @@ describe('ContentEditorCtrl', () => {
       $scope.$digest();
 
       expect(ContentEditor.confirmPublication).toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
     });
 
-    it('does not publish nor save if the confirmation dialog is cancelled', () => {
+    it('does not publish nor save if the confirmation dialog is cancelled for a publication', () => {
       ContentEditor.isDocumentDirty.and.returnValue(true);
       ContentEditor.confirmPublication.and.returnValue($q.reject());
 
@@ -174,6 +179,19 @@ describe('ContentEditorCtrl', () => {
 
       expect(ContentEditor.save).not.toHaveBeenCalled();
       expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
+    });
+
+    it('does not publish nor save if the confirmation dialog is cancelled for a request publication', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmPublication.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.save).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
     });
 
     it('publishes if the confirmation dialog is confirmed', () => {
@@ -183,6 +201,7 @@ describe('ContentEditorCtrl', () => {
       $scope.$digest();
 
       expect(ContentEditor.publish).toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
     });
 
     it('saves the form of a dirty document, prior to publishing', () => {
@@ -232,6 +251,7 @@ describe('ContentEditorCtrl', () => {
       expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
       expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingCancelRequest');
     });
   });
 });

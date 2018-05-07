@@ -413,7 +413,16 @@ class ContentEditorService {
       .ok(ok)
       .cancel(cancel);
 
-    return this.DialogService.show(confirm);
+    return this.DialogService.show(confirm)
+      .catch(() => {
+        this._reportPublishCancelAction();
+        return this.$q.reject();
+      });
+  }
+
+  _reportPublishCancelAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
+    this.CmsService.reportUsageStatistic(eventName);
   }
 
   _confirmPublicationTextKey() {
@@ -443,6 +452,7 @@ class ContentEditorService {
       .then(() =>
         this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
           .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
+          .then(() => this._reportPublishAction())
           .finally(() =>
             this.ContentService.getEditableDocument(this.documentId)
               .then((saveDocument) => {
@@ -469,6 +479,11 @@ class ContentEditorService {
         this.FeedbackService.showError(errorKey, messageParams);
         return this.$q.reject();
       });
+  }
+
+  _reportPublishAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
+    this.CmsService.reportUsageStatistic(eventName);
   }
 
   cancelRequestPublication() {

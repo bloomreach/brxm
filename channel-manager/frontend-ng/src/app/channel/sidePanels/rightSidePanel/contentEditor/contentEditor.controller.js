@@ -19,6 +19,7 @@ class ContentEditorCtrl {
     $q,
     $scope,
     $translate,
+    CmsService,
     ContentEditor,
     ConfigService,
     ProjectService,
@@ -27,6 +28,7 @@ class ContentEditorCtrl {
 
     this.$q = $q;
     this.$scope = $scope;
+    this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
@@ -84,6 +86,7 @@ class ContentEditorCtrl {
   }
 
   publish() {
+    this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
       .then(() => this._doPublish());
   }
@@ -96,6 +99,7 @@ class ContentEditorCtrl {
   }
 
   cancelRequestPublication() {
+    this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
     return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
   }
 
