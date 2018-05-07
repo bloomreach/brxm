@@ -13,6 +13,7 @@
 // limitations under the License.
 
 @import 'styles/variables';
+@import 'styles/browser_hacks';
 @import 'styles/button-toggle';
 @import 'styles/buttons';
 @import 'styles/iframe';
@@ -26,4 +27,3 @@
 @import 'styles/toolbar';
 @import 'styles/tooltips';
 @import 'styles/typography';
-@import 'styles/ie_hacks';
