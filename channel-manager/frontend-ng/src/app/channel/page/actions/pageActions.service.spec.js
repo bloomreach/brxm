@@ -28,6 +28,7 @@ describe('PageActionsService', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageActionsService;
+  let PageInfoService;
   let PageMetaDataService;
   let SessionService;
   let SiteMapItemService;
@@ -52,6 +53,7 @@ describe('PageActionsService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageActionsService_,
+      _PageInfoService_,
       _PageMetaDataService_,
       _SessionService_,
       _SiteMapItemService_,
@@ -66,6 +68,7 @@ describe('PageActionsService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageActionsService = _PageActionsService_;
+      PageInfoService = _PageInfoService_;
       PageMetaDataService = _PageMetaDataService_;
       SessionService = _SessionService_;
       SiteMapItemService = _SiteMapItemService_;
@@ -139,6 +142,17 @@ describe('PageActionsService', () => {
 
       const info = getItem('info');
       expect(info).not.toBeDefined();
+    });
+
+    it('shows page info when clicked', () => {
+      ExtensionService.hasExtensions.and.returnValue(true);
+      spyOn(PageMetaDataService, 'getPathInfo').and.returnValue('/pageUrl');
+      spyOn(PageInfoService, 'showPageInfo');
+
+      PageActionsService._initMenu();
+      getItem('info').onClick();
+
+      expect(PageInfoService.showPageInfo).toHaveBeenCalledWith('/pageUrl');
     });
   });
 
