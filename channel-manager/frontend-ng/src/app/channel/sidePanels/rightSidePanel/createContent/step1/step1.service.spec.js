@@ -162,8 +162,8 @@ describe('Step1Service', () => {
     });
   });
 
-  describe('createDraft', () => {
-    it('executes a "documents" backend call to create a draft', (done) => {
+  describe('createDocument', () => {
+    it('executes a "documents" backend call to create a document', (done) => {
       Step1Service.name = 'test-name';
       Step1Service.url = 'test-url';
       Step1Service.templateQuery = 'test-tpl-query';
@@ -171,7 +171,7 @@ describe('Step1Service', () => {
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
 
-      Step1Service.createDraft().then(done);
+      Step1Service.createDocument().then(done);
       expect(ContentService._send).toHaveBeenCalledWith('POST', ['documents'], {
         name: 'test-name',
         slug: 'test-url',
@@ -182,10 +182,10 @@ describe('Step1Service', () => {
       });
     });
 
-    it('handles create-draft backend errors', () => {
+    it('handles create-document backend errors', () => {
       spyOn(FeedbackService, 'showError');
-      expectError(() => Step1Service.createDraft(), {}, 'Unexpected error creating new draft document');
-      expectError(() => Step1Service.createDraft(), {
+      expectError(() => Step1Service.createDocument(), {}, 'Unexpected error creating a new document');
+      expectError(() => Step1Service.createDocument(), {
         data: {
           reason: 'the_cause',
           params: 'the_params',

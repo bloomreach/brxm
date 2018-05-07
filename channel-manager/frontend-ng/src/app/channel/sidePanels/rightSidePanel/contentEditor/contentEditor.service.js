@@ -145,7 +145,7 @@ class ContentEditorService {
     this._setDocumentId(id);
 
     return this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
+      .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
           if (this._hasFields(document)) {
             return this.loadDocumentType(document);
@@ -153,7 +153,7 @@ class ContentEditorService {
           return this.$q.reject(this._noContentResponse(document));
         })
         .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDraftInvalid());
+      .catch(() => this._setErrorDocumentInvalid());
   }
 
   _setDocumentId(id) {
@@ -186,11 +186,11 @@ class ContentEditorService {
     };
   }
 
-  _setErrorDraftInvalid() {
+  _setErrorDocumentInvalid() {
     this._clearDocument();
     this.error = {
-      titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+      titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+      messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
       linkToContentEditor: true,
     };
   }
@@ -243,7 +243,7 @@ class ContentEditorService {
   }
 
   save() {
-    return this._saveDraft()
+    return this._saveDocument()
       .catch((response) => {
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
@@ -267,11 +267,11 @@ class ContentEditorService {
       });
   }
 
-  _saveDraft() {
+  _saveDocument() {
     if (!this.documentDirty) {
       return this.$q.resolve();
     }
-    return this.ContentService.saveDraft(this.document)
+    return this.ContentService.saveDocument(this.document)
       .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
   }
 
@@ -352,7 +352,7 @@ class ContentEditorService {
       .then((action) => {
         switch (action) {
           case 'SAVE':
-            return this._saveDraft()
+            return this._saveDocument()
               .then(() => action); // let caller know that changes have been saved
           default:
             return this.$q.resolve(action); // let caller know that changes have not been saved
@@ -386,7 +386,7 @@ class ContentEditorService {
       || this.killed; // editor was killed, don't show dialog
   }
 
-  deleteDraft() {
+  discardChanges() {
     if (this.isEditing() && !this.killed) {
       return this.ContentService.discardChanges(this.document.id);
     }
@@ -454,22 +454,23 @@ class ContentEditorService {
           .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
           .then(() => this._reportPublishAction())
           .finally(() =>
-            this.ContentService.createDraft(this.documentId)
-              .then((draftDocument) => {
-                this._onLoadSuccess(draftDocument, this.documentType);
+            this.ContentService.getEditableDocument(this.documentId)
+              .then((saveDocument) => {
+                this._onLoadSuccess(saveDocument, this.documentType);
               })
               .catch((response) => {
                 if (this.canPublish) {
-                  // Document published. Creating the draft should not have failed, so set the same error as when
-                  // opening a document fails.
-                  this._setErrorDraftInvalid();
+                  // Document published. Getting an editable document should not have failed, so set the same error as
+                  // when getting an editable document fails.
+                  this._setErrorDocumentInvalid();
                 } else {
-                  // Publication requested. Creating the draft is expected to fail; _onLoadFailure will set an error and
-                  // remove the document so the 'document not editable' message is shown and the editor is removed.
+                  // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
+                  // error and remove the document so the 'document not editable' message is shown and the editor is
+                  // removed.
                   this._onLoadFailure(response);
                 }
                 // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
-                // action has succeeded. The error that has been set will make it clear to the user that the draft
+                // action has succeeded. The error that has been set will make it clear to the user that the document
                 // could not be created.
               }),
           ),

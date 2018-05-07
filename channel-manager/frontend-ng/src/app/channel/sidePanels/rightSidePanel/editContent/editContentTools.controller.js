@@ -79,7 +79,7 @@ class EditContentToolsCtrl {
   uiCanExit() {
     if (this.exitMode === 'view') {
       return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-        .then(() => this.ContentEditor.deleteDraft())
+        .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())
         .finally(() => this._clearExitMode());
     } else if (this.exitMode === 'edit') {

@@ -33,7 +33,7 @@ describe('EditContentMainCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId',
+        'close', 'confirmDiscardChanges', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocumentId',
         'getDocumentType', 'isDocumentDirty', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
@@ -114,24 +114,24 @@ describe('EditContentMainCtrl', () => {
 
       it('succeeds when discarding changes', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           done();
         });
@@ -152,11 +152,11 @@ describe('EditContentMainCtrl', () => {
     describe('when opening another document', () => {
       it('succeeds when saving changes and reloads the iframe', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
@@ -164,13 +164,13 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after saving changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).toHaveBeenCalled();
           done();
@@ -180,11 +180,11 @@ describe('EditContentMainCtrl', () => {
 
       it('succeeds when discarding changes', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
-        ContentEditor.deleteDraft.and.returnValue($q.resolve());
+        ContentEditor.discardChanges.and.returnValue($q.resolve());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
@@ -192,13 +192,13 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when deleting the draft fails after discarding changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
-        ContentEditor.deleteDraft.and.returnValue($q.reject());
+        ContentEditor.discardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().then(() => {
           expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
-          expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
           expect(ContentEditor.close).toHaveBeenCalled();
           expect(HippoIframeService.reload).not.toHaveBeenCalled();
           done();
@@ -219,9 +219,9 @@ describe('EditContentMainCtrl', () => {
 
     it('succeeds when switching editor ', (done) => {
       // because the editor is already closed in switchEditor(),
-      // no confirmation dialog will be shown and no draft will be deleted
+      // no confirmation dialog will be shown and no document will be discarded
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(done);
       $scope.$digest();

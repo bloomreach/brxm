@@ -71,16 +71,16 @@ class PrimitiveFieldCtrl {
     }
     delete this.hasFocus;
     this.onFieldBlur();
-    this._draftField();
+    this._saveField();
   }
 
   valueChanged() {
-    this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
+    this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues);
   }
 
-  _draftField() {
+  _saveField() {
     if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
+      this.FieldService.saveField(this.getFieldName(), this.fieldValues);
     }
   }
 }

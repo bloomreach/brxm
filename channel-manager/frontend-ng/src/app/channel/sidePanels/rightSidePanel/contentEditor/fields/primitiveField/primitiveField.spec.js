@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -212,30 +212,30 @@ describe('PrimitiveField', () => {
     expect(onFieldBlur).toHaveBeenCalled();
   });
 
-  it('starts a draft timer when the value changed', () => {
-    spyOn(FieldService, 'startDraftTimer');
+  it('starts a save timer when the value changed', () => {
+    spyOn(FieldService, 'startSaveTimer');
 
     $ctrl.valueChanged();
 
-    expect(FieldService.startDraftTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
   });
 
-  it('drafts the field on blur when the value has changed', () => {
-    spyOn(FieldService, 'draftField');
+  it('saves the field on blur when the value has changed', () => {
+    spyOn(FieldService, 'saveField');
 
     $ctrl.focusPrimitive();
     fieldValues[1].value = 'Changed';
     $ctrl.blurPrimitive();
 
-    expect(FieldService.draftField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    expect(FieldService.saveField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
   });
 
-  it('does not draft the field on blur when the value has not changed', () => {
-    spyOn(FieldService, 'draftField');
+  it('does not save the field on blur when the value has not changed', () => {
+    spyOn(FieldService, 'saveField');
 
     $ctrl.focusPrimitive();
     $ctrl.blurPrimitive();
 
-    expect(FieldService.draftField).not.toHaveBeenCalled();
+    expect(FieldService.saveField).not.toHaveBeenCalled();
   });
 });

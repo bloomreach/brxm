@@ -60,7 +60,7 @@ class Step2Controller {
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
       })
-      .then(() => this.ContentEditor.deleteDraft())
+      .then(() => this.ContentEditor.discardChanges())
       .then(() => this.Step2Service.saveComponentParameter())
       .then(() => {
         this.CreateContentService.finish(this.ContentEditor.getDocumentId());

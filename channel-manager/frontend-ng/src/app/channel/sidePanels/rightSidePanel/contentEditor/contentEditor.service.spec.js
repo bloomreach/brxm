@@ -34,7 +34,7 @@ describe('ContentEditorService', () => {
 
   function expectDocumentLoaded() {
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
 
     expect(ContentEditor.getDocument()).toEqual(testDocument);
@@ -97,7 +97,7 @@ describe('ContentEditorService', () => {
       },
     };
 
-    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'discardChanges', 'deleteDocument']);
+    ContentService = jasmine.createSpyObj('ContentService', ['getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
     WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
@@ -127,7 +127,7 @@ describe('ContentEditorService', () => {
   describe('opens a document', () => {
     beforeEach(() => {
       CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-      ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+      ContentService.getEditableDocument.and.returnValue($q.resolve(testDocument));
       ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     });
 
@@ -224,13 +224,13 @@ describe('ContentEditorService', () => {
           },
           fields: {},
         };
-        ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
+        ContentService.getEditableDocument.and.returnValue($q.resolve(emptyDocument));
 
         ContentEditor.open(emptyDocument.id);
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expectError({
           titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
           messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
@@ -241,18 +241,18 @@ describe('ContentEditorService', () => {
         });
       });
 
-      it('opens a document with pending invalid changes in the draft', () => {
+      it('opens a document with pending invalid changes in the editable document', () => {
         CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).not.toHaveBeenCalled();
+        expect(ContentService.getEditableDocument).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-          messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
           linkToContentEditor: true,
         });
       });
@@ -267,13 +267,13 @@ describe('ContentEditorService', () => {
             publicationState: 'changed',
           },
         };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getPublicationState()).toBe('changed');
@@ -294,13 +294,13 @@ describe('ContentEditorService', () => {
             userId: 'tester',
           },
         };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
@@ -320,13 +320,13 @@ describe('ContentEditorService', () => {
             publicationState: 'new',
           },
         };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getPublicationState()).toBe('new');
@@ -343,13 +343,13 @@ describe('ContentEditorService', () => {
         const response = {
           reason: 'NOT_A_DOCUMENT',
         };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getPublicationState()).toBeUndefined();
@@ -361,13 +361,13 @@ describe('ContentEditorService', () => {
       });
 
       it('opens a non-existing document', () => {
-        ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ status: 404 }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentEditor.getPublicationState()).toBeUndefined();
         expectError({
           titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
@@ -378,24 +378,24 @@ describe('ContentEditorService', () => {
 
       it('opens a document with random data in the response', () => {
         const response = { bla: 'test' };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expectDefaultError();
       });
 
       it('opens a document with no data in the response', () => {
-        ContentService.createDraft.and.returnValue($q.reject({}));
+        ContentService.getEditableDocument.and.returnValue($q.reject({}));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expectDefaultError();
       });
 
@@ -403,13 +403,13 @@ describe('ContentEditorService', () => {
         const response = {
           reason: 'unknown',
         };
-        ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.getEditableDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expectError(undefined);
       });
 
@@ -425,14 +425,14 @@ describe('ContentEditorService', () => {
           },
           displayName: 'Document Display Name',
         };
-        ContentService.createDraft.and.returnValue($q.resolve(doc));
+        ContentService.getEditableDocument.and.returnValue($q.resolve(doc));
         ContentService.getDocumentType.and.returnValue($q.reject({}));
 
         ContentEditor.open('test');
         $rootScope.$digest();
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
         expectDefaultError();
       });
@@ -450,13 +450,13 @@ describe('ContentEditorService', () => {
       const savedDoc = {
         id: '123',
       };
-      ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
+      ContentService.saveDocument.and.returnValue($q.resolve(savedDoc));
 
       ContentEditor.document = testDocument;
       ContentEditor.markDocumentDirty();
       ContentEditor.save();
 
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
       $rootScope.$digest();
 
@@ -470,7 +470,7 @@ describe('ContentEditorService', () => {
       ContentEditor.save();
       $rootScope.$digest();
 
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(ContentService.saveDocument).not.toHaveBeenCalled();
     });
 
     describe('shows error feedback when it', () => {
@@ -478,13 +478,13 @@ describe('ContentEditorService', () => {
         const response = {
           reason: 'TEST',
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -498,13 +498,13 @@ describe('ContentEditorService', () => {
             userId: 'tester',
           },
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -519,13 +519,13 @@ describe('ContentEditorService', () => {
             userName: 'Joe Tester',
           },
         };
-        ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+        ContentService.saveDocument.and.returnValue($q.reject({ data: response }));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -544,7 +544,7 @@ describe('ContentEditorService', () => {
             },
           ];
 
-          ContentService.saveDraft.and.returnValue($q.reject({ data: saveResponse }));
+          ContentService.saveDocument.and.returnValue($q.reject({ data: saveResponse }));
 
           ContentEditor.document = testDocument;
           ContentEditor.documentType = testDocumentType;
@@ -557,7 +557,7 @@ describe('ContentEditorService', () => {
 
           ContentEditor.save();
 
-          expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+          expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
           $rootScope.$digest();
 
@@ -571,7 +571,7 @@ describe('ContentEditorService', () => {
 
           ContentEditor.save();
 
-          expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+          expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
           $rootScope.$digest();
 
@@ -587,13 +587,13 @@ describe('ContentEditorService', () => {
       });
 
       it('fails because there is no data returned', () => {
-        ContentService.saveDraft.and.returnValue($q.reject({}));
+        ContentService.saveDocument.and.returnValue($q.reject({}));
 
         ContentEditor.document = testDocument;
         ContentEditor.markDocumentDirty();
         ContentEditor.save();
 
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
 
         $rootScope.$digest();
 
@@ -672,7 +672,7 @@ describe('ContentEditorService', () => {
     it('shows a dialog and saves changes', (done) => {
       ContentEditor.markDocumentDirty();
       DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+      ContentService.saveDocument.and.returnValue($q.resolve(testDocument));
 
       ContentEditor.confirmSaveOrDiscardChanges('TEST_MESSAGE_KEY').then((action) => {
         expect(action).toBe('SAVE');
@@ -681,7 +681,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+        expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
         done();
       });
       $rootScope.$digest();
@@ -698,7 +698,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).not.toHaveBeenCalled();
+        expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -714,7 +714,7 @@ describe('ContentEditorService', () => {
         });
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
-        expect(ContentService.saveDraft).not.toHaveBeenCalled();
+        expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -739,21 +739,21 @@ describe('ContentEditorService', () => {
     });
   });
 
-  describe('delete draft', () => {
+  describe('discard document', () => {
     it('happens when a document is edited and the editor is not killed', () => {
       ContentEditor.document = testDocument;
       ContentEditor.documentType = testDocumentType;
 
       ContentService.discardChanges.and.returnValue($q.resolve());
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).toHaveBeenCalledWith(testDocument.id);
     });
 
     it('does not happens when no document is being edited', (done) => {
-      ContentEditor.deleteDraft().then(() => {
+      ContentEditor.discardChanges().then(() => {
         expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
@@ -765,7 +765,7 @@ describe('ContentEditorService', () => {
       ContentEditor.documentType = testDocumentType;
       ContentEditor.kill();
 
-      ContentEditor.deleteDraft().then(() => {
+      ContentEditor.discardChanges().then(() => {
         expect(ContentService.discardChanges).not.toHaveBeenCalled();
         done();
       });
@@ -843,7 +843,7 @@ describe('ContentEditorService', () => {
   describe('close', () => {
     it('clears an opened document', () => {
       CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-      ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+      ContentService.getEditableDocument.and.returnValue($q.resolve(testDocument));
       ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
       ContentEditor.open('test');
 
@@ -868,7 +868,7 @@ describe('ContentEditorService', () => {
 
       ContentEditor.kill();
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).not.toHaveBeenCalled();
@@ -878,7 +878,7 @@ describe('ContentEditorService', () => {
       ContentEditor.document = testDocument;
       ContentEditor.documentType = testDocumentType;
 
-      ContentEditor.deleteDraft();
+      ContentEditor.discardChanges();
       $rootScope.$digest();
 
       expect(ContentService.discardChanges).toHaveBeenCalled();
@@ -1018,16 +1018,16 @@ describe('ContentEditorService', () => {
     describe('when a user can publish', () => {
       beforeEach(() => {
         ContentEditor.canPublish = true;
-        ContentService.createDraft.and.returnValue($q.resolve(newDoc));
+        ContentService.getEditableDocument.and.returnValue($q.resolve(newDoc));
       });
 
-      it('deletes the draft', () => {
+      it('discards the document changes', () => {
         ContentEditor.publish();
 
         expect(ContentService.discardChanges).toHaveBeenCalledWith('test');
       });
 
-      it('does not execute workflow action if delete draft fails', () => {
+      it('does not execute workflow action if discard changes fails', () => {
         ContentService.discardChanges.and.returnValue($q.reject());
         ContentEditor.publish();
         $rootScope.$digest();
@@ -1066,34 +1066,34 @@ describe('ContentEditorService', () => {
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PUBLISH_DOCUMENT_FAILED', { documentName: 'Test' });
       });
 
-      it('creates a new draft after publication succeeds', () => {
+      it('gets an editable document again after publication succeeds', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBe(newDoc);
       });
 
-      it('creates a new draft if publication fails', () => {
+      it('gets an editable document again if publication fails', () => {
         WorkflowService.createWorkflowAction.and.returnValue($q.reject(errorObject));
 
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBe(newDoc);
       });
 
-      it('sets an error if create draft fails', () => {
-        ContentService.createDraft.and.returnValue($q.reject(errorObject));
+      it('sets an error if getting an editable document fails', () => {
+        ContentService.getEditableDocument.and.returnValue($q.reject(errorObject));
 
         ContentEditor.publish();
         $rootScope.$digest();
 
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
-          titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-          messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+          titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+          messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
           linkToContentEditor: true,
         });
       });
@@ -1115,34 +1115,34 @@ describe('ContentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('resolves when createDraft fails', (done) => {
-        ContentService.createDraft.and.returnValue($q.reject(errorObject));
+      it('resolves when getting an editable document fails', (done) => {
+        ContentService.getEditableDocument.and.returnValue($q.reject(errorObject));
         ContentEditor.publish().then(done);
         $rootScope.$digest();
       });
     });
 
     describe('when a user can request publication', () => {
-      let expectedDraftError;
+      let expectedDocumentError;
 
       beforeEach(() => {
-        expectedDraftError = {
+        expectedDocumentError = {
           data: {
             reason: 'REQUEST_PENDING',
           },
         };
 
         ContentEditor.canRequestPublication = true;
-        ContentService.createDraft.and.returnValue($q.reject(expectedDraftError));
+        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
       });
 
-      it('deletes the draft', () => {
+      it('discards the document', () => {
         ContentEditor.publish();
 
         expect(ContentService.discardChanges).toHaveBeenCalledWith('test');
       });
 
-      it('does not execute workflow action if delete draft fails', () => {
+      it('does not execute workflow action if discard document fails', () => {
         ContentService.discardChanges.and.returnValue($q.reject());
         ContentEditor.publish();
         $rootScope.$digest();
@@ -1180,11 +1180,11 @@ describe('ContentEditorService', () => {
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
       });
 
-      it('fails to create a new draft after publication request succeeds', () => {
+      it('fails to get an editable document after publication request succeeds', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+        expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentEditor.document).toBeUndefined();
         expect(FeedbackService.showError).not.toHaveBeenCalled();
         expect(ContentEditor.getError()).toEqual({
@@ -1213,17 +1213,17 @@ describe('ContentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('resolves when createDraft fails', (done) => {
+      it('resolves when getting an editable document fails', (done) => {
         ContentEditor.publish().then(done);
         $rootScope.$digest();
       });
     });
 
     describe('when a user can cancel a request for publication', () => {
-      let expectedDraftError;
+      let expectedDocumentError;
 
       beforeEach(() => {
-        expectedDraftError = {
+        expectedDocumentError = {
           data: {
             reason: 'CANCELABLE_PUBLICATION_REQUEST_PENDING',
             params: {
@@ -1233,7 +1233,7 @@ describe('ContentEditorService', () => {
         };
 
         CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-        ContentService.createDraft.and.returnValue($q.reject(expectedDraftError));
+        ContentService.getEditableDocument.and.returnValue($q.reject(expectedDocumentError));
         ContentEditor.open('test');
         $rootScope.$digest();
       });
@@ -1256,7 +1256,7 @@ describe('ContentEditorService', () => {
         WorkflowService.createWorkflowAction.and.returnValue($q.resolve());
 
         CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-        ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+        ContentService.getEditableDocument.and.returnValue($q.resolve(testDocument));
         ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
 
         ContentEditor.cancelRequestPublication();
