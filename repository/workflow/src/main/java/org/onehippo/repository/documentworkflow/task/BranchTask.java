@@ -101,8 +101,8 @@ public class BranchTask extends AbstractDocumentTask {
         JcrUtils.ensureIsCheckedOut(targetNode);
         if (CORE_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // to be sure also remove the properties since hippo document is relaxed
-            targetNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
-            targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
+            targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
+            targetNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).remove();
             // the 'core' branch just means removing the branch info
             targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
         } else {
