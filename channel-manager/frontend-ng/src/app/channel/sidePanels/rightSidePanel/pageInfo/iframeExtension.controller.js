@@ -15,25 +15,65 @@
  */
 
 class IframeExtensionCtrl {
-  constructor($element, $uiRouterGlobals, ExtensionService) {
+  constructor($element, $log, $uiRouterGlobals, DomService, ExtensionService) {
     'ngInject';
 
     this.$element = $element;
+    this.$log = $log;
     this.$uiRouterGlobals = $uiRouterGlobals;
+    this.DomService = DomService;
     this.ExtensionService = ExtensionService;
   }
 
   $onInit() {
     const extensionId = this.$uiRouterGlobals.params.extensionId;
     this.extension = this.ExtensionService.getExtension(extensionId);
-    this.url = this.extension.urlPath;
+
     this.pageUrl = this.$uiRouterGlobals.params.pageUrl;
 
-    this.extensionIframe = this.$element.children('.iframe-extension')[0];
-    $(this.extensionIframe).on('load', () => this._onIframeLoaded());
+    const extensionIframe = this.$element.children('.iframe-extension');
+    this.iframeWindow = this.DomService.getIframeWindow(extensionIframe);
+
+    extensionIframe.on('load', () => this._onIframeLoaded());
   }
 
   _onIframeLoaded() {
+    if (this._isApiValid()) {
+      this._setPageContext();
+    }
+  }
+
+  _isApiValid() {
+    if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
+      this._warnPageExtension('does not define a window.BR_EXTENSION object, cannot provide page context');
+      return false;
+    } else if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
+      this._warnPageExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide page context');
+      return false;
+    }
+    return true;
+  }
+
+  _setPageContext() {
+    try {
+      this.iframeWindow.BR_EXTENSION.onContextChanged({
+        context: 'page',
+        data: {
+          pageUrl: this.pageUrl,
+        },
+      });
+    } catch (e) {
+      this._warnPageExtension('threw an error in window.BR_EXTENSION.onContextChanged()', e);
+    }
+  }
+
+  _warnPageExtension(message, error) {
+    const warning = `Page info extension '${this.extension.displayName}' ${message}`;
+    if (error) {
+      this.$log.warn(warning, error);
+    } else {
+      this.$log.warn(warning);
+    }
   }
 }
 
