@@ -97,7 +97,7 @@ describe('RightSidePanel', () => {
 
     spyOn($state, 'go');
     $ctrl.$element.trigger(e);
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
   });
 
   it('ignores other keypresses', () => {
