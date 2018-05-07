@@ -84,6 +84,26 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         final Document branch = workflow.branch("foo bar", "Foo Bar");
 
         branchAssertions(preview, branch);
+
+        workflow.publish();
+
+        final Node live = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+
+        assertTrue("live variant is expected to have branch info after publish.", live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertEquals("foo bar", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        assertEquals("Foo Bar", live.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
+
+        // publication is expected to result in a revision
+        assertTrue(versionHistory.hasVersionLabel("foo bar-preview"));
+        assertTrue(versionHistory.hasVersionLabel("foo bar-live"));
+
+        // when now editing, we expect the draft to also contain the branch info mixin
+        workflow.obtainEditableInstance();
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+
+        assertTrue("draft variant is expected to have branch info after publish.", draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertEquals("foo bar", draft.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        assertEquals("Foo Bar", draft.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
     }
 
     private void branchAssertions(final Node preview, final Document branch) throws RepositoryException {
@@ -108,6 +128,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
         assertArrayEquals(new String[]{"foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+
     }
 
     @Test
@@ -158,6 +179,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
         assertArrayEquals(new String[]{"foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+
     }
 
     @Test
