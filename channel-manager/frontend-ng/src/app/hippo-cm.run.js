@@ -20,9 +20,12 @@ function run($state, BrowserService) {
   // don't log state transition errors
   $state.defaultErrorHandler(angular.noop);
 
-  // add ie11 class for ie11 specific hacks
+  // add classes for browser specific hacks
   if (BrowserService.isIE()) {
     $('body').addClass('ie11');
+  }
+  if (BrowserService.isChrome()) {
+    $('body').addClass('chrome');
   }
 }
 

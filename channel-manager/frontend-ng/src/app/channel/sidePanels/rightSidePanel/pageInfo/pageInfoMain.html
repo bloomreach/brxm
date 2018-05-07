@@ -26,6 +26,7 @@
 
 <ui-view ng-repeat="extension in $ctrl.extensions track by extension.id"
          ng-show="$ctrl.selectedExtensionId === extension.id"
+         class="retain-iframe-scroll-position-when-hiding-in-chrome"
          name="{{ ::extension.id }}"
          flex
          layout="column">
