@@ -58,5 +58,5 @@ describe('pageInfoMainCtrl', () => {
   it('closes page info', () => {
     $ctrl.close();
     expect(PageInfoService.closePageInfo).toHaveBeenCalled();
-  })
+  });
 });
