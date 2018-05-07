@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * Determines which page info extension is shown. Each page info extension is registered as a separate UI router state
+ * below 'hippo-cm.channel.page-info'. These states are sticky so switching between them keeps the DOM state alive.
+ * As a result, each page extension is initialized when viewed (i.e. when the tab is selected), but then kept alive
+ * until the page-info parent state is left again.
+ */
 class PageInfoService {
   constructor($state, $stateRegistry, $translate, ExtensionService, RightSidePanelService) {
     'ngInject';
