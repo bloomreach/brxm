@@ -26,16 +26,26 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 
-public class CheckoutBranchTask extends VersionVariantTask {
+public class CheckoutBranchTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
+    private DocumentVariant variant;
     private String branchId;
+
+    public DocumentVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(DocumentVariant variant) {
+        this.variant = variant;
+    }
 
     public void setBranchId(final String branchId) {
         this.branchId = branchId;
