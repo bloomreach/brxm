@@ -83,6 +83,10 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.CheckoutBranchAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /removeBranch:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RemoveBranchAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /listVersions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction

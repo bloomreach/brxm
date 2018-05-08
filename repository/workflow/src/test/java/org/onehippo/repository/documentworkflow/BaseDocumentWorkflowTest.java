@@ -34,6 +34,7 @@ import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.ListBranchesAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
+import org.onehippo.repository.documentworkflow.action.RemoveBranchAction;
 import org.onehippo.repository.scxml.LogEventAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RejectRequestAction;
@@ -94,6 +95,7 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listBranches", ListBranchesAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "branch", BranchAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "removeBranch", RemoveBranchAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "checkoutBranch", CheckoutBranchAction.class.getName());
         registry.setUp(scxmlConfigNode);
 

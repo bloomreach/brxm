@@ -373,6 +373,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public void removeBranch(final String branchId) throws WorkflowException {
+        triggerAction(DocumentWorkflowAction.removeBranch().addEventPayload(BRANCH_ID, branchId));
+    }
+
+    @Override
     public Document checkoutBranch(final String branchId) throws WorkflowException {
         return (Document) triggerAction(DocumentWorkflowAction.checkoutBranch()
                 .addEventPayload(BRANCH_ID, branchId));

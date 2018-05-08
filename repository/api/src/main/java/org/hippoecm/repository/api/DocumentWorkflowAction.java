@@ -122,6 +122,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("checkoutBranch");
     }
 
+    public static DocumentWorkflowAction removeBranch() {
+        return new DocumentWorkflowAction("removeBranch");
+    }
+
     public static DocumentWorkflowAction none() {
         return new DocumentWorkflowAction("None");
     }

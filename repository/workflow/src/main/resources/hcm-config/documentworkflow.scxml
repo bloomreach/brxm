@@ -557,7 +557,7 @@
             <script>
               workflowContext.setResult(unpublished);
             </script>
-          <else/>
+            <else/>
             <hippo:version variant="unpublished"/>
             <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
           </if>
@@ -565,6 +565,30 @@
 
       </state>
     </state>
+    <state id="remove-branch">
+    <onentry>
+      <hippo:action action="removeBranch" enabledExpr="!editing and !!unpublished"/>
+    </onentry>
+    <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
+         allowed or possible because there is no unpublished document variant yet -->
+    <state id="no-remove-branch">
+      <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists
+           and not being edited -->
+      <transition target="can-remove-branch" cond="!editing and !!unpublished"/>
+    </state>
+    <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
+    <state id="can-remove-branch">
+      <transition event="removeBranch">
+        <!-- on the workflowContext.result put the list of branches that exist -->
+        <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+        <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                 errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it doesn\'t exist'"/>
+
+        <hippo:removeBranch unpublished="unpublished" published="published" draft="draft" branchId="_event.data?.branchId"/>
+      </transition>
+    </state>
+  </state>
 
 
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like

@@ -47,6 +47,7 @@ public class HintsBuilder {
     public static String ACTION_REQUEST_DELETE = "requestDelete";
     public static String ACTION_LIST_BRANCHES = "listBranches";
     public static String ACTION_BRANCH = "branch";
+    public static String ACTION_REMOVE_BRANCH = "removeBranch";
     public static String ACTION_CHECKOUT_BRANCH = "checkoutBranch";
     public static String ACTION_DELETE = "delete";
     public static String ACTION_MOVE = "move";
@@ -207,8 +208,13 @@ public class HintsBuilder {
         return this;
     }
 
-    public HintsBuilder checkoutBranch(final boolean eligibleForCheckout) {
-        actions.put(ACTION_CHECKOUT_BRANCH, eligibleForCheckout);
+    public HintsBuilder checkoutBranch(final boolean canCheckout) {
+        actions.put(ACTION_CHECKOUT_BRANCH, canCheckout);
+        return this;
+    }
+
+    public HintsBuilder removeBranch(final boolean branchRemovable) {
+        actions.put(ACTION_REMOVE_BRANCH, branchRemovable);
         return this;
     }
 
