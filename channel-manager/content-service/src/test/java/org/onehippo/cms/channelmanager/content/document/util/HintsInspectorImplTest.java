@@ -53,44 +53,44 @@ public class HintsInspectorImplTest {
     public void canCreateDraft() throws Exception {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canCreateDraft(hints));
+        assertFalse(hintsInspector.canObtainEditableDocument(hints));
 
         hints.put("obtainEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canCreateDraft(hints));
+        assertFalse(hintsInspector.canObtainEditableDocument(hints));
 
         hints.put("obtainEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canCreateDraft(hints));
+        assertTrue(hintsInspector.canObtainEditableDocument(hints));
     }
 
     @Test
     public void canUpdateDocument() throws Exception {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canUpdateDraft(hints));
+        assertFalse(hintsInspector.canUpdateDocument(hints));
 
         hints.put("commitEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canUpdateDraft(hints));
+        assertFalse(hintsInspector.canUpdateDocument(hints));
 
         hints.put("commitEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canUpdateDraft(hints));
+        assertTrue(hintsInspector.canUpdateDocument(hints));
     }
 
     @Test
     public void canUpdateDocumentWithException() throws Exception {
-        assertFalse(hintsInspector.canUpdateDraft(emptyMap()));
+        assertFalse(hintsInspector.canUpdateDocument(emptyMap()));
     }
 
     @Test
     public void canDeleteDraft() throws Exception {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canDeleteDraft(hints));
+        assertFalse(hintsInspector.canDisposeEditableDocument(hints));
 
         hints.put("disposeEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canDeleteDraft(hints));
+        assertFalse(hintsInspector.canDisposeEditableDocument(hints));
 
         hints.put("disposeEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canDeleteDraft(hints));
+        assertTrue(hintsInspector.canDisposeEditableDocument(hints));
     }
 
     @Test

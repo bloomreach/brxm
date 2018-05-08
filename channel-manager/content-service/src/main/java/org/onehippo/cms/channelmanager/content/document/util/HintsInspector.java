@@ -31,7 +31,7 @@ public interface HintsInspector {
      * @param hints workflow hints
      * @return true if a draft can be created for the document.
      */
-    boolean canCreateDraft(Map<String, Serializable> hints);
+    boolean canObtainEditableDocument(Map<String, Serializable> hints);
 
     /**
      * Check if a document can be updated, given its workflow hints.
@@ -39,7 +39,7 @@ public interface HintsInspector {
      * @param hints workflow hints
      * @return true if document can be updated, false otherwise
      */
-    boolean canUpdateDraft(Map<String, Serializable> hints);
+    boolean canUpdateDocument(Map<String, Serializable> hints);
 
     /**
      * Check if a document can be updated, given its workflow hints.
@@ -47,7 +47,7 @@ public interface HintsInspector {
      * @param hints workflow hints
      * @return true if document can be updated, false otherwise
      */
-    boolean canDeleteDraft(Map<String, Serializable> hints);
+    boolean canDisposeEditableDocument(Map<String, Serializable> hints);
 
     /**
      * Determine the reason why editing failed for the present workflow hints.
