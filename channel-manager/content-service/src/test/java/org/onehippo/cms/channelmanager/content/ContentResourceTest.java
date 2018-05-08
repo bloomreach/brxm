@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
+import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 import org.powermock.api.easymock.PowerMock;
@@ -70,6 +71,7 @@ public class ContentResourceTest extends CXFTest {
     private Session userSession;
     private Locale locale;
     private DocumentsService documentsService;
+    private WorkflowService workflowService;
     private DocumentTypesService documentTypesService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
@@ -78,6 +80,7 @@ public class ContentResourceTest extends CXFTest {
         locale = new Locale("en");
         userSession = createMock(Session.class);
         documentsService = createMock(DocumentsService.class);
+        workflowService = createMock(WorkflowService.class);
         documentTypesService = createMock(DocumentTypesService.class);
         contextPayloadService = createMock(Function.class);
 
@@ -94,7 +97,7 @@ public class ContentResourceTest extends CXFTest {
         replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, contextPayloadService));
+        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, workflowService, contextPayloadService));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
@@ -132,57 +135,57 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void createDraftDocument() throws Exception {
+    public void obtainEditableDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale, emptyMap())).andReturn(testDocument);
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
-                .post("/documents/" + requestedUuid + "/draft")
+                .get("/documents/" + requestedUuid + "/editable")
         .then()
-                .statusCode(201)
+                .statusCode(200)
                 .body(equalTo(expectedBody));
     }
 
     @Test
-    public void createDraftDocumentForbidden() throws Exception {
+    public void obtainEditableDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
-        final String uuid = "returned-uuid";
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale, emptyMap())).andThrow(new ForbiddenException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andThrow(new ForbiddenException());
         replay(documentsService);
 
         when()
-                .post("/documents/" + requestedUuid + "/draft")
+                .get("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(403);
     }
 
     @Test
-    public void createDraftDocumentNotFound() throws Exception {
+    public void obtainEditableDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale, emptyMap())).andThrow(new NotFoundException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
-                .post("/documents/" + requestedUuid + "/draft")
+                .get("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(404);
     }
 
     @Test
-    public void updateDraft() throws Exception {
+    public void updateEditableDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
+        final boolean finishEditing = false;
 
-        expect(documentsService.updateDraft(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq(emptyMap()))).andReturn(testDocument);
+        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq(emptyMap()))).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -191,65 +194,65 @@ public class ContentResourceTest extends CXFTest {
                 .body(expectedBody)
                 .contentType("application/json")
         .when()
-                .put("/documents/" + requestedUuid + "/draft")
+                .put("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
     }
 
     @Test
-    public void deleteDraft() throws Exception {
+    public void discardChanges() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
         expectLastCall();
         replay(documentsService);
 
         when()
-                .delete("/documents/" + requestedUuid + "/draft")
+                .delete("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(204);
     }
 
     @Test
-    public void deleteDraftNotFound() throws Exception {
+    public void discardChangesNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
         expectLastCall().andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
-                .delete("/documents/" + requestedUuid + "/draft")
+                .delete("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(404);
     }
 
     @Test
-    public void deleteDraftBadRequest() throws Exception {
+    public void discardChangesBadRequest() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
         expectLastCall().andThrow(new BadRequestException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
         replay(documentsService);
 
         when()
-                .delete("/documents/" + requestedUuid + "/draft")
+                .delete("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(400)
                 .body(equalTo("{\"reason\":\"ALREADY_DELETED\"}"));
     }
 
     @Test
-    public void deleteDraftServerError() throws Exception {
+    public void discardChangesServerError() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.deleteDraft(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
         expectLastCall().andThrow(new InternalServerErrorException());
         replay(documentsService);
 
         when()
-                .delete("/documents/" + requestedUuid + "/draft")
+                .delete("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(500)
                 .body(equalTo("")); // no additional ErrorInfo.
@@ -321,6 +324,36 @@ public class ContentResourceTest extends CXFTest {
         .then()
                 .statusCode(200)
                 .body(equalTo("some-content-name"));
+    }
+
+    @Test
+    public void executeDocumentWorkflowAction() throws Exception {
+        final String documentId = "uuid";
+
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        expectLastCall();
+
+        replay(workflowService);
+
+        when()
+                .post("/workflows/documents/" + documentId + "/publish")
+        .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void executeDocumentWorkflowActionAndDocumentNotFound() throws Exception {
+        final String documentId = "uuid";
+
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        expectLastCall().andThrow(new NotFoundException());
+
+        replay(workflowService);
+
+        when()
+                .post("/workflows/documents/" + documentId + "/publish")
+        .then()
+                .statusCode(404);
     }
 
     private String normalizeJsonResource(final String resourcePath) {

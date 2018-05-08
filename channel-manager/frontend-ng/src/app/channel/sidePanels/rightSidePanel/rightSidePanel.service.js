@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+const LOADING_TIMEOUT_MS = 1000;
+
 class RightSidePanelService {
-  constructor() {
+  constructor($timeout) {
     'ngInject';
+
+    this.$timeout = $timeout;
+    this.loadingPromise = null;
 
     this.stopLoading();
     this.clearTitle();
@@ -27,10 +32,22 @@ class RightSidePanelService {
   }
 
   startLoading() {
-    this.loading = true;
+    if (this.loading) {
+      return;
+    }
+    if (!this.loadingPromise) {
+      this.loadingPromise = this.$timeout(() => {
+        this.loadingPromise = null;
+        this.loading = true;
+      }, LOADING_TIMEOUT_MS);
+    }
   }
 
   stopLoading() {
+    if (this.loadingPromise) {
+      this.$timeout.cancel(this.loadingPromise);
+      this.loadingPromise = null;
+    }
     this.loading = false;
   }
 

@@ -20,10 +20,12 @@
            title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
   <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
 </md-button>
-<md-button class="md-icon-button qa-publish-in-content-perspective"
-           aria-label="{{ ::'PUBLISH' | translate }}"
-           ng-disabled="!$ctrl.isEditing() || $ctrl.isDisabled()"
+
+<md-button class="md-icon-button qa-view-in-content-perspective"
+           aria-label="{{ $ctrl.getPublicationIconTooltip() | translate }}"
+           ng-if="!$ctrl.isDisabled()"
+           ng-disabled="!$ctrl.isPublicationStateAvailable()"
            ng-click="$ctrl.openContentEditor('view')"
-           title="{{ ::'PUBLISH' | translate }}">
-  <md-icon md-svg-icon="publish"></md-icon>
+           title="{{ $ctrl.getPublicationIconTooltip() | translate }}">
+  <md-icon md-font-icon="{{ $ctrl.getPublicationIconName() }}"></md-icon>
 </md-button>

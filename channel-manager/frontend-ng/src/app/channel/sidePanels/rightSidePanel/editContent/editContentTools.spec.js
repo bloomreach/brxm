@@ -32,7 +32,7 @@ describe('EditContentToolsCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmSaveOrDiscardChanges', 'deleteDraft', 'getDocumentId', 'getError', 'isEditing',
+        'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 
@@ -81,15 +81,15 @@ describe('EditContentToolsCtrl', () => {
 
     function expectSuccess() {
       expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
-      expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
       expect(CmsService.publish).toHaveBeenCalledWith('open-content', documentId, 'view');
       expect(ContentEditor.close).toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentPublish');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingUnknownIcon');
     }
 
     it('succeeds', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expectSuccess();
@@ -108,13 +108,13 @@ describe('EditContentToolsCtrl', () => {
       $rootScope.$digest();
     });
 
-    it('fails because the draft cannot be deleted', (done) => {
+    it('fails because the changes cannot be discarded', (done) => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
-      ContentEditor.deleteDraft.and.returnValue($q.reject());
+      ContentEditor.discardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().catch(() => {
         expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
-        expect(ContentEditor.deleteDraft).toHaveBeenCalled();
+        expect(ContentEditor.discardChanges).toHaveBeenCalled();
         done();
       });
       $rootScope.$digest();
@@ -129,6 +129,50 @@ describe('EditContentToolsCtrl', () => {
           expectSuccess();
           done();
         });
+      });
+      $rootScope.$digest();
+    });
+  });
+
+  describe('report statistics when clicking the status icon', () => {
+    const documentId = '42';
+
+    beforeEach(() => {
+      ContentEditor.getDocumentId.and.returnValue(documentId);
+    });
+
+    it('reports that the offline icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      $ctrl.openContentEditor('view');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOfflineIcon');
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports that the online icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('live');
+      $ctrl.openContentEditor('view');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingOnlineIcon');
+      });
+      $rootScope.$digest();
+    });
+
+    it('reports that the alert icon is used to go to the content editor', () => {
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      $ctrl.openContentEditor('view');
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+      $ctrl.uiCanExit().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingAlertIcon');
       });
       $rootScope.$digest();
     });
@@ -151,5 +195,56 @@ describe('EditContentToolsCtrl', () => {
 
   it('always allows exiting the ui-router state when no button has been clicked', () => {
     expect($ctrl.uiCanExit()).toBe(true);
+  });
+
+  it('knows whether the publication state is available', () => {
+    ContentEditor.getPublicationState.and.returnValue('new');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue('unknown');
+    expect($ctrl.isPublicationStateAvailable()).toBe(true);
+
+    ContentEditor.getPublicationState.and.returnValue(undefined);
+    expect($ctrl.isPublicationStateAvailable()).toBe(false);
+  });
+
+  describe('the publication icon name', () => {
+    it('is based on the publication state of the document', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-minus-circle');
+
+      ContentEditor.getPublicationState.and.returnValue('live');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-check-circle');
+
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      expect($ctrl.getPublicationIconName()).toBe('mdi-alert');
+
+      ContentEditor.getPublicationState.and.returnValue('unknown');
+      expect($ctrl.getPublicationIconName()).toBe('');
+    });
+    it('is empty when there is no document', () => {
+      ContentEditor.getPublicationState.and.returnValue(undefined);
+      expect($ctrl.getPublicationIconName()).toBe('');
+    });
+  });
+
+  describe('the publication icon tooltip', () => {
+    it('is based on the publication state of the document', () => {
+      ContentEditor.getPublicationState.and.returnValue('new');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_NEW_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('live');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_LIVE_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('changed');
+      expect($ctrl.getPublicationIconTooltip()).toBe('DOCUMENT_CHANGED_TOOLTIP');
+
+      ContentEditor.getPublicationState.and.returnValue('unknown');
+      expect($ctrl.getPublicationIconTooltip()).toBe('');
+    });
+    it('is empty when there is no document', () => {
+      ContentEditor.getPublicationState.and.returnValue(undefined);
+      expect($ctrl.getPublicationIconTooltip()).toBe('');
+    });
   });
 });

@@ -76,8 +76,8 @@ Property 'rootPath' cannot be empty
 Failed to add document 'breaking-news' of type 'project:newsdocument' to folder '/content/documents/channel/news' using template query 'new-news-document'
 Failed to archive document 'uuid'
 Failed to erase document 'uuid'
-Forbade to erase document 'uuid'
-Forbade to erase document 'document'
+Forbidden to erase document 'uuid'
+Forbidden to erase document 'document'
 Failed to read name of node 'null'
 Failed to rename document
 Failed to rename draft
@@ -90,3 +90,11 @@ No values available for node of type 'node:name'
 Failed to read nodes for image link type 'my:imagelink'
 Failed to read image link 'my:imagelink' from node '/my:imagelink'
 Failed to write image link field 'my:imagelink'
+Could not determine publication state of document
+Document workflow action 'actionNotYetImplemented' is not implemented
+Cancel request received but no pending request found for 'uuid'.
+Multiple request nodes found for 'uuid'. This situation is not supported.
+Hint 'no-boolean' not stored as Boolean
+Hint 'action' not stored as Boolean
+Cannot determine publication state of document handle
+Failed to determine whether node with identifier 'request-node-id' is a cancelable publication request, assuming it's not

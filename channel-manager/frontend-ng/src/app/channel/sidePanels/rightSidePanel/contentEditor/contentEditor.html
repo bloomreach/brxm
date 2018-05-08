@@ -24,19 +24,27 @@
 
   <div ng-if="$ctrl.getError()"
        class="md-padding feedback qa-feedback"
-       md-colors="{background: 'hippo-red-50'}">
+       md-colors="{background: $ctrl.getError().color ? $ctrl.getError().color : 'hippo-red-50'}">
     <h4 class="qa-feedback-title">{{::$ctrl.getError().titleKey | translate}}</h4>
 
     <p class="qa-feedback-message"
-       translate="{{::$ctrl.getError().messageKey}}"
-       translate-values="{{::$ctrl.getError().messageParams}}">
+       translate="{{ $ctrl.getError().messageKey }}"
+       translate-values="{{ $ctrl.getError().messageParams }}">
     </p>
 
-    <md-button ng-if="::$ctrl.getError().linkToContentEditor"
-               ng-click="$ctrl.onSwitchEditor()">
-      <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-      {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
-    </md-button>
+    <div layout
+         layout-align="end center">
+      <md-button ng-if="$ctrl.getError().linkToContentEditor"
+                 ng-click="$ctrl.onSwitchEditor()">
+        <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
+        {{ ::'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate }}
+      </md-button>
+
+      <md-button ng-if="$ctrl.getError().cancelRequest"
+                 ng-click="$ctrl.cancelRequestPublication()">
+        {{ ::'FEEDBACK_CANCEL_REQUEST' | translate }}
+      </md-button>
+    </div>
   </div>
 
   <form name="$ctrl.form"
@@ -55,10 +63,17 @@
 
     <md-button class="qa-close"
                ng-click="$ctrl.onClose()">
-      {{ $ctrl.closeButtonLabel() }}
+      {{ ::$ctrl.closeLabel | translate }}
+    </md-button>
+
+    <md-button class="qa-publish animate-bump"
+               ng-if="$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.publish()">
+      {{ ::'PUBLISH' | translate }}
     </md-button>
 
     <md-button class="qa-save"
+               ng-if="!$ctrl.isPublishAllowed()"
                ng-click="$ctrl.save()"
                ng-disabled="!$ctrl.isSaveAllowed()">
       {{ ::'SAVE' | translate }}

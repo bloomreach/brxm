@@ -14,6 +14,27 @@
  * limitations under the License.
  */
 
+const PUBLICATION_STATE_ICON_NAMES = {
+  new: 'mdi-minus-circle',
+  live: 'mdi-check-circle',
+  changed: 'mdi-alert',
+  unknown: '',
+};
+
+const PUBLICATION_STATE_ICON_TOOLTIPS = {
+  new: 'DOCUMENT_NEW_TOOLTIP',
+  live: 'DOCUMENT_LIVE_TOOLTIP',
+  changed: 'DOCUMENT_CHANGED_TOOLTIP',
+  unknown: '',
+};
+
+const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
+  new: 'VisualEditingOfflineIcon',
+  live: 'VisualEditingOnlineIcon',
+  changed: 'VisualEditingAlertIcon',
+  unknown: 'VisualEditingUnknownIcon',
+};
+
 class EditContentToolsCtrl {
   constructor($q, CmsService, ContentEditor, EditContentService) {
     'ngInject';
@@ -33,7 +54,24 @@ class EditContentToolsCtrl {
     return this.ContentEditor.isEditing();
   }
 
+  isPublicationStateAvailable() {
+    return !!this.ContentEditor.getPublicationState();
+  }
+
+  getPublicationIconName() {
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES, this.ContentEditor.getPublicationState());
+  }
+
+  getPublicationIconTooltip() {
+    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS, this.ContentEditor.getPublicationState());
+  }
+
+  _getPublicationStateValue(map, publicationState) {
+    return map[publicationState] || map.unknown;
+  }
+
   openContentEditor(exitMode) {
+    this.publicationStateOnExit = this.ContentEditor.getPublicationState();
     this.exitMode = exitMode;
     this.EditContentService.stopEditing();
   }
@@ -41,7 +79,7 @@ class EditContentToolsCtrl {
   uiCanExit() {
     if (this.exitMode === 'view') {
       return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-        .then(() => this.ContentEditor.deleteDraft())
+        .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())
         .finally(() => this._clearExitMode());
     } else if (this.exitMode === 'edit') {
@@ -55,7 +93,8 @@ class EditContentToolsCtrl {
   _viewContent() {
     this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
     this.ContentEditor.close();
-    this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    const statisticEventName = this._getPublicationStateValue(REPORT_USAGE_STATISTIC_EVENT_NAMES, this.publicationStateOnExit);
+    this.CmsService.reportUsageStatistic(statisticEventName);
   }
 
   _editContent() {

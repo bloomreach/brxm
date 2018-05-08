@@ -80,7 +80,7 @@ class Step1Controller {
   }
 
   submit() {
-    this.Step1Service.createDraft()
+    this.Step1Service.createDocument()
       .then(document => this.CreateContentService.next(document, this.url, this.locale));
     this.CmsService.reportUsageStatistic('CreateContent1Create');
   }

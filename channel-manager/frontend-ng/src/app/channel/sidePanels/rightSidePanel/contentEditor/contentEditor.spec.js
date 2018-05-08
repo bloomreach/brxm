@@ -18,39 +18,50 @@ describe('ContentEditorCtrl', () => {
   let $componentController;
   let $q;
   let $rootScope;
+  let CmsService;
   let ContentEditor;
 
   let $ctrl;
   let $scope;
-  let cancelLabel;
   let form;
   let onSave;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _CmsService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
     });
 
+    spyOn(CmsService, 'reportUsageStatistic');
+
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'getDocument', 'getDocumentType', 'getError', 'isDocumentDirty', 'isEditing',
-      'markDocumentDirty', 'save',
+      'confirmPublication',
+      'getDocument',
+      'getDocumentType',
+      'getError',
+      'isDocumentDirty',
+      'isEditing',
+      'isPublishAllowed',
+      'markDocumentDirty',
+      'publish',
+      'save',
+      'cancelRequestPublication',
     ]);
 
     $scope = $rootScope.$new();
 
-    cancelLabel = 'CANCEL';
     form = jasmine.createSpyObj('form', ['$setPristine']);
     onSave = jasmine.createSpy('onSave');
 
     $ctrl = $componentController('contentEditor',
       { $scope, ContentEditor },
-      { cancelLabel, form, onSave },
+      { form, onSave },
     );
-    $rootScope.$digest();
+    $scope.$digest();
   });
 
   it('marks the content editor dirty when the form becomes dirty', () => {
@@ -71,6 +82,16 @@ describe('ContentEditorCtrl', () => {
 
     ContentEditor.isEditing.and.returnValue(false);
     expect($ctrl.isEditing()).toBe(false);
+  });
+
+  it('knows when publish is allowed', () => {
+    [true, false].forEach((editorAllowsPublish) => {
+      [true, false].forEach((dirty) => {
+        ContentEditor.isPublishAllowed.and.returnValue(editorAllowsPublish);
+        ContentEditor.isDocumentDirty.and.returnValue(dirty);
+        expect($ctrl.isPublishAllowed()).toBe(editorAllowsPublish && !dirty);
+      });
+    });
   });
 
   it('knows when save is allowed', () => {
@@ -111,7 +132,7 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.resolve());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).toHaveBeenCalled();
     expect(onSave).toHaveBeenCalled();
@@ -121,21 +142,116 @@ describe('ContentEditorCtrl', () => {
     ContentEditor.save.and.returnValue($q.reject());
 
     $ctrl.save();
-    $rootScope.$digest();
+    $scope.$digest();
 
     expect(form.$setPristine).not.toHaveBeenCalled();
     expect(onSave).not.toHaveBeenCalled();
   });
 
-  describe('close button label', () => {
-    it('is the cancel label when the document is dirty', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(true);
-      expect($ctrl.closeButtonLabel()).toBe(cancelLabel);
+  it('shows the loading indicator while saving and resets it once done', () => {
+    ContentEditor.save.and.returnValue($q.resolve());
+    spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+    $ctrl.save();
+    $scope.$digest();
+
+    expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+    expect($ctrl.loading).toBe(false);
+  });
+
+  describe('publish', () => {
+    it('shows a confirmation dialog', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.confirmPublication).toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
     });
 
-    it('is "close" when the document is not dirty', () => {
-      ContentEditor.isDocumentDirty.and.returnValue(false);
-      expect($ctrl.closeButtonLabel()).toBe('CLOSE');
+    it('does not publish nor save if the confirmation dialog is cancelled for a publication', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmPublication.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.save).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
+    });
+
+    it('does not publish nor save if the confirmation dialog is cancelled for a request publication', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.confirmPublication.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.save).not.toHaveBeenCalled();
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
+    });
+
+    it('publishes if the confirmation dialog is confirmed', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.publish).toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingPublishButton');
+    });
+
+    it('saves the form of a dirty document, prior to publishing', () => {
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.save.and.returnValue($q.resolve());
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.save).toHaveBeenCalled();
+      expect(form.$setPristine).toHaveBeenCalled();
+      expect(onSave).toHaveBeenCalled();
+      expect(ContentEditor.publish).toHaveBeenCalled();
+    });
+
+    it('does not publish if saving fails', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+      ContentEditor.isDocumentDirty.and.returnValue(true);
+      ContentEditor.save.and.returnValue($q.reject());
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect(ContentEditor.publish).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading indicator while publishing and resets it once done', () => {
+      ContentEditor.confirmPublication.and.returnValue($q.resolve());
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.publish();
+      $scope.$digest();
+
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
+    });
+  });
+
+  describe('cancelRequestPublication', () => {
+    it('cancels the publication request showing a loading indicator', () => {
+      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+
+      $ctrl.cancelRequestPublication();
+      $scope.$digest();
+
+      expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
+      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.loading).toBe(false);
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingCancelRequest');
     });
   });
 });

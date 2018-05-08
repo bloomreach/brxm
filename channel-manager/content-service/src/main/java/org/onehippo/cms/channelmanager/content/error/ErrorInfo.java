@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,13 +64,17 @@ public class ErrorInfo {
         this.params = params;
     }
 
+    public void addParam(final String name, final Serializable value) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        params.put(name, value);
+    }
+
     public static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
         if (errorInfo != null) {
             DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-                if (errorInfo.getParams() == null) {
-                    errorInfo.setParams(new HashMap<>());
-                }
-                errorInfo.getParams().put("displayName", displayName);
+                errorInfo.addParam("displayName", displayName);
             });
         }
         return errorInfo;
@@ -78,17 +82,21 @@ public class ErrorInfo {
 
     public enum Reason {
         ALREADY_DELETED,
+        CANCELABLE_PUBLICATION_REQUEST_PENDING,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        CORE_PROJECT,
         DOES_NOT_EXIST,
         INVALID_DATA,
         INVALID_TEMPLATE_QUERY,
         NAME_ALREADY_EXISTS,
         NO_HOLDER,
+        MULTIPLE_REQUESTS,
+        NO_REQUEST_PENDING,
         NOT_A_DOCUMENT,
+        NOT_EDITABLE,
         NOT_A_FOLDER,
         OTHER_HOLDER,
         PART_OF_PROJECT,
-        CORE_PROJECT,
         PROJECT_INVALID_STATE,
         PROJECT_NOT_FOUND,
         REQUEST_PENDING,
@@ -97,6 +105,7 @@ public class ErrorInfo {
         TEMPLATE_QUERY_NOT_FOUND,
         UNKNOWN_VALIDATOR,
         WORKFLOW_ERROR,
-        // add more specific failure reasons here.
+        WORKFLOW_ACTION_NOT_AVAILABLE,
+        WORKFLOW_ACTION_NOT_IMPLEMENTED,
     }
 }

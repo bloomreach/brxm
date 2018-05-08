@@ -15,13 +15,13 @@
   -->
 <div class="search-field-container">
   <md-input-container md-no-float>
-    <md-icon>search</md-icon>
+    <md-icon md-font-icon="mdi-magnify"></md-icon>
     <input type="text"
            placeholder="{{ ::'PLACEHOLDER_SEARCH' | translate }}"
            ng-model="$ctrl.keywords"
            ng-change="$ctrl.filterItems()"/>
     <md-button class="md-icon-button" ng-click="$ctrl.clearFilter()" ng-show="$ctrl.keywords">
-      <md-icon>clear</md-icon>
+      <md-icon md-font-icon="mdi-close"></md-icon>
     </md-button>
   </md-input-container>
 </div>

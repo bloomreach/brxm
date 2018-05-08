@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.function.Function;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -48,6 +49,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
+import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces("application/json")
@@ -62,61 +64,67 @@ public class ContentResource {
 
     private final SessionRequestContextProvider sessionRequestContextProvider;
     private final DocumentsService documentService;
+    private final WorkflowService workflowService;
     private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
 
-    public ContentResource(final SessionRequestContextProvider userSessionProvider, final DocumentsService documentsService, final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
+    public ContentResource(final SessionRequestContextProvider userSessionProvider,
+                           final DocumentsService documentsService,
+                           final WorkflowService workflowService,
+                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
+        this.workflowService = workflowService;
         this.contextPayloadService = contextPayloadService;
     }
 
-    @POST
-    @Path("documents/{id}/draft")
-    public Response createDraftDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> documentService.createDraft(id, session, locale, getPayload(servletRequest)));
-    }
-
-    @PUT
-    @Path("documents/{id}/draft")
-    public Response updateDraftDocument(@PathParam("id") final String id, final Document document,
-                                        @Context final HttpServletRequest servletRequest) {
+    @GET
+    @Path("documents/{documentId}/editable")
+    public Response obtainEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateDraft(id, document, session, locale, getPayload(servletRequest)));
+                (session, locale) -> documentService.obtainEditableDocument(id, session, locale, getPayload(servletRequest)));
     }
 
     @PUT
-    @Path("documents/{documentId}/draft/{fieldPath:.*}")
-    public Response updateDraftField(@PathParam("documentId") final String documentId,
-                                     @PathParam("fieldPath") final String fieldPath,
-                                     final List<FieldValue> fieldValues,
-                                     @Context final HttpServletRequest servletRequest) {
+    @Path("documents/{documentId}/editable")
+    public Response updateEditableDocument(@PathParam("documentId") final String id,
+                                           final Document document,
+                                           @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale, getPayload(servletRequest)));
+    }
+
+    @PUT
+    @Path("documents/{documentId}/editable/{fieldPath:.*}")
+    public Response updateEditableField(@PathParam("documentId") final String documentId,
+                                        @PathParam("fieldPath") final String fieldPath,
+                                        final List<FieldValue> fieldValues,
+                                        @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getPayload(servletRequest));
+            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getPayload(servletRequest));
             return null;
         });
     }
 
     @DELETE
-    @Path("documents/{id}/draft")
-    public Response deleteDraftDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documents/{documentId}/editable")
+    public Response discardEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.deleteDraft(id, session, locale, getPayload(servletRequest));
+            documentService.discardEditableDocument(id, session, locale, getPayload(servletRequest));
             return null;
         });
     }
 
     // for easy debugging:
     @GET
-    @Path("documents/{id}")
-    public Response getPublishedDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documents/{documentId}")
+    public Response getPublishedDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
                 (session, locale) -> documentService.getPublished(id, session, locale));
     }
 
     @GET
-    @Path("documenttypes/{id}")
-    public Response getDocumentType(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documenttypes/{documentId}")
+    public Response getDocumentType(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
     }
@@ -130,8 +138,8 @@ public class ContentResource {
     }
 
     @GET
-    @Path("templatequery/{id}")
-    public Response getTemplateQuery(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("templatequery/{documentId}")
+    public Response getTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
                 (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
     }
@@ -151,18 +159,29 @@ public class ContentResource {
     }
 
     @PUT
-    @Path("documents/{id}")
-    public Response updateDocumentNames(@PathParam("id") final String id, final Document document,
+    @Path("documents/{documentId}")
+    public Response updateDocumentNames(@PathParam("documentId") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
                 (session, locale) -> documentService.updateDocumentNames(id, document, session));
     }
 
     @DELETE
-    @Path("documents/{id}")
-    public Response deleteDocument(@PathParam("id") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documents/{documentId}")
+    public Response deleteDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
             documentService.deleteDocument(id, session, locale);
+            return null;
+        });
+    }
+
+    @POST
+    @Path("workflows/documents/{documentId}/{action}")
+    public Response executeDocumentWorkflowAction(@PathParam("documentId") final String documentId,
+                                                  @PathParam("action") final String action,
+                                                  @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+            workflowService.executeDocumentWorkflowAction(documentId, action, session, getPayload(servletRequest));
             return null;
         });
     }

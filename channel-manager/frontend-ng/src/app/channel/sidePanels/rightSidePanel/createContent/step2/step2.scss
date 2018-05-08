@@ -40,6 +40,8 @@
     }
 
     md-icon {
+      color: $icon-button-default;
+
       &:hover {
         cursor: pointer;
       }

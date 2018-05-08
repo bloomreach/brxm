@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ class FieldService {
     this.ContentService = ContentService;
 
     this.documentId = null;
-    this.activeDraftTimers = {};
-    this.AUTODRAFT_DELAY = 2000;
+    this.activeSaveTimers = {};
+    this.AUTOSAVE_DELAY = 2000;
 
     this._focusedInput = null;
     this._customFocusCallback = null;
@@ -71,35 +71,35 @@ class FieldService {
     return this.documentId;
   }
 
-  startDraftTimer(fieldName, fieldValue) {
+  startSaveTimer(fieldName, fieldValue) {
     const documentId = this.getDocumentId();
 
-    if (!this.activeDraftTimers[documentId]) this.activeDraftTimers[documentId] = {};
+    if (!this.activeSaveTimers[documentId]) this.activeSaveTimers[documentId] = {};
 
     this._clearFieldTimer(documentId, fieldName);
 
-    this.activeDraftTimers[documentId][fieldName] = this.$timeout(() => {
-      this.draftField(fieldName, fieldValue, documentId);
-    }, this.AUTODRAFT_DELAY);
+    this.activeSaveTimers[documentId][fieldName] = this.$timeout(() => {
+      this.saveField(fieldName, fieldValue, documentId);
+    }, this.AUTOSAVE_DELAY);
   }
 
-  draftField(fieldName, fieldValue, documentId = this.getDocumentId()) {
+  saveField(fieldName, fieldValue, documentId = this.getDocumentId()) {
     this._clearFieldTimer(documentId, fieldName);
-    this.ContentService.draftField(documentId, fieldName, fieldValue);
+    this.ContentService.saveField(documentId, fieldName, fieldValue);
     this._cleanupTimers(documentId);
   }
 
   _clearFieldTimer(documentId, fieldName) {
-    if (this.activeDraftTimers[documentId] && this.activeDraftTimers[documentId][fieldName]) {
-      this.$timeout.cancel(this.activeDraftTimers[documentId][fieldName]);
-      delete this.activeDraftTimers[documentId][fieldName];
+    if (this.activeSaveTimers[documentId] && this.activeSaveTimers[documentId][fieldName]) {
+      this.$timeout.cancel(this.activeSaveTimers[documentId][fieldName]);
+      delete this.activeSaveTimers[documentId][fieldName];
     }
   }
 
   _cleanupTimers(documentId) {
-    const timers = this.activeDraftTimers[documentId];
+    const timers = this.activeSaveTimers[documentId];
     if (timers && Object.keys(timers).length === 0) {
-      delete this.activeDraftTimers[documentId];
+      delete this.activeSaveTimers[documentId];
     }
   }
 }

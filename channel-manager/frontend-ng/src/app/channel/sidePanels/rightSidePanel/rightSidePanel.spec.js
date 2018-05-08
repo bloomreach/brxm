@@ -20,6 +20,7 @@ describe('RightSidePanel', () => {
   let $rootScope;
   let $state;
   let $stateRegistry;
+  let $timeout;
   let ChannelService;
   let CmsService;
   let RightSidePanelService;
@@ -32,12 +33,13 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$stateRegistry_, _ChannelService_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$stateRegistry_, _$timeout_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $stateRegistry = _$stateRegistry_;
+      $timeout = _$timeout_;
       ChannelService = _ChannelService_;
       RightSidePanelService = _RightSidePanelService_;
     });
@@ -58,6 +60,7 @@ describe('RightSidePanel', () => {
 
   it('knows the loading state', () => {
     RightSidePanelService.startLoading();
+    $timeout.flush();
     expect($ctrl.isLoading()).toBe(true);
 
     RightSidePanelService.stopLoading();

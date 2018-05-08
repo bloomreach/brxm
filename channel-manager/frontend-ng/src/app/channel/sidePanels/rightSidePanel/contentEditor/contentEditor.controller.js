@@ -16,20 +16,23 @@
 
 class ContentEditorCtrl {
   constructor(
+    $q,
     $scope,
     $translate,
+    CmsService,
     ContentEditor,
     ConfigService,
     ProjectService,
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$scope = $scope;
+    this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
 
-    this.cancelLabel = $translate.instant('CANCEL');
     this.closeLabel = $translate.instant('CLOSE');
   }
 
@@ -47,6 +50,10 @@ class ContentEditorCtrl {
 
   isEditing() {
     return this.ContentEditor.isEditing();
+  }
+
+  isPublishAllowed() {
+    return this.ContentEditor.isPublishAllowed() && !this._isDocumentDirty();
   }
 
   isSaveAllowed() {
@@ -69,15 +76,38 @@ class ContentEditorCtrl {
     return this.ContentEditor.getError();
   }
 
-  closeButtonLabel() {
-    return this._isDocumentDirty() ? this.cancelLabel : this.closeLabel;
+  save() {
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.onSave();
+        }));
   }
 
-  save() {
-    this.ContentEditor.save()
-      .then(() => {
-        this.form.$setPristine();
-        this.onSave();
+  publish() {
+    this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
+    return this.ContentEditor.confirmPublication()
+      .then(() => this._doPublish());
+  }
+
+  _doPublish() {
+    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+      ? this.save().then(() => this.ContentEditor.publish())
+      : this.ContentEditor.publish()),
+    );
+  }
+
+  cancelRequestPublication() {
+    this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
+    return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
+  }
+
+  showLoadingIndicator(promise) {
+    this.loading = true;
+    return this.$q.resolve(promise())
+      .finally(() => {
+        this.loading = false;
       });
   }
 }

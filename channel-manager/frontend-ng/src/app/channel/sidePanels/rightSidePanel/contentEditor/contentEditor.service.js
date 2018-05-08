@@ -33,6 +33,11 @@ const ERROR_MAP = {
     linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
+  NOT_EDITABLE: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    linkToContentEditor: true,
+    messageKey: 'FEEDBACK_NOT_EDITABLE_MESSAGE',
+  },
   NOT_FOUND: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
@@ -41,6 +46,12 @@ const ERROR_MAP = {
   OTHER_HOLDER: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
+  },
+  CANCELABLE_PUBLICATION_REQUEST_PENDING: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE',
+    cancelRequest: true,
+    color: 'hippo-grey-200',
   },
   REQUEST_PENDING: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -76,7 +87,7 @@ const ERROR_MAP = {
 };
 
 class ContentEditorService {
-  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService) {
+  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService, WorkflowService) {
     'ngInject';
 
     this.$q = $q;
@@ -86,9 +97,11 @@ class ContentEditorService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.FieldService = FieldService;
+    this.WorkflowService = WorkflowService;
   }
 
   open(documentId) {
+    this.close();
     return this._loadDocument(documentId);
   }
 
@@ -108,6 +121,10 @@ class ContentEditorService {
     return this.documentDirty;
   }
 
+  getPublicationState() {
+    return this.publicationState;
+  }
+
   markDocumentDirty() {
     this.documentDirty = true;
   }
@@ -120,11 +137,15 @@ class ContentEditorService {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
   }
 
+  isPublishAllowed() {
+    return this.canPublish || this.canRequestPublication;
+  }
+
   _loadDocument(id) {
     this._setDocumentId(id);
 
     return this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.createDraft(id)
+      .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
           if (this._hasFields(document)) {
             return this.loadDocumentType(document);
@@ -132,7 +153,7 @@ class ContentEditorService {
           return this.$q.reject(this._noContentResponse(document));
         })
         .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDraftInvalid());
+      .catch(() => this._setErrorDocumentInvalid());
   }
 
   _setDocumentId(id) {
@@ -165,10 +186,11 @@ class ContentEditorService {
     };
   }
 
-  _setErrorDraftInvalid() {
+  _setErrorDocumentInvalid() {
+    this._clearDocument();
     this.error = {
-      titleKey: 'FEEDBACK_DRAFT_INVALID_TITLE',
-      messageKey: 'FEEDBACK_DRAFT_INVALID_MESSAGE',
+      titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+      messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
       linkToContentEditor: true,
     };
   }
@@ -176,7 +198,12 @@ class ContentEditorService {
   _onLoadSuccess(document, documentType) {
     this.document = document;
     this.documentType = documentType;
+
     this.documentDirty = document.info && document.info.dirty;
+    this.canPublish = document.info && document.info.canPublish;
+    this.canRequestPublication = document.info && document.info.canRequestPublication;
+    this.publicationState = document.info && document.info.publicationState;
+
     delete this.error;
   }
 
@@ -190,6 +217,8 @@ class ContentEditorService {
   }
 
   _onLoadFailure(response) {
+    this._clearDocument();
+
     let errorKey;
     let params = null;
 
@@ -197,6 +226,10 @@ class ContentEditorService {
       const errorInfo = response.data;
       errorKey = errorInfo.reason;
       params = this._extractErrorParams(errorInfo);
+
+      if (errorInfo.params) {
+        this.publicationState = errorInfo.params.publicationState;
+      }
     } else if (response.status === 404) {
       errorKey = 'NOT_FOUND';
     } else {
@@ -210,7 +243,7 @@ class ContentEditorService {
   }
 
   save() {
-    return this._saveDraft()
+    return this._saveDocument()
       .catch((response) => {
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
@@ -234,11 +267,11 @@ class ContentEditorService {
       });
   }
 
-  _saveDraft() {
+  _saveDocument() {
     if (!this.documentDirty) {
       return this.$q.resolve();
     }
-    return this.ContentService.saveDraft(this.document)
+    return this.ContentService.saveDocument(this.document)
       .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
   }
 
@@ -254,13 +287,17 @@ class ContentEditorService {
     if (!angular.isDefined(errorInfo.params)) {
       return undefined;
     }
+
     const params = angular.copy(errorInfo.params);
+
     const user = params.userName || params.userId;
     if (user) {
       params.user = user;
       delete params.userId;
       delete params.userName;
     }
+
+    delete params.publicationState;
 
     if (errorInfo.reason === 'PART_OF_PROJECT') {
       params.projectName = errorInfo.params.projectName;
@@ -315,7 +352,7 @@ class ContentEditorService {
       .then((action) => {
         switch (action) {
           case 'SAVE':
-            return this._saveDraft()
+            return this._saveDocument()
               .then(() => action); // let caller know that changes have been saved
           default:
             return this.$q.resolve(action); // let caller know that changes have not been saved
@@ -349,9 +386,9 @@ class ContentEditorService {
       || this.killed; // editor was killed, don't show dialog
   }
 
-  deleteDraft() {
+  discardChanges() {
     if (this.isEditing() && !this.killed) {
-      return this.ContentService.deleteDraft(this.document.id);
+      return this.ContentService.discardChanges(this.document.id);
     }
     return this.$q.resolve();
   }
@@ -366,13 +403,117 @@ class ContentEditorService {
     return this.$q.resolve();
   }
 
+  confirmPublication() {
+    const textContent = this.$translate.instant(this._confirmPublicationTextKey(), { documentName: this.document.displayName });
+    const ok = this.$translate.instant(this._confirmPublicationOkKey());
+    const cancel = this.$translate.instant('CANCEL');
+
+    const confirm = this.DialogService.confirm()
+      .textContent(textContent)
+      .ok(ok)
+      .cancel(cancel);
+
+    return this.DialogService.show(confirm)
+      .catch(() => {
+        this._reportPublishCancelAction();
+        return this.$q.reject();
+      });
+  }
+
+  _reportPublishCancelAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxCancel' : 'VisualEditingLightboxRequestPubCancel';
+    this.CmsService.reportUsageStatistic(eventName);
+  }
+
+  _confirmPublicationTextKey() {
+    if (this.canPublish) {
+      return this.documentDirty ?
+        'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
+    }
+    return this.documentDirty ?
+      'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
+  }
+
+  _confirmPublicationOkKey() {
+    if (this.canPublish) {
+      return this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
+    }
+    return this.documentDirty ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
+  }
+
+  publish() {
+    const workflowAction = this.canPublish ? 'publish' : 'requestPublication';
+    const notificationKey = this.canPublish ? 'NOTIFICATION_DOCUMENT_PUBLISHED' : 'NOTIFICATION_PUBLICATION_REQUESTED';
+    const errorKey = this.canPublish ? 'ERROR_PUBLISH_DOCUMENT_FAILED' : 'ERROR_REQUEST_PUBLICATION_FAILED';
+    const messageParams = { documentName: this.document.displayName };
+
+    return this.ContentService
+      .discardChanges(this.documentId)
+      .then(() =>
+        this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
+          .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
+          .then(() => this._reportPublishAction())
+          .finally(() =>
+            this.ContentService.getEditableDocument(this.documentId)
+              .then((saveDocument) => {
+                this._onLoadSuccess(saveDocument, this.documentType);
+              })
+              .catch((response) => {
+                if (this.canPublish) {
+                  // Document published. Getting an editable document should not have failed, so set the same error as
+                  // when getting an editable document fails.
+                  this._setErrorDocumentInvalid();
+                } else {
+                  // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
+                  // error and remove the document so the 'document not editable' message is shown and the editor is
+                  // removed.
+                  this._onLoadFailure(response);
+                }
+                // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
+                // action has succeeded. The error that has been set will make it clear to the user that the document
+                // could not be created.
+              }),
+          ),
+      )
+      .catch(() => {
+        this.FeedbackService.showError(errorKey, messageParams);
+        return this.$q.reject();
+      });
+  }
+
+  _reportPublishAction() {
+    const eventName = this.canPublish ? 'VisualEditingLightboxPublish' : 'VisualEditingLightboxRequestPub';
+    this.CmsService.reportUsageStatistic(eventName);
+  }
+
+  cancelRequestPublication() {
+    return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
+      .catch(() => {
+        const errorData = {
+          documentName: this.error && this.error.messageParams && this.error.messageParams.displayName
+            ? this.error.messageParams.displayName
+            : null,
+        };
+        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', errorData);
+        return this.$q.reject();
+      })
+      .finally(() => this._loadDocument(this.documentId));
+  }
+
   close() {
     delete this.documentId;
-    delete this.document;
     delete this.documentType;
-    delete this.documentDirty;
+    this._clearDocument();
     delete this.error;
     delete this.killed;
+  }
+
+  _clearDocument() {
+    delete this.document;
+    delete this.documentDirty;
+    delete this.canPublish;
+    delete this.canRequestPublication;
+    delete this.publicationState;
   }
 }
 

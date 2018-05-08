@@ -29,20 +29,20 @@ class ContentService {
     this._running = false;
   }
 
-  createDraft(id) {
-    return this._send('POST', ['documents', id, 'draft']);
+  getEditableDocument(id) {
+    return this._send('GET', ['documents', id, 'editable']);
   }
 
-  saveDraft(doc) {
-    return this._send('PUT', ['documents', doc.id, 'draft'], doc);
+  saveDocument(doc) {
+    return this._send('PUT', ['documents', doc.id, 'editable'], doc);
   }
 
-  deleteDraft(id) {
-    return this._send('DELETE', ['documents', id, 'draft']);
+  discardChanges(id) {
+    return this._send('DELETE', ['documents', id, 'editable']);
   }
 
-  draftField(documentId, fieldName, value) {
-    return this._send('PUT', ['documents', documentId, 'draft', fieldName], value);
+  saveField(documentId, fieldName, value) {
+    return this._send('PUT', ['documents', documentId, 'editable', fieldName], value);
   }
 
   deleteDocument(id) {

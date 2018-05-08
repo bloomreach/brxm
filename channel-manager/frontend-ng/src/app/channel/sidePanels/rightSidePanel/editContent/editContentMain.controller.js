@@ -17,6 +17,7 @@
 class EditContentMainCtrl {
   constructor(
     $q,
+    $scope,
     $translate,
     CmsService,
     ConfigService,
@@ -24,18 +25,35 @@ class EditContentMainCtrl {
     EditContentService,
     HippoIframeService,
     ProjectService,
+    RightSidePanelService,
   ) {
     'ngInject';
 
     this.$q = $q;
+    this.$scope = $scope;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
+    this.RightSidePanelService = RightSidePanelService;
 
     this.closing = false;
+  }
+
+  $onInit() {
+    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        this.RightSidePanelService.startLoading();
+      } else {
+        this.RightSidePanelService.stopLoading();
+      }
+    });
   }
 
   notAllFieldsShown() {
@@ -61,9 +79,9 @@ class EditContentMainCtrl {
   uiCanExit() {
     return this._confirmExit()
       .then(() => {
-        // don't return the result of deleteDraft: if it fails (e.g. because an admin unlocked the document)
+        // don't return the result of discardChanges: if it fails (e.g. because an admin unlocked the document)
         // the editor should still be closed.
-        this.ContentEditor.deleteDraft()
+        this.ContentEditor.discardChanges()
           .finally(() => this.ContentEditor.close());
       })
       .catch(() => {
