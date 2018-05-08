@@ -68,7 +68,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final String IMAGE_QUERY_NAME = "image";
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
     private static final String RESULT_LIMIT_PROPERTY = "result.limit";
-    private static final int DEFAULT_RESULT_LIMIT = -1;
+    private static final int DEFAULT_RESULT_LIMIT = 300;
 
     private final FolderModelService folderService;
     private final DocumentCollection collection;

@@ -27,7 +27,7 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final int LIMIT = 300;
+    public static final int LIMIT = 100;
 
     private final String query;
     private int limit;
@@ -44,7 +44,7 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
         try {
             QueryManager queryManager = UserSession.get().getQueryManager();
             Query q = queryManager.createQuery(query, "xpath");
-            if (limit > 0 && limit < LIMIT) {
+            if (limit > 0) {
                 q.setLimit(limit);
             } else {
                 q.setLimit(LIMIT);
