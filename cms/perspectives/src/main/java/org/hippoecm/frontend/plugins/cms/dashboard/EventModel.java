@@ -94,7 +94,7 @@ public class EventModel implements IComponentAssignedModel<String> {
                     this.arguments[i] = values[i].getString();
                 }
             }
-            this.user = node.getProperty("hippolog:user").getString();
+            this.user = StringEscapeUtils.escapeHtml(node.getProperty("hippolog:user").getString());
             this.nameModel = nameModel;
 
         } catch (RepositoryException e) {
