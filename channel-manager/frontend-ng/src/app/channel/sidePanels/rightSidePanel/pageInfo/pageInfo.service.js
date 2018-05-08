@@ -21,13 +21,25 @@
  * until the page-info parent state is left again.
  */
 class PageInfoService {
-  constructor($state, $stateRegistry, $translate, ExtensionService, RightSidePanelService) {
+  constructor(
+    $state,
+    $stateRegistry,
+    $translate,
+    ChannelService,
+    ExtensionService,
+    PageMetaDataService,
+    PathService,
+    RightSidePanelService,
+  ) {
     'ngInject';
 
     this.$state = $state;
     this.$stateRegistry = $stateRegistry;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.ExtensionService = ExtensionService;
+    this.PageMetaDataService = PageMetaDataService;
+    this.PathService = PathService;
     this.RightSidePanelService = RightSidePanelService;
 
     this._registerPageExtensionStates();
@@ -56,12 +68,18 @@ class PageInfoService {
     });
   }
 
-  showPageInfo(pageUrl) {
-    const title = this.$translate.instant('PAGE_INFO_TITLE', { pageUrl });
-    this.RightSidePanelService.setTitle(title);
+  showPageInfo() {
+    const pageUrl = this._getPageUrl();
+    this._setTitle(pageUrl);
+    this._loadFirstPageExtension(pageUrl);
+  }
 
-    const pageExtensions = this.ExtensionService.getExtensions('page');
-    this.$state.go(`hippo-cm.channel.page-info.${pageExtensions[0].id}`, { pageUrl });
+  updatePageInfo() {
+    if (this._isPageInfoShown()) {
+      const pageUrl = this._getPageUrl();
+      this._setTitle(pageUrl);
+      this._updateLoadedPageExtensions(pageUrl);
+    }
   }
 
   get selectedExtensionId() {
@@ -69,6 +87,35 @@ class PageInfoService {
   }
 
   set selectedExtensionId(extensionId) {
+    this._loadPageExtension(extensionId);
+  }
+
+  _getPageUrl() {
+    const channelBaseUrl = this.ChannelService.getChannel().url;
+    const pagePath = this.PageMetaDataService.getPathInfo();
+    return this.PathService.concatPaths(channelBaseUrl, pagePath);
+  }
+
+  _setTitle(pageUrl) {
+    const title = this.$translate.instant('PAGE_INFO_TITLE', { pageUrl });
+    this.RightSidePanelService.setTitle(title);
+  }
+
+  _loadFirstPageExtension(pageUrl) {
+    const pageExtensions = this.ExtensionService.getExtensions('page');
+    this.$state.go(`hippo-cm.channel.page-info.${pageExtensions[0].id}`, { pageUrl });
+  }
+
+  _isPageInfoShown() {
+    return this.$state.includes('hippo-cm.channel.page-info');
+  }
+
+  _updateLoadedPageExtensions(pageUrl) {
+    this.$state.go(this.$state.current.name, { pageUrl });
+  }
+
+  _loadPageExtension(extensionId) {
+    // N.B. the current pageUrl is inherited from the page-info parent state
     this.$state.go(`hippo-cm.channel.page-info.${extensionId}`);
   }
 

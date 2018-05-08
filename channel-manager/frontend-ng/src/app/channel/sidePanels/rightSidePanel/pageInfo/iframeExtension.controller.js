@@ -29,37 +29,35 @@ class IframeExtensionCtrl {
     const extensionId = this.$uiRouterGlobals.params.extensionId;
     this.extension = this.ExtensionService.getExtension(extensionId);
 
-    this.pageUrl = this.$uiRouterGlobals.params.pageUrl;
-
     const extensionIframe = this.$element.children('.iframe-extension');
     this.iframeWindow = this.DomService.getIframeWindow(extensionIframe);
 
-    extensionIframe.on('load', () => this._onIframeLoaded());
+    extensionIframe.on('load', () => this._setPageContext());
   }
 
-  _onIframeLoaded() {
-    if (this._isApiValid()) {
+  uiOnParamsChanged(params) {
+    if (params.pageUrl) {
+      // page URL changed
       this._setPageContext();
     }
   }
 
-  _isApiValid() {
+  _setPageContext() {
     if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
       this._warnPageExtension('does not define a window.BR_EXTENSION object, cannot provide page context');
-      return false;
-    } else if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
-      this._warnPageExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide page context');
-      return false;
+      return;
     }
-    return true;
-  }
 
-  _setPageContext() {
+    if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
+      this._warnPageExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide page context');
+      return;
+    }
+
     try {
       this.iframeWindow.BR_EXTENSION.onContextChanged({
         context: 'page',
         data: {
-          pageUrl: this.pageUrl,
+          pageUrl: this.$uiRouterGlobals.params.pageUrl,
         },
       });
     } catch (e) {

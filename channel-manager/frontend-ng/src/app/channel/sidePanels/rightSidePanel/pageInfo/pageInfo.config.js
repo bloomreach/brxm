@@ -24,8 +24,12 @@ function config($stateProvider, $uiRouterProvider) {
 
   $stateProvider.state({
     name: 'hippo-cm.channel.page-info',
+    abstract: true,
     params: {
-      pageUrl: '',
+      pageUrl: {
+        type: 'string',
+        dynamic: true,
+      },
     },
     views: {
       tools: {

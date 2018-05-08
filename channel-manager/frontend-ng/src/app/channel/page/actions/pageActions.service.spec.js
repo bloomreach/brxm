@@ -146,41 +146,12 @@ describe('PageActionsService', () => {
 
     it('shows page info when clicked', () => {
       ExtensionService.hasExtensions.and.returnValue(true);
-      spyOn(ChannelService, 'getChannel').and.returnValue({ url: 'http://example.com/subsite' });
-      spyOn(PageMetaDataService, 'getPathInfo').and.returnValue('path/to/page.html');
       spyOn(PageInfoService, 'showPageInfo');
 
       PageActionsService._initMenu();
       getItem('info').onClick();
 
-      expect(PageInfoService.showPageInfo).toHaveBeenCalledWith('http://example.com/subsite/path/to/page.html');
-    });
-
-    it('generates the correct pageUrl', () => {
-      ExtensionService.hasExtensions.and.returnValue(true);
-      spyOn(ChannelService, 'getChannel');
-      spyOn(PageMetaDataService, 'getPathInfo');
-      spyOn(PageInfoService, 'showPageInfo');
-
-      function pageUrl(channelUrl, pagePath) {
-        ChannelService.getChannel.and.returnValue({ url: channelUrl });
-        PageMetaDataService.getPathInfo.and.returnValue(pagePath);
-
-        PageActionsService._initMenu();
-        getItem('info').onClick();
-
-        return PageInfoService.showPageInfo.calls.mostRecent().args[0];
-      }
-
-      expect(pageUrl('http://localhost:8080/site', '')).toEqual('http://localhost:8080/site');
-      expect(pageUrl('http://localhost:8080/site', '/news')).toEqual('http://localhost:8080/site/news');
-      expect(pageUrl('http://localhost:8080/site/nl', '')).toEqual('http://localhost:8080/site/nl');
-      expect(pageUrl('http://localhost:8080/site/nl', '/nieuws')).toEqual('http://localhost:8080/site/nl/nieuws');
-      expect(pageUrl('https://example.com', '')).toEqual('https://example.com');
-      expect(pageUrl('https://example.com', '/news')).toEqual('https://example.com/news');
-      expect(pageUrl('https://example.com/', '/news')).toEqual('https://example.com/news');
-      expect(pageUrl('https://example.com/en', '/news')).toEqual('https://example.com/en/news');
-      expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
+      expect(PageInfoService.showPageInfo).toHaveBeenCalled();
     });
   });
 

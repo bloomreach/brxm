@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('IframeExtension', () => {
+describe('iframeExtension', () => {
   let $componentController;
   let $ctrl;
   let $element;
@@ -59,14 +59,13 @@ describe('IframeExtension', () => {
   });
 
   describe('$onInit', () => {
-    it('initializes all fields', () => {
+    it('initializes the page extension', () => {
       ExtensionService.getExtension.and.returnValue(extension);
 
       $ctrl.$onInit();
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test');
       expect($ctrl.extension).toEqual(extension);
-      expect($ctrl.pageUrl).toEqual('testPageUrl');
     });
 
     it('listens to the iframe load event', () => {
@@ -146,6 +145,24 @@ describe('IframeExtension', () => {
         triggerIframeLoad();
         expect($log.warn).toHaveBeenCalledWith('Page info extension \'Test\' threw an error in window.BR_EXTENSION.onContextChanged()', error);
       });
+    });
+  });
+
+  describe('uiOnParamsChanged', () => {
+    beforeEach(() => {
+      spyOn($ctrl, '_setPageContext');
+    });
+
+    it('updates the page context when the pageUrl parameter changed', () => {
+      $ctrl.uiOnParamsChanged({
+        pageUrl: '/newPageUrl',
+      });
+      expect($ctrl._setPageContext).toHaveBeenCalled();
+    });
+
+    it('does not update the page context when the pageUrl parameter did not change', () => {
+      $ctrl.uiOnParamsChanged({});
+      expect($ctrl._setPageContext).not.toHaveBeenCalled();
     });
   });
 });

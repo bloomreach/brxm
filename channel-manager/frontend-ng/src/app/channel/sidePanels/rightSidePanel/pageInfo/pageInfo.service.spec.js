@@ -19,7 +19,9 @@ describe('PageInfoService', () => {
   let $state;
   let $stateRegistry;
   let $translate;
+  let ChannelService;
   let PageInfoService;
+  let PageMetaDataService;
   let RightSidePanelService;
 
   let extension1;
@@ -44,15 +46,35 @@ describe('PageInfoService', () => {
       $provide.value('ExtensionService', ExtensionService);
     });
 
-    inject((_$rootScope_, _$state_, _$stateRegistry_, _$translate_, _PageInfoService_, _RightSidePanelService_) => {
+    inject((
+      _$rootScope_,
+      _$state_,
+      _$stateRegistry_,
+      _$translate_,
+      _ChannelService_,
+      _PageInfoService_,
+      _PageMetaDataService_,
+      _RightSidePanelService_,
+    ) => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $stateRegistry = _$stateRegistry_;
       $translate = _$translate_;
+      ChannelService = _ChannelService_;
       PageInfoService = _PageInfoService_;
+      PageMetaDataService = _PageMetaDataService_;
       RightSidePanelService = _RightSidePanelService_;
     });
+
+    spyOn(ChannelService, 'getChannel');
+    spyOn(PageMetaDataService, 'getPathInfo');
   });
+
+  function pageUrl(channelUrl, pagePath) {
+    ChannelService.getChannel.and.returnValue({ url: channelUrl });
+    PageMetaDataService.getPathInfo.and.returnValue(pagePath);
+    return PageInfoService._getPageUrl();
+  }
 
   describe('state per page extension', () => {
     it('is registered', () => {
@@ -71,21 +93,82 @@ describe('PageInfoService', () => {
     });
   });
 
+  it('generates the correct pageUrl', () => {
+    expect(pageUrl('http://localhost:8080/site', '')).toEqual('http://localhost:8080/site');
+    expect(pageUrl('http://localhost:8080/site', '/news')).toEqual('http://localhost:8080/site/news');
+    expect(pageUrl('http://localhost:8080/site/nl', '')).toEqual('http://localhost:8080/site/nl');
+    expect(pageUrl('http://localhost:8080/site/nl', '/nieuws')).toEqual('http://localhost:8080/site/nl/nieuws');
+    expect(pageUrl('https://example.com', '')).toEqual('https://example.com');
+    expect(pageUrl('https://example.com', '/news')).toEqual('https://example.com/news');
+    expect(pageUrl('https://example.com/', '/news')).toEqual('https://example.com/news');
+    expect(pageUrl('https://example.com/en', '/news')).toEqual('https://example.com/en/news');
+    expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
+  });
+
   describe('showPageInfo', () => {
+    beforeEach(() => {
+      pageUrl('https://example.com', '/pageUrl');
+    });
+
     it('sets the title of the right side-panel', () => {
       spyOn($translate, 'instant').and.callThrough();
       spyOn(RightSidePanelService, 'setTitle');
 
-      PageInfoService.showPageInfo('/pageUrl');
+      PageInfoService.showPageInfo();
 
-      expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: '/pageUrl' });
+      expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/pageUrl' });
       expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
     });
 
     it('goes to the state of the first page extension', () => {
       spyOn($state, 'go');
-      PageInfoService.showPageInfo('/pageUrl');
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: '/pageUrl' });
+      PageInfoService.showPageInfo();
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/pageUrl' });
+    });
+  });
+
+  describe('updatePageInfo', () => {
+    beforeEach(() => {
+      pageUrl('https://example.com', '/pageUrl');
+    });
+
+    describe('when page info is already shown', () => {
+      beforeEach(() => {
+        PageInfoService.showPageInfo();
+        $rootScope.$digest();
+
+        pageUrl('https://example.com', '/anotherPageUrl');
+      });
+
+      it('updates the title of the right side-panel', () => {
+        spyOn($translate, 'instant').and.callThrough();
+        spyOn(RightSidePanelService, 'setTitle');
+
+        PageInfoService.updatePageInfo();
+
+        expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/anotherPageUrl' });
+        expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
+      });
+
+      it('updates the state of all loaded page extensions', () => {
+        spyOn($state, 'go');
+        PageInfoService.updatePageInfo();
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/anotherPageUrl' });
+      });
+    });
+
+    describe('when no page info is shown', () => {
+      it('does nothing', () => {
+        spyOn($translate, 'instant').and.callThrough();
+        spyOn(RightSidePanelService, 'setTitle');
+        spyOn($state, 'go');
+
+        PageInfoService.updatePageInfo();
+
+        expect($translate.instant).not.toHaveBeenCalled();
+        expect(RightSidePanelService.setTitle).not.toHaveBeenCalled();
+        expect($state.go).not.toHaveBeenCalled();
+      });
     });
   });
 
@@ -96,9 +179,13 @@ describe('PageInfoService', () => {
       expect(PageInfoService.selectedExtensionId).toEqual('extension2');
     });
 
-    it('navigates to a page extension state when set', () => {
+    it('navigates to another page extension state when set', () => {
+      $state.go('hippo-cm.channel.page-info.extension1', { pageUrl: '/test' });
+      $rootScope.$digest();
+
       PageInfoService.selectedExtensionId = 'extension2';
       $rootScope.$digest();
+
       expect($state.current.name).toEqual('hippo-cm.channel.page-info.extension2');
     });
   });

@@ -102,10 +102,7 @@ class PageActionsService extends MenuService {
   }
 
   _pageInfo() {
-    const channelBaseUrl = this.ChannelService.getChannel().url;
-    const pagePath = this.PageMetaDataService.getPathInfo();
-    const pageUrl = this.PathService.concatPaths(channelBaseUrl, pagePath);
-    this.PageInfoService.showPageInfo(pageUrl);
+    this.PageInfoService.showPageInfo();
   }
 
   _pageProperties() {
