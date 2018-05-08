@@ -93,7 +93,7 @@
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-collections4.version>4.1</commons-collections4.version>
-    <tika.version>1.17</tika.version>
+    <tika.version>1.18</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
     <pdfbox.version>2.0.8</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
@@ -340,14 +340,36 @@
             <artifactId>commons-csv</artifactId>
           </exclusion>
 
+          <!-- New in Tika 1.18 -->
           <exclusion>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>com.github.openjson</groupId>
+            <artifactId>openjson</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimafit-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimaj-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+          </exclusion>
+
         </exclusions>
       </dependency>
       <dependency>
