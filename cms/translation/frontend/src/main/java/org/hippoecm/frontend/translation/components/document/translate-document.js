@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -415,7 +415,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
         if (value === "" && record.get('editable')) {
             txt += "<font color='#ff0000'><i>" + this.resources['add-translation'] + "</i></font>";
         } else {
-            txt += String.format("{0}", value);
+            txt += Ext.util.Format.htmlEncode(value);
         }
         return txt;
     }

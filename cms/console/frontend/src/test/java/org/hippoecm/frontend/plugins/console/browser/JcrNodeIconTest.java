@@ -48,7 +48,7 @@ public class JcrNodeIconTest extends RepositoryTestCase {
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-file-folder/hippostd:templates/asset gallery"), "fa fa-paperclip jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:queries/hippo:templates/new-image-folder/hippostd:templates/image gallery"), "fa fa-picture-o jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:workflows"), "fa fa-refresh jcrnode-conf");
-        assertEquals(getCssClass("/hippo:configuration/hippo:workflows/threepane/image-gallery/frontend:renderer"), "fa fa-plug jcrnode-conf");
+        assertEquals(getCssClass("/hippo:configuration/hippo:workflows/threepane/image-gallery/frontend:renderer"), "fa fa-cogs jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:workflows/threepane/folder-permissions/frontend:renderer/standard/filters"), "fa fa-cog jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:users"), "fa fa-user jcrnode-conf");
         assertEquals(getCssClass("/hippo:configuration/hippo:groups"), "fa fa-users jcrnode-conf");
