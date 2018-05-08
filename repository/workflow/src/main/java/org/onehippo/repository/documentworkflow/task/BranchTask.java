@@ -99,6 +99,9 @@ public class BranchTask extends AbstractDocumentTask {
         }
 
         JcrUtils.ensureIsCheckedOut(targetNode);
+
+        addToHandleBranchesProperty(targetNode.getParent(), branchId, versionHistory);
+
         if (CORE_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // to be sure also remove the properties since hippo document is relaxed
             targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
@@ -106,25 +109,32 @@ public class BranchTask extends AbstractDocumentTask {
             // the 'core' branch just means removing the branch info
             targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
         } else {
-            final Node handle = targetNode.getParent();
-            if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
-                handle.addMixin(NT_HIPPO_VERSION_INFO);
-            }
-
-            final String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
-            if (contains(branches, branchId)) {
-                 log.warn("Handle property '{}' already contains branchId '{}' which is unexpected since the branch should " +
-                         "have already been created.", HIPPO_BRANCHES_PROPERTY, branchId);
-            } else {
-                handle.setProperty(HIPPO_BRANCHES_PROPERTY, add(branches, branchId));
-            }
-
             targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
         }
 
         return new Document(targetNode);
+    }
+
+    private void addToHandleBranchesProperty(final Node handle, final String branchId, final VersionHistory versionHistory) throws RepositoryException {
+
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            handle.addMixin(NT_HIPPO_VERSION_INFO);
+        }
+
+        String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
+        if (!branchId.equals(CORE_BRANCH_ID) && !contains(branches, CORE_BRANCH_ID) &&
+                versionHistory.hasVersionLabel(CORE_BRANCH_ID + "-preview")) {
+            // add core to available branches
+            branches = add(branches, CORE_BRANCH_ID);
+        }
+        if (contains(branches, branchId)) {
+             log.warn("Handle property '{}' already contains branchId '{}' which is unexpected since the branch should " +
+                     "have already been created.", HIPPO_BRANCHES_PROPERTY, branchId);
+        } else {
+            handle.setProperty(HIPPO_BRANCHES_PROPERTY, add(branches, branchId));
+        }
     }
 
 }

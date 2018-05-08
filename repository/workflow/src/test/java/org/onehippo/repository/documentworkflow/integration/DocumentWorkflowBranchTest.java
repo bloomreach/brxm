@@ -127,7 +127,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
-        assertArrayEquals(new String[]{"foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+        assertArrayEquals(new String[]{"core", "foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
 
     }
 
@@ -178,7 +178,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
-        assertArrayEquals(new String[]{"foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+        assertArrayEquals(new String[]{"core", "foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
 
     }
 
@@ -263,6 +263,12 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("bar", "Bar");
         }
+
+        //  assert the handle does NOT have 'core' now as available since there never was a core! Also 'foo' was never
+        // really a branch so also not present
+        assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
+        assertArrayEquals(new String[]{"bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+
 
         assertFalse("Version history does not have core-preview.",
                 versionHistory.hasVersionLabel("core-preview"));
