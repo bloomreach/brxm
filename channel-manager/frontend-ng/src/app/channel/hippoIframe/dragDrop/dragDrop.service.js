@@ -141,19 +141,22 @@ class DragDropService {
   _injectDragula(iframe) {
     const appRootUrl = this.DomService.getAppRootUrl();
     const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
-    this.requirejs = iframe.frameElement.contentWindow.require;
 
-    if (!angular.isDefined(this.requirejs)) {
+    if (!this._usesRequireJs(iframe)) {
       return this.DomService.addScript(iframe, dragulaJs);
     }
 
     const d = this.$q.defer();
-    this.requirejs([dragulaJs], (dragula) => {
+    iframe.require([dragulaJs], (dragula) => {
       iframe.dragula = dragula;
       d.resolve();
     });
 
     return d.promise;
+  }
+
+  _usesRequireJs(iframe) {
+    return angular.isFunction(iframe.require) && iframe.require === iframe.requirejs;
   }
 
   _isContainerEnabled(containerElement) {

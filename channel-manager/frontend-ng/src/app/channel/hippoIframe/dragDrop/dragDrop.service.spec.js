@@ -374,13 +374,9 @@ describe('DragDropService', () => {
   });
 
   describe('DragulaJS injection', () => {
-    const mockIframe = {
-      frameElement: {
-        contentWindow: {}, // "require" attribtue is undefined
-      },
-    };
+    let mockIframe = {}; // "require" and "requirejs" functions are not defined
 
-    it('inject DragulaJS when RequireJS is not available using DomService', (done) => {
+    it('injects DragulaJS when RequireJS is not available using DomService', (done) => {
       loadIframeFixture(() => {
         spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
         ConfigService.antiCache = '123';
@@ -395,10 +391,32 @@ describe('DragDropService', () => {
       });
     });
 
-    it('inject DragulaJS when RequireJS is available', (done) => {
+    it('injects DragulaJS using DomService when a require function exists that is not RequireJs', (done) => {
       loadIframeFixture(() => {
-        mockIframe.frameElement.contentWindow = {
-          require: (modules, callback) => { callback('dragulaLoaded'); },
+        mockIframe = {
+          require: () => fail(),
+        };
+
+        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
+        ConfigService.antiCache = '123';
+        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`;
+
+        spyOn(DomService, 'addScript').and.returnValue($q.resolve());
+
+        DragDropService._injectDragula(mockIframe);
+        expect(DomService.addScript).toHaveBeenCalledWith(mockIframe, DragulaJSPath);
+
+        done();
+      });
+    });
+
+    it('injects DragulaJS when RequireJS is available', (done) => {
+      loadIframeFixture(() => {
+        const requireFn = (modules, callback) => { callback('dragulaLoaded'); };
+
+        mockIframe = {
+          require: requireFn,
+          requirejs: requireFn,
         };
 
         spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
@@ -408,7 +426,6 @@ describe('DragDropService', () => {
 
         DragDropService._injectDragula(mockIframe);
         expect(DomService.addScript).not.toHaveBeenCalled();
-        expect(DragDropService.requirejs).toEqual(mockIframe.frameElement.contentWindow.require);
 
         expect(mockIframe.dragula).toBe('dragulaLoaded');
         done();
