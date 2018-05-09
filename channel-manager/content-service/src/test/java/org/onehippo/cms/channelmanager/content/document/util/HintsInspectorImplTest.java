@@ -50,7 +50,7 @@ public class HintsInspectorImplTest {
     private final HintsInspector hintsInspector = new HintsInspectorImpl();
 
     @Test
-    public void canCreateDraft() throws Exception {
+    public void canObtainEditableDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
         assertFalse(hintsInspector.canObtainEditableDocument(hints));
@@ -63,7 +63,7 @@ public class HintsInspectorImplTest {
     }
 
     @Test
-    public void canUpdateDocument() throws Exception {
+    public void canUpdateDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
         assertFalse(hintsInspector.canUpdateDocument(hints));
@@ -76,12 +76,12 @@ public class HintsInspectorImplTest {
     }
 
     @Test
-    public void canUpdateDocumentWithException() throws Exception {
+    public void canUpdateDocumentWithException() {
         assertFalse(hintsInspector.canUpdateDocument(emptyMap()));
     }
 
     @Test
-    public void canDeleteDraft() throws Exception {
+    public void canDisposeEditableDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
         assertFalse(hintsInspector.canDisposeEditableDocument(hints));
