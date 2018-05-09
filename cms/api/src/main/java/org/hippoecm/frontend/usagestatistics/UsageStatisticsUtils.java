@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 package org.hippoecm.frontend.usagestatistics;
 
 
+import java.security.MessageDigest;
+
+import javax.xml.bind.DatatypeConverter;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hippoecm.frontend.session.UserSession;
 
 public class UsageStatisticsUtils {
@@ -30,7 +33,10 @@ public class UsageStatisticsUtils {
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(final String key) throws Exception {
-                    return DigestUtils.md5Hex(key);
+                    final MessageDigest md5 = MessageDigest.getInstance("MD5");
+                    md5.update(key.getBytes());
+                    return DatatypeConverter.printHexBinary(md5.digest()).toLowerCase();
+
                 }
             });
 
