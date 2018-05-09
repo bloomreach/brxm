@@ -298,7 +298,7 @@ public class EditingUtilsTest {
     }
 
     @Test
-    public void etEditableDocumentNodeWithWorkflowException() throws Exception {
+    public void getEditableDocumentNodeWithWorkflowException() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Session session = createMock(Session.class);
 
