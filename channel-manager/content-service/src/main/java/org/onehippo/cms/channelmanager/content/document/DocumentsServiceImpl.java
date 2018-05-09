@@ -116,9 +116,9 @@ public class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node documentNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
-        final Document document = assembleDocument(uuid, handle, documentNode, docType);
-        FieldTypeUtils.readFieldValues(documentNode, docType.getFields(), document.getFields());
+        final Node draftNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Document document = assembleDocument(uuid, handle, draftNode, docType);
+        FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
 
         final boolean isDirty = WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
                 .map(unpublished -> {
@@ -180,11 +180,11 @@ public class DocumentsServiceImpl implements DocumentsService {
         final EditableWorkflow newWorkflow = getEditableWorkflow(handle);
         final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
 
-        final Node documentNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node newDraftNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
-        setDocumentState(document.getInfo(), documentNode);
+        setDocumentState(document.getInfo(), newDraftNode);
 
-        FieldTypeUtils.readFieldValues(documentNode, docType.getFields(), document.getFields());
+        FieldTypeUtils.readFieldValues(newDraftNode, docType.getFields(), document.getFields());
 
         document.getInfo().setDirty(false);
         document.getInfo().setCanPublish(isHintActionTrue(newHints, HINT_PUBLISH));
@@ -293,7 +293,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             session.save();
-            return getDocument(handle, documentTypeId, locale);
+            return getEditableDocument(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery, e);
@@ -402,7 +402,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         return propValue;
     }
 
-    private static Document getDocument(final Node handle, final String documentTypeId, final Locale locale) throws ErrorWithPayloadException, RepositoryException {
+    private static Document getEditableDocument(final Node handle, final String documentTypeId, final Locale locale) throws ErrorWithPayloadException, RepositoryException {
         final DocumentType docType = DocumentTypesService.get().getDocumentType(documentTypeId, handle.getSession(), locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ResetContentException();
