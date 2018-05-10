@@ -997,7 +997,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
             return bundles.get(0);
         }
 
-        return new CompositeResourceBundle(bundles.toArray(new ResourceBundle[bundles.size()]));
+        ResourceBundle[] bundlesArray = bundles.toArray(new ResourceBundle[bundles.size()]);
+        // mixins can override preceding ones.
+        ArrayUtils.reverse(bundlesArray);
+
+        return new CompositeResourceBundle(bundlesArray);
     }
 
     @SuppressWarnings("unchecked")
