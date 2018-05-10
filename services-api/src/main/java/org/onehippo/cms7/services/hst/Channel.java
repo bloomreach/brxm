@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.hst;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class Channel implements Serializable {
     private boolean composerModeEnabled;
     private Map<String, Object> properties = new HashMap<>();
     private String channelInfoClassName;
+    private List<String> channelInfoMixinNames;
     private String mountId;
     private String siteMapId;
     private String locale;
@@ -120,6 +122,9 @@ public class Channel implements Serializable {
         mapClone.putAll(channel.getProperties());
         setProperties(mapClone);
         channelInfoClassName = channel.channelInfoClassName;
+        if (channel.channelInfoMixinNames != null) {
+            channelInfoMixinNames = new ArrayList<>(channel.channelInfoMixinNames);
+        }
         mountId = channel.mountId;
         siteMapId = channel.siteMapId;
         locale = channel.locale;
@@ -287,6 +292,14 @@ public class Channel implements Serializable {
 
     public void setChannelInfoClassName(String channelInfoClassName) {
         this.channelInfoClassName = channelInfoClassName;
+    }
+
+    public List<String> getChannelInfoMixinNames() {
+        return channelInfoMixinNames;
+    }
+
+    public void setChannelInfoMixinNames(List<String> channelInfoMixinNames) {
+        this.channelInfoMixinNames = channelInfoMixinNames;
     }
 
     public void setMountId(final String mountId) {
@@ -523,6 +536,7 @@ public class Channel implements Serializable {
                 ", composerModeEnabled=" + composerModeEnabled +
                 ", properties=" + properties +
                 ", channelInfoClassName='" + channelInfoClassName + '\'' +
+                ", channelInfoMixinNames=" + channelInfoMixinNames +
                 ", mountId='" + mountId + '\'' +
                 ", siteMapId='" + siteMapId + '\'' +
                 ", locale='" + locale + '\'' +
