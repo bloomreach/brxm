@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,34 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ChannelUtilsTest {
 
-    public static interface TestInfo extends ChannelInfo{
+    static interface TestInfo extends ChannelInfo{
         @Parameter(name = "test-name")
         String getName();
+    }
+
+    static interface AnalyticsChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "analyticsEnabled")
+        Boolean isAnalyticsEnabled();
+
+        @Parameter(name = "scriptlet")
+        String getScriptlet();
+
+    }
+
+    static interface CategorizingChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "categorizationEnabled")
+        Boolean isCategorizationEnabled();
+
+        @Parameter(name = "categories")
+        String getCategories();
+
     }
 
     @Test
@@ -41,6 +62,54 @@ public class ChannelUtilsTest {
 
         Map<String, Object> properties = info.getProperties();
         assertEquals(properties, values);
+        try {
+            properties.put("test-name", "noot");
+            fail("properties should not be mutable");
+        } catch (UnsupportedOperationException uoe) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testProxyWithMixins() {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("test-name", "aap");
+        values.put("analyticsEnabled", true);
+        values.put("scriptlet", "(function() {})();");
+        values.put("categorizationEnabled", true);
+        values.put("categories", "foo,bar");
+
+        TestInfo info1 = ChannelUtils.getChannelInfo(values, TestInfo.class, AnalyticsChannelInfoMixin.class,
+                CategorizingChannelInfoMixin.class);
+        assertEquals("aap", info1.getName());
+
+        // cast it to a mixin type
+        assertTrue(info1 instanceof AnalyticsChannelInfoMixin);
+        AnalyticsChannelInfoMixin info2 = (AnalyticsChannelInfoMixin) info1;
+        assertTrue(info2.isAnalyticsEnabled());
+        assertEquals("(function() {})();", info2.getScriptlet());
+
+        // or getChannelInfo directly to a mixin type
+        info2 = ChannelUtils.getChannelInfo(values, TestInfo.class, AnalyticsChannelInfoMixin.class,
+                CategorizingChannelInfoMixin.class);
+        assertTrue(info2.isAnalyticsEnabled());
+        assertEquals("(function() {})();", info2.getScriptlet());
+
+        // cast it to a mixin type
+        assertTrue(info1 instanceof CategorizingChannelInfoMixin);
+        CategorizingChannelInfoMixin info3 = (CategorizingChannelInfoMixin) info1;
+        assertTrue(info3.isCategorizationEnabled());
+        assertEquals("foo,bar", info3.getCategories());
+
+        // or getChannelInfo directly to a mixin type
+        info3 = ChannelUtils.getChannelInfo(values, TestInfo.class, AnalyticsChannelInfoMixin.class,
+                CategorizingChannelInfoMixin.class);
+        assertTrue(info3.isCategorizationEnabled());
+        assertEquals("foo,bar", info3.getCategories());
+
+        Map<String, Object> properties = info1.getProperties();
+        assertEquals(properties, values);
+
         try {
             properties.put("test-name", "noot");
             fail("properties should not be mutable");

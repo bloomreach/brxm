@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,13 +35,6 @@ import org.hippoecm.hst.core.parameters.JcrPath;
  * Class to build different objects information to be easily serialized over the wire with different REST calls
  */
 public final class InformationObjectsBuilder {
-
-    @SuppressWarnings("unchecked")
-    private static final Class<? extends ChannelInfo>[] EMPTY_CHANNEL_INFO_ARRAY = new Class[0];
-
-    public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
-        return buildChannelInfoClassInfo(channelInfoClass, EMPTY_CHANNEL_INFO_ARRAY);
-    }
 
     @SafeVarargs
     public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass,

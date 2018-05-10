@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,14 +27,7 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 
 public class ChannelUtils {
 
-    @SuppressWarnings("unchecked")
-    private static final Class<? extends ChannelInfo>[] EMPTY_CHANNEL_INFO_ARRAY = new Class[0];
-
-    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
-                                                           final Class<? extends ChannelInfo> parametersInfoType) {
-        return getChannelInfo(values, parametersInfoType, EMPTY_CHANNEL_INFO_ARRAY);
-    }
-
+    @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
                                                            final Class<? extends ChannelInfo> parametersInfoType,
