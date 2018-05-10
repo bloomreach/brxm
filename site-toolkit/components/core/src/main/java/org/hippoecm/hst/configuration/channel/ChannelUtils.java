@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -27,8 +28,17 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 public class ChannelUtils {
 
     @SuppressWarnings("unchecked")
+    private static final Class<? extends ChannelInfo>[] EMPTY_CHANNEL_INFO_ARRAY = new Class[0];
+
     public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
                                                            final Class<? extends ChannelInfo> parametersInfoType) {
+        return getChannelInfo(values, parametersInfoType, EMPTY_CHANNEL_INFO_ARRAY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
+                                                           final Class<? extends ChannelInfo> parametersInfoType,
+                                                           final Class<? extends ChannelInfo>...mixinTypes) {
 
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
@@ -44,8 +54,14 @@ public class ChannelUtils {
                 int argCount = (args == null ? 0 : args.length);
 
                 if ("toString".equals(methodName) && argCount == 0) {
-                    StringBuilder builder = new StringBuilder("ChannelInfoProxy [parametersInfoType=");
-                    builder.append(parametersInfoType.getName()).append(", properties=").append(values).append("]");
+                    StringBuilder builder =
+                            new StringBuilder("ChannelInfoProxy [parametersInfoType=")
+                            .append(parametersInfoType.getName())
+                            .append(", mixinTypes=")
+                            .append(Arrays.toString(mixinTypes))
+                            .append(", properties=")
+                            .append(values)
+                            .append("]");
                     return  builder.toString();
                 }
 
@@ -73,6 +89,7 @@ public class ChannelUtils {
                 }
 
                 Parameter panno = method.getAnnotation(Parameter.class);
+
                 if (panno == null || (!isGetter && !isSetter)) {
                     throw new IllegalArgumentException("Method " + method.getName() + " is not a valid parameters info method");
                 }
@@ -82,21 +99,34 @@ public class ChannelUtils {
                 if (StringUtils.isBlank(parameterName)) {
                     throw new IllegalArgumentException("The parameter name is empty.");
                 }
+
                 if (isSetter) {
                     throw new UnsupportedOperationException("Setter method is not supported.");
                 } else {
                     Object parameterValue = values.get(parameterName);
+
                     if (parameterValue == null || "".equals(parameterValue)) {
                         // when the parameter value is null or an empty string we return the default value from the annotation
                         return panno.defaultValue();
                     }
+
                     return parameterValue;
                 }
             }
         };
 
-        T parametersInfo = (T) factory.createInvokerProxy(ChannelUtils.class.getClassLoader(), invoker, new Class[]{parametersInfoType});
-     
+        Class[] proxyClasses;
+
+        if (mixinTypes == null || mixinTypes.length == 0) {
+            proxyClasses = new Class[] { parametersInfoType };
+        } else {
+            proxyClasses = new Class[mixinTypes.length + 1];
+            proxyClasses[0] = parametersInfoType;
+            System.arraycopy(mixinTypes, 0, proxyClasses, 1, mixinTypes.length);
+        }
+
+        T parametersInfo = (T) factory.createInvokerProxy(ChannelUtils.class.getClassLoader(), invoker, proxyClasses);
+
         return parametersInfo;
     }
 

@@ -75,11 +75,14 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
         try {
-            Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
+            final Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
 
             if (channelInfoClass == null) {
                 throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
+
+            final List<Class<? extends ChannelInfo>> channelInfoMixins = getAllVirtualHosts()
+                    .getChannelInfoMixins(getCurrentVirtualHost().getHostGroupName(), channelId);
 
             final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId);
             final Set<String> annotatedFields = propertyDefinitions.stream()
@@ -92,9 +95,10 @@ public class ChannelServiceImpl implements ChannelService {
                     .collect(Collectors.toSet());
 
 
-            final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(propertyDefinitions);
-
-            final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, annotatedFields, hiddenFields);
+            final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(
+                    propertyDefinitions);
+            final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, channelInfoMixins,
+                    annotatedFields, hiddenFields);
             final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
 
             augmentDropDownAnnotatedPropertyDefinitionValues(visiblePropertyDefinitions, localizedResources);
@@ -198,13 +202,17 @@ public class ChannelServiceImpl implements ChannelService {
     /**
      * Get field groups containing only visible, annotated fields and give warnings on duplicated or without annotation fields
      *
-     *  @param channelInfoClass
+     * @param channelInfoClass
+     * @param channelInfoMixins
      * @param annotatedFields a set containing annotated fields
      * @param hiddenFields a set containing fields that mark as hidden
      */
+    @SuppressWarnings("unchecked")
     private List<FieldGroupInfo> getValidFieldGroups(final Class<? extends ChannelInfo> channelInfoClass,
+                                                     final List<Class<? extends ChannelInfo>> channelInfoMixins,
                                                      final Set<String> annotatedFields, final Set<String> hiddenFields) {
-        final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
+        final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder
+                .buildChannelInfoClassInfo(channelInfoClass, channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));
         final List<FieldGroupInfo> fieldGroups = channelInfoClassInfo.getFieldGroups();
 
         final Set<String> allFields = new HashSet<>();

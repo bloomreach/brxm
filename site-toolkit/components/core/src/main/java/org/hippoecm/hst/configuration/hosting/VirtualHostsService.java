@@ -30,13 +30,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.BlueprintHandler;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;
@@ -58,10 +58,12 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.hst.resourcebundle.CompositeResourceBundle;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -917,52 +919,104 @@ public class VirtualHostsService implements MutableVirtualHosts {
         } catch (IllegalArgumentException e) {
             throw new ChannelException("ChannelException for getChannelInfoClass", e);
         }
-
     }
 
     @Override
+    public List<Class<? extends ChannelInfo>> getChannelInfoMixins(final Channel channel) throws ChannelException {
+        if (channel == null) {
+            throw new ChannelException("Cannot get ChannelMixinClasses for null");
+        }
+
+        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
+
+        if (CollectionUtils.isEmpty(channelInfoMixinNames)) {
+            return Collections.emptyList();
+        }
+
+        List<Class<? extends ChannelInfo>> mixins = new ArrayList<>();
+
+        for (String channelInfoMixinName : channelInfoMixinNames) {
+            try {
+                Class<? extends ChannelInfo> mixinClazz = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class
+                        .getClassLoader().loadClass(channelInfoMixinName);
+                mixins.add(mixinClazz);
+            } catch (ClassNotFoundException cnfe) {
+                log.warn("Configured mixin class {} was not found.", channelInfoMixinName, cnfe);
+            } catch (ClassCastException cce) {
+                log.warn("Configured mixin class {} does not extend ChannelInfo", channelInfoMixinName, cce);
+            }
+        }
+
+        return mixins;
+    }
+
+    @Override
+    public List<Class<? extends ChannelInfo>> getChannelInfoMixins(final String hostGroup, final String id) throws ChannelException {
+        try {
+            return getChannelInfoMixins(getChannelById(hostGroup, id));
+        } catch (IllegalArgumentException e) {
+            throw new ChannelException("ChannelException for getChannelInfoMixins", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T extends ChannelInfo> T getChannelInfo(final Channel channel) throws ChannelException {
-        Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
-        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass);
+        final Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+        final List<Class<? extends ChannelInfo>> channelInfoMixins = getChannelInfoMixins(channel);
+        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass,
+                channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));
     }
 
     @Override
     public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
-        String channelInfoClassName = channel.getChannelInfoClassName();
-        if (channelInfoClassName != null) {
-            final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
-            if (localizationService != null) {
-                final String bundleName = CHANNEL_PARAMETERS_TRANSLATION_LOCATION + "." + channelInfoClassName;
-                final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
-                        localizationService.getResourceBundle(bundleName, locale);
-                if (repositoryResourceBundle != null) {
-                    return repositoryResourceBundle.toJavaResourceBundle();
+        final List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
+
+        final String channelInfoClassName = channel.getChannelInfoClassName();
+        ResourceBundle bundle = loadResourceBundle(channelInfoClassName, locale);
+
+        if (bundle != null) {
+            bundles.add(bundle);
+        }
+
+        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
+
+        if (channelInfoMixinNames != null) {
+            for (String channelInfoMixinName : channelInfoMixinNames) {
+                bundle = loadResourceBundle(channelInfoMixinName, locale);
+
+                if (bundle != null) {
+                    bundles.add(bundle);
                 }
             }
-
-            try {
-                return ResourceBundle.getBundle(channelInfoClassName, locale);
-            } catch (MissingResourceException e) {
-                log.info("Could not load repository or Java resource bundle for class '{}' and locale '{}', using " +
-                         "untranslated labels for channel properties.", channelInfoClassName, locale);
-                return null;
-            }
         }
-        return null;
+
+        if (bundles.isEmpty()) {
+            return null;
+        } else if (bundles.size() == 1) {
+            return bundles.get(0);
+        }
+
+        return new CompositeResourceBundle(bundles.toArray(new ResourceBundle[bundles.size()]));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<HstPropertyDefinition> getPropertyDefinitions(final Channel channel) {
         try {
             if (channel.getChannelInfoClassName() != null) {
                 Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+
                 if (channelInfoClass != null) {
-                    return ChannelInfoClassProcessor.getProperties(channelInfoClass);
+                    final List<Class<? extends ChannelInfo>> channelInfoMixins = getChannelInfoMixins(channel);
+                    return ChannelInfoClassProcessor.getProperties(channelInfoClass,
+                            channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));
                 }
             }
         } catch (ChannelException ex) {
             log.warn("Could not load properties", ex);
         }
+
         return Collections.emptyList();
     }
 
@@ -1032,5 +1086,30 @@ public class VirtualHostsService implements MutableVirtualHosts {
         log.warn("Property '{}' not used any more. Remove it from hst:hosts node. Use a (hst:default) sitemap item to account for prefixes/suffixes " +
                 "that need special handling or use hst-config.properties to set comma separated list for filter.prefix.exclusions or " +
                 "filter.suffix.exclusions.", property);
+    }
+
+    private ResourceBundle loadResourceBundle(final String channelInfoClassName, final Locale locale) {
+        if (channelInfoClassName != null) {
+            final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+
+            if (localizationService != null) {
+                final String bundleName = CHANNEL_PARAMETERS_TRANSLATION_LOCATION + "." + channelInfoClassName;
+                final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
+                        localizationService.getResourceBundle(bundleName, locale);
+
+                if (repositoryResourceBundle != null) {
+                    return repositoryResourceBundle.toJavaResourceBundle();
+                }
+            }
+
+            try {
+                return ResourceBundle.getBundle(channelInfoClassName, locale);
+            } catch (MissingResourceException e) {
+                log.info("Could not load repository or Java resource bundle for class '{}' and locale '{}', using " +
+                         "untranslated labels for channel properties.", channelInfoClassName, locale);
+            }
+        }
+
+        return null;
     }
 }

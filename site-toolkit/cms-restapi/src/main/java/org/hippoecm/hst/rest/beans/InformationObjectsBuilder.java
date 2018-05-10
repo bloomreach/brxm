@@ -18,6 +18,7 @@ package org.hippoecm.hst.rest.beans;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -35,11 +36,30 @@ import org.hippoecm.hst.core.parameters.JcrPath;
  */
 public final class InformationObjectsBuilder {
 
-    public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
-        ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
+    @SuppressWarnings("unchecked")
+    private static final Class<? extends ChannelInfo>[] EMPTY_CHANNEL_INFO_ARRAY = new Class[0];
 
+    public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
+        return buildChannelInfoClassInfo(channelInfoClass, EMPTY_CHANNEL_INFO_ARRAY);
+    }
+
+    @SafeVarargs
+    public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass,
+            Class<? extends ChannelInfo>... channelInfoMixins) {
+        final ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
         channelInfoClassInfo.setClassName(channelInfoClass.getName());
-        channelInfoClassInfo.setFieldGroups(buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
+
+        final List<FieldGroupInfo> fieldGroupListInfos = new LinkedList<>(
+                buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
+
+        if (channelInfoMixins != null) {
+            for (Class<? extends ChannelInfo> channelInfoMixin : channelInfoMixins) {
+                fieldGroupListInfos.addAll(buildFieldGroupListInfo(channelInfoMixin.getAnnotation(FieldGroupList.class)));
+            }
+        }
+
+        channelInfoClassInfo.setFieldGroups(fieldGroupListInfos);
+
         return channelInfoClassInfo;
     }
 

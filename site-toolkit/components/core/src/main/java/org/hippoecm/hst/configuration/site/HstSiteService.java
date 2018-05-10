@@ -15,16 +15,17 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import com.google.common.base.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes.CompositeConfigurationNode;
 import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
@@ -33,6 +34,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemap.HstNoopSiteMap;
@@ -46,8 +48,11 @@ import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeComponentDocuments;
 import org.hippoecm.hst.core.linking.LocationMapTreeSiteMap;
 import org.hippoecm.hst.site.HstServices;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
@@ -276,6 +281,32 @@ public class HstSiteService implements HstSite {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    private List<Class<? extends ChannelInfo>> getChannelInfoMixins(final Channel channel) {
+        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
+
+        if (CollectionUtils.isEmpty(channelInfoMixinNames)) {
+            return Collections.emptyList();
+        }
+
+        List<Class<? extends ChannelInfo>> mixins = new ArrayList<>();
+
+        for (String channelInfoMixinName : channelInfoMixinNames) {
+            try {
+                Class<? extends ChannelInfo> mixinClazz = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class
+                        .getClassLoader().loadClass(channelInfoMixinName);
+                mixins.add(mixinClazz);
+            } catch (ClassNotFoundException cnfe) {
+                log.warn("Configured mixin class {} was not found.", channelInfoMixinName, cnfe);
+            } catch (ClassCastException cce) {
+                log.warn("Configured mixin class {} does not extend ChannelInfo", channelInfoMixinName, cce);
+            }
+        }
+
+        return mixins;
+    }
+
+    @SuppressWarnings("unchecked")
     public <T extends ChannelInfo> T getChannelInfo() {
         Channel channel = getChannel();
         if (channel == null) {
@@ -285,7 +316,9 @@ public class HstSiteService implements HstSite {
         if (channelInfoClass == null) {
             return null;
         }
-        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass);
+        List<Class<? extends ChannelInfo>> channelInfoMixins = getChannelInfoMixins(channel);
+        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass,
+                channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));
     }
 
     public Channel getChannel() {
