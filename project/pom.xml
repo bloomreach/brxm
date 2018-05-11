@@ -91,7 +91,7 @@
     <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
     <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
-    <maven.plugin.failsafe.version>2.20.1</maven.plugin.failsafe.version>
+    <maven.plugin.failsafe.version>2.21.0</maven.plugin.failsafe.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.0.2</maven.plugin.jar.version>
     <maven.plugin.javadoc.version>2.10.4</maven.plugin.javadoc.version>
@@ -102,8 +102,8 @@
     <maven.plugin.remote-resources.version>1.5</maven.plugin.remote-resources.version>
     <maven.plugin.resources.version>3.0.2</maven.plugin.resources.version>
     <maven.plugin.source.version>3.0.1</maven.plugin.source.version>
-    <maven.plugin.surefire.version>2.20.1</maven.plugin.surefire.version>
-    <maven.plugin.surefire-report.version>2.20.1</maven.plugin.surefire-report.version>
+    <maven.plugin.surefire.version>2.21.0</maven.plugin.surefire.version>
+    <maven.plugin.surefire-report.version>2.21.0</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>3.1.0</maven.plugin.war.version>
     <!-- don't bump enforcer to 1.4.1 (yet), see commit message -->
@@ -119,7 +119,7 @@
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>8</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>8.5.28</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>8.5.31</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
