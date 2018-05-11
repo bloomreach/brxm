@@ -55,8 +55,8 @@ describe('ScrollService', () => {
   });
 
   beforeEach(() => {
-    const scrollBarWidth = ScrollService.getScrollBarWidth();
-    maxScrollTop = (iframeHeight - canvasHeight) + scrollBarWidth;
+    const scrollBarSize = ScrollService.getScrollBarSize();
+    maxScrollTop = (iframeHeight - canvasHeight) + scrollBarSize;
     maxScrollLeft = iframeWidth - canvasWidth;
   });
 
