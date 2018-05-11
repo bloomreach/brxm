@@ -670,7 +670,9 @@ public class TabsPlugin extends RenderPlugin {
                         if (editor != null) {
                             try {
                                 if (editor.isModified() || editor.getMode() == IEditor.Mode.EDIT) {
-                                    editor.discard(); ///discard the document and switch to VIEW mode
+                                    // (mode=edit means open but unmodified)
+                                    // discard the document and switch to VIEW mode
+                                    editor.discard();
                                 }
                                 editor.close();
                             } catch (EditorException e) {
@@ -690,10 +692,10 @@ public class TabsPlugin extends RenderPlugin {
                         final IEditor editor = currentTab.getEditor();
                         if (editor != null){
                             try {
-                                if (editor.isModified()) {
-                                    editor.done(); //save the document and switch to VIEW mode
-                                } else if (editor.getMode() == IEditor.Mode.EDIT) {
-                                    editor.discard();
+                                if (editor.isModified() || editor.getMode() == IEditor.Mode.EDIT) {
+                                    // (mode=edit means open but unmodified)
+                                    // save the document and switch to VIEW mode
+                                    editor.done();
                                 }
                                 editor.close();
                             } catch (EditorException e) {
