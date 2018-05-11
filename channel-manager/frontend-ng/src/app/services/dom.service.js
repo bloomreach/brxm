@@ -176,23 +176,6 @@ class DomService {
     return mouseEvent;
   }
 
-  getScrollBarWidth() {
-    if (!this._scrollBarWidth) {
-      const outerWidth = 100;
-      const $outer = $('<div>').css({
-        visibility: 'hidden',
-        width: outerWidth,
-        overflow: 'scroll',
-      }).appendTo('body');
-      const widthWithScroll = $('<div>').css('width', '100%')
-        .appendTo($outer)
-        .outerWidth();
-      $outer.remove();
-      this._scrollBarWidth = outerWidth - widthWithScroll;
-    }
-    return this._scrollBarWidth;
-  }
-
   isVisible(jqueryElement) {
     let isVisible = jqueryElement.is(':visible');
     if (isVisible) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,7 +250,7 @@ class ScrollService {
       scrollMaxY = bodyScrollHeight - iframeHeight;
       if (bodyScrollWidth > iframeWidth) {
         // horizontal scrollbar drawn in the site
-        scrollMaxY += this.DomService.getScrollBarWidth();
+        scrollMaxY += this.getScrollBarWidth();
       }
     }
 
@@ -287,6 +287,23 @@ class ScrollService {
     this.iframeWindow.scrollTop(this.savedScrollPosition.top);
     this.iframeWindow.scrollLeft(this.savedScrollPosition.iframeLeft);
     this.canvas.scrollLeft(this.savedScrollPosition.canvasLeft);
+  }
+
+  getScrollBarWidth() {
+    if (!this._scrollBarWidth) {
+      const outerWidth = 100;
+      const $outer = $('<div>').css({
+        visibility: 'hidden',
+        width: outerWidth,
+        overflow: 'scroll',
+      }).appendTo('body');
+      const widthWithScroll = $('<div>').css('width', '100%')
+        .appendTo($outer)
+        .outerWidth();
+      $outer.remove();
+      this._scrollBarWidth = outerWidth - widthWithScroll;
+    }
+    return this._scrollBarWidth;
   }
 }
 
