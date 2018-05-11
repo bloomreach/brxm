@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,7 +66,8 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         if (hstSiteMenuItemConfiguration.getMountAlias() != null) {
             targetMount = hstRequestContext.getMount(hstSiteMenuItemConfiguration.getMountAlias());
             if(targetMount == null) {
-                log.warn("Cannot create links for sitemenu item '"+name+"' of menu '"+hstSiteMenu.getName()+"' because could not lookup mount with alias '{}' for current mount '{}'", hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
+                log.warn("Cannot create links for site menu item '{}' because could not lookup mount with alias '{}' for current mount '{}'",
+                        getPathInfo(), hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
             }
         } else {
             targetMount = hstRequestContext.getResolvedMount().getMount();
@@ -80,11 +81,11 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
                 hstSiteMapItemRefId = siteMapItemRefIdOrPath;
                 hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
 
-                log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
+                log.debug("Site menu item '{}' found by refId '{}'. Site map item path: {}", getPathInfo(), siteMapItemRefIdOrPath, hstSiteMapItemPath);
             } else {
                 hstSiteMapItemPath = siteMapItemRefIdOrPath;
 
-                log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
+                log.debug("Site menu item '{}' will be found by refId or path '{}'.", getPathInfo(), siteMapItemRefIdOrPath);
             }
         }
 
@@ -135,7 +136,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
 
     public HstLink getHstLink() {
         if (targetMount == null) {
-            log.warn("Cannot create link for sitemenu item '{}' of menu '{}' because target mount is null. Return null", name, hstSiteMenu.getName());
+            log.warn("Cannot create link for site menu item '{}' because target mount is null. Returning null", getPathInfo());
             return null;
         }
         if (hstSiteMapItemRefId != null) {
@@ -144,7 +145,8 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             return linkCreator.create(hstSiteMapItemPath, targetMount);
         }
         if (externalLink == null) {
-            log.debug("Sitemenu item '{}' of menu '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. Cannot create link for sitemenu item, return null", name, hstSiteMenu.getName());
+            log.debug("Site menu item '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. " +
+                            "Cannot create link for site menu item, returning null", getPathInfo());
         }
         return null;
     }
@@ -226,5 +228,25 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
         String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
         return parsedParamValue;
+    }
+
+    @Override
+    protected String getPathInfo() {
+
+        final StringBuilder info = new StringBuilder(this.getName());
+
+        HstSiteMenuItem parentItem = this.getParentItem();
+        while (parentItem != null) {
+            info.insert(0, "/");
+            info.insert(0, parentItem.getName());
+            parentItem = parentItem.getParentItem();
+        }
+
+        if (this.getHstSiteMenu() != null) {
+            info.insert(0, "/");
+            info.insert(0, this.getHstSiteMenu().getName());
+        }
+
+        return info.toString();
     }
 }

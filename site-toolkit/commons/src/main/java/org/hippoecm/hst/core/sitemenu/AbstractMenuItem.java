@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,8 +79,9 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
         if(this.resolvedSiteMapItem != null) {
             return resolvedSiteMapItem.resolvedItem;
         }
-        if(this.getHstLink() == null || this.getHstLink().getPath() == null || "".equals(this.getHstLink().getPath())) {
-            log.warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null");
+        if (this.getHstLink() == null || this.getHstLink().getPath() == null || "".equals(this.getHstLink().getPath())) {
+            log.warn("Cannot resolve site menu item '{}' to a site because HstLink {}. Returning null.", getPathInfo(),
+                    (this.getHstLink() == null) ? "is null" : (this.getHstLink().getPath() == null) ? "path is null" : "path is empty");
             return null;
         }
         HstRequestContext requestContext = RequestContextProvider.get();
@@ -89,9 +90,11 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
                     requestContext.getSiteMapMatcher().match(this.getHstLink().getPath(),
                     requestContext.getResolvedSiteMapItem().getResolvedMount()));
         }  catch (NotFoundException e) {
-            log.warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage());
+            log.warn("Cannot resolve site menu item '{}' to a site map item because NotFoundException '{}'. Returning null.", getPathInfo(), e.getMessage());
             return null;
         }
+
+        log.debug("Returning resolved site map item '{}' for site menu item '{}'.", resolvedSiteMapItem.resolvedItem.getPathInfo(), this.getPathInfo());
         return resolvedSiteMapItem.resolvedItem;
     }
 
@@ -101,6 +104,13 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
     @Deprecated
     public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
         return resolveToSiteMapItem();
+    }
+
+    /**
+     * Return information about where this menu item is configured.
+     */
+    protected String getPathInfo() {
+        return this.getName();
     }
 
     private static class ResolvedSiteMapItemWrapper {
