@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4-SNAPSHOT</version>
+    <version>29.4</version>
   </parent>
 
   <name>Hippo Essentials Components</name>
   <description>Hippo Essentials Components</description>
   <artifactId>hippo-essentials-components</artifactId>
-  <version>4.3.0-SNAPSHOT</version>
+  <version>4.4.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
@@ -36,10 +36,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Essentials Components</notice.project.name>
 
-    <hippo.repository.version>5.3.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>4.3.0-SNAPSHOT</hippo.services.version>
-    <hippo.commons.version>4.3.0-SNAPSHOT</hippo.commons.version>
-    <hippo.hst.version>5.3.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>5.4.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>4.4.0-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
+    <hippo.hst.version>5.4.0-SNAPSHOT</hippo.hst.version>
     <findbugs.jsr305.version>1.3.9</findbugs.jsr305.version>
     <jsoup.version>1.11.2</jsoup.version>
     <rome.version>0.9</rome.version>
