@@ -250,7 +250,7 @@ class ScrollService {
       scrollMaxY = bodyScrollHeight - iframeHeight;
       if (bodyScrollWidth > iframeWidth) {
         // horizontal scrollbar drawn in the site
-        scrollMaxY += this.getScrollBarWidth();
+        scrollMaxY += this.getScrollBarSize();
       }
     }
 
@@ -289,8 +289,8 @@ class ScrollService {
     this.canvas.scrollLeft(this.savedScrollPosition.canvasLeft);
   }
 
-  getScrollBarWidth() {
-    if (!this._scrollBarWidth) {
+  getScrollBarSize() {
+    if (!this._scrollBarSize) {
       const outerWidth = 100;
       const $outer = $('<div>').css({
         visibility: 'hidden',
@@ -301,9 +301,9 @@ class ScrollService {
         .appendTo($outer)
         .outerWidth();
       $outer.remove();
-      this._scrollBarWidth = outerWidth - widthWithScroll;
+      this._scrollBarSize = outerWidth - widthWithScroll;
     }
-    return this._scrollBarWidth;
+    return this._scrollBarSize;
   }
 }
 

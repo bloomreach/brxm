@@ -584,7 +584,7 @@ describe('ScrollService', () => {
   });
 
   it('should calculate the scroll bar width', () => {
-    const width = ScrollService.getScrollBarWidth();
-    expect(width).toBeGreaterThan(-1);
+    const size = ScrollService.getScrollBarSize();
+    expect(size).toBeGreaterThan(-1);
   });
 });
