@@ -53,7 +53,7 @@ describe('ContentService', () => {
     };
     let result = null;
 
-    $httpBackend.expectGET('/test/ws/content/documents/123/editable').respond(200, docInfo);
+    $httpBackend.expectPOST('/test/ws/content/documents/123/editable').respond(200, docInfo);
     ContentService.getEditableDocument('123').then((returned) => {
       result = returned;
     });
@@ -191,7 +191,7 @@ describe('ContentService', () => {
     const doc = { id: '123' };
     const fieldValue = [{ value: 'bla' }];
 
-    $httpBackend.when('GET', '/test/ws/content/documents/123/editable').respond(200, 'create');
+    $httpBackend.when('POST', '/test/ws/content/documents/123/editable').respond(200, 'create');
     $httpBackend.when('PUT', '/test/ws/content/documents/123/editable').respond(200, 'save');
     $httpBackend.when('DELETE', '/test/ws/content/documents/123/editable').respond(200, 'delete');
     $httpBackend.when('PUT', '/test/ws/content/documents/123/editable/fieldA', fieldValue).respond(200, 'updateField');

@@ -77,7 +77,7 @@ public class ContentResource {
         this.contextPayloadService = contextPayloadService;
     }
 
-    @GET
+    @POST
     @Path("documents/{documentId}/editable")
     public Response obtainEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
