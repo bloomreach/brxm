@@ -97,8 +97,9 @@ class PageInfoService {
   }
 
   _setTitle(pageUrl) {
-    const title = this.$translate.instant('PAGE_INFO_TITLE', { pageUrl });
-    this.RightSidePanelService.setTitle(title);
+    const pageLabel = this.$translate.instant('PAGE');
+    this.RightSidePanelService.setContext(pageLabel);
+    this.RightSidePanelService.setTitle(pageUrl);
   }
 
   _loadFirstPageExtension(pageUrl) {

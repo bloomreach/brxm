@@ -112,12 +112,14 @@ describe('PageInfoService', () => {
 
     it('sets the title of the right side-panel', () => {
       spyOn($translate, 'instant').and.callThrough();
+      spyOn(RightSidePanelService, 'setContext');
       spyOn(RightSidePanelService, 'setTitle');
 
       PageInfoService.showPageInfo();
 
-      expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/pageUrl' });
-      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
+      expect($translate.instant).toHaveBeenCalledWith('PAGE');
+      expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
+      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('https://example.com/pageUrl');
     });
 
     it('goes to the state of the first page extension', () => {
@@ -142,12 +144,14 @@ describe('PageInfoService', () => {
 
       it('updates the title of the right side-panel', () => {
         spyOn($translate, 'instant').and.callThrough();
+        spyOn(RightSidePanelService, 'setContext');
         spyOn(RightSidePanelService, 'setTitle');
 
         PageInfoService.updatePageInfo();
 
-        expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/anotherPageUrl' });
-        expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
+        expect($translate.instant).toHaveBeenCalledWith('PAGE');
+        expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
+        expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('https://example.com/anotherPageUrl');
       });
 
       it('updates the state of all loaded page extensions', () => {

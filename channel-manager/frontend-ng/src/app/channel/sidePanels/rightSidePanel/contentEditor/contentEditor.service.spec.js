@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ContentEditorService', () => {
+fdescribe('ContentEditorService', () => {
   let $q;
   let $rootScope;
   let $translate;
@@ -73,6 +73,7 @@ describe('ContentEditorService', () => {
     };
     testDocument = {
       id: 'test',
+      displayName: 'Test',
       info: {
         type: {
           id: 'ns:testdocument',
@@ -830,6 +831,7 @@ describe('ContentEditorService', () => {
   function expectClear() {
     expect(ContentEditor.getDocument()).toBeUndefined();
     expect(ContentEditor.getDocumentId()).toBeUndefined();
+    expect(ContentEditor.getDocumentDisplayName()).toBeUndefined();
     expect(ContentEditor.getDocumentType()).toBeUndefined();
     expect(ContentEditor.getError()).toBeUndefined();
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();

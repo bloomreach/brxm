@@ -71,6 +71,10 @@ class RightSidePanelCtrl {
     return this.RightSidePanelService.getTitle();
   }
 
+  getContext() {
+    return this.RightSidePanelService.getContext();
+  }
+
   isLockedOpen() {
     return this.SidePanelService.isOpen('right');
   }

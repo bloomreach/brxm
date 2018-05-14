@@ -75,6 +75,14 @@ describe('RightSidePanel', () => {
     expect($ctrl.getTitle()).toEqual('');
   });
 
+  it('knows the context', () => {
+    RightSidePanelService.setContext('test context');
+    expect($ctrl.getContext()).toEqual('test context');
+
+    RightSidePanelService.clearContext();
+    expect($ctrl.getContext()).toEqual('');
+  });
+
   it('sets full width mode on and off', () => {
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);

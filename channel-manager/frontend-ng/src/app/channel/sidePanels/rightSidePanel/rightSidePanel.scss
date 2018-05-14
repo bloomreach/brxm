@@ -55,10 +55,10 @@ right-side-panel {
     display: flex;
   }
 
-  .text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .right-side-panel-context {
+    color: $text-dim;
+    font-size: 12px;
+    font-weight: normal;
   }
 }
 

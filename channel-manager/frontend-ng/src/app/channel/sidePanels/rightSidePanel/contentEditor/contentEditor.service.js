@@ -121,6 +121,10 @@ class ContentEditorService {
     return this.documentDirty;
   }
 
+  getDocumentDisplayName() {
+    return this.document ? this.document.displayName : this.error.messageParams.displayName;
+  }
+
   getPublicationState() {
     return this.publicationState;
   }

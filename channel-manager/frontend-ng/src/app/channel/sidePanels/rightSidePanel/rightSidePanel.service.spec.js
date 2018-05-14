@@ -30,6 +30,7 @@ describe('RightSidePanelService', () => {
   it('initializes correctly', () => {
     expect(RightSidePanelService.isLoading()).toBe(false);
     expect(RightSidePanelService.getTitle()).toEqual('');
+    expect(RightSidePanelService.getContext()).toEqual('');
     expect(RightSidePanelService.loadingPromise).toBeNull();
   });
 
@@ -83,6 +84,14 @@ describe('RightSidePanelService', () => {
 
     RightSidePanelService.clearTitle();
     expect(RightSidePanelService.getTitle()).toEqual('');
+  });
+
+  it('manages the context', () => {
+    RightSidePanelService.setContext('test');
+    expect(RightSidePanelService.getContext()).toEqual('test');
+
+    RightSidePanelService.clearContext();
+    expect(RightSidePanelService.getContext()).toEqual('');
   });
 });
 

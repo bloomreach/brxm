@@ -25,6 +25,7 @@ class RightSidePanelService {
 
     this.stopLoading();
     this.clearTitle();
+    this.clearContext();
   }
 
   isLoading() {
@@ -61,6 +62,18 @@ class RightSidePanelService {
 
   clearTitle() {
     this.title = '';
+  }
+
+  setContext(context) {
+    this.context = context;
+  }
+
+  getContext() {
+    return this.context;
+  }
+
+  clearContext() {
+    this.context = '';
   }
 }
 
