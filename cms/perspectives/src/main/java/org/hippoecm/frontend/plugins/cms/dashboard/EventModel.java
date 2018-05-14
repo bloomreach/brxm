@@ -72,8 +72,6 @@ public class EventModel implements IComponentAssignedModel<String> {
                 throw new IllegalArgumentException("CurrentActivityPlugin can only process nodes of type hippolog:item.");
             }
 
-            node.setProperty("hippolog:timestamp",1523404800000l);
-
             this.dateFormat = dateFormat;
 
             this.time = node.getProperty("hippolog:timestamp").getLong();
