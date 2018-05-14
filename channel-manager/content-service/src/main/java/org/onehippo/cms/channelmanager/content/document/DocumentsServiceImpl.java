@@ -293,12 +293,25 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             session.save();
-            return getEditableDocument(handle, documentTypeId, locale);
+            return getCreatedDocument(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
+    }
+
+    private static Document getCreatedDocument(final Node handle, final String documentTypeId, final Locale locale) throws ErrorWithPayloadException, RepositoryException {
+        final DocumentType docType = DocumentTypesService.get().getDocumentType(documentTypeId, handle.getSession(), locale);
+        if (docType.isReadOnlyDueToUnknownValidator()) {
+            throw new ResetContentException();
+        }
+
+        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
+                .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Document document = assembleDocument(handle.getIdentifier(), handle, draftNode, docType);
+        FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
+        return document;
     }
 
     @Override
@@ -400,19 +413,6 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA, "error", errorMessage));
         }
         return propValue;
-    }
-
-    private static Document getEditableDocument(final Node handle, final String documentTypeId, final Locale locale) throws ErrorWithPayloadException, RepositoryException {
-        final DocumentType docType = DocumentTypesService.get().getDocumentType(documentTypeId, handle.getSession(), locale);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ResetContentException();
-        }
-
-        final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
-                .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
-        final Document document = assembleDocument(handle.getIdentifier(), handle, draftNode, docType);
-        FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
-        return document;
     }
 
     private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
