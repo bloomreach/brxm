@@ -35,7 +35,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
         if (region !== 'center') {
             marginX = Ext.isEmpty(this.initialConfig.x) ? 0 : this.initialConfig.x;
             if (region === 'right') {
-                this.initialConfig.x = w - (this.initialConfig.width + marginX + Ext.getScrollBarWidth());
+                this.initialConfig.x = w - (this.initialConfig.width + marginX + Ext.getScrollBarSize());
                 this.initialConfig.y += t;
             }
         } else {
