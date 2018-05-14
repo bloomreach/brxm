@@ -100,7 +100,7 @@ public class BranchTask extends AbstractDocumentTask {
 
         JcrUtils.ensureIsCheckedOut(targetNode);
 
-        addToHandleBranchesProperty(targetNode.getParent(), branchId, versionHistory);
+        addBranchesPropertyToHandle(targetNode.getParent(), branchId, versionHistory);
 
         if (CORE_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // to be sure also remove the properties since hippo document is relaxed
@@ -117,7 +117,7 @@ public class BranchTask extends AbstractDocumentTask {
         return new Document(targetNode);
     }
 
-    private void addToHandleBranchesProperty(final Node handle, final String branchId, final VersionHistory versionHistory) throws RepositoryException {
+    private void addBranchesPropertyToHandle(final Node handle, final String branchId, final VersionHistory versionHistory) throws RepositoryException {
 
         if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
             handle.addMixin(NT_HIPPO_VERSION_INFO);

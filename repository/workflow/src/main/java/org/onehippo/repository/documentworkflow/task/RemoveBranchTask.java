@@ -16,8 +16,9 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,12 +26,10 @@ import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ArrayUtils.removeElement;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
@@ -66,26 +65,22 @@ public class RemoveBranchTask extends AbstractDocumentTask {
     }
 
     private List<DocumentVariant> getVariants() {
-        final List<DocumentVariant> variants = new ArrayList<>();
-        for (DocumentVariant variant : new DocumentVariant[]{unpublished, published, draft}) {
-            if (variant != null) {
-                variants.add(variant);
-            }
-        }
-        return variants;
+        return Stream.of(unpublished, published, draft)
+                .filter(Objects::nonNull)
+                .collect(toList());
     }
 
     @Override
     protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        final List<DocumentVariant> variants = getVariants();
-        if (variants.isEmpty()) {
-            throw new WorkflowException("No variant provided or present");
-        }
         if (branchId == null) {
             throw new WorkflowException("branchId needs to be provided");
         }
         if (branchId.equals(CORE_BRANCH_ID)) {
             throw new WorkflowException(String.format("Cannot remove '%s' branch.", CORE_BRANCH_ID));
+        }
+        final List<DocumentVariant> variants = getVariants();
+        if (variants.isEmpty()) {
+            throw new WorkflowException("No variant provided or present");
         }
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
