@@ -54,7 +54,7 @@ class PageActionsService extends MenuService {
   _initMenu() {
     const menu = this.defineMenu('page', {
       translationKey: 'TOOLBAR_BUTTON_PAGE',
-      isVisible: () => this._canEditChannel(),
+      isVisible: () => this._canAccessAnItem(),
       isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
     });
@@ -125,6 +125,10 @@ class PageActionsService extends MenuService {
     return this.ExtensionService.hasExtensions('page');
   }
 
+  _canAccessAnItem() {
+    return this._canEditChannel() || this._hasPageExtensions();
+  }
+
   _canEditChannel() {
     return this.ChannelService.isEditable();
   }
@@ -134,6 +138,9 @@ class PageActionsService extends MenuService {
   }
 
   _canCopyPage() {
+    if (!this.ChannelService.isEditable()) {
+      return false;
+    }
     if (!this.SiteMapItemService.hasItem()) {
       return false;
     }
