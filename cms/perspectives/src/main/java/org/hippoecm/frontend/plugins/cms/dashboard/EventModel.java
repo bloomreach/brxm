@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.MissingResourceException;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -33,6 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +93,7 @@ public class EventModel implements IComponentAssignedModel<String> {
             }
             this.user = StringEscapeUtils.escapeHtml(node.getProperty("hippolog:user").getString());
             this.nameModel = nameModel;
+
         } catch (RepositoryException e) {
             log.error("Could not parse event node", e);
         }
@@ -122,27 +125,31 @@ public class EventModel implements IComponentAssignedModel<String> {
 
         final long now = System.currentTimeMillis();
 
-        if (then > now-ONE_MINUTE) {
+        if (then > now - ONE_MINUTE) {
             return "one-minute";
         }
-        if (then > now-FIVE_MINUTES) {
+        if (then > now - FIVE_MINUTES) {
             return "five-minutes";
         }
-        if (then > now-TEN_MINUTES) {
+        if (then > now - TEN_MINUTES) {
             return "ten-minutes";
         }
-        if (then > now-HALF_AN_HOUR) {
+        if (then > now - HALF_AN_HOUR) {
             return "half-hour";
         }
-        if (then > now-ONE_HOUR) {
+        if (then > now - ONE_HOUR) {
             return "hour";
         }
 
-        final Calendar cal = Calendar.getInstance();
+        final UserSession session = UserSession.get();
+        final TimeZone timeZone = session.getTimeZone();
+        final Calendar cal = Calendar.getInstance(timeZone);
 
-        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
         final long today = cal.getTimeInMillis();
 
         if (then > today) {
