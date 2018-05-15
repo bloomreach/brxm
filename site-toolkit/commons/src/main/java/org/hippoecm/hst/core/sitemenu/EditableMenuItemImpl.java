@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMe
      * For classes extending this EditableMenuItemImpl. These classes need to have some init method
      * where the instance variables are set
      */ 
-    
+
     public EditableMenuItemImpl(EditableMenuItem parentItem){
         if(parentItem == null) {
             log.info("Can cause an invalid Editable menu item because parent item is null.");
@@ -92,5 +92,24 @@ public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMe
             this.parentItem.setExpanded(expanded);
         }
     }
-    
+
+    @Override
+    protected String getInfo() {
+
+        final StringBuilder info = new StringBuilder(this.getName());
+
+        EditableMenuItem parent = this.getParentItem();
+        while (parent != null) {
+            info.insert(0, "/");
+            info.insert(0, parent.getName());
+            parent = parent.getParentItem();
+        }
+
+        if (getEditableMenu() != null) {
+            info.insert(0, "/");
+            info.insert(0, getEditableMenu().getName());
+        }
+
+        return info.toString();
+    }
 }
