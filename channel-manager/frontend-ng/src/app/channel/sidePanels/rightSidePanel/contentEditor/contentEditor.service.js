@@ -122,7 +122,13 @@ class ContentEditorService {
   }
 
   getDocumentDisplayName() {
-    return this.document ? this.document.displayName : this.error.messageParams.displayName;
+    if (this.document) {
+      return this.document.displayName;
+    }
+    if (this.error && this.error.messageParams) {
+      return this.error.messageParams.displayName;
+    }
+    return undefined;
   }
 
   getPublicationState() {

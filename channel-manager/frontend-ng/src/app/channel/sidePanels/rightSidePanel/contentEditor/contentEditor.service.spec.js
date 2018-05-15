@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('ContentEditorService', () => {
+describe('ContentEditorService', () => {
   let $q;
   let $rootScope;
   let $translate;
@@ -39,6 +39,7 @@ fdescribe('ContentEditorService', () => {
 
     expect(ContentEditor.getDocument()).toEqual(testDocument);
     expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
+    expect(ContentEditor.getDocumentDisplayName()).toEqual('Test');
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();
     expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     expect(ContentEditor.isEditing()).toBe(true);
@@ -240,6 +241,7 @@ fdescribe('ContentEditorService', () => {
           },
           linkToContentEditor: true,
         });
+        expect(ContentEditor.getDocumentDisplayName()).toEqual('Display Name');
       });
 
       it('opens a document with pending invalid changes in the editable document', () => {
