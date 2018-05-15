@@ -94,7 +94,7 @@ public class EditableMenuItemImpl extends AbstractMenuItem implements EditableMe
     }
 
     @Override
-    protected String getPathInfo() {
+    protected String getInfo() {
 
         final StringBuilder info = new StringBuilder(this.getName());
 

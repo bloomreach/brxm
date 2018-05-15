@@ -80,7 +80,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
             return resolvedSiteMapItem.resolvedItem;
         }
         if (this.getHstLink() == null || this.getHstLink().getPath() == null || "".equals(this.getHstLink().getPath())) {
-            log.warn("Cannot resolve site menu item '{}' to a site because HstLink {}. Returning null.", getPathInfo(),
+            log.warn("Cannot resolve site menu item '{}' to a site because HstLink {}. Returning null.", getInfo(),
                     (this.getHstLink() == null) ? "is null" : (this.getHstLink().getPath() == null) ? "path is null" : "path is empty");
             return null;
         }
@@ -90,11 +90,11 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
                     requestContext.getSiteMapMatcher().match(this.getHstLink().getPath(),
                     requestContext.getResolvedSiteMapItem().getResolvedMount()));
         }  catch (NotFoundException e) {
-            log.warn("Cannot resolve site menu item '{}' to a site map item because NotFoundException '{}'. Returning null.", getPathInfo(), e.getMessage());
+            log.warn("Cannot resolve site menu item '{}' to a site map item because NotFoundException '{}'. Returning null.", getInfo(), e.getMessage());
             return null;
         }
 
-        log.debug("Returning resolved site map item '{}' for site menu item '{}'.", resolvedSiteMapItem.resolvedItem.getPathInfo(), this.getPathInfo());
+        log.debug("Returning resolved site map item '{}' for site menu item '{}'.", resolvedSiteMapItem.resolvedItem.getPathInfo(), this.getInfo());
         return resolvedSiteMapItem.resolvedItem;
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
     /**
      * Return information about where this menu item is configured.
      */
-    protected String getPathInfo() {
+    protected String getInfo() {
         return this.getName();
     }
 

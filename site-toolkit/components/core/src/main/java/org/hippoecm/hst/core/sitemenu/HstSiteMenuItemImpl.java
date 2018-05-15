@@ -67,7 +67,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             targetMount = hstRequestContext.getMount(hstSiteMenuItemConfiguration.getMountAlias());
             if(targetMount == null) {
                 log.warn("Cannot create links for site menu item '{}' because could not lookup mount with alias '{}' for current mount '{}'",
-                        getPathInfo(), hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
+                        getInfo(), hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
             }
         } else {
             targetMount = hstRequestContext.getResolvedMount().getMount();
@@ -81,11 +81,11 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
                 hstSiteMapItemRefId = siteMapItemRefIdOrPath;
                 hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
 
-                log.debug("Site menu item '{}' found by refId '{}'. Site map item path: {}", getPathInfo(), siteMapItemRefIdOrPath, hstSiteMapItemPath);
+                log.debug("Site menu item '{}' found by refId '{}'. Site map item path: {}", getInfo(), siteMapItemRefIdOrPath, hstSiteMapItemPath);
             } else {
                 hstSiteMapItemPath = siteMapItemRefIdOrPath;
 
-                log.debug("Site menu item '{}' will be found by refId or path '{}'.", getPathInfo(), siteMapItemRefIdOrPath);
+                log.debug("Site menu item '{}' will be found by refId or path '{}'.", getInfo(), siteMapItemRefIdOrPath);
             }
         }
 
@@ -136,7 +136,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
 
     public HstLink getHstLink() {
         if (targetMount == null) {
-            log.warn("Cannot create link for site menu item '{}' because target mount is null. Returning null", getPathInfo());
+            log.warn("Cannot create link for site menu item '{}' because target mount is null. Returning null", getInfo());
             return null;
         }
         if (hstSiteMapItemRefId != null) {
@@ -146,7 +146,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         }
         if (externalLink == null) {
             log.debug("Site menu item '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. " +
-                            "Cannot create link for site menu item, returning null", getPathInfo());
+                            "Cannot create link for site menu item, returning null", getInfo());
         }
         return null;
     }
@@ -231,7 +231,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     }
 
     @Override
-    protected String getPathInfo() {
+    protected String getInfo() {
 
         final StringBuilder info = new StringBuilder(this.getName());
 
