@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -191,6 +191,33 @@ public class WhitelistHtmlFilterTest {
         final TagNode a = result.findElementByName("a", true);
         assertNotNull(a);
         assertEquals("", a.getAttributeByName("onclick"));
+    }
+
+    @Test
+    public void testCleanJavascriptProtocolArgumentNewLine() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+        // check new lines
+        TagNode result = filterHtml("<a  href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("href"));
+        result = filterHtml("<a  href=\"javascript\n:alert('XSS');\">test</a>");
+        a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("javascript :alert('XSS');", a.getAttributeByName("href"));
+
+
+    }   @Test
+    public void testCleanDataProtocolArgumentNewLine() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+        // check new lines
+        TagNode result = filterHtml("<a  href=\"data\n:testData\">data</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("data :testData", a.getAttributeByName("href"));
+
     }
 
     @Test
