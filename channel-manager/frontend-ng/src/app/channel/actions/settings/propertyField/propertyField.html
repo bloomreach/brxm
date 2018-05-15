@@ -31,8 +31,8 @@
                ng-required="::$ctrl.required"
                ng-model="$ctrl.value"
                ng-disabled="::$ctrl.readOnly">
-      <md-option ng-repeat="choice in $ctrl.getDropDownListValues()" value="{{::choice}}">
-        {{::choice}}
+      <md-option ng-repeat="choice in $ctrl.dropDownValues" value="{{::choice.value}}">
+        {{::choice.displayName}}
       </md-option>
     </md-select>
     <div ng-messages="$ctrl.error">
