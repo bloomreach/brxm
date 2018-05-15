@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
         try {
             QueryManager queryManager = UserSession.get().getQueryManager();
             Query q = queryManager.createQuery(query, "xpath");
-            if (limit > 0 && limit < LIMIT) {
+            if (limit > 0) {
                 q.setLimit(limit);
             } else {
                 q.setLimit(LIMIT);
