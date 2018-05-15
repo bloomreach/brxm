@@ -85,7 +85,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                 .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
                     final String value = attribute.getValue();
                     final String normalizedValue =
-                            cleanCRLFTAB(CharacterReferenceNormalizer.normalize(value.toLowerCase().trim()));
+                            cleanCRLFTAB(CharacterReferenceNormalizer.normalizeAttributeContent(value.toLowerCase().trim()));
                     if (omitJavascriptProtocol &&
                             (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL) ||
                                     checkDataAttrValue(node.getName(), attribute.getKey(), normalizedValue))) {

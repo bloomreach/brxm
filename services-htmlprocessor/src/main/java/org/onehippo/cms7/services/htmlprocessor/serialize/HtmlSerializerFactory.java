@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 package org.onehippo.cms7.services.htmlprocessor.serialize;
 
 import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.CompactHtmlSerializer;
-import org.htmlcleaner.PrettyHtmlSerializer;
 import org.htmlcleaner.Serializer;
-import org.htmlcleaner.SimpleHtmlSerializer;
 
 public class HtmlSerializerFactory {
 
@@ -30,26 +27,11 @@ public class HtmlSerializerFactory {
     public static Serializer create(final HtmlSerializer serializer, final CleanerProperties properties) {
         switch (serializer) {
             case PRETTY:
-                return new PrettyHtmlSerializer(properties) {
-                    @Override
-                    protected String escapeText(final String content) {
-                        return CharacterReferenceNormalizer.normalize(content);
-                    }
-                };
+                return new NormalizingPrettyHtmlSerializer(properties);
             case COMPACT:
-                return new CompactHtmlSerializer(properties) {
-                    @Override
-                    protected String escapeText(final String content) {
-                        return CharacterReferenceNormalizer.normalize(content);
-                    }
-                };
+                return new NormalizingCompactHtmlSerializer(properties);
             default:
-                return new SimpleHtmlSerializer(properties) {
-                    @Override
-                    protected String escapeText(final String content) {
-                        return CharacterReferenceNormalizer.normalize(content);
-                    }
-                };
+                return new NormalizingSimpleHtmlSerializer(properties);
         }
 
     }

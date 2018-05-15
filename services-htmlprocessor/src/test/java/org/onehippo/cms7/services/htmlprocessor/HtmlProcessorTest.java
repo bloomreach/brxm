@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.filter.Element;
+import org.onehippo.cms7.services.htmlprocessor.serialize.HtmlSerializer;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertEquals;
@@ -154,6 +155,25 @@ public class HtmlProcessorTest {
         write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
         assertEquals("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", write);
 
+    }
+
+    @Test
+    public void characterReferencesInAttributesAreNotNormalized() throws IOException {
+        for (HtmlSerializer serializer : HtmlSerializer.values()) {
+            final HtmlProcessorConfig config = new HtmlProcessorConfig();
+            config.setFilter(true);
+            config.setSerializer(serializer);
+
+            final Element table = Element.create("table", "summary");
+            config.setWhitelistElements(Collections.singletonList(table));
+
+            processor = new HtmlProcessorImpl(config);
+
+            final String html = "<table summary=\"&quot; onmouseover=alert('hi')\"></table>";
+            final String written = processor.write(html, Collections.emptyList());
+
+            assertEquals(serializer.name(), html, written);
+        }
     }
 
     @Test
