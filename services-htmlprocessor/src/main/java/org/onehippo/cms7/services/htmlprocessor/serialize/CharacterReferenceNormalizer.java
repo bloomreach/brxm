@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,15 @@ import org.htmlcleaner.SpecialEntity;
 
 public class CharacterReferenceNormalizer {
 
+    private enum ConvertQuote { YES, NO };
+
     private static class ResultWriter {
         private final StringBuilder result;
+        private final ConvertQuote convertQuote;
 
-        ResultWriter(final int capacity) {
+        private ResultWriter(final int capacity, final ConvertQuote convertQuote) {
             result = new StringBuilder(capacity);
+            this.convertQuote = convertQuote;
         }
 
         @Override
@@ -38,6 +42,9 @@ public class CharacterReferenceNormalizer {
 
         ResultWriter write(final char ch) {
             switch (ch) {
+                case '"':
+                    result.append(this.convertQuote == ConvertQuote.NO ? "&quot;" : ch);
+                    break;
                 case '&':
                     result.append("&amp;");
                     break;
@@ -71,11 +78,11 @@ public class CharacterReferenceNormalizer {
     private static class CharacterReferenceFinder {
         private final static Pattern pattern = Pattern.compile(
                 "&(?<entity>\\p{Alnum}+);|&#(?<dec>\\p{Digit}+);|&#0*(x|X)(?<hex>\\p{XDigit}+);");
-                /* Regexp with searching for 3 patterns:
-                 * 1) character entity reference, e.g. &aacute;
-                 * 2) decimal numeric character reference, e.g. &#225;
-                 * 3) hexadecimal numeric character reference, e.g. &#0xE1;
-                 */
+        /* Regexp with searching for 3 patterns:
+         * 1) character entity reference, e.g. &aacute;
+         * 2) decimal numeric character reference, e.g. &#225;
+         * 3) hexadecimal numeric character reference, e.g. &#0xE1;
+         */
 
         private static final SpecialEntities specialEntities = SpecialEntities.INSTANCE;
 
@@ -121,12 +128,32 @@ public class CharacterReferenceNormalizer {
     }
 
     /**
+     * @deprecated use {@link #normalizeElementContent(String)} instead.
+     */
+    @Deprecated
+    public static String normalize(final String string) {
+        return normalizeElementContent(string);
+    }
+
+    public static String normalizeElementContent(final String string) {
+        return normalize(string, ConvertQuote.YES);
+    }
+
+    public static String normalizeAttributeContent(final String string) {
+        return normalize(string, ConvertQuote.NO);
+    }
+
+    /**
      * Transforms character references (e.g. &amp;aacute;, &amp;#225;, etc.) to characters by applying the same rules as
      * CKEditor in Hippo's default configuration. These rules are: convert all character references to the character
      * they represent except for &amp;nbsp;, &amp;gt;, &amp;lt;, &amp;amp; - those must always be encoded.
+     *
+     * @param string the string to normalize
+     * @param convertQuote whether to convert &quot; to " or not.
+     * @return the normalized string
      */
-    public static String normalize(final String string) {
-        final ResultWriter resultWriter = new ResultWriter(string.length());
+    private static String normalize(final String string, final ConvertQuote convertQuote) {
+        final ResultWriter resultWriter = new ResultWriter(string.length(), convertQuote);
         final CharacterReferenceFinder finder = new CharacterReferenceFinder(string);
         int current = 0;
 

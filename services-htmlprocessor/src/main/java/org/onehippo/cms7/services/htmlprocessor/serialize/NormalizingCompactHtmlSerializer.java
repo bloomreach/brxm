@@ -25,28 +25,28 @@ import org.htmlcleaner.TagNode;
 
 class NormalizingCompactHtmlSerializer extends CompactHtmlSerializer {
 
-    private final ThreadLocal<Boolean> escapeText;
+    private final ThreadLocal<Boolean> isElementContent;
 
     NormalizingCompactHtmlSerializer(final CleanerProperties props) {
         super(props);
-        escapeText = ThreadLocal.withInitial(() -> true);
+        isElementContent = ThreadLocal.withInitial(() -> true);
     }
 
     @Override
     protected void serializeOpenTag(final TagNode tagNode, final Writer writer, final boolean newLine) throws IOException {
-        escapeText.set(false);
+        isElementContent.set(false);
         try {
             super.serializeOpenTag(tagNode, writer, newLine);
         } finally {
-            escapeText.set(true);
+            isElementContent.set(true);
         }
     }
 
     @Override
     protected String escapeText(final String content) {
-        if (escapeText.get()) {
-            return CharacterReferenceNormalizer.normalize(content);
+        if (isElementContent.get()) {
+            return CharacterReferenceNormalizer.normalizeElementContent(content);
         }
-        return content;
+        return CharacterReferenceNormalizer.normalizeAttributeContent(content);
     }
 }
