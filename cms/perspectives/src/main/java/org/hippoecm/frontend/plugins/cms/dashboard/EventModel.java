@@ -125,25 +125,25 @@ public class EventModel implements IComponentAssignedModel<String> {
     private String getRelativeTimeKey(final long then) {
 
         final long now = System.currentTimeMillis();
-        final UserSession session = UserSession.get();
-        TimeZone timeZone = session.getTimeZone();
 
-        if (then > now-ONE_MINUTE) {
+        if (then > now - ONE_MINUTE) {
             return "one-minute";
         }
-        if (then > now-FIVE_MINUTES) {
+        if (then > now - FIVE_MINUTES) {
             return "five-minutes";
         }
-        if (then > now-TEN_MINUTES) {
+        if (then > now - TEN_MINUTES) {
             return "ten-minutes";
         }
-        if (then > now-HALF_AN_HOUR) {
+        if (then > now - HALF_AN_HOUR) {
             return "half-hour";
         }
-        if (then > now-ONE_HOUR) {
+        if (then > now - ONE_HOUR) {
             return "hour";
         }
 
+        final UserSession session = UserSession.get();
+        final TimeZone timeZone = session.getTimeZone();
         final Calendar cal = Calendar.getInstance(timeZone);
 
         cal.set(Calendar.HOUR_OF_DAY, 0);
