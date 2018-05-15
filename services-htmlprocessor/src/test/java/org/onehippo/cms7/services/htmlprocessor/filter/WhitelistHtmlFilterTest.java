@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -185,10 +185,16 @@ public class WhitelistHtmlFilterTest {
     public void testCleanJavascriptProtocolArgumentTrue() throws Exception {
         filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
         addToWhitelist(Element.create("a", "href", "onclick"));
-        final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
 
-        // src attribute contains javascript
-        final TagNode a = result.findElementByName("a", true);
+        // src attribute contains javascript:
+        TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("onclick"));
+
+        // src attribute contains javascript: + space
+        result = filterHtml("<a href=\"#\" onclick=\"javascript: lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
+        a = result.findElementByName("a", true);
         assertNotNull(a);
         assertEquals("", a.getAttributeByName("onclick"));
     }
@@ -199,10 +205,56 @@ public class WhitelistHtmlFilterTest {
         addToWhitelist(Element.create("a", "href", "onclick"));
         final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
 
-        // src attribute contains javascript
+        // src attribute contains javascript:
         final TagNode a = result.findElementByName("a", true);
         assertNotNull(a);
         assertEquals("javascript:lancerPu('XXXcodepuXXX')", a.getAttributeByName("onclick"));
+    }
+
+    @Test
+    public void testCleanJavascriptProtocolNewLine() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+
+        // check new lines
+        TagNode result = filterHtml("<a href=\"jav&#x0A;ascript:alert('XSS');\">test</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("href"));
+
+        result = filterHtml("<a href=\"javascript\n:alert('XSS');\">test</a>");
+        a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("javascript :alert('XSS');", a.getAttributeByName("href"));
+    }
+
+    @Test
+    public void testCleanDataProtocol() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+
+        // href attribute contains data:
+        TagNode result = filterHtml("<a href=\"data:testData\">data</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("href"));
+
+        // href attribute contains data: + space
+        result = filterHtml("<a href=\"data: testData\">data</a>");
+        a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("href"));
+    }
+
+    @Test
+    public void testCleanDataProtocolNewLine() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+        // check new lines
+        TagNode result = filterHtml("<a href=\"data\n:testData\">data</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("data :testData", a.getAttributeByName("href"));
     }
 
     private TagNode filterHtml(final String html) {

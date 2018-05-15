@@ -30,8 +30,8 @@ public class WhitelistHtmlFilter implements HtmlFilter {
 
     public static final Logger log = LoggerFactory.getLogger(WhitelistHtmlFilter.class);
 
-    private static final String JAVASCRIPT_PROTOCOL = "javascript";
-    private static final String DATA_PROTOCOL = "data";
+    private static final String JAVASCRIPT_PROTOCOL = "javascript:";
+    private static final String DATA_PROTOCOL = "data:";
     private static final Pattern CRLFTAB = Pattern.compile("[\r\n\t]");
 
     private final Map<String, Element> elements = new HashMap<>();
@@ -101,8 +101,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
     }
 
     private boolean checkDataAttrValue(final String tagName, final String attrName, final String attrValue) {
-        return attrValue.startsWith(DATA_PROTOCOL)
-                ? ("a".equals(tagName) && "href".equals(attrName)) || ("object".equals(tagName) && "data".equals(attrName))
-                : false;
+        return attrValue.startsWith(DATA_PROTOCOL) &&
+                (("a".equals(tagName) && "href".equals(attrName)) || ("object".equals(tagName) && "data".equals(attrName)));
     }
 }
