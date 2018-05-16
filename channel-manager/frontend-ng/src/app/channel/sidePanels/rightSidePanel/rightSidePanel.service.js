@@ -56,12 +56,18 @@ class RightSidePanelService {
     return this.title;
   }
 
-  setTitle(title) {
+  getTooltip() {
+    return this.tooltip;
+  }
+
+  setTitle(title, tooltip) {
     this.title = title;
+    this.tooltip = tooltip || title;
   }
 
   clearTitle() {
     this.title = '';
+    this.tooltip = '';
   }
 
   setContext(context) {
