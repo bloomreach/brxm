@@ -69,16 +69,14 @@ class PageInfoService {
   }
 
   showPageInfo() {
-    const pageUrl = this._getPageUrl();
-    this._setTitle(pageUrl);
-    this._loadFirstPageExtension(pageUrl);
+    this._setTitle();
+    this._loadFirstPageExtension();
   }
 
   updatePageInfo() {
     if (this._isPageInfoShown()) {
-      const pageUrl = this._getPageUrl();
-      this._setTitle(pageUrl);
-      this._updateLoadedPageExtensions(pageUrl);
+      this._setTitle();
+      this._updateLoadedPageExtensions();
     }
   }
 
@@ -90,20 +88,30 @@ class PageInfoService {
     this._loadPageExtension(extensionId);
   }
 
+  _setTitle() {
+    const pageLabel = this.$translate.instant('PAGE');
+    this.RightSidePanelService.setContext(pageLabel);
+
+    const pageName = this._getPageName();
+    const pageUrl = this._getPageUrl();
+    this.RightSidePanelService.setTitle(pageName, pageUrl);
+  }
+
+  _getPageName() {
+    const pagePath = this.PageMetaDataService.getPathInfo();
+    const baseName = this.PathService.baseName(pagePath);
+    return this.PathService.concatPaths('/', baseName);
+  }
+
   _getPageUrl() {
     const channelBaseUrl = this.ChannelService.getChannel().url;
     const pagePath = this.PageMetaDataService.getPathInfo();
     return this.PathService.concatPaths(channelBaseUrl, pagePath);
   }
 
-  _setTitle(pageUrl) {
-    const pageLabel = this.$translate.instant('PAGE');
-    this.RightSidePanelService.setContext(pageLabel);
-    this.RightSidePanelService.setTitle(pageUrl);
-  }
-
-  _loadFirstPageExtension(pageUrl) {
+  _loadFirstPageExtension() {
     const pageExtensions = this.ExtensionService.getExtensions('page');
+    const pageUrl = this._getPageUrl();
     this.$state.go(`hippo-cm.channel.page-info.${pageExtensions[0].id}`, { pageUrl });
   }
 
@@ -111,7 +119,8 @@ class PageInfoService {
     return this.$state.includes('hippo-cm.channel.page-info');
   }
 
-  _updateLoadedPageExtensions(pageUrl) {
+  _updateLoadedPageExtensions() {
+    const pageUrl = this._getPageUrl();
     this.$state.go(this.$state.current.name, { pageUrl });
   }
 
