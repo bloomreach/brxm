@@ -146,7 +146,7 @@ public class ContentResourceTest extends CXFTest {
         final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
-                .get("/documents/" + requestedUuid + "/editable")
+                .post("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
@@ -160,7 +160,7 @@ public class ContentResourceTest extends CXFTest {
         replay(documentsService);
 
         when()
-                .get("/documents/" + requestedUuid + "/editable")
+                .post("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(403);
     }
@@ -173,7 +173,7 @@ public class ContentResourceTest extends CXFTest {
         replay(documentsService);
 
         when()
-                .get("/documents/" + requestedUuid + "/editable")
+                .post("/documents/" + requestedUuid + "/editable")
         .then()
                 .statusCode(404);
     }
@@ -183,7 +183,6 @@ public class ContentResourceTest extends CXFTest {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
-        final boolean finishEditing = false;
 
         expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq(emptyMap()))).andReturn(testDocument);
         replay(documentsService);

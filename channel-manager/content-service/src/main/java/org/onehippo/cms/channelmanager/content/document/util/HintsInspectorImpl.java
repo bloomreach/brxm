@@ -46,17 +46,17 @@ public class HintsInspectorImpl implements HintsInspector {
     private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
 
     @Override
-    public boolean canCreateDraft(Map<String, Serializable> hints) {
+    public boolean canObtainEditableDocument(Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canUpdateDraft(Map<String, Serializable> hints) {
+    public boolean canUpdateDocument(Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canDeleteDraft(Map<String, Serializable> hints) {
+    public boolean canDisposeEditableDocument(Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 

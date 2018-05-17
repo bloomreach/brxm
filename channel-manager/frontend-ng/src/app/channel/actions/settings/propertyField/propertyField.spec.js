@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,9 @@ describe('Property field component', () => {
 
   it('applies a sanity check on drop-down fields', () => {
     initComponentController();
-    expect($ctrl.getDropDownListValues()).toEqual(['small', 'medium', 'large']);
+    expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'small' },
+      { value: 'medium', displayName: 'medium' },
+      { value: 'large', displayName: 'large' }]);
 
     // Wrong annotation type
     channelInfoDescription.propertyDefinitions = {
@@ -182,7 +184,7 @@ describe('Property field component', () => {
       },
     };
     initComponentController();
-    expect($ctrl.getDropDownListValues()).toEqual([]);
+    expect($ctrl.dropDownValues).toEqual([]);
 
     // No annotations
     channelInfoDescription.propertyDefinitions = {
@@ -191,7 +193,42 @@ describe('Property field component', () => {
       },
     };
     initComponentController();
-    expect($ctrl.getDropDownListValues()).toEqual([]);
+    expect($ctrl.dropDownValues).toEqual([]);
+  });
+
+  it('shows keys as display values in drop-downs if there are no translations available', () => {
+    initComponentController();
+    expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'small' },
+      { value: 'medium', displayName: 'medium' },
+      { value: 'large', displayName: 'large' }]);
+  });
+
+  it('shows translated display values in drop-downs for properties files', () => {
+    channelInfoDescription.i18nResources = {
+      testField: 'Test Field',
+      'testField.help': 'Test Field help text',
+      'testField/small': 'Small',
+      'testField/medium': 'Medium',
+      'testField/large': 'Large',
+    };
+    initComponentController();
+    expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'Small' },
+      { value: 'medium', displayName: 'Medium' },
+      { value: 'large', displayName: 'Large' }]);
+  });
+
+  it('shows translated display values in drop-downs for repository resource bundles', () => {
+    channelInfoDescription.i18nResources = {
+      testField: 'Test Field',
+      'testField.help': 'Test Field help text',
+      'testField#small': 'Small',
+      'testField#medium': 'Medium',
+      'testField#large': 'Large',
+    };
+    initComponentController();
+    expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'Small' },
+      { value: 'medium', displayName: 'Medium' },
+      { value: 'large', displayName: 'Large' }]);
   });
 
   it('enters read-only mode if the channel is locked by someone else even if the channel is editable', () => {
