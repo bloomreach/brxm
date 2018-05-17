@@ -35,7 +35,7 @@ gulp tasks via `npm run` or simply stick with the predefined `npm start` and
    localhost:8080/cms/angular/hippo-cm/... to the Webpack dev server.
 
         cd <your project>
-        mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090/cms'
+        mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090'
 
 Mind that if the Webpack dev server has not been started, users see an empty CM perspective without any error message.
 
