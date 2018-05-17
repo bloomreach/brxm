@@ -48,20 +48,20 @@ import static org.junit.Assert.assertTrue;
 public class EditingUtilsTest {
 
     @Test
-    public void canCreateDraft() throws Exception {
+    public void canObtainEditableDocument() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canCreateDraft(workflow));
+        assertFalse(EditingUtils.canObtainEditableDocument(workflow));
 
         hints.put("obtainEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canCreateDraft(workflow));
+        assertFalse(EditingUtils.canObtainEditableDocument(workflow));
 
         hints.put("obtainEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canCreateDraft(workflow));
+        assertTrue(EditingUtils.canObtainEditableDocument(workflow));
     }
 
     @Test
@@ -72,13 +72,13 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
 
         hints.put("commitEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
 
         hints.put("commitEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canUpdateDraft(workflow));
+        assertTrue(EditingUtils.canUpdateDocument(workflow));
     }
 
     @Test
@@ -88,24 +88,24 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andThrow(new WorkflowException("bla"));
         replay(workflow);
 
-        assertFalse(EditingUtils.canUpdateDraft(workflow));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
     }
 
     @Test
-    public void canDeleteDraft() throws Exception {
+    public void canDisposeEditableDocument() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertFalse(EditingUtils.canDeleteDraft(workflow));
+        assertFalse(EditingUtils.canDisposeEditableDocument(workflow));
 
         hints.put("disposeEditableInstance", Boolean.FALSE);
-        assertFalse(EditingUtils.canDeleteDraft(workflow));
+        assertFalse(EditingUtils.canDisposeEditableDocument(workflow));
 
         hints.put("disposeEditableInstance", Boolean.TRUE);
-        assertTrue(EditingUtils.canDeleteDraft(workflow));
+        assertTrue(EditingUtils.canDisposeEditableDocument(workflow));
     }
 
     @Test
@@ -278,27 +278,27 @@ public class EditingUtilsTest {
     }
 
     @Test
-    public void createDraft() throws Exception {
-        final Node draft = createMock(Node.class);
+    public void getEditableDocumentNode() throws Exception {
+        final Node draftNode = createMock(Node.class);
         final Session session = createMock(Session.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Document document = createMock(Document.class);
 
         expect(workflow.obtainEditableInstance()).andReturn(document);
-        expect(document.getNode(session)).andReturn(draft);
+        expect(document.getNode(session)).andReturn(draftNode);
         replay(workflow, document);
 
-        final Optional<Node> draftOptional = EditingUtils.createDraft(workflow, session);
-        assertThat("There should be a draft", draftOptional.isPresent());
-        if (draftOptional.isPresent()) {
-            assertThat(draftOptional.get(), equalTo(draft));
+        final Optional<Node> nodeOptional = EditingUtils.getEditableDocumentNode(workflow, session);
+        assertThat("There should be a draft", nodeOptional.isPresent());
+        if (nodeOptional.isPresent()) {
+            assertThat(nodeOptional.get(), equalTo(draftNode));
         }
 
         verify(workflow, document);
     }
 
     @Test
-    public void createDraftWithWorkflowException() throws Exception {
+    public void getEditableDocumentNodeWithWorkflowException() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Session session = createMock(Session.class);
 
@@ -306,7 +306,7 @@ public class EditingUtilsTest {
         expect(session.getUserID()).andReturn("bla");
         replay(workflow, session);
 
-        assertFalse(EditingUtils.createDraft(workflow, session).isPresent());
+        assertFalse(EditingUtils.getEditableDocumentNode(workflow, session).isPresent());
 
         verify(workflow, session);
     }

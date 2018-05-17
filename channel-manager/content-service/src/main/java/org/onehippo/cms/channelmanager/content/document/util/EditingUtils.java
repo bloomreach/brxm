@@ -63,7 +63,7 @@ public class EditingUtils {
      * @param workflow workflow for the current user on a specific document
      * @return true/false.
      */
-    public static boolean canCreateDraft(final EditableWorkflow workflow) {
+    public static boolean canObtainEditableDocument(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
@@ -73,17 +73,17 @@ public class EditingUtils {
      * @param workflow editable workflow of a document
      * @return true if document can be updated, false otherwise
      */
-    public static boolean canUpdateDraft(final EditableWorkflow workflow) {
+    public static boolean canUpdateDocument(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     /**
-     * Check if a document can be updated, given its workflow.
+     * Check if a document can be disposed of, given its workflow.
      *
      * @param workflow editable workflow of a document
-     * @return true if document can be updated, false otherwise
+     * @return true if document can be disposed of, false otherwise
      */
-    public static boolean canDeleteDraft(final EditableWorkflow workflow) {
+    public static boolean canDisposeEditableDocument(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
@@ -222,13 +222,13 @@ public class EditingUtils {
     }
 
     /**
-     * Create a draft variant node for a document represented by handle node.
+     * Get a backing JCR node of an editable document.
      *
      * @param workflow Editable workflow for the desired document
-     * @param session  JCR session for obtaining the draft node
-     * @return JCR draft node or nothing, wrapped in an Optional
+     * @param session  JCR session for obtaining the backing node
+     * @return JCR node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
+    public static Optional<Node> getEditableDocumentNode(final EditableWorkflow workflow, final Session session) {
         try {
             final Document document = workflow.obtainEditableInstance();
             return Optional.of(document.getNode(session));
