@@ -47,8 +47,8 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MavenModelReaderWriterTest {
 
-    final static File targetDir = new File(System.getProperty("java.io.tmpdir"));
-    final static String absolutePomTempPath = targetDir + "/pom2.xml";
+    static final File targetDir = new File(System.getProperty("java.io.tmpdir"));
+    static final String absolutePomTempPath = targetDir + "/pom2.xml";
     static File target;
     private static Logger log = LoggerFactory.getLogger(MavenModelReaderWriterTest.class);
     final MavenXpp3Reader reader = new MavenXpp3Reader();

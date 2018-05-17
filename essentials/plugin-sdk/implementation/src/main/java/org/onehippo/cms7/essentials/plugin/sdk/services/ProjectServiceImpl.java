@@ -47,13 +47,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    private final static String MODULE_NAME_APPLICATION = "application";
-    private final static String MODULE_NAME_CMS = "cms";
-    private final static String MODULE_NAME_DEVELOPMENT = "development";
-    private final static String MODULE_NAME_REPOSITORY_DATA = "repository-data";
-    private final static String MODULE_NAME_SITE = "site";
-    private final static String MODULE_NAME_WEB_FILES = "webfiles";
-    private final static Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
+    private static final String MODULE_NAME_APPLICATION = "application";
+    private static final String MODULE_NAME_CMS = "cms";
+    private static final String MODULE_NAME_DEVELOPMENT = "development";
+    private static final String MODULE_NAME_REPOSITORY_DATA = "repository-data";
+    private static final String MODULE_NAME_SITE = "site";
+    private static final String MODULE_NAME_WEB_FILES = "webfiles";
+    private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
     private final SettingsService settingsService;
 
