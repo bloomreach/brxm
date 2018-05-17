@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,16 @@ public class NewsDocument extends HippoDocument {
     /**
      * The document type of the news document.
      */
-    public final static String DOCUMENT_TYPE = "myhippoproject:newsdocument";
+    public static final String DOCUMENT_TYPE = "myhippoproject:newsdocument";
 
-    private final static String TITLE = "myhippoproject:title";
-    private final static String DATE = "myhippoproject:date";
-    private final static String INTRODUCTION = "myhippoproject:introduction";
-    private final static String IMAGE = "myhippoproject:image";
-    private final static String CONTENT = "myhippoproject:content";
-    private final static String LOCATION = "myhippoproject:location";
-    private final static String AUTHOR = "myhippoproject:author";
-    private final static String SOURCE = "myhippoproject:source";
+    private static final String TITLE = "myhippoproject:title";
+    private static final String DATE = "myhippoproject:date";
+    private static final String INTRODUCTION = "myhippoproject:introduction";
+    private static final String IMAGE = "myhippoproject:image";
+    private static final String CONTENT = "myhippoproject:content";
+    private static final String LOCATION = "myhippoproject:location";
+    private static final String AUTHOR = "myhippoproject:author";
+    private static final String SOURCE = "myhippoproject:source";
 
     /**
      * Get the title of the document.
