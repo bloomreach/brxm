@@ -44,7 +44,7 @@
 
             $scope.copyField = function() {
                 var newField = angular.copy($scope.copyChoice.field);
-                delete newField.originalName;
+                delete newField.caption;
                 delete newField.name;
 
                 // revert deep-copying of compounds, we must refer to the exact same instance
@@ -117,7 +117,7 @@
             };
             $scope.init();
 
-            function initDocTypes(docTypes, setOriginalName) {
+            function initDocTypes(docTypes, setCaption) {
                 // preserve docType selection if possible
                 var selectedName;
                 if ($scope.selectedDocumentType) {
@@ -130,10 +130,10 @@
                 // replace content blocks compound refs with actual compounds
                 angular.forEach($scope.documentTypes, function(docType) {
                     angular.forEach(docType.contentBlocksFields, function(field) {
-                        if (setOriginalName) {
-                            field.originalName = field.name;
+                        if (setCaption) {
+                            field.caption = field.caption || field.name;
                         }
-                        if (field.maxItems == 0) {
+                        if (field.maxItems === 0) {
                             delete field.maxItems;
                         }
                         field.compounds = [];
@@ -152,10 +152,10 @@
                 });
 
                 // if there's only one document type, preselect it.
-                if ($scope.documentTypes.length == 1) {
+                if ($scope.documentTypes.length === 1) {
                     $scope.selectedDocumentType = $scope.documentTypes[0];
                 }
-                if ($scope.copyChoices.length == 1) {
+                if ($scope.copyChoices.length === 1) {
                     $scope.copyChoice = $scope.copyChoices[0];
                 }
             }

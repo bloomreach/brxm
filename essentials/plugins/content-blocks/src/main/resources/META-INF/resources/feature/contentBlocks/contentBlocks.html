@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@
             <table ng-show="selectedDocumentType.contentBlocksFields.length > 0" class="table table-hover">
               <tr>
                 <th>Field Name</th>
+                <th>Field Caption</th>
                 <th></th>
                 <th>Picker Type</th>
                 <th>Max Blocks</th>
@@ -92,6 +93,8 @@
               <tr ng-repeat="field in selectedDocumentType.contentBlocksFields">
                 <td>
                   <input class="form-control" required type="text" ng-model="field.name"/>
+                </td><td>
+                  <input class="form-control" required type="text" ng-model="field.caption"/>
                 </td>
                 <td>
                   <button class="btn btn-danger" ng-click="deleteField(field)">Delete</button>
