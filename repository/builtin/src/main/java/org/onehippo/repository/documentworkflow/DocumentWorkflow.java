@@ -566,12 +566,13 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     As a result, the following happens
      *     <ol>
      *         <li>
-     *             document its 'foo-preview' version gets published. Note that if the preview variant below he handle does
-     *             not belong to project 'foo', first a checkout of 'foo' will be done (replacing the current preview) and
-     *             then the preview will be published. This scenario is allowed EVEN when someone is editing the document:
-     *             Assume an author is editing the branch 'bar'. In that case, the reintegrate won't touch the draft, and
-     *             as a result, the author can continue working on the draft and won't notice that the preview might have
-     *             changed. After saving the draft, the preview becomes again for branch 'bar'.
+     *             the 'foo-preview' version of the document gets published. Note that if the preview variant below the
+     *             handle does not belong to project 'foo', first a checkout of 'foo' will be done (replacing the
+     *             current preview) and then the preview will be published. This scenario is allowed EVEN when someone
+     *             is editing the document:Assume an author is editing the branch 'bar'. In that case, the reintegrate
+     *             won't touch the draft, and as a result, the author can continue working on the draft and won't notice
+     *             that the preview might have changed. After saving the draft, the preview becomes again for branch
+     *             'bar'.
      *         </li>
      *         <li>
      *             the new labels 'pre-reintegrate-core-live-x' and 'pre-reintegrate-core-preview-x' in version history
@@ -582,7 +583,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *             the reintegrate, these changes can always be found back in version history
      *          </li>
      *         <li>
-     *             after the project 'foo' version has been put live, the core-preview and core-live labels will be moved to
+     *             after the 'foo' version has been put live, the core-preview and core-live labels will be moved to
      *            'foo-preview' version.
      *         </li>
      *         <li>

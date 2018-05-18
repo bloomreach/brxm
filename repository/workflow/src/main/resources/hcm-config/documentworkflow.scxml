@@ -603,9 +603,8 @@
       </state>
       <state id="can-reintegrate-branch">
         <transition event="reintegrateBranch">
-          <if cond="'core'.equals(_event.data?.branchId)">
-            <hippo:workflowException errorExpr="'Branch \'core\' cannot be reintegrated'"/>
-          </if>
+
+          <hippo:workflowException cond="'core'.equals(_event.data?.branchId)" errorExpr="'Branch \'core\' cannot be reintegrated'"/>
 
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 

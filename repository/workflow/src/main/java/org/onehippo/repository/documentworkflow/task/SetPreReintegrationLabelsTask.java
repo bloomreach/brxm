@@ -16,9 +16,6 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,16 +26,7 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.util.JcrConstants;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.ArrayUtils.removeElement;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
-import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_LIVE;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
 
@@ -46,7 +34,7 @@ public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private final static String PRE_REINTEGRATE_LABEL_PREFIX = "pre-reintegrate-";
+    private static final String PRE_REINTEGRATE_LABEL_PREFIX = "pre-reintegrate-";
 
     private DocumentVariant unpublished;
 
@@ -65,6 +53,7 @@ public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
         final VersionHistory versionHistory = versionManager.getVersionHistory(preview.getPath());
 
         int counter = findNextCounter(versionHistory);
+
         for (final String coreLabel : new String[]{CORE_BRANCH_LABEL_PREVIEW, CORE_BRANCH_LABEL_LIVE}) {
             if (versionHistory.hasVersionLabel(coreLabel)) {
                 final Version versionByLabel = versionHistory.getVersionByLabel(coreLabel);
