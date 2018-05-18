@@ -20,10 +20,6 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.BranchTask;
 
-/**
- *
- * </p>
- */
 public class BranchAction extends AbstractDocumentTaskAction<BranchTask> {
 
     private static final long serialVersionUID = 1L;

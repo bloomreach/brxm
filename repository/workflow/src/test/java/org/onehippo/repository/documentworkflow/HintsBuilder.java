@@ -17,7 +17,16 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.TreeMap;
+
+import org.hippoecm.repository.HippoStdNodeType;
+import org.onehippo.repository.scxml.BranchFeedbackAction;
+
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
+import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.onehippo.repository.scxml.BranchFeedbackAction.BRANCH_VARIANTS_INFO;
 
 public class HintsBuilder {
 
@@ -233,6 +242,22 @@ public class HintsBuilder {
 
     public HintsBuilder copy() {
         actions.put(ACTION_COPY, true);
+        return this;
+    }
+
+    public HintsBuilder branchFeedback(final String valuePublished, final String valueUnpublished, final String valueDraft) {
+        HashMap<String, String> branchVariantInfo = new HashMap<>();
+        if (valuePublished != null) {
+            branchVariantInfo.put(PUBLISHED, valuePublished);
+        }
+        if (valueUnpublished != null) {
+            branchVariantInfo.put(UNPUBLISHED, valueUnpublished);
+        }
+        if (valueDraft != null) {
+            branchVariantInfo.put(DRAFT, valueDraft);
+        }
+
+        info.put(BRANCH_VARIANTS_INFO, branchVariantInfo);
         return this;
     }
 }

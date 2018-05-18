@@ -491,6 +491,7 @@
     <state id="branching">
 
       <onentry>
+        <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
         <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published)"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
       </onentry>

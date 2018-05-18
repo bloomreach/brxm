@@ -19,6 +19,10 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.scxml.FeedbackAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /branchFeedback:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.BranchFeedbackAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /configVariant:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ConfigVariantAction
