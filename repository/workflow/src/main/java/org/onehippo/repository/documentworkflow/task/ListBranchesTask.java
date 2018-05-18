@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.documentworkflow.task;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,11 +27,14 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
 
@@ -73,29 +77,52 @@ public class ListBranchesTask extends AbstractDocumentTask {
             throw new WorkflowException("No variant provided");
         }
 
-        final Set<String> branches = new HashSet<>();
-
-
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
-        final Node targetNode = getVariant().getNode(workflowSession);
-
-        if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-            branches.add(targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        final Node variant = getVariant().getNode(workflowSession);
+        final Node handle = variant.getParent();
+        final Set<String> branches = new HashSet<>();
+        if (handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            final String[] branchArray = JcrUtils.getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, null);
+            if (branchArray == null) {
+                branches.add(CORE_BRANCH_ID);
+            } else {
+                branches.addAll(Arrays.asList(branchArray));
+            }
         } else {
-            // current preview is for core
             branches.add(CORE_BRANCH_ID);
         }
 
-        if (!targetNode.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-            return branches;
+        // validate all branches are available (either as preview below handle and otherwise in version history
+        final Set<String> realAvailableBranches = getRealAvailableBranches(workflowSession, variant);
+
+        // only keep the branches that are really available (for example skip branches which are present on the
+        // hippo:handle node but are not available any more in version history
+        branches.retainAll(realAvailableBranches);
+
+        return branches;
+
+
+    }
+
+    private Set<String> getRealAvailableBranches(final Session workflowSession, final Node variant) throws RepositoryException {
+        final Set<String> realAvailableBranches = new HashSet<>();
+        if (variant.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            realAvailableBranches.add(variant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        } else {
+            // current preview is for core
+            realAvailableBranches.add(CORE_BRANCH_ID);
+        }
+
+        if (!variant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            return realAvailableBranches;
         }
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
-        final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
+        final VersionHistory versionHistory = versionManager.getVersionHistory(variant.getPath());
 
         if (versionHistory.hasVersionLabel(CORE_BRANCH_LABEL_PREVIEW)) {
             // core branch present
-            branches.add(CORE_BRANCH_ID);
+            realAvailableBranches.add(CORE_BRANCH_ID);
         }
 
         for (String label : versionHistory.getVersionLabels()) {
@@ -104,10 +131,10 @@ public class ListBranchesTask extends AbstractDocumentTask {
                 final Node frozenNode = version.getFrozenNode();
                 if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
                     // found a real branch instead of a label for a non-branch
-                    branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                    realAvailableBranches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
                 }
             }
         }
-        return branches;
+        return realAvailableBranches;
     }
 }
