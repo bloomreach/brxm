@@ -44,6 +44,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.google.common.collect.Lists;
+
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -233,15 +235,16 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeToSingleValue() throws Exception {
         final Node node = MockNode.root();
-        final Node choiceNode = node.addNode("choice", "compound2");
+        node.addNode("untouched", "bla");       // ignore
+        node.addNode("choice", "compound2");    // update
+        node.addNode("choice", "compound1");    // excess, remove
+        node.addNode("choice", "unsupported");  // unsupported, remove
+
+        final Node compound2Node = node.getNode("choice[1]");
         final FieldValue compoundValue = new FieldValue("bla");
         final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
 
-        node.addNode("untouched", "bla"); // ignore
-        node.addNode("choice", "unsupported"); // invalid, remove
-        node.addNode("choice", "compound1"); // excess, remove
-
-        compound2.writeValue(choiceNode, compoundValue);
+        compound2.writeValue(compound2Node, compoundValue);
         expectLastCall();
         replayAll();
 
@@ -250,6 +253,40 @@ public class ChoiceFieldTypeTest {
         verifyAll();
         assertTrue(node.hasNode("untouched"));
         assertThat(node.getNodes("choice").getSize(), equalTo(1L));
+    }
+
+    @Test
+    public void handlesUnsupportedValues() throws Exception {
+        choice.setMaxValues(3);
+
+        final Node node = MockNode.root();
+        final Node compound1Node = node.addNode("choice", "compound1");     // update
+        final Node unsupportedNode = node.addNode("choice", "unsupported"); // unsupported
+        final Node compound2Node = node.addNode("choice", "compound2");     // update
+
+        final FieldValue compound1Value = new FieldValue("bla1");
+        final FieldValue compound2Value = new FieldValue("bla2");
+
+        compound1.writeValue(compound1Node, compound1Value);
+        expectLastCall();
+
+        choice.writeValue(unsupportedNode, ChoiceFieldType.UNSUPPORTED_FIELD_VALUE);
+        expectLastCall();
+
+        compound2.writeValue(compound2Node, compound2Value);
+        expectLastCall();
+        replayAll();
+
+        choice.writeTo(node, Optional.of(Lists.newArrayList(
+                new FieldValue("compound1", compound1Value),
+                new FieldValue("compound2", compound2Value)
+        )));
+
+        verifyAll();
+        assertThat(node.getNodes("choice").getSize(), equalTo(3L));
+        assertThat(node.getNode("choice[1]"), equalTo(compound1Node));
+        assertThat(node.getNode("choice[2]"), equalTo(unsupportedNode));
+        assertThat(node.getNode("choice[3]"), equalTo(compound2Node));
     }
 
     @Test

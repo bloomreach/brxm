@@ -48,13 +48,9 @@ class PageActionsService extends MenuService {
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
 
-    this._initMenu();
-  }
-
-  _initMenu() {
     const menu = this.defineMenu('page', {
       translationKey: 'TOOLBAR_BUTTON_PAGE',
-      isVisible: () => this._canEditChannel(),
+      isVisible: () => this._canAccessMenuItem(),
       isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
     });
@@ -66,34 +62,36 @@ class PageActionsService extends MenuService {
       });
     }
 
-    menu
-      .addAction('properties', {
-        translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._pageProperties(),
-      })
-      .addDivider()
-      .addAction('copy', {
-        translationKey: 'TOOLBAR_MENU_PAGE_COPY',
-        isEnabled: () => this._canCopyPage(),
-        onClick: () => this._copyPage(),
-      })
-      .addAction('move', {
-        translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._movePage(),
-      })
-      .addAction('delete', {
-        translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._deletePage(),
-      })
-      .addDivider()
-      .addAction('new', {
-        translationKey: 'TOOLBAR_MENU_PAGE_NEW',
-        isEnabled: () => this._canAddNewPage(),
-        onClick: () => this._newPage(),
-      });
+    if (this._hasWriteAccess()) {
+      menu
+        .addAction('properties', {
+          translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._pageProperties(),
+        })
+        .addDivider()
+        .addAction('copy', {
+          translationKey: 'TOOLBAR_MENU_PAGE_COPY',
+          isEnabled: () => this._canCopyPage(),
+          onClick: () => this._copyPage(),
+        })
+        .addAction('move', {
+          translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._movePage(),
+        })
+        .addAction('delete', {
+          translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._deletePage(),
+        })
+        .addDivider()
+        .addAction('new', {
+          translationKey: 'TOOLBAR_MENU_PAGE_NEW',
+          isEnabled: () => this._canAddNewPage(),
+          onClick: () => this._newPage(),
+        });
+    }
   }
 
   onOpenMenu() {
@@ -123,6 +121,14 @@ class PageActionsService extends MenuService {
 
   _hasPageExtensions() {
     return this.ExtensionService.hasExtensions('page');
+  }
+
+  _hasWriteAccess() {
+    return this.SessionService.hasWriteAccess();
+  }
+
+  _canAccessMenuItem() {
+    return this._canEditChannel() || this._hasPageExtensions();
   }
 
   _canEditChannel() {

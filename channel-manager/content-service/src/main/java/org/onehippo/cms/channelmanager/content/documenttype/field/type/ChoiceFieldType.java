@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
+
+    static final FieldValue UNSUPPORTED_FIELD_VALUE = new FieldValue();
 
     // The order of the entries in the choice map matters, so we use a *linked* hash map.
     private final Map<String, NodeFieldType> choices = new LinkedHashMap<>();
@@ -118,20 +121,42 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     protected void writeValues(final Node node,
                                final Optional<List<FieldValue>> optionalValues,
                                final boolean validateValues) throws ErrorWithPayloadException {
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
+        final List<FieldValue> values = mergeUnsupportedValues(node, optionalValues.orElse(Collections.emptyList()));
         if (validateValues) {
             checkCardinality(values);
         }
 
         try {
-            removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
             final NodeIterator children = node.getNodes(getId());
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) throws ErrorWithPayloadException {
+        final List<FieldValue> values = new LinkedList<>();
+
+        try {
+            final NodeIterator nodes = node.getNodes(getId());
+            int supportedIndex = 0;
+            while (values.size() < getMaxValues() && nodes.hasNext()) {
+                final Node child = nodes.nextNode();
+                final String nodeType = child.getPrimaryNodeType().getName();
+                if (!findChoice(nodeType).isPresent()) {
+                    values.add(UNSUPPORTED_FIELD_VALUE);
+                } else if (supportedIndex < supportedValues.size()) {
+                    values.add(supportedValues.get(supportedIndex));
+                    supportedIndex += 1;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to read nodes for choice type '{}'", getId(), e);
+            throw new InternalServerErrorException();
+        }
+
+        return values;
     }
 
     @Override
@@ -148,6 +173,10 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
 
     @Override
     public void writeValue(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+        if (value == UNSUPPORTED_FIELD_VALUE) {
+            return;
+        }
+
         // each value must specify a chosen ID
         final String chosenId = value.findChosenId().orElseThrow(INVALID_DATA);
 
@@ -164,16 +193,6 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
         final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
 
         choice.writeValue(node, chosenValue);
-    }
-
-
-    private void removeInvalidChoices(final Node node) throws RepositoryException {
-        for (Node child : new NodeIterable(node.getNodes(getId()))) {
-            final String nodeType = child.getPrimaryNodeType().getName();
-            if (!findChoice(nodeType).isPresent()) {
-                child.remove();
-            }
-        }
     }
 
     @Override

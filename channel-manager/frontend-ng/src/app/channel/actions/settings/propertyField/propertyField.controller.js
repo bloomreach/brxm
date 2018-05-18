@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,20 +51,14 @@ class PropertyFieldCtrl {
     if (this._isPickerField()) {
       this.CmsService.subscribe('path-picked', this._onPathPicked, this);
     }
+
+    this._onLoadDropDownValues();
   }
 
   $onDestroy() {
     if (this._isPickerField()) {
       this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
     }
-  }
-
-  getDropDownListValues() {
-    if (!this.annotation || this.annotation.type !== 'DropDownList') {
-      this.$log.debug(`Field '${this.field}' is not a dropdown.`);
-      return [];
-    }
-    return this.annotation.value;
   }
 
   _isPickerField() {
@@ -135,6 +129,18 @@ class PropertyFieldCtrl {
   // Replace (subsequent) space and double quote characters with a hyphen. We could do more, but for now this is good enough
   _getQaClass() {
     return `qa-field-${this.field.replace(/(\s|")+/g, '-')}`;
+  }
+
+  _onLoadDropDownValues() {
+    this.dropDownValues = [];
+    if (this.annotation && this.annotation.value && this.annotation.type === 'DropDownList') {
+      this.annotation.value.forEach((value) => {
+        const key1 = `${this.field}/${value}`;
+        const key2 = `${this.field}#${value}`;
+        const displayName = this.info.i18nResources[key1] || this.info.i18nResources[key2] || value;
+        this.dropDownValues.push({ value, displayName });
+      });
+    }
   }
 }
 
