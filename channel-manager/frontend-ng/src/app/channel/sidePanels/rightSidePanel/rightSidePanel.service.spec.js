@@ -30,6 +30,8 @@ describe('RightSidePanelService', () => {
   it('initializes correctly', () => {
     expect(RightSidePanelService.isLoading()).toBe(false);
     expect(RightSidePanelService.getTitle()).toEqual('');
+    expect(RightSidePanelService.getTooltip()).toEqual('');
+    expect(RightSidePanelService.getContext()).toEqual('');
     expect(RightSidePanelService.loadingPromise).toBeNull();
   });
 
@@ -80,9 +82,23 @@ describe('RightSidePanelService', () => {
   it('manages the title', () => {
     RightSidePanelService.setTitle('test title');
     expect(RightSidePanelService.getTitle()).toEqual('test title');
+    expect(RightSidePanelService.getTooltip()).toEqual('test title');
+
+    RightSidePanelService.setTitle('title', 'tooltip');
+    expect(RightSidePanelService.getTitle()).toEqual('title');
+    expect(RightSidePanelService.getTooltip()).toEqual('tooltip');
 
     RightSidePanelService.clearTitle();
     expect(RightSidePanelService.getTitle()).toEqual('');
+    expect(RightSidePanelService.getTooltip()).toEqual('');
+  });
+
+  it('manages the context', () => {
+    RightSidePanelService.setContext('test');
+    expect(RightSidePanelService.getContext()).toEqual('test');
+
+    RightSidePanelService.clearContext();
+    expect(RightSidePanelService.getContext()).toEqual('');
   });
 });
 
