@@ -566,29 +566,77 @@
       </state>
     </state>
     <state id="remove-branch">
-    <onentry>
-      <hippo:action action="removeBranch" enabledExpr="!editing and !!unpublished"/>
-    </onentry>
-    <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
-         allowed or possible because there is no unpublished document variant yet -->
-    <state id="no-remove-branch">
-      <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists
-           and not being edited -->
-      <transition target="can-remove-branch" cond="!editing and !!unpublished"/>
-    </state>
-    <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
-    <state id="can-remove-branch">
-      <transition event="removeBranch">
-        <!-- on the workflowContext.result put the list of branches that exist -->
-        <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+      <onentry>
+        <hippo:action action="removeBranch" enabledExpr="!editing and !!unpublished"/>
+      </onentry>
+      <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
+           allowed or possible because there is no unpublished document variant yet -->
+      <state id="no-remove-branch">
+        <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists
+             and not being edited -->
+        <transition target="can-remove-branch" cond="!editing and !!unpublished"/>
+      </state>
+      <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
+      <state id="can-remove-branch">
+        <transition event="removeBranch">
+          <!-- on the workflowContext.result put the list of branches that exist -->
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 
-        <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
-                                 errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it doesn\'t exist'"/>
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it doesn\'t exist'"/>
 
-        <hippo:removeBranch unpublished="unpublished" published="published" draft="draft" branchId="_event.data?.branchId"/>
-      </transition>
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
+                              branchId="_event.data?.branchId"/>
+        </transition>
+      </state>
+
     </state>
-  </state>
+    <state id="reintegrate-branch">
+      <onentry>
+        <hippo:action action="reintegrateBranch" enabledExpr="!!unpublished"/>
+      </onentry>
+      <!-- the initial no-reintegrate-branch state is used and active to indicate reintegrate-branch operations are
+         currently not allowed or possible -->
+      <state id="no-reintegrate-branch">
+        <!-- event-less transition to 'can-reintegrate-branch' state -->
+        <transition target="can-reintegrate-branch" cond="!!unpublished"/>
+      </state>
+      <state id="can-reintegrate-branch">
+        <transition event="reintegrateBranch">
+          <if cond="'core'.equals(_event.data?.branchId)">
+            <hippo:workflowException errorExpr="'Branch \'core\' cannot be reintegrated'"/>
+          </if>
+
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be reintegrated because it doesn\'t exist'"/>
+
+          <!-- if the unpublished version is not for the branch to reintegrate, first version it to avoid any loss of
+           changes in the preview -->
+          <if cond="!unpublished.isBranch(_event.data?.branchId)">
+            <hippo:version variant="unpublished"/>
+          </if>
+
+          <hippo:setPreReintegrationLabels unpublished="unpublished"/>
+
+          <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+
+          <!-- after reintegration we still need to remove the branch -->
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
+                              branchId="_event.data?.branchId"/>
+
+          <if cond="_event.data?.publish">
+            <!-- copy the content of the unpublished variant to the published variant -->
+            <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+            <!-- mark the published variant as published and set its availability to (only) 'live' -->
+            <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished" trigger="publication"/>
+          </if>
+        </transition>
+      </state>
+    </state>
 
 
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like

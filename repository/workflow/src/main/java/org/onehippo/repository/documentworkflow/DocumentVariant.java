@@ -34,6 +34,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 public class DocumentVariant extends Document {
 
     public static final String CORE_BRANCH_ID = "core";
+    public static final String CORE_BRANCH_LABEL_LIVE = "core-live";
+    public static final String CORE_BRANCH_LABEL_PREVIEW = "core-preview";
 
     public DocumentVariant() {
     }

@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.util.Optional;
+
 import javax.jcr.Node;
 import javax.jcr.version.VersionHistory;
 
@@ -27,6 +29,7 @@ import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.junit.Assert.assertEquals;
@@ -63,6 +66,9 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
     @Test
     public void checkout_existing_branch() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+
+        assertFalse("No draft yet",
+                WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).isPresent());
 
         // below triggers the core-preview to be versioned
         {
@@ -103,17 +109,49 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
 
         // as a result of the checkout of 'foo' we exect a checkin of core
         assertEquals(numberOfVersions + 2, versionHistory.getAllVersions().getSize());
-
-        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-        workflow.obtainEditableInstance();
-
-        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-            workflow.checkoutBranch("core");
-            fail("Checkout expected to fail because of editing state of preview");
-        } catch (WorkflowException e) {
-            assertEquals("Cannot invoke workflow documentworkflow action checkoutBranch: action not allowed or undefined",
-                    e.getMessage());
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.obtainEditableInstance();
         }
+        final Optional<Node> draftVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT);
+        assertTrue(draftVariant.isPresent());
+
+        final Node draft = draftVariant.get();
+        assertTrue(draftVariant.get().isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertEquals("foo",draftVariant.get().getProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID).getString());
+
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+                workflow.checkoutBranch("core");
+                fail("Checkout expected to fail because of editing state of preview");
+            } catch (WorkflowException e) {
+                assertEquals("Cannot invoke workflow documentworkflow action checkoutBranch: action not allowed or undefined",
+                        e.getMessage());
+            }
+        }
+
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            draft.setProperty("title", "Foo title");
+            session.save();
+            assertEquals("admin", draft.getProperty(HIPPOSTD_HOLDER).getString());
+            workflow.commitEditableInstance();
+            assertFalse(draft.hasProperty(HIPPOSTD_HOLDER));
+        }
+
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            // after commitEditableInstance, we are not editing any more and should be able to checkout the core again.
+            workflow.checkoutBranch("core");
+        }
+        {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.obtainEditableInstance();
+        }
+
+        final Node draft2 = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        assertFalse(draft2.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
     }
 
     @Test

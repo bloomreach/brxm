@@ -18,9 +18,9 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.ListBranchesTask;
+import org.onehippo.repository.documentworkflow.task.SetPreReintegrationLabelsTask;
 
-public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesTask> {
+public class SetPreReintegrationLabelsAction extends AbstractDocumentTaskAction<SetPreReintegrationLabelsTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,34 +33,14 @@ public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesT
         setParameter("unpublishedExpr", unpublished);
     }
 
-    public String getPublished() {
-        return getParameter("publishedExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setPublished(String published) {
-        setParameter("publishedExpr", published);
-    }
-
-    public String getDraft() {
-        return getParameter("draftExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setDraft(String draft) {
-        setParameter("draftExpr", draft);
+    @Override
+    protected SetPreReintegrationLabelsTask createWorkflowTask() {
+        return new SetPreReintegrationLabelsTask();
     }
 
     @Override
-    protected ListBranchesTask createWorkflowTask() {
-        return new ListBranchesTask();
-    }
-
-    @Override
-    protected void initTask(ListBranchesTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(SetPreReintegrationLabelsTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setUnpublished(eval(getUnpublished()));
-        task.setPublished(eval(getPublished()));
-        task.setDraft(eval(getDraft()));
     }
 }

@@ -15,41 +15,27 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
-import java.io.Serializable;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.apache.commons.lang3.ArrayUtils.contains;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -61,7 +47,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         assertTrue(workflow.hints().containsKey("removeBranch"));
         assertTrue((Boolean) workflow.hints().get("removeBranch"));
 
-        // when document is being edited, you cannot branch
+        // when document is being edited, you cannot remove branch
         workflow.obtainEditableInstance();
         assertFalse((Boolean) workflow.hints().get("removeBranch"));
 
@@ -165,7 +151,6 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         assertArrayEquals(expected, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
     }
 
-    // TOOD
     @Test
     public void remove_core_is_not_allowed() throws Exception {
 

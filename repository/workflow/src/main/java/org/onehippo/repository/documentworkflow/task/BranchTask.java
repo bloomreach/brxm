@@ -39,6 +39,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
 
 public class BranchTask extends AbstractDocumentTask {
 
@@ -125,7 +126,7 @@ public class BranchTask extends AbstractDocumentTask {
 
         String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
         if (!branchId.equals(CORE_BRANCH_ID) && !contains(branches, CORE_BRANCH_ID) &&
-                versionHistory.hasVersionLabel(CORE_BRANCH_ID + "-preview")) {
+                versionHistory.hasVersionLabel(CORE_BRANCH_LABEL_PREVIEW)) {
             // add core to available branches
             branches = add(branches, CORE_BRANCH_ID);
         }

@@ -505,7 +505,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *
      * @return The {@link Set} of branches in version history
      *
-     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
      */
     Set<String> listBranches() throws WorkflowException;
 
@@ -553,11 +553,48 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
      * if no such version exists. Before a version from version history is restored, the preview gets versioned.
      *
+     *  @param branchId the {@code branchId} of the branch to checkout
      *  @return {@link Document} wrapping the workspace preview node variant
      *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch
      *                            is not allowed in the current document state
      */
     Document checkoutBranch(String branchId) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Reintegrates the branch for {@code branchId}. Assume someone invokes {@code #reintegrateBranch('foo', true)}.
+     *     As a result, the following happens
+     *     <ol>
+     *         <li>
+     *             document its 'foo-preview' version gets published. Note that if the preview variant below he handle does
+     *             not belong to project 'foo', first a checkout of 'foo' will be done (replacing the current preview) and
+     *             then the preview will be published. This scenario is allowed EVEN when someone is editing the document:
+     *             Assume an author is editing the branch 'bar'. In that case, the reintegrate won't touch the draft, and
+     *             as a result, the author can continue working on the draft and won't notice that the preview might have
+     *             changed. After saving the draft, the preview becomes again for branch 'bar'.
+     *         </li>
+     *         <li>
+     *             the new labels 'pre-reintegrate-core-live-x' and 'pre-reintegrate-core-preview-x' in version history
+     *             will point to the core-live and core-preview labels before the reintegrate
+     *             (x is a incremental counter for every reintegrate on this document). If there is no core-live present,
+     *             the value of x in pre-reintegrate-core-live-x can contain gaps, for example jumping from 2 to 4.
+     *             We add these extra labels to make sure that IF core-preview or live had changes which were not part of
+     *             the reintegrate, these changes can always be found back in version history
+     *          </li>
+     *         <li>
+     *             after the project 'foo' version has been put live, the core-preview and core-live labels will be moved to
+     *            'foo-preview' version.
+     *         </li>
+     *         <li>
+     *             at the end, the branch 'foo' will be removed via {@link #removeBranch(String)}
+     *         </li>
+     *     </ol>
+     * </p>
+     * @param branchId the {@code branchId} to branch to reintegrate
+     * @param publish {@code true} if the document also needs to be (re)published as part of the reintegrate
+     * @throws WorkflowException if there is no branch for {@code branchId}
+     */
+    void reintegrateBranch(String branchId, boolean publish) throws WorkflowException;
 
     /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}

@@ -32,6 +32,7 @@ import org.onehippo.repository.util.JcrConstants;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
 
 public class ListBranchesTask extends AbstractDocumentTask {
 
@@ -66,7 +67,6 @@ public class ListBranchesTask extends AbstractDocumentTask {
         return null;
     }
 
-
     @Override
     protected Object doExecute() throws WorkflowException, RepositoryException {
         if (getVariant() == null || !getVariant().hasNode()) {
@@ -93,22 +93,21 @@ public class ListBranchesTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
 
-        if (versionHistory.hasVersionLabel(CORE_BRANCH_ID + "-preview")) {
+        if (versionHistory.hasVersionLabel(CORE_BRANCH_LABEL_PREVIEW)) {
             // core branch present
             branches.add(CORE_BRANCH_ID);
         }
 
-       for (String label : versionHistory.getVersionLabels()) {
-           if (label.endsWith("-preview")) {
-               final Version version = versionHistory.getVersionByLabel(label);
-               final Node frozenNode = version.getFrozenNode();
-               if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
-                   // found a real branch instead of a label for a non-branch
-                   branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
-               }
-           }
-       }
+        for (String label : versionHistory.getVersionLabels()) {
+            if (label.endsWith("-preview")) {
+                final Version version = versionHistory.getVersionByLabel(label);
+                final Node frozenNode = version.getFrozenNode();
+                if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
+                    // found a real branch instead of a label for a non-branch
+                    branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                }
+            }
+        }
         return branches;
     }
-
 }

@@ -48,6 +48,7 @@ public class HintsBuilder {
     public static String ACTION_LIST_BRANCHES = "listBranches";
     public static String ACTION_BRANCH = "branch";
     public static String ACTION_REMOVE_BRANCH = "removeBranch";
+    public static String ACTION_REINTEGRATE_BRANCH = "reintegrateBranch";
     public static String ACTION_CHECKOUT_BRANCH = "checkoutBranch";
     public static String ACTION_DELETE = "delete";
     public static String ACTION_MOVE = "move";
@@ -215,6 +216,11 @@ public class HintsBuilder {
 
     public HintsBuilder removeBranch(final boolean branchRemovable) {
         actions.put(ACTION_REMOVE_BRANCH, branchRemovable);
+        return this;
+    }
+
+    public HintsBuilder reintegrateBranch(final boolean branchReingratable) {
+        actions.put(ACTION_REINTEGRATE_BRANCH, branchReingratable);
         return this;
     }
 
