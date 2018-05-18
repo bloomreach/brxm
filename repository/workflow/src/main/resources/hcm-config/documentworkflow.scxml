@@ -626,7 +626,8 @@
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
                               branchId="_event.data?.branchId"/>
 
-          <if cond="_event.data?.publish">
+          <!-- only publish when preview is different than live -->
+          <if cond="_event.data?.publish and modified">
             <!-- copy the content of the unpublished variant to the published variant -->
             <hippo:copyVariant sourceState="unpublished" targetState="published"/>
             <!-- mark the published variant as published and set its availability to (only) 'live' -->
