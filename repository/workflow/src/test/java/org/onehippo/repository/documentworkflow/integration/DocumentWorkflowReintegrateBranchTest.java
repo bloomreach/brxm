@@ -257,6 +257,8 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         preview.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         preview.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
         preview.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Foo");
+        handle.addMixin(HippoNodeType.NT_HIPPO_VERSION_INFO);
+        handle.setProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[]{"foo"});
         session.save();
     }
 

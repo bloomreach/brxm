@@ -49,7 +49,7 @@
 + hippo:request (hippo:request) multiple ignore
 
 [hippo:versionInfo] mixin
-- hippo:versionHistory (string) mandatory
+- hippo:versionHistory (string)
 - hippo:branches (string) multiple
 
 [hippo:branchInfo]  mixin
