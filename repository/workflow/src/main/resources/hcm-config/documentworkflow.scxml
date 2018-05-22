@@ -323,9 +323,9 @@
       <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
-          <if cond="!requestPending or user=='workflowuser'">
-            <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
-                 enable request publication operation -->
+          <if cond="(!requestPending or user=='workflowuser') and unpublished.master">
+            <!-- if unpublished is a master version and no request pending OR invoked by the 'workflowuser'
+            user (scheduled workflow jobs daemon): enable request publication operation -->
             <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
               <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
@@ -377,11 +377,12 @@
             <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
-        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
-        <transition target="depublishable" cond="!editing and live"/>
+        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' and published
+            version is for master and unpublished is missing OR is present but for master-->
+        <transition target="depublishable" cond="!editing and live and published.master and (!unpublished or unpublished.master)"/>
       </state>
 
-      <!-- state depublishable is active when the  document is live and not currently edited -->
+      <!-- state depublishable is active when the  document is live and not currently edited and published is for master -->
       <state id="depublishable">
         <onentry>
           <if cond="!requestPending or user=='workflowuser'">

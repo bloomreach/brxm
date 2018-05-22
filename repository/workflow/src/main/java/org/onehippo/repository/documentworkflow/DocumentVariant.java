@@ -93,6 +93,12 @@ public class DocumentVariant extends Document {
         return getStringsProperty(HippoNodeType.HIPPO_AVAILABILITY);
     }
 
+    // returns true if this document variant does not represent a branch
+    @SuppressWarnings("unused")
+    public boolean isMaster() throws RepositoryException {
+        return !getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO);
+    }
+
     @SuppressWarnings("unused")
     public boolean isBranch(final String branch) throws RepositoryException {
         if (branch == null) {
