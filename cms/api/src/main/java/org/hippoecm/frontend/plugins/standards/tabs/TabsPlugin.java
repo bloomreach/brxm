@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -669,8 +669,10 @@ public class TabsPlugin extends RenderPlugin {
                         final IEditor editor = currentTab.getEditor();
                         if (editor != null) {
                             try {
-                                if (editor.isModified()) {
-                                    editor.discard(); ///discard the document and switch to VIEW mode
+                                if (editor.isModified() || editor.getMode() == IEditor.Mode.EDIT) {
+                                    // (mode=edit means open but unmodified)
+                                    // discard the document and switch to VIEW mode
+                                    editor.discard();
                                 }
                                 editor.close();
                             } catch (EditorException e) {
@@ -690,8 +692,10 @@ public class TabsPlugin extends RenderPlugin {
                         final IEditor editor = currentTab.getEditor();
                         if (editor != null){
                             try {
-                                if (editor.isModified()) {
-                                    editor.done(); //save the document and switch to VIEW mode
+                                if (editor.isModified() || editor.getMode() == IEditor.Mode.EDIT) {
+                                    // (mode=edit means open but unmodified)
+                                    // save the document and switch to VIEW mode
+                                    editor.done();
                                 }
                                 editor.close();
                             } catch (EditorException e) {
