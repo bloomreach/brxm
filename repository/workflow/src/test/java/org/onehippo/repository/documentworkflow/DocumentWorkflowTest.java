@@ -270,7 +270,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
-                .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
+                .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
                 .branchFeedback("foo", null, "core")
                 .hints()
@@ -281,7 +281,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
-                .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
+                .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
                 .branchFeedback("foo", null, "foo")
                 .hints()
