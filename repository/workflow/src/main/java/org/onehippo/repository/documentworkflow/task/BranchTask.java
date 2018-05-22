@@ -38,8 +38,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class BranchTask extends AbstractDocumentTask {
 
@@ -71,14 +71,14 @@ public class BranchTask extends AbstractDocumentTask {
         if (getVariant() == null || !getVariant().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
-        if (branchId == null || (branchName == null && !CORE_BRANCH_ID.equals(branchId))) {
+        if (branchId == null || (branchName == null && !MASTER_BRANCH_ID.equals(branchId))) {
             throw new WorkflowException("Both branchId and branchName need to be provided");
         }
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
         final Node targetNode = getVariant().getNode(workflowSession);
 
-        final String targetLabel = branchId + "-preview";
+        final String targetLabel = branchId + "-unpublished";
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
@@ -94,8 +94,8 @@ public class BranchTask extends AbstractDocumentTask {
                 return new Document(targetNode);
             }
         }
-        if (branchId.equals(CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-            // preview already core. Nothing to do
+        if (branchId.equals(MASTER_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            // preview already master. Nothing to do
             return new Document(targetNode);
         }
 
@@ -103,11 +103,11 @@ public class BranchTask extends AbstractDocumentTask {
 
         addBranchesPropertyToHandle(targetNode.getParent(), branchId, versionHistory);
 
-        if (CORE_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+        if (MASTER_BRANCH_ID.equals(branchId) && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             // to be sure also remove the properties since hippo document is relaxed
             targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
             targetNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).remove();
-            // the 'core' branch just means removing the branch info
+            // the 'master' branch just means removing the branch info
             targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
         } else {
             targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
@@ -125,10 +125,10 @@ public class BranchTask extends AbstractDocumentTask {
         }
 
         String[] branches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
-        if (!branchId.equals(CORE_BRANCH_ID) && !contains(branches, CORE_BRANCH_ID) &&
-                versionHistory.hasVersionLabel(CORE_BRANCH_LABEL_PREVIEW)) {
-            // add core to available branches
-            branches = add(branches, CORE_BRANCH_ID);
+        if (!branchId.equals(MASTER_BRANCH_ID) && !contains(branches, MASTER_BRANCH_ID) &&
+                versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+            // add master to available branches
+            branches = add(branches, MASTER_BRANCH_ID);
         }
         if (contains(branches, branchId)) {
              log.warn("Handle property '{}' already contains branchId '{}' which is unexpected since the branch should " +

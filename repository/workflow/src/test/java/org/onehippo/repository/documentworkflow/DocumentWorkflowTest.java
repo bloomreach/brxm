@@ -44,6 +44,7 @@ import org.onehippo.repository.scxml.MockWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
@@ -151,7 +152,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, null)
+                .branchFeedback(MASTER_BRANCH_ID, null, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -169,7 +170,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -187,7 +188,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -203,7 +204,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", "core")
+                .branchFeedback(null, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -219,7 +220,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -238,7 +239,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -256,7 +257,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(true).listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -272,7 +273,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("foo", null, "core")
+                .branchFeedback("foo", null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -309,7 +310,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -320,7 +321,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -331,7 +332,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -344,7 +345,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -355,7 +356,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -366,7 +367,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -377,7 +378,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -392,7 +393,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(true).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -403,7 +404,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback(null, "core", "core")
+                .branchFeedback(null, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
 
@@ -414,7 +415,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
     }
@@ -438,7 +439,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -454,7 +455,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -470,7 +471,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser").unlock(true)
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -486,7 +487,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -504,7 +505,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(rejectedRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -526,7 +527,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .rejectRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -554,7 +555,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -573,7 +574,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -589,7 +590,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -607,7 +608,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .rejectRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -626,7 +627,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .rejectRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -645,7 +646,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(publishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -668,7 +669,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(depublishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -687,7 +688,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(depublishRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -710,7 +711,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(deleteRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -729,7 +730,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(deleteRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", null)
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -750,7 +751,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -767,7 +768,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(rejectedRequest.getIdentifier())
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -784,7 +785,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(rejectedRequest.getIdentifier())
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -800,7 +801,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -820,7 +821,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .cancelRequest(scheduledRequest.getIdentifier())
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -836,7 +837,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -867,7 +868,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback(null, "core", "core")
+                .branchFeedback(null, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -884,7 +885,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false).copy()
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback(null, "core", "core")
+                .branchFeedback(null, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -903,7 +904,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(true)
                 .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -925,7 +926,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).publish(true).requestDepublication(true)
                 .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -942,7 +943,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).requestDepublication(true)
                 .listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -960,7 +961,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -978,7 +979,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).publish(true).requestDepublication(true)
                 .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1012,7 +1013,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(true).previewAvailable(true).checkModified(true).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1029,7 +1030,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().requestDelete(false).copy()
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1047,7 +1048,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().requestDelete(true).copy()
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1064,7 +1065,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true).depublish(true)
                 .listVersions().retrieveVersion().requestDelete(false).copy()
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1081,7 +1082,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true)
                 .listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1099,7 +1100,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().retrieveVersion().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1117,7 +1118,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true).depublish(true)
                 .listVersions().retrieveVersion().requestDelete(false).copy()
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback("core", "core", "core")
+                .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1144,7 +1145,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback(null, null, "core")
+                .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1162,7 +1163,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1179,7 +1180,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(true).publish(true).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().requestDelete(true).terminateable(true).copy()
                 .listBranches().branch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true)
-                .branchFeedback(null, "core", null)
+                .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1212,7 +1213,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1229,7 +1230,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().requestDelete(false).copy()
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1246,7 +1247,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().requestDelete(false).terminateable(false).copy()
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1263,7 +1264,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().requestDelete(false)
                 .listBranches().branch(false).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1284,7 +1285,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1301,7 +1302,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(false)
                 .listVersions().requestDelete(true)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1318,7 +1319,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().requestDelete(true).terminateable(true).copy()
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, "core")
+                .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1346,7 +1347,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).requestDepublication(true)
                 .listVersions().requestDelete(false)
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, null)
+                .branchFeedback(MASTER_BRANCH_ID, null, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
@@ -1363,7 +1364,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .requestPublication(false).publish(false).requestDepublication(true).depublish(true)
                 .listVersions().requestDelete(false).terminateable(false).copy()
                 .listBranches().branch(true).checkoutBranch(false).removeBranch(false).reintegrateBranch(false)
-                .branchFeedback("core", null, null)
+                .branchFeedback(MASTER_BRANCH_ID, null, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()

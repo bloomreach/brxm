@@ -36,7 +36,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class RemoveBranchTask extends AbstractDocumentTask {
 
@@ -75,8 +75,8 @@ public class RemoveBranchTask extends AbstractDocumentTask {
         if (branchId == null) {
             throw new WorkflowException("branchId needs to be provided");
         }
-        if (branchId.equals(CORE_BRANCH_ID)) {
-            throw new WorkflowException(String.format("Cannot remove '%s' branch.", CORE_BRANCH_ID));
+        if (branchId.equals(MASTER_BRANCH_ID)) {
+            throw new WorkflowException(String.format("Cannot remove '%s' branch.", MASTER_BRANCH_ID));
         }
         final List<DocumentVariant> variants = getVariants();
         if (variants.isEmpty()) {
@@ -96,7 +96,7 @@ public class RemoveBranchTask extends AbstractDocumentTask {
                 // to be sure also remove the properties since hippo document is relaxed
                 targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
                 targetNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).remove();
-                // the 'core' branch just means removing the branch info
+                // the 'master' branch just means removing the branch info
                 targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
             }
         }
@@ -117,7 +117,7 @@ public class RemoveBranchTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(previewVariant.getPath());
 
-        final String[] versionLabelsToRemove = new String[]{branchId + "-preview", branchId + "-live"};
+        final String[] versionLabelsToRemove = new String[]{branchId + "-unpublished", branchId + "-published"};
 
         for (String label : versionLabelsToRemove) {
             if (versionHistory.hasVersionLabel(label)) {

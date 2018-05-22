@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
@@ -34,7 +33,7 @@ import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 
 public class BranchFeedbackAction extends AbstractAction {
@@ -103,7 +102,7 @@ public class BranchFeedbackAction extends AbstractAction {
                 if (variantNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
                     branchFeedback.put(entry.getKey(), variantNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
                 } else {
-                    branchFeedback.put(entry.getKey(), CORE_BRANCH_ID);
+                    branchFeedback.put(entry.getKey(), MASTER_BRANCH_ID);
                 }
             } catch (RepositoryException e) {
                 throw new ModelException(e);

@@ -27,6 +27,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkflowIntegrationTest {
 
@@ -55,7 +56,7 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
             System.out.println(e.getMessage());
         }
 
-        workflow.checkoutBranch("core");
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
 
         assertTrue((Boolean)workflow.hints().get("publish"));
         assertTrue((Boolean)workflow.hints().get("requestPublication"));
@@ -77,7 +78,7 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
 
-        workflow.checkoutBranch("core");
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
 
         // delete the unpublished manually
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get().remove();

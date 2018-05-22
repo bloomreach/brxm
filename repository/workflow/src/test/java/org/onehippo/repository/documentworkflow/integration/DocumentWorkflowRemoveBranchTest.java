@@ -36,6 +36,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -77,7 +78,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        assertHandleBranchesProperty(handle, new String[]{"core", "foo"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "foo"});
 
         workflow.publish();
 
@@ -89,7 +90,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // live version
         workflow.branch("bar", "Bar");
 
-        assertHandleBranchesProperty(handle, new String[]{"core", "foo", "bar"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "foo", "bar"});
 
         assertTrue(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -98,16 +99,16 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        assertHandleBranchesProperty(handle, new String[]{"core", "foo", "bar"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "foo", "bar"});
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
 
-        assertTrue(versionHistory.hasVersionLabel("foo-preview"));
-        assertTrue(versionHistory.hasVersionLabel("foo-live"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
 
         workflow.removeBranch("foo");
 
-        assertHandleBranchesProperty(handle, new String[]{"core", "bar"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "bar"});
 
         // branch should have been removed from live
         assertFalse(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -117,11 +118,11 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // version history labels should not have 'foo-preview' or 'foo-live' any more
-        assertFalse(versionHistory.hasVersionLabel("foo-preview"));
-        assertFalse(versionHistory.hasVersionLabel("foo-live"));
+        // version history labels should not have 'foo-unpublished' or 'foo-published' any more
+        assertFalse(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("foo-published"));
 
-        assertHandleBranchesProperty(handle, new String[]{"core", "bar"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "bar"});
 
         // publish branch bar
         workflow.obtainEditableInstance();
@@ -132,18 +133,18 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        assertTrue(versionHistory.hasVersionLabel("bar-preview"));
-        assertTrue(versionHistory.hasVersionLabel("bar-live"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
 
         workflow.removeBranch("bar");
 
-        assertHandleBranchesProperty(handle, new String[]{"core"});
+        assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID});
 
         assertFalse(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertFalse(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
-        assertFalse(versionHistory.hasVersionLabel("bar-preview"));
-        assertFalse(versionHistory.hasVersionLabel("bar-live"));
+        assertFalse(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("bar-published"));
 
     }
 
@@ -152,14 +153,14 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
     }
 
     @Test
-    public void remove_core_is_not_allowed() throws Exception {
+    public void remove_master_is_not_allowed() throws Exception {
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-            workflow.removeBranch(DocumentVariant.CORE_BRANCH_ID);
+            workflow.removeBranch(MASTER_BRANCH_ID);
         } catch (WorkflowException e) {
-            assertEquals("Cannot remove 'core' branch.", e.getMessage());
+            assertEquals("Cannot remove 'master' branch.", e.getMessage());
         }
     }
 }

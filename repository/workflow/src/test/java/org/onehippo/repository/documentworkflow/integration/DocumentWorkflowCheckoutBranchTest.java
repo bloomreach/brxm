@@ -36,6 +36,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -70,7 +72,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertFalse("No draft yet",
                 WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).isPresent());
 
-        // below triggers the core-preview to be versioned
+        // below triggers the master-unpublished to be versioned
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("foo", "Foo");
@@ -81,14 +83,14 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
 
-        assertTrue(versionHistory.hasVersionLabel("core-preview"));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
         final long numberOfVersions = versionHistory.getAllVersions().getSize();
 
-        // now we should be able to checkout core
+        // now we should be able to checkout master
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.checkoutBranch("core");
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
         }
 
         assertFalse(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -97,7 +99,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         // as a result of the checkout we expect also 'foo' to be checkin into version history
         assertEquals(numberOfVersions + 1, versionHistory.getAllVersions().getSize());
 
-        assertTrue(versionHistory.hasVersionLabel("foo-preview"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
 
         // checkout foo again
         {
@@ -107,7 +109,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // as a result of the checkout of 'foo' we exect a checkin of core
+        // as a result of the checkout of 'foo' we exect a checkin of master
         assertEquals(numberOfVersions + 2, versionHistory.getAllVersions().getSize());
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -123,7 +125,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-                workflow.checkoutBranch("core");
+                workflow.checkoutBranch(MASTER_BRANCH_ID);
                 fail("Checkout expected to fail because of editing state of preview");
             } catch (WorkflowException e) {
                 assertEquals("Cannot invoke workflow documentworkflow action checkoutBranch: action not allowed or undefined",
@@ -142,8 +144,8 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
 
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            // after commitEditableInstance, we are not editing any more and should be able to checkout the core again.
-            workflow.checkoutBranch("core");
+            // after commitEditableInstance, we are not editing any more and should be able to checkout the master again.
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
         }
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -160,7 +162,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         final long numberOfVersions = versionHistory.getAllVersions().getSize();
 
-        // below triggers the core-preview to be versioned
+        // below triggers the master-unpublished to be versioned
         {
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
                 final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -178,7 +180,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
     public void checkout_of_branch_which_is_already_preview_is_NOOP() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
 
-        // below triggers the core-preview to be versioned
+        // below triggers the master-unpublished to be versioned
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("foo", "Foo");

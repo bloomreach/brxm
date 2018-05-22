@@ -35,8 +35,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class ListBranchesTask extends AbstractDocumentTask {
 
@@ -84,12 +84,12 @@ public class ListBranchesTask extends AbstractDocumentTask {
         if (handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
             final String[] branchArray = JcrUtils.getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, null);
             if (branchArray == null) {
-                branches.add(CORE_BRANCH_ID);
+                branches.add(MASTER_BRANCH_ID);
             } else {
                 branches.addAll(Arrays.asList(branchArray));
             }
         } else {
-            branches.add(CORE_BRANCH_ID);
+            branches.add(MASTER_BRANCH_ID);
         }
 
         // validate all branches are available (either as preview below handle and otherwise in version history
@@ -109,8 +109,8 @@ public class ListBranchesTask extends AbstractDocumentTask {
         if (variant.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             realAvailableBranches.add(variant.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         } else {
-            // current preview is for core
-            realAvailableBranches.add(CORE_BRANCH_ID);
+            // current preview is for master
+            realAvailableBranches.add(MASTER_BRANCH_ID);
         }
 
         if (!variant.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
@@ -120,13 +120,13 @@ public class ListBranchesTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(variant.getPath());
 
-        if (versionHistory.hasVersionLabel(CORE_BRANCH_LABEL_PREVIEW)) {
-            // core branch present
-            realAvailableBranches.add(CORE_BRANCH_ID);
+        if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+            // master branch present
+            realAvailableBranches.add(MASTER_BRANCH_ID);
         }
 
         for (String label : versionHistory.getVersionLabels()) {
-            if (label.endsWith("-preview")) {
+            if (label.endsWith("-unpublished")) {
                 final Version version = versionHistory.getVersionByLabel(label);
                 final Node frozenNode = version.getFrozenNode();
                 if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {

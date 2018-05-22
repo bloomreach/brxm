@@ -38,6 +38,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
@@ -71,11 +73,11 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
 
-        assertTrue(versionHistory.hasVersionLabel("core-live"));
-        assertTrue(versionHistory.hasVersionLabel("core-preview"));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
-        assertTrue("After publication, expected core-live and core-preview both point to the last checked in version",
-                versionHistory.getVersionByLabel("core-live").isSame(versionHistory.getVersionByLabel("core-preview")));
+        assertTrue("After publication, expected master-published and master-unpublished both point to the last checked in version",
+                versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_PUBLISHED).isSame(versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)));
     }
 
     @Test

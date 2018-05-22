@@ -29,7 +29,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -40,7 +39,9 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -73,7 +74,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
     }
 
     @Test
-    public void reintegrate_core_is_not_allowed() throws Exception {
+    public void reintegrate_master_is_not_allowed() throws Exception {
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
@@ -81,10 +82,10 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         workflow.branch("foo", "Foo");
 
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-            workflow.reintegrateBranch(DocumentVariant.CORE_BRANCH_ID, true);
+            workflow.reintegrateBranch(MASTER_BRANCH_ID, true);
         } catch (WorkflowException e) {
 
-                assertEquals("Branch 'core' cannot be reintegrated", e.getMessage());
+                assertEquals("Branch 'master' cannot be reintegrated", e.getMessage());
         }
     }
 
@@ -110,7 +111,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
 
         workflow.obtainEditableInstance();
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
-        // set a property for 'core' version
+        // set a property for 'master' version
         draft.setProperty("title", "Foo title");
         session.save();
         workflow.commitEditableInstance();
@@ -120,7 +121,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
                 preview.getProperty("title").getString());
 
         assertEquals(2, workflow.listBranches().size());
-        assertTrue(workflow.listBranches().contains(CORE_BRANCH_ID));
+        assertTrue(workflow.listBranches().contains(MASTER_BRANCH_ID));
         assertTrue(workflow.listBranches().contains("foo"));
 
         workflow.reintegrateBranch("foo", true);
@@ -131,25 +132,25 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
 
     private void afterReintegrationAssertions(final DocumentWorkflow workflow, final Node preview) throws WorkflowException, RepositoryException {
         assertEquals(1, workflow.listBranches().size());
-        assertTrue(workflow.listBranches().contains(CORE_BRANCH_ID));
+        assertTrue(workflow.listBranches().contains(MASTER_BRANCH_ID));
 
         // assert live has changed as a result of workflow.reintegrateBranch("foo", true);
         assertEquals("Foo title",
                 WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get().getProperty("title").getString());
 
-        // assert version history does contain core-preview and core-live labels and not foo-preview and foo-live
+        // assert version history does contain master-unpublished and master-published labels and not foo-unpublished and foo-published
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertFalse("Core was not live before", versionHistory.hasVersionLabel("pre-reintegrate-core-live-1"));
-        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-core-preview-1"));
-        assertTrue(versionHistory.hasVersionLabel("core-live"));
-        assertTrue(versionHistory.hasVersionLabel("core-preview"));
-        assertFalse(versionHistory.hasVersionLabel("foo-live"));
-        assertFalse(versionHistory.hasVersionLabel("foo-preview"));
+        assertFalse("Master was not live before", versionHistory.hasVersionLabel("pre-reintegrate-master-published-1"));
+        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-master-unpublished-1"));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+        assertFalse(versionHistory.hasVersionLabel("foo-published"));
+        assertFalse(versionHistory.hasVersionLabel("foo-unpublished"));
 
-        final Version version = versionHistory.getVersionByLabel("pre-reintegrate-core-preview-1");
-        final Version version1 = versionHistory.getVersionByLabel("core-live");
-        final Version version2 = versionHistory.getVersionByLabel("core-preview");
+        final Version version = versionHistory.getVersionByLabel("pre-reintegrate-master-unpublished-1");
+        final Version version1 = versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_PUBLISHED);
+        final Version version2 = versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
 
         assertFalse(version.isSame(version1));
         assertTrue(version1.isSame(version2));
@@ -158,8 +159,8 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
     }
 
     /**
-     * Standard scenario where the current preview is for branch 'core' and foo gets reintegrated (and published)
-     * As a result, the old preview core will be versioned with label pre-reintegrate-core-preview-1
+     * Standard scenario where the current preview is for branch 'master' and foo gets reintegrated (and published)
+     * As a result, the old preview master will be versioned with label pre-reintegrate-master-unpublished-1
      */
     @Test
     public void standard_reintegration_scenario_2_assertions() throws Exception {
@@ -169,12 +170,12 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         workflow.branch("foo", "Foo");
         workflow.obtainEditableInstance();
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
-        // set a property for 'core' version
+        // set a property for 'master' version
         draft.setProperty("title", "Foo title");
         session.save();
         workflow.commitEditableInstance();
 
-        workflow.checkoutBranch("core");
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         assertFalse(preview.hasProperty("title"));
@@ -187,7 +188,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
 
     /**
      * Standard scenario where the current preview is for branch 'bar' and foo gets reintegrated (and published)
-     * As a result, the old preview core will be versioned with label pre-reintegrate-core-preview-1
+     * As a result, the old preview master will be versioned with label pre-reintegrate-master-unpublished-1
      */
     @Test
     public void standard_reintegration_scenario_3_assertions() throws Exception {
@@ -197,12 +198,12 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         workflow.branch("foo", "Foo");
         workflow.obtainEditableInstance();
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
-        // set a property for 'core' version
+        // set a property for 'master' version
         draft.setProperty("title", "Foo title");
         session.save();
         workflow.commitEditableInstance();
 
-        workflow.checkoutBranch("core");
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
@@ -216,15 +217,15 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
     }
 
     @Test
-    public void reintegrate_when_there_is_no_core_makes_the_reintegratee_core() throws Exception {
-        createFooBranchWithMissingCoreBranch();
+    public void reintegrate_when_there_is_no_master_makes_the_reintegratee_master() throws Exception {
+        createFooBranchWithMissingMasterBranch();
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         {
             final String[] versionLabels = versionHistory.getVersionLabels();
             assertEquals(0, versionLabels.length);
-            assertFalse(ArrayUtils.contains(versionLabels, "core-preview"));
-            assertFalse(ArrayUtils.contains(versionLabels, "core-live"));
+            assertFalse(ArrayUtils.contains(versionLabels, MASTER_BRANCH_LABEL_UNPUBLISHED));
+            assertFalse(ArrayUtils.contains(versionLabels, MASTER_BRANCH_LABEL_PUBLISHED));
         }
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -232,24 +233,24 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         {
             final String[] versionLabels = versionHistory.getVersionLabels();
             assertEquals(2, versionLabels.length);
-            assertTrue(ArrayUtils.contains(versionLabels, "core-preview"));
-            assertTrue(ArrayUtils.contains(versionLabels, "core-live"));
-            // since there was NO core before the reintegrate, there is no "pre-reintegrate-core-preview-1" label
-            assertFalse(ArrayUtils.contains(versionLabels, "pre-reintegrate-core-preview-1"));
+            assertTrue(ArrayUtils.contains(versionLabels, MASTER_BRANCH_LABEL_UNPUBLISHED));
+            assertTrue(ArrayUtils.contains(versionLabels, MASTER_BRANCH_LABEL_PUBLISHED));
+            // since there was NO master before the reintegrate, there is no "pre-reintegrate-master-unpublished-1" label
+            assertFalse(ArrayUtils.contains(versionLabels, "pre-reintegrate-master-unpublished-1"));
         }
     }
 
-    private void createFooBranchWithMissingCoreBranch() throws RepositoryException {
+    private void createFooBranchWithMissingMasterBranch() throws RepositoryException {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
-        // set a property for 'core' version
-        preview.setProperty("title", "Core title");
+        // set a property for 'master' version
+        preview.setProperty("title", "Master title");
         session.save();
 
         final VersionManager versionManager = session.getWorkspace().getVersionManager();
-        // don't use workflow version to avoid core-preview to be added
+        // don't use workflow version to avoid master-unpublished to be added
         versionManager.checkpoint(preview.getPath());
         final VersionHistory versionHistory = versionManager.getVersionHistory(preview.getPath());
-        assertFalse(versionHistory.hasVersionLabel("core-preview"));
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
         // now hardcode via JCR the preview to belong to 'foo' (not via workflow to create a right fixture (thus not using
         // workflow branch)
@@ -275,12 +276,12 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         workflow.obtainEditableInstance();
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
-        // set a property for 'core' version
+        // set a property for 'master' version
         draft.setProperty("title", "Foo title");
         session.save();
         workflow.commitEditableInstance();
 
-        workflow.checkoutBranch("core");
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         assertFalse(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         // the draft can still have the 'foo' mixin since on next edit it will be replaced
         assertTrue(draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -333,17 +334,17 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         assertFalse(draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        // since initially there was no core live, there never will be a 'pre-reintegrate-core-live-1' label
-        assertFalse("Core was not live before", versionHistory.hasVersionLabel("pre-reintegrate-core-live-1"));
-        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-core-preview-1"));
-        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-core-live-2"));
-        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-core-preview-2"));
-        assertTrue(versionHistory.hasVersionLabel("core-live"));
-        assertTrue(versionHistory.hasVersionLabel("core-preview"));
-        assertFalse(versionHistory.hasVersionLabel("foo-live"));
-        assertFalse(versionHistory.hasVersionLabel("foo-preview"));
-        assertFalse(versionHistory.hasVersionLabel("bar-live"));
-        assertFalse(versionHistory.hasVersionLabel("bar-preview"));
+        // since initially there was no master live, there never will be a 'pre-reintegrate-master-published-1' label
+        assertFalse("Master was not live before", versionHistory.hasVersionLabel("pre-reintegrate-master-published-1"));
+        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-master-unpublished-1"));
+        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-master-published-2"));
+        assertTrue(versionHistory.hasVersionLabel("pre-reintegrate-master-unpublished-2"));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+        assertFalse(versionHistory.hasVersionLabel("foo-published"));
+        assertFalse(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("bar-published"));
+        assertFalse(versionHistory.hasVersionLabel("bar-unpublished"));
 
     }
 

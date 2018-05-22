@@ -30,7 +30,7 @@ import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class CheckoutBranchTask extends AbstractDocumentTask {
 
@@ -69,15 +69,15 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
                 return new Document(targetNode);
             }
         }
-        if (branchId.equals(CORE_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-            // preview already core. Nothing to do
+        if (branchId.equals(MASTER_BRANCH_ID) && !targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            // preview already master. Nothing to do
             return new Document(targetNode);
         }
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
 
-        final String versionLabelToRestore = branchId + "-preview";
+        final String versionLabelToRestore = branchId + "-unpublished";
 
         if (!versionHistory.hasVersionLabel(versionLabelToRestore)) {
             throw new WorkflowException(String.format("version label '%s' does not exist in version history so cannot " +

@@ -33,9 +33,9 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
  */
 public class DocumentVariant extends Document {
 
-    public static final String CORE_BRANCH_ID = "core";
-    public static final String CORE_BRANCH_LABEL_LIVE = "core-live";
-    public static final String CORE_BRANCH_LABEL_PREVIEW = "core-preview";
+    public static final String MASTER_BRANCH_ID = "master";
+    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-published";
+    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-unpublished";
 
     public DocumentVariant() {
     }
@@ -107,7 +107,7 @@ public class DocumentVariant extends Document {
         if (getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             return branch.equals(getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         }
-        return branch.equals(CORE_BRANCH_ID);
+        return branch.equals(MASTER_BRANCH_ID);
     }
 
     public boolean isAvailable(String environment) throws RepositoryException {

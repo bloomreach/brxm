@@ -32,7 +32,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -66,8 +67,8 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             final Set<String> branches = workflow.listBranches();
             assertEquals(1, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
-            assertFalse(versionHistory.hasVersionLabel("core-preview"));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
+            assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
         }
 
         {
@@ -75,8 +76,8 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             workflow.version();
             final Set<String> branches = workflow.listBranches();
             assertEquals(1, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
-            assertTrue(versionHistory.hasVersionLabel("core-preview"));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
+            assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
         }
 
         {
@@ -84,12 +85,12 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             workflow.branch("foo", "Foo");
             final Set<String> branches = workflow.listBranches();
             assertEquals(2, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
             assertTrue(branches.contains("foo"));
 
             // even though 'foo' is a branch, it is not yet part of version history: Just the preview variant is for branch
             // 'foo'
-            assertFalse(versionHistory.hasVersionLabel("foo-preview"));
+            assertFalse(versionHistory.hasVersionLabel("foo-unpublished"));
         }
 
         {
@@ -97,7 +98,7 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             workflow.branch("bar", "Bar");
             final Set<String> branches = workflow.listBranches();
             assertEquals(3, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
             assertTrue(branches.contains("foo"));
             assertTrue(branches.contains("bar"));
         }
@@ -122,7 +123,7 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             final Set<String> branches = workflow.listBranches();
             assertEquals(1, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
         }
     }
 
@@ -137,7 +138,7 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             final Set<String> branches = workflow.listBranches();
             assertEquals(1, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
         }
     }
 
@@ -147,13 +148,13 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
 
         final VersionManager versionManager = session.getWorkspace().getVersionManager();
         final Version v1 = versionManager.checkpoint(preview.getPath());
-        versionManager.getVersionHistory(preview.getPath()).addVersionLabel(v1.getName(), "noRealBranch-preview", true);
+        versionManager.getVersionHistory(preview.getPath()).addVersionLabel(v1.getName(), "noRealBranch-unpublished", true);
 
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             final Set<String> branches = workflow.listBranches();
             assertEquals(1, branches.size());
-            assertTrue(branches.contains(CORE_BRANCH_ID));
+            assertTrue(branches.contains(MASTER_BRANCH_ID));
             assertFalse(branches.contains("noRealBranch"));
         }
     }

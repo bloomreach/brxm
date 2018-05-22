@@ -27,8 +27,8 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_LIVE;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.CORE_BRANCH_LABEL_PREVIEW;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 
@@ -54,23 +54,23 @@ public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 
         int counter = findNextCounter(versionHistory);
 
-        for (final String coreLabel : new String[]{CORE_BRANCH_LABEL_PREVIEW, CORE_BRANCH_LABEL_LIVE}) {
-            if (versionHistory.hasVersionLabel(coreLabel)) {
-                final Version versionByLabel = versionHistory.getVersionByLabel(coreLabel);
-                versionHistory.addVersionLabel(versionByLabel.getName(), PRE_REINTEGRATE_LABEL_PREFIX + coreLabel + "-" + counter, false);
+        for (final String masterLabel : new String[]{MASTER_BRANCH_LABEL_UNPUBLISHED, MASTER_BRANCH_LABEL_PUBLISHED}) {
+            if (versionHistory.hasVersionLabel(masterLabel)) {
+                final Version versionByLabel = versionHistory.getVersionByLabel(masterLabel);
+                versionHistory.addVersionLabel(versionByLabel.getName(), PRE_REINTEGRATE_LABEL_PREFIX + masterLabel + "-" + counter, false);
             }
         }
         return null;
     }
 
     /**
-     * the value X for 'pre-reintegrate-core-preview-X' and 'pre-reintegrate-core-live-X' is computed wrt the 'preview'
-     * since the core can have 'gaps' in the incrementer : For example when there was no live version but only a preview
+     * the value X for 'pre-reintegrate-master-unpublished-X' and 'pre-reintegrate-master-published-X' is computed wrt the
+     * 'unpublished' since the master can have 'gaps' in the incrementer : For example when there was no live version but only a preview
      * before a reintegrate took place
      */
     private int findNextCounter(final VersionHistory versionHistory) throws RepositoryException {
         int i = 1;
-        while (versionHistory.hasVersionLabel(PRE_REINTEGRATE_LABEL_PREFIX + CORE_BRANCH_LABEL_PREVIEW + "-" + i)) {
+        while (versionHistory.hasVersionLabel(PRE_REINTEGRATE_LABEL_PREFIX + MASTER_BRANCH_LABEL_UNPUBLISHED + "-" + i)) {
             i++;
         }
         return i;

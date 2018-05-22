@@ -37,6 +37,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class DocumentWorkflowVersioningTest extends AbstractDocumentWorkflowIntegrationTest {
 
@@ -88,18 +89,18 @@ public class DocumentWorkflowVersioningTest extends AbstractDocumentWorkflowInte
     }
 
     @Test
-    public void version_document_results_in_core_preview_label() throws Exception {
+    public void version_document_results_in_master_preview_label() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow();
         workflow.version();
 
         final Map<Calendar, Set<String>> history = workflow.listVersions();
         assertEquals(1, history.size());
-        assertTrue("In the labels we expect 'core-preview' after version",
-                history.values().iterator().next().contains("core-preview"));
+        assertTrue("In the labels we expect 'master-unpublished' after version",
+                history.values().iterator().next().contains(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        versionHistory.hasVersionLabel("core-preview");
+        versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
     }
 
     @Test

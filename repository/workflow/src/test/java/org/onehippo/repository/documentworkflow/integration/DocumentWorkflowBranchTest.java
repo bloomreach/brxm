@@ -42,6 +42,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -94,8 +96,8 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertEquals("Foo Bar", live.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
 
         // publication is expected to result in a revision
-        assertTrue(versionHistory.hasVersionLabel("foo bar-preview"));
-        assertTrue(versionHistory.hasVersionLabel("foo bar-live"));
+        assertTrue(versionHistory.hasVersionLabel("foo bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo bar-published"));
 
         // when now editing, we expect the draft to also contain the branch info mixin
         workflow.obtainEditableInstance();
@@ -112,11 +114,11 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertEquals("After branch, we expect the 'master' to be versioned",
                 2L, versionHistory.getAllVersions().getSize());
 
-        assertEquals("Expected label 'core-preview' to be present", 1, versionHistory.getVersionLabels().length);
+        assertEquals("Expected label 'master-unpublished' to be present", 1, versionHistory.getVersionLabels().length);
 
-        final Version coreVersion = versionHistory.getVersionByLabel("core-preview");
+        final Version masterVersion = versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
 
-        assertFalse("Core version does not have a branch id", coreVersion.getFrozenNode().hasProperty(HIPPO_PROPERTY_BRANCH_ID));
+        assertFalse("Master version does not have a branch id", masterVersion.getFrozenNode().hasProperty(HIPPO_PROPERTY_BRANCH_ID));
 
         assertTrue("preview variant is expected to have branch info.", preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
@@ -127,7 +129,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
-        assertArrayEquals(new String[]{"core", "foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+        assertArrayEquals(new String[]{MASTER_BRANCH_ID, "foo bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
 
     }
 
@@ -164,11 +166,11 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertEquals("After two times branching, we expect 3 versions",
                 3L, versionHistory.getAllVersions().getSize());
 
-        assertEquals("We expect the 'foo bar-preview' to be added as label since 'bar lux' branch was branched " +
+        assertEquals("We expect the 'foo bar-unpublished' to be added as label since 'bar lux' branch was branched " +
                         "after 'foo bar",2, versionHistory.getVersionLabels().length);
 
-        assertTrue(versionHistory.hasVersionLabel("foo bar-preview"));
-        final Version fooBar = versionHistory.getVersionByLabel("foo bar-preview");
+        assertTrue(versionHistory.hasVersionLabel("foo bar-unpublished"));
+        final Version fooBar = versionHistory.getVersionByLabel("foo bar-unpublished");
 
         assertEquals("foo bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Foo Bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
@@ -178,7 +180,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(),
                 preview.getProperty(JcrConstants.JCR_VERSION_HISTORY).getNode().getIdentifier());
 
-        assertArrayEquals(new String[]{"core", "foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
+        assertArrayEquals(new String[]{MASTER_BRANCH_ID, "foo bar", "bar lux"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
 
     }
 
@@ -191,7 +193,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
             assertTrue(preview.isSame(branch.getNode(session)));
         }
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertFalse(versionHistory.hasVersionLabel("foo bar-preview"));
+        assertFalse(versionHistory.hasVersionLabel("foo bar-unpublished"));
         {
 
 
@@ -205,49 +207,49 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 assertEquals("Branching to branch for which the preview already exists should not result in an extra version",
                         2L, versionHistory.getAllVersions().getSize());
 
-                assertFalse(versionHistory.hasVersionLabel("foo bar-preview"));
+                assertFalse(versionHistory.hasVersionLabel("foo bar-unpublished"));
             }
         }
     }
 
     @Test
-    public void branch_to_core_is_in_general_not_needed() throws Exception {
+    public void branch_to_master_is_in_general_not_needed() throws Exception {
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertFalse("no core version yet", versionHistory.hasVersionLabel("preview-core"));
+        assertFalse("no master version yet", versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-                workflow.branch("core", null);
-                fail("Branching core is in general not needed and should not be possible when preview is for core");
+                workflow.branch(MASTER_BRANCH_ID, null);
+                fail("Branching master is in general not needed and should not be possible when preview is for master");
             } catch (WorkflowException e) {
-                assertEquals("Branch 'core' already exists",
+                assertEquals("Branch 'master' already exists",
                         e.getMessage());
-                assertEquals("Branching to core is not allowed and should not have created version",
+                assertEquals("Branching to master is not allowed and should not have created version",
                         1L, versionHistory.getAllVersions().getSize());
-                assertFalse(versionHistory.hasVersionLabel("core-preview"));
+                assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
             }
         }
     }
 
     @Test
-    public void missing_core_branch_in_version_history_is_possible()
+    public void missing_master_branch_in_version_history_is_possible()
             throws Exception {
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
-        // set a property for 'core' version
-        preview.setProperty("title", "Core title");
+        // set a property for 'master' version
+        preview.setProperty("title", "Master title");
         session.save();
 
         final VersionManager versionManager = session.getWorkspace().getVersionManager();
-        // don't use workflow version to avoid core-preview to be added
+        // don't use workflow version to avoid master-unpublished to be added
         versionManager.checkpoint(preview.getPath());
         final VersionHistory versionHistory = versionManager.getVersionHistory(preview.getPath());
 
         assertEquals(2L, versionHistory.getAllVersions().getSize());
-        assertFalse(versionHistory.hasVersionLabel("core-preview"));
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
         // now hardcode via JCR the preview to belong to 'foo' (not via workflow to create a right fixture (thus not using
         // workflow branch)
@@ -264,42 +266,42 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
             workflow.branch("bar", "Bar");
         }
 
-        //  assert the handle does NOT have 'core' now as available since there never was a core! Also 'foo' was never
+        //  assert the handle does NOT have 'master' now as available since there never was a master! Also 'foo' was never
         // really a branch so also not present
         assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
         assertArrayEquals(new String[]{"bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
 
 
-        assertFalse("Version history does not have core-preview.",
-                versionHistory.hasVersionLabel("core-preview"));
-        assertTrue("Branching should had added version label for foo-preview to existing version.",
-                versionHistory.hasVersionLabel("foo-preview"));
+        assertFalse("Version history does not have master-unpublished.",
+                versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+        assertTrue("Branching should had added version label for foo-unpublished to existing version.",
+                versionHistory.hasVersionLabel("foo-unpublished"));
 
-        // Now branch to core
+        // Now branch to master
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch("core", null);
+            workflow.branch(MASTER_BRANCH_ID, null);
         }
 
-        assertFalse("for core the mixin should had been removed.",preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertFalse("for master the mixin should had been removed.",preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
-        assertTrue(versionHistory.hasVersionLabel("foo-preview"));
-        assertTrue(versionHistory.hasVersionLabel("bar-preview"));
-        assertFalse(versionHistory.hasVersionLabel("core-preview"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
-        // after branching to 'lux' we expect a core-preview label
+        // after branching to 'lux' we expect a master-unpublished label
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("lux", "Lux");
         }
 
-        assertTrue(versionHistory.hasVersionLabel("core-preview"));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch("core", null);
-            fail("Branching core should now not be possible");
+            workflow.branch(MASTER_BRANCH_ID, null);
+            fail("Branching master should now not be possible");
         } catch (WorkflowException e) {
-            assertTrue(versionHistory.hasVersionLabel("core-preview"));
+            assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
         }
 
     }
