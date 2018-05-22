@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -116,5 +117,32 @@ public class ChannelUtilsTest {
         } catch (UnsupportedOperationException uoe) {
             // expected
         }
+    }
+
+    @Test
+    public void testProxyOnlyWithMixins() {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("test-name", "aap");
+        values.put("analyticsEnabled", true);
+        values.put("scriptlet", "(function() {})();");
+        values.put("categorizationEnabled", true);
+        values.put("categories", "foo,bar");
+
+        Object info1 = ChannelUtils.getChannelInfo(values, null, AnalyticsChannelInfoMixin.class,
+                CategorizingChannelInfoMixin.class);
+
+        assertFalse(info1 instanceof TestInfo);
+
+        // cast it to a mixin type
+        assertTrue(info1 instanceof AnalyticsChannelInfoMixin);
+        AnalyticsChannelInfoMixin info2 = (AnalyticsChannelInfoMixin) info1;
+        assertTrue(info2.isAnalyticsEnabled());
+        assertEquals("(function() {})();", info2.getScriptlet());
+
+        // cast it to a mixin type
+        assertTrue(info1 instanceof CategorizingChannelInfoMixin);
+        CategorizingChannelInfoMixin info3 = (CategorizingChannelInfoMixin) info1;
+        assertTrue(info3.isCategorizationEnabled());
+        assertEquals("foo,bar", info3.getCategories());
     }
 }

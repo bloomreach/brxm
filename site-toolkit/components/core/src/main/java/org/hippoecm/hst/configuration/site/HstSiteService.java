@@ -313,9 +313,6 @@ public class HstSiteService implements HstSite {
             return null;
         }
         Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
-        if (channelInfoClass == null) {
-            return null;
-        }
         List<Class<? extends ChannelInfo>> channelInfoMixins = getChannelInfoMixins(channel);
         return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass,
                 channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));

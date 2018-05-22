@@ -32,13 +32,30 @@ public class ChannelUtils {
     public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
                                                            final Class<? extends ChannelInfo> parametersInfoType,
                                                            final Class<? extends ChannelInfo>...mixinTypes) {
+        final int mixinTypesLen = (mixinTypes != null) ? mixinTypes.length : 0;
+        Class<?>[] proxyClasses;
 
-        if (!parametersInfoType.isInterface()) {
-            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
+        if (parametersInfoType == null) {
+            if (mixinTypesLen == 0) {
+                return null;
+            }
+
+            proxyClasses = mixinTypes;
+        } else {
+            proxyClasses = new Class[mixinTypesLen + 1];
+            proxyClasses[0] = parametersInfoType;
+            System.arraycopy(mixinTypes, 0, proxyClasses, 1, mixinTypesLen);
+        }
+
+        for (Class<?> proxyClass : proxyClasses) {
+            if (!proxyClass.isInterface()) {
+                throw new IllegalArgumentException(
+                        "The ParametersInfo annotation type, " + proxyClass.getName() + ", must be an interface.");
+            }
         }
 
         ProxyFactory factory = new ProxyFactory();
-        
+
         Invoker invoker = new Invoker() {
 
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
@@ -107,16 +124,6 @@ public class ChannelUtils {
                 }
             }
         };
-
-        Class[] proxyClasses;
-
-        if (mixinTypes == null || mixinTypes.length == 0) {
-            proxyClasses = new Class[] { parametersInfoType };
-        } else {
-            proxyClasses = new Class[mixinTypes.length + 1];
-            proxyClasses[0] = parametersInfoType;
-            System.arraycopy(mixinTypes, 0, proxyClasses, 1, mixinTypes.length);
-        }
 
         T parametersInfo = (T) factory.createInvokerProxy(ChannelUtils.class.getClassLoader(), invoker, proxyClasses);
 
