@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -52,6 +53,11 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 
 /**
  * A panel that displays the revision history of a document as a list.
@@ -59,6 +65,8 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
     private static final long serialVersionUID = -6072417388871990194L;
+
+    static final Logger log = LoggerFactory.getLogger(RevisionHistoryView.class);
 
     private RevisionHistory history;
 
@@ -135,8 +143,8 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         addTimeColumn(columns);
         addUserColumn(columns);
         addStateColumn(columns);
-        addVersionColumn(columns);
         addLabelsColumn(columns);
+        addNameColumn(columns);
 
         return new TableDefinition<>(columns);
     }
@@ -219,12 +227,11 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     }
 
     /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
-     * to the list of columns.
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the JCR labels.
      * @param columns the list of columns.
      */
-    private void addVersionColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-version")), "version");
+    private void addLabelsColumn(List<ListColumn<Revision>> columns) {
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-label")), "label");
         column.setRenderer(new IListCellRenderer<Revision>() {
             @Override
             public Component getRenderer(String id, final IModel<Revision> model) {
@@ -232,17 +239,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                     @Override
                     public Object getObject() {
                         Revision revision = model.getObject();
-                        try {
-                            final Node node = revision.getDocument().getObject();
-                            if (node == null) {
-                                // TODO sometimes we get into this state, beats me why
-                                return "???";
-                            }
-                            return node.getName();
-                        } catch (RepositoryException e) {
-                            // TODO what todo? Log error and return ""? Or runtime exception
-                            return "";
-                        }
+                        return revision.getLabels().stream().collect(Collectors.joining(","));
                     }
 
                     @Override
@@ -267,12 +264,12 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     }
 
     /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
-     * to the list of columns.
+     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information in hippo:branchName
+     * if it exists
      * @param columns the list of columns.
      */
-    private void addLabelsColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-label")), "label");
+    private void addNameColumn(List<ListColumn<Revision>> columns) {
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-name")), "name");
         column.setRenderer(new IListCellRenderer<Revision>() {
             @Override
             public Component getRenderer(String id, final IModel<Revision> model) {
@@ -280,7 +277,18 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                     @Override
                     public Object getObject() {
                         Revision revision = model.getObject();
-                        return revision.getLabels().stream().collect(Collectors.joining(","));
+                        final Node versionHistoryNode = revision.getVersionModel().getNode();
+                        try {
+                            if (versionHistoryNode != null && versionHistoryNode instanceof Version) {
+                                final Node frozenNode = ((Version) versionHistoryNode).getFrozenNode();
+                                if (frozenNode != null && frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_NAME)) {
+                                    return frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();
+                                }
+                            }
+                        } catch (RepositoryException e) {
+                            log.warn("Exception while trying to access versioned node '{}'", JcrUtils.getNodePathQuietly(versionHistoryNode));
+                        }
+                        return "";
                     }
 
                     @Override

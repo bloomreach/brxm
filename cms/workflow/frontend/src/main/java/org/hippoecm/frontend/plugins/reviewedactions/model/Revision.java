@@ -97,6 +97,10 @@ public class Revision implements IDetachable {
         return handleModel;
     }
 
+    public JcrNodeModel getVersionModel() {
+        return versionModel;
+    }
+
     public int getRevisionNumber() {
         return index;
     }
