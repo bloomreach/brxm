@@ -17,9 +17,11 @@ package org.hippoecm.hst.pagemodelapi.v09.core.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +39,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -54,12 +57,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.ReaderConfigUtils;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -105,11 +114,20 @@ public class PageModelAggregationValve extends AggregationValve {
 
     private int defaultMaxContentReferenceLevel;
 
+    private String apiDocPath;
+
+    /**
+     * API Document (Swagger) serializing ObjectMapper.
+     */
+    private final ObjectMapper apiDocObjectMapper;
+
     public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
         objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(
                 new HippoBeanModelsSerializerModifier(metadataDecorators)
         ));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
+
+        apiDocObjectMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
     }
 
     public void setDefaultMaxContentReferenceLevel(int defaultMaxContentReferenceLevel) {
@@ -129,6 +147,14 @@ public class PageModelAggregationValve extends AggregationValve {
     @SuppressWarnings("unused")
     public void addMetadataDecorator(MetadataDecorator metadataDecorator) {
         metadataDecorators.add(metadataDecorator);
+    }
+
+    /**
+     * Set API Document (e.g, /swagger.json) Path.
+     * @param apiDocPath API Document (e.g, /swagger.json) Path
+     */
+    public void setApiDocPath(String apiDocPath) {
+        this.apiDocPath = apiDocPath;
     }
 
     /**
@@ -276,6 +302,73 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return aggregatedPageModel;
+    }
+
+    @Override
+    protected boolean isAggregationApiDocumentRequest(final ValveContext context) {
+        if (StringUtils.isNotBlank(apiDocPath)) {
+            final HstRequestContext requestContext = context.getRequestContext();
+            final HstContainerURL baseURL = requestContext.getBaseURL();
+            return apiDocPath.equals(baseURL.getPathInfo());
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void writeAggregationApiDocument(final ValveContext context) throws ContainerException {
+        final HttpServletResponse response = context.getServletResponse();
+
+        try {
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            apiDocObjectMapper.writeValue(response.getWriter(), getAggregationApiDocument(context));
+        } catch (JsonGenerationException e) {
+            throw new ContainerException(e.getMessage(), e);
+        } catch (JsonMappingException e) {
+            throw new ContainerException(e.getMessage(), e);
+        } catch (IOException e) {
+            log.warn("Failed to write Swagger in json.", e);
+        }
+    }
+
+    /**
+     * Return a Page Aggregation API Document (e.g, Swagger).
+     * @param context {@link ValveContext} instance
+     * @return a Page Aggregation API Document (e.g, Swagger)
+     * @throws ContainerException if HST Container exception occurs
+     */
+    protected Object getAggregationApiDocument(final ValveContext context) throws ContainerException {
+        final HstRequestContext requestContext = context.getRequestContext();
+        final HstLink hstLink = requestContext.getHstLinkCreator().create("/",
+                requestContext.getResolvedMount().getMount());
+        final Reader reader = new Reader(new Swagger(),
+                ReaderConfigUtils.getReaderConfig(requestContext.getServletContext()));
+        final Swagger swagger = reader.read(PageModelApiSwaggerDefinition.class);
+        swagger.setBasePath(hstLink.toUrlForm(requestContext, false));
+
+        // As io.swagger.jaxrs.Reader depends on java.lang.Class#getMethods() which returns an unordered array at random,
+        // the swagger#paths shows operations in a random order.
+        // So, let's re-sort it for usability.
+        final Map<String, Path> sortedPaths = new TreeMap<>(new Comparator<String>() {
+            @Override
+            public int compare(String key1, String key2) {
+                if (PageModelApiSwaggerDefinition.PATH_PARAM_PATH_INFO.equals(key1)) {
+                    return -1;
+                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_PATH_INFO.equals(key2)) {
+                    return 1;
+                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_WITH_0_PATH_SEGMENT.equals(key1)) {
+                    return -1;
+                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_WITH_0_PATH_SEGMENT.equals(key2)) {
+                    return 1;
+                }
+                return Integer.compare(key1.length(), key2.length());
+            }
+        });
+        sortedPaths.putAll(swagger.getPaths());
+        swagger.setPaths(sortedPaths);
+
+        return swagger;
     }
 
     /**
