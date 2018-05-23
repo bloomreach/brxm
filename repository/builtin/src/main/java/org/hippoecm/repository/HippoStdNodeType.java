@@ -98,6 +98,14 @@ public interface HippoStdNodeType {
      */
     String NT_GALLERY = "hippostd:gallery";
 
+    String NT_DOCUMENT = "hippostd:document";
+    String NT_SPACE = "hippostd:space";
+    String NT_TEMPLATES = "hippostd:templates";
+    String NT_TRANSLATED = "hippostd:translated";
+    String NT_TEMPLATE_QUERY = "hippostd:templatequery";
+    String NT_TAGGABLE = "hippostd:taggable";
+    String NT_DATE_FIELDS = "hippostd:datefields";
+
     /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */
