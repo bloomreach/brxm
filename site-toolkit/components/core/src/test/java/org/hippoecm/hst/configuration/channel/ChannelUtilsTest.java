@@ -128,7 +128,7 @@ public class ChannelUtilsTest {
         values.put("categorizationEnabled", true);
         values.put("categories", "foo,bar");
 
-        Object info1 = ChannelUtils.getChannelInfo(values, null, AnalyticsChannelInfoMixin.class,
+        ChannelInfo info1 = ChannelUtils.getChannelInfo(values, null, AnalyticsChannelInfoMixin.class,
                 CategorizingChannelInfoMixin.class);
 
         assertFalse(info1 instanceof TestInfo);
@@ -144,5 +144,97 @@ public class ChannelUtilsTest {
         CategorizingChannelInfoMixin info3 = (CategorizingChannelInfoMixin) info1;
         assertTrue(info3.isCategorizationEnabled());
         assertEquals("foo,bar", info3.getCategories());
+    }
+
+    static interface ConflictableInfo1 extends ChannelInfo{
+        @Parameter(name = "foo")
+        String getFoo();
+    }
+
+    static interface ConflictableInfo2 extends ChannelInfo{
+        @Parameter(name = "foo")
+        String getFoo();
+    }
+
+    @Test
+    public void testWhenMixinHavingSameMethodForSameProperty() throws Exception {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("foo", "bar");
+
+        ConflictableInfo1 info1 = ChannelUtils.getChannelInfo(values, ConflictableInfo1.class, ConflictableInfo2.class);
+        ConflictableInfo2 info2 = (ConflictableInfo2) info1;
+
+        assertEquals("bar", info1.getFoo());
+        assertEquals("bar", info2.getFoo());
+    }
+
+    static interface ConflictableInfo3 extends ChannelInfo{
+        @Parameter(name = "foo")
+        String getFoo1();
+    }
+
+    static interface ConflictableInfo4 extends ChannelInfo{
+        @Parameter(name = "foo")
+        String getFoo2();
+    }
+
+    @Test
+    public void testWhenMixinHavingDifferentMethodsForSameProperty() throws Exception {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("foo", "bar");
+
+        ConflictableInfo3 info3 = ChannelUtils.getChannelInfo(values, ConflictableInfo3.class, ConflictableInfo4.class);
+        ConflictableInfo4 info4 = (ConflictableInfo4) info3;
+
+        assertEquals("bar", info3.getFoo1());
+        assertEquals("bar", info4.getFoo2());
+    }
+
+    static interface ConflictableInfo5 extends ChannelInfo{
+        @Parameter(name = "foo1")
+        String getFoo();
+    }
+
+    static interface ConflictableInfo6 extends ChannelInfo{
+        @Parameter(name = "foo2")
+        String getFoo();
+    }
+
+    @Test
+    public void testWhenMixinHavingSameMethodForDifferentProperties() throws Exception {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("foo1", "bar1");
+        values.put("foo2", "bar2");
+
+        ConflictableInfo5 info5 = ChannelUtils.getChannelInfo(values, ConflictableInfo5.class, ConflictableInfo6.class);
+        ConflictableInfo6 info6 = (ConflictableInfo6) info5;
+
+        assertEquals("bar1", info5.getFoo());
+
+        // NOTE: As two channel info have the same getter operation, the operation with the same name of the second
+        // internface is hidden.
+        assertEquals("bar1", info6.getFoo());
+    }
+
+    static interface ConflictableInfo7 extends ChannelInfo{
+        @Parameter(name = "foo")
+        String getFoo();
+    }
+
+    static interface ConflictableInfo8 extends ChannelInfo{
+        @Parameter(name = "foo")
+        Integer getFoo();
+    }
+
+    @Test
+    public void testWhenMixinHavingSameMethodButDifferentReturnTypeForSameProperty() throws Exception {
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("foo", "100");
+
+        try {
+            ConflictableInfo7 info7 = ChannelUtils.getChannelInfo(values, ConflictableInfo7.class, ConflictableInfo8.class);
+            fail("Should fail because of methods with same signature getFoo() but incompatible return types:  [class java.lang.String, class java.lang.Integer]");
+        } catch (IllegalArgumentException ignore) {
+        }
     }
 }
