@@ -15,18 +15,15 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
- * The context of a CMS extension, i.e. the thing in the CMS that the extension knows something about
- * and can reason with.
+ * Checks that the system can use a CMS extension.
  */
-public enum CmsExtensionContext {
+public interface CmsExtensionValidator {
 
-    PAGE;
+    /**
+     * @param extension the extension to check
+     * @return whether the system can use the extension or not.
+     */
+    boolean validate(CmsExtension extension);
 
-    @JsonValue
-    public String getLowerCase() {
-        return this.name().toLowerCase();
-    }
 }

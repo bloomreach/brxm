@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -44,8 +45,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.channelmanager.extensions.ChannelEditorExtensionValidator;
 import org.onehippo.cms7.channelmanager.extensions.CmsExtension;
-import org.onehippo.cms7.channelmanager.extensions.HardcodedCmsExtensionLoader;
+import org.onehippo.cms7.channelmanager.extensions.CmsExtensionLoader;
+import org.onehippo.cms7.channelmanager.extensions.CmsExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.JcrCmsExtensionLoader;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,8 +215,12 @@ public class ChannelEditor extends ExtPanel {
     }
 
     private JSONArray loadExtensions() {
-        final HardcodedCmsExtensionLoader loader = new HardcodedCmsExtensionLoader();
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final CmsExtensionLoader loader = new JcrCmsExtensionLoader(UserSession.get().getJcrSession());
+        final CmsExtensionValidator validator = new ChannelEditorExtensionValidator();
+        final List<CmsExtension> extensions = loader.loadCmsExtensions()
+                .stream()
+                .filter(validator::validate)
+                .collect(Collectors.toList());
         return JSON_ORG_OBJECT_MAPPER.convertValue(extensions, JSONArray.class);
     }
 

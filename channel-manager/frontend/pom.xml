@@ -171,6 +171,16 @@
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-mockutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
