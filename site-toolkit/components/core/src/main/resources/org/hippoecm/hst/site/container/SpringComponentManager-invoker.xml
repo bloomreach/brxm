@@ -41,6 +41,7 @@
 
   <!-- AJAX based asynchronous component window renderer -->
   <bean id="ajaxAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.AjaxAsynchronousComponentWindowRenderer">
+    <property name="asyncLoadJavaScriptFragmentTemplate" value="${ajax.asynchronous.component.windows.load.js.fragment.template}" />
   </bean>
 
   <!-- ESI based asynchronous component window renderer -->
