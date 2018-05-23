@@ -559,7 +559,7 @@
             <script>
               workflowContext.setResult(unpublished);
             </script>
-            <else/>
+          <else/>
             <hippo:version variant="unpublished"/>
             <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
           </if>
@@ -623,7 +623,7 @@
 
           <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
 
-          <!-- after reintegration we still need to remove the branch -->
+          <!-- during reintegration we need to remove the branch for the variants that belong to the branch -->
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
                               branchId="_event.data?.branchId"/>
 
@@ -636,6 +636,7 @@
             <!-- create a JCR version of the published document via the unpublished variant -->
             <hippo:version variant="unpublished" trigger="publication"/>
           </if>
+
         </transition>
       </state>
     </state>
