@@ -67,6 +67,15 @@ public class DbLockManager extends AbstractLockManager {
             "lastModified=? " +
             "WHERE lockKey=? AND lockOwner=? AND lockThread=?";
 
+    private static final String RESET_INVALID_LIVE_LOCKS_STATEMENT = "UPDATE %s SET " +
+            "lockOwner=NULL, " +
+            "lockThread=NULL, " +
+            "status='FREE', " +
+            "lockTime=0, " +
+            "expirationTime=0, " +
+            "lastModified=? " +
+            "WHERE lockOwner=? AND (status='RUNNING' OR status='ABORT')";
+
 
     private static final String RESET_EXPIRED_STATEMENT = "UPDATE %s SET " +
             "lockOwner=NULL, " +
@@ -96,6 +105,7 @@ public class DbLockManager extends AbstractLockManager {
     private final String allLockedStatement;
     private final String resetLockStatement;
     private final String resetExpiredStatement;
+    private final String resetInvalidLiveLocksStatement;
     private final String removeOutdatedStatement;
     private final String abortStatement;
     private final String refreshLockStatement;
@@ -112,12 +122,15 @@ public class DbLockManager extends AbstractLockManager {
         this.allLockedStatement = String.format(ALL_LOCKED_STATEMENT, tableName);
         this.resetLockStatement = String.format(RESET_LOCK_STATEMENT, tableName);
         this.resetExpiredStatement = String.format(RESET_EXPIRED_STATEMENT, tableName);
+        this.resetInvalidLiveLocksStatement = String.format(RESET_INVALID_LIVE_LOCKS_STATEMENT, tableName);
         this.removeOutdatedStatement = String.format(REMOVE_OUTDATED_LOCKS, tableName);
         this.abortStatement = String.format(ABORT_STATEMENT, tableName);
         this.refreshLockStatement = String.format(REFRESH_LOCK_STATEMENT, tableName);
         this.selectAbortStatement = String.format(SELECT_ABORT_STATEMENT, tableName);
 
         createTableIfNeeded(dataSource, connectionHelper, getCreateLockTableStatement(), tableName, schemaCheckEnabled, "lockKey");
+
+        resetInvalidLiveLocks();
 
         addJob(new UnlockStoppedThreadJanitor());
         addJob(new DbResetExpiredLocksJanitor(this));
@@ -172,6 +185,30 @@ public class DbLockManager extends AbstractLockManager {
                     throw new RuntimeException(errm, e);
                 }
             }
+        }
+    }
+
+    private void resetInvalidLiveLocks() {
+        // stop any lockKey for the current cluster node ID that is in state RUNNING (or ABORT): This can happen when a cluster node
+        // has an ungraceful shutdown (or graceful but some jobs did not finish not clearing the locks) AND restarts within
+        // 1 minute since then the DbResetExpiredLocksJanitor did not yet clean up the abandoned locks
+        Connection connection = null;
+        boolean originalAutoCommit = false;
+        try {
+            connection = getConnection();
+            originalAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(true);
+            try (final PreparedStatement resetObsoleteLocksStatement = connection.prepareStatement(resetInvalidLiveLocksStatement)) {
+                long currentTime = System.currentTimeMillis();
+                resetObsoleteLocksStatement.setLong(1, currentTime);
+                resetObsoleteLocksStatement.setString(2, getClusterNodeId());
+                int updated = resetObsoleteLocksStatement.executeUpdate();
+                log.info("Reset {} locks", updated);
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to reset locks", e);
+        } finally {
+            close(connection, originalAutoCommit);
         }
     }
 

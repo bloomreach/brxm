@@ -17,7 +17,9 @@ package org.onehippo.cm.model;
 
 import java.nio.file.Path;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.source.ResourceInputProvider;
@@ -37,7 +39,10 @@ public class ImportModuleContext extends ModuleContext {
 
     @Override
     public ResourceInputProvider getContentInputProvider() {
-        return super.getContentInputProvider();
+        if (contentInputProvider == null) {
+            contentInputProvider = new FileResourceInputProvider(moduleRoot, StringUtils.EMPTY);
+        }
+        return contentInputProvider;
     }
 
     @Override
