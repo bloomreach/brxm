@@ -88,7 +88,8 @@ public class BranchFeedbackAction extends AbstractAction {
 
     @Override
     protected void doExecute(ActionExecutionContext exctx) throws ModelException, SCXMLExpressionException {
-        if (getVariants().isEmpty()) {
+        final Map<String, DocumentVariant> variants = getVariants();
+        if (variants.isEmpty()) {
             return;
         }
 
@@ -96,7 +97,7 @@ public class BranchFeedbackAction extends AbstractAction {
 
         HashMap<String, String> branchFeedback = new HashMap<>();
 
-        for (Map.Entry<String, DocumentVariant> entry : getVariants().entrySet()) {
+        for (Map.Entry<String, DocumentVariant> entry : variants.entrySet()) {
             try {
                 final Node variantNode = entry.getValue().getNode(workflowSession);
                 if (variantNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
