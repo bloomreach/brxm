@@ -95,6 +95,10 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.SetPreReintegrationLabelsAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /label:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.LabelAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /listVersions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction

@@ -58,6 +58,7 @@ public class HintsBuilder {
     public static String ACTION_BRANCH = "branch";
     public static String ACTION_REMOVE_BRANCH = "removeBranch";
     public static String ACTION_REINTEGRATE_BRANCH = "reintegrateBranch";
+    public static String ACTION_PUBLISH_BRANCH = "publishBranch";
     public static String ACTION_CHECKOUT_BRANCH = "checkoutBranch";
     public static String ACTION_DELETE = "delete";
     public static String ACTION_MOVE = "move";
@@ -230,6 +231,11 @@ public class HintsBuilder {
 
     public HintsBuilder reintegrateBranch(final boolean branchReingratable) {
         actions.put(ACTION_REINTEGRATE_BRANCH, branchReingratable);
+        return this;
+    }
+
+    public HintsBuilder publishBranch(final boolean publishableBranch) {
+        actions.put(ACTION_PUBLISH_BRANCH, publishableBranch);
         return this;
     }
 

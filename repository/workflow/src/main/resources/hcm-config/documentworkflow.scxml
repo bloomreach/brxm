@@ -641,6 +641,63 @@
       </state>
     </state>
 
+    <state id="publish-branch">
+      <onentry>
+        <hippo:action action="publishBranch" enabledExpr="!!unpublished"/>
+      </onentry>
+      <!-- the initial no-publish-branch state is used and active to indicate publish-branch operations are
+       currently not allowed or possible -->
+      <state id="no-publish-branch">
+        <!-- event-less transition to 'can-publish-branch' state -->
+        <transition target="can-publish-branch" cond="!!unpublished"/>
+      </state>
+      <state id="can-publish-branch">
+
+        <transition event="publishBranch">
+          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be published as branch'"/>
+
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be publ because it doesn\'t exist'"/>
+
+
+          <if cond="!!published">
+            <!-- there is a published variant, we only publish to version history -->
+            <if cond="unpublished.isBranch(_event.data?.branchId)">
+              <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
+              <hippo:version variant="unpublished" trigger="publication"/>
+            <else/>
+              <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
+              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
+            </if>
+
+          </if>
+
+          <if cond="!published">
+            <!-- there is not yet a published variant : really publish the preview -->
+            <if cond="!unpublished.isBranch(_event.data?.branchId)">
+              <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
+              <if cond="editing">
+                <!-- the other branch is being edited : In case it gets saved afterward it would replace the preview again
+                     HOWEVER if the draft is discarded, we don't want to loose the preview data!!! Hence we need to version
+                     the preview first to be sure before we do a checkout! -->
+                <hippo:version variant="unpublished"/>
+              </if>
+              <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+            </if>
+
+            <!-- copy the content of the unpublished variant to the published variant -->
+            <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+            <!-- mark the published variant as published and set its availability to (only) 'live' -->
+            <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished" trigger="publication"/>
+          </if>
+        </transition>
+
+      </state>
+    </state>
 
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like
          move and rename -->

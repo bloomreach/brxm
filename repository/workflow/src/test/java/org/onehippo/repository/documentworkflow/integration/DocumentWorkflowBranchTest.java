@@ -87,11 +87,12 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
 
         branchAssertions(preview, branch);
 
-        workflow.publish();
+        workflow.publishBranch("foo bar");
 
         final Node live = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
 
-        assertTrue("live variant is expected to have branch info after publish.", live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertTrue("live variant is expected to have branch info after publish since there was no live variant " +
+                "before (otherwise only a live version in version history was expected).", live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo bar", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Foo Bar", live.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
 
@@ -106,6 +107,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertTrue("draft variant is expected to have branch info after publish.", draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo bar", draft.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Foo Bar", draft.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
+
     }
 
     private void branchAssertions(final Node preview, final Document branch) throws RepositoryException {
@@ -324,4 +326,5 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
             assertEquals("Cannot invoke workflow documentworkflow action branch: action not allowed or undefined", e.getMessage());
         }
     }
+
 }

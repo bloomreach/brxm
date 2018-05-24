@@ -598,6 +598,19 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     void reintegrateBranch(String branchId, boolean publish) throws WorkflowException;
 
     /**
+     * <p>
+     *     Publishes the branch for {@core branchId}. Note that publishing a branch can have as result that a published
+     *     variant is created, but, if it already exists, can also result in only a marker in version history that the
+     *     specific branch is live.
+     * </p>
+     * @param branchId the id of the branch to publish
+     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@core branchId} is
+     * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version cannot
+     * be found in version history
+     */
+    void publishBranch(String branchId) throws WorkflowException;
+
+    /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}
      *
      * @param action {@link org.hippoecm.repository.api.WorkflowAction} instance

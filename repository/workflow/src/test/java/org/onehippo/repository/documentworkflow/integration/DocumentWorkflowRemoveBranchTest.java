@@ -80,7 +80,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
 
         assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "foo"});
 
-        workflow.publish();
+        workflow.publishBranch("foo");
 
         final Node live = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
         assertTrue(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -127,9 +127,13 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // publish branch bar
         workflow.obtainEditableInstance();
         workflow.commitEditableInstance();
-        workflow.publish();
 
-        assertEquals("bar", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+
+        workflow.publishBranch("bar");
+
+        // since there was already live, for 'bar' we only expect a new version in version history. Published variant
+        // should still remain for core
+        assertFalse(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 

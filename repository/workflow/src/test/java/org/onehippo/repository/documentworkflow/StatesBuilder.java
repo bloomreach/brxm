@@ -45,6 +45,8 @@ public class StatesBuilder {
     public static String STATE_CAN_REMOVE_BRANCH = "can-remove-branch";
     public static String STATE_NO_REINTEGRATE_BRANCH = "no-reintegrate-branch";
     public static String STATE_CAN_REINTEGRATE_BRANCH = "can-reintegrate-branch";
+    public static String STATE_NO_PUBLISH_BRANCH = "no-publish-branch";
+    public static String STATE_CAN_PUBLISH_BRANCH = "can-publish-branch";
     public static String STATE_LOGEVENT = "logEvent";
 
     private TreeSet<String> states = new TreeSet<>();
@@ -181,6 +183,15 @@ public class StatesBuilder {
     }
     public StatesBuilder canReintegrateBranch() {
         states.add(STATE_CAN_REINTEGRATE_BRANCH);
+        return this;
+    }
+
+    public StatesBuilder noPublishBranch() {
+        states.add(STATE_NO_PUBLISH_BRANCH);
+        return this;
+    }
+    public StatesBuilder canPublishBranch() {
+        states.add(STATE_CAN_PUBLISH_BRANCH);
         return this;
     }
 

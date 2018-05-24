@@ -126,6 +126,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("reintegrateBranch");
     }
 
+    public static DocumentWorkflowAction publishBranch() {
+        return new DocumentWorkflowAction("publishBranch");
+    }
+
     public static DocumentWorkflowAction removeBranch() {
         return new DocumentWorkflowAction("removeBranch");
     }
