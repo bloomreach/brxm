@@ -16,7 +16,7 @@
 package org.onehippo.cms7.channelmanager.extensions;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -59,7 +59,7 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
         }
 
         final NodeIterator extensionNodes = session.getNode(CMS_EXTENSION_CONFIG_PATH).getNodes();
-        final Set<CmsExtension> extensions = new HashSet<>();
+        final Set<CmsExtension> extensions = new LinkedHashSet<>();
 
         while (extensionNodes.hasNext()) {
             final Node extensionNode = extensionNodes.nextNode();
