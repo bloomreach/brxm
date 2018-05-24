@@ -220,11 +220,6 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('calculates the scroll bar width', () => {
-    const width = DomService.getScrollBarWidth();
-    expect(width).toBeGreaterThan(-1);
-  });
-
   it('checks if an element is hidden on the page', () => {
     $j('.shouldBeHidden').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(false);

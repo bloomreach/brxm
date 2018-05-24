@@ -70,9 +70,23 @@ describe('RightSidePanel', () => {
   it('knows the title', () => {
     RightSidePanelService.setTitle('test title');
     expect($ctrl.getTitle()).toEqual('test title');
+    expect($ctrl.getTooltip()).toEqual('test title');
+
+    RightSidePanelService.setTitle('title', 'tooltip');
+    expect($ctrl.getTitle()).toEqual('title');
+    expect($ctrl.getTooltip()).toEqual('tooltip');
 
     RightSidePanelService.clearTitle();
     expect($ctrl.getTitle()).toEqual('');
+    expect($ctrl.getTooltip()).toEqual('');
+  });
+
+  it('knows the context', () => {
+    RightSidePanelService.setContext('test context');
+    expect($ctrl.getContext()).toEqual('test context');
+
+    RightSidePanelService.clearContext();
+    expect($ctrl.getContext()).toEqual('');
   });
 
   it('sets full width mode on and off', () => {

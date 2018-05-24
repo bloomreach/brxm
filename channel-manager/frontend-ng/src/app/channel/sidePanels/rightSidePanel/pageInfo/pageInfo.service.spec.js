@@ -70,11 +70,39 @@ describe('PageInfoService', () => {
     spyOn(PageMetaDataService, 'getPathInfo');
   });
 
+  function pageName(pagePath) {
+    PageMetaDataService.getPathInfo.and.returnValue(pagePath);
+    return PageInfoService._getPageName();
+  }
+
   function pageUrl(channelUrl, pagePath) {
     ChannelService.getChannel.and.returnValue({ url: channelUrl });
     PageMetaDataService.getPathInfo.and.returnValue(pagePath);
     return PageInfoService._getPageUrl();
   }
+
+  it('generates the correct page name', () => {
+    expect(pageName('')).toEqual('/');
+    expect(pageName('/')).toEqual('/');
+    expect(pageName('/news')).toEqual('/news');
+    expect(pageName('/news/')).toEqual('/news');
+    expect(pageName('/news/2018')).toEqual('/2018');
+    expect(pageName('/news/2018/')).toEqual('/2018');
+    expect(pageName('/news/2018/my-page.html')).toEqual('/my-page.html');
+    expect(pageName('/weird-path.html/page')).toEqual('/page');
+  });
+
+  it('generates the correct page URL', () => {
+    expect(pageUrl('http://localhost:8080/site', '')).toEqual('http://localhost:8080/site');
+    expect(pageUrl('http://localhost:8080/site', '/news')).toEqual('http://localhost:8080/site/news');
+    expect(pageUrl('http://localhost:8080/site/nl', '')).toEqual('http://localhost:8080/site/nl');
+    expect(pageUrl('http://localhost:8080/site/nl', '/nieuws')).toEqual('http://localhost:8080/site/nl/nieuws');
+    expect(pageUrl('https://example.com', '')).toEqual('https://example.com');
+    expect(pageUrl('https://example.com', '/news')).toEqual('https://example.com/news');
+    expect(pageUrl('https://example.com/', '/news')).toEqual('https://example.com/news');
+    expect(pageUrl('https://example.com/en', '/news')).toEqual('https://example.com/en/news');
+    expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
+  });
 
   describe('state per page extension', () => {
     it('is registered', () => {
@@ -93,43 +121,37 @@ describe('PageInfoService', () => {
     });
   });
 
-  it('generates the correct pageUrl', () => {
-    expect(pageUrl('http://localhost:8080/site', '')).toEqual('http://localhost:8080/site');
-    expect(pageUrl('http://localhost:8080/site', '/news')).toEqual('http://localhost:8080/site/news');
-    expect(pageUrl('http://localhost:8080/site/nl', '')).toEqual('http://localhost:8080/site/nl');
-    expect(pageUrl('http://localhost:8080/site/nl', '/nieuws')).toEqual('http://localhost:8080/site/nl/nieuws');
-    expect(pageUrl('https://example.com', '')).toEqual('https://example.com');
-    expect(pageUrl('https://example.com', '/news')).toEqual('https://example.com/news');
-    expect(pageUrl('https://example.com/', '/news')).toEqual('https://example.com/news');
-    expect(pageUrl('https://example.com/en', '/news')).toEqual('https://example.com/en/news');
-    expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
-  });
-
   describe('showPageInfo', () => {
     beforeEach(() => {
-      pageUrl('https://example.com', '/pageUrl');
+      const pagePath = '/news/2018/my-page.html';
+      pageName(pagePath);
+      pageUrl('https://example.com', pagePath);
     });
 
     it('sets the title of the right side-panel', () => {
       spyOn($translate, 'instant').and.callThrough();
+      spyOn(RightSidePanelService, 'setContext');
       spyOn(RightSidePanelService, 'setTitle');
 
       PageInfoService.showPageInfo();
 
-      expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/pageUrl' });
-      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
+      expect($translate.instant).toHaveBeenCalledWith('PAGE');
+      expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
+      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('/my-page.html', 'https://example.com/news/2018/my-page.html');
     });
 
     it('goes to the state of the first page extension', () => {
       spyOn($state, 'go');
       PageInfoService.showPageInfo();
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/pageUrl' });
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/news/2018/my-page.html' });
     });
   });
 
   describe('updatePageInfo', () => {
     beforeEach(() => {
-      pageUrl('https://example.com', '/pageUrl');
+      const pagePath = '/news/2018/my-page.html';
+      pageName(pagePath);
+      pageUrl('https://example.com', pagePath);
     });
 
     describe('when page info is already shown', () => {
@@ -137,23 +159,27 @@ describe('PageInfoService', () => {
         PageInfoService.showPageInfo();
         $rootScope.$digest();
 
-        pageUrl('https://example.com', '/anotherPageUrl');
+        const anotherPagePath = '/events/latest';
+        pageName(anotherPagePath);
+        pageUrl('https://example.com', anotherPagePath);
       });
 
       it('updates the title of the right side-panel', () => {
         spyOn($translate, 'instant').and.callThrough();
+        spyOn(RightSidePanelService, 'setContext');
         spyOn(RightSidePanelService, 'setTitle');
 
         PageInfoService.updatePageInfo();
 
-        expect($translate.instant).toHaveBeenCalledWith('PAGE_INFO_TITLE', { pageUrl: 'https://example.com/anotherPageUrl' });
-        expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('PAGE_INFO_TITLE');
+        expect($translate.instant).toHaveBeenCalledWith('PAGE');
+        expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
+        expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('/latest', 'https://example.com/events/latest');
       });
 
       it('updates the state of all loaded page extensions', () => {
         spyOn($state, 'go');
         PageInfoService.updatePageInfo();
-        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/anotherPageUrl' });
+        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/events/latest' });
       });
     });
 

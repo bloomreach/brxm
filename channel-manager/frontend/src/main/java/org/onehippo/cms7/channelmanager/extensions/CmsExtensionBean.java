@@ -57,5 +57,25 @@ class CmsExtensionBean implements CmsExtension {
     public void setContext(final CmsExtensionContext context) {
         this.context = context;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final CmsExtensionBean that = (CmsExtensionBean) o;
+
+        return id.equalsIgnoreCase(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }
 

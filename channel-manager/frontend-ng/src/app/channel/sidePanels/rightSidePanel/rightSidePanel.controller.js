@@ -71,6 +71,14 @@ class RightSidePanelCtrl {
     return this.RightSidePanelService.getTitle();
   }
 
+  getTooltip() {
+    return this.RightSidePanelService.getTooltip();
+  }
+
+  getContext() {
+    return this.RightSidePanelService.getContext();
+  }
+
   isLockedOpen() {
     return this.SidePanelService.isOpen('right');
   }
