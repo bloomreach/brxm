@@ -21,12 +21,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 /**
  * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
@@ -34,8 +36,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 public class DocumentVariant extends Document {
 
     public static final String MASTER_BRANCH_ID = "master";
-    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-published";
-    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-unpublished";
+    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + PUBLISHED.name();
+    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + UNPUBLISHED.name();
 
     public DocumentVariant() {
     }
@@ -96,18 +98,22 @@ public class DocumentVariant extends Document {
     // returns true if this document variant does not represent a branch
     @SuppressWarnings("unused")
     public boolean isMaster() throws RepositoryException {
-        return !getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO);
+        // do not nodetype check since getNode can also be a frozenNode, see DocumentWorkflowImpl.getBranch()
+        return !getNode().hasProperty(HIPPO_PROPERTY_BRANCH_ID);
     }
 
     @SuppressWarnings("unused")
-    public boolean isBranch(final String branch) throws RepositoryException {
-        if (branch == null) {
+    public boolean isBranch(final String branchId) throws RepositoryException {
+        if (branchId == null) {
             throw new IllegalArgumentException("Branch is not allowed to be null");
         }
-        if (getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-            return branch.equals(getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        // do not nodetype check since getNode can also be a frozenNode, see DocumentWorkflowImpl.getBranch()
+        final String branchIdProperty = JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, null);
+        if (branchIdProperty == null) {
+            return  branchId.equals(MASTER_BRANCH_ID);
+        } else {
+            return branchId.equals(branchIdProperty);
         }
-        return branch.equals(MASTER_BRANCH_ID);
     }
 
     public boolean isAvailable(String environment) throws RepositoryException {

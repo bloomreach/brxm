@@ -99,7 +99,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         // as a result of the checkout we expect also 'foo' to be checkin into version history
         assertEquals(numberOfVersions + 1, versionHistory.getAllVersions().getSize());
 
-        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-UNPUBLISHED"));
 
         // checkout foo again
         {
@@ -162,7 +162,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         final long numberOfVersions = versionHistory.getAllVersions().getSize();
 
-        // below triggers the master-unpublished to be versioned
+        // below triggers the master-UNPUBLISHED to be versioned
         {
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
                 final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -180,7 +180,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
     public void checkout_of_branch_which_is_already_preview_is_NOOP() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
 
-        // below triggers the master-unpublished to be versioned
+        // below triggers the master-UNPUBLISHED to be versioned
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("foo", "Foo");

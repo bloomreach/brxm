@@ -27,6 +27,7 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 import static java.util.stream.Collectors.toList;
@@ -36,6 +37,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class RemoveBranchTask extends AbstractDocumentTask {
@@ -117,7 +120,7 @@ public class RemoveBranchTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(previewVariant.getPath());
 
-        final String[] versionLabelsToRemove = new String[]{branchId + "-unpublished", branchId + "-published"};
+        final String[] versionLabelsToRemove = new String[]{branchId + "-" + UNPUBLISHED.name(), branchId + "-" + PUBLISHED.name()};
 
         for (String label : versionLabelsToRemove) {
             if (versionHistory.hasVersionLabel(label)) {

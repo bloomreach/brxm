@@ -495,11 +495,23 @@
         <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
         <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published)"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
+        <hippo:action action="getBranch" enabledExpr="true"/>
       </onentry>
 
       <!-- target-less transition to report a list of available branches of the document -->
       <transition event="listBranches">
         <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+      </transition>
+
+      <!-- target-less transition to get a branch -->
+      <transition event="getBranch">
+        <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+        <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                 errorExpr="'Cannot get branch \'' + _event.data?.branchId + '\' because it doesn\'t exist'"/>
+
+        <hippo:getBranch branchId="_event.data?.branchId" state="_event.data?.state"
+                            unpublished="unpublished" published="published" draft="draft"/>
       </transition>
 
       <!-- the initial no-branchable state is used and active to indicate branchable operations are currently not
@@ -669,7 +681,7 @@
               <hippo:version variant="unpublished" trigger="publication"/>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
-              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
+              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-PUBLISHED'" onLabel="_event.data?.branchId + '-UNPUBLISHED'"/>
             </if>
 
           </if>
@@ -695,7 +707,6 @@
             <hippo:version variant="unpublished" trigger="publication"/>
           </if>
         </transition>
-
       </state>
     </state>
 

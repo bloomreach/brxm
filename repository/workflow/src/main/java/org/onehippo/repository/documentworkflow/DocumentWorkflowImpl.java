@@ -35,12 +35,14 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.STATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DESTINATION;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.NAME;
@@ -370,6 +372,13 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return (Document) triggerAction(DocumentWorkflowAction.branch()
                 .addEventPayload(BRANCH_ID, branchId)
                 .addEventPayload(BRANCH_NAME, branchName));
+    }
+
+    @Override
+    public Document getBranch(final String branchId, final WorkflowUtils.Variant state) throws WorkflowException {
+        return (Document) triggerAction(DocumentWorkflowAction.getBranch()
+                .addEventPayload(BRANCH_ID, branchId)
+                .addEventPayload(STATE, state.name()));
     }
 
     @Override

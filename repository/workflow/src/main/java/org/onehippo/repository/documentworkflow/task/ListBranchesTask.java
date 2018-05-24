@@ -35,6 +35,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
@@ -126,7 +127,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
         }
 
         for (String label : versionHistory.getVersionLabels()) {
-            if (label.endsWith("-unpublished")) {
+            if (label.endsWith("-" + UNPUBLISHED.name())) {
                 final Version version = versionHistory.getVersionByLabel(label);
                 final Node frozenNode = version.getFrozenNode();
                 if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {

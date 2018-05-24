@@ -117,6 +117,9 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     public static DocumentWorkflowAction branch() {
         return new DocumentWorkflowAction("branch");
     }
+    public static DocumentWorkflowAction getBranch() {
+        return new DocumentWorkflowAction("getBranch");
+    }
 
     public static DocumentWorkflowAction checkoutBranch() {
         return new DocumentWorkflowAction("checkoutBranch");
@@ -184,6 +187,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         REASON("reason"),
         BRANCH_ID("branchId"),
         BRANCH_NAME("branchName"),
+        STATE("state"),
         ;
 
         private final String key;

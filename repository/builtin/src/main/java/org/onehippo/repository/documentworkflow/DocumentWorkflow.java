@@ -34,6 +34,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.WorkflowUtils;
 
 /**
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
@@ -531,6 +532,21 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *                           document state
      */
     Document branch(String branchId, String branchName) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Returns a {@link Document} for the combination {@code branchId} and {@code variant} or {@code null} if the
+     *     {@code state} does not exist for {@code branchId}. The {@core branchId} is allowed to be 'master' in which
+     *     the non-branch {@link Document} is returned if present.
+     * </p>
+     * @param branchId the id of the branch to get the {@link Document} for
+     * @param state the {@link WorkflowUtils.Variant} that is requested
+     * @return a {@link Document} where the backing {@link javax.jcr.Node} is for the {@code branchId} and {@code state}
+     * or {@code null} in case the {@core state} is not available for {@code branchId}. The {@link javax.jcr.Node} can
+     * be a state below the handle <em>or</em> a frozenNode from version history.
+     * @throws WorkflowException If there is no branch for {@code branchId}
+     */
+    Document getBranch(String branchId, WorkflowUtils.Variant state) throws WorkflowException;
 
     /**
      * <p>

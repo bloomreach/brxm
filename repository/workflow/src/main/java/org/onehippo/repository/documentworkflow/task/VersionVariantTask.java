@@ -32,6 +32,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 
@@ -106,9 +108,9 @@ public class VersionVariantTask extends AbstractDocumentTask {
 
         final String[] branchLabels;
         if ("publication".equals(trigger)) {
-            branchLabels = new String[] {branchId + "-unpublished", branchId + "-published"};
+            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.name(), branchId + "-" + PUBLISHED.name()};
         } else {
-            branchLabels = new String[] {branchId + "-unpublished"};
+            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.name()};
         }
 
         for (String branchLabel : branchLabels) {

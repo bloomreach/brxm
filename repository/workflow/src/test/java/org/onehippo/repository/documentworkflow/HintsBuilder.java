@@ -56,6 +56,7 @@ public class HintsBuilder {
     public static String ACTION_REQUEST_DELETE = "requestDelete";
     public static String ACTION_LIST_BRANCHES = "listBranches";
     public static String ACTION_BRANCH = "branch";
+    public static String ACTION_GET_BRANCH = "getBranch";
     public static String ACTION_REMOVE_BRANCH = "removeBranch";
     public static String ACTION_REINTEGRATE_BRANCH = "reintegrateBranch";
     public static String ACTION_PUBLISH_BRANCH = "publishBranch";
@@ -216,6 +217,11 @@ public class HintsBuilder {
 
     public HintsBuilder branch(final boolean branchable) {
         actions.put(ACTION_BRANCH, branchable);
+        return this;
+    }
+
+    public HintsBuilder getBranch(final boolean canGetBranch) {
+        actions.put(ACTION_GET_BRANCH, canGetBranch);
         return this;
     }
 
