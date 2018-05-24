@@ -15,10 +15,10 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrCmsExtensionLoader implements CmsExtensionLoader {
 
-    private static final String CMS_EXTENSION_CONFIG_PATH = "/hippo:configuration/hippo:frontend/extensions";
+    private static final String CMS_EXTENSION_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/extensions";
     private static final String CMS_EXTENSION_CONTEXT = "context";
     private static final String CMS_EXTENSION_DISPLAY_NAME = "displayName";
     private static final String CMS_EXTENSION_URL_PATH = "urlPath";
@@ -44,27 +44,31 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
     }
 
     @Override
-    public List<CmsExtension> loadCmsExtensions() {
+    public Set<CmsExtension> loadCmsExtensions() {
         try {
             return readExtensions();
         } catch (RepositoryException e) {
             log.warn("Could not load CMS extensions", e);
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
     }
 
-    private List<CmsExtension> readExtensions() throws RepositoryException {
+    private Set<CmsExtension> readExtensions() throws RepositoryException {
         if (!session.nodeExists(CMS_EXTENSION_CONFIG_PATH)) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
         final NodeIterator extensionNodes = session.getNode(CMS_EXTENSION_CONFIG_PATH).getNodes();
-        final List<CmsExtension> extensions = new ArrayList<>();
+        final Set<CmsExtension> extensions = new HashSet<>();
 
         while (extensionNodes.hasNext()) {
             final Node extensionNode = extensionNodes.nextNode();
             final CmsExtension extension = readExtension(extensionNode);
-            extensions.add(extension);
+            if (extensions.contains(extension)) {
+                log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.", extension.getId());
+            } else {
+                extensions.add(extension);
+            }
         }
 
         return extensions;
@@ -87,12 +91,13 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
     }
 
     private Optional<CmsExtensionContext> readContext(final Node extensionNode) throws RepositoryException {
-        if (extensionNode.hasProperty(CMS_EXTENSION_CONTEXT)) {
-            final String contextProp = extensionNode.getProperty("context").getString();
+        final Optional<String> optionalProperty = readProperty(extensionNode, CMS_EXTENSION_CONTEXT);
+
+        if (optionalProperty.isPresent()) {
             try {
-                return Optional.of(CmsExtensionContext.valueOf(contextProp.toUpperCase()));
+                return Optional.of(CmsExtensionContext.valueOf(optionalProperty.get().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                log.info("Cannot convert '{}' to a CMS extension context", contextProp, e);
+                log.warn("Cannot convert '{}' to a CMS extension context", optionalProperty.get(), e);
             }
         }
         return Optional.empty();

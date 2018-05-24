@@ -84,7 +84,7 @@ public class ChannelEditorExtensionValidator implements CmsExtensionValidator {
         final String urlPath = extension.getUrlPath();
 
         if (StringUtils.isBlank(urlPath)) {
-            log.warn("Ignoring CMS extension '{}': no url path provided.", extension.getId());
+            log.warn("Ignoring CMS extension '{}': no URL path provided.", extension.getId());
             return false;
         }
 

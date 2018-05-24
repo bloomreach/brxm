@@ -15,7 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -48,19 +49,20 @@ public class JcrCmsExtensionLoaderTest {
         return root
                 .addNode("hippo:configuration", "hipposys:configuration")
                 .addNode("hippo:frontend", "hipposys:applicationfolder")
+                .addNode("cms", "nt:unstructured")
                 .addNode("extensions", "nt:unstructured");
     }
 
     @Test
     public void noConfigNode() {
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertTrue(extensions.isEmpty());
     }
 
     @Test
     public void zeroExtensions() throws RepositoryException {
         createConfigNode();
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertTrue(extensions.isEmpty());
     }
 
@@ -72,10 +74,10 @@ public class JcrCmsExtensionLoaderTest {
         extensionNode.setProperty("displayName", "Extension One");
         extensionNode.setProperty("urlPath", "/extensions/extension-one");
 
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertThat(extensions.size(), equalTo(1));
 
-        final CmsExtension extension = extensions.get(0);
+        final CmsExtension extension = extensions.iterator().next();
         assertThat(extension.getId(), equalTo("extension1"));
         assertThat(extension.getContext(), equalTo(CmsExtensionContext.PAGE));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
@@ -96,16 +98,18 @@ public class JcrCmsExtensionLoaderTest {
         extensionNode2.setProperty("displayName", "Extension Two");
         extensionNode2.setProperty("urlPath", "/extensions/extension-two");
 
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertThat(extensions.size(), equalTo(2));
 
-        final CmsExtension extension1 = extensions.get(0);
+        final Iterator<CmsExtension> iterator = extensions.iterator();
+
+        final CmsExtension extension1 = iterator.next();
         assertThat(extension1.getId(), equalTo("extension1"));
         assertThat(extension1.getContext(), equalTo(CmsExtensionContext.PAGE));
         assertThat(extension1.getDisplayName(), equalTo("Extension One"));
         assertThat(extension1.getUrlPath(), equalTo("/extensions/extension-one"));
 
-        final CmsExtension extension2 = extensions.get(1);
+        final CmsExtension extension2 = iterator.next();
         assertThat(extension2.getId(), equalTo("extension2"));
         assertThat(extension2.getContext(), equalTo(CmsExtensionContext.PAGE));
         assertThat(extension2.getDisplayName(), equalTo("Extension Two"));
@@ -113,11 +117,22 @@ public class JcrCmsExtensionLoaderTest {
     }
 
     @Test
+    public void extensionsMustHaveUniqueID() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
+
+        configNode.addNode("extension1", "nt:unstructured");
+        configNode.addNode("extension1", "nt:unstructured");
+
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
+        assertThat(extensions.size(), equalTo(1));
+    }
+
+    @Test
     public void defaultValues() throws RepositoryException {
         final MockNode configNode = createConfigNode();
         configNode.addNode("extension1", "nt:unstructured");
 
-        final CmsExtension extension = loader.loadCmsExtensions().get(0);
+        final CmsExtension extension = loader.loadCmsExtensions().iterator().next();
         assertThat(extension.getContext(), equalTo(null));
         assertThat(extension.getDisplayName(), equalTo("extension1"));
         assertThat(extension.getUrlPath(), equalTo(null));
@@ -130,7 +145,7 @@ public class JcrCmsExtensionLoaderTest {
         replay(brokenSession);
 
         loader = new JcrCmsExtensionLoader(brokenSession);
-        final List<CmsExtension> extensions = loader.loadCmsExtensions();
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertTrue(extensions.isEmpty());
 
         verify(brokenSession);

@@ -14,4 +14,6 @@
 #  limitations under the License.
 #
 
+Could not load CMS extensions
+Duplicate extensions found.
 Ignoring CMS extension
