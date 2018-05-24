@@ -671,7 +671,7 @@
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 
           <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be publ because it doesn\'t exist'"/>
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be published because it doesn\'t exist'"/>
 
 
           <if cond="!!published">
