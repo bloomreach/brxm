@@ -15,9 +15,10 @@
  */
 
 class PageInfoMainCtrl {
-  constructor(ExtensionService, PageInfoService) {
+  constructor($state, ExtensionService, PageInfoService) {
     'ngInject';
 
+    this.$state = $state;
     this.ExtensionService = ExtensionService;
     this.PageInfoService = PageInfoService;
   }
@@ -26,12 +27,8 @@ class PageInfoMainCtrl {
     this.extensions = this.ExtensionService.getExtensions('page');
   }
 
-  get selectedExtensionId() {
-    return this.PageInfoService.selectedExtensionId;
-  }
-
-  set selectedExtensionId(extensionId) {
-    this.PageInfoService.selectedExtensionId = extensionId;
+  selectTab(extensionId) {
+    this.$state.go('hippo-cm.channel.page-info.' + extensionId);
   }
 
   close() {

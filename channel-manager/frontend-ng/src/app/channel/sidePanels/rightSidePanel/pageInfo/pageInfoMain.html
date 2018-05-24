@@ -14,23 +14,22 @@
   ~ limitations under the License.
   -->
 
-<md-nav-bar nav-bar-aria-label="{{ ::'PAGE_INFO_TABS_ARIA_LABEL' | translate }}"
-            md-selected-nav-item="$ctrl.selectedExtensionId">
-  <md-nav-item ng-repeat="extension in $ctrl.extensions track by extension.id"
+<md-tabs flex="grow" layout="column">
+  <md-tab ng-repeat="extension in $ctrl.extensions track by extension.id"
+          md-on-select="$ctrl.selectTab(extension.id)">
+    <md-tab-label>
+      {{ ::extension.displayName }}
+    </md-tab-label>
+    <md-tab-body>
+      <ui-view class="retain-iframe-scroll-position-when-hiding-in-chrome"
                name="{{ ::extension.id }}"
-               aria-label="{{ ::extension.displayName }}"
-               md-nav-click="$ctrl.selectedExtensionId = extension.id">
-    {{ ::extension.displayName }}
-  </md-nav-item>
-</md-nav-bar>
-
-<ui-view ng-repeat="extension in $ctrl.extensions track by extension.id"
-         ng-show="$ctrl.selectedExtensionId === extension.id"
-         class="retain-iframe-scroll-position-when-hiding-in-chrome"
-         name="{{ ::extension.id }}"
-         flex
-         layout="column">
-</ui-view>
+               flex="grow"
+               layout="column">
+        {{ ::extension }}
+      </ui-view>
+    </md-tab-body>
+  </md-tab>
+</md-tabs>
 
 <md-toolbar class="page-info-bottom-toolbar">
   <div class="md-toolbar-tools"
