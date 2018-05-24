@@ -16,10 +16,11 @@
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -138,186 +139,38 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
      * @return the {@link org.hippoecm.frontend.plugins.standards.list.TableDefinition} with all data
      */
     protected TableDefinition<Revision> getTableDefinition() {
-        List<ListColumn<Revision>> columns = new ArrayList<>();
 
-        addTimeColumn(columns);
-        addUserColumn(columns);
-        addStateColumn(columns);
-        addLabelsColumn(columns);
-        addNameColumn(columns);
-
-        return new TableDefinition<>(columns);
+        return new TableDefinition<>(Arrays.asList(
+                getTimeColumn(),
+                getUserColumn(),
+                getStateColumn(),
+                getLabelsColumn(),
+                getNameColumn()));
     }
 
     /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the time information
-     * to the list of columns.
-     * @param columns the list of columns.
+     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the time information
      */
-    private void addTimeColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-time")), null);
-        column.setRenderer(new IListCellRenderer<Revision>() {
-            @Override
-            public Component getRenderer(String id, final IModel<Revision> model) {
-                IModel labelModel = new IModel() {
-                    @Override
-                    public Object getObject() {
-                        final Date creationDate = model.getObject().getCreationDate();
-                        return DateTimePrinter.of(creationDate).print(FormatStyle.LONG, FormatStyle.MEDIUM);
-                    }
-
-                    @Override
-                    public void setObject(Object object) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void detach() {
-                        model.detach();
-                    }
-                };
-                return new Label(id, labelModel);
-            }
-
-            @Override
-            public IObservable getObservable(IModel<Revision> model) {
-                return null;
-            }
-        });
-        columns.add(column);
+    private ListColumn<Revision> getTimeColumn() {
+        return getColumn("history-time", "null",
+                revision -> {
+                    final Date creationDate = revision.getCreationDate();
+                    return DateTimePrinter.of(creationDate).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+                });
     }
 
     /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
-     * to the list of columns.
-     * @param columns the list of columns.
+     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the user
      */
-    private void addUserColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-user")), "user");
-        column.setRenderer(new IListCellRenderer<Revision>() {
-            @Override
-            public Component getRenderer(String id, final IModel<Revision> model) {
-                IModel labelModel = new IModel() {
-                    @Override
-                    public Object getObject() {
-                        Revision revision = model.getObject();
-                        StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
-                        return attrs.getLastModifiedBy();
-                    }
-
-                    @Override
-                    public void setObject(Object object) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void detach() {
-                        model.detach();
-                    }
-                };
-                return new Label(id, labelModel);
-            }
-
-            public IObservable getObservable(IModel<Revision> model) {
-                return null;
-            }
-
-        });
-        columns.add(column);
+    private ListColumn<Revision> getUserColumn() {
+        return getColumn("history-user", "user",
+                revision -> new StateIconAttributes((JcrNodeModel) revision.getDocument()).getLastModifiedBy());
     }
 
     /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the JCR labels.
-     * @param columns the list of columns.
+     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information.
      */
-    private void addLabelsColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-label")), "label");
-        column.setRenderer(new IListCellRenderer<Revision>() {
-            @Override
-            public Component getRenderer(String id, final IModel<Revision> model) {
-                IModel labelModel = new IModel() {
-                    @Override
-                    public Object getObject() {
-                        Revision revision = model.getObject();
-                        return revision.getLabels().stream().collect(Collectors.joining(","));
-                    }
-
-                    @Override
-                    public void setObject(Object object) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void detach() {
-                        model.detach();
-                    }
-                };
-                return new Label(id, labelModel);
-            }
-
-            public IObservable getObservable(IModel<Revision> model) {
-                return null;
-            }
-
-        });
-        columns.add(column);
-    }
-
-    /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information in hippo:branchName
-     * if it exists
-     * @param columns the list of columns.
-     */
-    private void addNameColumn(List<ListColumn<Revision>> columns) {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-name")), "name");
-        column.setRenderer(new IListCellRenderer<Revision>() {
-            @Override
-            public Component getRenderer(String id, final IModel<Revision> model) {
-                IModel labelModel = new IModel() {
-                    @Override
-                    public Object getObject() {
-                        Revision revision = model.getObject();
-                        final Node versionHistoryNode = revision.getVersionModel().getNode();
-                        try {
-                            if (versionHistoryNode != null && versionHistoryNode instanceof Version) {
-                                final Node frozenNode = ((Version) versionHistoryNode).getFrozenNode();
-                                if (frozenNode != null && frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_NAME)) {
-                                    return frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();
-                                }
-                            }
-                        } catch (RepositoryException e) {
-                            log.warn("Exception while trying to access versioned node '{}'", JcrUtils.getNodePathQuietly(versionHistoryNode));
-                        }
-                        return "";
-                    }
-
-                    @Override
-                    public void setObject(Object object) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    @Override
-                    public void detach() {
-                        model.detach();
-                    }
-                };
-                return new Label(id, labelModel);
-            }
-
-            public IObservable getObservable(IModel<Revision> model) {
-                return null;
-            }
-
-        });
-        columns.add(column);
-    }
-
-
-    /**
-     * Adds a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information to the list of columns.
-     * @param columns the list of columns.
-     */
-    private void addStateColumn(List<ListColumn<Revision>> columns) {
+    private ListColumn<Revision> getStateColumn() {
         ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-state")), "state");
         column.setRenderer(EmptyRenderer.getInstance());
         column.setAttributeModifier(new AbstractListAttributeModifier<Revision>() {
@@ -336,8 +189,75 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 return new AttributeModifier[] { CssClass.append("icon-16") };
             }
         });
-        columns.add(column);
+        return column;
     }
+
+    /**
+     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information of the JCR labels.
+     */
+    private ListColumn<Revision> getLabelsColumn() {
+        return getColumn("history-label", "label",
+                revision -> revision.getLabels().stream().collect(Collectors.joining(",")));
+    }
+
+    /**
+     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the information in hippo:branchName
+     * if it exists
+     */
+    private ListColumn<Revision> getNameColumn() {
+        return getColumn("history-name", "name", revision -> {
+                    final Node versionHistoryNode = revision.getVersionModel().getNode();
+                    try {
+                        if (versionHistoryNode != null && versionHistoryNode instanceof Version) {
+                            final Node frozenNode = ((Version) versionHistoryNode).getFrozenNode();
+                            if (frozenNode != null && frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_NAME)) {
+                                return frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();
+                            }
+                        }
+                    } catch (RepositoryException e) {
+                        log.warn("Exception while trying to access versioned node '{}'", JcrUtils.getNodePathQuietly(versionHistoryNode));
+                    }
+                    return "";
+                }
+        );
+    }
+
+    private ListColumn<Revision> getColumn(final String key, final String sortProperty, final Function<Revision, Object> getRevisionProperty) {
+        ListColumn<Revision> column = new ListColumn<>(Model.of(getString(key)), sortProperty);
+        column.setRenderer(createRenderer(getRevisionProperty));
+        return column;
+    }
+
+    private IListCellRenderer<Revision> createRenderer(Function<Revision, Object> getRevisionProperty) {
+        return new IListCellRenderer<Revision>() {
+            @Override
+            public Component getRenderer(String id, final IModel<Revision> model) {
+                IModel labelModel = new IModel() {
+                    @Override
+                    public Object getObject() {
+                        return getRevisionProperty.apply(model.getObject());
+                    }
+
+                    @Override
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    @Override
+                    public void detach() {
+                        model.detach();
+                    }
+                };
+                return new Label(id, labelModel);
+            }
+
+            @Override
+            public IObservable getObservable(IModel<Revision> model) {
+                return null;
+            }
+        };
+    }
+
 
     public int getPageSize() {
         return 7;
