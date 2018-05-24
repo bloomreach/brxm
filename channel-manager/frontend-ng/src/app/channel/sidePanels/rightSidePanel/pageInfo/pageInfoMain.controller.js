@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './pageInfoMain.scss';
+
 class PageInfoMainCtrl {
   constructor($state, ExtensionService, PageInfoService) {
     'ngInject';
@@ -28,7 +30,7 @@ class PageInfoMainCtrl {
   }
 
   selectTab(extensionId) {
-    this.$state.go('hippo-cm.channel.page-info.' + extensionId);
+    this.$state.go(`hippo-cm.channel.page-info.${extensionId}`);
   }
 
   close() {
