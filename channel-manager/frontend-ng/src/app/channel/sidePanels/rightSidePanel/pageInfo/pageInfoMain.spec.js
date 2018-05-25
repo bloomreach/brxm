@@ -18,13 +18,15 @@ describe('pageInfoMainCtrl', () => {
   let ExtensionService;
   let PageInfoService;
   let $ctrl;
+  let $state;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.pageInfo');
 
-    inject(($controller, $rootScope) => {
+    inject(($controller, $rootScope, _$state_) => {
       ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
       PageInfoService = jasmine.createSpyObj('PageInfoService', ['closePageInfo']);
+      $state = _$state_;
 
       const $scope = $rootScope.$new();
       $ctrl = $controller('pageInfoMainCtrl', {
@@ -45,14 +47,10 @@ describe('pageInfoMainCtrl', () => {
     expect($ctrl.extensions).toEqual(extensions);
   });
 
-  it('gets the selected extension ID from the PageInfoService', () => {
-    PageInfoService.selectedExtensionId = 'a';
-    expect($ctrl.selectedExtensionId).toEqual('a');
-  });
-
-  it('sets the selected extension ID in the PageInfoService', () => {
-    $ctrl.selectedExtensionId = 'a';
-    expect(PageInfoService.selectedExtensionId).toEqual('a');
+  it('changes the app state when a tab is selected', () => {
+    spyOn($state, 'go');
+    $ctrl.selectTab('xyz');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.xyz');
   });
 
   it('closes page info', () => {
