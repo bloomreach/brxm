@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './pageInfoMain.scss';
+
 class PageInfoMainCtrl {
   constructor(ExtensionService, PageInfoService) {
     'ngInject';
@@ -26,12 +28,12 @@ class PageInfoMainCtrl {
     this.extensions = this.ExtensionService.getExtensions('page');
   }
 
-  get selectedExtensionId() {
-    return this.PageInfoService.selectedExtensionId;
+  get selectedTab() {
+    return this.extensions.findIndex(item => item.id === this.PageInfoService.selectedExtensionId);
   }
 
-  set selectedExtensionId(extensionId) {
-    this.PageInfoService.selectedExtensionId = extensionId;
+  set selectedTab(index) {
+    this.PageInfoService.selectedExtensionId = this.extensions[index].id;
   }
 
   close() {

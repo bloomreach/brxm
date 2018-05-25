@@ -45,14 +45,30 @@ describe('pageInfoMainCtrl', () => {
     expect($ctrl.extensions).toEqual(extensions);
   });
 
-  it('gets the selected extension ID from the PageInfoService', () => {
-    PageInfoService.selectedExtensionId = 'a';
-    expect($ctrl.selectedExtensionId).toEqual('a');
+  it('changes the app state when a tab is selected', () => {
+    const extensions = [{ id: 'a' }, { id: 'b' }];
+    ExtensionService.getExtensions.and.returnValue(extensions);
+
+    $ctrl.$onInit();
+
+    $ctrl.selectedTab = 0;
+    expect(PageInfoService.selectedExtensionId).toEqual('a');
+
+    $ctrl.selectedTab = 1;
+    expect(PageInfoService.selectedExtensionId).toEqual('b');
   });
 
-  it('sets the selected extension ID in the PageInfoService', () => {
-    $ctrl.selectedExtensionId = 'a';
-    expect(PageInfoService.selectedExtensionId).toEqual('a');
+  it('sets the selected tab to the selected extension', () => {
+    const extensions = [{ id: 'a' }, { id: 'b' }];
+    ExtensionService.getExtensions.and.returnValue(extensions);
+
+    $ctrl.$onInit();
+
+    PageInfoService.selectedExtensionId = 'a';
+    expect($ctrl.selectedTab).toBe(0);
+
+    PageInfoService.selectedExtensionId = 'b';
+    expect($ctrl.selectedTab).toBe(1);
   });
 
   it('closes page info', () => {
