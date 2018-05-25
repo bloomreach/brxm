@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import config from './pageInfo.config';
-import iframeExtensionComponent from './iframeExtension.component';
-import pageExtensionComponent from './pageExtension.component';
-import pageInfoMainCtrl from './pageInfoMain.controller';
-import PageInfoService from './pageInfo.service';
+import controller from './pageExtension.controller';
+import template from './pageExtension.html';
 
-const pageInfoModule = angular
-  .module('hippo-cm.channel.pageInfo', [])
-  .config(config)
-  .service('PageInfoService', PageInfoService)
-  .controller('pageInfoMainCtrl', pageInfoMainCtrl)
-  .component('iframeExtension', iframeExtensionComponent)
-  .component('pageExtension', pageExtensionComponent);
+const pageExtensionComponent = {
+  controller,
+  template,
+  bindings: {
+    // Trick to set the attributes 'flex' and 'layout="column"' on the page-extension tag so we get a scrollbar
+    // inside the tab (see https://github.com/angular-ui/ui-router/issues/3385#issuecomment-333919458).
+    // The values of 'flex' and 'layout' are defined in the state definition.
+    flex: '@',
+    layout: '@',
+  },
+};
 
-export default pageInfoModule.name;
+export default pageExtensionComponent;

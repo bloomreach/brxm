@@ -20,6 +20,7 @@ describe('iframeExtension', () => {
   let $element;
   let $log;
   let $rootScope;
+  let context;
   let extension;
   let DomService;
   let ExtensionService;
@@ -33,16 +34,16 @@ describe('iframeExtension', () => {
       $rootScope = _$rootScope_;
     });
 
-    extension = {
-      displayName: 'Test',
-      id: 'test',
-      urlPath: 'testUrlPath',
+    context = {
+      foo: 1,
     };
 
-    const uiRouterParams = angular.copy(extension);
-    uiRouterParams.extensionId = extension.id;
-    uiRouterParams.pageUrl = 'testPageUrl';
-    const $uiRouterGlobals = { params: uiRouterParams };
+    extension = {
+      id: 'test',
+      displayName: 'Test',
+      context: 'testContext',
+      urlPath: 'testUrlPath',
+    };
 
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
@@ -52,14 +53,16 @@ describe('iframeExtension', () => {
     $ctrl = $componentController('iframeExtension', {
       $element,
       $scope,
-      $uiRouterGlobals,
       DomService,
       ExtensionService,
+    }, {
+      extensionId: extension.id,
+      context,
     });
   });
 
   describe('$onInit', () => {
-    it('initializes the page extension', () => {
+    it('initializes the extension', () => {
       ExtensionService.getExtension.and.returnValue(extension);
 
       $ctrl.$onInit();
@@ -84,7 +87,7 @@ describe('iframeExtension', () => {
     });
   });
 
-  describe('on iframe load', () => {
+  describe('when initialized', () => {
     let iframeJQueryElement;
     let iframeWindow;
 
@@ -96,7 +99,6 @@ describe('iframeExtension', () => {
 
       spyOn($element, 'children').and.returnValue(iframeJQueryElement);
       DomService.getIframeWindow.and.returnValue(iframeWindow);
-      spyOn($log, 'warn');
     });
 
     function triggerIframeLoad() {
@@ -105,64 +107,110 @@ describe('iframeExtension', () => {
       onLoad();
     }
 
-    describe('without a correct API', () => {
-      it('logs a warning when the BR_EXTENSION object does not exist', () => {
-        triggerIframeLoad();
-        expect($log.warn).toHaveBeenCalledWith('Page info extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide page context');
-      });
-
-      it('logs a warning when the BR_EXTENSION object is not an object', () => {
-        iframeWindow.BR_EXTENSION = () => true;
-        triggerIframeLoad();
-        expect($log.warn).toHaveBeenCalledWith('Page info extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide page context');
-      });
-
-      it('logs a warning when the BR_EXTENSION.onContextChanged function does not exist', () => {
-        iframeWindow.BR_EXTENSION = {};
-        triggerIframeLoad();
-        expect($log.warn).toHaveBeenCalledWith('Page info extension \'Test\' does not define a window.BR_EXTENSION.onContextChanged function, cannot provide page context');
-      });
-    });
-
-    describe('with a correct API', () => {
+    describe('on iframe load', () => {
       beforeEach(() => {
-        iframeWindow.BR_EXTENSION = jasmine.createSpyObj('BR_EXTENSION', ['onContextChanged']);
+        spyOn($log, 'warn');
       });
 
-      it('calls the BR_EXTENSION.onContextChanged function', () => {
-        triggerIframeLoad();
-        expect(iframeWindow.BR_EXTENSION.onContextChanged).toHaveBeenCalledWith({
-          context: 'page',
-          data: {
-            pageUrl: 'testPageUrl',
-          },
+      describe('without a correct API', () => {
+        it('logs a warning when the BR_EXTENSION object does not exist', () => {
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide context');
+        });
+
+        it('logs a warning when the BR_EXTENSION object is not an object', () => {
+          iframeWindow.BR_EXTENSION = () => true;
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide context');
+        });
+
+        it('logs a warning when the BR_EXTENSION.onContextChanged function does not exist', () => {
+          iframeWindow.BR_EXTENSION = {};
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION.onContextChanged function, cannot provide context');
         });
       });
 
-      it('logs a warning when BR_EXTENSION.onContextChanged throws an error', () => {
-        const error = new Error('EEK');
-        iframeWindow.BR_EXTENSION.onContextChanged.and.throwError(error);
-        triggerIframeLoad();
-        expect($log.warn).toHaveBeenCalledWith('Page info extension \'Test\' threw an error in window.BR_EXTENSION.onContextChanged()', error);
+      describe('with a correct API', () => {
+        beforeEach(() => {
+          iframeWindow.BR_EXTENSION = jasmine.createSpyObj('BR_EXTENSION', ['onContextChanged']);
+        });
+
+        it('calls the BR_EXTENSION.onContextChanged function', () => {
+          triggerIframeLoad();
+          expect(iframeWindow.BR_EXTENSION.onContextChanged).toHaveBeenCalledWith({
+            context: 'testContext',
+            data: {
+              foo: 1,
+            },
+          });
+        });
+
+        it('logs a warning when BR_EXTENSION.onContextChanged throws an error', () => {
+          const error = new Error('EEK');
+          iframeWindow.BR_EXTENSION.onContextChanged.and.throwError(error);
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' threw an error in window.BR_EXTENSION.onContextChanged()', error);
+        });
       });
     });
-  });
 
-  describe('uiOnParamsChanged', () => {
-    beforeEach(() => {
-      spyOn($ctrl, '_setPageContext');
-    });
+    describe('$onChanges', () => {
+      let changedContext;
+      let isFirstChange;
 
-    it('updates the page context when the pageUrl parameter changed', () => {
-      $ctrl.uiOnParamsChanged({
-        pageUrl: '/newPageUrl',
+      beforeEach(() => {
+        iframeWindow.BR_EXTENSION = jasmine.createSpyObj('BR_EXTENSION', ['onContextChanged']);
+        changedContext = {
+          currentValue: {
+            foo: 2,
+          },
+          isFirstChange: () => isFirstChange,
+        };
       });
-      expect($ctrl._setPageContext).toHaveBeenCalled();
-    });
 
-    it('does not update the page context when the pageUrl parameter did not change', () => {
-      $ctrl.uiOnParamsChanged({});
-      expect($ctrl._setPageContext).not.toHaveBeenCalled();
+      it('does not update the context when it did not change', () => {
+        $ctrl.$onChanges({});
+        expect(iframeWindow.BR_EXTENSION.onContextChanged).not.toHaveBeenCalled();
+      });
+
+      describe('before the iframe is loaded', () => {
+        it('does not update the context for the first change', () => {
+          isFirstChange = true;
+          $ctrl.$onChanges({ context: changedContext });
+          expect(iframeWindow.BR_EXTENSION.onContextChanged).not.toHaveBeenCalled();
+        });
+
+        it('does not update the context for subsequent changes', () => {
+          isFirstChange = false;
+          $ctrl.$onChanges({ context: changedContext });
+          expect(iframeWindow.BR_EXTENSION.onContextChanged).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('after the iframe is loaded', () => {
+        beforeEach(() => {
+          triggerIframeLoad();
+          iframeWindow.BR_EXTENSION.onContextChanged.calls.reset();
+        });
+
+        it('does not update the context for the first change', () => {
+          isFirstChange = true;
+          $ctrl.$onChanges({ context: changedContext });
+          expect(iframeWindow.BR_EXTENSION.onContextChanged).not.toHaveBeenCalled();
+        });
+
+        it('updates the context for subsequent changes', () => {
+          isFirstChange = false;
+          $ctrl.$onChanges({ context: changedContext });
+          expect(iframeWindow.BR_EXTENSION.onContextChanged).toHaveBeenCalledWith({
+            context: 'testContext',
+            data: {
+              foo: 2,
+            },
+          });
+        });
+      });
     });
   });
 });
