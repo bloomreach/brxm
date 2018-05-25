@@ -15,13 +15,15 @@
  */
 
 class IframeExtensionCtrl {
-  constructor($element, $log, DomService, ExtensionService) {
+  constructor($element, $log, ConfigService, DomService, ExtensionService, PathService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
+    this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.ExtensionService = ExtensionService;
+    this.PathService = PathService;
   }
 
   $onInit() {
@@ -34,6 +36,10 @@ class IframeExtensionCtrl {
       this.iframeLoaded = true;
       this._setIframeContext();
     });
+  }
+
+  getExtensionUrl() {
+    return this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.urlPath);
   }
 
   $onChanges(params) {

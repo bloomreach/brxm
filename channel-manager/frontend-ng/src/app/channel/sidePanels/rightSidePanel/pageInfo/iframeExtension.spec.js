@@ -22,6 +22,7 @@ describe('iframeExtension', () => {
   let $rootScope;
   let context;
   let extension;
+  let ConfigService;
   let DomService;
   let ExtensionService;
 
@@ -45,6 +46,7 @@ describe('iframeExtension', () => {
       urlPath: 'testUrlPath',
     };
 
+    ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
 
@@ -53,6 +55,7 @@ describe('iframeExtension', () => {
     $ctrl = $componentController('iframeExtension', {
       $element,
       $scope,
+      ConfigService,
       DomService,
       ExtensionService,
     }, {
@@ -99,6 +102,22 @@ describe('iframeExtension', () => {
 
       spyOn($element, 'children').and.returnValue(iframeJQueryElement);
       DomService.getIframeWindow.and.returnValue(iframeWindow);
+    });
+
+    describe('getExtensionUrl', () => {
+      beforeEach(() => {
+        $ctrl.$onInit();
+      });
+
+      it('works when the CMS location has a context path', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath');
+      });
+
+      it('works when the CMS location has no context path', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/');
+        expect($ctrl.getExtensionUrl()).toEqual('/testUrlPath');
+      });
     });
 
     function triggerIframeLoad() {
