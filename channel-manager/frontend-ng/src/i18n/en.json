@@ -169,7 +169,6 @@
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publication requested for '{{documentName}}'",
   "OK": "OK",
   "PAGE": "Page",
-  "PAGE_INFO_TABS_ARIA_LABEL": "Page Info Links",
   "PICKER_EMPTY_TREE": "No documents are available",
   "PICKER_LISTING_NAME": "Name",
   "PICKER_SELECT": "Select link type",
