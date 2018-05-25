@@ -108,9 +108,9 @@ public class VersionVariantTask extends AbstractDocumentTask {
 
         final String[] branchLabels;
         if ("publication".equals(trigger)) {
-            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.name(), branchId + "-" + PUBLISHED.name()};
+            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.getState(), branchId + "-" + PUBLISHED.getState()};
         } else {
-            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.name()};
+            branchLabels = new String[] {branchId + "-" + UNPUBLISHED.getState()};
         }
 
         for (String branchLabel : branchLabels) {

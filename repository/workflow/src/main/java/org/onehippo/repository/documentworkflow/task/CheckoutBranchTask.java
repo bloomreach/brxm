@@ -78,7 +78,7 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
 
-        final String versionLabelToRestore = branchId + "-" + UNPUBLISHED.name();
+        final String versionLabelToRestore = branchId + "-" + UNPUBLISHED.getState();
 
         if (!versionHistory.hasVersionLabel(versionLabelToRestore)) {
             throw new WorkflowException(String.format("version label '%s' does not exist in version history so cannot " +

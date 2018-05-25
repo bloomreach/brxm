@@ -378,7 +378,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Document getBranch(final String branchId, final WorkflowUtils.Variant state) throws WorkflowException {
         return (Document) triggerAction(DocumentWorkflowAction.getBranch()
                 .addEventPayload(BRANCH_ID, branchId)
-                .addEventPayload(STATE, state.name()));
+                .addEventPayload(STATE, state.getState()));
     }
 
     @Override

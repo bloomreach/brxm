@@ -98,11 +98,11 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
         assertEquals(5, versionHistory.getVersionLabels().length);
-        assertTrue(versionHistory.hasVersionLabel("master-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("foo-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("foo-PUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("bar-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("bar-PUBLISHED"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
 
         // let's now remove the published version, create a branch 'lux1' and then create a branch 'lux2'. Then
         // start editing 'lux2' and after that, publish branch 'lux1' : We expect the unpublished to be replaced by 'lux1'
@@ -152,31 +152,31 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
 
         assertEquals(8, versionHistory.getVersionLabels().length);
 
-        assertTrue(versionHistory.hasVersionLabel("master-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("foo-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("foo-PUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("bar-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("bar-PUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("lux1-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("lux1-PUBLISHED"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
+        assertTrue(versionHistory.hasVersionLabel("lux1-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("lux1-published"));
         // because lux2 is being edited WHILE a publish branch of lux1 happened, there must have been created a version
         // of lux2 SINCE if the editor would discard the draft changes, she otherwise might have lost the lux2 branch
         // for good if there was not checked in version yet!
-        assertTrue(versionHistory.hasVersionLabel("lux2-UNPUBLISHED"));
-        assertFalse(versionHistory.hasVersionLabel("lux2-PUBLISHED"));
+        assertTrue(versionHistory.hasVersionLabel("lux2-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("lux2-published"));
 
-        // Expected 'Lux 1' for "lux2-UNPUBLISHED" : This might be confusing but the lux2 draft was not yet committed
+        // Expected 'Lux 1' for "lux2-unpublished" : This might be confusing but the lux2 draft was not yet committed
         // when the publish branch happened, hence the preview as it was got pushed to version history.
         assertEquals("Lux 1",
-                versionHistory.getVersionByLabel("lux2-UNPUBLISHED").getFrozenNode().getProperty("title").getString());
+                versionHistory.getVersionByLabel("lux2-unpublished").getFrozenNode().getProperty("title").getString());
 
         // checkoutBranch lux1 triggers lux2 preview to be versioned with the committed changes
         workflow.checkoutBranch("lux1");
         assertEquals("Lux 2",
-                versionHistory.getVersionByLabel("lux2-UNPUBLISHED").getFrozenNode().getProperty("title").getString());
+                versionHistory.getVersionByLabel("lux2-unpublished").getFrozenNode().getProperty("title").getString());
 
-        // now publish lux2 : Since there is already a live version (lux1), we only expect 'lux2-PUBLISHED' label in
-        // version history to have been added and point to the same version as lux2-UNPUBLISHED
+        // now publish lux2 : Since there is already a live version (lux1), we only expect 'lux2-published' label in
+        // version history to have been added and point to the same version as lux2-unpublished
 
         workflow.publishBranch("lux2");
 
@@ -184,12 +184,12 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         assertEquals("lux1", getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
                 .get().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // version history now also should have lux2-PUBLISHED
+        // version history now also should have lux2-published
 
         assertEquals(9, versionHistory.getVersionLabels().length);
-        assertTrue(versionHistory.hasVersionLabel("lux2-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("lux2-PUBLISHED"));
-        assertTrue(versionHistory.getVersionByLabel("lux2-UNPUBLISHED").isSame(versionHistory.getVersionByLabel("lux2-PUBLISHED")));
+        assertTrue(versionHistory.hasVersionLabel("lux2-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("lux2-published"));
+        assertTrue(versionHistory.getVersionByLabel("lux2-unpublished").isSame(versionHistory.getVersionByLabel("lux2-published")));
     }
 
     @Test

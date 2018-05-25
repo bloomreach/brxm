@@ -36,8 +36,8 @@ import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 public class DocumentVariant extends Document {
 
     public static final String MASTER_BRANCH_ID = "master";
-    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + PUBLISHED.name();
-    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + UNPUBLISHED.name();
+    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + PUBLISHED.getState();
+    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + UNPUBLISHED.getState();
 
     public DocumentVariant() {
     }

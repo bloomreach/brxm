@@ -127,7 +127,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
         }
 
         for (String label : versionHistory.getVersionLabels()) {
-            if (label.endsWith("-" + UNPUBLISHED.name())) {
+            if (label.endsWith("-" + UNPUBLISHED.getState())) {
                 final Version version = versionHistory.getVersionByLabel(label);
                 final Node frozenNode = version.getFrozenNode();
                 if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {

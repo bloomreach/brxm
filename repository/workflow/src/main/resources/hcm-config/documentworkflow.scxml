@@ -681,7 +681,7 @@
               <hippo:version variant="unpublished" trigger="publication"/>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
-              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-PUBLISHED'" onLabel="_event.data?.branchId + '-UNPUBLISHED'"/>
+              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
             </if>
 
           </if>

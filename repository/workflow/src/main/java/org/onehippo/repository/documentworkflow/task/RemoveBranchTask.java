@@ -27,7 +27,6 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 import static java.util.stream.Collectors.toList;
@@ -120,7 +119,7 @@ public class RemoveBranchTask extends AbstractDocumentTask {
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(previewVariant.getPath());
 
-        final String[] versionLabelsToRemove = new String[]{branchId + "-" + UNPUBLISHED.name(), branchId + "-" + PUBLISHED.name()};
+        final String[] versionLabelsToRemove = new String[]{branchId + "-" + UNPUBLISHED.getState(), branchId + "-" + PUBLISHED.getState()};
 
         for (String label : versionLabelsToRemove) {
             if (versionHistory.hasVersionLabel(label)) {

@@ -103,8 +103,8 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
 
-        assertTrue(versionHistory.hasVersionLabel("foo-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("foo-PUBLISHED"));
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
 
         workflow.removeBranch("foo");
 
@@ -118,9 +118,9 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // version history labels should not have 'foo-UNPUBLISHED' or 'foo-PUBLISHED' any more
-        assertFalse(versionHistory.hasVersionLabel("foo-UNPUBLISHED"));
-        assertFalse(versionHistory.hasVersionLabel("foo-PUBLISHED"));
+        // version history labels should not have 'foo-unpublished' or 'foo-published' any more
+        assertFalse(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("foo-published"));
 
         assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "bar"});
 
@@ -137,8 +137,8 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         // preview is bar
         assertEquals("bar", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        assertTrue(versionHistory.hasVersionLabel("bar-UNPUBLISHED"));
-        assertTrue(versionHistory.hasVersionLabel("bar-PUBLISHED"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
 
         workflow.removeBranch("bar");
 
@@ -147,8 +147,8 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         assertFalse(live.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertFalse(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
-        assertFalse(versionHistory.hasVersionLabel("bar-UNPUBLISHED"));
-        assertFalse(versionHistory.hasVersionLabel("bar-PUBLISHED"));
+        assertFalse(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertFalse(versionHistory.hasVersionLabel("bar-published"));
 
     }
 
