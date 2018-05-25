@@ -121,6 +121,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
 
         workflow.commitEditableInstance();
 
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         // preview now becomes for 'bar'. draft should still be for 'foo'
         workflow.branch("bar", "Bar");
 
@@ -152,6 +153,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
             assertFalse(unpublishedNode.isNodeType(NT_FROZEN_NODE));
         }
 
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         {
@@ -182,6 +184,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
             assertFalse(publishedNode.isNodeType(NT_FROZEN_NODE));
         }
 
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         workflow.publishBranch("bar");

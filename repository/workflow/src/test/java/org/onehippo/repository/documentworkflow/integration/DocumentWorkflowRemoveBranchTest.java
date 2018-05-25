@@ -88,6 +88,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
 
         // now branch the preview to bar. When we now remove the branch 'foo' we expect it only to be removed from the
         // live version
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         assertHandleBranchesProperty(handle, new String[]{MASTER_BRANCH_ID, "foo", "bar"});

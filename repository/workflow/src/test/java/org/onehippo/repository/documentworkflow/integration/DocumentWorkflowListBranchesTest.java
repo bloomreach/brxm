@@ -95,6 +95,7 @@ public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIn
 
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
             workflow.branch("bar", "Bar");
             final Set<String> branches = workflow.listBranches();
             assertEquals(3, branches.size());

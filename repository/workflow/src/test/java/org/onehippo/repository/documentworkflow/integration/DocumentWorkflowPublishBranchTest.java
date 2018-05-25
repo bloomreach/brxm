@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -87,6 +88,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         assertEquals("foo", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
         // now branch the preview to bar.
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         workflow.publishBranch("bar");
@@ -112,6 +114,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get().remove();
         session.save();
 
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("lux1", "Lux1");
         {
             final Node draft = workflow.obtainEditableInstance().getNode(session);
@@ -120,6 +123,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         }
         workflow.commitEditableInstance();
 
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("lux2", "Lux2");
         {
             final Node draft = workflow.obtainEditableInstance().getNode(session);
@@ -164,11 +168,6 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         // for good if there was not checked in version yet!
         assertTrue(versionHistory.hasVersionLabel("lux2-unpublished"));
         assertFalse(versionHistory.hasVersionLabel("lux2-published"));
-
-        // Expected 'Lux 1' for "lux2-unpublished" : This might be confusing but the lux2 draft was not yet committed
-        // when the publish branch happened, hence the preview as it was got pushed to version history.
-        assertEquals("Lux 1",
-                versionHistory.getVersionByLabel("lux2-unpublished").getFrozenNode().getProperty("title").getString());
 
         // checkoutBranch lux1 triggers lux2 preview to be versioned with the committed changes
         workflow.checkoutBranch("lux1");

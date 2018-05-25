@@ -269,6 +269,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
 
+        // #branch is still allowed since there is no unpublished version
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
@@ -287,6 +288,30 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .branchFeedback("foo", null, "foo")
                 .hints()
         );
+
+        draftVariant.remove();
+
+        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        // set (only) author permission
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+
+        // after this, branch should be disallowed because we only allow branching from Master
+        unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+        unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
+
+        assertMatchingHints(wf.hints(), HintsBuilder.build()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(true).reintegrateBranch(true).publishBranch(true)
+                .branchFeedback("foo", "foo", null)
+                .hints()
+        );
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                .noBranchable().canCheckoutBranch().canRemoveBranch().canReintegrateBranch().canPublishBranch()
+                .states()
+        );
+
     }
 
 

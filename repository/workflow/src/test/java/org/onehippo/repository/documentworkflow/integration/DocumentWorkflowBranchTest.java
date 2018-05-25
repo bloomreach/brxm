@@ -69,6 +69,15 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
 
         workflow.commitEditableInstance();
         assertTrue((Boolean)workflow.hints().get("branch"));
+
+        workflow.branch("foo", "Foo");
+
+        // preview is now for branch 'foo', we should only be allowed to branch from 'master'
+        assertFalse((Boolean)workflow.hints().get("branch"));
+
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+        assertTrue((Boolean)workflow.hints().get("branch"));
     }
 
     @Test
@@ -155,9 +164,13 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("foo bar", "Foo Bar");
+
         }
+
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            // first checkout master to allow branching
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
             workflow.branch("bar lux", "Bar Lux");
         }
 
@@ -165,8 +178,8 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertEquals("Bar Lux", preview.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertEquals("After two times branching, we expect 3 versions",
-                3L, versionHistory.getAllVersions().getSize());
+        assertEquals("After two times branching, we expect 4 versions due to extra master checkout",
+                4L, versionHistory.getAllVersions().getSize());
 
         assertEquals("We expect the 'foo bar-unpublished' to be added as label since 'bar lux' branch was branched " +
                         "after 'foo bar",2, versionHistory.getVersionLabels().length);
@@ -197,9 +210,11 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         assertFalse(versionHistory.hasVersionLabel("foo bar-unpublished"));
         {
-
-
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+            assertEquals(3L, versionHistory.getAllVersions().getSize());
+
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
                 workflow.branch("foo bar", "Foo Bar");
                 fail("Branch already exists so exception expected");
@@ -207,9 +222,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                 assertEquals("Branch 'foo bar' already exists",
                         e.getMessage());
                 assertEquals("Branching to branch for which the preview already exists should not result in an extra version",
-                        2L, versionHistory.getAllVersions().getSize());
-
-                assertFalse(versionHistory.hasVersionLabel("foo bar-unpublished"));
+                        3L, versionHistory.getAllVersions().getSize());
             }
         }
     }
@@ -237,7 +250,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
     }
 
     @Test
-    public void missing_master_branch_in_version_history_is_possible()
+    public void missing_master_branch_in_version_history_is_possible_and_makes_further_branching_impossible()
             throws Exception {
 
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
@@ -262,48 +275,21 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         preview.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Foo");
         session.save();
 
-        // now branch to bar
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch("bar", "Bar");
-        }
-
-        //  assert the handle does NOT have 'master' now as available since there never was a master! Also 'foo' was never
-        // really a branch so also not present
-        assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
-        assertArrayEquals(new String[]{"bar"}, getMultipleStringProperty(handle, HippoNodeType.HIPPO_BRANCHES_PROPERTY, null));
-
-
-        assertFalse("Version history does not have master-unpublished.",
-                versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
-        assertTrue("Branching should had added version label for foo-unpublished to existing version.",
-                versionHistory.hasVersionLabel("foo-unpublished"));
-
-        // Now branch to master
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch(MASTER_BRANCH_ID, null);
-        }
-
-        assertFalse("for master the mixin should had been removed.",preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
-
-        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
-        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
-        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
-
-        // after branching to 'lux' we expect a master-unpublished label
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch("lux", "Lux");
-        }
-
-        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+        // now try to branch to bar
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.branch(MASTER_BRANCH_ID, null);
-            fail("Branching master should now not be possible");
+            workflow.branch("bar", "Bar");
+            fail("Expected branching to be not possible since no Master branch");
         } catch (WorkflowException e) {
-            assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+            assertEquals("Cannot invoke workflow documentworkflow action branch: action not allowed or undefined", e.getMessage());
+        }
+        // now try to checkout master
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            workflow.checkoutBranch(MASTER_BRANCH_ID);
+            fail("Expected checkout to Master not possible since no Master branch");
+        } catch (WorkflowException e) {
+            assertEquals("Branch 'master' cannot be checked out because it doesn't exist", e.getMessage());
         }
 
     }
