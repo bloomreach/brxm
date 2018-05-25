@@ -204,4 +204,17 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
 
     }
 
+    @Test
+    public void publish_master_results_in_workflow_exception() throws Exception {
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.publishBranch(MASTER_BRANCH_ID);
+            fail("Master is not allowed to be published as branch");
+        } catch (WorkflowException e) {
+            assertEquals("Branch 'master' cannot be published as branch", e.getMessage());
+        }
+
+    }
+
 }
