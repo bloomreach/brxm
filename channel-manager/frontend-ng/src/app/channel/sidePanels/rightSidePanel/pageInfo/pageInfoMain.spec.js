@@ -18,15 +18,13 @@ describe('pageInfoMainCtrl', () => {
   let ExtensionService;
   let PageInfoService;
   let $ctrl;
-  let $state;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.pageInfo');
 
-    inject(($controller, $rootScope, _$state_) => {
+    inject(($controller, $rootScope) => {
       ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
       PageInfoService = jasmine.createSpyObj('PageInfoService', ['closePageInfo']);
-      $state = _$state_;
 
       const $scope = $rootScope.$new();
       $ctrl = $controller('pageInfoMainCtrl', {
@@ -48,9 +46,29 @@ describe('pageInfoMainCtrl', () => {
   });
 
   it('changes the app state when a tab is selected', () => {
-    spyOn($state, 'go');
-    $ctrl.selectTab('xyz');
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.xyz');
+    const extensions = [{ id: 'a' }, { id: 'b' }];
+    ExtensionService.getExtensions.and.returnValue(extensions);
+
+    $ctrl.$onInit();
+
+    $ctrl.selectedTab = 0;
+    expect(PageInfoService.selectedExtensionId).toEqual('a');
+
+    $ctrl.selectedTab = 1;
+    expect(PageInfoService.selectedExtensionId).toEqual('b');
+  });
+
+  it('sets the selected tab to the selected extension', () => {
+    const extensions = [{ id: 'a' }, { id: 'b' }];
+    ExtensionService.getExtensions.and.returnValue(extensions);
+
+    $ctrl.$onInit();
+
+    PageInfoService.selectedExtensionId = 'a';
+    expect($ctrl.selectedTab).toBe(0);
+
+    PageInfoService.selectedExtensionId = 'b';
+    expect($ctrl.selectedTab).toBe(1);
   });
 
   it('closes page info', () => {

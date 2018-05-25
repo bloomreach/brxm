@@ -14,9 +14,11 @@
   ~ limitations under the License.
   -->
 
-<md-tabs flex="grow" layout="column">
+<md-tabs flex="grow"
+         layout="column"
+         md-selected="$ctrl.selectedTab">
   <md-tab ng-repeat="extension in $ctrl.extensions track by extension.id"
-          md-on-select="$ctrl.selectTab(extension.id)">
+          md-on-select="$ctrl.selectedTab = $index">
     <md-tab-label>
       {{ ::extension.displayName }}
     </md-tab-label>
