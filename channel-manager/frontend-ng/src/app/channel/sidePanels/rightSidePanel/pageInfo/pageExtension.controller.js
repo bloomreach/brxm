@@ -15,10 +15,11 @@
  */
 
 class pageExtensionCtrl {
-  constructor($uiRouterGlobals) {
+  constructor($uiRouterGlobals, PageMetaDataService) {
     'ngInject';
 
     this.$uiRouterGlobals = $uiRouterGlobals;
+    this.PageMetaDataService = PageMetaDataService;
   }
 
   $onInit() {
@@ -33,8 +34,15 @@ class pageExtensionCtrl {
   }
 
   _setPageContext(pageUrl) {
+    const channelId = this.PageMetaDataService.getChannelId();
+    const pageId = this.PageMetaDataService.getPageId();
+    const sitemapItemId = this.PageMetaDataService.getSiteMapItemId();
+
     this.pageContext = {
+      channelId,
+      pageId,
       pageUrl,
+      sitemapItemId,
     };
   }
 }
