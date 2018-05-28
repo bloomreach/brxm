@@ -28,8 +28,15 @@ describe('pageExtension', () => {
         },
       };
 
+      const PageMetaDataService = {
+        getChannelId: () => 'testChannelId',
+        getPageId: () => 'testPageId',
+        getSiteMapItemId: () => 'testSitemapItemId',
+      };
+
       $ctrl = $componentController('pageExtension', {
         $uiRouterGlobals,
+        PageMetaDataService,
       });
     });
   });
@@ -42,7 +49,10 @@ describe('pageExtension', () => {
     it('initializes the page extension', () => {
       expect($ctrl.extensionId).toEqual('test');
       expect($ctrl.pageContext).toEqual({
+        channelId: 'testChannelId',
+        pageId: 'testPageId',
         pageUrl: 'testPageUrl',
+        sitemapItemId: 'testSitemapItemId',
       });
     });
 
@@ -52,14 +62,20 @@ describe('pageExtension', () => {
           pageUrl: 'newPageUrl',
         });
         expect($ctrl.pageContext).toEqual({
+          channelId: 'testChannelId',
+          pageId: 'testPageId',
           pageUrl: 'newPageUrl',
+          sitemapItemId: 'testSitemapItemId',
         });
       });
 
       it('does not update the page context when the pageUrl parameter did not change', () => {
         $ctrl.uiOnParamsChanged({});
         expect($ctrl.pageContext).toEqual({
+          channelId: 'testChannelId',
+          pageId: 'testPageId',
           pageUrl: 'testPageUrl',
+          sitemapItemId: 'testSitemapItemId',
         });
       });
     });

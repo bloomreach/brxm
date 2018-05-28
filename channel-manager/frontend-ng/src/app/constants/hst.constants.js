@@ -37,6 +37,7 @@ const HstConstants = {
   LOCKED_BY: 'HST-LockedBy',
   LOCKED_BY_CURRENT_USER: 'HST-LockedBy-Current-User',
   MOUNT_ID: 'HST-Mount-Id',
+  PAGE_ID: 'HST-Page-Id',
   REFERENCE_NAMESPACE: 'refNS',
   RENDER_URL: 'url',
   RENDER_VARIANT: 'HST-Render-Variant',
