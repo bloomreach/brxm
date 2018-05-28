@@ -247,6 +247,18 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
+    public void testDataPrefixOfFileNameIsNotCleaned() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href"));
+
+        // href attribute start with 'data' but is not a data protocol
+        TagNode result = filterHtml("<a href=\"data-science.pdf\">data science</a>");
+        TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("data-science.pdf", a.getAttributeByName("href"));
+    }
+
+    @Test
     public void testCleanDataProtocolNewLine() throws Exception {
         filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
         addToWhitelist(Element.create("a", "href"));
