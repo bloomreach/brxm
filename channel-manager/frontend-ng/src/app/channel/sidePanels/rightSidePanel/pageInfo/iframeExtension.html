@@ -14,4 +14,4 @@
   limitations under the License.
 -->
 
-<iframe ng-src="{{ $ctrl.extension.urlPath }}" class="iframe-extension"></iframe>
+<iframe ng-src="{{ ::$ctrl.getExtensionUrl() }}" class="iframe-extension"></iframe>

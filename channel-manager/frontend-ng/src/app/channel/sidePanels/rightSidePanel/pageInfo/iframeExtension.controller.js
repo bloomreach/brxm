@@ -15,58 +15,73 @@
  */
 
 class IframeExtensionCtrl {
-  constructor($element, $log, $uiRouterGlobals, DomService, ExtensionService) {
+  constructor($element, $log, ConfigService, DomService, ExtensionService, PathService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
-    this.$uiRouterGlobals = $uiRouterGlobals;
+    this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.ExtensionService = ExtensionService;
+    this.PathService = PathService;
   }
 
   $onInit() {
-    const extensionId = this.$uiRouterGlobals.params.extensionId;
-    this.extension = this.ExtensionService.getExtension(extensionId);
+    this.extension = this.ExtensionService.getExtension(this.extensionId);
 
     const extensionIframe = this.$element.children('.iframe-extension');
     this.iframeWindow = this.DomService.getIframeWindow(extensionIframe);
 
-    extensionIframe.on('load', () => this._setPageContext());
+    extensionIframe.on('load', () => {
+      this.iframeLoaded = true;
+      this._setIframeContext();
+    });
   }
 
-  uiOnParamsChanged(params) {
-    if (params.pageUrl) {
-      // page URL changed
-      this._setPageContext();
+  getExtensionUrl() {
+    return this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.urlPath);
+  }
+
+  $onChanges(params) {
+    const changedContext = params.context;
+
+    if (changedContext) {
+      // copy the context so any changes to it won't affect the parent version
+      this.context = angular.copy(changedContext.currentValue);
+
+      // the iframe's onload handler sets the initial context, so only subsequent context changes
+      // need to be passed to the iframe.
+      if (!changedContext.isFirstChange() && this.iframeLoaded) {
+        this._setIframeContext();
+      }
     }
   }
 
-  _setPageContext() {
+  _setIframeContext() {
     if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
-      this._warnPageExtension('does not define a window.BR_EXTENSION object, cannot provide page context');
+      this._warnExtension('does not define a window.BR_EXTENSION object, cannot provide context');
       return;
     }
 
     if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
-      this._warnPageExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide page context');
+      this._warnExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide context');
       return;
     }
 
     try {
+      const contextName = this.extension.context;
+      const contextData = this.context;
       this.iframeWindow.BR_EXTENSION.onContextChanged({
-        context: 'page',
-        data: {
-          pageUrl: this.$uiRouterGlobals.params.pageUrl,
-        },
+        context: contextName,
+        data: contextData,
       });
     } catch (e) {
-      this._warnPageExtension('threw an error in window.BR_EXTENSION.onContextChanged()', e);
+      this._warnExtension('threw an error in window.BR_EXTENSION.onContextChanged()', e);
     }
   }
 
-  _warnPageExtension(message, error) {
-    const warning = `Page info extension '${this.extension.displayName}' ${message}`;
+  _warnExtension(message, error) {
+    const warning = `Extension '${this.extension.displayName}' ${message}`;
     if (error) {
       this.$log.warn(warning, error);
     } else {

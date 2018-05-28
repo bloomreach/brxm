@@ -55,7 +55,7 @@ class PageInfoService {
         sticky: true,
         views: {
           [pageExtension.id]: {
-            component: 'iframeExtension',
+            component: 'pageExtension',
           },
         },
         resolve: {

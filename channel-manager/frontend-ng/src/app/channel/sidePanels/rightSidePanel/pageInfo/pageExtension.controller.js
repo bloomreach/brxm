@@ -14,17 +14,29 @@
  * limitations under the License.
  */
 
-import './iframeExtension.scss';
-import controller from './iframeExtension.controller';
-import template from './iframeExtension.html';
+class pageExtensionCtrl {
+  constructor($uiRouterGlobals) {
+    'ngInject';
 
-const iframeExtensionComponent = {
-  controller,
-  template,
-  bindings: {
-    context: '<',
-    extensionId: '@',
-  },
-};
+    this.$uiRouterGlobals = $uiRouterGlobals;
+  }
 
-export default iframeExtensionComponent;
+  $onInit() {
+    this.extensionId = this.$uiRouterGlobals.params.extensionId;
+    this._setPageContext(this.$uiRouterGlobals.params.pageUrl);
+  }
+
+  uiOnParamsChanged(params) {
+    if (params.pageUrl) {
+      this._setPageContext(params.pageUrl);
+    }
+  }
+
+  _setPageContext(pageUrl) {
+    this.pageContext = {
+      pageUrl,
+    };
+  }
+}
+
+export default pageExtensionCtrl;
