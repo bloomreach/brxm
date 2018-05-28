@@ -79,7 +79,7 @@
     <hippo.services.version>4.4.0-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>4.4.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.utilities.version>4.4.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.jcrdiff.version>1.01.07-SNAPSHOT</hippo.jcrdiff.version>
+    <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
     <hippo.testutils.version>1.4.0-SNAPSHOT</hippo.testutils.version>
 
     <!-- Test dependencies  -->
