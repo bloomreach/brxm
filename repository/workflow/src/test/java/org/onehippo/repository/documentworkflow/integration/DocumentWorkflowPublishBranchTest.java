@@ -192,6 +192,46 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
     }
 
     @Test
+    public void publish_master_replaces_possible_live_branch_variant() throws Exception {
+
+        final Node preview = getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        // The actual branching!
+        workflow.branch("foo", "Foo");
+
+        workflow.publishBranch("foo");
+
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
+        assertFalse(versionHistory.hasVersionLabel("master-published"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+
+        final Node live = getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+        assertEquals("foo", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+        // trigger change to enable publish
+        workflow.obtainEditableInstance();
+        workflow.commitEditableInstance();
+
+        workflow.publish();
+
+        assertFalse("Live variant is expected to be replaced by 'Master'",
+                live.hasProperty(HIPPO_PROPERTY_BRANCH_ID));
+
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
+        assertTrue(versionHistory.hasVersionLabel("master-published"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+
+    }
+
+
+    @Test
     public void publish_non_existing_branch_results_in_workflow_exception() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
