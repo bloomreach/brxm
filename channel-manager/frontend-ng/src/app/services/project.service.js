@@ -74,7 +74,7 @@ class ProjectService {
     this.updateListeners.push(cb);
   }
 
-  associateToProject(documentId) {
+  associateWithProject(documentId) {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
     return this.$http
       .post(url)
