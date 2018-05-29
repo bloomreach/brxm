@@ -35,7 +35,9 @@ import HstConstants from './constants/hst.constants';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
 
-const hippoCmng = angular
+import hippoCmComponent from './hippo-cm.component';
+
+const hippoCmModule = angular
   .module('hippo-cm', [
     ngAnimate,
     ngDeviceDetector,
@@ -50,8 +52,9 @@ const hippoCmng = angular
     filtersModule,
     servicesModule,
   ])
+  .component('hippoCm', hippoCmComponent)
   .config(config)
   .constant('HstConstants', HstConstants)
   .run(run);
 
-export default hippoCmng;
+export default hippoCmModule;
