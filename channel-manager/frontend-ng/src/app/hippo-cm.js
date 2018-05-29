@@ -24,36 +24,13 @@ import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from '@uirouter/angularjs';
 
-// TODO: Move some of these toplevel modules into functional specific folders/modules
-import BrowserService from './services/browser.service';
-import CatalogService from './services/catalog.service';
-import CmsService from './services/cms.service';
-import ConfigService from './services/config.service';
-import ContentService from './services/content.service';
-import DialogService from './services/dialog.service';
-import DomService from './services/dom.service';
-import FeedbackService from './services/feedback.service';
-import HippoGlobal from './services/hippoGlobal.service';
-import HstComponentService from './services/hstComponent.service';
-import HstConstants from './constants/hst.constants';
-import HstService from './services/hst.service';
-import PathService from './services/path.service';
-import ProjectService from './services/project.service';
-import SessionService from './services/session.service';
-import SiteMapItemService from './services/siteMapItem.service';
-import SiteMapService from './services/siteMap.service';
-import SiteMenuService from './services/siteMenu.service';
-import WorkflowService from './services/workflow.service';
-
-import getByPropertyFilter from './filters/getByProperty.filter';
-import illegalCharactersDirective from './directives/illegalCharacters.directive';
-import incrementPropertyFilter from './filters/incrementProperty.filter';
-import scrollToIfDirective from './directives/scrollToIf.directive';
-import startWithSlashFilter from './filters/startWithSlash.filter';
-import stopPropagationDirective from './directives/stopPropagation.directive';
-
 import channelModule from './channel/channel';
+import directivesModule from './directives/directives.module';
 import factoriesModule from './factories/factories.module';
+import filtersModule from './filters/filters.module';
+import servicesModule from './services/services.module';
+
+import HstConstants from './constants/hst.constants';
 
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -68,34 +45,13 @@ const hippoCmng = angular
     ngTranslate,
     uiRouter,
     channelModule.name,
+    directivesModule,
     factoriesModule,
+    filtersModule,
+    servicesModule,
   ])
   .config(config)
-  .run(run)
   .constant('HstConstants', HstConstants)
-  .service('BrowserService', BrowserService)
-  .service('CatalogService', CatalogService)
-  .service('CmsService', CmsService)
-  .service('ConfigService', ConfigService)
-  .service('ContentService', ContentService)
-  .service('DialogService', DialogService)
-  .service('DomService', DomService)
-  .service('FeedbackService', FeedbackService)
-  .service('HippoGlobal', HippoGlobal)
-  .service('HstComponentService', HstComponentService)
-  .service('HstService', HstService)
-  .service('PathService', PathService)
-  .service('ProjectService', ProjectService)
-  .service('SessionService', SessionService)
-  .service('SiteMapItemService', SiteMapItemService)
-  .service('SiteMapService', SiteMapService)
-  .service('SiteMenuService', SiteMenuService)
-  .service('WorkflowService', WorkflowService)
-  .directive('illegalCharacters', illegalCharactersDirective)
-  .directive('scrollToIf', scrollToIfDirective)
-  .directive('stopPropagation', stopPropagationDirective)
-  .filter('getByProperty', getByPropertyFilter)
-  .filter('incrementProperty', incrementPropertyFilter)
-  .filter('startWithSlash', startWithSlashFilter);
+  .run(run);
 
 export default hippoCmng;
