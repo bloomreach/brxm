@@ -52,6 +52,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeField
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -59,7 +60,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +85,9 @@ public class FieldTypeUtils {
 
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
+
+    // Wicket plugin classes that are used for layout structure
+    private static final Set<String> STRUCTURE_PLUGIN_CLASSES;
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -119,9 +122,35 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
         FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
+
+        STRUCTURE_PLUGIN_CLASSES = new HashSet<>();
+        STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");
+        STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.service.render.ListViewPlugin");
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
+
+    public static void checkPluginsWithoutFieldDefinition(final FieldsInformation fieldsInformation, final ContentTypeContext context) {
+        final List<Node> editorConfigFieldNodes = NamespaceUtils.getEditorFieldConfigNodes(context.getContentTypeRoot());
+        for (final Node editorConfigFieldNode : editorConfigFieldNodes) {
+            pluginWithoutFieldDefinition(editorConfigFieldNode)
+                    .filter(FieldTypeUtils::isNotStructureElement)
+                    .ifPresent(fieldsInformation::addUnsupportedField);
+        }
+    }
+
+    private static Optional<String> pluginWithoutFieldDefinition(final Node editorConfigFieldNode) {
+        final Optional<String> fieldProperty = JcrStringReader.get().read(editorConfigFieldNode, "field");
+        if (!fieldProperty.isPresent()) {
+            return JcrStringReader.get().read(editorConfigFieldNode, "plugin.class");
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static boolean isNotStructureElement(final String pluginClass) {
+        return STRUCTURE_PLUGIN_CLASSES.stream().noneMatch(pluginClass::startsWith);
+    }
 
     private static class TypeDescriptor {
         public final Class<? extends FieldType> fieldTypeClass;

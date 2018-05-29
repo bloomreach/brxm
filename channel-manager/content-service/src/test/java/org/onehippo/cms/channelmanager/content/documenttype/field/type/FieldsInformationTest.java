@@ -92,6 +92,15 @@ public class FieldsInformationTest {
     }
 
     @Test
+    public void addReportableUnsupportedPluginField() {
+        final FieldsInformation info = FieldsInformation.allSupported();
+        info.addUnsupportedField("org.hippoecm.test");
+
+        assertFalse(info.isAllFieldsIncluded());
+        assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("org.hippoecm.test")));
+    }
+
+    @Test
     public void addMultipleReportableFields() {
         final FieldsInformation info = FieldsInformation.allSupported();
         info.addUnsupportedField("StaticDropdown", Collections.emptyList());

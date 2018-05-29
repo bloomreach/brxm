@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -844,5 +846,102 @@ public class FieldTypeUtilsTest {
 
         assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
         verifyAll();
+    }
+
+    @Test
+    public void pluginsCheckBasic() {
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final Node rootNode = createMock(Node.class);
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(Collections.emptyList());
+
+        replayAll();
+
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+        assertTrue(fieldsInformation.isAllFieldsIncluded());
+
+        verifyAll();
+    }
+
+    @Test
+    public void pluginsCheckWithFieldTemplate() throws RepositoryException {
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final Node rootNode = createMock(Node.class);
+        final Node editorConfigNode = createMock(Node.class);
+        final List<Node> nodeList = Collections.singletonList(editorConfigNode);
+        final Property property = createMock(Property.class);
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(nodeList);
+        expect(editorConfigNode.hasProperty("field")).andReturn(true);
+        expect(editorConfigNode.getProperty("field")).andReturn(property);
+        expect(property.getString()).andReturn("abc");
+
+        replayAll();
+
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+        assertTrue(fieldsInformation.isAllFieldsIncluded());
+
+        verifyAll();
+    }
+
+    @Test
+    public void pluginsCheckIgnoresStructurePlugins() throws RepositoryException {
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final Node rootNode = createMock(Node.class);
+        final Node editorRootNode = createMock(Node.class);
+        final Node editorColumnNode = createMock(Node.class);
+        final List<Node> nodeList = Arrays.asList(editorRootNode, editorColumnNode);
+        final Property property = createMock(Property.class);
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(nodeList);
+        expect(editorRootNode.hasProperty("field")).andReturn(false);
+        expect(editorRootNode.hasProperty("plugin.class")).andReturn(true);
+        expect(editorRootNode.getProperty("plugin.class")).andReturn(property);
+        expect(property.getString()).andReturn("org.hippoecm.frontend.editor.layout.");
+        expect(editorColumnNode.hasProperty("field")).andReturn(false);
+        expect(editorColumnNode.hasProperty("plugin.class")).andReturn(true);
+        expect(editorColumnNode.getProperty("plugin.class")).andReturn(property);
+        expect(property.getString()).andReturn("org.hippoecm.frontend.service.render.ListViewPlugin");
+
+        replayAll();
+
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+        assertTrue(fieldsInformation.isAllFieldsIncluded());
+
+        verifyAll();
+    }
+
+    @Test
+    public void pluginsCheckWithoutFieldDefinitionIsReported() throws RepositoryException {
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final Node rootNode = createMock(Node.class);
+        final Node editorConfigNode = createMock(Node.class);
+        final List<Node> nodeList = Collections.singletonList(editorConfigNode);
+        final Property property = createMock(Property.class);
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(nodeList);
+        expect(editorConfigNode.hasProperty("field")).andReturn(false);
+        expect(editorConfigNode.hasProperty("plugin.class")).andReturn(true);
+        expect(editorConfigNode.getProperty("plugin.class")).andReturn(property);
+        expect(property.getString()).andReturn("org.hippoecm.test");
+
+        replayAll();
+
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+
+        assertFalse(fieldsInformation.isAllFieldsIncluded());
+        assertThat(fieldsInformation.getUnsupportedFieldTypes().size(), equalTo(1));
+        assertThat(fieldsInformation.getUnsupportedFieldTypes().iterator().next(), equalTo("org.hippoecm.test"));
+
+        verifyAll();
+
     }
 }

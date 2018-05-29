@@ -130,6 +130,7 @@ public class DocumentTypesServiceImplTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -138,7 +139,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
 
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(FieldsInformation.allSupported());
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInformation);
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+        expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
@@ -173,6 +176,7 @@ public class DocumentTypesServiceImplTest {
         final ContentType contentType = createMock(ContentType.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
         final List<FieldType> fields = new ArrayList<>();
+        final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.of(context));
@@ -185,7 +189,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(FieldsInformation.allSupported());
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInformation);
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInformation, context);
+        expectLastCall();
 
         docType.setAllFieldsIncluded(true);
         expectLastCall();
@@ -233,6 +239,8 @@ public class DocumentTypesServiceImplTest {
 
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInfo, context);
+        expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
@@ -279,6 +287,8 @@ public class DocumentTypesServiceImplTest {
         final FieldsInformation fieldsInfo = new FieldsInformation();
 
         expect(FieldTypeUtils.populateFields(fields, context)).andReturn(fieldsInfo);
+        FieldTypeUtils.checkPluginsWithoutFieldDefinition(fieldsInfo, context);
+        expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
