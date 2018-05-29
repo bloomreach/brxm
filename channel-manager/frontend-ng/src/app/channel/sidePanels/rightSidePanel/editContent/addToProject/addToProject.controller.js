@@ -28,7 +28,7 @@ class AddToProjectController {
 
   addDocumentToProject() {
     const documentId = this.ContentEditor.getDocumentId();
-    this.ProjectService.associateToProject(documentId)
+    this.ProjectService.associateWithProject(documentId)
       .then(() => this.ContentEditor.open(documentId));
   }
 }

@@ -47,7 +47,7 @@ describe('addToProjectComponent', () => {
 
     ProjectService.selectedProject = testProject;
 
-    spyOn(ProjectService, 'associateToProject').and.returnValue($q.resolve());
+    spyOn(ProjectService, 'associateWithProject').and.returnValue($q.resolve());
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocumentId);
     spyOn(ContentEditor, 'open');
 
@@ -64,7 +64,7 @@ describe('addToProjectComponent', () => {
     it('adds the document to the selected project', () => {
       $ctrl.addDocumentToProject();
       expect(ContentEditor.getDocumentId).toHaveBeenCalled();
-      expect(ProjectService.associateToProject).toHaveBeenCalledWith(testDocumentId);
+      expect(ProjectService.associateWithProject).toHaveBeenCalledWith(testDocumentId);
     });
 
     it('opens the document in the content editor', () => {
@@ -74,7 +74,7 @@ describe('addToProjectComponent', () => {
     });
 
     it('does not open the document in the content editor when the document could not be added to the selected project', () => {
-      ProjectService.associateToProject.and.returnValue($q.reject());
+      ProjectService.associateWithProject.and.returnValue($q.reject());
       $ctrl.addDocumentToProject();
       $rootScope.$digest();
       expect(ContentEditor.open).not.toHaveBeenCalled();
