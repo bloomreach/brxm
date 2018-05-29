@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.search;
 
 import org.hippoecm.frontend.plugins.cms.admin.search.AdminTextSearchBuilder;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -47,4 +48,14 @@ public class AdminTextSearchBuilderTest {
         assertThat(xpathQuery, containsString("[(not(@hipposys:system) or @hipposys:system='false')]"));
     }
 
+    @Test
+    public void testOnePrimaryTypeIncludeSubtype() {
+        AdminTextSearchBuilder builder = new AdminTextSearchBuilder();
+        builder.setText("x");
+        builder.setIncludePrimaryTypes(new String[]{HippoNodeType.NT_USER});
+        final StringBuilder queryStringBuilder = builder.getQueryStringBuilder();
+        final String xpathQuery = queryStringBuilder.toString();
+
+        assertThat(xpathQuery, containsString("element(*," + HippoNodeType.NT_USER + ")"));
+    }
 }
