@@ -31,9 +31,11 @@ public class AdminTextSearchBuilder extends GeneralSearchBuilder {
             sb.append(scopes[0]);
         }
 
-        if (getIncludePrimaryTypes() != null && getIncludePrimaryTypes().length == 1) {
+        // for 1 primary type, use element() to retrieve also subtypes
+        final String[] primaryTypes = getIncludePrimaryTypes();
+        if (primaryTypes != null && primaryTypes.length == 1) {
             sb.append("//element(*,");
-            sb.append(getIncludePrimaryTypes()[0]);
+            sb.append(primaryTypes[0]);
             sb.append(")");
             return;
         }
