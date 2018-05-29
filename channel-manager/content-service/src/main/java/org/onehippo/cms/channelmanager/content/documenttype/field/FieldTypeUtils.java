@@ -140,10 +140,9 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> pluginWithoutFieldDefinition(final Node editorConfigFieldNode) {
-        final Optional<String> field = JcrStringReader.get().read(editorConfigFieldNode, "field");
-        final Optional<String> pluginClass = JcrStringReader.get().read(editorConfigFieldNode, "plugin.class");
-        if (!field.isPresent()) {
-            return pluginClass;
+        final Optional<String> fieldProperty = JcrStringReader.get().read(editorConfigFieldNode, "field");
+        if (!fieldProperty.isPresent()) {
+            return JcrStringReader.get().read(editorConfigFieldNode, "plugin.class");
         } else {
             return Optional.empty();
         }
