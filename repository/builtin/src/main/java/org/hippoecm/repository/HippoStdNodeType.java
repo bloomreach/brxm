@@ -98,12 +98,39 @@ public interface HippoStdNodeType {
      */
     String NT_GALLERY = "hippostd:gallery";
 
+    /**
+     * The hippostd:document node type, which is a base type including publication metadata.
+     */
     String NT_DOCUMENT = "hippostd:document";
+
+    /**
+     * The hippostd:space node type
+     */
     String NT_SPACE = "hippostd:space";
+
+    /**
+     * The hippostd:templates node type
+     */
     String NT_TEMPLATES = "hippostd:templates";
+
+    /**
+     * The hippostd:translated mixin type (has hippostd:translations)
+     */
     String NT_TRANSLATED = "hippostd:translated";
+
+    /**
+     * The hippostd:templatequery node type
+     */
     String NT_TEMPLATE_QUERY = "hippostd:templatequery";
+
+    /**
+     * The hippostd:taggable mixin (has hippostd:tags)
+     */
     String NT_TAGGABLE = "hippostd:taggable";
+
+    /**
+     * The hippostd:datefields node type -- you probably want {@link NT_DATE} instead.
+     */
     String NT_DATE_FIELDS = "hippostd:datefields";
 
     /**
