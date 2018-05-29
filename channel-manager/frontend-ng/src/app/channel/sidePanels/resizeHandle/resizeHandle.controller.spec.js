@@ -181,7 +181,9 @@ describe('resizeHandle component', () => {
       const mask = $('.resize-handle-mask');
       mask.trigger('mouseup');
 
-      expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(new Event('resize'));
+      const evt = new Event('resize');
+      expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(evt);
+      expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
     });
   });
 

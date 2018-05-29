@@ -20,6 +20,7 @@ class RightSidePanelCtrl {
     $mdConstant,
     $state,
     $transitions,
+    $window,
     SidePanelService,
     ChannelService,
     CmsService,
@@ -30,6 +31,7 @@ class RightSidePanelCtrl {
 
     this.$element = $element;
     this.$transitions = $transitions;
+    this.$window = $window;
 
     this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
@@ -112,6 +114,8 @@ class RightSidePanelCtrl {
       this.ChannelService.setToolbarDisplayed(true);
     }
     this.isFullWidth = state;
+    // to trigger hiding/showing pagination handles of md-tabs
+    this.$window.dispatchEvent(new Event('resize'));
   }
 }
 
