@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
@@ -54,6 +53,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
     protected String variableSuffix;
     protected Character escapeChar;
     protected String scope;
+    protected boolean escapeMessageXml = true;
 
     @Override
     public int doStartTag() throws JspException{
@@ -96,7 +96,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
                     if (bundle != null) {
                         textContent = MessageUtils.replaceMessagesByBundle(bundle, textContent,
                                                                            variablePrefix, variableSuffix,
-                                                                           escapeChar);
+                                                                           escapeChar, isEscapeMessageXml());
                     }
 
                     if (var == null) {
@@ -126,6 +126,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
         locale = null;
         localeString = null;
         scope = null;
+        escapeMessageXml = true;
     }
 
     @Override
@@ -203,6 +204,14 @@ public class MessagesReplaceTag extends BodyTagSupport {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public boolean isEscapeMessageXml() {
+        return escapeMessageXml;
+    }
+
+    public void setEscapeMessageXml(boolean escapeMessageXml) {
+        this.escapeMessageXml = escapeMessageXml;
     }
 
     protected LocalizationContext getLocalizationContext() {

@@ -18,6 +18,8 @@ package org.hippoecm.hst.tag;
 import java.io.Reader;
 import java.io.StringReader;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,9 +27,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HeadElementImpl;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.util.HeadElementUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,26 +41,32 @@ import org.xml.sax.InputSource;
 public class HeadContributionTag extends BodyTagSupport {
 
     static Logger logger = LoggerFactory.getLogger(HeadContributionTag.class);
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     protected String keyHint;
-    
+
     protected Element element;
-    
+
     /**
      * Comma separated category list where this head element should be in.
      */
     protected String category;
-    
+
     public int doEndTag() throws JspException {
         try {
-            // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
-            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
+            final HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pageContext.getRequest());
 
-            if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-                hstResponse = (HstResponse) pageContext.getResponse();
+            if (hstRequest == null) {
+                return SKIP_BODY;
             }
+
+            if (!HstRequest.RENDER_PHASE.equals(hstRequest.getLifecyclePhase())) {
+                return SKIP_BODY;
+            }
+
+            final HstResponse hstResponse = HstRequestUtils.getHstResponse(
+                    (HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
 
             if (hstResponse == null) {
                 return SKIP_BODY;
@@ -133,25 +143,25 @@ public class HeadContributionTag extends BodyTagSupport {
     public void setKeyHint(String keyHint) {
         this.keyHint = keyHint;
     }
-    
+
     public String getKeyHint() {
         return this.keyHint;
     }
-    
+
     public void setElement(Element element) {
         this.element = element;
     }
-    
+
     public Element getElement() {
         return this.element;
     }
-    
+
     public void setCategory(String category) {
         this.category = category;
     }
-    
+
     public String getCategory() {
         return category;
     }
-    
+
 }

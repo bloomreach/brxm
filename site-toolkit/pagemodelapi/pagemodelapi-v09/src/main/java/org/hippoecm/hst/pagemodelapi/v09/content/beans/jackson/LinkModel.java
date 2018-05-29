@@ -17,9 +17,6 @@ package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -27,8 +24,15 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
+@ApiModel(description = "Link model.")
 public class LinkModel {
 
     private static Logger log = LoggerFactory.getLogger(LinkModel.class);
@@ -60,21 +64,25 @@ public class LinkModel {
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Location of the link.")
     public String getHref() {
         return href;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Type of the link.")
     public String getType() {
         return type;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Relationship name of the link.")
     public String getRel() {
         return rel;
     }
 
     @JsonInclude(Include.NON_NULL)
+    @ApiModelProperty("Title of the link.")
     public String getTitle() {
         return title;
     }
@@ -86,58 +94,64 @@ public class LinkModel {
     public static LinkModel convert(final HstLink hstLink, final HstRequestContext requestContext) {
         final Mount linkMount = hstLink.getMount();
         // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
+        HstLink siteLink;
+
         if (PAGE_MODEL_PIPELINE_NAME.equals(linkMount.getNamedPipeline())) {
-            final Mount siteMount = linkMount.getParent();
-            if (siteMount == null) {
-                log.info("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
-                        "case for '{}'. Return the link model of the current hst link instead of relative to the parent " +
-                        "mount.", linkMount);
-                return new LinkModel(hstLink.toUrlForm(requestContext, false), "external");
+            siteLink = getSiteLink(hstLink, requestContext);
+            if (siteLink == null) {
+                log.warn("Could not get a site link. Use hstLink from argument instead instead.");
+                siteLink = hstLink;
             }
-            // since the selfLink could be resolved, the site link also must be possible to resolve
-            final HstLink siteLink = requestContext.getHstLinkCreator().create(hstLink.getPath(), siteMount);
-            if (siteLink != null) {
-                final String linkType = getLinkType(requestContext, siteLink);
-                return new LinkModel(siteLink.toUrlForm(requestContext, false), linkType);
-            }
-
-            log.warn("Unexpectedly could not resolve a site link for '{}'. Return LinkModel for hst link.", hstLink);
-
-            return new LinkModel(hstLink.toUrlForm(requestContext, false), "external");
-
+        } else {
+            siteLink = hstLink;
         }
 
-        if (requestContext.getResolvedMount().getMount() == hstLink.getMount()) {
-            return new LinkModel(hstLink.toUrlForm(requestContext, false), "internal");
-        }
+        return new LinkModel(siteLink.toUrlForm(requestContext, false), getLinkType(requestContext, siteLink));
 
-        return new LinkModel(hstLink.toUrlForm(requestContext, false), "external");
     }
 
     public static String getLinkType(final HstRequestContext requestContext, final HstLink siteLink) {
+        if (siteLink.isContainerResource()) {
+            return "resource";
+        }
+
+        final Mount linkMount = siteLink.getMount();
+        if (linkMount != null && linkMount != requestContext.getResolvedMount().getMount().getParent()) {
+            // this is a cross mount link since does not belong to the parent mount of the PageModelApi mount
+            return "external";
+        }
+
         final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
         if (siteMapItem == null) {
             return "external";
         }
-        final String linkType;
-        if (siteMapItem.isContainerResource()) {
-            linkType = "resource";
-        } else {
-            final Mount linkMount = siteLink.getMount();
-            if (linkMount != null && linkMount != requestContext.getResolvedMount().getMount().getParent()) {
-                // this is a cross mount link since does not belong to the parent mount of the PageModelApi mount
-                return "external";
-            }
-            final String linkApplicationId = siteMapItem.getApplicationId();
-            // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
-            // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
-            // the application id. If there is *no* application id set for both site map items, the link type is
-            // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
-            // have an application id to have correct indication of 'internal/external'.
-            final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-            linkType = Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
+        final String linkApplicationId = siteMapItem.getApplicationId();
+        // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
+        // to exactly the same hst sitemap item configuration node as the parent mount, hence we can compare
+        // the application id. If there is *no* application id set for both site map items, the link type is
+        // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
+        // have an application id to have correct indication of 'internal/external'.
+        final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
+        return Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
+    }
+
+    private static HstLink getSiteLink(final HstLink hstLink, final HstRequestContext requestContext) {
+        final Mount linkMount = hstLink.getMount();
+        final Mount siteMount = linkMount.getParent();
+        if (siteMount == null) {
+            log.info("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
+                    "case for '{}'. Return null.", linkMount);
+            return null;
         }
-        return linkType;
+        // since the selfLink could be resolved, the site link also must be possible to resolve
+        final HstLink siteLink = requestContext.getHstLinkCreator().create(hstLink.getPath(), siteMount);
+        if (siteLink != null) {
+            return siteLink;
+        }
+
+        log.warn("Unexpectedly could not resolve a site link for '{}'. Return null.", hstLink);
+
+        return null;
     }
 
 }
