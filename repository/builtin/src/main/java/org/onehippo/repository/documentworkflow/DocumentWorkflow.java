@@ -536,13 +536,13 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     /**
      * <p>
      *     Returns a {@link Document} for the combination {@code branchId} and {@code variant} or {@code null} if the
-     *     {@code state} does not exist for {@code branchId}. The {@core branchId} is allowed to be 'master' in which
+     *     {@code state} does not exist for {@code branchId}. The {@code branchId} is allowed to be 'master' in which
      *     the non-branch {@link Document} is returned if present.
      * </p>
      * @param branchId the id of the branch to get the {@link Document} for
      * @param state the {@link WorkflowUtils.Variant} that is requested
      * @return a {@link Document} where the backing {@link javax.jcr.Node} is for the {@code branchId} and {@code state}
-     * or {@code null} in case the {@core state} is not available for {@code branchId}. The {@link javax.jcr.Node} can
+     * or {@code null} in case the {@code state} is not available for {@code branchId}. The {@link javax.jcr.Node} can
      * be a state below the handle <em>or</em> a frozenNode from version history.
      * @throws WorkflowException If there is no branch for {@code branchId}
      */
@@ -615,16 +615,30 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
 
     /**
      * <p>
-     *     Publishes the branch for {@core branchId}. Note that publishing a branch can have as result that a published
+     *     Publishes the branch for {@code branchId}. Note that publishing a branch can have as result that a published
      *     variant is created, but, if it already exists, can also result in only a marker in version history that the
      *     specific branch is live.
      * </p>
      * @param branchId the id of the branch to publish
-     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@core branchId} is
-     * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version cannot
-     * be found in version history
+     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@code branchId} is
+     * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version does not
+     * exist
      */
     void publishBranch(String branchId) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Depublishes the branch for {@code branchId}. If there is no published version for {@code branchId}, a
+     *     workflow exception is thrown. If you want to avoid a workflow exception, first check via
+     *     {@link #getBranch(String, WorkflowUtils.Variant)} whether the published version for {@code branchId} exists
+     *
+     * </p>
+     * @param branchId the id of the branch to publish
+     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@code branchId} is
+     * equal to 'master' which is not allowed to be depublished as branch or in case the right published version does not
+     * exist
+     */
+    void depublishBranch(String branchId) throws WorkflowException;
 
     /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}

@@ -39,11 +39,11 @@ public class LabelTask extends AbstractDocumentTask {
     private String onLabel;
     private String removeLabel;
 
-    public DocumentVariant getVariant() {
+    public DocumentVariant getUnpublished() {
         return variant;
     }
 
-    public void setVariant(DocumentVariant variant) {
+    public void setUnpublished(DocumentVariant variant) {
         this.variant = variant;
     }
 
@@ -61,7 +61,7 @@ public class LabelTask extends AbstractDocumentTask {
 
     @Override
     protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
-        if (getVariant() == null || !getVariant().hasNode()) {
+        if (getUnpublished() == null || !getUnpublished().hasNode()) {
             throw new WorkflowException("No variant provided");
         }
 
@@ -70,7 +70,7 @@ public class LabelTask extends AbstractDocumentTask {
         }
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
-        Node targetNode = getVariant().getNode(workflowSession);
+        Node targetNode = getUnpublished().getNode(workflowSession);
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
@@ -79,7 +79,7 @@ public class LabelTask extends AbstractDocumentTask {
             if (versionHistory.hasVersionLabel(removeLabel)) {
                 versionHistory.removeVersionLabel(removeLabel);
             } else {
-                log.info("Specified to remove a label which does not exist. Do nothing");
+                throw new WorkflowException(String.format("Cannot remove label '%s' because it does not exist", removeLabel));
             }
         }
 

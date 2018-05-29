@@ -33,7 +33,7 @@ public class CheckoutBranchAction extends AbstractDocumentTaskAction<CheckoutBra
     }
 
     @SuppressWarnings("unused")
-    public void setVariant(String variant) {
+    public void setVariant(final String variant) {
         setParameter("variantExpr", variant);
     }
 
@@ -43,8 +43,27 @@ public class CheckoutBranchAction extends AbstractDocumentTaskAction<CheckoutBra
     }
 
     @SuppressWarnings("unused")
-    public void setBranchId(String branchIdExpr) {
+    public void setBranchId(final String branchIdExpr) {
         setParameter("branchIdExpr", branchIdExpr);
+    }
+
+    @SuppressWarnings("unused")
+    public String getStateLabel() {
+        return getParameter("stateLabelExpr");
+    }
+
+    @SuppressWarnings("unused")
+    public void setStateLabel(final String stateLabelExpr) {
+        setParameter("stateLabelExpr", stateLabelExpr);
+    }
+
+    @SuppressWarnings("unused")
+    public String getForceReplace() {
+        return getParameter("forceReplaceExpr");
+    }
+
+    public void setForceReplace(final String forceReplace) {
+        setParameter("forceReplaceExpr", forceReplace);
     }
 
     @Override
@@ -57,5 +76,13 @@ public class CheckoutBranchAction extends AbstractDocumentTaskAction<CheckoutBra
         super.initTask(task);
         task.setVariant(eval(getVariant()));
         task.setBranchId(eval(getBranchId()));
+        task.setStateLabel(eval(getStateLabel()));
+        task.setForceReplace(eval(getForceReplace()));
+    }
+
+    @Override
+    protected void processTaskResult(final Object taskResult) {
+        // even when result is null, set the result!
+        getSCXMLWorkflowContext().setResult(taskResult);
     }
 }

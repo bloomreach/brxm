@@ -406,6 +406,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public void depublishBranch(final String branchId) throws WorkflowException {
+        triggerAction(DocumentWorkflowAction.depublishBranch()
+                .addEventPayload(BRANCH_ID, branchId));
+    }
+
+    @Override
     public Object triggerAction(final WorkflowAction action) throws WorkflowException {
         if (!(action instanceof DocumentWorkflowAction)) {
             throw new IllegalArgumentException(String.format("action class must be of type '%s' for document workflow but " +

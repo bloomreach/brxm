@@ -683,7 +683,7 @@
               <hippo:version variant="unpublished" trigger="publication"/>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
-              <hippo:label variant="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
+              <hippo:label unpublished="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
             </if>
 
           </if>
@@ -710,6 +710,83 @@
           </if>
         </transition>
       </state>
+    </state>
+
+    <state id="depublish-branch">
+      <onentry>
+        <hippo:action action="depublishBranch" enabledExpr="live"/>
+      </onentry>
+      <state id="no-depublish-branch">
+        <!-- event-less transition to 'can-publish-branch' state -->
+        <transition target="can-depublish-branch" cond="live"/>
+      </state>
+
+      <state id="can-depublish-branch">
+        <transition event="depublishBranch">
+          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be depublished as branch'"/>
+
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be depublished because it doesn\'t exist'"/>
+
+          <if cond="!!unpublished">
+            <!-- there is already an unpublished version -->
+
+            <!-- remove the published label from version history -->
+            <hippo:label unpublished="unpublished" removeLabel="_event.data?.branchId + '-published'"/>
+
+            <if cond="published.isBranch(_event.data?.branchId)">
+              <!-- this is a very complex state: the branch gets depublished but the published variant is for the branch : This
+              means we need to unpublish this one BUT if it turns out there is ANY other
+              branch (including Master) live in version history, we need to publish that branch!! Master has
+              precedence to become the live variant (although in general it already always is) -->
+              <script>
+                var originalUnpublishedId = unpublished.getBranchId();
+              </script>
+
+              <!-- first version the existing unpublished since it might get replaced (and can be even another branch ) -->
+              <hippo:version variant="unpublished"/>
+
+              <!-- take the live variant offline -->
+              <hippo:configVariant variant="published" availabilities=""/>
+
+              <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'published'"/>
+
+              <if cond="!!workflowContext.result">
+                <!-- the checkout of a published branch succeeded in a result : publish the preview now -->
+                <!-- copy the content of the unpublished variant to the published variant -->
+                <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+                <!-- mark the published variant as published and set its availability to (only) 'live' -->
+                <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
+                <!-- we do not need an extra version! -->
+
+                <!-- we need to restore the preview of before -->
+                <hippo:checkoutBranch variant="unpublished" branchId="originalUnpublishedId" forceReplace="true"/>
+              </if>
+
+            </if>
+          </if>
+
+          <if cond="!unpublished">
+            <!-- there is no unpublished version : Only allow the depublish IF the published variant is for the current right branch -->
+            <if cond="published.isBranch(_event.data?.branchId)">
+              <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+              <!-- ensure the unpublished variant to be versionable set its availability to (only) 'preview' -->
+              <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+              <!-- remove all availabilities from the published variant -->
+              <hippo:configVariant variant="published" availabilities=""/>
+              <!-- create an extra version of the current unpublished (possibly modified?) -->
+              <hippo:version variant="unpublished"/>
+            <else/>
+              <!-- should never come here since 'branchId' branch exists and there is only a published version -->
+              <hippo:workflowException errorExpr="'Cannot depublish branch \'' + _event.data?.branchId + '\' since there is not a published version for it'"/>
+            </if>
+          </if>
+
+        </transition>
+      </state>
+
     </state>
 
     <!-- the composite terminate state is used to manage termination and related/similar workflow operations like

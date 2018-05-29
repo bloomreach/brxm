@@ -26,6 +26,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -113,6 +114,14 @@ public class DocumentVariant extends Document {
             return  branchId.equals(MASTER_BRANCH_ID);
         } else {
             return branchId.equals(branchIdProperty);
+        }
+    }
+
+    public String getBranchId() throws RepositoryException {
+        if (getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+            return getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
+        } else {
+            return MASTER_BRANCH_ID;
         }
     }
 

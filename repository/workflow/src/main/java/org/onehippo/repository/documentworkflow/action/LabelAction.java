@@ -28,13 +28,13 @@ public class LabelAction extends AbstractDocumentTaskAction<LabelTask> {
 
     private static final long serialVersionUID = 1L;
 
-    public String getVariant() {
-        return getParameter("variantExpr");
+    public String getUnpublished() {
+        return getParameter("unpublishedExpr");
     }
 
     @SuppressWarnings("unused")
-    public void setVariant(String variant) {
-        setParameter("variantExpr", variant);
+    public void setUnpublished(String unpublished) {
+        setParameter("unpublishedExpr", unpublished);
     }
 
     @SuppressWarnings("unused")
@@ -75,7 +75,7 @@ public class LabelAction extends AbstractDocumentTaskAction<LabelTask> {
     @Override
     protected void initTask(LabelTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setVariant(eval(getVariant()));
+        task.setUnpublished(eval(getUnpublished()));
         task.setAddLabel(eval(getAddLabel()));
         task.setOnLabel(eval(getOnLabel()));
         task.setRemoveLabel(eval(getRemoveLabel()));
