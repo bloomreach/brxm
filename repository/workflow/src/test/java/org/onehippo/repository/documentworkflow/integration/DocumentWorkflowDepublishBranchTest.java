@@ -16,7 +16,6 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -25,7 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -36,14 +34,12 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
@@ -60,7 +56,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
 
         workflow.publish();
 
-        // depublish is enabled when there is no live variant
+        // depublish is enabled when there is a live variant
         assertTrue((Boolean) workflow.hints().get("depublishBranch"));
 
         // when document is being edited, you can still depublish
@@ -225,7 +221,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         assertEquals("bar9", unpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
     }
 
-        @Test
+    @Test
     public void depublish_branch_when_the_published_version_for_master_assertions() throws Exception {
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -316,7 +312,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         session.save();
 
         final Node published = getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
-        published.setProperty(HIPPO_AVAILABILITY, new String[]{"live","preview"});
+        published.setProperty(HIPPO_AVAILABILITY, new String[]{"live", "preview"});
         session.save();
 
         assertEquals("foo", published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
@@ -330,7 +326,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
 
         workflow.depublishBranch("foo");
 
-        assertTrue("Depublish keeps the published node!",getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).isPresent());
+        assertTrue("Depublish keeps the published node!", getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).isPresent());
         assertTrue(published.isSame(getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get()));
         assertArrayEquals(new String[]{}, JcrUtils.getMultipleStringProperty(published, HIPPO_AVAILABILITY, null));
 
@@ -389,7 +385,8 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
 
     @Test
     public void depublish_branch_foo_while_bar_published_exists_and_bar_unpublished_has_changes() throws Exception {
-        depublish_foo_with_bar_published_assertions(documentWorkflow -> {});
+        depublish_foo_with_bar_published_assertions(documentWorkflow -> {
+        });
     }
 
     private void depublish_foo_with_bar_published_assertions(final Consumer<DocumentWorkflow> consumer) throws RepositoryException, WorkflowException, RemoteException {

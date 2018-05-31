@@ -25,26 +25,23 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class LabelTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(LabelTask.class);
-    private DocumentVariant variant;
+    private DocumentVariant unpublished;
     private String addLabel;
     private String onLabel;
     private String removeLabel;
 
     public DocumentVariant getUnpublished() {
-        return variant;
+        return unpublished;
     }
 
     public void setUnpublished(DocumentVariant variant) {
-        this.variant = variant;
+        this.unpublished = variant;
     }
 
     public void setAddLabel(final String addLabel) {
@@ -62,7 +59,7 @@ public class LabelTask extends AbstractDocumentTask {
     @Override
     protected Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         if (getUnpublished() == null || !getUnpublished().hasNode()) {
-            throw new WorkflowException("No variant provided");
+            throw new WorkflowException("No unpublished variant provided");
         }
 
         if (addLabel == null && onLabel == null && removeLabel == null) {

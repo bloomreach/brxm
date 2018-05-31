@@ -86,10 +86,7 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
         Node targetNode = getVariant().getNode(workflowSession);
 
         if (ANY.equals(branchId)) {
-            if (stateLabel == null) {
-                throw new WorkflowException("When branchId is '*', a non-null label is required");
-            }
-            return checkoutMasterOrEldestBranch(workflowSession, targetNode, stateLabel);
+            return checkoutMasterOrEldestBranch(workflowSession, targetNode);
         }
 
         if (!forceReplace && targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
@@ -123,7 +120,10 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
      * @return a checked out Document for any branch that has the required label or NULL if no such version exists. If
      * there is no Master to restore for stateLabel but multiple others, we pick the oldest version to restore
      */
-    private DocumentVariant checkoutMasterOrEldestBranch(final Session workflowSession, final Node targetNode, final String stateLabel) throws RepositoryException {
+    private DocumentVariant checkoutMasterOrEldestBranch(final Session workflowSession, final Node targetNode) throws RepositoryException, WorkflowException {
+        if (stateLabel == null) {
+            throw new WorkflowException("When branchId is '*', a non-null label is required");
+        }
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
         if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED)) {
@@ -135,7 +135,7 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
 
         final List<String> labels = Arrays.stream(versionHistory.getVersionLabels()).filter(label -> label.endsWith("-" + stateLabel)).collect(Collectors.toList());
         if (labels.isEmpty()) {
-            // there is not version for 'stateLabel', return null
+            // there is no version for 'stateLabel', return null
             return null;
         }
 

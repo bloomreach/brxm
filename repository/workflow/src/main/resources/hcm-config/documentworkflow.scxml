@@ -742,7 +742,7 @@
               branch (including Master) live in version history, we need to publish that branch!! Master has
               precedence to become the live variant (although in general it already always is) -->
               <script>
-                var originalUnpublishedId = unpublished.getBranchId();
+                var originalUnpublishedBranchId = unpublished.getBranchId();
               </script>
 
               <!-- first version the existing unpublished since it might get replaced (and can be even another branch ) -->
@@ -762,7 +762,7 @@
                 <!-- we do not need an extra version! -->
 
                 <!-- we need to restore the preview of before -->
-                <hippo:checkoutBranch variant="unpublished" branchId="originalUnpublishedId" forceReplace="true"/>
+                <hippo:checkoutBranch variant="unpublished" branchId="originalUnpublishedBranchId" forceReplace="true"/>
               </if>
 
             </if>
