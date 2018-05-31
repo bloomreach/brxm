@@ -763,6 +763,42 @@ public class HstManageContentTagTest {
                 + "} -->"));
     }
 
+    @Test
+    public void matchingJcrInitialPathAndManageContentRootPath() throws Exception {
+        tag.setRootPath("news");
+        tag.setParameterName("pickerNews");
+
+        final ResolvedMount resolvedMount = createMock(ResolvedMount.class);
+        final Mount mount = createMock(Mount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(mount.getContentPath()).andReturn("/my/channel/path").anyTimes();
+
+        Session jcrSession = createMock(Session.class);
+        hstRequestContext.setSession(jcrSession);
+        hstRequestContext.setSiteContentBasePath("my/channel/path");
+        hstRequestContext.setResolvedMount(resolvedMount);
+
+        Node folderNode = createMock(Node.class);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_FOLDER)).andReturn(false);
+        expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
+        expect(jcrSession.getNode("/my/channel/path/news")).andReturn(folderNode);
+
+        replay(jcrSession, folderNode, resolvedMount);
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"rootPath\":\"news\","
+                + "\"parameterName\":\"pickerNews\","
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"pickerConfiguration\":\"cms-pickers/documents\","
+                + "\"pickerInitialPath\":\"/my/channel/path/news\","
+                + "\"pickerRemembersLastVisited\":\"true\","
+                + "\"pickerRootPath\":\"/my/channel/path/news\""
+                + "} -->"));
+    }
+
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
         final List<String> messages = listener.messages().collect(Collectors.toList());
         assertThat(messages.size(), is(1));
@@ -818,6 +854,12 @@ public class HstManageContentTagTest {
                 pickerInitialPath = "/initial-path"
         )
         String getPickerAbsoluteInitialPath();
+
+        @Parameter(name = "pickerNews")
+        @JcrPath(
+                pickerInitialPath = "news"
+        )
+        String getPickerNews();
 
         @Parameter(name = "string")
         String getString();
