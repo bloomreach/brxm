@@ -15,7 +15,6 @@
  */
 
 import moment from 'moment-timezone';
-import template from './hippo-cm.html';
 
 const FALLBACK_LOCALE = 'en';
 
@@ -39,7 +38,7 @@ function config(
 
   $stateProvider.state('hippo-cm', {
     url: '/',
-    template,
+    component: 'hippoCm',
     resolve: {
       translations: ($translate, ConfigService) => {
         'ngInject';
