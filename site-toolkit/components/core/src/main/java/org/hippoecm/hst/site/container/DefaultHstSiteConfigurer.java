@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.model.ConfigurationNodesLoadingException;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -291,7 +293,18 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 final long start = System.currentTimeMillis();
                 final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
                 // triggers the loading of all the hst configuration nodes
-                hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                HstNode root = null;
+                while (root == null) {
+                    try {
+                        root = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                    } catch (ConfigurationNodesLoadingException e) {
+                        if (log.isDebugEnabled()) {
+                            log.info("Exception while trying to load the HST configuration nodes. Try again.", e);
+                        } else {
+                            log.info("Exception while trying to load the HST configuration nodes. Try again. Reason: {}", e.getMessage());
+                        }
+                    }
+                }
                 log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
             }
             log.info(INIT_DONE_MSG);

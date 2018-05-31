@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,9 +28,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
@@ -107,7 +106,7 @@ public class HstNodeImpl implements HstNode {
         }
         long iteratorSizeAfterLoop = nodes.getSize();
         if (iteratorSizeBeforeLoop != iteratorSizeAfterLoop) {
-            throw new ModelLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
+            throw new ConfigurationNodesLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
         }
     }
 

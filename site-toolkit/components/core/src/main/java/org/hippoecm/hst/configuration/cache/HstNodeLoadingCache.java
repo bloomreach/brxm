@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.site.HstServices;
@@ -102,7 +103,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                         if (!lazyCloseableSession.getSession().nodeExists(rootPath)) {
                             // root config node is not present any more
                             rootNode = null;
-                            throw new ModelLoadingException("Cannot load hst model since root config node " +
+                            throw new ConfigurationNodesLoadingException("Cannot load hst model since root config node " +
                                     "'"+rootPath+"' missing");
                         }
                     }
@@ -131,7 +132,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                 log.info("Updating root HstNode took '{}' ms.", (System.currentTimeMillis() - start));
             }
         } catch (RepositoryException e) {
-            throw new ModelLoadingException("Could not load hst node model due to RepositoryException : ", e);
+            throw new ConfigurationNodesLoadingException("Could not load hst node model due to RepositoryException : ", e);
         }
         HstNode result;
         if (absPath.equals(rootPath)) {
