@@ -33,8 +33,6 @@ import servicesModule from './services/services.module';
 import HstConstants from './constants/hst.constants';
 
 import config from './hippo-cm.config';
-import run from './hippo-cm.run';
-
 import hippoCmComponent from './hippo-cm.component';
 
 const hippoCmModule = angular
@@ -54,7 +52,6 @@ const hippoCmModule = angular
   ])
   .component('hippoCm', hippoCmComponent)
   .config(config)
-  .constant('HstConstants', HstConstants)
-  .run(run);
+  .constant('HstConstants', HstConstants);
 
 export default hippoCmModule;

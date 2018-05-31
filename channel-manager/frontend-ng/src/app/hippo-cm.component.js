@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import controller from './hippo-cm.controller';
 import template from './hippo-cm.html';
 
 const hippoCmComponent = {
+  controller,
   template,
 };
 
