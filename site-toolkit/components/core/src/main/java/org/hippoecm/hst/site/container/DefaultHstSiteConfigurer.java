@@ -297,6 +297,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 while (root == null) {
                     try {
                         root = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                        // don't sweat to much, sleep for 250 ms
+                        Thread.sleep(250);
                     } catch (ConfigurationNodesLoadingException e) {
                         if (log.isDebugEnabled()) {
                             log.info("Exception while trying to load the HST configuration nodes. Try again.", e);
