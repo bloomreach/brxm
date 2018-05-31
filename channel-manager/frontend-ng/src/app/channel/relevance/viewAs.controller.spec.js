@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ViewAsCtrl', () => {
-  let ViewAsCtrl;
+  let $ctrl;
+  let $controller;
   let $element;
   let $q;
-  let $controller;
   let $rootScope;
   let $window;
-  let SessionService;
-  let HstService;
-  let HippoIframeService;
   let FeedbackService;
+  let HippoIframeService;
+  let HstService;
+  let SessionService;
+
   const MockConfigService = {
     variantsUuid: 'testVariantsUuid',
     locale: 'testLocale',
@@ -37,44 +38,49 @@ describe('ViewAsCtrl', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$q_,
       _$controller_,
+      _$q_,
       _$rootScope_,
       _$window_,
-      _SessionService_,
-      _HstService_,
-      _HippoIframeService_,
       _FeedbackService_,
+      _HippoIframeService_,
+      _HstService_,
+      _SessionService_,
     ) => {
-      $q = _$q_;
       $controller = _$controller_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
-      SessionService = _SessionService_;
-      HstService = _HstService_;
-      HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
+      HstService = _HstService_;
+      SessionService = _SessionService_;
 
       $element = angular.element('<div></div>');
 
+      spyOn(FeedbackService, 'showError');
+      spyOn(HippoIframeService, 'reload');
       spyOn(HstService, 'doGetWithParams');
       spyOn(HstService, 'doPost');
       spyOn(SessionService, 'registerInitCallback');
       spyOn(SessionService, 'unregisterInitCallback');
-      spyOn(HippoIframeService, 'reload');
-      spyOn(FeedbackService, 'showError');
     });
   });
+
+  function createController(scope, configService) {
+    return $controller('ViewAsCtrl', {
+      $scope: scope,
+      ConfigService: configService,
+      $element,
+    });
+  }
 
   it('doesn\'t attempt to retrieve the global variants if the corresponding uuid is not present', () => {
     const scope = $rootScope.$new();
     spyOn(scope, '$on');
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: scope,
-      ConfigService: {},
-      $element,
-    });
+    $ctrl = createController(scope, {});
+    $ctrl.$onInit();
 
     expect(HstService.doGetWithParams).not.toHaveBeenCalled();
     expect(SessionService.registerInitCallback.calls.mostRecent().args[0]).toBe('reloadGlobalVariants');
@@ -90,13 +96,10 @@ describe('ViewAsCtrl', () => {
     const scope = $rootScope.$new();
     spyOn(scope, '$watch');
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: scope,
-      ConfigService: { rootUuid: 'rootUuid' },
-      $element,
-    });
+    $ctrl = createController(scope, { rootUuid: 'rootUuid' });
+    $ctrl.$onInit();
 
-    expect(scope.$watch.calls.mostRecent().args[0]).toBe('viewAs.selectedVariant');
+    expect(scope.$watch.calls.mostRecent().args[0]).toBe('$ctrl.selectedVariant');
     const variantChangedCallback = scope.$watch.calls.mostRecent().args[1];
 
     // ignore the initial call
@@ -125,19 +128,16 @@ describe('ViewAsCtrl', () => {
   it('has no global variants if retrieving them fails', () => {
     HstService.doGetWithParams.and.returnValue($q.reject());
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      ConfigService: MockConfigService,
-      $element,
-    });
+    $ctrl = createController($rootScope.$new(), MockConfigService);
+    $ctrl.$onInit();
 
     expect(HstService.doGetWithParams).toHaveBeenCalledWith('testVariantsUuid', { locale: 'testLocale' }, 'globalvariants');
 
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE');
-    expect(ViewAsCtrl.globalVariants).toEqual([]);
-    expect(ViewAsCtrl.selectedVariant).toBeUndefined();
+    expect($ctrl.globalVariants).toEqual([]);
+    expect($ctrl.selectedVariant).toBeUndefined();
   });
 
   it('selects the rendered variant', () => {
@@ -147,16 +147,12 @@ describe('ViewAsCtrl', () => {
     ];
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      ConfigService: MockConfigService,
-      $element,
-    });
-    ViewAsCtrl.renderVariant = 'id2';
+    $ctrl = createController($rootScope.$new(), MockConfigService);
+    $ctrl.renderVariant = 'id2';
     $rootScope.$digest();
 
-    expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
-    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[1]);
+    expect($ctrl.globalVariants).toBe(globalVariants);
+    expect($ctrl.selectedVariant).toBe(globalVariants[1]);
   });
 
   it('selects the first variant as a fallback when the render variant set but no longer available', () => {
@@ -166,16 +162,12 @@ describe('ViewAsCtrl', () => {
     ];
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      ConfigService: MockConfigService,
-      $element,
-    });
-    ViewAsCtrl.renderVariant = 'id3';
+    $ctrl = createController($rootScope.$new(), MockConfigService);
+    $ctrl.renderVariant = 'id3';
     $rootScope.$digest();
 
-    expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
-    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants[0]);
+    expect($ctrl.globalVariants).toBe(globalVariants);
+    expect($ctrl.selectedVariant).toBe(globalVariants[0]);
   });
 
   it('does not fall back to the first variant when the render variant has not been set yet', () => {
@@ -185,15 +177,11 @@ describe('ViewAsCtrl', () => {
     ];
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants }));
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      ConfigService: MockConfigService,
-      $element,
-    });
+    $ctrl = createController($rootScope.$new(), MockConfigService);
     $rootScope.$digest();
 
-    expect(ViewAsCtrl.globalVariants).toBe(globalVariants);
-    expect(ViewAsCtrl.selectedVariant).not.toBeDefined();
+    expect($ctrl.globalVariants).toBe(globalVariants);
+    expect($ctrl.selectedVariant).not.toBeDefined();
   });
 
   it('preserves the selection by ID', () => {
@@ -211,12 +199,9 @@ describe('ViewAsCtrl', () => {
     ];
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants1 }));
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      ConfigService: MockConfigService,
-      $element,
-    });
-    ViewAsCtrl.renderVariant = 'id1';
+    $ctrl = createController($rootScope.$new(), MockConfigService);
+    $ctrl.$onInit();
+    $ctrl.renderVariant = 'id1';
     $rootScope.$digest();
 
     const reloadGlobalVariantsCallback = SessionService.registerInitCallback.calls.mostRecent().args[1];
@@ -226,28 +211,28 @@ describe('ViewAsCtrl', () => {
     expect(HstService.doGetWithParams).toHaveBeenCalled();
     $rootScope.$digest();
 
-    expect(ViewAsCtrl.globalVariants).toBe(globalVariants2);
-    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants2[2]);
+    expect($ctrl.globalVariants).toBe(globalVariants2);
+    expect($ctrl.selectedVariant).toBe(globalVariants2[2]);
 
     HstService.doGetWithParams.and.returnValue($q.when({ data: globalVariants3 }));
     reloadGlobalVariantsCallback();
     $rootScope.$digest();
 
-    expect(ViewAsCtrl.globalVariants).toBe(globalVariants3);
-    expect(ViewAsCtrl.selectedVariant).toBe(globalVariants3[0]);
+    expect($ctrl.globalVariants).toBe(globalVariants3);
+    expect($ctrl.selectedVariant).toBe(globalVariants3[0]);
   });
 
   it('formats the display name of a global variant', () => {
     const variant1 = { name: 'name-only' };
     const variant2 = { name: 'name', group: 'group' };
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
+    $ctrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       $element,
     });
 
-    expect(ViewAsCtrl.makeDisplayName(variant1)).toBe('name-only');
-    expect(ViewAsCtrl.makeDisplayName(variant2)).toBe('name (group)');
+    expect($ctrl.makeDisplayName(variant1)).toBe('name-only');
+    expect($ctrl.makeDisplayName(variant2)).toBe('name (group)');
   });
 
   it('formats the selectable display name', () => {
@@ -255,20 +240,17 @@ describe('ViewAsCtrl', () => {
     const variant2 = { name: 'name', group: 'group' };
     const alterEgo = { name: 'Alter Ego', id: 'hippo-alter-ego' };
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      $element,
-    });
+    $ctrl = createController($rootScope.$new(), {});
 
-    ViewAsCtrl.selectedVariant = variant1;
-    expect(ViewAsCtrl.makeSelectableDisplayName(variant1)).toBe('name-only');
-    expect(ViewAsCtrl.makeSelectableDisplayName(variant2)).toBe('name (group)');
-    expect(ViewAsCtrl.makeSelectableDisplayName(alterEgo)).toBe('Alter Ego');
+    $ctrl.selectedVariant = variant1;
+    expect($ctrl.makeSelectableDisplayName(variant1)).toBe('name-only');
+    expect($ctrl.makeSelectableDisplayName(variant2)).toBe('name (group)');
+    expect($ctrl.makeSelectableDisplayName(alterEgo)).toBe('Alter Ego');
 
-    ViewAsCtrl.selectedVariant = alterEgo;
-    expect(ViewAsCtrl.makeSelectableDisplayName(variant1)).toBe('name-only');
-    expect(ViewAsCtrl.makeSelectableDisplayName(variant2)).toBe('name (group)');
-    expect(ViewAsCtrl.makeSelectableDisplayName(alterEgo)).toBe('TOOLBAR_EDIT_ALTER_EGO');
+    $ctrl.selectedVariant = alterEgo;
+    expect($ctrl.makeSelectableDisplayName(variant1)).toBe('name-only');
+    expect($ctrl.makeSelectableDisplayName(variant2)).toBe('name (group)');
+    expect($ctrl.makeSelectableDisplayName(alterEgo)).toBe('TOOLBAR_EDIT_ALTER_EGO');
   });
 
   it('edits the alter ego by publishing an edit-alter-ego event', () => {
@@ -278,21 +260,19 @@ describe('ViewAsCtrl', () => {
 
     spyOn($window.APP_TO_CMS, 'publish').and.callThrough();
 
-    ViewAsCtrl = $controller('ViewAsCtrl', {
+    $ctrl = $controller('ViewAsCtrl', {
       $scope: $rootScope.$new(),
       $element: mockElement,
     });
     const alterEgo = { id: 'hippo-alter-ego' };
-    ViewAsCtrl.editVariant(alterEgo);
+    $ctrl.editVariant(alterEgo);
 
     expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('edit-alter-ego', 42);
   });
 
   it('reloads the iframe when the alter ego changed', () => {
-    ViewAsCtrl = $controller('ViewAsCtrl', {
-      $scope: $rootScope.$new(),
-      $element,
-    });
+    $ctrl = createController($rootScope.$new(), {});
+    $ctrl.$onInit();
 
     $window.CMS_TO_APP.publish('alter-ego-changed');
 
