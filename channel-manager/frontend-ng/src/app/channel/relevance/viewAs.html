@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
   limitations under the License.
   -->
 
-<div ng-if="viewAs.selectedVariant" layout="row" layout-align="start center" class="select-in-toolbar qa-view-as">
+<div ng-if="$ctrl.selectedVariant" layout="row" layout-align="start center" class="select-in-toolbar qa-view-as">
   <label flex="none">{{ ::'TOOLBAR_VIEW_AS_LABEL' | translate }}</label>
   <md-select aria-label="{{ ::'TOOLBAR_VIEW_AS_LABEL' | translate }}"
              class="md-no-underline"
-             ng-model="viewAs.selectedVariant"
+             ng-model="$ctrl.selectedVariant"
              ng-model-options="{trackBy: '$value.id'}"
-             md-selected-text="viewAs.makeDisplayName(viewAs.selectedVariant)">
-    <md-option ng-repeat="variant in viewAs.globalVariants track by variant.id"
+             md-selected-text="$ctrl.makeDisplayName($ctrl.selectedVariant)">
+    <md-option ng-repeat="variant in $ctrl.globalVariants track by variant.id"
                ng-value="{{::variant}}"
-               ng-click="viewAs.editVariant(variant)">
-      {{ ::viewAs.makeSelectableDisplayName(variant) }}
+               ng-click="$ctrl.editVariant(variant)">
+      {{ ::$ctrl.makeSelectableDisplayName(variant) }}
     </md-option>
   </md-select>
   <span>

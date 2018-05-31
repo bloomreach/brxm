@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,37 @@
 const ALTER_EGO_ID = 'hippo-alter-ego';
 
 class ViewAsCtrl {
-  constructor($scope, $element, $translate, CmsService, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
+  constructor($element, $scope, $translate, CmsService, ConfigService, FeedbackService, HippoIframeService, HstService, PageMetaDataService, SessionService) {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.HstService = HstService;
-    this.HippoIframeService = HippoIframeService;
-    this.PageMetaDataService = PageMetaDataService;
     this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
+    this.HstService = HstService;
+    this.PageMetaDataService = PageMetaDataService;
+    this.SessionService = SessionService;
 
     this.globalVariants = [];
 
     this._retrieveGlobalVariants();
+  }
 
+  $onInit() {
     // In order to have a way to trigger the reloading of the global variants, we tie the reloading
     // to a successful SessionService.initialize call, which happens upon channel switching.
-    SessionService.registerInitCallback('reloadGlobalVariants', () => this._retrieveGlobalVariants());
-    $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadGlobalVariants'));
+    this.SessionService.registerInitCallback('reloadGlobalVariants', () => this._retrieveGlobalVariants());
+    this.$scope.$on('$destroy', () => this.SessionService.unregisterInitCallback('reloadGlobalVariants'));
 
-    $scope.$watch('viewAs.renderVariant', () => this._updateSelectedVariant());
+    this.$scope.$watch('$ctrl.renderVariant', () => this._updateSelectedVariant());
 
     // Could have used ng-change on md-select, but watching nicely gives me the old value as well.
-    $scope.$watch('viewAs.selectedVariant', (newValue, oldValue) => this._setVariant(newValue, oldValue));
+    this.$scope.$watch('$ctrl.selectedVariant', (newValue, oldValue) => this._setVariant(newValue, oldValue));
 
-    CmsService.subscribe('alter-ego-changed', () => HippoIframeService.reload());
+    this.CmsService.subscribe('alter-ego-changed', () => this.HippoIframeService.reload());
   }
 
   _retrieveGlobalVariants() {
