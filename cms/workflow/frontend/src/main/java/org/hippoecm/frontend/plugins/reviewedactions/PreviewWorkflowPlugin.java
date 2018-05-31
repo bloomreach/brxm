@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.addon.workflow.BranchAwareStdWorkflow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -35,8 +35,13 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
         inUseBy = getHint("inUseBy");
     }
 
-    protected StdWorkflow getInfoEditAction() {
-        return new StdWorkflow("infoEdit", "infoEdit") {
+    protected BranchAwareStdWorkflow getInfoEditAction() {
+        return new BranchAwareStdWorkflow("infoEdit", "infoEdit") {
+
+            @Override
+            public void updateBranch(final String branchId) {
+                log.debug("Updating branch:{}", branchId);
+            }
 
             /**
              * Gets whether this component and any children are visible.

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,7 +28,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.addon.workflow.BranchAwareStdWorkflow;
+import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -43,24 +45,34 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private final StdWorkflow infoAction;
-    private final StdWorkflow infoEditAction;
-    private final StdWorkflow editAction;
+    private final BranchAwareStdWorkflow infoAction;
+    private final BranchAwareStdWorkflow infoEditAction;
+    private final BranchAwareStdWorkflow editAction;
     private final Map<String, Serializable> info;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
+        final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), new WorkflowUtils.Variant[]{UNPUBLISHED, PUBLISHED});
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         info = getHints();
 
-        infoAction = new StdWorkflow("info", "info") {
+        infoAction = new BranchAwareStdWorkflow("info", "info") {
+
+            @Override
+            public void updateBranch(final String branchId) {
+                log.debug("Updating branch:{}", branchId);
+            }
 
             @Override
             public String getSubMenu() {
@@ -90,7 +102,12 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         infoEditAction = getInfoEditAction();
         add(infoEditAction);
 
-        editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
+        editAction = new BranchAwareStdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
+
+            @Override
+            public void updateBranch(final String branchId) {
+                log.debug("Updating branch:{}", branchId);
+            }
 
             @Override
             public String getSubMenu() {
@@ -125,9 +142,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         };
         add(editAction);
 
+        new BranchIdModelObservation(context, config,
+                branchId -> Stream.of(editAction, infoEditAction, infoAction).forEach(action -> action.updateBranch(branchId)))
+                .observeBranchId(initialBranchId);
         hideInvalidActions();
     }
-
 
 
     @SuppressWarnings("unused")  // used by a PropertyModel
@@ -151,7 +170,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         hideOrDisable(info, "status", infoAction);
     }
 
-    protected final String getHint(final String key){
+    protected final String getHint(final String key) {
         final Serializable serializable = info.get(key);
         if (serializable instanceof String) {
             return (String) serializable;
@@ -159,6 +178,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         return StringUtils.EMPTY;
     }
 
-    protected abstract StdWorkflow getInfoEditAction();
+    protected abstract BranchAwareStdWorkflow getInfoEditAction();
 
 }
