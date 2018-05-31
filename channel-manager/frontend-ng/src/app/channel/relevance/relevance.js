@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ViewAsDirective from './viewAs.directive';
+import ViewAsDirective from './viewAs.component';
 import ViewAsCtrl from './viewAs.controller';
 import ExperimentStateService from './experimentState.service';
 
