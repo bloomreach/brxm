@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
 public class ButtonWrapper implements IClusterable {
-    private static final long serialVersionUID = 1L;
 
     private Button button;
 
@@ -50,7 +49,7 @@ public class ButtonWrapper implements IClusterable {
     private KeyType keyType;
     private boolean hasChanges = false;
 
-    public ButtonWrapper(Button button) {
+    public ButtonWrapper(final Button button) {
         this.button = button;
         visible = button.isVisible();
         enabled = button.isEnabled();
@@ -61,11 +60,11 @@ public class ButtonWrapper implements IClusterable {
         }
     }
 
-    public ButtonWrapper(IModel<String> label) {
+    public ButtonWrapper(final IModel<String> label) {
         this(label, true);
     }
 
-    public ButtonWrapper(IModel<String> label, boolean ajax) {
+    public ButtonWrapper(final IModel<String> label, final boolean ajax) {
         this.ajax = ajax;
         this.label = label;
         this.visible = true;
@@ -74,11 +73,10 @@ public class ButtonWrapper implements IClusterable {
 
     private Button createButton() {
         if (ajax) {
-            AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
+            final AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                     ButtonWrapper.this.onSubmit();
                 }
 
@@ -98,12 +96,12 @@ public class ButtonWrapper implements IClusterable {
                     attributes.getAjaxCallListeners().add(new AjaxCallListener(){
                         @Override
                         public CharSequence getBeforeHandler(final Component component) {
-                            return "$('#" + getMarkupId() + "').prop('disabled', true);";
+                            return String.format("$('#%s').prop('disabled', true);", getMarkupId());
                         }
 
                         @Override
                         public CharSequence getCompleteHandler(final Component component) {
-                            return "$('#" + getMarkupId() + "').prop('disabled', false);";
+                            return String.format("$('#%s').prop('disabled', false);", getMarkupId());
                         }
                     });
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
@@ -112,8 +110,7 @@ public class ButtonWrapper implements IClusterable {
             button.setModel(label);
             return button;
         } else {
-            Button button = new Button(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
+            final Button button = new Button(DialogConstants.BUTTON) {
 
                 @Override
                 public void onSubmit() {
@@ -145,7 +142,7 @@ public class ButtonWrapper implements IClusterable {
         return button;
     }
 
-    protected Button decorate(Button button) {
+    protected Button decorate(final Button button) {
         button.setEnabled(enabled);
         button.setVisible(visible);
         if (getKeyType() != null) {
@@ -159,9 +156,10 @@ public class ButtonWrapper implements IClusterable {
                 @Override
                 public void onRemove(final Component component) {
                     super.onRemove(component);
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.appendJavaScript("if (window['shortcut']) { shortcut.remove('" + getKeyType().getKeyCode() + "'); }");
+                        target.appendJavaScript(String.format("if (window['shortcut']) { shortcut.remove('%s'); }",
+                                getKeyType().getKeyCode()));
                     }
                 }
             });
@@ -169,23 +167,24 @@ public class ButtonWrapper implements IClusterable {
         return button;
     }
 
-    public void setEnabled(boolean isset) {
+    public void setEnabled(final boolean isset) {
         enabled = isset;
         if (button != null && WebApplicationHelper.isPartOfPage(button)) {
             button.setEnabled(isset);
             if (ajax) {
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
                     if (!isset) {
                         renderAttribute(target, "disabled", "disabled");
                     } else {
-                        target.appendJavaScript("Wicket.$('" + button.getMarkupId() + "').removeAttribute('disabled')");
-                        for (Behavior behavior : button.getBehaviors()) {
-                            ComponentTag tag = new ComponentTag("button", XmlTag.TagType.OPEN_CLOSE);
+                        target.appendJavaScript(
+                                String.format("Wicket.$('%s').removeAttribute('disabled')", button.getMarkupId()));
+                        for (final Behavior behavior : button.getBehaviors()) {
+                            final ComponentTag tag = new ComponentTag("button", XmlTag.TagType.OPEN_CLOSE);
                             behavior.onComponentTag(button, tag);
                             behavior.renderHead(button, target.getHeaderResponse());
 
-                            for (Map.Entry<String, Object> entry : tag.getAttributes().entrySet()) {
+                            for (final Map.Entry<String, Object> entry : tag.getAttributes().entrySet()) {
                                 renderAttribute(target, entry.getKey(), entry.getValue());
                             }
                         }
@@ -199,11 +198,11 @@ public class ButtonWrapper implements IClusterable {
      * Reverse the encoding that was done by {@link AjaxEventBehavior#onComponentTag} method.
      * That is needed for rendering to html, but is not usable in an ajax response.
      *
-     * @param target
-     * @param key
-     * @param value
+     * @param target    The ajax request target
+     * @param key       The attribute key
+     * @param value     The attribute value
      */
-    private void renderAttribute(final AjaxRequestTarget target, String key, Object value) {
+    private void renderAttribute(final AjaxRequestTarget target, final String key, Object value) {
         if (value != null) {
             value = Strings.replaceAll(value.toString(), "&nbsp;", " ");
             value = Strings.replaceAll(value.toString(), "&amp;", "&");
@@ -213,15 +212,15 @@ public class ButtonWrapper implements IClusterable {
         }
 
         target.appendJavaScript(
-                "Wicket.$('" + button.getMarkupId() + "').setAttribute('" + key + "', \"" + value + "\")");
+                String.format("Wicket.$('%s').setAttribute('%s', \"%s\")", button.getMarkupId(), key, value));
     }
 
-    public void setVisible(boolean isset) {
+    public void setVisible(final boolean isset) {
         visible = isset;
         if (button != null && button.isVisible() != isset) {
             button.setVisible(isset);
             if (ajax) {
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
                     target.add(button);
                 }
@@ -229,11 +228,11 @@ public class ButtonWrapper implements IClusterable {
         }
     }
 
-    public void setAjax(boolean c) {
+    public void setAjax(final boolean c) {
         ajax = c;
     }
 
-    public void setLabel(IModel<String> label) {
+    public void setLabel(final IModel<String> label) {
         this.label = label;
         if (button != null) {
             button.setModel(label);
@@ -241,7 +240,7 @@ public class ButtonWrapper implements IClusterable {
         hasChanges = true;
     }
 
-    public void setKeyType(KeyType keyType) {
+    public void setKeyType(final KeyType keyType) {
         this.keyType = keyType;
     }
 
