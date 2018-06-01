@@ -776,15 +776,19 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node source = offspring.getNode(rootSession);
         if (folder.isSame(destination)) {
             //throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
-            return duplicate(source, targetName);
+            final Document copy = duplicate(source, targetName);
+            removeBranchRelatedMixins(copy);
+            return copy;
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            return ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
+            final Document copy = ((EmbedWorkflow) workflowContext.getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
+            removeBranchRelatedMixins(copy);
+            return copy;
         }
         return null;
     }
 
-    public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, RepositoryException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         final Session subjectSession = workflowContext.getSubjectSession();
@@ -798,6 +802,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
         Node source = offspring.getNode(rootSession);
+        Document copy;
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -807,14 +812,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
-
-            folder.save();
-            return new Document(document);
+            copy = new Document(document);
         } else {
             renameChildDocument(JcrUtils.copy(source, targetName, folder));
-            folder.save();
-            return new Document(folder.getNode(targetName));
+            copy = new Document(folder.getNode(targetName));
         }
+        removeBranchRelatedMixins(copy);
+        rootSession.save();
+        return copy;
     }
 
     protected Node copyDocument(String targetName, Map<String, String> arguments, Node source, Node handle)
@@ -890,6 +895,37 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
         return result;
+    }
+
+    private void removeBranchRelatedMixins(Document copy) {
+        try {
+            final Node handle = copy.getNode(rootSession);
+            removeVersionInfoMixin(handle);
+            removeBranchInfoMixins(handle);
+            rootSession.save();
+        } catch (RepositoryException e) {
+            log.warn("Could not removeBranchRelatedMixins %s or %s mixin and related properties", HippoNodeType.HIPPO_MIXIN_BRANCH_INFO, HippoNodeType.NT_HIPPO_VERSION_INFO);
+        }
+
+    }
+
+    private void removeBranchInfoMixins(final Node handle) throws RepositoryException {
+        final NodeIterator nodes = handle.getNodes(handle.getName());
+        while (nodes.hasNext()) {
+            final Node variant = nodes.nextNode();
+            if (variant.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO)) {
+                final Value delete = null;
+                variant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, delete);
+                variant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, delete);
+                variant.removeMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+            }
+        }
+    }
+
+    private void removeVersionInfoMixin(final Node handle) throws RepositoryException {
+        if (handle.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO)) {
+            handle.removeMixin(HippoNodeType.NT_HIPPO_VERSION_INFO);
+        }
     }
 
 }
