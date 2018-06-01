@@ -783,7 +783,7 @@ public class HstManageContentTagTest {
         expect(folderNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)).andReturn(true);
         expect(jcrSession.getNode("/my/channel/path/news")).andReturn(folderNode);
 
-        replay(jcrSession, folderNode, resolvedMount);
+        replay(jcrSession, folderNode, resolvedMount, mount);
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
 
