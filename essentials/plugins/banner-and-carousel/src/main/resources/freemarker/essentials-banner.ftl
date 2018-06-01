@@ -3,6 +3,7 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Banner" -->
 <#if document??>
 <div>
+  <#if document.class.name == '{{beansPackage}}.Banner'>
   <a href="<@hst.link hippobean=document.link />">
     <figure style="position: relative">
       <@hst.manageContent hippobean=document parameterName="document" rootPath="banners"/>
@@ -15,6 +16,10 @@
       </figcaption>
     </figure>
   </a>
+  <#elseif editMode>
+  <@hst.manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Selected document "${document.node.path}" is not of the correct type, please select or create a Banner document.
+  </#if>
 </div>
 <#elseif editMode>
 <div>
