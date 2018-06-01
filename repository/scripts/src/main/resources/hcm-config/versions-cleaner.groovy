@@ -28,6 +28,7 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor
 import javax.jcr.Node
 import javax.jcr.version.Version
 import javax.jcr.version.VersionHistory
+import javax.jcr.version.VersionIterator
 import javax.jcr.version.VersionManager
 
 /**
@@ -58,8 +59,19 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
     log.info "VersionsCleaner initialized with parameters: { retainCount: ${retainCount}, daysToKeep: ${daysToKeep} }"
     
   }
+
+  boolean skipCheckoutNodes() {
+    return true; // we're changing version history, not current content
+  }
   
   boolean doUpdate(Node node) {
+    if (node.getPrimaryNodeType().getName().startsWith("hst:")
+            || node.getPath().startsWith("/hippo:configuration/")
+            || node.getPath().equals("/hippo:namespaces")
+            || node.getPath().startsWith("/hippo:namespaces/")) {
+      log.debug "Skipping config node ${node.path}"
+      return false
+    }
     log.debug "Updating node ${node.path}"
     
     // gather versions
@@ -85,7 +97,7 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
     if (remove) {
       log.info "Removing ${removeCount} versions of node ${node.path}"
     }
-    while (removeCount < 0) {
+    while (removeCount > 0) {
       Version version = versions.remove(0);
       versionHistory.removeVersion(version.getName())
       removeCount--;
