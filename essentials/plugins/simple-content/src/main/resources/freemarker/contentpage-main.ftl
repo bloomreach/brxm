@@ -21,6 +21,6 @@
 <#elseif editMode>
   <div class="has-edit-button">
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/simple-content.png" />"> Click to edit Simple Content
-    <@hst.manageContent templateQuery="new-content-document" rootPath="content"/>
+    <@hst.manageContent templateQuery="new-content-document" parameterName="document" rootPath="content"/>
   </div>
 </#if>
