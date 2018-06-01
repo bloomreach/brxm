@@ -16,11 +16,10 @@
   -->
 
 <sv:node sv:name="banner" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:containeritemcomponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.cms7.essentials.components.EssentialsDocumentComponent</sv:value>
+    <sv:value>org.onehippo.cms7.essentials.components.EssentialsBannerComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>Banner</sv:value>
