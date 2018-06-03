@@ -50,6 +50,10 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @deprecated since 5.4. Use {@link org.hippoecm.hst.container.PingFilter} or PingServlet instead
+ */
+@Deprecated
 public class HstPingServletTest {
 
     protected final static Logger log = LoggerFactory.getLogger(HstPingServletTest.class);
