@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -294,6 +294,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
                 .addNode("foo-" + prototypePageNodeName, HstNodeTypes.NODETYPE_HST_COMPONENT);
         session.save();
+        Thread.sleep(200);
 
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -326,6 +327,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
                 .addNode("foo-"+prototypePageNodeName + "-1", HstNodeTypes.NODETYPE_HST_COMPONENT);
 
         session.save();
+        Thread.sleep(200);
 
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation("foo", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
