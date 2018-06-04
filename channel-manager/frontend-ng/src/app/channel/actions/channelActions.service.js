@@ -189,7 +189,10 @@ class ChannelActionsService extends MenuService {
     this.CmsService.reportUsageStatistic('AcceptChannelChannelManager');
 
     this._showRejectPrompt(channel)
-      .then(message => this.ProjectService.reject(channelId, message));
+      .then((message) => {
+        this.CmsService.reportUsageStatistic('RejectChannelCMDialogueOKButton');
+        this.ProjectService.reject(channelId, message);
+      });
   }
 
   _accept() {
