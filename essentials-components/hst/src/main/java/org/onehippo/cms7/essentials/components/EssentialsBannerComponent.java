@@ -19,10 +19,9 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsBannerComponentInfo;
 
 /**
- * Hippo HST component for simple (document detail) request handling.
- * If document path is not defined, EssentialsDocumentComponent will try to fetch sitemap mapped bean.
+ * HstComponent that supports selecting documents from a "banner" folder.
+ *
  * @version "$Id$"
- * @see EssentialsContentComponent
  */
 @ParametersInfo(type = EssentialsBannerComponentInfo.class)
 public class EssentialsBannerComponent extends EssentialsDocumentComponent {
