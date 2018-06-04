@@ -192,6 +192,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _accept() {
+    this.CmsService.reportUsageStatistic('AcceptChannelChannelManager');
     this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]);
   }
 
