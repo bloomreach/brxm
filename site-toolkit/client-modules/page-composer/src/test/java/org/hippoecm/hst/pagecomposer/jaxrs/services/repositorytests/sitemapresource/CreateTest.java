@@ -671,6 +671,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/about-us");
         session.save();
+        Thread.sleep(200);
         initContext();
         assertPageCreationFails();
     }
@@ -686,6 +687,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
                 "/hst:hst/hst:configurations/hst:default/hst:sitemap/about-us");
         session.save();
+        Thread.sleep(200);
         initContext();
         assertPageCreationFails();
     }
@@ -707,6 +709,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/about-us");
         session.save();
+        Thread.sleep(200);
         initContext();
         assertPageCreationSucceeds();
     }
@@ -723,6 +726,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     public void test_create_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
         session.save();
+        Thread.sleep(200);
         initContext();
         final SiteMapItemRepresentation newItem = createSiteMapItemRepresentation("about-us", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
