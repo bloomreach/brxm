@@ -91,19 +91,19 @@ class ChannelActionsService extends MenuService {
         .addDivider({
           isVisible: () => this._isBranch(),
         })
-        .addAction('reject', {
-          translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
-          iconName: 'mdi-close',
-          isVisible: () => this._isBranch(),
-          isEnabled: () => this.ProjectService.isRejectEnabled(),
-          onClick: () => this._reject(),
-        })
         .addAction('accept', {
           translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
           iconName: 'mdi-check',
           isVisible: () => this._isBranch(),
           isEnabled: () => this.ProjectService.isAcceptEnabled(),
           onClick: () => this._accept(),
+        })
+        .addAction('reject', {
+          translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
+          iconName: 'mdi-close',
+          isVisible: () => this._isBranch(),
+          isEnabled: () => this.ProjectService.isRejectEnabled(),
+          onClick: () => this._reject(),
         })
         .addDivider()
         .addAction('delete', {
