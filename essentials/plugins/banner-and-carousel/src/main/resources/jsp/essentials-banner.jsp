@@ -36,4 +36,3 @@
     </figure>
   </div>
 </c:if>
-
