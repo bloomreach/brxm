@@ -186,6 +186,7 @@ class ChannelActionsService extends MenuService {
   _reject() {
     const channel = this.ChannelService.getChannel();
     const channelId = channel.id.replace(/-preview$/, '');
+    this.CmsService.reportUsageStatistic('AcceptChannelChannelManager');
 
     this._showRejectPrompt(channel)
       .then(message => this.ProjectService.reject(channelId, message));
