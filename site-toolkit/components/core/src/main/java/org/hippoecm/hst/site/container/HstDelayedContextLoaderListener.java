@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.hippoecm.hst.site.container;
 import javax.servlet.ServletContextEvent;
 
 import org.hippoecm.hst.site.HstServices;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
@@ -44,7 +42,7 @@ public class HstDelayedContextLoaderListener extends ContextLoaderListener {
         } else {
             initThread = new Thread(() -> {
                 boolean retry = true;
-                while (retry && HippoServiceRegistry.getService(RepositoryService.class) == null) {
+                while (retry && !HstServices.isAvailable()) {
                     log.info("Waiting for the HstServices to become available before initializing the Spring root application context.");
                     try {
                         Thread.sleep(1000);
@@ -54,7 +52,7 @@ public class HstDelayedContextLoaderListener extends ContextLoaderListener {
                         Thread.currentThread().interrupt();
                     }
                 }
-                if (HippoServiceRegistry.getService(RepositoryService.class) != null) {
+                if (HstServices.isAvailable()) {
                     log.info("HstServices is available. Initializing the Spring root application context");
                     super.contextInitialized(event);
                 }
