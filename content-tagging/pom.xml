@@ -29,7 +29,7 @@
   </description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-tagging</artifactId>
-  <version>7.4.0-SNAPSHOT</version>
+  <version>7.5.0-SNAPSHOT</version>
 
   <inceptionYear>2008</inceptionYear>
 
@@ -40,8 +40,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>5.4.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.4.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
 
     <json-lib.version>2.4</json-lib.version>
     <junit.version>4.12</junit.version>
