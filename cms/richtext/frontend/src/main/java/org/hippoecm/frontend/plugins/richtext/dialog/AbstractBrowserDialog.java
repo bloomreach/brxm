@@ -58,10 +58,10 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
                 if (isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
                     onModelSelected(selectedModel);
-                    checkState();
                 } else {
-                    setOkEnabled(false);
+                    getModelObject().setLinkTarget(null);
                 }
+                checkState();
             }
 
             @Override
