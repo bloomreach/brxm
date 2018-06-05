@@ -344,40 +344,54 @@ public abstract class NodePickerController implements IDetachable {
      * By default, all nodes except hippo document are allowed
      */
     private void saveLastModelVisited() {
-        if (lastModelVisited != null && lastModelVisited.getObject() != null) {
-            try {
-                Node node = lastModelVisited.getObject();
-                final Node parent = node.getParent();
-                if (settings.hasLastVisitedNodeTypes()) {
-                    final Node root = UserSession.get().getJcrSession().getRootNode();
-                    while (!node.isSame(root)) {
-                        for (final String nodeType : settings.getLastVisitedNodeTypes()) {
-                            if (node.isNodeType(nodeType)) {
-                                storeLastVisited(node.getPath());
-                                return;
-                            }
-                        }
-                        node = parent;
-                    }
-                } else {
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        node = parent.getParent();
-                    }
-
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        if (!node.hasNode(node.getName())) {
-                            //deleted
-                            return;
-                        }
-                        node = parent;
-                    }
-                    storeLastVisited(node.getPath());
-                }
-
-            } catch (final RepositoryException e) {
-                log.warn("Could not save last-node-path-visited in preferences store");
-            }
+        if (lastModelVisited == null) {
+            return;
         }
+
+        final Node node = lastModelVisited.getObject();
+        if (node == null) {
+            return;
+        }
+
+        try {
+            final Node lastVisited = settings.hasLastVisitedNodeTypes()
+                    ? findNodeByType(node, settings.getLastVisitedNodeTypes())
+                    : findParentOfDocumentOrHandle(node);
+
+            if (lastVisited != null) {
+                storeLastVisited(node.getPath());
+            }
+        } catch (final RepositoryException e) {
+            log.warn("Could not save last-node-path-visited in preferences store");
+        }
+    }
+
+    private Node findParentOfDocumentOrHandle(Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            node = node.getParent();
+        }
+
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (!node.hasNode(node.getName())) {
+                //deleted
+                return null;
+            }
+            node = node.getParent();
+        }
+        return node;
+    }
+
+    private Node findNodeByType(Node node, final String[] nodeTypes) throws RepositoryException {
+        final Node root = UserSession.get().getJcrSession().getRootNode();
+        while (!node.isSame(root)) {
+            for (final String nodeType : nodeTypes) {
+                if (node.isNodeType(nodeType)) {
+                    return node;
+                }
+            }
+            node = node.getParent();
+        }
+        return null;
     }
 
     private void storeLastVisited(final String path) {
