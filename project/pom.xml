@@ -48,7 +48,7 @@
       You can find the latest apache pom here:
       https://svn.apache.org/repos/asf/maven/pom/trunk/asf/pom.xml
     -->
-    <servlet-api.version>3.0.1</servlet-api.version>
+    <servlet-api.version>3.1.0</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <xml-apis.version>1.0.b2</xml-apis.version>
     <jta.version>1.1.1</jta.version>
