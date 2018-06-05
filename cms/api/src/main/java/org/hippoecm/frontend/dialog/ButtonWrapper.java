@@ -15,23 +15,16 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.util.Map;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.parser.XmlTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 
 import wicket.contrib.input.events.EventType;
@@ -72,22 +65,14 @@ public class ButtonWrapper implements IClusterable {
     }
 
     private Button createButton() {
+        final Button button;
+
         if (ajax) {
-            final AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
+            button = new AjaxButton(DialogConstants.BUTTON) {
 
                 @Override
                 protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                     ButtonWrapper.this.onSubmit();
-                }
-
-                @Override
-                public boolean isVisible() {
-                    return visible;
-                }
-
-                @Override
-                public boolean isEnabled() {
-                    return enabled;
                 }
 
                 @Override
@@ -107,29 +92,19 @@ public class ButtonWrapper implements IClusterable {
                     ButtonWrapper.this.onUpdateAjaxAttributes(attributes);
                 }
             };
-            button.setModel(label);
-            return button;
         } else {
-            final Button button = new Button(DialogConstants.BUTTON) {
-
+            button = new Button(DialogConstants.BUTTON) {
                 @Override
                 public void onSubmit() {
                     ButtonWrapper.this.onSubmit();
                 }
-
-                @Override
-                public boolean isVisible() {
-                    return visible;
-                }
-
-                @Override
-                public boolean isEnabled() {
-                    return enabled;
-                }
             };
-            button.setModel(label);
-            return button;
         }
+
+        button.setVisible(visible);
+        button.setEnabled(enabled);
+        button.setModel(label);
+        return button;
     }
 
     protected void onUpdateAjaxAttributes(final AjaxRequestAttributes attributes) {
@@ -167,58 +142,23 @@ public class ButtonWrapper implements IClusterable {
         return button;
     }
 
-    public void setEnabled(final boolean isset) {
-        enabled = isset;
-        if (button != null && WebApplicationHelper.isPartOfPage(button)) {
-            button.setEnabled(isset);
+    public void setEnabled(final boolean isEnabled) {
+        enabled = isEnabled;
+        if (button != null && button.isEnabled() != isEnabled && WebApplicationHelper.isPartOfPage(button)) {
+            button.setEnabled(isEnabled);
             if (ajax) {
                 final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
-                    if (!isset) {
-                        renderAttribute(target, "disabled", "disabled");
-                    } else {
-                        target.appendJavaScript(
-                                String.format("Wicket.$('%s').removeAttribute('disabled')", button.getMarkupId()));
-                        for (final Behavior behavior : button.getBehaviors()) {
-                            final ComponentTag tag = new ComponentTag("button", XmlTag.TagType.OPEN_CLOSE);
-                            behavior.onComponentTag(button, tag);
-                            behavior.renderHead(button, target.getHeaderResponse());
-
-                            for (final Map.Entry<String, Object> entry : tag.getAttributes().entrySet()) {
-                                renderAttribute(target, entry.getKey(), entry.getValue());
-                            }
-                        }
-                    }
+                    target.add(button);
                 }
             }
         }
     }
 
-    /**
-     * Reverse the encoding that was done by {@link AjaxEventBehavior#onComponentTag} method.
-     * That is needed for rendering to html, but is not usable in an ajax response.
-     *
-     * @param target    The ajax request target
-     * @param key       The attribute key
-     * @param value     The attribute value
-     */
-    private void renderAttribute(final AjaxRequestTarget target, final String key, Object value) {
-        if (value != null) {
-            value = Strings.replaceAll(value.toString(), "&nbsp;", " ");
-            value = Strings.replaceAll(value.toString(), "&amp;", "&");
-            value = Strings.replaceAll(value.toString(), "&gt;", ">");
-            value = Strings.replaceAll(value.toString(), "&lt;", "<");
-            value = Strings.replaceAll(value.toString(), "&quot;", "\\\"");
-        }
-
-        target.appendJavaScript(
-                String.format("Wicket.$('%s').setAttribute('%s', \"%s\")", button.getMarkupId(), key, value));
-    }
-
-    public void setVisible(final boolean isset) {
-        visible = isset;
-        if (button != null && button.isVisible() != isset) {
-            button.setVisible(isset);
+    public void setVisible(final boolean isVisible) {
+        visible = isVisible;
+        if (button != null && button.isVisible() != isVisible) {
+            button.setVisible(isVisible);
             if (ajax) {
                 final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
