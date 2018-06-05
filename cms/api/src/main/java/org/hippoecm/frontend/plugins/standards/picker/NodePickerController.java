@@ -338,10 +338,9 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     /**
-     * Save the last visited location in the preferences store. By default, only nodes of type hippostd:folder are
-     * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes".
-     *
-     * By default, all nodes except hippo document are allowed
+     * Save the last visited location in the preferences store. By default, it will try to use the parent of the nearest
+     * "hippo:handle" node, other node-types can be specified by configuring a multi-value String property named
+     * "last.visited.nodetypes".
      */
     private void saveLastModelVisited() {
         if (lastModelVisited == null) {
