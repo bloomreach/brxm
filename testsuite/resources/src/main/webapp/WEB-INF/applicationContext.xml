@@ -34,7 +34,7 @@
   <!-- The controllers are autodetected POJOs labeled with the @Controller annotation. -->
   <context:component-scan base-package="org.hippoecm.hst.demo.spring.webmvc" />
 
-  <bean id="handlerMappingApplicationContext" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+  <bean id="handlerMappingApplicationContext" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
   </bean>
 
   <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

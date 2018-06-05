@@ -27,7 +27,7 @@
     class="org.springframework.web.servlet.view.InternalResourceViewResolver"
     p:prefix="/WEB-INF/springapp/jsp/" p:suffix=".jsp" p:order="1" />
 
-  <bean id="handlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+  <bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
   </bean>
 
   <!-- HSTTWO-3119: HST Component Bean from a specified Spring Application Context through servlet context attributes. -->
