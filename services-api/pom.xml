@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services</name>
   <artifactId>hippo-services</artifactId>
-  <version>4.4.0-SNAPSHOT</version>
+  <version>4.5.0-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -34,7 +34,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
 
-    <hippo.commons.version>4.4.0-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
     <easymock.version>3.0</easymock.version>
   </properties>
 
