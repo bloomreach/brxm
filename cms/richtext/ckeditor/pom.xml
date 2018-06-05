@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-richtext</artifactId>
-    <version>5.4.0-campaigns-psp1-SNAPSHOT</version>
+    <version>5.5.0-campaigns-psp1-SNAPSHOT</version>
   </parent>
 
   <name>CMS Rich Text CKEditor</name>
