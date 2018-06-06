@@ -27,7 +27,7 @@
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>2.5.0-SNAPSHOT</version>
+  <version>13.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
