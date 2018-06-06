@@ -27,7 +27,7 @@
 
   <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
   <name>Hippo Plugin Resourcebundle Editor</name>
-  <version>4.5.0-SNAPSHOT</version>
+  <version>13.0.0-SNAPSHOT</version>
 
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-resourcebundle-editor.git</connection>
