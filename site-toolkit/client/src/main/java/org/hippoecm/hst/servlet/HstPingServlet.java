@@ -69,8 +69,9 @@ import org.hippoecm.hst.servlet.utils.SessionUtils;
       <url-pattern>/ping/*</url-pattern>
     </servlet-mapping>
  * ]]></code>
- *
+ * @deprecated since 5.4. Use {@link org.hippoecm.hst.container.PingFilter} or PingServlet instead
  */
+@Deprecated
 public class HstPingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

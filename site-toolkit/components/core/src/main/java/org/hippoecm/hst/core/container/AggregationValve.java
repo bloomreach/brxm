@@ -99,6 +99,12 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             return;
         }
 
+        // If API Documentation request (e.g, /swagger.json), then write a (dynamic) Swagger documentation for example.
+        if (isAggregationApiDocumentRequest(context)) {
+            writeAggregationApiDocument(context);
+            return;
+        }
+
         HstComponentWindow rootWindow = context.getRootComponentWindow();
 
         HstComponentWindow rootRenderingWindow = context.getRootComponentRenderingWindow();
@@ -510,6 +516,26 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                 log.warn("Exception during flushing the response state. {}", e.toString());
             }
         }
+    }
+
+    /**
+     * Return true if the current request is for the Aggregation API Document (e.g, /swagger.json). false by default.
+     * @param context {@link ValveContext} instance
+     * @return true if the current request is for the Aggregation API Document (e.g, /swagger.json). false by default
+     */
+    protected boolean isAggregationApiDocumentRequest(final ValveContext context) {
+        return false;
+    }
+
+    /**
+     * Do nothing by default. An implementation is supposed to write the Aggregation API Document (e.g, Swagger document)
+     * to the client. This method is invoked only if {@link #isAggregationApiDocumentRequest(ValveContext)} returns
+     * true.
+     * @param context {@link ValveContext} instance
+     * @throws ContainerException if HST Container exception occurs
+     */
+    protected void writeAggregationApiDocument(final ValveContext context)
+            throws ContainerException {
     }
 
     /**
