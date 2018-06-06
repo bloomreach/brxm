@@ -245,6 +245,7 @@ public interface HstNodeTypes {
     String CHANNEL_PROPERTY_DEVICES = "hst:devices";
     String CHANNEL_PROPERTY_DELETABLE = "hst:deletable";
     String CHANNEL_PROPERTY_CHANNELINFO_CLASS = "hst:channelinfoclass";
+    String CHANNEL_PROPERTY_CHANNELINFO_MIXINS = "hst:channelinfomixins";
 
     String BLUEPRINT_PROPERTY_NAME = "hst:name";
     String BLUEPRINT_PROPERTY_DESCRIPTION = "hst:description";

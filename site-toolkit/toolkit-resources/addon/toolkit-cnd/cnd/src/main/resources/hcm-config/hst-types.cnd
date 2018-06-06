@@ -238,6 +238,7 @@
 [hst:channel] > nt:base, mix:referenceable, mix:versionable
 - hst:name (string)
 - hst:channelinfoclass (string)
+- hst:channelinfomixins (string) multiple
 - hst:type (string)
 - hst:defaultdevice (string)
 - hst:devices (string) multiple
