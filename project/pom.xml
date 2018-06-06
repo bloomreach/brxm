@@ -48,7 +48,7 @@
       You can find the latest apache pom here:
       https://svn.apache.org/repos/asf/maven/pom/trunk/asf/pom.xml
     -->
-    <servlet-api.version>3.0.1</servlet-api.version>
+    <servlet-api.version>3.1.0</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <xml-apis.version>1.0.b2</xml-apis.version>
     <jta.version>1.1.1</jta.version>
@@ -70,7 +70,7 @@
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.8.11</jackson2.version>
     <jackson2-databind.version>2.8.11.1</jackson2-databind.version>
-    <spring.version>4.3.15.RELEASE</spring.version>
+    <spring.version>5.0.6.RELEASE</spring.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.15</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
