@@ -44,6 +44,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 import org.hippoecm.hst.core.component.HstRequest;
@@ -366,13 +367,18 @@ public abstract class MockHstRequestBase implements HstRequest {
     }
 
     public int getContentLength() {
-        Integer v = (Integer) props.get("contentLength");
-        
+        return (int) getContentLengthLong();
+    }
+
+    @Override
+    public long getContentLengthLong() {
+        Number v = (Number) props.get("contentLength");
+
         if (v != null) {
-            return ((Integer) v).intValue();
+            return ((Number) v).longValue();
         }
-        
-        return 0;
+
+        return 0L;
     }
 
     public String getContentType() {
@@ -633,5 +639,15 @@ public abstract class MockHstRequestBase implements HstRequest {
     @Override
     public void removeModel(String name) {
         modelsMap.remove(name);
+    }
+
+    @Override
+    public String changeSessionId() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+        throw new UnsupportedOperationException();
     }
 }

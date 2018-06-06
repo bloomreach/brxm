@@ -923,6 +923,11 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         @Override
+        public void setContentLengthLong(long len) {
+            
+        }
+
+        @Override
         public void setContentType(String type) {
         }
 
