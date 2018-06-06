@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,7 +114,7 @@ public class HstServletResponseState implements HstResponseState {
     protected boolean setContentTypeAfterEncoding;
     protected boolean closed;
     protected String characterEncoding;
-    protected int contentLength = -1;
+    protected long contentLength = -1L;
     protected String contentType;
     protected int errorCode;
     protected String errorMessage;
@@ -490,11 +491,24 @@ public class HstServletResponseState implements HstResponseState {
                 public void write(int b) throws IOException {
                     if (!closed) {
                         byteOutputBuffer.write(b);
-                        if (contentLength > -1 && byteOutputBuffer.size() >= contentLength) {
+                        if (contentLength > -1L && byteOutputBuffer.size() >= contentLength) {
                             committed = true;
                             closed = true;
                         }
                     }
+                }
+
+                @Override
+                public boolean isReady() {
+                    // NOTE: The Servlet 3.1 feature that has non-blocking read and write capability is not applicable
+                    //       to synchronous HstComponent aggregation. So, this output stream is always ready as non-blocking as well.
+                    return true;
+                }
+
+                @Override
+                public void setWriteListener(WriteListener writeListener) {
+                    // NOTE: As HST Component aggregation is not required to provide javax.servlet.WriteListener
+                    //       of Servlet 3.1 feature to HstComponents, it's unnecessary to implement this.
                 }
             };
         }
@@ -540,7 +554,7 @@ public class HstServletResponseState implements HstResponseState {
         setHeaders = null;
         cookies = null;
         hasStatus = false;
-        contentLength = -1;
+        contentLength = -1L;
         if (printWriter == null) {
             contentType = null;
             characterEncoding = null;
@@ -593,8 +607,14 @@ public class HstServletResponseState implements HstResponseState {
      *
      * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
      */
+    @Override
     public void setContentLength(int len) {
-        if (isResourceResponse && !committed && printWriter == null && len > 0) {
+        setContentLengthLong(len);
+    }
+
+    @Override
+    public void setContentLengthLong(long len) {
+        if (isResourceResponse && !committed && printWriter == null && len > 0L) {
             contentLength = len;
             if (outputStream != null) {
                 try {
@@ -786,7 +806,7 @@ public class HstServletResponseState implements HstResponseState {
         setContentTypeAfterEncoding = false;
         closed = false;
         characterEncoding = null;
-        contentLength = -1;
+        contentLength = -1L;
         contentType = null;
         errorCode = 0;
         errorMessage = null;
@@ -900,9 +920,9 @@ public class HstServletResponseState implements HstResponseState {
                 setResponseStatus(statusCode);
             }
 
-            if (isResourceResponse && contentLength > -1) {
+            if (isResourceResponse && contentLength > -1L) {
                 try {
-                    setResponseContentLength(contentLength);
+                    setResponseContentLengthLong(contentLength);
                 } catch (UnsupportedOperationException usoe) {
                 }
             }
@@ -920,8 +940,8 @@ public class HstServletResponseState implements HstResponseState {
                         writer = getParentWriter();
                     }
                     int len = byteOutputBuffer.size();
-                    if (contentLength > -1 && contentLength < len) {
-                        len = contentLength;
+                    if (contentLength > -1L && contentLength < len) {
+                        len = (int) contentLength;
                     }
 
                     printComments(preambleComments, writer);
@@ -1070,7 +1090,11 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     protected void setResponseContentLength(int len) {
-        this.parentResponse.setContentLength(len);
+        setResponseContentLengthLong(len);
+    }
+
+    protected void setResponseContentLengthLong(long len) {
+        this.parentResponse.setContentLengthLong(len);
     }
 
     protected OutputStream getResponseOutputStream() throws IOException {

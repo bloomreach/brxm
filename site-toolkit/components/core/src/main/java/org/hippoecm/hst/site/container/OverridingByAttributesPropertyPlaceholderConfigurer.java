@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.container;
 
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeansException;
@@ -26,6 +27,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.core.Constants;
+import org.springframework.lang.Nullable;
+import org.springframework.util.PropertyPlaceholderHelper;
+import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.springframework.util.StringValueResolver;
 
 /**
@@ -36,7 +41,9 @@ import org.springframework.util.StringValueResolver;
 public class OverridingByAttributesPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
     
     public static final String IGNORE_UNRESOLVABLE_PLACEHOLDERS_ATTRIBUTE = OverridingByAttributesPropertyPlaceholderConfigurer.class.getName() + ".ignoreUnresolvablePlaceholders";
-    
+
+    private static final Constants constants = new Constants(PropertyPlaceholderConfigurer.class);
+
     private boolean ignoreUnresolvablePlaceholders = false;
 
     private String nullValue;
@@ -45,8 +52,22 @@ public class OverridingByAttributesPropertyPlaceholderConfigurer extends Propert
 
     private BeanFactory beanFactory;
 
+    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
+
     public OverridingByAttributesPropertyPlaceholderConfigurer() {
         super();
+    }
+
+    @Override
+    public void setSystemPropertiesModeName(String constantName) throws IllegalArgumentException {
+        super.setSystemPropertiesModeName(constantName);
+        this.systemPropertiesMode = constants.asNumber(constantName).intValue();
+    }
+
+    @Override
+    public void setSystemPropertiesMode(int systemPropertiesMode) {
+        super.setSystemPropertiesMode(systemPropertiesMode);
+        this.systemPropertiesMode = systemPropertiesMode;
     }
 
     @Override
@@ -127,6 +148,37 @@ public class OverridingByAttributesPropertyPlaceholderConfigurer extends Propert
             @SuppressWarnings({ "deprecation", "rawtypes" })
             String value = parseStringValue(strVal, this.props, new HashSet());
             return (value.equals(nullValue) ? null : value);
+        }
+    }
+
+    /*
+     * Forked from Spring v4's <code>org.springframework.beans.factory.config.PropertyPlaceholderConfigurer#parseStringValue(String, Properties, Set<?>)</code>
+     * as it's dropped since v5, together with the private class, <code>PropertyPlaceholderConfigurerResolver</code> below.
+     */
+    protected String parseStringValue(String strVal, Properties props, Set<?> visitedPlaceholders) {
+        PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper(
+                placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+        PlaceholderResolver resolver = new PropertyPlaceholderConfigurerResolver(props);
+        return helper.replacePlaceholders(strVal, resolver);
+    }
+
+    /*
+     * Forked from Spring v4's private <code>org.springframework.beans.factory.config.PropertyPlaceholderConfigurer.PropertyPlaceholderConfigurerResolver</code>
+     * as it's dropped since v5.
+     */
+    private class PropertyPlaceholderConfigurerResolver implements PlaceholderResolver {
+
+        private final Properties props;
+
+        private PropertyPlaceholderConfigurerResolver(Properties props) {
+            this.props = props;
+        }
+
+        @Override
+        @Nullable
+        public String resolvePlaceholder(String placeholderName) {
+            return OverridingByAttributesPropertyPlaceholderConfigurer.this.resolvePlaceholder(placeholderName, props,
+                    systemPropertiesMode);
         }
     }
 

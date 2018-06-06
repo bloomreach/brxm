@@ -120,6 +120,8 @@ public interface HstResponseState
 
     void setContentLength(int len);
 
+    void setContentLengthLong(long len);
+
     void setContentType(String type);
 
     void setLocale(Locale locale);
