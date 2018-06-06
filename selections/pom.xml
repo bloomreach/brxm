@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4</version>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Selections</name>
@@ -42,9 +42,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugins Selection</notice.project.name>
 
-    <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>5.5.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.8.2</junit.version>
   </properties>
