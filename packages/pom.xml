@@ -26,7 +26,7 @@
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>5.5.0-SNAPSHOT</version>
+  <version>13.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
