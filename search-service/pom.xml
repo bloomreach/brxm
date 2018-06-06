@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4</version>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Search Service</name>
@@ -53,9 +53,9 @@
 
     <aspectj.version>1.8.10</aspectj.version>
 
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
-    <hippo.utilities.version>4.5.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
 
     <maven.plugin.site.version>3.6</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
