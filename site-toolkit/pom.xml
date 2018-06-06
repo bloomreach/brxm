@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4</version>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -80,15 +80,15 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.jackrabbit.version>2.16.1-h1</hippo.jackrabbit.version>
-    <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>1.5.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.utilities.version>4.5.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>4.5.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.search.version>4.5.0-SNAPSHOT</hippo.services.search.version>
-    <hippo.services.contenttype.version>4.5.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.testutils.version>1.5.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>13.0.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.search.version>13.0.0-SNAPSHOT</hippo.services.search.version>
+    <hippo.services.contenttype.version>13.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>13.0.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
 
