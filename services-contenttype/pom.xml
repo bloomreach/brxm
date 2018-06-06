@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29.4</version>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Services - contenttype</name>
@@ -34,9 +34,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - contenttype</notice.project.name>
     
-    <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
+    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <scm>
