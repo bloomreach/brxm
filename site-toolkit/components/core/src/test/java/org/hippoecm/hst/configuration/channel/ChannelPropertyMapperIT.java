@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -29,35 +31,37 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ChannelPropertyMapperIT extends RepositoryTestCase {
 
-    public static interface TestInfo extends ChannelInfo{
+    static interface TestInfo extends ChannelInfo{
         @Parameter(name = "test-name")
         String getName();
     }
 
-    public static interface TestInfoInteger extends ChannelInfo {
+    static interface TestInfoInteger extends ChannelInfo {
         @Parameter(name = "test-integer")
         int getInteger();
     }
 
-    public static interface TestInfoIntegerWithDefaultValue extends ChannelInfo {
+    static interface TestInfoIntegerWithDefaultValue extends ChannelInfo {
         @Parameter(name = "test-integer", defaultValue = "4")
         int getInteger();
     }
 
-    public static interface TestInfoDefaultValuesMissing extends ChannelInfo {
+    static interface TestInfoDefaultValuesMissing extends ChannelInfo {
         @Parameter(name = "integer")
         int getInteger();
         @Parameter(name = "boolean")
@@ -68,7 +72,7 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
         Calendar getCalendar();
     }
 
-    public static interface TestInfoDefaultValuesPresent extends ChannelInfo {
+    static interface TestInfoDefaultValuesPresent extends ChannelInfo {
         @Parameter(name = "integer", defaultValue = "3")
         int getInteger();
         @Parameter(name = "boolean", defaultValue = "true")
@@ -79,7 +83,7 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
         Calendar getCalendar();
     }
 
-    public static interface TestInfoDefaultValuesPresentButWrongFormat extends ChannelInfo {
+    static interface TestInfoDefaultValuesPresentButWrongFormat extends ChannelInfo {
         @Parameter(name = "integer", defaultValue = "aaa")
         int getInteger();
         @Parameter(name = "boolean", defaultValue = "bbb")
@@ -90,11 +94,30 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
         Calendar getCalendar();
     }
 
-    public static interface TestInfoUnsupportedReturnType extends ChannelInfo {
+    static interface TestInfoUnsupportedReturnType extends ChannelInfo {
         @Parameter(name = "test-bigdecimal")
         BigDecimal getBigDecimal();
     }
 
+    static interface AnalyticsChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "analyticsEnabled")
+        Boolean isAnalyticsEnabled();
+
+        @Parameter(name = "scriptlet")
+        String getScriptlet();
+
+    }
+
+    static interface CategorizingChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "categorizationEnabled")
+        Boolean isCategorizationEnabled();
+
+        @Parameter(name = "categories")
+        String getCategories();
+
+    }
 
     private HstNodeLoadingCache hstNodeLoadingCache;
 
@@ -276,6 +299,50 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
             }
         }
 
+    }
+
+    @Test
+    public void textMixinProperties() throws RepositoryException {
+        List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class,
+                AnalyticsChannelInfoMixin.class, CategorizingChannelInfoMixin.class);
+        Map<String, HstPropertyDefinition> definitionMap = definitions.stream()
+                .collect(Collectors.toMap(HstPropertyDefinition::getName, Function.identity()));
+
+        Node testConfNode = session.getNode("/test");
+        testConfNode.setProperty("test-name", "aap");
+        testConfNode.setProperty("analyticsEnabled", true);
+        testConfNode.setProperty("scriptlet", "(function() {})();");
+        testConfNode.setProperty("categorizationEnabled", true);
+        testConfNode.setProperty("categories", "foo,bar");
+        session.save();
+
+        HstNode testHstConfNode = hstNodeLoadingCache.getNode("/test");
+        Map<HstPropertyDefinition, Object> propsMap = ChannelPropertyMapper.loadProperties(testHstConfNode, definitions);
+
+        HstPropertyDefinition propDef = definitionMap.get("test-name");
+        assertNotNull(propDef);
+        assertTrue(propsMap.containsKey(propDef));
+        assertEquals("aap", propsMap.get(propDef));
+
+        propDef = definitionMap.get("analyticsEnabled");
+        assertNotNull(propDef);
+        assertTrue(propsMap.containsKey(propDef));
+        assertEquals(Boolean.TRUE, propsMap.get(propDef));
+
+        propDef = definitionMap.get("scriptlet");
+        assertNotNull(propDef);
+        assertTrue(propsMap.containsKey(propDef));
+        assertEquals("(function() {})();", propsMap.get(propDef));
+
+        propDef = definitionMap.get("categorizationEnabled");
+        assertNotNull(propDef);
+        assertTrue(propsMap.containsKey(propDef));
+        assertEquals(Boolean.TRUE, propsMap.get(propDef));
+
+        propDef = definitionMap.get("categories");
+        assertNotNull(propDef);
+        assertTrue(propsMap.containsKey(propDef));
+        assertEquals("foo,bar", propsMap.get(propDef));
     }
 
     private List<String> getPropDefNamesFromChannelInfo() {

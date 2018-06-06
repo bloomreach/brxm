@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -24,9 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -144,20 +143,39 @@ public class ChannelPropertyMapper {
             channel.setLockedOn(channelNode.getValueProvider().getDate(GENERAL_PROPERTY_LOCKED_ON));
         }
 
-        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
-            String className = channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS);
-            try {
-                Class clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
-                if (!ChannelInfo.class.isAssignableFrom(clazz)) {
-                    log.warn("Class " + className + " does not extend ChannelInfo");
-                    return channel;
+        final String channelInfoType = (channelNode.getValueProvider()
+                .hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS))
+                        ? channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)
+                        : null;
+
+        final String[] channelInfoMixins = (channelNode.getValueProvider()
+                .hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS))
+                        ? channelNode.getValueProvider().getStrings(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS)
+                        : null;
+
+        if (channelInfoType != null) {
+            final Class<? extends ChannelInfo> channelInfoClazz = loadChannelInfoClass(channelInfoType, channel.getId(),
+                    contextPath, isBlueprint);
+            final Class<? extends ChannelInfo>[] channelInfoMixinClasses = getChannelInfoMixinClasses(channelInfoMixins,
+                    channel.getId(), contextPath, isBlueprint);
+
+            if (channelInfoClazz != null) {
+                channel.setChannelInfoClassName(channelInfoClazz.getName());
+
+                if (channelInfoMixinClasses.length > 0) {
+                    channel.setChannelInfoMixinNames(
+                            Arrays.stream(channelInfoMixinClasses)
+                            .map(clazz -> clazz.getName()).collect(Collectors.toList()));
                 }
-                channel.setChannelInfoClassName(className);
+
                 HstNode channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+
                 if (channelInfoNode != null) {
                     Map<String, Object> properties = new HashMap<>();
-                    List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor.getProperties(clazz);
+                    List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor
+                            .getProperties(channelInfoClazz, channelInfoMixinClasses);
                     Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelInfoNode, propertyDefinitions);
+
                     for (HstPropertyDefinition def : propertyDefinitions) {
                         if (values.get(def) != null) {
                             properties.put(def.getName(), values.get(def));
@@ -165,36 +183,8 @@ public class ChannelPropertyMapper {
                             properties.put(def.getName(), def.getDefaultValue());
                         }
                     }
+
                     channel.setProperties(properties);
-                }
-            } catch (ClassNotFoundException e) {
-                if (isBlueprint) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
-                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
-                                "the correct contextPath on the blueprint node.",
-                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e);
-                    } else {
-                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
-                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
-                                "the correct contextPath on the blueprint node: {}",
-                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e.toString());
-                    }
-                }
-                else if (contextPath == null) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
-                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp. ", className, channel.getId(), e);
-                    } else {
-                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
-                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp : {}", className, channel.getId(), e.toString());
-                    }
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
-                    } else {
-                        log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
-                    }
                 }
             }
         }
@@ -232,23 +222,42 @@ public class ChannelPropertyMapper {
             channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).remove();
         }
 
-        String channelInfoClassName = channel.getChannelInfoClassName();
-        if (channelInfoClassName != null) {
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channelInfoClassName);
+        final String channelInfoType = channel.getChannelInfoClassName();
+        final List<String> channelInfoMixins = channel.getChannelInfoMixinNames();
+
+        if (channelInfoType != null) {
+            final Class<? extends ChannelInfo> channelInfoClazz = loadChannelInfoClass(channelInfoType, channel.getId(),
+                    null, false);
+            final Class<? extends ChannelInfo>[] channelInfoMixinClasses = getChannelInfoMixinClasses(
+                    (channelInfoMixins != null) ? channelInfoMixins.toArray(new String[channelInfoMixins.size()])
+                            : null,
+                    channel.getId(), null, false);
+
+            if (channelInfoClazz == null) {
+                throw new IllegalStateException("Could not find channel info class " + channelInfoType);
+            }
+
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channelInfoClazz.getName());
+
+            if (channelInfoMixinClasses.length > 1) {
+                final List<String> mixinTypeNameList =
+                        Arrays.stream(channelInfoMixinClasses, 1, channelInfoMixinClasses.length)
+                        .map(clazz -> clazz.getName()).collect(Collectors.toList());
+                channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS,
+                        mixinTypeNameList.toArray(new String[mixinTypeNameList.size()]));
+            }
 
             Node channelPropsNode;
+
             if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 channelPropsNode = channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
             } else {
                 channelPropsNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
             }
-            try {
-                Class<? extends ChannelInfo> channelInfoClass = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
-                ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), channel.getProperties());
-            } catch (ClassNotFoundException e) {
-                log.warn("Could not find channel info class " + channelInfoClassName, e);
-                throw new IllegalStateException("Could not find channel info class ", e);
-            }
+
+            ChannelPropertyMapper.saveProperties(channelPropsNode,
+                    ChannelInfoClassProcessor.getProperties(channelInfoClazz, channelInfoMixinClasses),
+                    channel.getProperties());
         } else {
             if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
@@ -502,4 +511,67 @@ public class ChannelPropertyMapper {
         nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
     }
 
+    @SuppressWarnings("unchecked")
+    private static Class<? extends ChannelInfo>[] getChannelInfoMixinClasses(final String[] channelInfoMixins,
+            final String channelId, final String contextPath, final boolean isBlueprint) {
+        final List<Class<? extends ChannelInfo>> list = new ArrayList<>();
+
+        if (channelInfoMixins != null) {
+            for (String channelInfoMixin : channelInfoMixins) {
+                final Class<? extends ChannelInfo> channelInfoMixinClazz = loadChannelInfoClass(channelInfoMixin, channelId,
+                        contextPath, isBlueprint);
+                if (channelInfoMixinClazz != null) {
+                    list.add(channelInfoMixinClazz);
+                }
+            }
+        }
+
+        return list.toArray(new Class[list.size()]);
+    }
+
+    private static Class<? extends ChannelInfo> loadChannelInfoClass(final String className, final String channelId,
+            final String contextPath, final boolean isBlueprint) {
+        Class<?> channelInfoClazz = null;
+
+        try {
+            Class<?> clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
+
+            if (ChannelInfo.class.isAssignableFrom(clazz)) {
+                channelInfoClazz = clazz;
+            } else {
+                log.warn("Class " + className + " does not extend ChannelInfo");
+            }
+        } catch (ClassNotFoundException e) {
+            if (isBlueprint) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                            "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                            "the correct contextPath on the blueprint node.",
+                            className, channelId, contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e);
+                } else {
+                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                            "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                            "the correct contextPath on the blueprint node: {}",
+                            className, channelId, contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e.toString());
+                }
+            }
+            else if (contextPath == null) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                            "contextPath agnostic mounts, the channel info needs to be in every HST webapp. ", className, channelId, e);
+                } else {
+                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                            "contextPath agnostic mounts, the channel info needs to be in every HST webapp : {}", className, channelId, e.toString());
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.warn("Could not load channel info class '{}' for channel '{}'", className, channelId, e);
+                } else {
+                    log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channelId, e.toString());
+                }
+            }
+        }
+
+        return (Class<? extends ChannelInfo>) channelInfoClazz;
+    }
 }

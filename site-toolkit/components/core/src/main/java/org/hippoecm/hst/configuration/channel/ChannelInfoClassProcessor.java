@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,22 +26,38 @@ import org.slf4j.LoggerFactory;
 public class ChannelInfoClassProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelInfoClassProcessor.class);
-    
-    public static List<HstPropertyDefinition> getProperties(Class<? extends ChannelInfo> channelInfoClass) {
+
+    @SafeVarargs
+    public static List<HstPropertyDefinition> getProperties(Class<? extends ChannelInfo> channelInfoClass,
+            Class<? extends ChannelInfo>... channelInfoMixins) {
         List<HstPropertyDefinition> properties = new ArrayList<HstPropertyDefinition>();
-        for (Method method : channelInfoClass.getMethods()) {
+
+        if (channelInfoClass != null) {
+            addProperties(properties, channelInfoClass);
+        }
+
+        if (channelInfoMixins != null) {
+            for (Class<? extends ChannelInfo> channelInfoMixin : channelInfoMixins) {
+                addProperties(properties, channelInfoMixin);
+            }
+        }
+
+        return properties;
+    }
+
+    private static void addProperties(final List<HstPropertyDefinition> properties, Class<? extends ChannelInfo> channelInfoType) {
+        for (Method method : channelInfoType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 // new style annotations
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
+
                 try {
                     HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
                     properties.add(prop);
                 } catch (IllegalArgumentException e) {
                     log.warn("Invalid parameterized method '{}' : {}", method.getName(), e.toString());
                 }
-                
             }
         }
-        return properties;
     }
 }
