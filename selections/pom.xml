@@ -26,7 +26,7 @@
   <name>Hippo Plugin Selections</name>
   <description>Hippo Plugin Selections</description>
   <artifactId>hippo-plugin-selections</artifactId>
-  <version>5.5.0-SNAPSHOT</version>
+  <version>13.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
