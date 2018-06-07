@@ -143,8 +143,12 @@ public class RestPluginResource {
         final Session session = jcrService.createSession();
         try {
             final Node targetNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-            jcrService.importResource(targetNode, "/plain_mount.xml", properties);
-            session.save();
+            if (targetNode.hasNode(mountName)) {
+                LOG.warn("Generic REST API mount '{}' already exists, skipping creation.");
+            } else {
+                jcrService.importResource(targetNode, "/plain_mount.xml", properties);
+                session.save();
+            }
         } catch (RepositoryException e) {
             LOG.error("Failed to import REST mount point '{}'.", mountName, e);
             feedback.addError("Failed to set up REST endpoint '" + mountName + "'. See back-end logs for mode details.");
