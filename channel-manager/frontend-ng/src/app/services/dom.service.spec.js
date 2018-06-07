@@ -127,13 +127,26 @@ describe('DomService', () => {
     expect(DomService.getAppRootUrl()).toEqual('//localhost:8080/app/root/');
   });
 
-  function expectEqualComputedStyle(elements1, elements2) {
-    expect(elements1.length).toEqual(elements2.length);
+  // Release 67 of Google Chrome introduced a failing test on comparing the copied computed style values,
+  // specifically the '-webkit-app-region' property. A little investigation showed that we don't
+  // depend on this property and as such can safely skip it during the validation.
+  const skipComputedStyleProperties = ['-webkit-app-region'];
+  function expectEqualComputedStyle(elementsSource, elementsTarget) {
+    expect(elementsSource.length).toEqual(elementsTarget.length);
 
-    for (let i = 0; i < elements1.length; i += 1) {
-      const computedStyle1 = window.getComputedStyle(elements1[i]);
-      const computedStyle2 = window.getComputedStyle(elements2[i]);
-      expect(computedStyle1.cssText).toEqual(computedStyle2.cssText);
+    for (let i = 0; i < elementsSource.length; i += 1) {
+      const computedStyleSource = window.getComputedStyle(elementsSource[i]);
+      const computedStyleTarget = window.getComputedStyle(elementsTarget[i]);
+      expect(computedStyleSource.length).toEqual(computedStyleTarget.length);
+
+      for (let j = 0; j < computedStyleSource.length; j += 1) {
+        const propertyName = computedStyleSource.item(j);
+        if (!skipComputedStyleProperties.includes(propertyName)) {
+          const propertyValueSource = computedStyleSource.getPropertyValue(propertyName);
+          const propertyValueTarget = computedStyleTarget.getPropertyValue(propertyName);
+          expect(propertyValueSource).toBe(propertyValueTarget, `-> CSS property ${propertyName}`);
+        }
+      }
     }
   }
 
