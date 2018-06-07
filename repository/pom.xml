@@ -548,6 +548,8 @@
                 <!-- cxf slf4j logger configuration -->
                 <exclude>jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger</exclude>
                 <exclude>testutils/src/main/resources/META-INF/cxf/org.apache.cxf.Logger</exclude>
+                <exclude>*.puml</exclude>
+                <exclude>**/*/*.puml</exclude>
               </excludes>
             </configuration>
           </plugin>
