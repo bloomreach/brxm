@@ -30,7 +30,6 @@
     <Logger name="org.hippoecm.repository" level="warn"/>
     <Logger name="org.hippoecm.frontend" level="warn"/>
     <Logger name="org.apache.wicket" level="warn"/>
-    <Logger name="org.onehippo.repository.bootstrap" level="warn"/>
 
     <!-- audit logging -->
     <Logger name="org.hippoecm.repository.api.Workflow" level="info"/>
