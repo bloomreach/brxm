@@ -17,10 +17,9 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ChannelCtrl', () => {
+describe('ChannelController', () => {
   let $ctrl;
   let $q;
-  let $rootScope;
   let $timeout;
   let $window;
   let ChannelService;
@@ -36,8 +35,7 @@ describe('ChannelCtrl', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      $controller,
-      _$rootScope_,
+      $componentController,
       _$timeout_,
       _$q_,
       _$window_,
@@ -49,7 +47,6 @@ describe('ChannelCtrl', () => {
     ) => {
       const resolvedPromise = _$q_.when();
 
-      $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $q = _$q_;
       $window = _$window_;
@@ -86,8 +83,7 @@ describe('ChannelCtrl', () => {
         'getRenderVariant',
       ]);
 
-      $ctrl = $controller('ChannelCtrl', {
-        $scope: $rootScope.$new(),
+      $ctrl = $componentController('channel', {
         $stateParams,
         ChannelService,
         SidePanelService,
