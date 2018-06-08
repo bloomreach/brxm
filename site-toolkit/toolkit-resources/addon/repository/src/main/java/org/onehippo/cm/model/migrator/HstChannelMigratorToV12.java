@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.onehippo.cm.engine.migrator.MigrationException;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.tree.Value;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
@@ -137,7 +137,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
                     }
                     final String cndPathOrigin = String.format("'%s' (%s)", cndPath, namespaceDefinition.getOrigin());
                     try (final InputStream nodeTypeStream = namespaceDefinition.getCndPath().getResourceInputStream()) {
-                        BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
+                        NodeTypeUtils.initializeNodeTypes(session, nodeTypeStream, cndPathOrigin);
                     }
                 } catch (IOException | RepositoryException e) {
                     getLogger().error("Error while trying to re-register the hst cnd. Cannot run migrator '{}'", this);
