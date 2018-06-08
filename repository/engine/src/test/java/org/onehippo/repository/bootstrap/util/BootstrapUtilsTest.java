@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.onehippo.repository.bootstrap.util;
 
-import java.io.File;
-import java.net.URL;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BootstrapUtilsTest extends RepositoryTestCase {
 
-    private Logger bootstrapLogger = BootstrapConstants.log;
+    private Logger bootstrapLogger = BootstrapUtils.log;
     private LoggerRecordingWrapper loggingRecorder;
 
     @Override
@@ -39,32 +36,14 @@ public class BootstrapUtilsTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
         loggingRecorder = new LoggerRecordingWrapper(bootstrapLogger);
-        BootstrapConstants.log = loggingRecorder;
+        BootstrapUtils.log = loggingRecorder;
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        BootstrapConstants.log = bootstrapLogger;
+        BootstrapUtils.log = bootstrapLogger;
         super.tearDown();
-    }
-
-    /*
-     * REPO-969: It works fine when the file: URL is on non-Windows system,
-     *           but it throws "IllegalArgumentException: URI is not hierarchical"
-     *           if the file: URL denotes a Windows URL like 'file:C:/a/b/c/...'.
-     */
-    @Test
-    public void testGetBaseZipFileFromURL() throws Exception {
-        URL url = new URL("file:/a/b/c.jar!/d/e/f.xml");
-        assertEquals("/a/b/c.jar!/d/e/f.xml", url.getFile());
-        File baseFile = BootstrapUtils.getBaseZipFileFromURL(url);
-        assertTrue(baseFile.getPath().endsWith("c.jar"));
-
-        url = new URL("file:C:/a/b/c.jar!/d/e/f.xml");
-        assertEquals("C:/a/b/c.jar!/d/e/f.xml", url.getFile());
-        baseFile = BootstrapUtils.getBaseZipFileFromURL(url);
-        assertTrue(baseFile.getPath().endsWith("c.jar"));
     }
 
     @Test

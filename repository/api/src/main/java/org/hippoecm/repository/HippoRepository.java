@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.onehippo.repository.bootstrap.InitializationProcessor;
-import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
 
 /**
@@ -115,18 +113,4 @@ public interface HippoRepository {
      * @throws RepositoryException in case of a generic error occurs communicating with the repository
      */
     public RepositoryMap getRepositoryMap(Node node) throws RepositoryException;
-
-    /**
-     * @return An {@link InitializationProcessor} for this repository for doing initialization tasks
-     */
-    public InitializationProcessor getInitializationProcessor();
-
-    /**
-     * Get or create a new reference workspace for comparing what changed since system bootstrap.
-     * This is a lightweight operation only creating the workspace itself but not loading the configuration.
-     *
-     * @return a {@link ReferenceWorkspace}
-     * @throws RepositoryException
-     */
-    public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException;
 }
