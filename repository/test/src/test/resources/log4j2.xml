@@ -84,8 +84,6 @@
       <AppenderRef ref="console"/>
     </Logger>
 
-    <Logger name="org.onehippo.repository.bootstrap" level="warn"/>
-
     <Logger additivity="false" name="org.hippoecm.repository.LocalHippoRepository" level="warn">
       <AppenderRef ref="console"/>
     </Logger>

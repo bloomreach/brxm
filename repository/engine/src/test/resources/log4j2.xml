@@ -35,7 +35,6 @@
   <Loggers>
     <Logger name="org.apache.jackrabbit" level="warn"/>
     <Logger name="org.hippoecm.repository" level="warn"/>
-    <Logger name="org.onehippo.repository.bootstrap" level="warn"/>
     <Logger name="org.hippoecm.repository.impl.LockManagerDecorator" level="debug"/>
     <Logger name="org.hippoecm.repository.HippoNodeTypeSanityTest" level="error"/>
     <Logger name="org.hippoecm.repository.quartz.JCRJobStore" level="error"/>

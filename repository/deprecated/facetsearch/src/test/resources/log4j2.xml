@@ -72,9 +72,6 @@
       <AppenderRef ref="console"/>
     </Logger>
 
-    <Logger additivity="false" name="org.onehippo.repository.bootstrap.InitializationProcessorImpl" level="warn">
-      <AppenderRef ref="console"/>
-    </Logger>
     <Logger additivity="false" name="org.hippoecm.repository.LocalHippoRepository" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
