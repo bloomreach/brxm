@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class CndImportDialog extends AbstractDialog<Void> {
 
             try {
                 final Session session = UserSession.get().getJcrSession();
-                BootstrapUtils.initializeNodetypes(session, upload.getInputStream(), upload.getClientFileName());
+                NodeTypeUtils.initializeNodeTypes(session, upload.getInputStream(), upload.getClientFileName());
             } catch (IOException e) {
                 log.error("Failed to read upload file for importing cnd", e);
                 error("Failed to read upload file");
