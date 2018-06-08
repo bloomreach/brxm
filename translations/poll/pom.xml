@@ -25,8 +25,7 @@
   
   <name>Hippo Plugin Poll Translations</name>
   <artifactId>hippo-plugin-poll-l10n</artifactId>
-  <version>4.4.0-SNAPSHOT</version>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
