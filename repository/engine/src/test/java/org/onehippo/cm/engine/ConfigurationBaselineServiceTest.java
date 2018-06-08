@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.util.NodeTypeUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -68,7 +68,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         }
 
         final InputStream cndStream = getClass().getClassLoader().getResourceAsStream("hcm-config/hcm.cnd");
-        BootstrapUtils.initializeNodetypes(session, cndStream, "hcm.cnd");
+        NodeTypeUtils.initializeNodeTypes(session, cndStream, "hcm.cnd");
         if (session.nodeExists(HCM_ROOT_PATH)) {
             baselineAlreadyCreated = true;
             session.getNode(HCM_ROOT_PATH).remove();

@@ -31,7 +31,7 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.util.Text;
 import org.onehippo.cm.model.util.DigestUtils;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
-import org.onehippo.repository.bootstrap.util.PartialZipFile;
+import org.onehippo.repository.util.PartialZipFile;
 import org.onehippo.repository.util.JcrConstants;
 
 import static org.onehippo.repository.util.JcrConstants.JCR_CONTENT;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.bootstrap.util;
+package org.onehippo.repository.util;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class BootstrapUtilsTest extends RepositoryTestCase {
+public class NodeTypeUtilsTest extends RepositoryTestCase {
 
-    private Logger bootstrapLogger = BootstrapUtils.log;
+    private Logger bootstrapLogger = NodeTypeUtils.log;
     private LoggerRecordingWrapper loggingRecorder;
 
     @Override
@@ -36,19 +36,19 @@ public class BootstrapUtilsTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
         loggingRecorder = new LoggerRecordingWrapper(bootstrapLogger);
-        BootstrapUtils.log = loggingRecorder;
+        NodeTypeUtils.log = loggingRecorder;
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        BootstrapUtils.log = bootstrapLogger;
+        NodeTypeUtils.log = bootstrapLogger;
         super.tearDown();
     }
 
     @Test
     public void testReplaceNodeTypeDefinition() throws Exception {
-        BootstrapUtils.initializeNodetypes(session, getClass().getResourceAsStream("/bootstrap/test.cnd"), "test.cnd");
+        NodeTypeUtils.initializeNodeTypes(session, getClass().getResourceAsStream("/bootstrap/test.cnd"), "test.cnd");
         assertEquals(2, loggingRecorder.getDebugMessages().size());
         assertTrue(loggingRecorder.getDebugMessages().get(1).startsWith("Replacing"));
     }

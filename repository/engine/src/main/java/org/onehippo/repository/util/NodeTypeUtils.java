@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.bootstrap.util;
+package org.onehippo.repository.util;
 
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
@@ -33,13 +33,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class BootstrapUtils {
+public class NodeTypeUtils {
 
-    private BootstrapUtils() {}
+    private NodeTypeUtils() {}
 
-    public static Logger log = LoggerFactory.getLogger("org.onehippo.repository.bootstrap");
+    public static Logger log = LoggerFactory.getLogger(NodeTypeUtils.class);
 
-    public static void initializeNodetypes(Session session, InputStream cndStream, String cndName) throws RepositoryException {
+    public static void initializeNodeTypes(Session session, InputStream cndStream, String cndName) throws RepositoryException {
         try {
             log.debug("Initializing nodetypes from {} ", cndName);
             final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();

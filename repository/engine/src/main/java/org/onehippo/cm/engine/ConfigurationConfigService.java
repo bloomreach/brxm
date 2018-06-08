@@ -67,8 +67,8 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
-import org.onehippo.repository.bootstrap.util.PartialZipFile;
+import org.onehippo.repository.util.NodeTypeUtils;
+import org.onehippo.repository.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -300,7 +300,7 @@ public class ConfigurationConfigService {
                 }
                 final String cndPathOrigin = String.format("'%s' (%s)", cndPath, nsDefinition.getOrigin());
                 try (final InputStream nodeTypeStream = nsDefinition.getCndPath().getResourceInputStream()) {
-                    BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
+                    NodeTypeUtils.initializeNodeTypes(session, nodeTypeStream, cndPathOrigin);
                 }
             }
         }

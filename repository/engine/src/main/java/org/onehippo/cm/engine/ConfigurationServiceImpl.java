@@ -69,7 +69,7 @@ import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -472,12 +472,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 }
                 if (!session.getWorkspace().getNodeTypeManager().hasNodeType(HIPPO_LOCK)) {
                     try (InputStream is = getClass().getResourceAsStream("/" + HCM_CONFIG_FOLDER + "/hippo.cnd")) {
-                        BootstrapUtils.initializeNodetypes(session, is, "hippo.cnd");
+                        NodeTypeUtils.initializeNodeTypes(session, is, "hippo.cnd");
                     }
                 }
                 if (!session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)) {
                     try (InputStream is = getClass().getResourceAsStream("/" + HCM_CONFIG_FOLDER + "/hcm.cnd")) {
-                        BootstrapUtils.initializeNodetypes(session, is, "hcm.cnd");
+                        NodeTypeUtils.initializeNodeTypes(session, is, "hcm.cnd");
                     }
                 }
                 session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
