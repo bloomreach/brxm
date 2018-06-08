@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,11 +40,9 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.junit.After;
 import org.junit.Before;
-import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.onehippo.repository.mock.MockNode;
 
 /**
@@ -140,16 +138,6 @@ public abstract class MockPluginTest {
 
         @Override
         public RepositoryMap getRepositoryMap(final Node node) throws RepositoryException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public InitializationProcessor getInitializationProcessor() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException {
             throw new UnsupportedOperationException();
         }
     }
