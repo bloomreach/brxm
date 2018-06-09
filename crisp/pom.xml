@@ -59,9 +59,9 @@
     <httpcomponents-httpcore.version>4.4.9</httpcomponents-httpcore.version>
     <httpcomponents-httpclient.version>4.5.5</httpcomponents-httpclient.version>
 
-    <spring.security.version>4.2.5.RELEASE</spring.security.version>
+    <spring.security.version>5.0.5.RELEASE</spring.security.version>
     <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
-    <spring-security-oauth2.version>2.1.0.RELEASE</spring-security-oauth2.version>
+    <spring-security-oauth2.version>2.3.3.RELEASE</spring-security-oauth2.version>
 
     <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
@@ -102,6 +102,12 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
         <version>${jackson2.version}</version>
       </dependency>
 
