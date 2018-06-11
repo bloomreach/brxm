@@ -31,6 +31,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -555,6 +556,17 @@ public class ResourceServlet extends HttpServlet {
                 throw new IOException("Cannot write to a closed output stream");
             }
             gzipStream.write(b, off, len);
+        }
+
+        @Override
+        public boolean isReady() {
+            // Upgrade processing with asynchronous IO is not supported.
+            return false;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener listener) {
+            // Upgrade processing with asynchronous IO is not supported.
         }
     }
 }
