@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PageActionNew', () => {
-  let $q;
-  let $scope;
-  let $rootScope;
+describe('PageNewComponent', () => {
   let $compile;
-  let $element;
+  let $componentController;
+  let $ctrl;
+  let $q;
+  let $rootScope;
   let $translate;
   let ChannelService;
   let FeedbackService;
@@ -34,18 +34,20 @@ describe('PageActionNew', () => {
     angular.mock.module('hippo-cm');
 
     inject((
+      _$compile_,
+      _$componentController_,
       _$q_,
       _$rootScope_,
-      _$compile_,
       _$translate_,
       _ChannelService_,
       _FeedbackService_,
       _HippoIframeService_,
       _SiteMapService_,
     ) => {
+      $compile = _$compile_;
+      $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $compile = _$compile_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
@@ -79,20 +81,37 @@ describe('PageActionNew', () => {
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapService, 'create').and.returnValue($q.when({ renderPathInfo: 'renderPathInfo' }));
     spyOn(SiteMapService, 'load');
+
+    $ctrl = $componentController('pageNew', null, {
+      onDone: jasmine.createSpy('onDone'),
+    });
   });
 
-  function compileDirectiveAndGetController() {
-    $scope = $rootScope.$new();
-    $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<page-new on-done="onDone()"> </page-new>');
-    $compile($element)($scope);
-    $scope.$digest();
+  describe('$element tests', () => {
+    let $element;
+    let $scope;
 
-    return $element.controller('pageNew');
-  }
+    function compileComponentAndGetController() {
+      $scope = $rootScope.$new();
+      $scope.onDone = jasmine.createSpy('onDone');
+      $element = angular.element('<page-new on-done="onDone()"> </page-new>');
+      $compile($element)($scope);
+      $scope.$digest();
+
+      return $element.controller('pageNew');
+    }
+
+    it('calls the callback when navigating back', () => {
+      compileComponentAndGetController();
+
+      $element.find('.qa-button-back').click();
+      expect($scope.onDone).toHaveBeenCalled();
+    });
+  });
 
   it('initializes correctly', () => {
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     expect($ctrl.illegalCharacters).toBe('/ :');
     expect($ctrl.illegalCharactersMessage).toBe('Illegal Characters');
@@ -108,7 +127,7 @@ describe('PageActionNew', () => {
   });
 
   it('updates the last pathinfo element as long as it is coupled to the title field', () => {
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     expect($ctrl.title).toBeUndefined();
@@ -123,27 +142,19 @@ describe('PageActionNew', () => {
     expect($ctrl.lastPathInfoElement).toBe('-foo--bar-');
   });
 
-  it('calls the callback when navigating back', () => {
-    compileDirectiveAndGetController();
-
-    $element.find('.qa-button-back').click();
-    expect($scope.onDone).toHaveBeenCalled();
-  });
-
   it('flashes a toast when retrieval of the new page model fails', () => {
     ChannelService.getNewPageModel.and.returnValue($q.reject());
-    compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
-  it('gracefully handles absend prototypes or locations', () => {
+  it('gracefully handles absent prototypes or locations', () => {
     pageModel.prototypes = [];
     pageModel.locations = [];
-
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     expect($ctrl.location).toBeUndefined();
@@ -151,7 +162,7 @@ describe('PageActionNew', () => {
   });
 
   it('successfully creates a new page', () => {
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     $ctrl.title = 'title';
@@ -168,12 +179,12 @@ describe('PageActionNew', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('renderPathInfo');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('flashes a toast when failing to create a new page with a parent sitemap item id', () => {
     SiteMapService.create.and.returnValue($q.reject());
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     $ctrl.title = 'title';
@@ -194,7 +205,7 @@ describe('PageActionNew', () => {
   });
 
   it('correctly dispatches the error from the server when trying to create a new page', () => {
-    const $ctrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
     $rootScope.$digest();
 
     const response = { key: 'value' };

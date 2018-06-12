@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
 
 import PageActionsService from './pageActions.service';
-import pageNewDirective from './new/new.directive';
-import PageNewCtrl from './new/new.controller';
+import pageNewComponent from './new/pageNew.component';
 import pagePropertiesDirective from './properties/properties.directive';
 import PagePropertiesCtrl from './properties/properties.controller';
 import pageMoveDirective from './move/move.directive';
@@ -33,8 +32,7 @@ const channelPageActionsModule = angular
     focusIf,
   ])
   .service('PageActionsService', PageActionsService)
-  .controller('PageNewCtrl', PageNewCtrl)
-  .directive('pageNew', pageNewDirective)
+  .component('pageNew', pageNewComponent)
   .controller('PagePropertiesCtrl', PagePropertiesCtrl)
   .directive('pageProperties', pagePropertiesDirective)
   .controller('PageMoveCtrl', PageMoveCtrl)

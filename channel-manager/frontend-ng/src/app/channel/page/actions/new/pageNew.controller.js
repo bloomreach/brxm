@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,37 +15,42 @@
  */
 
 class PageNewCtrl {
-  constructor($log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
-    FeedbackService, lowercaseFilter) {
+  constructor(
+    $scope,
+    $translate,
+    ChannelService,
+    FeedbackService,
+    HippoIframeService,
+    lowercaseFilter,
+    SiteMapService,
+  ) {
     'ngInject';
 
-    this.$log = $log;
+    this.$scope = $scope;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.SiteMapService = SiteMapService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.lowercaseFilter = lowercaseFilter;
+    this.SiteMapService = SiteMapService;
+  }
 
-    this.prototypes = [];
-    this.locations = [];
-    this.updateLastPathInfoElementAutomatically = true;
-    this.siteMapId = ChannelService.getSiteMapId();
-    this.illegalCharacters = '/ :';
-    this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
-      { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+  $onInit() {
     this.errorMap = {
       ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
       ITEM_NOT_IN_PREVIEW: 'ERROR_PAGE_PARENT_MISSING',
       ITEM_NAME_NOT_UNIQUE: 'ERROR_PAGE_PATH_EXISTS',
       INVALID_PATH_INFO: 'ERROR_PAGE_PATH_INVALID',
     };
+    this.illegalCharacters = '/ :';
+    this.illegalCharactersMessage = this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
+      { characters: this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+    this.locations = [];
+    this.prototypes = [];
+    this.siteMapId = this.ChannelService.getSiteMapId();
+    this.updateLastPathInfoElementAutomatically = true;
 
-    $scope.$watch('$ctrl.title', () => {
-      if (this.updateLastPathInfoElementAutomatically) {
-        this.lastPathInfoElement = this._replaceIllegalCharacters(lowercaseFilter(this.title), '-');
-      }
-    });
-
-    ChannelService.getNewPageModel()
+    this.ChannelService.getNewPageModel()
       .then((data) => {
         this.prototypes = data.prototypes;
         this.prototype = (data.prototypes.length > 0) ? data.prototypes[0] : undefined;
@@ -53,6 +58,12 @@ class PageNewCtrl {
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
       .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+
+    this.$scope.$watch('$ctrl.title', () => {
+      if (this.updateLastPathInfoElementAutomatically) {
+        this.lastPathInfoElement = this._replaceIllegalCharacters(this.lowercaseFilter(this.title), '-');
+      }
+    });
   }
 
   create() {
