@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,28 +23,33 @@ import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.core.query.QueryImpl;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.decorating.DecoratorFactory;
 
-public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDecorator implements HippoQuery {
+public class QueryDecorator extends AbstractDecorator implements HippoQuery {
 
     protected final Query query;
     protected Map<String, Value> arguments = null;
@@ -54,12 +59,12 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     private static final String MAGIC_NAMED_END = "CIGAM";
 
     public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
-        super(factory, session, query);
+        super(factory, session);
         this.query = query;
     }
 
     public QueryDecorator(DecoratorFactory factory, Session session, Query query, Node node) {
-        super(factory, session, query);
+        super(factory, session);
         this.query = query;
         try {
             if (node.isNodeType(HippoNodeType.NT_IMPLEMENTATION) && node.hasProperty(HippoNodeType.HIPPO_CLASSNAME)) {
@@ -116,6 +121,38 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
         }
         return queryString;
     }
+
+    public String getLanguage() {
+        return query.getLanguage();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public String getStoredQueryPath() throws ItemNotFoundException, RepositoryException {
+        return query.getStoredQueryPath();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
+        Node node = query.storeAsNode(absPath);
+        return node;
+    }
+
+    public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
+        if(!absPath.startsWith("/")) {
+            throw new RepositoryException(absPath + " is not an absolute path");
+        }
+        Node queryNode = session.getRootNode().addNode(absPath.substring(1), type);
+        queryNode.setProperty("jcr:language", getLanguage());
+        queryNode.setProperty("jcr:statement", getStatement());
+        return factory.getNodeDecorator(session, queryNode);
+    }
+
 
     /**
      * @inheritDoc

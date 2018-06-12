@@ -32,7 +32,7 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
-import org.hippoecm.repository.decorating.NodeDecorator;
+import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.path.JcrPath;

@@ -16,7 +16,7 @@
 
 package org.onehippo.repository.journal;
 
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.junit.Test;
 import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.testutils.RepositoryTestCase;

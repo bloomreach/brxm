@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
 
 import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
-import org.hippoecm.repository.decorating.AbstractDecorator;
-import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.query.lucene.HippoQueryResult;
 
 public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
@@ -33,15 +31,24 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
     protected QueryResultDecorator(DecoratorFactory factory, SessionDecorator session, QueryResult result) {
         super(factory, session);
         this.result = result;
-        QueryResult impl = org.hippoecm.repository.decorating.QueryResultDecorator.unwrap(result);
+        QueryResult impl = unwrap(result);
         if (impl instanceof HippoQueryResult) {
             totalSize = ((HippoQueryResult)impl).getSizeTotal();
         } else if (impl instanceof QueryResultImpl) {
-            totalSize = ((QueryResultImpl)org.hippoecm.repository.decorating.QueryResultDecorator.unwrap(result)).getTotalSize();
+            totalSize = ((QueryResultImpl)impl).getTotalSize();
         } else {
             totalSize = -1L;
         }
     }
+
+    public static QueryResult unwrap(QueryResult decorated) {
+        if(decorated instanceof QueryResultDecorator) {
+            return ((QueryResultDecorator)decorated).result;
+        } else {
+            return decorated;
+        }
+    }
+
     /**
      * @inheritDoc
      */

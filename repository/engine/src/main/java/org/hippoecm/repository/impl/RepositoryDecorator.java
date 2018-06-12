@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,23 +20,70 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.security.JvmCredentials;
 
 /**
  * Simple {@link Repository Repository} decorator.
  */
-public class RepositoryDecorator extends org.hippoecm.repository.decorating.RepositoryDecorator implements RepositoryService {
+public class RepositoryDecorator implements RepositoryService {
 
+    private DecoratorFactory factory;
     private Repository repository;
 
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
-        super(factory, repository);
+        this.factory = factory;
         this.repository = repository;
+    }
+
+    public static Repository unwrap(Repository repository) {
+        if (repository == null) {
+            return null;
+        }
+        if (repository instanceof RepositoryDecorator) {
+            repository = ((RepositoryDecorator)repository).repository;
+        }
+        return repository;
+    }
+
+    @Override
+    public String[] getDescriptorKeys() {
+        return repository.getDescriptorKeys();
+    }
+
+    @Override
+    public String getDescriptor(String key) {
+        if(REP_NAME_DESC.equals(key)) {
+            return "Hippo Repository";
+        } else if(REP_VENDOR_DESC.equals(key)) {
+            return "Hippo B.V.";
+        } else if(REP_VENDOR_URL_DESC.equals(key)) {
+            return "http://www.onehippo.org/";
+        } else if(REP_VERSION_DESC.equals(key)) {
+            return getClass().getPackage().getImplementationVersion();
+        } else {
+            return repository.getDescriptor(key);
+        }
+    }
+
+    public boolean isStandardDescriptor(String key) {
+        return repository.isStandardDescriptor(key);
+    }
+
+    public boolean isSingleValueDescriptor(String key) {
+        return repository.isSingleValueDescriptor(key);
+    }
+
+    public Value getDescriptorValue(String key) {
+        return repository.getDescriptorValue(key);
+    }
+
+    public Value[] getDescriptorValues(String key) {
+        return repository.getDescriptorValues(key);
     }
 
     @Override
@@ -74,21 +121,6 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
             if (loginTask != null) {
                 loginTask.stop();
             }
-        }
-    }
-
-    @Override
-    public String getDescriptor(String key) {
-        if(REP_NAME_DESC.equals(key)) {
-            return "Hippo Repository";
-        } else if(REP_VENDOR_DESC.equals(key)) {
-            return "Hippo B.V.";
-        } else if(REP_VENDOR_URL_DESC.equals(key)) {
-            return "http://www.onehippo.org/";
-        } else if(REP_VERSION_DESC.equals(key)) {
-            return getClass().getPackage().getImplementationVersion();
-        } else {
-            return super.getDescriptor(key);
         }
     }
 }

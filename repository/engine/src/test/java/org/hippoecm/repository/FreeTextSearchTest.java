@@ -492,7 +492,7 @@ public class FreeTextSearchTest extends RepositoryTestCase {
 
     public static void flushIndex(Repository repository) {
         try {
-            repository = org.hippoecm.repository.decorating.RepositoryDecorator.unwrap(repository);
+            repository = org.hippoecm.repository.impl.RepositoryDecorator.unwrap(repository);
             QueryHandler queryHandler = ((RepositoryImpl)repository).getSearchManager("default").getQueryHandler();
             ((SearchIndex)queryHandler).flush();
         } catch (SecurityException e) {

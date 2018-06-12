@@ -24,28 +24,31 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventJournal;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.QueryManager;
 import javax.jcr.util.TraversingItemVisitor;
+import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitSession;
@@ -56,7 +59,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
@@ -64,11 +66,12 @@ import org.hippoecm.repository.security.service.SecurityServiceImpl;
 import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 /**
  * Simple workspace decorator.
  */
-public class WorkspaceDecorator extends org.hippoecm.repository.decorating.WorkspaceDecorator implements HippoWorkspace {
+public class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
@@ -87,10 +90,29 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
      * @param workspace
      */
     public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
-        super(factory, session, workspace);
+        super(factory, session);
         this.session = session;
         this.workspace = workspace;
         workflowManager = null;
+    }
+
+    public static Workspace unwrap(Workspace workspace) {
+        while (workspace instanceof WorkspaceDecorator) {;
+            workspace = ((WorkspaceDecorator)workspace).workspace;
+        }
+        return workspace;
+    }
+
+    /** {@inheritDoc} */
+    public Session getSession() {
+        return session;
+    }
+
+    /**
+     * Forwards the method call to the underlying workspace.
+     */
+    public String getName() {
+        return workspace.getName();
     }
 
     public void postMountEnabled(boolean enabled) {
@@ -138,7 +160,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     @Override
     public ObservationManager getObservationManager() throws UnsupportedRepositoryOperationException,
             RepositoryException {
-        final ObservationManager upstream = super.getObservationManager();
+        final ObservationManager upstream = workspace.getObservationManager();
         return new ObservationManager() {
 
             public void addEventListener(EventListener listener, int eventTypes, String absPath, boolean isDeep,
@@ -309,7 +331,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     @Override
     public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
-        super.copy(srcAbsPath, destAbsPath);
+        workspace.copy(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
@@ -317,7 +339,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException,
             ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException,
             ItemExistsException, LockException, RepositoryException {
-        super.copy(srcWorkspace, srcAbsPath, destAbsPath);
+        workspace.copy(srcWorkspace, srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
@@ -325,15 +347,75 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting)
             throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
             PathNotFoundException, ItemExistsException, LockException, RepositoryException {
-        super.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
+        workspace.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
         touch(destAbsPath);
     }
 
     @Override
     public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
-        super.move(srcAbsPath, destAbsPath);
+        workspace.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
+    }
+
+    public void restore(Version[] versions, boolean removeExisting) throws ItemExistsException,
+            UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException,
+            RepositoryException {
+        Version[] tmp = new Version[versions.length];
+        for (int i = 0; i < versions.length; i++) {
+            tmp[i] = VersionDecorator.unwrap(versions[i]);
+        }
+        workspace.restore(tmp, removeExisting);
+    }
+
+    /**
+     * Forwards the method call to the underlying workspace.
+     */
+    public QueryManager getQueryManager() throws RepositoryException {
+        return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
+    }
+
+    /**
+     * Forwards the method call to the underlying workspace.
+     */
+    public NamespaceRegistry getNamespaceRegistry() throws RepositoryException {
+        return workspace.getNamespaceRegistry();
+    }
+
+    /**
+     * Forwards the method call to the underlying workspace.
+     */
+    public NodeTypeManager getNodeTypeManager() throws RepositoryException {
+        return workspace.getNodeTypeManager();
+    }
+
+    public String[] getAccessibleWorkspaceNames() throws RepositoryException {
+        return workspace.getAccessibleWorkspaceNames();
+    }
+
+    /**
+     * Forwards the method call to the underlying workspace.
+     */
+    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+            throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
+            RepositoryException {
+        return workspace.getImportContentHandler(parentAbsPath, uuidBehaviour);
+    }
+
+    public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return factory.getLockManagerDecorator(session, workspace.getLockManager());
+    }
+
+    public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
+        workspace.createWorkspace(name);
+    }
+
+    public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+        workspace.createWorkspace(name, srcWorkspace);
+    }
+
+    public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+        workspace.deleteWorkspace(name);
     }
 
     void dispose() {

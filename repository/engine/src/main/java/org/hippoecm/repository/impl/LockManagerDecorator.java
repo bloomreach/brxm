@@ -20,7 +20,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.lock.Lock;
@@ -56,7 +59,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_LOCKABLE;
  * @deprecated since 5.0.3
  */
 @Deprecated
-public class LockManagerDecorator extends org.hippoecm.repository.decorating.LockManagerDecorator implements HippoLockManager {
+public class LockManagerDecorator implements HippoLockManager, LockManager {
 
     private static final Logger log = LoggerFactory.getLogger(LockManagerDecorator.class);
     private static final Calendar NO_TIMEOUT = Calendar.getInstance();
@@ -64,10 +67,14 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
         NO_TIMEOUT.setTimeInMillis(Long.MAX_VALUE);
     }
 
+    private final Session session;
+    private final LockManager lockManager;
+
     private final ScheduledExecutorService executor;
 
     public LockManagerDecorator(final Session session, final LockManager lockManager) {
-        super(session, lockManager);
+        this.session = session;
+        this.lockManager = lockManager;
         executor = ((InternalHippoSession) SessionDecorator.unwrap(session)).getExecutor();
     }
 
@@ -77,6 +84,12 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
         }
         return lockManager;
     }
+
+    @Override
+    public void addLockToken(final String lockToken) throws LockException, RepositoryException {
+        lockManager.addLockToken(lockToken);
+    }
+
 
     @Override
     public boolean expireLock(final String absPath) throws LockException, RepositoryException {
@@ -101,14 +114,39 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                 throw new LockException("Already locked: " + absPath);
             }
         }
-        final Lock lock = super.lock(absPath, isDeep, isSessionScoped, timeoutHint, ownerInfo);
+        final Lock lock = lockManager.lock(absPath, isDeep, isSessionScoped, timeoutHint, ownerInfo);
         setTimeout(lock, timeoutHint);
         return new LockDecorator(lock, timeoutHint);
     }
 
     @Override
     public HippoLock getLock(final String absPath) throws RepositoryException {
-        return new LockDecorator(super.getLock(absPath));
+        return new LockDecorator(lockManager.getLock(absPath));
+    }
+
+    @Override
+    public String[] getLockTokens() throws RepositoryException {
+        return lockManager.getLockTokens();
+    }
+
+    @Override
+    public boolean holdsLock(final String absPath) throws PathNotFoundException, RepositoryException {
+        return lockManager.holdsLock(absPath);
+    }
+
+    @Override
+    public boolean isLocked(final String absPath) throws PathNotFoundException, RepositoryException {
+        return lockManager.isLocked(absPath);
+    }
+
+    @Override
+    public void removeLockToken(final String lockToken) throws LockException, RepositoryException {
+        lockManager.removeLockToken(lockToken);
+    }
+
+    @Override
+    public void unlock(final String absPath) throws PathNotFoundException, LockException, AccessDeniedException, InvalidItemStateException, RepositoryException {
+        lockManager.unlock(absPath);
     }
 
     private void setTimeout(final Lock lock, final long timeoutHint) throws RepositoryException {

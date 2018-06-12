@@ -26,7 +26,7 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.junit.Test;
 import org.onehippo.repository.InternalHippoRepository;
 

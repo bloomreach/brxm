@@ -73,7 +73,7 @@ import org.apache.jackrabbit.util.XMLChar;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
-import org.hippoecm.repository.decorating.NodeDecorator;
+import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;

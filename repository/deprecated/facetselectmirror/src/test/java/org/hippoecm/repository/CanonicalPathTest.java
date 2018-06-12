@@ -117,7 +117,7 @@ public class CanonicalPathTest extends RepositoryTestCase {
 
     private ItemId unwrappedItemId(Node node) {
         Node impl = node;
-        impl = org.hippoecm.repository.decorating.NodeDecorator.unwrap(impl);
+        impl = org.hippoecm.repository.impl.NodeDecorator.unwrap(impl);
         return ((NodeImpl)impl).getId();
     }
 

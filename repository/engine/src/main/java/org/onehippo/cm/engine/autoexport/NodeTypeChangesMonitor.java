@@ -29,7 +29,7 @@ import javax.jcr.observation.ObservationManager;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistryListener;
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.onehippo.repository.InternalHippoRepository;
 
 import static com.google.common.collect.Sets.newHashSet;

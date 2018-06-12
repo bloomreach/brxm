@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -28,6 +29,7 @@ import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -38,12 +40,17 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.retention.RetentionManager;
+import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 import javax.xml.transform.OutputKeys;
@@ -61,8 +68,6 @@ import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.decorating.DecoratorFactory;
-import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -80,25 +85,44 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class SessionDecorator extends org.hippoecm.repository.decorating.SessionDecorator implements XASession, HippoSession {
+public class SessionDecorator implements XASession, HippoSession {
 
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
+    protected final DecoratorFactory factory;
+    protected final Repository repository;
+    protected final Session session;
 
     protected DerivedDataEngine derivedEngine;
 
     protected final Credentials credentials;
 
     SessionDecorator(DecoratorFactory factory, Repository repository, Session session, Credentials credentials) {
-        super(factory, repository, session);
+        this.factory = factory;
+        this.repository = repository;
+        this.session = session;
         derivedEngine = new DerivedDataEngine(this);
         this.credentials = credentials;
     }
 
     SessionDecorator(DecoratorFactory factory, Repository repository, XASession session, Credentials credentials) throws RepositoryException {
-        super(factory, repository, session);
+        this.factory = factory;
+        this.repository = repository;
+        this.session = session;
         derivedEngine = new DerivedDataEngine(this);
         this.credentials = credentials;
+    }
+
+    public static Session unwrap(Session session) {
+        if (session == null) {
+            return null;
+        } else if (session instanceof SessionDecorator) {
+            while(session instanceof SessionDecorator)
+                session = ((SessionDecorator)session).session;
+            return session;
+        } else {
+            return session;
+        }
     }
 
     void postSave(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
@@ -145,6 +169,31 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     @Override
+    public Repository getRepository() {
+        return repository;
+    }
+
+    @Override
+    public String getUserID() {
+        return session.getUserID();
+    }
+
+    @Override
+    public Object getAttribute(String name) {
+        return session.getAttribute(name);
+    }
+
+    @Override
+    public String[] getAttributeNames() {
+        return session.getAttributeNames();
+    }
+
+    @Override
+    public Workspace getWorkspace() {
+        return factory.getWorkspaceDecorator(this, session.getWorkspace());
+    }
+
+    @Override
     public User getUser() throws RepositoryException {
         return ((HippoWorkspace) getWorkspace()).getSecurityService().getUser(getUserID());
     }
@@ -153,6 +202,35 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
         Session newSession = session.impersonate(credentials);
         return DecoratorFactoryImpl.getSessionDecorator(newSession, credentials);
+    }
+
+    @Override
+    public Node getRootNode() throws RepositoryException {
+        Node root = session.getRootNode();
+        return factory.getNodeDecorator(this, root);
+    }
+
+    @Override
+    public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
+        Node node = session.getNodeByUUID(uuid);
+        return factory.getNodeDecorator(this, node);
+    }
+
+    @Override
+    public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
+        Item item = session.getItem(absPath);
+        return factory.getItemDecorator(this, item);
+    }
+
+    @Override
+    public boolean itemExists(String path) throws RepositoryException {
+        return session.itemExists(path);
+    }
+
+    @Override
+    public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
+            VersionException, RepositoryException {
+        session.move(srcAbsPath, destAbsPath);
     }
 
     @Override
@@ -177,10 +255,32 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
         try {
             postMountEnabled(false);
-            super.save();
+            session.save();
         } finally {
             postMountEnabled(true);
         }
+    }
+
+    @Override
+    public void refresh(boolean keepChanges) throws RepositoryException {
+        session.refresh(keepChanges);
+    }
+
+    @Override
+    public boolean hasPendingChanges() throws RepositoryException {
+        return session.hasPendingChanges();
+    }
+
+    @Override
+    public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
+        session.checkPermission(absPath, actions);
+    }
+
+    @Override
+    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+            throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
+            RepositoryException {
+        return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
     }
 
     @Override
@@ -219,7 +319,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             throws IOException, RepositoryException {
         try {
             postMountEnabled(false);
-            super.importXML(parentAbsPath, in, uuidBehavior);
+            session.importXML(parentAbsPath, in, uuidBehavior);
         } finally {
             postMountEnabled(true);
         }
@@ -327,9 +427,54 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     @Override
+    public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
+        session.setNamespacePrefix(prefix, uri);
+    }
+
+    @Override
+    public String[] getNamespacePrefixes() throws RepositoryException {
+        return session.getNamespacePrefixes();
+    }
+
+    @Override
+    public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
+        return session.getNamespaceURI(prefix);
+    }
+
+    @Override
+    public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
+        return session.getNamespacePrefix(uri);
+    }
+
+    @Override
     public void logout() {
-        super.logout();
+        session.logout();
         ((WorkspaceDecorator) getWorkspace()).dispose();
+    }
+
+    @Override
+    public void addLockToken(String lt) {
+        session.addLockToken(lt);
+    }
+
+    @Override
+    public String[] getLockTokens() {
+        return session.getLockTokens();
+    }
+
+    @Override
+    public void removeLockToken(String lt) {
+        session.removeLockToken(lt);
+    }
+
+    @Override
+    public ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return factory.getValueFactoryDecorator(this, session.getValueFactory());
+    }
+
+    @Override
+    public boolean isLive() {
+        return session.isLive();
     }
 
     @Override
@@ -501,7 +646,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) throws RepositoryException {
-        if (!(super.session instanceof InternalHippoSession)) {
+        if (!(this.session instanceof InternalHippoSession)) {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
         if (!(session instanceof SessionDecorator)) {
@@ -511,7 +656,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         if (!(other.session instanceof InternalHippoSession)) {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
-        final Session delegatedSession = ((InternalHippoSession) super.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
+        final Session delegatedSession = ((InternalHippoSession) this.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
         return DecoratorFactoryImpl.getSessionDecorator(delegatedSession, credentials);
     }
 
@@ -527,5 +672,63 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     private InternalHippoSession getInternalHippoSession() {
         return ((InternalHippoSession) session);
+    }
+
+    @Override
+    public ClassLoader getSessionClassLoader() throws RepositoryException {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    @Override
+    public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
+        Node node = session.getNodeByIdentifier(id);
+        return factory.getNodeDecorator(this, node);
+    }
+
+    @Override
+    public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
+        Node node = session.getNode(absPath);
+        return factory.getNodeDecorator(this, node);
+    }
+
+    @Override
+    public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
+        Property property = session.getProperty(absPath);
+        return factory.getPropertyDecorator(this, property);
+    }
+
+    @Override
+    public boolean nodeExists(String absPath) throws RepositoryException {
+        return session.nodeExists(absPath);
+    }
+
+    @Override
+    public boolean propertyExists(String absPath) throws RepositoryException {
+        return session.propertyExists(absPath);
+    }
+
+    @Override
+    public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
+        session.removeItem(absPath);
+    }
+
+    @Override
+    public boolean hasPermission(String absPath, String actions) throws RepositoryException {
+        return session.hasPermission(absPath, actions);
+    }
+
+    @Override
+    public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
+        return session.hasCapability(methodName, target, arguments);
+    }
+
+    @Override
+    public AccessControlManager getAccessControlManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return session.getAccessControlManager();
+    }
+
+    @Override
+    public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return session.getRetentionManager();
     }
 }

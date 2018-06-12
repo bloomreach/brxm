@@ -35,7 +35,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.Test;

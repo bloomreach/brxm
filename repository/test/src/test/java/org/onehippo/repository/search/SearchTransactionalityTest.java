@@ -32,7 +32,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
-import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Ignore;
