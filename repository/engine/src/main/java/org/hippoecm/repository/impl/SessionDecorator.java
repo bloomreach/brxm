@@ -268,20 +268,6 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final int uuidBehavior,
-                                      final int referenceBehavior, final int mergeBehavior) throws IOException, RepositoryException {
-        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
-    }
-
-    @Override
-    public void importDereferencedXML(final String parentAbsPath, final InputStream in,
-                                      final ContentResourceLoader referredResourceLoader,
-                                      final int uuidBehavior, final int referenceBehavior,
-                                      final int mergeBehavior) throws IOException, RepositoryException {
-        importEnhancedSystemViewXML(parentAbsPath, in, uuidBehavior, referenceBehavior, referredResourceLoader);
-    }
-
-    @Override
     public ImportResult importEnhancedSystemViewXML(final String parentAbsPath, final InputStream in,
                                                     final int uuidBehavior, final int referenceBehavior,
                                                     final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {

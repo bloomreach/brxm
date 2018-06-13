@@ -345,7 +345,7 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     public void restore(final Version[] versions, final boolean removeExisting) throws ItemExistsException,
             UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException,
             RepositoryException {
-        Version[] unwrapped = Arrays.stream(versions).map(v -> VersionDecorator.unwrap(v)).toArray(size -> new Version[size]);
+        Version[] unwrapped = Arrays.stream(versions).map(VersionDecorator::unwrap).toArray(Version[]::new);
         workspace.restore(unwrapped, removeExisting);
     }
 

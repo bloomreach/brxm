@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 
 import javax.jcr.Credentials;
-import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
-import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -34,13 +32,10 @@ import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.QueryManager;
 import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
-import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.apache.commons.lang.StringUtils;
@@ -375,16 +370,6 @@ public class MockSession implements HippoSession {
 
     @Override
     public void exportDereferencedView(final String absPath, final ContentHandler contentHandler, final boolean binaryAsLink, final boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

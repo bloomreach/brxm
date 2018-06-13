@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import javax.jcr.RepositoryException;
@@ -48,20 +49,12 @@ public class VersionDecorator extends NodeDecorator implements Version {
 
     public VersionDecorator[] getSuccessors() throws RepositoryException {
         final Version[] successors = version.getSuccessors();
-        final VersionDecorator[] result = new VersionDecorator[successors.length];
-        for (int i = 0; i < successors.length; i++) {
-            result[i] = new VersionDecorator(session, successors[i]);
-        }
-        return result;
+        return Arrays.stream(successors).map(v -> new VersionDecorator(session, v)).toArray(VersionDecorator[]::new);
     }
 
     public VersionDecorator[] getPredecessors() throws RepositoryException {
         final Version[] predecessors = version.getPredecessors();
-        final VersionDecorator[] result = new VersionDecorator[predecessors.length];
-        for (int i = 0; i < predecessors.length; i++) {
-            result[i] = new VersionDecorator(session, predecessors[i]);
-        }
-        return result;
+        return Arrays.stream(predecessors).map(v -> new VersionDecorator(session, v)).toArray(VersionDecorator[]::new);
     }
 
     public VersionDecorator getLinearSuccessor() throws RepositoryException {

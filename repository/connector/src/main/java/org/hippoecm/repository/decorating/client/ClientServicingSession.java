@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,11 +29,8 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.security.AccessControlException;
-import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -129,22 +124,6 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
         } catch (TransformerException ex) {
             throw new SAXException(ex);
         }
-    }
-
-    @Override
-    public void importDereferencedXML(String path, InputStream xml, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void importDereferencedXML(String path, InputStream xml, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException {
-        throw new UnsupportedOperationException();
     }
 
     @Override

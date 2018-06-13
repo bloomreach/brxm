@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.jcr.Credentials;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -30,10 +28,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.onehippo.repository.security.User;
@@ -157,63 +152,6 @@ public interface HippoSession extends Session {
      */
     public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException;
-
-    /**
-     * <b>This call is not (yet) part of the API, but under evaluation.</b>
-     * Import a dereferenced export.
-     * @param parentAbsPath the parent node below which to in
-     * @param in the input stream from which to read the XML
-     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
-     * @param mergeBehavior an options flag containing one of the values of {@link ImportMergeBehavior} indicating how to merge nodes that already exist
-     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
-     * @throws IOException if incoming stream is not a valid XML document.
-     * @throws PathNotFoundException in case the parentAbsPath parameter does not point to a valid node
-     * @throws ItemExistsException in case the to be imported node already exist below the parent and same-name siblings are not allowed, or when the merge behavior does not allow merging on an existing node and the node does exist
-     * @throws ConstraintViolationException when imported node is marked protected accoring to the node definition of the parent
-     * @throws InvalidSerializedDataException 
-     * @throws VersionException when the parent node is not in checked-out status
-     * @throws LockException when the parent node is locked
-     * @throws RepositoryException a generic error while accessing the repository
-     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
-     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
-     * @see org.hippoecm.repository.api.ImportReferenceBehavior
-     * @see org.hippoecm.repository.api.ImportMergeBehavior
-     * @deprecated use {@link #importEnhancedSystemViewXML(String, InputStream, int, int, ContentResourceLoader)}
-     */
-    @Deprecated
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
-            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
-            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
-            RepositoryException;
-
-    /**
-     * <b>This call is not (yet) part of the API, but under evaluation.</b>
-     * Import a dereferenced export.
-     * @param parentAbsPath the parent node below which to in
-     * @param in the input stream from which to read the XML
-     * @param referredResourceLoader the content resouce loader to load the referred imported content resources
-     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
-     * @param mergeBehavior an options flag containing one of the values of {@link ImportMergeBehavior} indicating how to merge nodes that already exist
-     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
-     * @throws IOException if incoming stream is not a valid XML document.
-     * @throws PathNotFoundException in case the parentAbsPath parameter does not point to a valid node
-     * @throws ItemExistsException in case the to be imported node already exist below the parent and same-name siblings are not allowed, or when the merge behavior does not allow merging on an existing node and the node does exist
-     * @throws ConstraintViolationException when imported node is marked protected accoring to the node definition of the parent
-     * @throws InvalidSerializedDataException 
-     * @throws VersionException when the parent node is not in checked-out status
-     * @throws LockException when the parent node is locked
-     * @throws RepositoryException a generic error while accessing the repository
-     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
-     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
-     * @see org.hippoecm.repository.api.ImportReferenceBehavior
-     * @see org.hippoecm.repository.api.ImportMergeBehavior
-     * @deprecated use {@link #importEnhancedSystemViewXML(String, InputStream, int, int, ContentResourceLoader)}
-     */
-    @Deprecated
-    public void importDereferencedXML(String parentAbsPath, InputStream in,
-            ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior)
-            throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException,
-            VersionException, InvalidSerializedDataException, LockException, RepositoryException;
 
     /**
      * Import an enhanced system view xml file.

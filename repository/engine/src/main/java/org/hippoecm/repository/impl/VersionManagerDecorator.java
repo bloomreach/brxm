@@ -102,7 +102,7 @@ public class VersionManagerDecorator implements HippoVersionManager {
 
     @Override
     public void restore(final Version[] versions, final boolean removeExisting) throws ItemExistsException, UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException, RepositoryException {
-        Version[] unwrapped = Arrays.stream(versions).map(v -> VersionDecorator.unwrap(v)).toArray(size -> new Version[size]);
+        Version[] unwrapped = Arrays.stream(versions).map(VersionDecorator::unwrap).toArray(Version[]::new);
         try {
             workspace.postMountEnabled(false);
             versionManager.restore(unwrapped, removeExisting);
