@@ -253,6 +253,9 @@ public interface HippoNodeType {
 
     public static final String HIPPO_EQUALS = "hipposys:equals";
 
+    /**
+     * @deprecated since REPO 13.0.0
+     */
     public static final String HIPPO_EXECUTED = "hipposys:executed";
 
     public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";

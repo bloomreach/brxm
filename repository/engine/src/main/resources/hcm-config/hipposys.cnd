@@ -245,6 +245,7 @@
 
 [hipposys:module] > nt:base
 - hipposys:className (string)
+// deprecated and unused : do not use
 - hipposys:executed (date)
 - hipposys:cmsonly (boolean)
 + hippo:moduleconfig
