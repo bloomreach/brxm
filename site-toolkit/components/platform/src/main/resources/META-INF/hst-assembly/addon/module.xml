@@ -18,6 +18,5 @@
   <name>org.hippoecm.hst.platform</name>
   <config-locations>
     <config-location>classpath*:META-INF/hst-assembly/addon/org/hippoecm/hst/platform/*.xml</config-location>
-    <config-location>classpath*:META-INF/hst-assembly/overrides/addon/org/hippoecm/hst/platform/*.xml</config-location>
   </config-locations>
 </module>
