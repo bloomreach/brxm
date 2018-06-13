@@ -635,6 +635,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.components</groupId>
+        <artifactId>hst-platform</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.components</groupId>
         <artifactId>hst-jaxrs</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
