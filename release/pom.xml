@@ -932,6 +932,10 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -1046,6 +1050,11 @@
                     <artifactId>hippo-services-autoreload</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
+		  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-api</artifactId>
+                    <classpath>shared</classpath>
+		  </dependency>
                 </dependencies>
               </container>
             </configuration>
