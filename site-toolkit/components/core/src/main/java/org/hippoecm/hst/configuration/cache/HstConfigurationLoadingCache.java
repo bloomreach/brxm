@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,21 +54,17 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     private WeakTaggedCache<List<UUID>, HstComponentsConfiguration, String> componentsConfigurationCache = new WeakTaggedCache<>();
     private WeakTaggedCache<List<UUID>, HstSiteMapItemHandlersConfiguration, String> siteMapItemHandlerConfigurationCache = new WeakTaggedCache<>();
 
-    private HstNodeLoadingCache hstNodeLoadingCache;
-    private String rootConfigurationsPrefix;
-    private String commonCatalogPath;
+    private final HstNodeLoadingCache hstNodeLoadingCache;
+    private final String rootConfigurationsPrefix;
+    private final String commonCatalogPath;
 
     /*
      * The List of all common catalog items. These have a fixed location at rootConfigurationsPrefix + "/hst:catalog"
      */
     private Optional<List<HstComponentConfiguration>> commonCatalogItems = null;
 
-
-    public void setHstNodeLoadingCache(final HstNodeLoadingCache hstNodeLoadingCache) {
+    public HstConfigurationLoadingCache(final HstNodeLoadingCache hstNodeLoadingCache, final String rootConfigurationsPrefix) {
         this.hstNodeLoadingCache = hstNodeLoadingCache;
-    }
-
-    public void setRootConfigurationsPrefix(final String rootConfigurationsPrefix) {
         this.rootConfigurationsPrefix = rootConfigurationsPrefix;
         commonCatalogPath = rootConfigurationsPrefix + HstNodeTypes.NODENAME_HST_CATALOG;
     }

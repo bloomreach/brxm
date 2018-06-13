@@ -30,6 +30,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -242,6 +243,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                         final Mount parent,
                         final VirtualHost virtualHost,
                         final HstNodeLoadingCache hstNodeLoadingCache,
+                        final HstConfigurationLoadingCache hstConfigurationLoadingCache,
                         final int port) throws ModelLoadingException {
         this.virtualHost = virtualHost;
         this.parent = parent;
@@ -604,11 +606,11 @@ public class MountService implements ContextualizableMount, MutableMount {
                 long start = System.currentTimeMillis();
                 if (Mount.PREVIEW_NAME.equals(type)) {
                     // explicit preview
-                    previewHstSite = new HstSiteFactory().createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
                     hstSite = previewHstSite;
                 } else {
-                    hstSite = new HstSiteFactory().createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
-                    previewHstSite = new HstSiteFactory().createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    hstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+                    previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
                 }
 
                 assertContentPathNotEmpty(mount, contentPath);
@@ -625,7 +627,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         for (HstNode childMount : mount.getNodes()) {
             if (HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
                 try {
-                    MountService childMountService = new MountService(childMount, this, virtualHost, hstNodeLoadingCache, port);
+                    MountService childMountService = new MountService(childMount, this, virtualHost, hstNodeLoadingCache, hstConfigurationLoadingCache, port);
                     childMountServices.put(childMountService.getName(), childMountService);
 
                 } catch (ModelLoadingException e) {
@@ -654,7 +656,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                         pageModelApi);
             } else {
                 try {
-                    addMount(new PageModelApiMount(pageModelApi, this, hstNodeLoadingCache));
+                    addMount(new PageModelApiMount(pageModelApi, this, hstNodeLoadingCache, hstConfigurationLoadingCache));
                 } catch (Exception e) {
                     log.error("Cannot add PageModelApiMount for mount '{}'", this, e);
                 }
@@ -916,6 +918,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (matcher != null) {
             return matcher;
         }
+
+        // TODO HSTTWO-4355 not allowed like this! Either set current thread class loader or use a service to get to the correct webapp component manager
         HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         matcher =  mngr.getSiteMapMatcher();
         return matcher;

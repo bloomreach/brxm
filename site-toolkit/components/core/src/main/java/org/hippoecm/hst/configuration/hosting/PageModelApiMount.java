@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -44,7 +45,8 @@ public class PageModelApiMount implements ContextualizableMount {
     private final HstSite hstSite;
     private final HstSite previewHstSite;
 
-    public PageModelApiMount(final String name, final Mount parent, final HstNodeLoadingCache hstNodeLoadingCache) {
+    public PageModelApiMount(final String name, final Mount parent, final HstNodeLoadingCache hstNodeLoadingCache,
+                             final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         if (StringUtils.isEmpty(name) || name.contains("/")) {
             throw new ModelLoadingException(String.format("Name '{}' is illegal for page model api pipeline", name));
         }
@@ -55,8 +57,8 @@ public class PageModelApiMount implements ContextualizableMount {
         MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
         HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(getMountPoint());
 
-        hstSite = new HstSiteFactory().createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
-        previewHstSite = new HstSiteFactory().createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+        hstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
+        previewHstSite = new HstSiteFactory(hstNodeLoadingCache, hstConfigurationLoadingCache).createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration);
 
     }
 

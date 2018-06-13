@@ -49,6 +49,7 @@ public class HstConfigurationEventListener extends GenericEventListener implemen
         synchronized(hstModelMutex) {
             hstEventsCollector.collect(events);
             if (hstEventsCollector.hasEvents()) {
+                // TODO HSTTWO-4355 get rid of the hstManager : This should live in the platform webapp!
                 hstManager.markStale();
             }
         }

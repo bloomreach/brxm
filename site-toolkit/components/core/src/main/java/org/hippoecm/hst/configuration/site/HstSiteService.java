@@ -74,16 +74,20 @@ public class HstSiteService implements HstSite {
     private String canonicalIdentifier;
     private String configurationPath;
     private MountSiteMapConfiguration mountSiteMapConfiguration;
-    private HstConfigurationLoadingCache configLoadingCache;
+    private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
     private final Object hstModelMutex;
 
     HstSiteService(final HstNode site,
                    final Mount mount,
                    final MountSiteMapConfiguration mountSiteMapConfiguration,
                    final HstNodeLoadingCache hstNodeLoadingCache,
+                   final HstConfigurationLoadingCache hstConfigurationLoadingCache,
                    final boolean isPreviewSite) throws ModelLoadingException {
+
+        // TODO HSTTWO-4355 this is now a platform mutex which is allowed but do we want this?
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
-        configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
+
+        this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
@@ -93,11 +97,15 @@ public class HstSiteService implements HstSite {
 
     public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
                           final HstNodeLoadingCache hstNodeLoadingCache,
+                          final HstConfigurationLoadingCache hstConfigurationLoadingCache,
                           final String configurationPath,
                           final boolean isPreviewSite,
                           final Channel master) {
+
+        // TODO HSTTWO-4355 this is now a platform mutex which is allowed but do we want this?
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
-        configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
+
+        this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
@@ -138,7 +146,7 @@ public class HstSiteService implements HstSite {
 
         loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache, master);
 
-        HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
+        HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath, false);
         if (ccs != null) {
             log.debug("Reusing cached HstComponentsConfiguration for '{}'", configurationPath);
             componentsConfiguration = Optional.of(ccs);
@@ -147,7 +155,7 @@ public class HstSiteService implements HstSite {
                     "be loaded lazily", configurationPath);
         }
 
-        HstSiteMapItemHandlersConfiguration hsihcs = configLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, false);
+        HstSiteMapItemHandlersConfiguration hsihcs = hstConfigurationLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, false);
         if (hsihcs != null) {
             log.debug("Reusing cached HstSiteMapItemHandlersConfigurationService for '{}'", configurationPath);
             siteMapItemHandlersConfigurationService = Optional.of(hsihcs);
@@ -172,14 +180,14 @@ public class HstSiteService implements HstSite {
         if (mount.hasNoChannelInfo()) {
             ch = null;
         } else {
-            ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier(), mount.getContextPath());
+            ch = hstConfigurationLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier(), mount.getContextPath());
         }
         if (ch != null) {
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
             if (master != null) {
                 if (!rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) || !rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
                     throw new ModelLoadingException(String.format("Cannot load branch '%s' since misses mandatory property '%s' or '%s'",
-                            configLoadingCache, BRANCH_PROPERTY_BRANCH_OF, BRANCH_PROPERTY_BRANCH_ID));
+                            hstConfigurationLoadingCache, BRANCH_PROPERTY_BRANCH_OF, BRANCH_PROPERTY_BRANCH_ID));
                 }
                 ch.setBranchOf(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF));
                 ch.setBranchId(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID));
@@ -216,6 +224,8 @@ public class HstSiteService implements HstSite {
             }
 
             VirtualHost virtualHost = mount.getVirtualHost();
+
+            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
             ch.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
             ch.setHostname(virtualHost.getHostName());
 
@@ -251,7 +261,7 @@ public class HstSiteService implements HstSite {
     }
 
     private CompositeConfigurationNode findSiteMapNode() {
-        final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMAP);
+        final CompositeConfigurationNodes ccn = hstConfigurationLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMAP);
         return ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAP);
     }
 
@@ -334,7 +344,7 @@ public class HstSiteService implements HstSite {
             }
             try {
                 long start = System.currentTimeMillis();
-                HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, true);
+                HstComponentsConfiguration ccs = hstConfigurationLoadingCache.getComponentsConfiguration(configurationPath, true);
                 componentsConfiguration = Optional.of(ccs);
                 if (siteMap != null) {
                     checkAndLogAccessibleRootComponents(ccs, siteMap.get());
@@ -399,7 +409,7 @@ public class HstSiteService implements HstSite {
             }
             try {
                 long start = System.currentTimeMillis();
-                HstSiteMapItemHandlersConfiguration hsihcs = configLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, true);
+                HstSiteMapItemHandlersConfiguration hsihcs = hstConfigurationLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, true);
                 siteMapItemHandlersConfigurationService = Optional.of(hsihcs);
                 log.info("Loading HstSiteMapItemHandlersConfiguration for '{}' took '{}' ms.", configurationPath,
                         String.valueOf(System.currentTimeMillis() - start));
@@ -471,7 +481,7 @@ public class HstSiteService implements HstSite {
             if (siteMenusConfigurations != null) {
                 return siteMenusConfigurations.orNull();
             }
-            final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMENUS);
+            final CompositeConfigurationNodes ccn = hstConfigurationLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMENUS);
             final CompositeConfigurationNode siteMenusNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMENUS);
             if (siteMenusNode == null) {
                 log.info("There is no sitemenu configuration for '{}'. Return null", configurationPath);

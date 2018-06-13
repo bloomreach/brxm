@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 
   <bean id="hstModelMutex" class="java.lang.Object"/>
 
+  <!-- TODO HSTTWO-4355 can all this eventing logic be replaced by code in the platform hst? no need to spring wiring? -->
   <bean id="hstEventsCollector" class="org.hippoecm.hst.configuration.cache.HstEventsCollector">
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
   </bean>
@@ -35,25 +36,24 @@
     <property name="hstEventsCollector" ref="hstEventsCollector"/>
     <property name="hstEventConsumers">
       <list>
-        <ref bean="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"/>
-        <ref bean="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"/>
+        <!--<ref bean="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"/>-->
+        <!--<ref bean="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"/>-->
       </list>
     </property>
   </bean>
 
+  <!--<bean id="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache">-->
+    <!--<constructor-arg ref="javax.jcr.Repository.delegating" />-->
+    <!--<constructor-arg ref="javax.jcr.Credentials.hstconfigreader.delegating"/>-->
+    <!--<constructor-arg value="${hst.configuration.rootPath}"/>-->
+  <!--</bean>-->
 
-  <bean id="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache">
-    <property name="repository" ref="javax.jcr.Repository.delegating" />
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
-    <property name="rootPath" value="${hst.configuration.rootPath}"/>
-  </bean>
+  <!--<bean id="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache">-->
+    <!--<property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />-->
+    <!--<property name="rootConfigurationsPrefix" value="${hst.configuration.rootPath}/hst:configurations/"/>-->
+  <!--</bean>-->
 
-  <bean id="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache">
-    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
-    <property name="rootConfigurationsPrefix" value="${hst.configuration.rootPath}/hst:configurations/"/>
-  </bean>
-
-
+  <!-- TODO HSTTWO-4355 EventPathsInvalidator not allowed in this way any more : Needs to be platform only -->
   <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidatorImpl">
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstEventsCollector" ref="hstEventsCollector"/>
@@ -61,11 +61,10 @@
   </bean>
 
 
-
   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstEventsDispatcher" ref="hstEventsDispatcher"/>
-    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <!--<property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />-->
     <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/>
     <!-- Deprecated since CMS 10.0, HST 2.30.00: siteMapItemHandlerFactory property is deprecated on HstManagerImpl -->
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        

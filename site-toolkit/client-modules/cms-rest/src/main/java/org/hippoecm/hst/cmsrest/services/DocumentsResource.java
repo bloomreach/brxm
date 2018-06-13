@@ -1,5 +1,5 @@
 /*
-*  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -106,6 +106,8 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             }
 
             // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
+
+            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
             document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
 
             channelDocuments.add(document);

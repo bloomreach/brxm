@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
@@ -36,7 +37,8 @@ public class PortMountService implements MutablePortMount {
      */
     private Mount rootMount;
     
-    public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
+    public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache,
+                            final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws ModelLoadingException {
         String nodeName = portMount.getValueProvider().getName();
         try {
             portNumber = Integer.parseInt(nodeName);
@@ -49,7 +51,7 @@ public class PortMountService implements MutablePortMount {
         
         HstNode mount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(mount.getNodeTypeName())) {
-            rootMount = new MountService(mount, null, virtualHost, hstNodeLoadingCache, portNumber);
+            rootMount = new MountService(mount, null, virtualHost, hstNodeLoadingCache, hstConfigurationLoadingCache, portNumber);
         }
     }
     

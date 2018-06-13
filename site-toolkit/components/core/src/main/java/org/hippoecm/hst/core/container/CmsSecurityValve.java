@@ -79,6 +79,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         if (!requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
+
+            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
             if (!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount()
                     .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
                 // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT

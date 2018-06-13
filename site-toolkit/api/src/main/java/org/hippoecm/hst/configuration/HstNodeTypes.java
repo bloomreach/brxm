@@ -21,6 +21,8 @@ public interface HstNodeTypes {
     String ANY = "_any_";
     String INDEX = "_index_";
 
+    // TODO HSTTWO-4355 do we want this here?
+    String NODETYPE_HST_HST = "hst:hst";
     String NODETYPE_HST_SITES = "hst:sites";
     String NODETYPE_HST_SITE = "hst:site";
     String NODETYPE_HST_CONFIGURATIONS = "hst:configurations";
@@ -76,6 +78,8 @@ public interface HstNodeTypes {
     String PROTOTYPE_META_PROPERTY_APPLICATION_ID = "hst:applicationId";
 
     String CONFIGURATION_PROPERTY_LOCKED = "hst:locked";
+
+    String HST_HST_PROPERTY_CONTEXT_PATH = "hst:contextpath";
 
     String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";

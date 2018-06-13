@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ public class DelegatingHstSiteProvider  {
     /**
      * this setter can be used by enterprise / end project modules to inject a custom HstSiteProvider for the website
      */
+    // TODO HSTTWO-4356 get rid of this setter
     public void setWebsiteHstSiteProvider(final HstSiteProvider websiteHstSiteProvider) {
         this.websiteHstSiteProvider = websiteHstSiteProvider;
     }
@@ -45,7 +46,11 @@ public class DelegatingHstSiteProvider  {
         if (requestContext.isCmsRequest()) {
             return channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
         }
-
+        // TODO HSTTWO-4356 org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider.websiteHstSiteProvider MUST BE pluggable
+        // TODO but the org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider.channelManagerHstSiteProvider MUST NOT
+        // TODO be pluggable! Hence, we need to make a separate SITE webapp Spring bean for websiteHstSiteProvider and
+        // TODO load this bean via HstServices.getComponentManager().getComponent("websiteHstSiteProvider"); here instead
+        // TODO of from the instance variable
         return websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
     }
 }

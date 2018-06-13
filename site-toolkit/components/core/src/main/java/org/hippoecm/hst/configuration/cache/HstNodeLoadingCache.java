@@ -49,18 +49,11 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     private Credentials credentials;
     private Set<HstEvent> events;
 
-
-    public void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
-    public void setCredentials(final Credentials credentials) {
-        this.credentials = credentials;
-    }
-
-    public void setRootPath(final String rootPath) {
+    public HstNodeLoadingCache(final Repository repository, final Credentials credentials, final String rootPath) {
         this.rootPath = rootPath;
         rootPathLength = rootPath.length();
+        this.repository = repository;
+        this.credentials = credentials;
     }
 
     @Override

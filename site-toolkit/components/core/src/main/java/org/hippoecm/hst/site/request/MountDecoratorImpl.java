@@ -619,12 +619,6 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Deprecated
         @Override
-        public HstManager getHstManager() {
-            return delegatee.getHstManager();
-        }
-
-        @Deprecated
-        @Override
         public boolean isExcluded(final String pathInfo) {
             return isHstFilterExcludedPath(pathInfo);
         }
@@ -725,6 +719,8 @@ public class MountDecoratorImpl implements MountDecorator {
             return decorateMountAsPreview(mountByIdentifier);
         }
 
+
+        // TODO always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
         @Override
         public String getCmsPreviewPrefix() {
             return delegatee.getCmsPreviewPrefix();

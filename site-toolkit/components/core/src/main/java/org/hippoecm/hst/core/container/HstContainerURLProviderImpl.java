@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,10 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PathEncoder;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.QueryStringBuilder;
@@ -214,7 +216,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         boolean includeTrailingSlash = false;
 
-        if (pathInfo != null && pathInfo.endsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+        HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class);
+        if (pathInfo != null && pathInfo.endsWith(hstManager.getPathSuffixDelimiter())) {
             // we now must not strip the trailing slash because it is part of the rest call ./
             includeTrailingSlash = true; 
         }
@@ -224,7 +227,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         // get a wrong URL like /mountPath/./subPath : It must be /mountPath./subPath instead. Thus, hence this check
         boolean includeLeadingSlash = true;
 
-        if (pathInfo != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+        if (pathInfo != null && pathInfo.startsWith(hstManager.getPathSuffixDelimiter())) {
             includeLeadingSlash = false;
         }
 
@@ -330,7 +333,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     protected String buildHstURLPath(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException {
         String encoding = containerURL.getURIEncoding();
         StringBuilder url = new StringBuilder(100);
-        String pathSuffixDelimiter = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
 
         String containerUrlPathInfo = containerURL.getPathInfo();
 

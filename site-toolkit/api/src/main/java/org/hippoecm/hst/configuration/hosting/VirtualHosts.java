@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -40,14 +39,6 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 public interface VirtualHosts {
 
     String DEFAULT_SCHEME = "http";
-
-    /**
-     * @return the {@link HstManager} for this VirtualHosts object
-     * @deprecated since 7.9.0 : Use the {@link org.hippoecm.hst.core.container.ComponentManager} instead to access the
-     * {@link HstManager}
-     */
-    @Deprecated
-    HstManager getHstManager();
 
     /**
      * @deprecated since CMS 10.0, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
@@ -176,6 +167,7 @@ public interface VirtualHosts {
      * @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
      * to be empty, it will be ""
      */
+    // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
      String getCmsPreviewPrefix();
 
      /**

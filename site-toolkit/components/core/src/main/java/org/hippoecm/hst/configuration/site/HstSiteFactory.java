@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -33,30 +34,34 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 public class HstSiteFactory {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteFactory.class);
+    private final HstNodeLoadingCache hstNodeLoadingCache;
+    private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
+
+    public HstSiteFactory(final HstNodeLoadingCache hstNodeLoadingCache, final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
+        this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
+    }
 
 
     public HstSite createLiveSiteService(final HstNode site,
                                                        final Mount mount,
-                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return createSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, false);
+                                                       final MountSiteMapConfiguration mountSiteMapConfiguration) throws ModelLoadingException {
+        return createSiteService(site, mount, mountSiteMapConfiguration, false);
     }
 
     public HstSite createPreviewSiteService(final HstNode site,
                                                           final Mount mount,
-                                                          final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                          final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return createSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, true);
+                                                          final MountSiteMapConfiguration mountSiteMapConfiguration) throws ModelLoadingException {
+        return createSiteService(site, mount, mountSiteMapConfiguration, true);
     }
 
 
     private HstSite createSiteService(final HstNode site,
                                       final Mount mount,
                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                      final HstNodeLoadingCache hstNodeLoadingCache,
                                       final boolean isPreviewSite) {
 
-        final HstSite master = new HstSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, isPreviewSite);
+        final HstSite master = new HstSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache, isPreviewSite);
 
         if (master.getChannel() == null) {
             log.debug("Branches can only exist for configurations that have a channel");
@@ -103,7 +108,7 @@ public class HstSiteFactory {
             log.info("Found branch '{}' for configuration '{}'. Loading branch.", branchNode.getName(), branchOf);
             try {
                 final HstSite branch = new HstSiteService(site, mount, mountSiteMapConfiguration,
-                        hstNodeLoadingCache, branchNode.getValueProvider().getPath(), isPreviewSite,  master.getChannel());
+                        hstNodeLoadingCache, hstConfigurationLoadingCache, branchNode.getValueProvider().getPath(), isPreviewSite,  master.getChannel());
                 branches.put(branch.getChannel().getBranchId(), branch);
             } catch (ModelLoadingException e) {
                 log.error("Could not load branch '{}'. Skip that branch.", branchNode.getName(), e);

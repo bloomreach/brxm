@@ -34,6 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.BlueprintHandler;
@@ -45,8 +46,6 @@ import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.CompositeHstSite;
@@ -80,7 +79,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private final static String WILDCARD = "_default_";
     private final static String CHANNEL_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.channelparameters";
 
-    private HstManagerImpl hstManager;
+    private final String contextPath;
     private HstNodeLoadingCache hstNodeLoadingCache;
     private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<>();
 
@@ -178,10 +177,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private final Map<String, Blueprint> blueprints = new HashMap<>();
     private boolean bluePrintsPrototypeChecked;
 
-    public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) {
+    public VirtualHostsService(final String contextPath, final HstNodeLoadingCache hstNodeLoadingCache,
+                               final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         long start = System.currentTimeMillis();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
-        this.hstManager = hstManager;
+        this.contextPath = contextPath;
         virtualHostsConfigured = true;
 
         // quick check if the basic mandatory hst nodes are available. If not, we throw a runtime model loading exception
@@ -224,10 +224,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
         Collections.addAll(diagnosticsForIps, ips);
         if(cmsPreviewPrefix == null) {
             // there is no explicit cms preview prefix configured. Take the default one from the hstManager
-            cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
-            if(cmsPreviewPrefix == null) {
-                cmsPreviewPrefix = StringUtils.EMPTY;
-            }
+
+
+            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!! REMOVE IT FROM HERE
+            // cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
+//            if(cmsPreviewPrefix == null) {
+//                cmsPreviewPrefix = StringUtils.EMPTY;
+//            }
+
+            cmsPreviewPrefix = StringUtils.EMPTY;
         }
         if(StringUtils.isEmpty(cmsPreviewPrefix)) {
             log.info("cmsPreviewPrefix property '{}' on hst:hosts is configured to be empty. This means that when " +
@@ -355,15 +360,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 try {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null,
                             hostGroupNode.getValueProvider().getName(),
-                            validCmsLocations , defaultPort, hstNodeLoadingCache);
+                            validCmsLocations , defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ModelLoadingException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
                     // continue to next virtualHost
-                } catch (IllegalArgumentException e) {
+                } catch (DuplicateKeyNotAllowedHashMap.DuplicateKeyException e) {
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                             + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
-                            + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
+                            + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)", e);
+                } catch (IllegalArgumentException e) {
+                    log.error("Exception while trying to load virtual host '{}'", virtualHostNode.getName(), e);
                }
             }
         }
@@ -385,9 +392,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
             Map<String, Channel> hostGroupChannels = channelsByHostGroup.get(hostGroupName);
             for (Mount mount : getMountsByHostGroup(hostGroupName)) {
                 if (mount.getContextPath() == null ||
-                        !mount.getContextPath().equals(hstManager.getContextPath())) {
+                        !mount.getContextPath().equals(contextPath)) {
                     log.info("Skipping channel for mount {} because the mount is for contextpath" +
-                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), hstManager.getContextPath());
+                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), contextPath);
                     continue;
                 }
                 if (mount instanceof ContextualizableMount) {
@@ -461,18 +468,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
     }
 
-    public HstManager getHstManager() {
-        return hstManager;
-    }
-
     @Deprecated
     @Override
     public boolean isExcluded(final String pathInfo) {
         return isHstFilterExcludedPath(pathInfo);
     }
 
+    // TODO HSTTWO-4355 get rid of the hstManager !!!
     public boolean isHstFilterExcludedPath(String pathInfo) {
-        return hstManager.isHstFilterExcludedPath(pathInfo);
+        // TODO HSTTWO-4355 fix
+        return false;
+        // return hstManager.isHstFilterExcludedPath(pathInfo);
     }
 
     @Override
@@ -1038,10 +1044,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 if (blueprintContextPath == null) {
                     blueprintContextPath = getDefaultContextPath();
                 }
-                if (!hstManager.getContextPath().equals(blueprintContextPath)) {
+                if (!contextPath.equals(blueprintContextPath)) {
                     log.info("Skipping blueprint '{}' because only suited for contextPath '{}' and " +
                             "current webapp's contextPath is '{}'.", blueprintNode.getValueProvider().getPath(),
-                            blueprintContextPath, hstManager.getContextPath());
+                            blueprintContextPath, contextPath);
                     continue;
                 }
                 if (!isValidContextPath(blueprintContextPath)) {

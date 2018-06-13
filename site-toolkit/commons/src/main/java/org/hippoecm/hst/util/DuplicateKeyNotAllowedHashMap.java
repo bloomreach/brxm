@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,9 +31,15 @@ public class DuplicateKeyNotAllowedHashMap<K, V> extends HashMap<K, V> {
     public V put(K key, V value) throws IllegalArgumentException {
         V prev = get(key);
         if (prev != null) {
-            throw new IllegalArgumentException("DuplicateKeyNotAllowedHashMap is not allowed to have duplicate keys: The key '"+key+"' is already present");
+            throw new DuplicateKeyException("DuplicateKeyNotAllowedHashMap is not allowed to have duplicate keys: The key '"+key+"' is already present");
         }
         return super.put(key, value);
+    }
+
+    public static class DuplicateKeyException extends IllegalArgumentException {
+        public DuplicateKeyException(final String s) {
+            super(s);
+        }
     }
     
 }

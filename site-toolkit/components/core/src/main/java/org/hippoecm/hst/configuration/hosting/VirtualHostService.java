@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
@@ -112,7 +113,8 @@ public class VirtualHostService implements MutableVirtualHost {
                               final String hostGroupName,
                               final List<String> cmsLocations,
                               final int defaultPort,
-                              final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
+                              final HstNodeLoadingCache hstNodeLoadingCache,
+                              final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws ModelLoadingException {
 
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
@@ -347,7 +349,7 @@ public class VirtualHostService implements MutableVirtualHost {
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
-                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstNodeLoadingCache, defaultPort);
+                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstNodeLoadingCache, hstConfigurationLoadingCache, defaultPort);
                     MutablePortMount portMount = new PortMountService(mount);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ModelLoadingException e) {
@@ -362,7 +364,7 @@ public class VirtualHostService implements MutableVirtualHost {
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocations, defaultPort, hstNodeLoadingCache);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocations, defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ModelLoadingException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -370,7 +372,7 @@ public class VirtualHostService implements MutableVirtualHost {
 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
                 try {
-                MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstNodeLoadingCache);
+                MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstNodeLoadingCache, hstConfigurationLoadingCache);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ModelLoadingException e) {
                     log.error("The host '"+attachPortMountToHost.getHostName()+"' for port '"+child.getName()+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing", e);

@@ -479,6 +479,8 @@
 + hst:blueprints (hst:blueprints) = hst:blueprints version
 + hst:channels (hst:channels) = hst:channels version
 + * (hst:sites) = hst:sites version
+// TODO HSTTWO-4355 do we want this here?
+- hst:contextpath (string)
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
 [hst:contentshare] > hippo:mirror

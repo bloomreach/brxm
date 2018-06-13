@@ -127,10 +127,7 @@ public class ChannelPropertyMapperIT extends RepositoryTestCase {
         Node root = session.getRootNode();
         root.addNode("test", "nt:unstructured");
         session.save();
-        hstNodeLoadingCache = new HstNodeLoadingCache();
-        hstNodeLoadingCache.setRepository(server.getRepository());
-        hstNodeLoadingCache.setRootPath("/test");
-        hstNodeLoadingCache.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
+        hstNodeLoadingCache = new HstNodeLoadingCache(server.getRepository(), new SimpleCredentials("admin", "admin".toCharArray()), "/test");
     }
 
     @Test

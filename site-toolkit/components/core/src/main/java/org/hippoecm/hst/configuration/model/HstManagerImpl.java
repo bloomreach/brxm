@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
-import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.configuration.hosting.VirtualHostsRegistry;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
@@ -69,8 +69,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     private HstCache pageCache;
     private boolean clearPageCacheAfterModelLoad;
 
-
-    private HstNodeLoadingCache hstNodeLoadingCache;
     private HstEventsDispatcher hstEventsDispatcher;
 
     /**
@@ -102,10 +100,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
-    }
-
-    public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
-        this.hstNodeLoadingCache = hstNodeLoadingCache;
     }
 
     public void setHstEventsDispatcher(final HstEventsDispatcher hstEventsDispatcher) {
@@ -282,17 +276,40 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
-        if (state == BuilderState.UP2DATE) {
-            return virtualHostsModel;
-        }
-        if (state == BuilderState.UNDEFINED) {
-            return synchronousBuild();
-        }
-        if (allowStale && staleConfigurationSupported) {
-            asynchronousBuild();
-            return prevVirtualHostsModel;
-        }
-        return synchronousBuild();
+
+        VirtualHostsRegistry virtualHostsRegistry = HippoServiceRegistry.getService(VirtualHostsRegistry.class);
+        // TODO HSTTWO-4355 support for allowStale?
+        final VirtualHosts virtualHosts = virtualHostsRegistry.getVirtualHosts(getContextPath());
+
+        // TODO HSTTWO-4355 if the virtualHostsRegistry#getVirtualHosts triggered a new model build because of a change, it must
+        // TODO HSTTWO-4355 inform the current webapp to invoke componentRegistry.unregisterAllComponents(); and siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+        // TODO HSTTWO-4355 how will we communicate this? A guava bus registered by hst-platform?
+
+        // TODO HSTTWO-4355 and invoke after a new model the following:
+//        if (clearPageCacheAfterModelLoad) {
+//            log.info("Clearing page cache after new model is loaded");
+//            pageCache.clear();
+//        } else {
+//            log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
+//        }
+
+        // TODO HSTTWO-4355 componentRegistry.unregisterAllComponents();
+        // TODO HSTTWO-4355 siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+
+
+        return virtualHosts;
+
+//        if (state == BuilderState.UP2DATE) {
+//            return virtualHostsModel;
+//        }
+//        if (state == BuilderState.UNDEFINED) {
+//            return synchronousBuild();
+//        }
+//        if (allowStale && staleConfigurationSupported) {
+//            asynchronousBuild();
+//            return prevVirtualHostsModel;
+//        }
+//        return synchronousBuild();
     }
 
     @Override
@@ -367,27 +384,32 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
         log.info("Start building in memory hst configuration model");
 
-        try {
-            long start = System.currentTimeMillis();
-            VirtualHostsService newModel = new VirtualHostsService(this, hstNodeLoadingCache);
+        // TODO HSTTWO-4355 arrange something for componentRegistry.unregisterAllComponents(); and  siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
 
-            for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
-                log.info("Configuration augmenter '{}' will be augmented.", configurationAugmenter.getClass().getName());
-                configurationAugmenter.augment(newModel);
-            }
-
-            componentRegistry.unregisterAllComponents();
-            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-
-            log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
-            virtualHostsModel = newModel;
-        } catch (ModelLoadingException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
-        }
+//        try {
+//            long start = System.currentTimeMillis();
+//
+//            //VirtualHostsService newModel = new VirtualHostsService(this, hstNodeLoadingCache);
+//
+              // TODO below is the HstConfigurationAugmenter which is still needed! However only in CMS webapp MOST LIKELY!
+//            for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
+//                log.info("Configuration augmenter '{}' will be augmented.", configurationAugmenter.getClass().getName());
+//                configurationAugmenter.augment(newModel);
+//            }
+//
+//            componentRegistry.unregisterAllComponents();
+//            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+//
+//            log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
+//            virtualHostsModel = newModel;
+//        } catch (ModelLoadingException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
+//        }
     }
 
+    // TODO HSTTWO-4355 get rid of the logic below, the CMS webapp should control the HST model loading / staleness
     @Override
     public void markStale() {
         synchronized (hstModelMutex) {

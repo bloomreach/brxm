@@ -291,23 +291,27 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             if (!HstServices.isHstConfigurationNodesLoaded() && !lazyHstConfigurationLoading) {
                 log.info("Trigger HST Configuration nodes to be loaded");
                 final long start = System.currentTimeMillis();
-                final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
+
+                // TODO HSTTWO-4355 below would if we want to still support this have to trigger something in the cms webapp to trigger
+                // TODO HSTTWO-4355 an active load of hst nodes
+
+                // final HstNodeLoadingCache hstNodeLoadingCache = componentManager.getComponent(HstNodeLoadingCache.class);
                 // triggers the loading of all the hst configuration nodes
-                HstNode root = null;
-                while (root == null) {
-                    try {
-                        root = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
-                        // don't sweat to much, sleep for 250 ms
-                        Thread.sleep(250);
-                    } catch (ConfigurationNodesLoadingException e) {
-                        if (log.isDebugEnabled()) {
-                            log.info("Exception while trying to load the HST configuration nodes. Try again.", e);
-                        } else {
-                            log.info("Exception while trying to load the HST configuration nodes. Try again. Reason: {}", e.getMessage());
-                        }
-                    }
-                }
-                log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
+//                HstNode root = null;
+//                while (root == null) {
+//                    try {
+//                        root = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+//                        // don't sweat to much, sleep for 250 ms
+//                        Thread.sleep(250);
+//                    } catch (ConfigurationNodesLoadingException e) {
+//                        if (log.isDebugEnabled()) {
+//                            log.info("Exception while trying to load the HST configuration nodes. Try again.", e);
+//                        } else {
+//                            log.info("Exception while trying to load the HST configuration nodes. Try again. Reason: {}", e.getMessage());
+//                        }
+//                    }
+//                }
+//                log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
             }
             log.info(INIT_DONE_MSG);
             this.initialized = true;

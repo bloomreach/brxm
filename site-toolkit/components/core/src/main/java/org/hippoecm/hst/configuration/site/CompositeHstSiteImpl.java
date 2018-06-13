@@ -41,6 +41,7 @@ public class CompositeHstSiteImpl implements CompositeHstSite {
     public CompositeHstSiteImpl(final HstSite master, final Map<String, HstSite> branches) {
         this.master = master;
         this.branches = branches;
+        // TODO HSTTWO-4355 Most likely not ok like this!
         delegatingHstSiteProvider = HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class);
         if (delegatingHstSiteProvider == null) {
             log.warn("No DelegatingHstSiteProvider is found.");
