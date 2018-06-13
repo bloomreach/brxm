@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,19 +22,15 @@ import java.util.Calendar;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Binary;
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.MergeException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -45,317 +41,204 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
 
 public class NodeDecorator extends ItemDecorator implements HippoNode {
 
-    private static final Logger log = LoggerFactory.getLogger(NodeDecorator.class);
-
     protected final Node node;
-    protected HippoSession session;
 
-    protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
-        super(factory, session, node);
-        this.session = (HippoSession) session;
-        this.node = node;
+    static NodeDecorator newNodeDecorator(SessionDecorator session, Node node) {
+        if (node instanceof Version) {
+            return new VersionDecorator(session, (Version) node);
+        } else if (node instanceof VersionHistory) {
+            return new VersionHistoryDecorator(session, (VersionHistory) node);
+        } else if (node == null) {
+            return null;
+        } else {
+            return new NodeDecorator(session, node);
+        }
     }
 
-    public static Node unwrap(Node node) {
+    public static Node unwrap(final Node node) {
         if (node instanceof NodeDecorator) {
-            node = (Node) ((NodeDecorator) node).unwrap();
+            return ((NodeDecorator) node).node;
         }
         return node;
     }
 
-    public Node addNode(String name) throws ItemExistsException, PathNotFoundException, VersionException,
+    NodeDecorator(final SessionDecorator session, Node node) {
+        super(session, node);
+        this.node = unwrap(node);
+    }
+
+    public NodeDecorator addNode(final String name) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, RepositoryException {
-        return factory.getNodeDecorator(session, node.addNode(name));
+        return newNodeDecorator(session, node.addNode(name));
     }
 
-    public Node addNode(String name, String type) throws ItemExistsException, PathNotFoundException,
+    public NodeDecorator addNode(final String name, final String type) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        return factory.getNodeDecorator(session, node.addNode(name, type));
+        return newNodeDecorator(session, node.addNode(name, type));
     }
 
-    public Property setProperty(String name, Value value) throws ValueFormatException, VersionException, LockException,
+    public PropertyDecorator setProperty(final String name, final Value value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, Value value, int type) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final Value value, final int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value, type);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value, type));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, Value[] values) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final Value[] values) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, values);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, values));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, Value[] values, int type) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final Value[] values, final int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, values, type);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, values, type));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, String[] values) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final String[] values) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, values);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, values));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, String[] values, int type) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final String[] values, final int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, values, type);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, values, type));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, String value) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final String value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, String value, int type) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final String value, final int type) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value, type);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value, type));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, InputStream value) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final InputStream value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, boolean value) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final boolean value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, double value) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final double value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, long value) throws ValueFormatException, VersionException, LockException,
+    public PropertyDecorator setProperty(final String name, final long value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, Calendar value) throws ValueFormatException, VersionException,
+    public PropertyDecorator setProperty(final String name, final Calendar value) throws ValueFormatException, VersionException,
             LockException, ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property setProperty(String name, Node value) throws ValueFormatException, VersionException, LockException,
+    public PropertyDecorator setProperty(final String name, final Node value) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
-        Property prop = node.setProperty(name, NodeDecorator.unwrap(value));
-        return factory.getPropertyDecorator(session, prop);
+        return new PropertyDecorator(session, node.setProperty(name, NodeDecorator.unwrap(value)));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Node getNode(String relPath) throws PathNotFoundException, RepositoryException {
-        return factory.getNodeDecorator(session, node.getNode(relPath));
+    public NodeDecorator getNode(final String relPath) throws PathNotFoundException, RepositoryException {
+        return newNodeDecorator(session, node.getNode(relPath));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator getNodes() throws RepositoryException {
-        NodeIterator iter = new NodeIteratorDecorator(factory, session, node.getNodes(), this);
-        return iter;
+    public NodeIteratorDecorator getNodes() throws RepositoryException {
+        return new NodeIteratorDecorator(session, node.getNodes());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator getNodes(String namePattern) throws RepositoryException {
-        NodeIterator iter = new NodeIteratorDecorator(factory, session, node.getNodes(namePattern), this);
-        return iter;
+    public NodeIteratorDecorator getNodes(final String namePattern) throws RepositoryException {
+        return new NodeIteratorDecorator(session, node.getNodes(namePattern));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
-        Property prop = node.getProperty(relPath);
-        return factory.getPropertyDecorator(session, prop);
+    public PropertyDecorator getProperty(final String relPath) throws PathNotFoundException, RepositoryException {
+        return new PropertyDecorator(session, node.getProperty(relPath));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public PropertyIterator getProperties() throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getProperties());
+    public PropertyIteratorDecorator getProperties() throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getProperties());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public PropertyIterator getProperties(String namePattern) throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getProperties(namePattern));
+    public PropertyIteratorDecorator getProperties(final String namePattern) throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getProperties(namePattern));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Item getPrimaryItem() throws ItemNotFoundException, RepositoryException {
-        return factory.getItemDecorator(session, node.getPrimaryItem());
+    public ItemDecorator getPrimaryItem() throws ItemNotFoundException, RepositoryException {
+        return ItemDecorator.newItemDecorator(session, node.getPrimaryItem());
     }
 
-    /**
-     * @inheritDoc
-     */
     public String getUUID() throws UnsupportedRepositoryOperationException, RepositoryException {
         return node.getUUID();
     }
 
-    /**
-     * @inheritDoc
-     */
     public int getIndex() throws RepositoryException {
         return node.getIndex();
     }
 
-    /**
-     * @inheritDoc
-     */
     public PropertyIterator getReferences() throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getReferences());
+        return new PropertyIteratorDecorator(session, node.getReferences());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public boolean hasNode(String relPath) throws RepositoryException {
+    public boolean hasNode(final String relPath) throws RepositoryException {
         return node.hasNode(relPath);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public boolean hasProperty(String relPath) throws RepositoryException {
+    public boolean hasProperty(final String relPath) throws RepositoryException {
         return node.hasProperty(relPath);
     }
 
-    /**
-     * @inheritDoc
-     */
     public boolean hasNodes() throws RepositoryException {
         return node.hasNodes();
     }
 
-    /**
-     * @inheritDoc
-     */
     public boolean hasProperties() throws RepositoryException {
         return node.hasProperties();
     }
 
-    /**
-     * @inheritDoc
-     */
     public NodeType getPrimaryNodeType() throws RepositoryException {
         return node.getPrimaryNodeType();
     }
 
-    /**
-     * @inheritDoc
-     */
     public NodeType[] getMixinNodeTypes() throws RepositoryException {
         return node.getMixinNodeTypes();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public boolean isNodeType(String nodeTypeName) throws RepositoryException {
+    public boolean isNodeType(final String nodeTypeName) throws RepositoryException {
         return node.isNodeType(nodeTypeName);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void addMixin(String mixinName) throws NoSuchNodeTypeException, VersionException,
+    public void addMixin(final String mixinName) throws NoSuchNodeTypeException, VersionException,
             ConstraintViolationException, LockException, RepositoryException {
         node.addMixin(mixinName);
     }
 
-    public Node getCanonicalNode() throws RepositoryException {
+    public NodeDecorator getCanonicalNode() throws RepositoryException {
         // Note that HREPTWO-2127 is still unresolved, even though the
         // previous implementation did have problems with it, but the current
         // implementation hasn't.  The point is that if you try to perform a
-        // hasPRoperty you do not have the same view as with getProperty,
+        // hasProperty you do not have the same view as with getProperty,
         // which is wrong.
-        Node canonical = ((SessionDecorator)getSession()).getCanonicalNode(node);
-        if(canonical != null) {
-            return factory.getNodeDecorator(session, canonical);
-        } else {
-            return null;
-        }
+        return newNodeDecorator(session, session.getCanonicalNode(node));
     }
 
     @Override
@@ -365,19 +248,13 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
 
     @Override
     public boolean recomputeDerivedData() throws RepositoryException {
-        if(item.isNode()) {
-            return ((SessionDecorator)getSession()).computeDerivedData((Node) item);
-        }
-        return false;
+        return session.computeDerivedData(node);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
-        if(item.isNode()) {
-            ((SessionDecorator)getSession()).postSave((Node)item);
-        }
+        session.postSave(node);
         super.save();
     }
 
@@ -387,315 +264,191 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     @Override
     public void remove() throws VersionException, LockException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
-            if(isNode()) {
-                DerivedDataEngine.removal(this);
-            }
+            session.postMountEnabled(false);
+            DerivedDataEngine.removal(this);
             super.remove();
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    /**
-     * internal function to access the display name for a normal, Version or VersionHistory node.
-     * @param node the <em>underlying</em> node
-     * @return a symbolic name of the node
-     */
-    static String getDisplayName(Node node) throws RepositoryException {
-        //if (node.hasProperty(HippoNodeType.HIPPO_UUID) && node.hasProperty(HippoNodeType.HIPPO_SEARCH)) {
-        if (node.hasProperty(HippoNodeType.HIPPO_SEARCH)) {
-
-            // just return the resultset
-            if (node.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
-                return HippoNodeType.HIPPO_RESULTSET;
-            }
-
-            // the last search is the current one
-            Value[] searches = node.getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
-            if (searches.length == 0) {
-                return node.getName();
-            }
-            String search = searches[searches.length-1].getString();
-
-            // check for search seperator
-            if (search.indexOf("#") == -1) {
-                return node.getName();
-            }
-
-            // check for sql parameter '?'
-            String xpath = search.substring(search.indexOf("#")+1);
-            if (xpath.indexOf('?') == -1) {
-                return node.getName();
-            }
-
-            // construct query
-            xpath = xpath.substring(0,xpath.indexOf('?')) + node.getName() + xpath.substring(xpath.indexOf('?')+1);
-
-            Query query = node.getSession().getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
-
-            // execute
-            QueryResult result = query.execute();
-            RowIterator iter = result.getRows();
-            if (iter.hasNext()) {
-                return iter.nextRow().getValues()[0].getString();
-            } else {
-                return node.getName();
-            }
-        } else {
-            return node.getName();
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public Version checkin() throws VersionException, UnsupportedRepositoryOperationException,
+    public VersionDecorator checkin() throws VersionException, UnsupportedRepositoryOperationException,
             InvalidItemStateException, LockException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
-            Version version = node.checkin();
-            return factory.getVersionDecorator(session, version);
+            session.postMountEnabled(false);
+            return new VersionDecorator(session, node.checkin());
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public void checkout() throws UnsupportedRepositoryOperationException, LockException, RepositoryException {
         if(!isCheckedOut()) {
             try {
-                ((SessionDecorator)getSession()).postMountEnabled(false);
-                ((SessionDecorator)getSession()).postRefreshEnabled(false);
+                session.postMountEnabled(false);
+                session.postRefreshEnabled(false);
                 node.checkout();
             } finally {
-                ((SessionDecorator)getSession()).postMountEnabled(true);
-                ((SessionDecorator)getSession()).postRefreshEnabled(true);
+                session.postMountEnabled(true);
+                session.postRefreshEnabled(true);
             }
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void removeMixin(String mixinName) throws NoSuchNodeTypeException, VersionException,
+    public void removeMixin(final String mixinName) throws NoSuchNodeTypeException, VersionException,
                                                      ConstraintViolationException, LockException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.removeMixin(mixinName);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    public boolean canAddMixin(String mixinName) throws NoSuchNodeTypeException, RepositoryException {
+    public boolean canAddMixin(final String mixinName) throws NoSuchNodeTypeException, RepositoryException {
         return node.canAddMixin(mixinName);
     }
 
-    /**
-     * @inheritDoc
-     */
     public NodeDefinition getDefinition() throws RepositoryException {
         return node.getDefinition();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void orderBefore(String srcChildRelPath, String destChildRelPath)
+    public void orderBefore(final String srcChildRelPath, final String destChildRelPath)
             throws UnsupportedRepositoryOperationException, VersionException, ConstraintViolationException,
             ItemNotFoundException, LockException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.orderBefore(srcChildRelPath, destChildRelPath);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    public void doneMerge(Version version) throws VersionException, InvalidItemStateException,
+    public void doneMerge(final Version version) throws VersionException, InvalidItemStateException,
             UnsupportedRepositoryOperationException, RepositoryException {
         node.doneMerge(VersionDecorator.unwrap(version));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void cancelMerge(Version version) throws VersionException, InvalidItemStateException,
+    public void cancelMerge(final Version version) throws VersionException, InvalidItemStateException,
             UnsupportedRepositoryOperationException, RepositoryException {
         node.cancelMerge(VersionDecorator.unwrap(version));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void update(String srcWorkspaceName) throws NoSuchWorkspaceException, AccessDeniedException, LockException,
+    public void update(final String srcWorkspaceName) throws NoSuchWorkspaceException, AccessDeniedException, LockException,
             InvalidItemStateException, RepositoryException {
         node.update(srcWorkspaceName);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator merge(String srcWorkspace, boolean bestEffort) throws NoSuchWorkspaceException,
+    public NodeIteratorDecorator merge(final String srcWorkspace, final boolean bestEffort) throws NoSuchWorkspaceException,
             AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
-            NodeIterator nodes = node.merge(srcWorkspace, bestEffort);
-            return new NodeIteratorDecorator(factory, session, nodes);
+            session.postMountEnabled(false);
+            return new NodeIteratorDecorator(session, node.merge(srcWorkspace, bestEffort));
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    public String getCorrespondingNodePath(String workspaceName) throws ItemNotFoundException,
+    public String getCorrespondingNodePath(final String workspaceName) throws ItemNotFoundException,
             NoSuchWorkspaceException, AccessDeniedException, RepositoryException {
         return node.getCorrespondingNodePath(workspaceName);
     }
 
-    /**
-     * @inheritDoc
-     */
     public boolean isCheckedOut() throws RepositoryException {
         return node.isCheckedOut();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void restore(String versionName, boolean removeExisting) throws VersionException, ItemExistsException,
+    public void restore(final String versionName, final boolean removeExisting) throws VersionException, ItemExistsException,
             UnsupportedRepositoryOperationException, LockException, InvalidItemStateException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.restore(versionName, removeExisting);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void restore(Version version, boolean removeExisting) throws VersionException, ItemExistsException,
+    public void restore(final Version version, final boolean removeExisting) throws VersionException, ItemExistsException,
             UnsupportedRepositoryOperationException, LockException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.restore(VersionDecorator.unwrap(version), removeExisting);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void restore(Version version, String relPath, boolean removeExisting) throws PathNotFoundException,
+    public void restore(final Version version, final String relPath, final boolean removeExisting) throws PathNotFoundException,
             ItemExistsException, VersionException, ConstraintViolationException,
             UnsupportedRepositoryOperationException, LockException, InvalidItemStateException, RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.restore(VersionDecorator.unwrap(version), relPath, removeExisting);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void restoreByLabel(String versionLabel, boolean removeExisting) throws VersionException,
+    public void restoreByLabel(final String versionLabel, final boolean removeExisting) throws VersionException,
             ItemExistsException, UnsupportedRepositoryOperationException, LockException, InvalidItemStateException,
             RepositoryException {
         try {
-            ((SessionDecorator)getSession()).postMountEnabled(false);
+            session.postMountEnabled(false);
             node.restoreByLabel(versionLabel, removeExisting);
         } finally {
-            ((SessionDecorator)getSession()).postMountEnabled(true);
+            session.postMountEnabled(true);
         }
     }
 
-    public VersionHistory getVersionHistory() throws UnsupportedRepositoryOperationException, RepositoryException {
-        VersionHistory hist = node.getVersionHistory();
-        return factory.getVersionHistoryDecorator(session, hist);
+    public VersionHistoryDecorator getVersionHistory() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return new VersionHistoryDecorator(session, node.getVersionHistory());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version getBaseVersion() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return factory.getVersionDecorator(session, node.getBaseVersion());
+    public VersionDecorator getBaseVersion() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return new VersionDecorator(session, node.getBaseVersion());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Lock lock(boolean isDeep, boolean isSessionScoped) throws UnsupportedRepositoryOperationException,
+    public Lock lock(final boolean isDeep, final boolean isSessionScoped) throws UnsupportedRepositoryOperationException,
             LockException, AccessDeniedException, InvalidItemStateException, RepositoryException {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         return lockManager.lock(getPath(), isDeep, isSessionScoped, Long.MAX_VALUE, null);
     }
 
-    /**
-     * @inheritDoc
-     */
     public Lock getLock() throws UnsupportedRepositoryOperationException, LockException, AccessDeniedException,
             RepositoryException {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         return lockManager.getLock(getPath());
     }
 
-    /**
-     * @inheritDoc
-     */
     public void unlock() throws UnsupportedRepositoryOperationException, LockException, AccessDeniedException,
             InvalidItemStateException, RepositoryException {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         lockManager.unlock(getPath());
     }
 
-    /**
-     * @inheritDoc
-     */
     public boolean holdsLock() throws RepositoryException {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         return lockManager.holdsLock(node.getPath());
     }
 
-    /**
-     * @inheritDoc
-     */
     public boolean isLocked() throws RepositoryException {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         return lockManager.isLocked(getPath());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator pendingChanges(String nodeType, boolean prune) throws RepositoryException {
+    public NodeIteratorDecorator pendingChanges(final String nodeType, final boolean prune) throws RepositoryException {
         return session.pendingChanges(this, nodeType, prune);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator pendingChanges(String nodeType) throws RepositoryException {
+    public NodeIteratorDecorator pendingChanges(final String nodeType) throws RepositoryException {
         return session.pendingChanges(this, nodeType);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public NodeIterator pendingChanges() throws RepositoryException {
+    public NodeIteratorDecorator pendingChanges() throws RepositoryException {
         return session.pendingChanges(this, null);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void refresh(boolean keepChanges) throws InvalidItemStateException, RepositoryException {
+    public void refresh(final boolean keepChanges) throws InvalidItemStateException, RepositoryException {
         if (keepChanges == false && getDepth() == 0) {
             session.refresh(keepChanges);
             return;
@@ -704,44 +457,44 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     }
 
 
-    public Property setProperty(String name, Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        return factory.getPropertyDecorator(session, node.setProperty(name, value));
+    public PropertyDecorator setProperty(final String name, final Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    public Property setProperty(String name, BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        return factory.getPropertyDecorator(session, node.setProperty(name, value));
+    public PropertyDecorator setProperty(final String name, final BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        return new PropertyDecorator(session, node.setProperty(name, value));
     }
 
-    public NodeIterator getNodes(String[] nameGlobs) throws RepositoryException {
-        return new NodeIteratorDecorator(factory, session, node.getNodes(nameGlobs), this);
+    public NodeIteratorDecorator getNodes(final String[] nameGlobs) throws RepositoryException {
+        return new NodeIteratorDecorator(session, node.getNodes(nameGlobs));
     }
 
-    public PropertyIterator getProperties(String[] nameGlobs) throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getProperties(nameGlobs));
+    public PropertyIteratorDecorator getProperties(final String[] nameGlobs) throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getProperties(nameGlobs));
     }
 
     public String getIdentifier() throws RepositoryException {
         return node.getIdentifier();
     }
 
-    public PropertyIterator getReferences(String name) throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getReferences(name));
+    public PropertyIteratorDecorator getReferences(final String name) throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getReferences(name));
     }
 
-    public PropertyIterator getWeakReferences() throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getWeakReferences());
+    public PropertyIteratorDecorator getWeakReferences() throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getWeakReferences());
     }
 
-    public PropertyIterator getWeakReferences(String name) throws RepositoryException {
-        return new PropertyIteratorDecorator(factory, session, node.getWeakReferences(name));
+    public PropertyIteratorDecorator getWeakReferences(final String name) throws RepositoryException {
+        return new PropertyIteratorDecorator(session, node.getWeakReferences(name));
     }
 
-    public void setPrimaryType(String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
+    public void setPrimaryType(final String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
         node.setPrimaryType(nodeTypeName);
     }
 
-    public NodeIterator getSharedSet() throws RepositoryException {
-        return new NodeIteratorDecorator(factory, session, node.getSharedSet(), this);
+    public NodeIteratorDecorator getSharedSet() throws RepositoryException {
+        return new NodeIteratorDecorator(session, node.getSharedSet());
     }
 
     public void removeSharedSet() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
@@ -752,7 +505,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
         node.removeShare();
     }
 
-    public void followLifecycleTransition(String transition) throws UnsupportedRepositoryOperationException, RepositoryException {
+    public void followLifecycleTransition(final String transition) throws UnsupportedRepositoryOperationException, RepositoryException {
         node.followLifecycleTransition(transition);
     }
 
@@ -783,5 +536,4 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
         }
         return node.getProperty(HippoNodeType.HIPPO_NAME).getString();
     }
-
 }

@@ -15,51 +15,26 @@
  */
 package org.hippoecm.repository.impl;
 
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
 
-/**
- * Node iterator that decorates all iterated nodes. This utility class is
- * used by the decorator layer to manage the decoration of all the nodes
- * returned by an underlying node iterator. This class delegates
- * all method calls to the underlying node iterator and uses the given
- * decorator factory to decorate all the returned node instances.
- */
 public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator, HippoNodeIterator {
 
-    private long totalSize = -1;
+    private final long totalSize;
 
-    /**
-     * Creates a decorating node iterator.
-     *
-     * @param factory decorator factory
-     * @param session decorated session
-     * @param iterator underlying node iterator
-     */
-    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator) {
-        super(factory, session, iterator);
+    NodeIteratorDecorator(final SessionDecorator session, final NodeIterator iterator) {
+        super(session, iterator);
+        this.totalSize = -1;
     }
 
-    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator, long totalSize) {
-        super(factory, session, iterator);
+    NodeIteratorDecorator(final SessionDecorator session, final NodeIterator iterator, final long totalSize) {
+        super(session, iterator);
         this.totalSize = totalSize;
     }
 
-    NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator, NodeDecorator parent) {
-        super(factory, session, iterator, parent);
-    }
-
-    /**
-     * Decorates and returns the next node from the underlying node iterator.
-     *
-     * @return next node (decorated)
-     * @see NodeIterator#nextNode()
-     */
-    public Node nextNode() {
-        return (Node) next();
+    public NodeDecorator nextNode() {
+        return (NodeDecorator) next();
     }
 
     public long getTotalSize() {

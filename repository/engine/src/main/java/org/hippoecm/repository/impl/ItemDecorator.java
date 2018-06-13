@@ -21,141 +21,111 @@ import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionHistory;
 
-/**
- */
-public class ItemDecorator extends AbstractDecorator implements Item {
+public class ItemDecorator extends SessionBoundDecorator implements Item {
 
-
-    /**
-     * The underlying item to decorate.
-     */
     protected final Item item;
 
-    protected ItemDecorator(DecoratorFactory factory, Session session, Item item) {
-        super(factory, session);
-        this.item = item;
-    }
-
-    /**
-     * Returns the underlying item that <code>this</code>
-     * <code>ItemDecorator</code> decorates.
-     *
-     * @return the underlying item.
-     */
-    public Item unwrap() {
-        return item;
-    }
-
-    /**
-     * Returns the underlying <code>item</code> of the {@code item}
-     * that decorates it. Unwrapping {@code null} returns {@code null}.
-     *
-     * @param item decorates the underlying item.
-     * @return the underlying item.
-     * @throws IllegalStateException if <code>item</code> is not of type
-     *                               {@link ItemDecorator}.
-     */
-    public static Item unwrap(Item item) {
-        if (item == null) {
+    static ItemDecorator newItemDecorator(SessionDecorator session, Object item) throws UnsupportedOperationException {
+        if (item instanceof Version) {
+            return new VersionDecorator(session, (Version) item);
+        } else if (item instanceof VersionHistory) {
+            return new VersionHistoryDecorator(session, (VersionHistory) item);
+        } else if (item instanceof Node) {
+            return new NodeDecorator(session, (Node) item);
+        } else if (item instanceof Property) {
+            return new PropertyDecorator(session, (Property) item);
+        } else if (item instanceof Item) {
+            return new ItemDecorator(session, (Item)item);
+        } else if (item == null) {
             return null;
-        }
-        if (item instanceof ItemDecorator) {
-            item = ((ItemDecorator) item).unwrap();
         } else {
-            throw new IllegalStateException("item is not of type ItemDecorator");
+            throw new UnsupportedOperationException("No decorator available for item of type " + item.getClass());
+        }
+    }
+
+    public static Item unwrap(final Item item) {
+        if (item instanceof ItemDecorator) {
+            return ((ItemDecorator) item).item;
         }
         return item;
     }
 
-    /**
-     * Returns the decorated session through which this item decorator
-     * was acquired.
-     *
-     * @return decorated session
-     */
-    public Session getSession() throws RepositoryException {
+    ItemDecorator(final SessionDecorator session, final Item item) {
+        super(session);
+        this.item = unwrap(item);
+    }
+
+    public SessionDecorator getSession() throws RepositoryException {
         return session;
     }
 
-    /** {@inheritDoc} */
     public String getPath() throws RepositoryException {
         return item.getPath();
     }
 
-    /** {@inheritDoc} */
     public String getName() throws RepositoryException {
         return item.getName();
     }
 
-    /** {@inheritDoc} */
-    public Item getAncestor(int depth) throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        Item ancestor = item.getAncestor(depth);
-        return factory.getItemDecorator(session, ancestor);
+    public ItemDecorator getAncestor(final int depth) throws ItemNotFoundException, AccessDeniedException, RepositoryException {
+        final Item ancestor = item.getAncestor(depth);
+        return newItemDecorator(session, ancestor);
     }
 
-    /** {@inheritDoc} */
     public Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        Node parent = item.getParent();
-        return factory.getNodeDecorator(session, parent);
+        final Node parent = item.getParent();
+        return NodeDecorator.newNodeDecorator(session, parent);
     }
 
-    /** {@inheritDoc} */
     public int getDepth() throws RepositoryException {
         return item.getDepth();
     }
 
-    /** {@inheritDoc} */
     public boolean isNode() {
         return item.isNode();
     }
 
-    /** {@inheritDoc} */
     public boolean isNew() {
         return item.isNew();
     }
 
-    /** {@inheritDoc} */
     public boolean isModified() {
         return item.isModified();
     }
 
-    /** {@inheritDoc} */
-    public boolean isSame(Item otherItem) throws RepositoryException {
+    public boolean isSame(final Item otherItem) throws RepositoryException {
         return item.isSame(unwrap(otherItem));
     }
 
-    /** {@inheritDoc} */
-    public void accept(ItemVisitor visitor) throws RepositoryException {
-        item.accept(factory.getItemVisitorDecorator(session, visitor));
+    public void accept(final ItemVisitor visitor) throws RepositoryException {
+        item.accept(new ItemVisitorDecorator(session, visitor));
     }
 
-    /** {@inheritDoc} */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
         item.save();
     }
 
-    /** {@inheritDoc} */
-    public void refresh(boolean keepChanges) throws InvalidItemStateException, RepositoryException {
+    public void refresh(final boolean keepChanges) throws InvalidItemStateException, RepositoryException {
         item.refresh(keepChanges);
     }
 
-    /** {@inheritDoc} */
     public void remove() throws VersionException, LockException, RepositoryException {
         item.remove();
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof ItemDecorator) {
-            ItemDecorator other = (ItemDecorator) obj;
-            return item.equals(other.unwrap());
+            return item.equals(((ItemDecorator)obj).item);
         }
         return false;
     }

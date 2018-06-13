@@ -31,7 +31,7 @@ import javax.jcr.lock.LockManager;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.impl.DecoratorFactoryImpl;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.util.JcrConstants;
@@ -152,7 +152,7 @@ public class ModuleManager {
             try {
                 final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
                 Session moduleSession = session.impersonate(credentials);
-                moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession, credentials);
+                moduleSession = SessionDecorator.newSessionDecorator(moduleSession);
                 if (module instanceof ConfigurableDaemonModule) {
                     final String moduleConfigPath = MODULES_PATH + "/" + moduleName + "/" + HIPPO_MODULECONFIG;
                     final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, moduleSession);

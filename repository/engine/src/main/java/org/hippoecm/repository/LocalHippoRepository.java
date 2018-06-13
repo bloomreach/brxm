@@ -34,6 +34,8 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.journal.DatabaseJournal;
 import org.apache.jackrabbit.core.journal.JournalConnectionHelperAccessorImpl;
 import org.apache.jackrabbit.core.util.db.ConnectionHelper;
+import org.hippoecm.repository.impl.RepositoryDecorator;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.onehippo.cm.ConfigurationService;
@@ -41,7 +43,6 @@ import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.lock.LockManager;
-import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
@@ -282,7 +283,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         HippoServiceRegistry.registerService(lockManager, new Class[]{LockManager.class, InternalLockManager.class});
 
-        repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
+        repository = RepositoryDecorator.newRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
         configurationService = initializeConfiguration(rootSession);
@@ -298,7 +299,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     protected ConfigurationServiceImpl initializeConfiguration(final Session rootSession) throws RepositoryException {
         log.info("LocalHippoRepository initialize configuration");
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-        final Session configurationServiceSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
+        final Session configurationServiceSession = SessionDecorator.newSessionDecorator(rootSession.impersonate(credentials));
         migrateToV12IfNeeded(configurationServiceSession, false);
 
         return new ConfigurationServiceImpl().start(configurationServiceSession,() -> start(rootSession));

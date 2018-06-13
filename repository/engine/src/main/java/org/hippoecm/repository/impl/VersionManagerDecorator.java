@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import javax.jcr.AccessDeniedException;
@@ -23,7 +24,6 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.MergeException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -31,28 +31,35 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.core.VersionManagerImpl;
 import org.hippoecm.repository.api.HippoVersionManager;
 
-
 public class VersionManagerDecorator implements HippoVersionManager {
 
     private final VersionManager versionManager;
     private final WorkspaceDecorator workspace;
+    private final SessionDecorator session;
+
+    public static VersionManager unwrap(final VersionManager versionManager) {
+        if (versionManager instanceof VersionManagerDecorator) {
+            return ((VersionManagerDecorator)versionManager).versionManager;
+        }
+        return versionManager;
+    }
 
     public VersionManagerDecorator(final VersionManager versionManager, final WorkspaceDecorator workspaceDecorator) {
-        this.versionManager = versionManager;
+        this.versionManager = unwrap(versionManager);
         this.workspace = workspaceDecorator;
+        this.session = workspace.session;
     }
 
     @Override
-    public Version checkin(final String absPath) throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
+    public VersionDecorator checkin(final String absPath) throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            return versionManager.checkin(absPath);
+            return new VersionDecorator(session, versionManager.checkin(absPath));
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -69,10 +76,10 @@ public class VersionManagerDecorator implements HippoVersionManager {
     }
 
     @Override
-    public Version checkpoint(final String absPath) throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
+    public VersionDecorator checkpoint(final String absPath) throws VersionException, UnsupportedRepositoryOperationException, InvalidItemStateException, LockException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            return versionManager.checkpoint(absPath);
+            return new VersionDecorator(session, versionManager.checkpoint(absPath));
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -84,20 +91,21 @@ public class VersionManagerDecorator implements HippoVersionManager {
     }
 
     @Override
-    public VersionHistory getVersionHistory(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.getVersionHistory(absPath);
+    public VersionHistoryDecorator getVersionHistory(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
+        return new VersionHistoryDecorator(session, versionManager.getVersionHistory(absPath));
     }
 
     @Override
-    public Version getBaseVersion(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.getBaseVersion(absPath);
+    public VersionDecorator getBaseVersion(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
+        return new VersionDecorator(session, versionManager.getBaseVersion(absPath));
     }
 
     @Override
     public void restore(final Version[] versions, final boolean removeExisting) throws ItemExistsException, UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException, RepositoryException {
+        Version[] unwrapped = Arrays.stream(versions).map(v -> VersionDecorator.unwrap(v)).toArray(size -> new Version[size]);
         try {
             workspace.postMountEnabled(false);
-            versionManager.restore(versions, removeExisting);
+            versionManager.restore(unwrapped, removeExisting);
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -117,7 +125,7 @@ public class VersionManagerDecorator implements HippoVersionManager {
     public void restore(final Version version, final boolean removeExisting) throws VersionException, ItemExistsException, InvalidItemStateException, UnsupportedRepositoryOperationException, LockException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            versionManager.restore(version, removeExisting);
+            versionManager.restore(VersionDecorator.unwrap(version), removeExisting);
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -127,7 +135,7 @@ public class VersionManagerDecorator implements HippoVersionManager {
     public void restore(final String absPath, final Version version, final boolean removeExisting) throws PathNotFoundException, ItemExistsException, VersionException, ConstraintViolationException, UnsupportedRepositoryOperationException, LockException, InvalidItemStateException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            versionManager.restore(absPath, version, removeExisting);
+            versionManager.restore(absPath, VersionDecorator.unwrap(version), removeExisting);
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -144,20 +152,20 @@ public class VersionManagerDecorator implements HippoVersionManager {
     }
 
     @Override
-    public NodeIterator merge(final String absPath, final String srcWorkspace, final boolean bestEffort) throws NoSuchWorkspaceException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
+    public NodeIteratorDecorator merge(final String absPath, final String srcWorkspace, final boolean bestEffort) throws NoSuchWorkspaceException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            return versionManager.merge(absPath, srcWorkspace, bestEffort);
+            return new NodeIteratorDecorator(session, versionManager.merge(absPath, srcWorkspace, bestEffort));
         } finally {
             workspace.postMountEnabled(true);
         }
     }
 
     @Override
-    public NodeIterator merge(final String absPath, final String srcWorkspace, final boolean bestEffort, final boolean isShallow) throws NoSuchWorkspaceException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
+    public NodeIteratorDecorator merge(final String absPath, final String srcWorkspace, final boolean bestEffort, final boolean isShallow) throws NoSuchWorkspaceException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            return versionManager.merge(absPath, srcWorkspace, bestEffort, isShallow);
+            return new NodeIteratorDecorator(session, versionManager.merge(absPath, srcWorkspace, bestEffort, isShallow));
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -167,7 +175,7 @@ public class VersionManagerDecorator implements HippoVersionManager {
     public void doneMerge(final String absPath, final Version version) throws VersionException, InvalidItemStateException, UnsupportedRepositoryOperationException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            versionManager.doneMerge(absPath, version);
+            versionManager.doneMerge(absPath, VersionDecorator.unwrap(version));
         } finally {
             workspace.postMountEnabled(true);
         }
@@ -177,49 +185,49 @@ public class VersionManagerDecorator implements HippoVersionManager {
     public void cancelMerge(final String absPath, final Version version) throws VersionException, InvalidItemStateException, UnsupportedRepositoryOperationException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            versionManager.cancelMerge(absPath, version);
+            versionManager.cancelMerge(absPath, VersionDecorator.unwrap(version));
         } finally {
             workspace.postMountEnabled(true);
         }
     }
 
     @Override
-    public Node createConfiguration(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.createConfiguration(absPath);
+    public NodeDecorator createConfiguration(final String absPath) throws UnsupportedRepositoryOperationException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(session, versionManager.createConfiguration(absPath));
     }
 
     @Override
-    public Node setActivity(final Node activity) throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.setActivity(activity);
+    public NodeDecorator setActivity(final Node activity) throws UnsupportedRepositoryOperationException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(session, versionManager.setActivity(NodeDecorator.unwrap(activity)));
     }
 
     @Override
-    public Node getActivity() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.getActivity();
+    public NodeDecorator getActivity() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(session, versionManager.getActivity());
     }
 
     @Override
-    public Node createActivity(final String title) throws UnsupportedRepositoryOperationException, RepositoryException {
-        return versionManager.createActivity(title);
+    public NodeDecorator createActivity(final String title) throws UnsupportedRepositoryOperationException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(session, versionManager.createActivity(title));
     }
 
     @Override
     public void removeActivity(final Node activityNode) throws UnsupportedRepositoryOperationException, VersionException, RepositoryException {
-        versionManager.removeActivity(activityNode);
+        versionManager.removeActivity(NodeDecorator.unwrap(activityNode));
     }
 
     @Override
-    public NodeIterator merge(final Node activityNode) throws VersionException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
+    public NodeIteratorDecorator merge(final Node activityNode) throws VersionException, AccessDeniedException, MergeException, LockException, InvalidItemStateException, RepositoryException {
         try {
             workspace.postMountEnabled(false);
-            return versionManager.merge(activityNode);
+            return new NodeIteratorDecorator(session, versionManager.merge(NodeDecorator.unwrap(activityNode)));
         } finally {
             workspace.postMountEnabled(true);
         }
     }
 
     @Override
-    public Version checkin(final String absPath, final Calendar created) throws RepositoryException {
-        return ((VersionManagerImpl) versionManager).checkin(absPath, created);
+    public VersionDecorator checkin(final String absPath, final Calendar created) throws RepositoryException {
+        return new VersionDecorator(session, ((VersionManagerImpl) versionManager).checkin(absPath, created));
     }
 }

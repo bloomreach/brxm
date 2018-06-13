@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
@@ -59,7 +58,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_LOCKABLE;
  * @deprecated since 5.0.3
  */
 @Deprecated
-public class LockManagerDecorator implements HippoLockManager, LockManager {
+public class LockManagerDecorator extends SessionBoundDecorator implements HippoLockManager, LockManager {
 
     private static final Logger log = LoggerFactory.getLogger(LockManagerDecorator.class);
     private static final Calendar NO_TIMEOUT = Calendar.getInstance();
@@ -67,22 +66,20 @@ public class LockManagerDecorator implements HippoLockManager, LockManager {
         NO_TIMEOUT.setTimeInMillis(Long.MAX_VALUE);
     }
 
-    private final Session session;
     private final LockManager lockManager;
-
     private final ScheduledExecutorService executor;
 
-    public LockManagerDecorator(final Session session, final LockManager lockManager) {
-        this.session = session;
-        this.lockManager = lockManager;
-        executor = ((InternalHippoSession) SessionDecorator.unwrap(session)).getExecutor();
-    }
-
-    public static LockManager unwrap(LockManager lockManager) {
+    public static LockManager unwrap(final LockManager lockManager) {
         if (lockManager instanceof LockManagerDecorator) {
             return ((LockManagerDecorator) lockManager).lockManager;
         }
         return lockManager;
+    }
+
+    public LockManagerDecorator(final SessionDecorator session, final LockManager lockManager) {
+        super(session);
+        this.lockManager = unwrap(lockManager);
+        executor = ((InternalHippoSession) session.session).getExecutor();
     }
 
     @Override
@@ -93,7 +90,7 @@ public class LockManagerDecorator implements HippoLockManager, LockManager {
 
     @Override
     public boolean expireLock(final String absPath) throws LockException, RepositoryException {
-        final Node lockNode = session.getNode(absPath);
+        final Node lockNode = session.session.getNode(absPath);
         final Calendar timeout = JcrUtils.getDateProperty(lockNode, HIPPO_LOCKEXPIRATIONTIME, NO_TIMEOUT);
         if (System.currentTimeMillis() < timeout.getTimeInMillis()) {
             return false;

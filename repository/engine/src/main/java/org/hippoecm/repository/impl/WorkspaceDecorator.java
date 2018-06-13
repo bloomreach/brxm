@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.repository.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -38,7 +39,6 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
-import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.EventIterator;
@@ -46,7 +46,6 @@ import javax.jcr.observation.EventJournal;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
-import javax.jcr.query.QueryManager;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
@@ -68,59 +67,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
-/**
- * Simple workspace decorator.
- */
-public class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
+public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWorkspace {
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
     private static final WeakHashMap<Session, Set<EventListener>> listeners = new WeakHashMap<Session, Set<EventListener>>();
 
-    /** The underlying workspace instance. */
     protected final Workspace workspace;
-    protected Session session;
     protected WorkflowManagerImpl workflowManager;
 
-    /**
-     * Creates a workspace decorator.
-     *
-     * @param factory
-     * @param session
-     * @param workspace
-     */
-    public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
-        super(factory, session);
-        this.session = session;
-        this.workspace = workspace;
-        workflowManager = null;
-    }
-
-    public static Workspace unwrap(Workspace workspace) {
-        while (workspace instanceof WorkspaceDecorator) {;
-            workspace = ((WorkspaceDecorator)workspace).workspace;
+    public static Workspace unwrap(final Workspace workspace) {
+        if (workspace instanceof WorkspaceDecorator) {;
+            return ((WorkspaceDecorator)workspace).workspace;
         }
         return workspace;
     }
 
-    /** {@inheritDoc} */
-    public Session getSession() {
+    WorkspaceDecorator(final SessionDecorator session) {
+        super(session);
+        this.workspace = session.session.getWorkspace();
+        workflowManager = null;
+    }
+
+    public SessionDecorator getSession() {
         return session;
     }
 
-    /**
-     * Forwards the method call to the underlying workspace.
-     */
     public String getName() {
         return workspace.getName();
     }
 
-    public void postMountEnabled(boolean enabled) {
+    public void postMountEnabled(final boolean enabled) {
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)workspace).getItemStateManager()).setEnabled(enabled);
     }
 
     @Override
-    public void importXML(String parentAbsPath, InputStream in, int uuidBehaviour) throws IOException,
+    public void importXML(final String parentAbsPath, final InputStream in, final int uuidBehaviour) throws IOException,
             PathNotFoundException, ItemExistsException, ConstraintViolationException, InvalidSerializedDataException,
             LockException, RepositoryException {
         try {
@@ -172,7 +154,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                 }
                 synchronized (listeners) {
                     if (!listeners.containsKey(session)) {
-                        listeners.put(session, new HashSet<EventListener>());
+                        listeners.put(session, new HashSet<>());
                     }
                     listeners.get(session).add(registeringListener);
                 }
@@ -181,7 +163,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
 
             public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
                 // create local copy
-                final Set<EventListener> currentListeners = new HashSet<EventListener>();
+                final Set<EventListener> currentListeners = new HashSet<>();
                 synchronized (listeners) {
                     if (listeners.containsKey(session)) {
                         currentListeners.addAll(listeners.get(session));
@@ -233,15 +215,15 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                 };
             }
 
-            public void removeEventListener(EventListener listener) throws RepositoryException {
+            public void removeEventListener(final EventListener listener) throws RepositoryException {
                 if (!session.isLive()) {
                     return;
                 }
                 synchronized (listeners) {
-                    Set<EventListener> registered = listeners.get(session);
+                    final Set<EventListener> registered = listeners.get(session);
                     if (registered != null) {
                         for (Iterator<EventListener> iter = registered.iterator(); iter.hasNext();) {
-                            EventListener registeredListener = iter.next();
+                            final EventListener registeredListener = iter.next();
                             if (registeredListener == listener || (registeredListener instanceof JackrabbitSynchronousEventListenerDecorator && ((JackrabbitSynchronousEventListenerDecorator) registeredListener).listener == listener)) {
                                 iter.remove();
                                 upstream.removeEventListener(registeredListener);
@@ -255,7 +237,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                 }
             }
 
-            public void setUserData(String userData) throws RepositoryException {
+            public void setUserData(final String userData) throws RepositoryException {
                 upstream.setUserData(userData);
             }
 
@@ -263,28 +245,30 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                 return upstream.getEventJournal();
             }
 
-            public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypeName) throws RepositoryException {
+            public EventJournal getEventJournal(final int eventTypes, final String absPath, final boolean isDeep,
+                                                final String[] uuid, final String[] nodeTypeName) throws RepositoryException {
                 return upstream.getEventJournal(eventTypes, absPath, isDeep, uuid, nodeTypeName);
             }
         };
     }
 
     static class JackrabbitSynchronousEventListenerDecorator implements org.apache.jackrabbit.core.observation.SynchronousEventListener {
-        EventListener listener;
 
-        public JackrabbitSynchronousEventListenerDecorator(EventListener listener) {
+        final EventListener listener;
+
+        public JackrabbitSynchronousEventListenerDecorator(final EventListener listener) {
             this.listener = listener;
         }
 
-        public void onEvent(EventIterator events) {
+        public void onEvent(final EventIterator events) {
             listener.onEvent(events);
         }
     }
 
-    private void touch(String destAbsPath) throws RepositoryException {
+    private void touch(final String destAbsPath) throws RepositoryException {
         Node destination = null;
-        int parentPathEnd = destAbsPath.lastIndexOf("/");
-        Node parent = (parentPathEnd <= 0) ? getSession().getRootNode()
+        final int parentPathEnd = destAbsPath.lastIndexOf("/");
+        final Node parent = (parentPathEnd <= 0) ? getSession().getRootNode()
                 : getSession().getNode(destAbsPath.substring(0, parentPathEnd));
         for (NodeIterator iter = parent.getNodes(destAbsPath.substring(parentPathEnd + 1)); iter
                 .hasNext();) {
@@ -293,10 +277,10 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         if (destination != null) {
             destination.accept(new TraversingItemVisitor.Default() {
                 @Override
-                public void visit(Node node) throws RepositoryException {
+                public void visit(final Node node) throws RepositoryException {
                     if (node instanceof HippoNode) {
                         try {
-                            Node canonical = ((HippoNode) node).getCanonicalNode();
+                            final Node canonical = ((HippoNode) node).getCanonicalNode();
                             if (canonical == null || !canonical.isSame(node)) {
                                 return;
                             }
@@ -309,11 +293,11 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
                 }
 
                 @Override
-                protected void leaving(Node node, int level) throws RepositoryException {
+                protected void leaving(final Node node, final int level) throws RepositoryException {
                     if (node.isNodeType(HippoNodeType.NT_DERIVED)) {
                         if (!node.isCheckedOut()) {
                             for (int depth = node.getDepth(); depth > 0; depth--) {
-                                Node ancestor = (Node) node.getAncestor(depth);
+                                final Node ancestor = (Node) node.getAncestor(depth);
                                 if (ancestor.isNodeType("mix:versionable")) {
                                     ancestor.checkout();
                                     break;
@@ -329,14 +313,14 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     }
 
     @Override
-    public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+    public void copy(final String srcAbsPath, final String destAbsPath) throws ConstraintViolationException, VersionException,
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.copy(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
     @Override
-    public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException,
+    public void copy(final String srcWorkspace, final String srcAbsPath, final String destAbsPath) throws NoSuchWorkspaceException,
             ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException,
             ItemExistsException, LockException, RepositoryException {
         workspace.copy(srcWorkspace, srcAbsPath, destAbsPath);
@@ -344,7 +328,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     }
 
     @Override
-    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting)
+    public void clone(final String srcWorkspace, final String srcAbsPath, final String destAbsPath, boolean removeExisting)
             throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
             PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.clone(srcWorkspace, srcAbsPath, destAbsPath, removeExisting);
@@ -352,39 +336,27 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     }
 
     @Override
-    public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
+    public void move(final String srcAbsPath, final String destAbsPath) throws ConstraintViolationException, VersionException,
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
         workspace.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
 
-    public void restore(Version[] versions, boolean removeExisting) throws ItemExistsException,
+    public void restore(final Version[] versions, final boolean removeExisting) throws ItemExistsException,
             UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException,
             RepositoryException {
-        Version[] tmp = new Version[versions.length];
-        for (int i = 0; i < versions.length; i++) {
-            tmp[i] = VersionDecorator.unwrap(versions[i]);
-        }
-        workspace.restore(tmp, removeExisting);
+        Version[] unwrapped = Arrays.stream(versions).map(v -> VersionDecorator.unwrap(v)).toArray(size -> new Version[size]);
+        workspace.restore(unwrapped, removeExisting);
     }
 
-    /**
-     * Forwards the method call to the underlying workspace.
-     */
-    public QueryManager getQueryManager() throws RepositoryException {
-        return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
+    public QueryManagerDecorator getQueryManager() throws RepositoryException {
+        return new QueryManagerDecorator(session, workspace.getQueryManager());
     }
 
-    /**
-     * Forwards the method call to the underlying workspace.
-     */
     public NamespaceRegistry getNamespaceRegistry() throws RepositoryException {
         return workspace.getNamespaceRegistry();
     }
 
-    /**
-     * Forwards the method call to the underlying workspace.
-     */
     public NodeTypeManager getNodeTypeManager() throws RepositoryException {
         return workspace.getNodeTypeManager();
     }
@@ -393,28 +365,25 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         return workspace.getAccessibleWorkspaceNames();
     }
 
-    /**
-     * Forwards the method call to the underlying workspace.
-     */
-    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+    public ContentHandler getImportContentHandler(final String parentAbsPath, final int uuidBehaviour)
             throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
             RepositoryException {
         return workspace.getImportContentHandler(parentAbsPath, uuidBehaviour);
     }
 
-    public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return factory.getLockManagerDecorator(session, workspace.getLockManager());
+    public LockManagerDecorator getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+        return new LockManagerDecorator(session, workspace.getLockManager());
     }
 
-    public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
+    public void createWorkspace(final String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {
         workspace.createWorkspace(name);
     }
 
-    public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+    public void createWorkspace(final String name, final String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
         workspace.createWorkspace(name, srcWorkspace);
     }
 
-    public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
+    public void deleteWorkspace(final String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
         workspace.deleteWorkspace(name);
     }
 

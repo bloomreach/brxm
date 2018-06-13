@@ -27,27 +27,23 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.security.JvmCredentials;
 
-/**
- * Simple {@link Repository Repository} decorator.
- */
 public class RepositoryDecorator implements RepositoryService {
 
-    private DecoratorFactory factory;
     private Repository repository;
 
-    public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
-        this.factory = factory;
-        this.repository = repository;
+    public static RepositoryDecorator newRepositoryDecorator(final Repository repository) {
+        return new RepositoryDecorator(repository);
     }
 
-    public static Repository unwrap(Repository repository) {
-        if (repository == null) {
-            return null;
-        }
+    public static Repository unwrap(final Repository repository) {
         if (repository instanceof RepositoryDecorator) {
-            repository = ((RepositoryDecorator)repository).repository;
+            return ((RepositoryDecorator)repository).repository;
         }
         return repository;
+    }
+
+    RepositoryDecorator(final Repository repository) {
+        this.repository = unwrap(repository);
     }
 
     @Override
@@ -56,7 +52,7 @@ public class RepositoryDecorator implements RepositoryService {
     }
 
     @Override
-    public String getDescriptor(String key) {
+    public String getDescriptor(final String key) {
         if(REP_NAME_DESC.equals(key)) {
             return "Hippo Repository";
         } else if(REP_VENDOR_DESC.equals(key)) {
@@ -70,39 +66,35 @@ public class RepositoryDecorator implements RepositoryService {
         }
     }
 
-    public boolean isStandardDescriptor(String key) {
+    public boolean isStandardDescriptor(final String key) {
         return repository.isStandardDescriptor(key);
     }
 
-    public boolean isSingleValueDescriptor(String key) {
+    public boolean isSingleValueDescriptor(final String key) {
         return repository.isSingleValueDescriptor(key);
     }
 
-    public Value getDescriptorValue(String key) {
+    public Value getDescriptorValue(final String key) {
         return repository.getDescriptorValue(key);
     }
 
-    public Value[] getDescriptorValues(String key) {
+    public Value[] getDescriptorValues(final String key) {
         return repository.getDescriptorValues(key);
     }
 
-    @Override
-    public Session login(Credentials credentials) throws RepositoryException {
+    public Session login(final Credentials credentials) throws RepositoryException {
         return login(credentials, null);
     }
 
-    @Override
-    public Session login(String workspaceName) throws RepositoryException {
+    public Session login(final String workspaceName) throws RepositoryException {
         return login(null, workspaceName);
     }
 
-    @Override
     public Session login() throws RepositoryException {
         return login(null, null);
     }
 
-    @Override
-    public Session login(Credentials credentials, String workspaceName) throws RepositoryException {
+    public Session login(Credentials credentials, final String workspaceName) throws RepositoryException {
         Task loginTask = null;
 
         try {
@@ -116,7 +108,7 @@ public class RepositoryDecorator implements RepositoryService {
                 credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
             }
             Session session = repository.login(credentials, workspaceName);
-            return DecoratorFactoryImpl.getSessionDecorator(session, credentials);
+            return new SessionDecorator(session);
         } finally {
             if (loginTask != null) {
                 loginTask.stop();

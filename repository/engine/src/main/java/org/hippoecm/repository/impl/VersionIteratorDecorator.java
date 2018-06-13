@@ -15,29 +15,15 @@
  */
 package org.hippoecm.repository.impl;
 
-import javax.jcr.Session;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionIterator;
 
-/**
- */
 public class VersionIteratorDecorator extends RangeIteratorDecorator implements VersionIterator {
 
-    /**
-     * Creates a decorating version iterator.
-     *
-     * @param factory decorator factory
-     * @param session decorated session
-     * @param iterator underlying version iterator
-     */
-    protected VersionIteratorDecorator(DecoratorFactory factory, Session session, VersionIterator iterator) {
-        super(factory, session, iterator);
+    protected VersionIteratorDecorator(final SessionDecorator session, final VersionIterator iterator) {
+        super(session, iterator);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version nextVersion() {
-        return (Version) next();
+    public VersionDecorator nextVersion() {
+        return (VersionDecorator) next();
     }
 }

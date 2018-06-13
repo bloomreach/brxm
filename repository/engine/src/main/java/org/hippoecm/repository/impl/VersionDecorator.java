@@ -17,116 +17,66 @@ package org.hippoecm.repository.impl;
 
 import java.util.Calendar;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
-
-import org.hippoecm.repository.api.HippoNode;
 
 public class VersionDecorator extends NodeDecorator implements Version {
 
     protected final Version version;
 
-    public VersionDecorator(DecoratorFactory factory, Session session, Version version) {
-        super(factory, session, version);
-        this.version = version;
-    }
-
-    /**
-     * Returns the underlying <code>Version</code> of the <code>version</code>
-     * that decorates it. Unwrapping <code>null</code> returns <code>null</code>.
-     *
-     * @param version decorates the underlying version.
-     * @return the underlying version.
-     * @throws IllegalStateException if <code>version</code> is not of type
-     *                               {@link VersionDecorator}.
-     */
-    public static Version unwrap(Version version) {
-        if (version == null) {
-            return null;
-        }
+    public static Version unwrap(final Version version) {
         if (version instanceof VersionDecorator) {
-            version = (Version) ((VersionDecorator) version).unwrap();
-        } else {
-            throw new IllegalStateException("version is not of type VersionDecorator");
+            return ((VersionDecorator) version).version;
         }
         return version;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public VersionHistory getContainingHistory() throws RepositoryException {
-        VersionHistory vHistory = version.getContainingHistory();
-        return factory.getVersionHistoryDecorator(session, vHistory);
+    VersionDecorator(final SessionDecorator session, final Version version) {
+        super(session, version);
+        this.version = unwrap(version);
     }
 
-    /**
-     * @inheritDoc
-     */
+    public VersionHistoryDecorator getContainingHistory() throws RepositoryException {
+        final VersionHistory vHistory = version.getContainingHistory();
+        return new VersionHistoryDecorator(session, vHistory);
+    }
+
     public Calendar getCreated() throws RepositoryException {
         return version.getCreated();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version[] getSuccessors() throws RepositoryException {
-        Version[] successors = version.getSuccessors();
+    public VersionDecorator[] getSuccessors() throws RepositoryException {
+        final Version[] successors = version.getSuccessors();
+        final VersionDecorator[] result = new VersionDecorator[successors.length];
         for (int i = 0; i < successors.length; i++) {
-            successors[i] = factory.getVersionDecorator(session, successors[i]);
+            result[i] = new VersionDecorator(session, successors[i]);
         }
-        return successors;
+        return result;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version[] getPredecessors() throws RepositoryException {
-        Version[] predecessors = version.getPredecessors();
+    public VersionDecorator[] getPredecessors() throws RepositoryException {
+        final Version[] predecessors = version.getPredecessors();
+        final VersionDecorator[] result = new VersionDecorator[predecessors.length];
         for (int i = 0; i < predecessors.length; i++) {
-            predecessors[i] = factory.getVersionDecorator(session, predecessors[i]);
+            result[i] = new VersionDecorator(session, predecessors[i]);
         }
-        return predecessors;
+        return result;
     }
 
-
-    public Version getLinearSuccessor() throws RepositoryException {
-        return version.getLinearSuccessor();
+    public VersionDecorator getLinearSuccessor() throws RepositoryException {
+        return new VersionDecorator(session, version.getLinearSuccessor());
     }
 
-    public Version getLinearPredecessor() throws RepositoryException {
-        return version.getLinearPredecessor();
+    public VersionDecorator getLinearPredecessor() throws RepositoryException {
+        return new VersionDecorator(session, version.getLinearPredecessor());
     }
 
-    public Node getFrozenNode() throws RepositoryException {
-        return version.getFrozenNode();
+    public NodeDecorator getFrozenNode() throws RepositoryException {
+        return new NodeDecorator(session, version.getFrozenNode());
     }
 
-    public Node getCanonicalNode() throws RepositoryException {
-        Node canonical = ((SessionDecorator)getSession()).getCanonicalNode(version);
-        if(canonical != null) {
-            return factory.getNodeDecorator(session, canonical);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean isVirtual() throws RepositoryException {
-        return getIdentifier().startsWith("cafeface");
-    }
-
-    @Override
     public boolean recomputeDerivedData() throws RepositoryException {
         return false;
     }
-
-    @Override
-    public String getDisplayName() throws RepositoryException {
-        return ((HippoNode) version).getDisplayName();
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,162 +16,100 @@
 package org.hippoecm.repository.impl;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
-
-import org.hippoecm.repository.api.HippoNode;
 
 public class VersionHistoryDecorator extends NodeDecorator implements VersionHistory {
 
     protected final VersionHistory versionHistory;
 
-    protected VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
-        super(factory, session, versionHistory);
-        this.versionHistory = versionHistory;
+    public static VersionHistory unwrap(final VersionHistory versionHistory) {
+        if (versionHistory instanceof VersionHistoryDecorator) {
+            return ((VersionHistoryDecorator)versionHistory).versionHistory;
+        }
+        return versionHistory;
     }
 
-    /**
-     * @inheritDoc
-     */
+    VersionHistoryDecorator(final SessionDecorator session, final VersionHistory versionHistory) {
+        super(session, versionHistory);
+        this.versionHistory = unwrap(versionHistory);
+    }
+
     public String getVersionableUUID() throws RepositoryException {
         return versionHistory.getVersionableUUID();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version getRootVersion() throws RepositoryException {
-        Version version = versionHistory.getRootVersion();
-        return factory.getVersionDecorator(session, version);
+    public VersionDecorator getRootVersion() throws RepositoryException {
+        final Version version = versionHistory.getRootVersion();
+        return new VersionDecorator(session, version);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public VersionIterator getAllVersions() throws RepositoryException {
-        return new VersionIteratorDecorator(factory, session, versionHistory.getAllVersions());
+    public VersionIteratorDecorator getAllVersions() throws RepositoryException {
+        return new VersionIteratorDecorator(session, versionHistory.getAllVersions());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version getVersion(String versionName) throws VersionException, RepositoryException {
-        Version version = versionHistory.getVersion(versionName);
-        return factory.getVersionDecorator(session, version);
+    public VersionDecorator getVersion(final String versionName) throws VersionException, RepositoryException {
+        final Version version = versionHistory.getVersion(versionName);
+        return new VersionDecorator(session, version);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Version getVersionByLabel(String label) throws RepositoryException {
-        Version version = versionHistory.getVersionByLabel(label);
-        return factory.getVersionDecorator(session, version);
+    public VersionDecorator getVersionByLabel(final String label) throws RepositoryException {
+        final Version version = versionHistory.getVersionByLabel(label);
+        return new VersionDecorator(session, version);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void addVersionLabel(String versionName, String label, boolean moveLabel) throws VersionException,
+    public void addVersionLabel(final String versionName, final String label, final boolean moveLabel) throws VersionException,
             RepositoryException {
         versionHistory.addVersionLabel(versionName, label, moveLabel);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void removeVersionLabel(String label) throws VersionException, RepositoryException {
+    public void removeVersionLabel(final String label) throws VersionException, RepositoryException {
         versionHistory.removeVersionLabel(label);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public boolean hasVersionLabel(String label) throws RepositoryException {
+    public boolean hasVersionLabel(final String label) throws RepositoryException {
         return versionHistory.hasVersionLabel(label);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public boolean hasVersionLabel(Version version, String label) throws VersionException, RepositoryException {
+    public boolean hasVersionLabel(final Version version, final String label) throws VersionException, RepositoryException {
         return versionHistory.hasVersionLabel(VersionDecorator.unwrap(version), label);
     }
 
-    /**
-     * @inheritDoc
-     */
     public String[] getVersionLabels() throws RepositoryException {
         return versionHistory.getVersionLabels();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public String[] getVersionLabels(Version version) throws VersionException, RepositoryException {
+    public String[] getVersionLabels(final Version version) throws VersionException, RepositoryException {
         return versionHistory.getVersionLabels(VersionDecorator.unwrap(version));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public void removeVersion(String versionName) throws ReferentialIntegrityException, AccessDeniedException,
+    public void removeVersion(final String versionName) throws ReferentialIntegrityException, AccessDeniedException,
             UnsupportedRepositoryOperationException, VersionException, RepositoryException {
         versionHistory.removeVersion(versionName);
     }
-
 
     public String getVersionableIdentifier() throws RepositoryException {
         return versionHistory.getVersionableIdentifier();
     }
 
-    public VersionIterator getAllLinearVersions() throws RepositoryException {
-        return versionHistory.getAllLinearVersions();
+    public VersionIteratorDecorator getAllLinearVersions() throws RepositoryException {
+        return new VersionIteratorDecorator(session, versionHistory.getAllLinearVersions());
     }
 
-    public NodeIterator getAllLinearFrozenNodes() throws RepositoryException {
-        return versionHistory.getAllLinearFrozenNodes();
+    public NodeIteratorDecorator getAllLinearFrozenNodes() throws RepositoryException {
+        return new NodeIteratorDecorator(session, versionHistory.getAllLinearFrozenNodes());
     }
 
-    public NodeIterator getAllFrozenNodes() throws RepositoryException {
-        return versionHistory.getAllFrozenNodes();
-    }
-
-    public static VersionHistory unwrap(VersionHistory versionHistory) {
-        if (versionHistory instanceof VersionHistoryDecorator) {
-            return ((VersionHistoryDecorator) versionHistory).versionHistory;
-        }
-        return versionHistory;
-    }
-    public Node getCanonicalNode() throws RepositoryException {
-        Node canonical = ((SessionDecorator)getSession()).getCanonicalNode(versionHistory);
-        if(canonical != null) {
-            return factory.getNodeDecorator(session, canonical);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean isVirtual() throws RepositoryException {
-        return getIdentifier().startsWith("cafeface");
+    public NodeIteratorDecorator getAllFrozenNodes() throws RepositoryException {
+        return new NodeIteratorDecorator(session, versionHistory.getAllFrozenNodes());
     }
 
     @Override
     public boolean recomputeDerivedData() throws RepositoryException {
         return false;
     }
-
-    @Override
-    public String getDisplayName() throws RepositoryException {
-        return ((HippoNode) versionHistory).getDisplayName();
-    }
-
 }

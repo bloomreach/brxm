@@ -15,15 +15,11 @@
  */
 package org.hippoecm.repository.impl;
 
-import javax.jcr.PropertyIterator;
+public abstract class SessionBoundDecorator {
 
-public class PropertyIteratorDecorator extends RangeIteratorDecorator implements PropertyIterator {
+    protected final SessionDecorator session;
 
-    protected PropertyIteratorDecorator(SessionDecorator session, PropertyIterator iterator) {
-        super(session, iterator);
-    }
-
-    public PropertyDecorator nextProperty() {
-        return (PropertyDecorator) next();
+    protected SessionBoundDecorator(SessionDecorator session) {
+        this.session = session;
     }
 }

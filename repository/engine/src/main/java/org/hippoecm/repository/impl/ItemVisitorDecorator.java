@@ -19,30 +19,21 @@ import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-/**
- */
-public class ItemVisitorDecorator extends AbstractDecorator implements ItemVisitor {
+public class ItemVisitorDecorator extends SessionBoundDecorator implements ItemVisitor {
 
     protected final ItemVisitor visitor;
 
-    protected ItemVisitorDecorator(DecoratorFactory factory, Session session, ItemVisitor visitor) {
-        super(factory, session);
+    ItemVisitorDecorator(final SessionDecorator session, ItemVisitor visitor) {
+        super(session);
         this.visitor = visitor;
     }
 
-    /**
-     * @inheritDoc
-     */
     public void visit(Property property) throws RepositoryException {
-        visitor.visit(factory.getPropertyDecorator(session, property));
+        visitor.visit(new PropertyDecorator(session, property));
     }
 
-    /**
-     * @inheritDoc
-     */
     public void visit(Node node) throws RepositoryException {
-        visitor.visit(factory.getNodeDecorator(session, node));
+        visitor.visit(NodeDecorator.newNodeDecorator(session, node));
     }
 }

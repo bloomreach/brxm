@@ -23,55 +23,43 @@ import javax.jcr.query.RowIterator;
 import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
 import org.hippoecm.repository.query.lucene.HippoQueryResult;
 
-public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
+public class QueryResultDecorator extends SessionBoundDecorator implements QueryResult {
 
     protected final QueryResult result;
     protected long totalSize;
 
-    protected QueryResultDecorator(DecoratorFactory factory, SessionDecorator session, QueryResult result) {
-        super(factory, session);
-        this.result = result;
-        QueryResult impl = unwrap(result);
-        if (impl instanceof HippoQueryResult) {
-            totalSize = ((HippoQueryResult)impl).getSizeTotal();
-        } else if (impl instanceof QueryResultImpl) {
-            totalSize = ((QueryResultImpl)impl).getTotalSize();
+    public static QueryResult unwrap(final QueryResult decorated) {
+        if(decorated instanceof QueryResultDecorator) {
+            return ((QueryResultDecorator)decorated).result;
+        }
+        return decorated;
+    }
+
+    QueryResultDecorator(final SessionDecorator session, final QueryResult result) {
+        super(session);
+        this.result = unwrap(result);
+        if (result instanceof HippoQueryResult) {
+            totalSize = ((HippoQueryResult)result).getSizeTotal();
+        } else if (result instanceof QueryResultImpl) {
+            totalSize = ((QueryResultImpl)result).getTotalSize();
         } else {
             totalSize = -1L;
         }
     }
 
-    public static QueryResult unwrap(QueryResult decorated) {
-        if(decorated instanceof QueryResultDecorator) {
-            return ((QueryResultDecorator)decorated).result;
-        } else {
-            return decorated;
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
     public String[] getColumnNames() throws RepositoryException {
         return result.getColumnNames();
     }
 
-    /**
-     * @inheritDoc
-     */
     public RowIterator getRows() throws RepositoryException {
-        return new RowIteratorDecorator(factory, session, result.getRows());
+        return new RowIteratorDecorator(session, result.getRows());
     }
 
-    /**
-     * @inheritDoc
-     */
     public NodeIterator getNodes() throws RepositoryException {
-        return new NodeIteratorDecorator(factory, session, result.getNodes(), totalSize);
+        return new NodeIteratorDecorator(session, result.getNodes(), totalSize);
     }
 
     public String[] getSelectorNames() throws RepositoryException {
         return result.getSelectorNames();
     }
-
 }

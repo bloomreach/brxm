@@ -17,42 +17,36 @@ package org.hippoecm.repository.impl;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.qom.QueryObjectModelFactory;
 
-/**
- */
-public class QueryManagerDecorator extends AbstractDecorator implements QueryManager {
+public class QueryManagerDecorator extends SessionBoundDecorator implements QueryManager {
 
     protected final QueryManager manager;
 
-    public QueryManagerDecorator(DecoratorFactory factory, Session session, QueryManager manager) {
-        super(factory, session);
-        this.manager = manager;
+    public static QueryManager unwrap(final QueryManager manager) {
+        if (manager instanceof QueryManagerDecorator) {
+            return ((QueryManagerDecorator)manager).manager;
+        }
+        return manager;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Query createQuery(String statement, String language) throws InvalidQueryException, RepositoryException {
+    QueryManagerDecorator(final SessionDecorator session, final QueryManager manager) {
+        super(session);
+        this.manager = unwrap(manager);
+    }
+
+    public QueryDecorator createQuery(String statement, final String language) throws InvalidQueryException, RepositoryException {
         statement = QueryDecorator.mangleArguments(statement);
-        return factory.getQueryDecorator(session, manager.createQuery(statement, language));
+        return new QueryDecorator(session, manager.createQuery(statement, language));
     }
 
-    /**
-     * @inheritDoc
-     */
     public Query getQuery(Node node) throws InvalidQueryException, RepositoryException {
-        Query query = manager.getQuery(NodeDecorator.unwrap(node));
-        return factory.getQueryDecorator(session, query, node);
+        return new QueryDecorator(session, manager.getQuery(NodeDecorator.unwrap(node)), node);
     }
 
-    /**
-     * @inheritDoc
-     */
     public String[] getSupportedQueryLanguages() throws RepositoryException {
         return manager.getSupportedQueryLanguages();
     }

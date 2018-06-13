@@ -17,22 +17,16 @@ package org.hippoecm.repository.impl;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
 
-class RowIteratorDecorator implements RowIterator {
+class RowIteratorDecorator extends SessionBoundDecorator implements RowIterator {
 
-    private final DecoratorFactory factory;
-    private final Session session;
     private final RowIterator rows;
 
-    public RowIteratorDecorator(final DecoratorFactory factory, final Session session, final RowIterator rows) {
-        this.factory = factory;
-        this.session = session;
+    RowIteratorDecorator(final SessionDecorator session, final RowIterator rows) {
+        super(session);
         this.rows = rows;
     }
 
@@ -76,23 +70,13 @@ class RowIteratorDecorator implements RowIterator {
             }
 
             @Override
-            public Node getNode() throws RepositoryException {
-                return decorateNode(row.getNode());
-            }
-
-            private Node decorateNode(final Node node) {
-                if (node instanceof Version) {
-                    return factory.getVersionDecorator(session, (Version) node);
-                } else if (node instanceof VersionHistory) {
-                    return factory.getVersionHistoryDecorator(session, (VersionHistory) node);
-                } else {
-                    return factory.getNodeDecorator(session, node);
-                }
+            public NodeDecorator getNode() throws RepositoryException {
+                return NodeDecorator.newNodeDecorator(session, row.getNode());
             }
 
             @Override
             public Node getNode(final String selectorName) throws RepositoryException {
-                return decorateNode(row.getNode(selectorName));
+                return NodeDecorator.newNodeDecorator(session, row.getNode(selectorName));
             }
 
             @Override

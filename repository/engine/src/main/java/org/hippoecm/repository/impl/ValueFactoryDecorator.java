@@ -22,91 +22,64 @@ import javax.jcr.Binary;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 
-/**
- */
-public class ValueFactoryDecorator extends AbstractDecorator implements ValueFactory {
+public class ValueFactoryDecorator extends SessionBoundDecorator implements ValueFactory {
 
     protected final ValueFactory valueFactory;
 
-    protected ValueFactoryDecorator(DecoratorFactory factory, Session session, ValueFactory valueFactory) {
-        super(factory, session);
+    protected ValueFactoryDecorator(SessionDecorator session, ValueFactory valueFactory) {
+        super(session);
         this.valueFactory = valueFactory;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(String value) {
+    public Value createValue(final String value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(String value, int type) throws ValueFormatException {
+    public Value createValue(final String value, final int type) throws ValueFormatException {
         return valueFactory.createValue(value, type);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(long value) {
+    public Value createValue(final long value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(double value) {
+    public Value createValue(final double value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(boolean value) {
+    public Value createValue(final boolean value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(Calendar value) {
+    public Value createValue(final Calendar value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(InputStream value) {
+    public Value createValue(final InputStream value) {
         return valueFactory.createValue(value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Value createValue(Node value) throws RepositoryException {
+    public Value createValue(final Node value) throws RepositoryException {
         return valueFactory.createValue(NodeDecorator.unwrap(value));
     }
 
-    public Value createValue(BigDecimal value) {
+    public Value createValue(final BigDecimal value) {
         return valueFactory.createValue(value);
     }
 
-    public Value createValue(Binary value) {
+    public Value createValue(final Binary value) {
         return valueFactory.createValue(value);
     }
 
-    public Value createValue(Node value, boolean weak) throws RepositoryException {
-        return valueFactory.createValue(value, weak);
+    public Value createValue(final Node value, final boolean weak) throws RepositoryException {
+        return valueFactory.createValue(NodeDecorator.unwrap(value), weak);
     }
 
-    public Binary createBinary(InputStream stream) throws RepositoryException {
+    public Binary createBinary(final InputStream stream) throws RepositoryException {
         return valueFactory.createBinary(stream);
     }
 }

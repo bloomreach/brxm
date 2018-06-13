@@ -48,8 +48,12 @@ import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class QueryDecorator extends AbstractDecorator implements HippoQuery {
+public class QueryDecorator extends SessionBoundDecorator implements HippoQuery {
+
+    private static Logger log = LoggerFactory.getLogger(QueryDecorator.class);
 
     protected final Query query;
     protected Map<String, Value> arguments = null;
@@ -58,38 +62,37 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     private static final String MAGIC_NAMED_START = "MAGIC";
     private static final String MAGIC_NAMED_END = "CIGAM";
 
-    public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
-        super(factory, session);
-        this.query = query;
+    public static Query unwrap(final Query query) {
+        if (query instanceof QueryDecorator) {
+            return ((QueryDecorator)query).query;
+        }
+        return query;
     }
 
-    public QueryDecorator(DecoratorFactory factory, Session session, Query query, Node node) {
-        super(factory, session);
-        this.query = query;
+    QueryDecorator(final SessionDecorator session, final Query query) {
+        super(session);
+        this.query = unwrap(query);
+    }
+
+    QueryDecorator(final SessionDecorator session, final Query query, final Node node) throws RepositoryException {
+        super(session);
+        this.query = unwrap(query);
+        String classname = null;
         try {
             if (node.isNodeType(HippoNodeType.NT_IMPLEMENTATION) && node.hasProperty(HippoNodeType.HIPPO_CLASSNAME)) {
-                String classname = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                classname = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 this.implementation = (HardcodedQuery)Class.forName(classname).newInstance();
             }
-        } catch (ClassNotFoundException ex) {
-            // FIXME log some error
-        } catch (InstantiationException ex) {
-            // FIXME log some error
-        } catch (IllegalAccessException ex) {
-            // FIXME log some error
-        } catch (RepositoryException ex) {
-            // FIXME log some error
+        } catch (ClassNotFoundException|InstantiationException|IllegalAccessException ex) {
+            log.error("Failed to instantiate Query implementation class "+classname, ex);
         }
     }
 
-    public Session getSession() {
+    public SessionDecorator getSession() {
         return session;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public QueryResult execute() throws RepositoryException {
+    public QueryResultDecorator execute() throws RepositoryException {
         Task queryTask = null;
 
         try {
@@ -101,7 +104,7 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
             if (arguments != null) {
                 return execute((Map<String, String>)null);
             } else {
-                return factory.getQueryResultDecorator(session, execute(query));
+                return new QueryResultDecorator(session, execute(query));
             }
         } finally {
             if (queryTask != null) {
@@ -110,12 +113,9 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public String getStatement() {
         String queryString = query.getStatement();
-        String[] argumentNames = getArguments();
+        final String[] argumentNames = getArguments();
         for (int i = 0; i < argumentNames.length; i++) {
             queryString = queryString.replaceAll(MAGIC_NAMED_START + argumentNames[i] + MAGIC_NAMED_END, "\\$" + argumentNames[i]);
         }
@@ -126,40 +126,29 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         return query.getLanguage();
     }
 
-    /**
-     * @inheritDoc
-     */
     public String getStoredQueryPath() throws ItemNotFoundException, RepositoryException {
         return query.getStoredQueryPath();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
+    public NodeDecorator storeAsNode(final String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
-        Node node = query.storeAsNode(absPath);
-        return node;
+        return new NodeDecorator(session, query.storeAsNode(absPath));
     }
 
-    public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
+    public Node storeAsNode(final String absPath, final String type) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         if(!absPath.startsWith("/")) {
             throw new RepositoryException(absPath + " is not an absolute path");
         }
-        Node queryNode = session.getRootNode().addNode(absPath.substring(1), type);
+        final Node queryNode = session.getRootNode().addNode(absPath.substring(1), type);
         queryNode.setProperty("jcr:language", getLanguage());
         queryNode.setProperty("jcr:statement", getStatement());
-        return factory.getNodeDecorator(session, queryNode);
+        return new NodeDecorator(session, queryNode);
     }
 
-
-    /**
-     * @inheritDoc
-     */
     public String[] getArguments() {
         String queryString = query.getStatement();
-        Set<String> arguments = new HashSet<String>();
+        final Set<String> arguments = new HashSet<String>();
         for (int position = queryString.indexOf(MAGIC_NAMED_START); position >= 0; position = queryString.indexOf(MAGIC_NAMED_START, position)) {
             position += MAGIC_NAMED_START.length();
             int endPosition = position;
@@ -177,18 +166,12 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         return arguments.toArray(new String[arguments.size()]);
     }
 
-    /**
-     * @inheritDoc
-     */
     public int getArgumentCount() {
-        String[] arguments = getArguments();
+        final String[] arguments = getArguments();
         return arguments != null ? arguments.length : 0;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public QueryResult execute(Map<String, String> arguments) throws RepositoryException {
+    public QueryResultDecorator execute(final Map<String, String> arguments) throws RepositoryException {
         String queryString = query.getStatement();
         if (arguments != null) {
             for (Map.Entry<String,String> entry : arguments.entrySet()) {
@@ -201,10 +184,10 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
             }
         }
         Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
-        return factory.getQueryResultDecorator(session, execute(q));
+        return new QueryResultDecorator(session, execute(q));
     }
 
-    public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
+    public void bindValue(final String varName, final Value value) throws IllegalArgumentException, RepositoryException {
         if (query.getStatement().contains(MAGIC_NAMED_START)) {
             if(arguments == null)
                 arguments = new HashMap<String, Value>();
@@ -214,16 +197,18 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         }
     }
 
-    public void setLimit(long limit) {
-        ((QueryImpl)query).setLimit(limit);
+    public void setLimit(final long limit) {
+        query.setLimit(limit);
     }
 
-    public void setOffset(long offset) {
-        ((QueryImpl)query).setOffset(offset);
+    public void setOffset(final long offset) {
+        query.setOffset(offset);
     }
 
     static String mangleArguments(String statement) {
-        if (statement == null ) throw new IllegalArgumentException("Query statement is null");
+        if (statement == null ) {
+            throw new IllegalArgumentException("Query statement is null");
+        }
         for (int position = statement.indexOf("$"); position >= 0; position = statement.indexOf("$", position)) {
             int endPosition = position + 1;
             if (Character.isJavaIdentifierStart(statement.charAt(endPosition))) {
@@ -242,11 +227,11 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
         return ((QueryImpl)query).getBindVariableNames();
     }
 
-    public static interface HardcodedQuery {
-        public List execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException;
+    public interface HardcodedQuery {
+        public List execute(final Session session, final HippoQuery query, final Map<String,Value> arguments) throws RepositoryException;
     }
 
-    private QueryResult execute(Query query) throws RepositoryException {
+    private QueryResult execute(final Query query) throws RepositoryException {
         if (implementation != null) {
             final List result = implementation.execute(session, this, arguments);
             return new QueryResult() {

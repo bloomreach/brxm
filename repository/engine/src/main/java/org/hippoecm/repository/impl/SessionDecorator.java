@@ -43,7 +43,6 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
-import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -67,7 +66,6 @@ import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -89,49 +87,36 @@ public class SessionDecorator implements XASession, HippoSession {
 
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
-    protected final DecoratorFactory factory;
     protected final Repository repository;
     protected final Session session;
+    protected WorkspaceDecorator workspaceDecorator;
 
     protected DerivedDataEngine derivedEngine;
 
-    protected final Credentials credentials;
-
-    SessionDecorator(DecoratorFactory factory, Repository repository, Session session, Credentials credentials) {
-        this.factory = factory;
-        this.repository = repository;
-        this.session = session;
-        derivedEngine = new DerivedDataEngine(this);
-        this.credentials = credentials;
+    public static SessionDecorator newSessionDecorator(final Session session) {
+        return new SessionDecorator(session);
     }
 
-    SessionDecorator(DecoratorFactory factory, Repository repository, XASession session, Credentials credentials) throws RepositoryException {
-        this.factory = factory;
-        this.repository = repository;
-        this.session = session;
-        derivedEngine = new DerivedDataEngine(this);
-        this.credentials = credentials;
-    }
-
-    public static Session unwrap(Session session) {
-        if (session == null) {
-            return null;
-        } else if (session instanceof SessionDecorator) {
-            while(session instanceof SessionDecorator)
-                session = ((SessionDecorator)session).session;
-            return session;
-        } else {
-            return session;
+    public static Session unwrap(final Session session) {
+        if (session instanceof SessionDecorator) {
+            return ((SessionDecorator)session).session;
         }
+        return session;
     }
 
-    void postSave(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+    SessionDecorator(final Session session) {
+        this.session = unwrap(session);
+        this.repository = new RepositoryDecorator(this.session.getRepository());
+        derivedEngine = new DerivedDataEngine(this);
+    }
+
+    void postSave(final Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
         if(derivedEngine != null) {
             derivedEngine.save(node);
         }
     }
 
-    boolean computeDerivedData(Node node) throws RepositoryException {
+    boolean computeDerivedData(final Node node) throws RepositoryException {
         return (derivedEngine != null) ? derivedEngine.compute(node) : false;
     }
 
@@ -141,7 +126,7 @@ public class SessionDecorator implements XASession, HippoSession {
         }
     }
 
-    public void postDerivedData(boolean enabled) {
+    public void postDerivedData(final boolean enabled) {
         if (enabled) {
             if (derivedEngine == null) {
                 derivedEngine = new DerivedDataEngine(this);
@@ -151,7 +136,7 @@ public class SessionDecorator implements XASession, HippoSession {
         }
     }
 
-    public void postMountEnabled(boolean enabled) {
+    public void postMountEnabled(final boolean enabled) {
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setEnabled(enabled);
     }
 
@@ -159,7 +144,7 @@ public class SessionDecorator implements XASession, HippoSession {
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setRefreshing(enabled);
     }
 
-    Node getCanonicalNode(Node node) throws RepositoryException {
+    Node getCanonicalNode(final Node node) throws RepositoryException {
         return getInternalHippoSession().getCanonicalNode(node);
     }
 
@@ -179,7 +164,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         return session.getAttribute(name);
     }
 
@@ -189,37 +174,36 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public Workspace getWorkspace() {
-        return factory.getWorkspaceDecorator(this, session.getWorkspace());
+    public WorkspaceDecorator getWorkspace() {
+        if (workspaceDecorator == null) {
+            workspaceDecorator = new WorkspaceDecorator(this);
+        }
+        return workspaceDecorator;
     }
 
     @Override
     public User getUser() throws RepositoryException {
-        return ((HippoWorkspace) getWorkspace()).getSecurityService().getUser(getUserID());
+        return getWorkspace().getSecurityService().getUser(getUserID());
     }
 
     @Override
-    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
-        Session newSession = session.impersonate(credentials);
-        return DecoratorFactoryImpl.getSessionDecorator(newSession, credentials);
+    public SessionDecorator impersonate(final Credentials credentials) throws LoginException, RepositoryException {
+        return new SessionDecorator(session.impersonate(credentials));
     }
 
     @Override
-    public Node getRootNode() throws RepositoryException {
-        Node root = session.getRootNode();
-        return factory.getNodeDecorator(this, root);
+    public NodeDecorator getRootNode() throws RepositoryException {
+        return new NodeDecorator(this, session.getRootNode());
     }
 
     @Override
-    public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
-        Node node = session.getNodeByUUID(uuid);
-        return factory.getNodeDecorator(this, node);
+    public NodeDecorator getNodeByUUID(final String uuid) throws ItemNotFoundException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(this, session.getNodeByUUID(uuid));
     }
 
     @Override
-    public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
-        Item item = session.getItem(absPath);
-        return factory.getItemDecorator(this, item);
+    public Item getItem(final String absPath) throws PathNotFoundException, RepositoryException {
+        return ItemDecorator.newItemDecorator(this, session.getItem(absPath));
     }
 
     @Override
@@ -228,7 +212,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
+    public void move(final String srcAbsPath, final String destAbsPath) throws ItemExistsException, PathNotFoundException,
             VersionException, RepositoryException {
         session.move(srcAbsPath, destAbsPath);
     }
@@ -262,7 +246,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void refresh(boolean keepChanges) throws RepositoryException {
+    public void refresh(final boolean keepChanges) throws RepositoryException {
         session.refresh(keepChanges);
     }
 
@@ -272,27 +256,28 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
+    public void checkPermission(final String absPath, final String actions) throws AccessControlException, RepositoryException {
         session.checkPermission(absPath, actions);
     }
 
     @Override
-    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
+    public ContentHandler getImportContentHandler(final String parentAbsPath, final int uuidBehaviour)
             throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
             RepositoryException {
         return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
     }
 
     @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException {
+    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final int uuidBehavior,
+                                      final int referenceBehavior, final int mergeBehavior) throws IOException, RepositoryException {
         importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
     @Override
-    public void importDereferencedXML(String parentAbsPath, InputStream in,
-                                      ContentResourceLoader referredResourceLoader,
-                                      int uuidBehavior, int referenceBehavior,
-                                      int mergeBehavior) throws IOException, RepositoryException {
+    public void importDereferencedXML(final String parentAbsPath, final InputStream in,
+                                      final ContentResourceLoader referredResourceLoader,
+                                      final int uuidBehavior, final int referenceBehavior,
+                                      final int mergeBehavior) throws IOException, RepositoryException {
         importEnhancedSystemViewXML(parentAbsPath, in, uuidBehavior, referenceBehavior, referredResourceLoader);
     }
 
@@ -301,7 +286,7 @@ public class SessionDecorator implements XASession, HippoSession {
                                                     final int uuidBehavior, final int referenceBehavior,
                                                     final ContentResourceLoader referredResourceLoader) throws IOException, RepositoryException {
         try {
-            ImportContext importContext = new ImportContext(parentAbsPath, in, uuidBehavior, referenceBehavior,
+            final ImportContext importContext = new ImportContext(parentAbsPath, in, uuidBehavior, referenceBehavior,
                     referredResourceLoader, getInternalHippoSession());
             postMountEnabled(false);
             getInternalHippoSession().importEnhancedSystemViewXML(importContext);
@@ -315,7 +300,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void importXML(String parentAbsPath, InputStream in, int uuidBehavior)
+    public void importXML(final String parentAbsPath, final InputStream in, final int uuidBehavior)
             throws IOException, RepositoryException {
         try {
             postMountEnabled(false);
@@ -326,9 +311,10 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
+    public void exportDereferencedView(final String absPath, final ContentHandler contentHandler,
+                                       final boolean binaryAsLink, final boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
-        Item item = getItem(absPath);
+        final Item item = getItem(absPath);
         if (!item.isNode()) {
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(absPath);
@@ -342,10 +328,11 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+    public void exportDereferencedView(final String absPath, final OutputStream out, final boolean binaryAsLink,
+                                       final boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         try {
-            ContentHandler handler = getExportContentHandler(out);
+            final ContentHandler handler = getExportContentHandler(out);
             this.exportDereferencedView(absPath, handler, binaryAsLink, noRecurse);
         } catch (SAXException e) {
             Exception exception = e.getException();
@@ -360,13 +347,14 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
+    public void exportSystemView(final String absPath, final ContentHandler contentHandler, final boolean binaryAsLink,
+                                 final boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
 
         // check sanity of this session
         session.isLive();
 
-        Item item = getItem(absPath);
+        final Item item = getItem(absPath);
         if (!item.isNode()) {
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(absPath);
@@ -380,10 +368,11 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void exportSystemView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+    public void exportSystemView(final String absPath, final OutputStream out, final boolean binaryAsLink,
+                                 final boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         try {
-            ContentHandler handler = getExportContentHandler(out);
+            final ContentHandler handler = getExportContentHandler(out);
             this.exportSystemView(absPath, handler, binaryAsLink, noRecurse);
         } catch (SAXException e) {
             Exception exception = e.getException();
@@ -398,9 +387,10 @@ public class SessionDecorator implements XASession, HippoSession {
     }
     
     @Override
-    public void exportDocumentView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
-            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
-        Item item = getItem(absPath);
+    public void exportDocumentView(final String absPath, final ContentHandler contentHandler,
+                                   final boolean binaryAsLink, final boolean noRecurse)
+            throws PathNotFoundException, SAXException, RepositoryException {
+        final Item item = getItem(absPath);
         if (item.isNode()) {
             new HippoDocumentViewExporter(this, contentHandler, !noRecurse, !binaryAsLink).export((Node) item);
         } else {
@@ -409,10 +399,11 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void exportDocumentView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+    public void exportDocumentView(final String absPath, final OutputStream out, final boolean binaryAsLink,
+                                   final boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         try {
-            ContentHandler handler = new ToXmlContentHandler(out);
+            final ContentHandler handler = new ToXmlContentHandler(out);
             exportDocumentView(absPath, handler, binaryAsLink, noRecurse);
         } catch (SAXException e) {
             Exception exception = e.getException();
@@ -427,7 +418,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
+    public void setNamespacePrefix(final String prefix, final String uri) throws NamespaceException, RepositoryException {
         session.setNamespacePrefix(prefix, uri);
     }
 
@@ -437,23 +428,23 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
+    public String getNamespaceURI(final String prefix) throws NamespaceException, RepositoryException {
         return session.getNamespaceURI(prefix);
     }
 
     @Override
-    public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
+    public String getNamespacePrefix(final String uri) throws NamespaceException, RepositoryException {
         return session.getNamespacePrefix(uri);
     }
 
     @Override
     public void logout() {
         session.logout();
-        ((WorkspaceDecorator) getWorkspace()).dispose();
+        getWorkspace().dispose();
     }
 
     @Override
-    public void addLockToken(String lt) {
+    public void addLockToken(final String lt) {
         session.addLockToken(lt);
     }
 
@@ -463,13 +454,13 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public void removeLockToken(String lt) {
+    public void removeLockToken(final String lt) {
         session.removeLockToken(lt);
     }
 
     @Override
     public ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return factory.getValueFactoryDecorator(this, session.getValueFactory());
+        return new ValueFactoryDecorator(this, session.getValueFactory());
     }
 
     @Override
@@ -479,7 +470,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
     @Override
     public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
-        Item item = getItem(parentAbsPath);
+        final Item item = getItem(parentAbsPath);
         if (!item.isNode()) {
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(parentAbsPath);
@@ -520,7 +511,7 @@ public class SessionDecorator implements XASession, HippoSession {
      * @returns the resulting copy
      */
     @Override
-    public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
+    public Node copy(final Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
         if (destAbsNodePath.startsWith(srcNode.getPath()+"/")) {
             String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
@@ -547,7 +538,7 @@ public class SessionDecorator implements XASession, HippoSession {
         }
     }
 
-    public static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+    public static void copy(final Node srcNode, final Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
             Node canonical;
             boolean copyChildren = true;
@@ -561,8 +552,8 @@ public class SessionDecorator implements XASession, HippoSession {
             }
 
             for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
-                Property property = iter.nextProperty();
-                PropertyDefinition definition = property.getDefinition();
+                final Property property = iter.nextProperty();
+                final PropertyDefinition definition = property.getDefinition();
                 if (!definition.isProtected()) {
                     if (definition.isMultiple())
                         destNode.setProperty(property.getName(), property.getValues(), property.getType());
@@ -579,7 +570,7 @@ public class SessionDecorator implements XASession, HippoSession {
              */
             if (copyChildren) {
                 for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
-                    Node node = iter.nextNode();
+                    final Node node = iter.nextNode();
                     if (!(node instanceof HippoNode) || ((canonical = ((HippoNode) node).getCanonicalNode()) != null && canonical.isSame(node))) {
                         Node child;
                         // check if the subnode is autocreated
@@ -606,31 +597,31 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
+    public NodeIteratorDecorator pendingChanges(final Node node, final String nodeType, final boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, prune);
-        return new NodeIteratorDecorator(factory, this, changesIter);
+        final NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, prune);
+        return new NodeIteratorDecorator(this, changesIter);
     }
 
     @Override
-    public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
+    public NodeIteratorDecorator pendingChanges(final Node node, final String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, false);
-        return new NodeIteratorDecorator(factory, this, changesIter);
+        final NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, false);
+        return new NodeIteratorDecorator(this, changesIter);
     }
 
     @Override
-    public NodeIterator pendingChanges() throws RepositoryException {
-        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, null, false);
-        return new NodeIteratorDecorator(factory, this, changesIter);
+    public NodeIteratorDecorator pendingChanges() throws RepositoryException {
+        final NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, null, false);
+        return new NodeIteratorDecorator(this, changesIter);
     }
 
-    private ContentHandler getExportContentHandler(OutputStream stream) throws RepositoryException {
+    private ContentHandler getExportContentHandler(final OutputStream stream) throws RepositoryException {
         try {
-            SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-            TransformerHandler handler = stf.newTransformerHandler();
+            final SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            final TransformerHandler handler = stf.newTransformerHandler();
 
-            Transformer transformer = handler.getTransformer();
+            final Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -645,7 +636,7 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+    public SessionDecorator createSecurityDelegate(final Session session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
         if (!(this.session instanceof InternalHippoSession)) {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
@@ -657,7 +648,7 @@ public class SessionDecorator implements XASession, HippoSession {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
         final Session delegatedSession = ((InternalHippoSession) this.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
-        return DecoratorFactoryImpl.getSessionDecorator(delegatedSession, credentials);
+        return new SessionDecorator(delegatedSession);
     }
 
     @Override
@@ -680,45 +671,42 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public Node getNodeByIdentifier(String id) throws ItemNotFoundException, RepositoryException {
-        Node node = session.getNodeByIdentifier(id);
-        return factory.getNodeDecorator(this, node);
+    public NodeDecorator getNodeByIdentifier(final String id) throws ItemNotFoundException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(this, session.getNodeByIdentifier(id));
     }
 
     @Override
-    public Node getNode(String absPath) throws PathNotFoundException, RepositoryException {
-        Node node = session.getNode(absPath);
-        return factory.getNodeDecorator(this, node);
+    public NodeDecorator getNode(final String absPath) throws PathNotFoundException, RepositoryException {
+        return NodeDecorator.newNodeDecorator(this, session.getNode(absPath));
     }
 
     @Override
-    public Property getProperty(String absPath) throws PathNotFoundException, RepositoryException {
-        Property property = session.getProperty(absPath);
-        return factory.getPropertyDecorator(this, property);
+    public PropertyDecorator getProperty(final String absPath) throws PathNotFoundException, RepositoryException {
+        return new PropertyDecorator(this, session.getProperty(absPath));
     }
 
     @Override
-    public boolean nodeExists(String absPath) throws RepositoryException {
+    public boolean nodeExists(final String absPath) throws RepositoryException {
         return session.nodeExists(absPath);
     }
 
     @Override
-    public boolean propertyExists(String absPath) throws RepositoryException {
+    public boolean propertyExists(final String absPath) throws RepositoryException {
         return session.propertyExists(absPath);
     }
 
     @Override
-    public void removeItem(String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
+    public void removeItem(final String absPath) throws VersionException, LockException, ConstraintViolationException, AccessDeniedException, RepositoryException {
         session.removeItem(absPath);
     }
 
     @Override
-    public boolean hasPermission(String absPath, String actions) throws RepositoryException {
+    public boolean hasPermission(final String absPath, final String actions) throws RepositoryException {
         return session.hasPermission(absPath, actions);
     }
 
     @Override
-    public boolean hasCapability(String methodName, Object target, Object[] arguments) throws RepositoryException {
+    public boolean hasCapability(final String methodName, final Object target, final Object[] arguments) throws RepositoryException {
         return session.hasCapability(methodName, target, arguments);
     }
 
