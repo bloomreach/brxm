@@ -83,12 +83,6 @@ public interface VirtualHost {
     boolean isContextPathInUrl();
 
     /**
-     * @deprecated since CMS 7.9.1 : Use {@link #getContextPath()} instead
-     */
-    @Deprecated
-    String onlyForContextPath();
-
-    /**
      * <p>
      *    Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}. A {@link Mount}
      *    can override this default host contextpath by setting the contextpath explicitly.

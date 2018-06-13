@@ -43,7 +43,6 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.BLUEPRINT_PROPERTY_CONTEXTPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
@@ -533,6 +532,8 @@ public class ChannelPropertyMapper {
             final String contextPath, final boolean isBlueprint) {
         Class<?> channelInfoClazz = null;
 
+        // TODO HSTTWO-4354 most likely we need here the class loader from the site webapp instead of the current one
+        // TODO since the current one is the platform classloader
         try {
             Class<?> clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
 
@@ -545,14 +546,12 @@ public class ChannelPropertyMapper {
             if (isBlueprint) {
                 if (log.isDebugEnabled()) {
                     log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
-                            "channel info class needs to be added to that webapp as well or set the property '{}' with " +
-                            "the correct contextPath on the blueprint node.",
-                            className, channelId, contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e);
+                            "channel info class needs to be added to that webapp as well.",
+                            className, channelId, contextPath, e);
                 } else {
                     log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
-                            "channel info class needs to be added to that webapp as well or set the property '{}' with " +
-                            "the correct contextPath on the blueprint node: {}",
-                            className, channelId, contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e.toString());
+                            "channel info class needs to be added to that webapp as well: {}",
+                            className, channelId, contextPath, e.toString());
                 }
             }
             else if (contextPath == null) {

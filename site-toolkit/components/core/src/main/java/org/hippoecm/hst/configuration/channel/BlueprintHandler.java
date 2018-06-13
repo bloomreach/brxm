@@ -32,7 +32,7 @@ public class BlueprintHandler {
 
     public static final String SUBSITE_TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/";
 
-    public static Blueprint buildBlueprint(final HstNode blueprintNode, final String blueprintContextPath) {
+    public static Blueprint buildBlueprint(final HstNode blueprintNode, final String contextPath) {
         Blueprint blueprint = new Blueprint();
 
         blueprint.setPath(blueprintNode.getValueProvider().getPath());
@@ -70,7 +70,7 @@ public class BlueprintHandler {
         } else {
             channel = new Channel();
         }
-        channel.setContextPath(blueprintContextPath);
+        channel.setContextPath(contextPath);
         blueprint.setPrototypeChannel(channel);
         readMount(readSite(blueprintNode, blueprint), blueprintNode, blueprint);
 

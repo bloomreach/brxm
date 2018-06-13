@@ -129,10 +129,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private int schemeNotMatchingResponseCode = HttpServletResponse.SC_MOVED_PERMANENTLY;
     private boolean contextPathInUrl = true;
-   /**
-     * if configured, this field will contain the default contextpath through which is hst webapp can be accessed
-     */
-    private String defaultContextPath;
+
     private boolean showPort = true;
 
     /**
@@ -196,18 +193,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
             contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         }
 
-        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH)) {
-            defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
-        }
-
-        if (!isValidContextPath(defaultContextPath)) {
-            String msg = String.format("Incorrect configured defaultContextPath '%s' for '%s': It must start with a '/' to be used" +
-                    "and is not allowed to contain any other '/', but it is '%s'. " +
-                    "Skipping host from hst model.",
-                    defaultContextPath, hstNodeLoadingCache.getRootPath()+"/hst:hosts", defaultContextPath);
-            log.error(msg);
-            throw new ModelLoadingException(msg);
-        }
         cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         diagnosticsEnabled = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_DEPTH)) {
@@ -391,12 +376,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
             Map<String, Channel> hostGroupChannels = channelsByHostGroup.get(hostGroupName);
             for (Mount mount : getMountsByHostGroup(hostGroupName)) {
-                if (mount.getContextPath() == null ||
-                        !mount.getContextPath().equals(contextPath)) {
-                    log.info("Skipping channel for mount {} because the mount is for contextpath" +
-                            "'{}' and current webapp's contextpath is '{}'", mount, mount.getContextPath(), contextPath);
-                    continue;
-                }
                 if (mount instanceof ContextualizableMount) {
                     if (mount.isPreview()) {
                         log.debug("Explicit preview mounts are not added as channel (only their live equivalent");
@@ -714,8 +693,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return contextPathInUrl;
     }
 
-    public String getDefaultContextPath() {
-        return defaultContextPath;
+    public String getContextPath() {
+        return contextPath;
     }
 
     public boolean isPortInUrl() {
@@ -1040,28 +1019,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
         if (blueprintsNode != null) {
             for (HstNode blueprintNode : blueprintsNode.getNodes()) {
-                String blueprintContextPath = blueprintNode.getValueProvider().getString(HstNodeTypes.BLUEPRINT_PROPERTY_CONTEXTPATH);
-                if (blueprintContextPath == null) {
-                    blueprintContextPath = getDefaultContextPath();
-                }
-                if (!contextPath.equals(blueprintContextPath)) {
-                    log.info("Skipping blueprint '{}' because only suited for contextPath '{}' and " +
-                            "current webapp's contextPath is '{}'.", blueprintNode.getValueProvider().getPath(),
-                            blueprintContextPath, contextPath);
-                    continue;
-                }
-                if (!isValidContextPath(blueprintContextPath)) {
-                    String msg = String.format("Incorrect configured contextPath '%s' for blueprint '%s': It must start with a '/' to be used" +
-                            "and is not allowed to contain any other '/', but it is '%s'. " +
-                            "Skipping blueprint from hst model.",
-                            blueprintContextPath, blueprintNode.getValueProvider().getPath() , blueprintContextPath);
-                    log.error(msg);
-                    continue;
-                }
-
-
                 try {
-                    blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode, blueprintContextPath));
+                    blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode, contextPath));
                 } catch (ModelLoadingException e) {
                     log.error("Cannot load blueprint '{}' :", blueprintNode.getValueProvider().getPath(), e);
                 }

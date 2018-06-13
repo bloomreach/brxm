@@ -322,7 +322,7 @@
 - hst:showcontextpath (boolean)
 // deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
-// if this mount can only be used for a certain contextpath
+// deprecated : only hst:contextpath on hst:hst node is used
 - hst:contextpath
 // deprecated and unused: do not use
 - hst:embeddedmountpath
@@ -394,7 +394,7 @@
 - hst:versioninpreviewheader (boolean)
 // deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
-// if the mounts for this host can only be used for a certain contextpath
+// deprecated : only hst:contextpath on hst:hst node is used
 - hst:contextpath
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
@@ -430,7 +430,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// The default contextpath for all sites.
+// deprecated : only hst:contextpath on hst:hst node is used
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)
@@ -461,8 +461,7 @@
 - hst:contentRoot (string)
 // prototype for the channel properties.
 // Used for default values
-// if the blueprint is meant for a different contextpath than configured in
-// hst:hosts/@hst:defaultcontextpath
+// deprecated : only hst:contextpath on hst:hst node is used
 - hst:contextpath (string)
 + hst:channel (hst:channel)
 + hst:configuration (hst:configuration)

@@ -37,7 +37,6 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -396,12 +395,6 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.isVersionInPreviewHeader();
         }
 
-        @Deprecated
-        @Override
-        public String onlyForContextPath() {
-            return delegatee.onlyForContextPath();
-        }
-
         @Override
         public String getContextPath() {
             return delegatee.getContextPath();
@@ -506,12 +499,6 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public boolean isContextPathInUrl() {
             return delegatee.isContextPathInUrl();
-        }
-
-        @Deprecated
-        @Override
-        public String onlyForContextPath() {
-            return delegatee.onlyForContextPath();
         }
 
         @Override
@@ -661,8 +648,8 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public String getDefaultContextPath() {
-            return delegatee.getDefaultContextPath();
+        public String getContextPath() {
+            return delegatee.getContextPath();
         }
 
         @Override

@@ -55,7 +55,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
@@ -191,13 +190,6 @@ public class MountService implements ContextualizableMount, MutableMount {
      */
     private int port;
 
-    /**
-     *  when this {@link Mount} is only applicable for certain contextpath,
-     *  this property for the contextpath tells which value it must have. If not null, it must start with a '/' and is
-     *  not allowed to end with a '/'
-     */
-    private String contextPath;
-
     private String scheme;
     private boolean schemeAgnostic;
 
@@ -308,32 +300,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             } else {
                 this.showPort = virtualHost.isPortInUrl();
             }
-        }
-
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
-            log.warn("Property '{}' on Mount '{}' is deprecated. Use property '{}' instead",
-                    HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH, jcrLocation, HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH);
-            this.contextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH);
-        }
-
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH)) {
-            this.contextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH);
-        }
-
-        if(contextPath == null) {
-            if (parent == null) {
-                this.contextPath = virtualHost.getContextPath();
-            } else {
-                this.contextPath = parent.getContextPath();
-            }
-        }
-
-        if (!isValidContextPath(contextPath)) {
-            String msg = String.format("Incorrect configured contextPath '%s' for mount '%s': It must start with a '/' to be used" +
-                    "and is not allowed to contain any other '/', but it is '%s'. " +
-                    "Skipping mount from hst model.", contextPath, jcrLocation, contextPath);
-            log.error(msg);
-            throw new ModelLoadingException(msg);
         }
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {
@@ -841,13 +807,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         return false;
     }
 
-    @Deprecated
-    public String onlyForContextPath() {
-        return contextPath;
-    }
-
     public String getContextPath() {
-        return contextPath;
+        return virtualHost.getContextPath();
     }
 
     public boolean isPreview() {

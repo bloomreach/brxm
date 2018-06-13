@@ -165,15 +165,6 @@ public class PageModelApiMount implements ContextualizableMount {
         return parent.getPort();
     }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public String onlyForContextPath() {
-        return parent.onlyForContextPath();
-    }
-
     @Override
     public String getContextPath() {
         return parent.getContextPath();

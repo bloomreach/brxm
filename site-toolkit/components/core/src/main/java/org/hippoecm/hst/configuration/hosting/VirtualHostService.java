@@ -87,13 +87,6 @@ public class VirtualHostService implements MutableVirtualHost {
 
     private boolean contextPathInUrl;
 
-    /**
-     *  when this {@link Mount}s for this {@link VirtualHost} are only applicable for certain contextpath,
-     *  this property for the contextpath tells which value it must have. If not null, it must start with a '/' and is
-     *  not allowed to end with a '/'
-     */
-    private String contextPath;
-
     private boolean showPort;
     private String scheme;
     private boolean schemeAgnostic;
@@ -131,33 +124,6 @@ public class VirtualHostService implements MutableVirtualHost {
             } else {
                 this.contextPathInUrl = virtualHosts.isContextPathInUrl();
             }
-        }
-
-        if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH)) {
-            log.warn("Property '{}' on Mount '{}' is deprecated. Use property '{}' instead",
-                    HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH, virtualHostNode.getValueProvider().getPath(),
-                    HstNodeTypes.VIRTUALHOST_PROPERTY_CONTEXTPATH);
-            contextPath = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH);
-        }
-
-        if (virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_CONTEXTPATH)) {
-            this.contextPath = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_CONTEXTPATH);
-        }
-
-        if (contextPath == null) {
-            if (parentHost == null) {
-                contextPath = virtualHosts.getDefaultContextPath();
-            } else {
-                contextPath = parentHost.getContextPath();
-            }
-        }
-        if (!isValidContextPath(contextPath)) {
-            String msg = String.format("Incorrect configured contextPath '%s' for host '%s': It must start with a '/' to be used" +
-                    "and is not allowed to contain any other '/', but it is '%s'. " +
-                    "Skipping host from hst model.",
-                    contextPath, virtualHostNode.getValueProvider().getPath(), contextPath);
-            log.warn(msg);
-            throw new ModelLoadingException(msg);
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT)) {
@@ -402,7 +368,6 @@ public class VirtualHostService implements MutableVirtualHost {
         this.pageNotFound = parent.pageNotFound;
         this.versionInPreviewHeader = parent.versionInPreviewHeader;
         this.contextPathInUrl = parent.contextPathInUrl;
-        this.contextPath = parent.contextPath;
         this.showPort = parent.showPort;
         this.cacheable = parent.cacheable;
         this.defaultResourceBundleIds = parent.defaultResourceBundleIds;
@@ -469,13 +434,8 @@ public class VirtualHostService implements MutableVirtualHost {
         return contextPathInUrl;
     }
 
-    @Deprecated
-    public String onlyForContextPath() {
-        return contextPath;
-    }
-
     public String getContextPath() {
-        return contextPath;
+        return virtualHosts.getContextPath();
     }
 
     public boolean isPortInUrl() {

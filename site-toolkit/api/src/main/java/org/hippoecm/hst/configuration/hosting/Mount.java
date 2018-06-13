@@ -235,12 +235,6 @@ public interface Mount {
     int getPort();
 
     /**
-     * @deprecated since CMS 7.9.1 : Use {@link #getContextPath()} instead
-     */
-    @Deprecated
-    String onlyForContextPath();
-
-    /**
      * <p>
      *    Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this
      *    {@link Mount} if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal

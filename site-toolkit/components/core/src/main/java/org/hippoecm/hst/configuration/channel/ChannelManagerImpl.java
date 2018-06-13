@@ -297,7 +297,6 @@ public class ChannelManagerImpl implements ChannelManager {
 
             // Create mount
             Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH, channel.getContextPath());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
             final String locale = channel.getLocale();
             if (locale != null) {

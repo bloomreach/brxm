@@ -225,12 +225,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             log.warn("Cannot add a portMount to a CustomVirtualHost");
         }
 
-        @Deprecated
-        @Override
-        public String onlyForContextPath() {
-            return null;
-        }
-
         @Override
         public String getContextPath() {
             // the cms host mounts must be contextpath agnostic!
@@ -532,12 +526,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public int getPort() {
             return 0;
-        }
-
-        @Deprecated
-        @Override
-        public String onlyForContextPath() {
-            return null;
         }
 
         @Override

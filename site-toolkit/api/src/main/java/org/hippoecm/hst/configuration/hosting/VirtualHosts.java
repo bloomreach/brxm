@@ -118,12 +118,9 @@ public interface VirtualHosts {
     boolean isContextPathInUrl();
 
     /**
-     * For external calls like the CMS REST api, an external app needs to know what context path to use. Through this getter,
-     * the default context path can be retrieved. If not configured, <code>null</code> is returned and the external app must know
-     * the context path. If configured, the contextPath is either an empty string, or it has to start with a "/" and is not allowed to have any other "/".
-     * @return the default context path for the webapps or <code>null</code> when not configured
+     * @return the context path of the webapp for this hst configuration
      */
-    String getDefaultContextPath();
+    String getContextPath();
 
     /**
      * This is the global setting for every {@link VirtualHost} / {@link Mount} whether the port number should be in the URL or not

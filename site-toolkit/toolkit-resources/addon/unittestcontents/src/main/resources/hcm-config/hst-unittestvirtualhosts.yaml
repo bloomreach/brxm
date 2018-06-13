@@ -24,6 +24,7 @@ definitions:
             /intranet:
               jcr:primaryType: hst:mount
               hst:alias: intranet
+              # TODO HSTTWO-4358 contextpath on hst:mount is not supported any more. Fix test setup
               hst:contextpath: /site2
               hst:mountpoint: /hst:hst/hst:sites/intranettestproject
             /subsite:
