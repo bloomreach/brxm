@@ -28,8 +28,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsRegistry;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.repository.util.NodeIterable;
@@ -41,17 +41,17 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.HST_HST_PROPERTY_CONTE
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_HST;
 
-public class VirtualHostsRegistryImpl implements VirtualHostsRegistry {
+public class HstModelRegistryImpl implements HstModelRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(VirtualHostsRegistryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
     private volatile Map<String, Supplier<VirtualHosts>> virtualHostsSuppliers = new HashMap<>();
 
     private Repository repository;
     private Credentials credentials;
 
-    public VirtualHostsRegistryImpl() {
-        HippoServiceRegistry.registerService(this, VirtualHostsRegistry.class);
+    public HstModelRegistryImpl() {
+        HippoServiceRegistry.registerService(this, HstModelRegistry.class);
     }
 
 
@@ -64,7 +64,7 @@ public class VirtualHostsRegistryImpl implements VirtualHostsRegistry {
     }
 
     private void stop() {
-        HippoServiceRegistry.unregisterService(this, VirtualHostsRegistry.class);
+        HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
     }
 
     // TODO register listeners for jcr events!!
@@ -99,7 +99,7 @@ public class VirtualHostsRegistryImpl implements VirtualHostsRegistry {
         } catch (LoginException e) {
             throw new ModelLoadingException("Cannot login JCR Session", e);
         } catch (RepositoryException e) {
-            throw new ModelLoadingException("Cannot create VirtualHostsRegistryImpl", e);
+            throw new ModelLoadingException("Cannot create HstModelRegistryImpl", e);
         } finally {
             if (session != null) {
                 session.logout();

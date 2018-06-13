@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.hosting;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
-public interface VirtualHostsRegistry {
+public interface HstModelRegistry {
 
     VirtualHosts getVirtualHosts(String contextPath);
 

@@ -23,7 +23,7 @@ import javax.servlet.ServletContext;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsRegistry;
+import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
@@ -277,11 +277,11 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
 
-        VirtualHostsRegistry virtualHostsRegistry = HippoServiceRegistry.getService(VirtualHostsRegistry.class);
+        HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         // TODO HSTTWO-4355 support for allowStale?
-        final VirtualHosts virtualHosts = virtualHostsRegistry.getVirtualHosts(getContextPath());
+        final VirtualHosts virtualHosts = hstModelRegistry.getVirtualHosts(getContextPath());
 
-        // TODO HSTTWO-4355 if the virtualHostsRegistry#getVirtualHosts triggered a new model build because of a change, it must
+        // TODO HSTTWO-4355 if the hstModelRegistry#getVirtualHosts triggered a new model build because of a change, it must
         // TODO HSTTWO-4355 inform the current webapp to invoke componentRegistry.unregisterAllComponents(); and siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
         // TODO HSTTWO-4355 how will we communicate this? A guava bus registered by hst-platform?
 
