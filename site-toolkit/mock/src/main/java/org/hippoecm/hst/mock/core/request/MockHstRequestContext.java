@@ -45,6 +45,7 @@ import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -106,6 +107,8 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     private Map<String, Object> modelsMap = new HashMap<String, Object>();
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
+
+    private Map<String, HeadContributable> headContributablesMap;
 
     private boolean disposed;
 
@@ -673,6 +676,33 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     @Override
     public void matchingFinished() {
+    }
+
+    @Override
+    public Map<String, HeadContributable> getHeadContributableMap() {
+        if (headContributablesMap != null) {
+            return Collections.unmodifiableMap(headContributablesMap);
+        }
+
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public HeadContributable getHeadContributable(String name) {
+        if (headContributablesMap != null) {
+            return headContributablesMap.get(name);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setHeadContributable(String name, HeadContributable headContributable) {
+        if (headContributablesMap == null) {
+            headContributablesMap = new HashMap<>();
+        }
+
+        headContributablesMap.put(name, headContributable);
     }
 
     private void checkStateValidity() {

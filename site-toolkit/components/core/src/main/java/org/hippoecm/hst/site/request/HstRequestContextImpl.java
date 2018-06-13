@@ -52,6 +52,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -120,6 +121,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private Map<String, Object> modelsMap = new HashMap<>();
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
+
+    private Map<String, HeadContributable> headContributablesMap;
 
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -951,5 +954,38 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
                     "all matching to host, mount and optionally sitemap has finished, but matching " +
                     "is not yes finished. Problematic request is '%s'", methodName, getServletRequest()));
         }
+    }
+
+    @Override
+    public Map<String, HeadContributable> getHeadContributableMap() {
+        checkStateValidity();
+
+        if (headContributablesMap != null) {
+            return Collections.unmodifiableMap(headContributablesMap);
+        }
+
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public HeadContributable getHeadContributable(String name) {
+        checkStateValidity();
+
+        if (headContributablesMap != null) {
+            return headContributablesMap.get(name);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setHeadContributable(String name, HeadContributable headContributable) {
+        checkStateValidity();
+
+        if (headContributablesMap == null) {
+            headContributablesMap = new HashMap<>();
+        }
+
+        headContributablesMap.put(name, headContributable);
     }
 }

@@ -39,6 +39,7 @@ import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -458,5 +459,20 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public void matchingFinished() {
         context.matchingFinished();
+    }
+
+    @Override
+    public Map<String, HeadContributable> getHeadContributableMap() {
+        return context.getHeadContributableMap();
+    }
+
+    @Override
+    public HeadContributable getHeadContributable(String name) {
+        return context.getHeadContributable(name);
+    }
+
+    @Override
+    public void setHeadContributable(String name, HeadContributable headContributable) {
+        context.setHeadContributable(name, headContributable);
     }
 }
