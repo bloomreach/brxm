@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>13.0.0-SNAPSHOT</version>
+  <version>13.0.0-hst-platform-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -49,7 +49,7 @@
     <hippo.ckeditor.version>4.7.1-h13.0.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>13.0.0-hst-platform-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>13.0.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
