@@ -61,7 +61,7 @@ public class TestDefaultHstSiteConfigurer {
         FileUtils.writeStringToFile(new File("target/test-hst-config-2.properties"), SIMPLE_PROPS_2, "utf-8");
         FileUtils.writeStringToFile(new File("target/conf/hst.properties"), SIMPLE_PROPS_ENV_CONF, "utf-8");
         FileUtils.writeStringToFile(new File("target/test-hst-config-1.xml"), SIMPLE_XMLCONF_1, "utf-8");
-        System.setProperty("currentWorkingDirectory", new File(".").getCanonicalPath());
+        System.setProperty("currentWorkingDirectory", new File("").getCanonicalPath());
         System.setProperty("test.xml.config.foo", "bar");
         servletContext = new MockServletContext("target", new FileSystemResourceLoader());
     }

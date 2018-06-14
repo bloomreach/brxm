@@ -37,6 +37,7 @@
     <module>platform</module>
     <module>jaxrs</module>
     <module>restapi</module>
+    <module>tests</module>
   </modules>
   
 </project>

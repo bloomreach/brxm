@@ -16,6 +16,7 @@ target/
 /commons/log4j.log
 /components/core/.lock
 /components/core/workspaces/
+/components/tests/workspaces/
 /components/restapi/.lock
 /components/restapi/log4j.log
 /components/restapi/workspaces/
