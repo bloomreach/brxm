@@ -21,8 +21,7 @@ import PageActionsService from './pageActions.service';
 import pageCopyComponent from './copy/pageCopy.component';
 import pageMoveComponent from './move/pageMove.component';
 import pageNewComponent from './new/pageNew.component';
-import pagePropertiesDirective from './properties/properties.directive';
-import PagePropertiesCtrl from './properties/properties.controller';
+import pagePropertiesComponent from './properties/pageProperties.component';
 
 const channelPageActionsModule = angular
   .module('hippo-cm.channel.page.actions', [
@@ -33,7 +32,6 @@ const channelPageActionsModule = angular
   .component('pageCopy', pageCopyComponent)
   .component('pageMove', pageMoveComponent)
   .component('pageNew', pageNewComponent)
-  .controller('PagePropertiesCtrl', PagePropertiesCtrl)
-  .directive('pageProperties', pagePropertiesDirective);
+  .component('pageProperties', pagePropertiesComponent);
 
 export default channelPageActionsModule;
