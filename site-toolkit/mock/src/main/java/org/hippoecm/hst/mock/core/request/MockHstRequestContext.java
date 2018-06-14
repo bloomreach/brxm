@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -699,7 +700,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     @Override
     public void setHeadContributable(String name, HeadContributable headContributable) {
         if (headContributablesMap == null) {
-            headContributablesMap = new HashMap<>();
+            headContributablesMap = new LinkedHashMap<>();
         }
 
         headContributablesMap.put(name, headContributable);
