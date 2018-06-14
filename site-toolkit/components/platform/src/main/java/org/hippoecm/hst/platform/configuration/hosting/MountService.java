@@ -31,6 +31,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -40,7 +41,6 @@ import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -231,7 +231,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private Map<String, String> parameters;
 
-    private HstSiteMapMatcher matcher;
+    private volatile HstSiteMapMatcher matcher;
 
     private Map<String, String> responseHeaders;
 
@@ -886,9 +886,8 @@ public class MountService implements ContextualizableMount, MutableMount {
             return matcher;
         }
 
-        // TODO HSTTWO-4355 not allowed like this! Either set current thread class loader or use a service to get to the correct webapp component manager
-        HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        matcher =  mngr.getSiteMapMatcher();
+        HstModelProvider hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class.getName());
+        matcher =  hstModelProvider.getHstModel().getHstSiteMapMatcher();
         return matcher;
     }
 

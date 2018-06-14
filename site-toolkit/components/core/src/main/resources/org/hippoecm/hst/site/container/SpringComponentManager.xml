@@ -25,5 +25,9 @@
     <property name="location" value="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties" />
   </bean>
 
+  <bean id="org.hippoecm.hst.platform.HstModelProvider" class="org.hippoecm.hst.platform.HstModelProvider">
+    <property name="contextPath" value="#{servletContext.contextPath}"/>
+  </bean>
+
 </beans>
 

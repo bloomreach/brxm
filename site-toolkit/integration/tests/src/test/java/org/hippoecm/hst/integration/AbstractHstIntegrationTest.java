@@ -25,7 +25,7 @@ import javax.jcr.observation.EventListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.jackrabbit.spi.Event;
-import org.hippoecm.hst.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;

@@ -30,6 +30,7 @@
     <constructor-arg ref="javax.jcr.Repository" />
     <constructor-arg ref="org.hippoecm.hst.core.request.ContextCredentialsProvider" />
     <constructor-arg ref="containerConfiguration" />
+    <constructor-arg ref="org.hippoecm.hst.platform.HstModelProvider"/>
 
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />

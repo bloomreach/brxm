@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.hosting;
+package org.hippoecm.hst.platform.model;
 
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
 public interface HstModelRegistry {
 
-    VirtualHosts getVirtualHosts(String contextPath);
+    HstModel getHstModel(String contextPath, ComponentManager websiteComponentManager);
 
 }

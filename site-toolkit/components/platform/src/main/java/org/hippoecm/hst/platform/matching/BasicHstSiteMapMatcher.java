@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.site.request;
+package org.hippoecm.hst.platform.matching;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
@@ -34,6 +33,8 @@ import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.WILDCARD;
  * 
  * @version $Id$
  */
-public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
+public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
     
     private final static Logger log = LoggerFactory.getLogger(BasicHstSiteMapMatcher.class);
 

@@ -31,6 +31,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.hippoecm.hst.platform.HstModelProvider;
 
 /**
  * HstRequestContextComponentImpl
@@ -42,19 +43,23 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected ContainerConfiguration config;
+    private HstModelProvider hstModelProvider;
     private boolean cachingObjectConverter;
     private ContentBeansTool contentBeansTool;
-    private HstSiteMapMatcher siteMapMatcher;
     private HstURLFactory urlFactory;
     private HstLinkCreator linkCreator;
     private HstSiteMenusManager siteMenusManager;
     private HstQueryManagerFactory hstQueryManagerFactory;
     private List<HstComponentWindowFilter> componentWindowFilters;
 
-    public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider, ContainerConfiguration config) {
+    public HstRequestContextComponentImpl(final Repository repository,
+                                          final ContextCredentialsProvider contextCredentialsProvider,
+                                          final ContainerConfiguration config,
+                                          final HstModelProvider hstModelProvider) {
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
         this.config = config;
+        this.hstModelProvider = hstModelProvider;
     }
 
     public HstMutableRequestContext create() {
@@ -62,7 +67,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         rc.setContainerConfiguration(config);
         rc.setURLFactory(urlFactory);
         rc.setLinkCreator(linkCreator);
-        rc.setSiteMapMatcher(siteMapMatcher);
+        rc.setSiteMapMatcher(hstModelProvider.getHstModel().getHstSiteMapMatcher());
         rc.setHstSiteMenusManager(siteMenusManager);
         rc.setHstQueryManagerFactory(hstQueryManagerFactory);
         rc.setContentBeansTool(contentBeansTool);
@@ -74,10 +79,6 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     public void release(HstRequestContext context) {
         // dispose the request context to ensure all the stateful objects aren't to be reused again.
         ((HstMutableRequestContext) context).dispose();
-    }
-
-    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
-        this.siteMapMatcher = siteMapMatcher;
     }
 
     public void setUrlFactory(HstURLFactory urlFactory) {

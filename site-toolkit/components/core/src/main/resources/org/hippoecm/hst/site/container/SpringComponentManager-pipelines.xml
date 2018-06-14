@@ -37,7 +37,6 @@
         init-method="initialize" destroy-method="destroy">
     <property name="containerConfiguration" ref="containerConfiguration" />
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager" />
-    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.internal.HstRequestContextComponent" />
     <property name="componentFactory" ref="org.hippoecm.hst.core.container.HstComponentFactory" />
     <property name="componentWindowFactory" ref="org.hippoecm.hst.core.container.HstComponentWindowFactory" />

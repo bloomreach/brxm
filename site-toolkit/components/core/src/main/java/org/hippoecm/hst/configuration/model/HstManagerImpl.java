@@ -22,13 +22,16 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
+import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     private static final Logger log = LoggerFactory.getLogger(HstManagerImpl.class);
 
     private Object hstModelMutex;
+    private HstModelProvider hstModelProvider;
 
     private volatile VirtualHosts prevVirtualHostsModel;
     private volatile VirtualHosts virtualHostsModel;
@@ -46,31 +50,31 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     protected volatile BuilderState state = BuilderState.UNDEFINED;
 
+
+
     protected enum BuilderState {
         UNDEFINED,
         UP2DATE,
         FAILED,
         STALE,
         SCHEDULED,
-        RUNNING,
+        RUNNING;
     }
-    
     volatile int consecutiveBuildFailCounter = 0;
 
     private boolean staleConfigurationSupported = false;
 
     private HstURLFactory urlFactory;
-    private HstSiteMapMatcher siteMapMatcher;
+
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
-    
     private HstComponentRegistry componentRegistry;
+
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     private HstCache pageCache;
     private boolean clearPageCacheAfterModelLoad;
-
     /**
      *
-     * the default cms preview prefix : The prefix all URLs when accessed through the CMS 
+     * the default cms preview prefix : The prefix all URLs when accessed through the CMS
      */
     private String cmsPreviewPrefix;
 
@@ -80,12 +84,12 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     private String pathSuffixDelimiter = "./";
 
     private String[] hstFilterPrefixExclusions;
-    private String[] hstFilterSuffixExclusions;
 
+    private String[] hstFilterSuffixExclusions;
     private ServletContext servletContext;
 
     /**
-     * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object 
+     * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object
      * has been created
      */
     List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
@@ -95,6 +99,10 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.servletContext = servletContext;
     }
 
+    public void setHstModelProvider(HstModelProvider hstModelProvider) {
+        this.hstModelProvider = hstModelProvider;
+    }
+
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
     }
@@ -102,7 +110,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
     }
-    
+
     public void setSiteMapItemHandlerRegistry(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
         this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
     }
@@ -135,13 +143,10 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public HstURLFactory getUrlFactory() {
         return this.urlFactory;
     }
-    
-    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
-        this.siteMapMatcher = siteMapMatcher;
-    }
-    
+
     public HstSiteMapMatcher getSiteMapMatcher() {
-        return siteMapMatcher;
+
+        return hstModelProvider.getHstModel().getHstSiteMapMatcher();
     }
     
     @Override
@@ -270,9 +275,8 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
 
-        HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         // TODO HSTTWO-4355 support for allowStale?
-        final VirtualHosts virtualHosts = hstModelRegistry.getVirtualHosts(getContextPath());
+        final VirtualHosts virtualHosts = hstModelProvider.getHstModel().getVirtualHosts();
 
         // TODO HSTTWO-4355 if the hstModelRegistry#getVirtualHosts triggered a new model build because of a change, it must
         // TODO HSTTWO-4355 inform the current webapp to invoke componentRegistry.unregisterAllComponents(); and siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();

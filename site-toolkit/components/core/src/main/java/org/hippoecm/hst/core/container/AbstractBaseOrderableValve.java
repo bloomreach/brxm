@@ -65,7 +65,6 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     protected ContainerConfiguration containerConfiguration;
     protected HstManager hstManager;
-    protected HstSiteMapMatcher siteMapMatcher;
     protected HstRequestContextComponent requestContextComponent;
     protected HstComponentFactory componentFactory;
     protected HstComponentWindowFactory componentWindowFactory;
@@ -100,11 +99,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     }
 
     public HstSiteMapMatcher getSiteMapMatcher() {
-        return siteMapMatcher;
-    }
-
-    public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
-        this.siteMapMatcher = siteMapMatcher;
+        return hstManager.getSiteMapMatcher();
     }
 
     public HstRequestContextComponent getRequestContextComponent() {

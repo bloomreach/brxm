@@ -26,12 +26,12 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
-    private volatile Map<String, Supplier<VirtualHosts>> virtualHostsSuppliers = new HashMap<>();
+    private volatile Map<String, Supplier<HstModelImpl>> modelSuppliers = new HashMap<>();
 
     private Repository repository;
     private Credentials credentials;
@@ -90,7 +90,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                     final HstConfigurationLoadingCache hstConfigurationLoadingCache = new HstConfigurationLoadingCache(hstNodeLoadingCache,
                             hstNodeLoadingCache.getRootPath() + "/" + NODENAME_HST_CONFIGURATIONS + "/");
 
-                    virtualHostsSuppliers.put(contextPath, () -> new VirtualHostsService(contextPath, hstNodeLoadingCache, hstConfigurationLoadingCache));
+                    modelSuppliers.put(contextPath, () -> new HstModelImpl(contextPath, hstNodeLoadingCache, hstConfigurationLoadingCache));
 
                 } catch (RepositoryException e) {
                     log.error("Could not load '{}'", child.getPath(), e);
@@ -107,24 +107,29 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         }
     }
 
-
     @Override
-    public VirtualHosts getVirtualHosts(final String contextPath) {
-        final Supplier<VirtualHosts> supplier = virtualHostsSuppliers.get(contextPath);
-        if (supplier == null) {
+    public HstModel getHstModel(final String contextPath, final ComponentManager websiteComponentManager) {
+        final Supplier<HstModelImpl> hstModelSupplier = modelSuppliers.get(contextPath);
+
+        if (hstModelSupplier == null) {
             throw new ModelLoadingException(String.format("Cannot load an HST model for contextPath '%s'", contextPath));
         }
 
         // make sure that the Thread class loader during model loading is the platform classloader!
-        ClassLoader platformClassloader = supplier.getClass().getClassLoader();
+        ClassLoader platformClassloader = hstModelSupplier.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
         try {
             if (platformClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(platformClassloader);
             }
-            supplier.getClass().getClassLoader();
-            // TODO support retries in case of model loading failure
-            return supplier.get();
+            hstModelSupplier.getClass().getClassLoader();
+            // TODO support retries in case of model loading failure and synchronization and caching
+            final HstModelImpl hstModel = hstModelSupplier.get();
+
+            // Set the custom website webapp specific configurations for for example linkrewriting
+            hstModel.getHstSiteMapMatcherImpl().setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+
+            return hstModel;
         } finally {
             if (platformClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
