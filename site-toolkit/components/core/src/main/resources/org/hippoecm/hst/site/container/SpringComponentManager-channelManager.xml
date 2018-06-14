@@ -20,11 +20,7 @@
 
   <bean id="org.hippoecm.hst.configuration.channel.ChannelManager" class="org.hippoecm.hst.configuration.channel.ChannelManagerImpl">
     <property name="hstModelMutex" ref="hstModelMutex"/>
-    <!-- TODO HSTTWO-4355 fix hstNodeLoadingCache -->
-    <!--<property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />-->
     <property name="contentRoot" value="${channel.manager.contentRoot}"/>
-    <!-- TODO HSTTWO-4355 what to do with the EventPathsInvalidator? -->
-    <property name="eventPathsInvalidator" ref="org.hippoecm.hst.configuration.model.EventPathsInvalidator"/>
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">

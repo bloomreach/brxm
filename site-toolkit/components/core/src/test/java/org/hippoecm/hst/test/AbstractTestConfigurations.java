@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.test;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -52,8 +53,15 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
     }
 
     protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        return getRepository().login(getAdminCredentials());
+    }
+
+    protected Credentials getAdminCredentials() {
+        return new SimpleCredentials("admin", "admin".toCharArray());
+    }
+
+    protected Repository getRepository() {
+        return HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
     }
 
 }

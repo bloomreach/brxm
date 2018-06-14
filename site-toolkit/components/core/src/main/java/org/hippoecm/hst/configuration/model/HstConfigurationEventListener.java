@@ -32,6 +32,7 @@ public class HstConfigurationEventListener extends GenericEventListener implemen
 
     private HstManager hstManager;
 
+    // TODO HSTTWO-4355 get rid of the hstManager : This should live in the platform webapp!
     public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
     }

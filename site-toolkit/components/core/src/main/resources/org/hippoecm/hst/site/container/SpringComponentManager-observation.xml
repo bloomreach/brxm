@@ -105,30 +105,30 @@
       <list>
 
         <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
-        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true"/>
-          <property name="nodeRemovedEnabled" value="true"/>
-          <property name="propertyAddedEnabled" value="true"/>
-          <property name="propertyChangedEnabled" value="true"/>
-          <property name="propertyRemovedEnabled" value="true"/>
-          <property name="absolutePath" value="${hst.configuration.rootPath}"/>
-          <property name="deep" value="true"/>
-          <property name="uuids">
-            <null/>
-          </property>
-          <property name="nodeTypeNames">
-            <null/>
-          </property>
-          <property name="noLocal" value="false"/>
+        <!--<bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">-->
+          <!--<property name="nodeAddedEnabled" value="true"/>-->
+          <!--<property name="nodeRemovedEnabled" value="true"/>-->
+          <!--<property name="propertyAddedEnabled" value="true"/>-->
+          <!--<property name="propertyChangedEnabled" value="true"/>-->
+          <!--<property name="propertyRemovedEnabled" value="true"/>-->
+          <!--<property name="absolutePath" value="${hst.configuration.rootPath}"/>-->
+          <!--<property name="deep" value="true"/>-->
+          <!--<property name="uuids">-->
+            <!--<null/>-->
+          <!--</property>-->
+          <!--<property name="nodeTypeNames">-->
+            <!--<null/>-->
+          <!--</property>-->
+          <!--<property name="noLocal" value="false"/>-->
 
-          <property name="eventListener">
-            <bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
-              <property name="hstModelMutex" ref="hstModelMutex"/>
-              <property name="hstEventsCollector" ref="hstEventsCollector"/>
-              <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-            </bean>
-          </property>
-        </bean>
+          <!--<property name="eventListener">-->
+            <!--<bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">-->
+              <!--<property name="hstModelMutex" ref="hstModelMutex"/>-->
+              <!--<property name="hstEventsCollector" ref="hstEventsCollector"/>-->
+              <!--<property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>-->
+            <!--</bean>-->
+          <!--</property>-->
+        <!--</bean>-->
 
         <!-- Changes in the content will invalidate the page cache if pageCache.clearOnContentChange is true . -->
         <bean class="org.hippoecm.hst.core.jcr.OptionalEventListenerItemImpl">

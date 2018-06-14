@@ -25,16 +25,13 @@ public class HstEventsDispatcher {
 
     private static final Logger log = LoggerFactory.getLogger(HstEventsDispatcher.class);
 
-    private HstEventsCollector hstEventsCollector;
+    private final HstEventsCollector hstEventsCollector;
 
-    private List<HstEventConsumer> hstEventConsumers;
+    private final List<HstEventConsumer> hstEventConsumers;
 
-    public void setHstEventConsumers(final List<HstEventConsumer> hstEventConsumers) {
-        this.hstEventConsumers = hstEventConsumers;
-    }
-
-    public void setHstEventsCollector(HstEventsCollector hstEventsCollector) {
+    public HstEventsDispatcher(final HstEventsCollector hstEventsCollector, final List<HstEventConsumer> hstEventConsumers) {
         this.hstEventsCollector = hstEventsCollector;
+        this.hstEventConsumers = hstEventConsumers;
     }
 
     // meant for unit test only

@@ -83,7 +83,9 @@ public class ChannelManagerImpl implements ChannelManager {
 
     private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(
             new ArrayList<ChannelManagerEventListener>());
-;
+
+    // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
+    // TODO we will for now get NPE's
     private EventPathsInvalidator eventPathsInvalidator;
     private Object hstModelMutex;
     private HstNodeLoadingCache hstNodeLoadingCache;
@@ -94,10 +96,6 @@ public class ChannelManagerImpl implements ChannelManager {
 
     public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
         this.hstNodeLoadingCache = hstNodeLoadingCache;
-    }
-
-    public void setEventPathsInvalidator(final EventPathsInvalidator eventPathsInvalidator) {
-        this.eventPathsInvalidator = eventPathsInvalidator;
     }
 
     public void setContentRoot(final String contentRoot) {
@@ -164,6 +162,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
+                // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
                 return channelName;
             } catch (RepositoryException e) {
@@ -242,6 +241,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 }
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
+                // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
             } catch (RepositoryException | IllegalArgumentException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);

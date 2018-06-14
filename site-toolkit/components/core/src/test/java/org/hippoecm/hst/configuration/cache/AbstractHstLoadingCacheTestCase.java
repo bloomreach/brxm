@@ -15,8 +15,12 @@
  */
 package org.hippoecm.hst.configuration.cache;
 
+import java.util.Arrays;
+
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 
 public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfigurations {
 
@@ -30,12 +34,18 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.hstConfigurationLoadingCache = getComponent(HstConfigurationLoadingCache.class.getName());
-        this.hstNodeLoadingCache = getComponent(HstNodeLoadingCache.class.getName());
-        this.hstEventsCollector = getComponent("hstEventsCollector");
-        this.hstEventsDispatcher =  getComponent("hstEventsDispatcher");
+        this.hstNodeLoadingCache = new HstNodeLoadingCache(getRepository(), getAdminCredentials(), "/hst:hst");
+        this.hstConfigurationLoadingCache = new HstConfigurationLoadingCache(hstNodeLoadingCache,
+                "/hst:hst/" + NODENAME_HST_CONFIGURATIONS + "/");
+
+        hstEventsCollector = new HstEventsCollector("/hst:hst");
+        hstEventsDispatcher = new HstEventsDispatcher(hstEventsCollector, Arrays.asList(hstConfigurationLoadingCache, hstNodeLoadingCache));
+
+        // HSTTWO-4354 TODO replace since hstEventsCollector and hstEventsDispatcher and hstModelMutex most likely won't be spring
+        // wired any more
         this.hstManager = getComponent(HstManager.class.getName());
         this.hstModelMutex = getComponent("hstModelMutex");
+
     }
 
 }

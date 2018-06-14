@@ -21,7 +21,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -69,8 +68,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     private HstCache pageCache;
     private boolean clearPageCacheAfterModelLoad;
 
-    private HstEventsDispatcher hstEventsDispatcher;
-
     /**
      *
      * the default cms preview prefix : The prefix all URLs when accessed through the CMS 
@@ -100,10 +97,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
-    }
-
-    public void setHstEventsDispatcher(final HstEventsDispatcher hstEventsDispatcher) {
-        this.hstEventsDispatcher = hstEventsDispatcher;
     }
 
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
@@ -380,7 +373,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     private void buildSites() {
 
-        hstEventsDispatcher.dispatchHstEvents();
+        // hstEventsDispatcher.dispatchHstEvents();
 
         log.info("Start building in memory hst configuration model");
 

@@ -41,10 +41,10 @@ public class HstEventsCollector {
 
     private static final Logger log = LoggerFactory.getLogger(HstEventsCollector.class);
 
-    private String rootPath;
+    private final String rootPath;
     private Set<HstEvent> hstEvents = new HashSet<>();
 
-    public void setRootPath(String rootPath) {
+    public HstEventsCollector(final String rootPath) {
         this.rootPath = rootPath;
     }
 

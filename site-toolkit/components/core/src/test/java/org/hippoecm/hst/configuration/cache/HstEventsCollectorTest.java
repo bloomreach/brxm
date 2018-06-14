@@ -51,8 +51,7 @@ public class HstEventsCollectorTest {
 
     @Before
     public void setUp() {
-        this.hstEventsCollector = new HstEventsCollector();
-        this.hstEventsCollector.setRootPath("/");
+        this.hstEventsCollector = new HstEventsCollector("/");
     }
 
     @Test
