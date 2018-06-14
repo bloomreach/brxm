@@ -18,12 +18,11 @@ import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
 
 import PageActionsService from './pageActions.service';
+import pageCopyComponent from './copy/pageCopy.component';
 import pageMoveComponent from './move/pageMove.component';
 import pageNewComponent from './new/pageNew.component';
 import pagePropertiesDirective from './properties/properties.directive';
 import PagePropertiesCtrl from './properties/properties.controller';
-import pageCopyDirective from './copy/copy.directive';
-import PageCopyCtrl from './copy/copy.controller';
 
 const channelPageActionsModule = angular
   .module('hippo-cm.channel.page.actions', [
@@ -31,11 +30,10 @@ const channelPageActionsModule = angular
     focusIf,
   ])
   .service('PageActionsService', PageActionsService)
+  .component('pageCopy', pageCopyComponent)
   .component('pageMove', pageMoveComponent)
   .component('pageNew', pageNewComponent)
   .controller('PagePropertiesCtrl', PagePropertiesCtrl)
-  .directive('pageProperties', pagePropertiesDirective)
-  .controller('PageCopyCtrl', PageCopyCtrl)
-  .directive('pageCopy', pageCopyDirective);
+  .directive('pageProperties', pagePropertiesDirective);
 
 export default channelPageActionsModule;

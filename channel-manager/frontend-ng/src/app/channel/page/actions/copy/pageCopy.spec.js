@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,45 +14,32 @@
  * limitations under the License.
  */
 
-describe('PageActionCopy', () => {
-  let $element;
-  let $q;
-  let $log;
-  let $scope;
-  let $rootScope;
+describe('PageCopyComponent', () => {
   let $compile;
+  let $componentController;
+  let $ctrl;
+  let $log;
+  let $q;
+  let $rootScope;
   let $translate;
   let ChannelService;
   let CmsService;
   let FeedbackService;
   let HippoIframeService;
   let SessionService;
-  let SiteMapService;
   let SiteMapItemService;
-  let siteMapItem;
+  let SiteMapService;
+
   let channels = [];
-  const pageModel = {
-    locations: [
-      {
-        id: null,
-        location: 'localhost/',
-      },
-      {
-        id: 'root-level',
-        location: 'localhost/foo/',
-      },
-      {
-        id: 'nested',
-        location: 'localhost/foo/bar/',
-      },
-    ],
-  };
+  let pageModel;
+  let siteMapItem;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
       _$compile_,
+      _$componentController_,
       _$log_,
       _$q_,
       _$rootScope_,
@@ -66,6 +53,7 @@ describe('PageActionCopy', () => {
       _SiteMapService_,
     ) => {
       $compile = _$compile_;
+      $componentController = _$componentController_;
       $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -78,6 +66,23 @@ describe('PageActionCopy', () => {
       SiteMapItemService = _SiteMapItemService_;
       SiteMapService = _SiteMapService_;
     });
+
+    pageModel = {
+      locations: [
+        {
+          id: null,
+          location: 'localhost/',
+        },
+        {
+          id: 'root-level',
+          location: 'localhost/foo/',
+        },
+        {
+          id: 'nested',
+          location: 'localhost/foo/bar/',
+        },
+      ],
+    };
 
     siteMapItem = {
       id: 'siteMapItemId',
@@ -105,8 +110,8 @@ describe('PageActionCopy', () => {
       },
     ];
 
-    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($log, 'info');
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(CmsService, 'publish');
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
@@ -123,103 +128,130 @@ describe('PageActionCopy', () => {
     spyOn(SiteMapItemService, 'updateItem');
     spyOn(SiteMapService, 'copy').and.returnValue($q.when({ renderPathInfo: '/destination/path' }));
     spyOn(SiteMapService, 'load');
+
+    $ctrl = $componentController('pageCopy', null, {
+      onDone: jasmine.createSpy('onDone'),
+    });
   });
 
-  function compileDirectiveAndGetController() {
-    $scope = $rootScope.$new();
-    $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<page-copy on-done="onDone()"> </page-copy>');
-    $compile($element)($scope);
-    $scope.$digest();
+  describe('$element tests', () => {
+    let $element;
+    let $scope;
 
-    return $element.controller('pageCopy');
-  }
+    function compileComponentAndGetController() {
+      $scope = $rootScope.$new();
+      $scope.onDone = jasmine.createSpy('onDone');
+      $element = angular.element('<page-copy on-done="onDone()"> </page-copy>');
+      $compile($element)($scope);
+      $scope.$digest();
+
+      return $element.controller('pageCopy');
+    }
+
+    it('calls the callback when navigating back', () => {
+      compileComponentAndGetController();
+
+      $element.find('.qa-button-back').click();
+      expect($scope.onDone).toHaveBeenCalled();
+    });
+  });
 
   it('initializes correctly when cross channel copy is disabled', () => {
     SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
-
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     expect(ChannelService.getNewPageModel).toHaveBeenCalled();
     expect(ChannelService.getPageModifiableChannels).not.toHaveBeenCalled();
 
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBeFalsy();
-    expect(PageCopyCtrl.channels).toEqual([]);
-    expect(PageCopyCtrl.locations).toBe(pageModel.locations);
-    expect(PageCopyCtrl.location).toBe(pageModel.locations[0]);
-    expect(PageCopyCtrl.lastPathInfoElement).toBe('');
+    expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
+    expect($ctrl.channels).toEqual([]);
+    expect($ctrl.locations).toBe(pageModel.locations);
+    expect($ctrl.location).toBe(pageModel.locations[0]);
+    expect($ctrl.lastPathInfoElement).toBe('');
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_COPY_TITLE', { pageName: 'name' });
   });
 
   it('initializes correctly when cross channel copy is enabled', () => {
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
     // we're on channel B and channels A, B and C are available, select B
-    let PageCopyCtrl = compileDirectiveAndGetController();
-    expect(PageCopyCtrl.channels).toBe(channels);
-    expect(PageCopyCtrl.channel).toBe(channels[1]);
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBe(true);
+    expect($ctrl.channels).toBe(channels);
+    expect($ctrl.channel).toBe(channels[1]);
+    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
     expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountB']);
 
     // we're on channel D and only channel A, B and C are available, select A
     ChannelService.getId.and.returnValue('channelD');
-    PageCopyCtrl = compileDirectiveAndGetController();
-    expect(PageCopyCtrl.channel).toBe(channels[0]);
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBe(true);
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
+    expect($ctrl.channel).toBe(channels[0]);
+    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
     expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountA']);
 
     // we're on channel D and only channel C is available, select C
     ChannelService.getPageModifiableChannels.and.returnValue([channels[2]]);
-    PageCopyCtrl = compileDirectiveAndGetController();
-    expect(PageCopyCtrl.channel).toBe(channels[2]);
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBe(true);
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
+    expect($ctrl.channel).toBe(channels[2]);
+    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
     expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountC']);
 
     // we're on channel C and only channel C is available, no cross-channel copying available
     ChannelService.getId.and.returnValue('channelC');
-    PageCopyCtrl = compileDirectiveAndGetController();
-    expect(PageCopyCtrl.channel).toBeUndefined();
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBeFalsy();
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
+    expect($ctrl.channel).toBeUndefined();
+    expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
     expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
 
     // we're on channel C, but no channels are available, no cross-channel copying available
     ChannelService.getPageModifiableChannels.and.returnValue([]);
-    PageCopyCtrl = compileDirectiveAndGetController();
-    expect(PageCopyCtrl.channel).toBeUndefined();
-    expect(PageCopyCtrl.isCrossChannelCopyAvailable).toBeFalsy();
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
+    expect($ctrl.channel).toBeUndefined();
+    expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
     expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
   });
 
   it('flashes a toast when the retrieval of the locations fails', () => {
     ChannelService.getNewPageModel.and.returnValue($q.reject());
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
-    const PageCopyCtrl = compileDirectiveAndGetController();
-
-    expect(PageCopyCtrl.locations).toEqual([]);
-    expect(PageCopyCtrl.location).toBeUndefined();
+    expect($ctrl.locations).toEqual([]);
+    expect($ctrl.location).toBeUndefined();
     expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
   });
 
   it('successfully retrieves the locations for the selected channel', () => {
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     // location is undefined when no locations are available
     ChannelService.getNewPageModel.and.returnValue($q.when({ }));
-    PageCopyCtrl.lastPathInfoElement = 'keepUnchanged';
-    PageCopyCtrl.channelChanged();
+    $ctrl.lastPathInfoElement = 'keepUnchanged';
+    $ctrl.channelChanged();
     expect(ChannelService.getNewPageModel).toHaveBeenCalledWith('channelMountB');
     $rootScope.$digest();
-    expect(PageCopyCtrl.locations).toEqual([]);
-    expect(PageCopyCtrl.location).toBeUndefined();
-    expect(PageCopyCtrl.lastPathInfoElement).toBe('keepUnchanged');
+    expect($ctrl.locations).toEqual([]);
+    expect($ctrl.location).toBeUndefined();
+    expect($ctrl.lastPathInfoElement).toBe('keepUnchanged');
 
     // "null" location matches
     ChannelService.getNewPageModel.and.returnValue($q.when(pageModel));
-    PageCopyCtrl.channel = channels[2];
-    PageCopyCtrl.channelChanged();
+    $ctrl.channel = channels[2];
+    $ctrl.channelChanged();
     expect(ChannelService.getNewPageModel).toHaveBeenCalledWith('channelMountC');
     $rootScope.$digest();
-    expect(PageCopyCtrl.locations).toBe(pageModel.locations);
-    expect(PageCopyCtrl.location).toBe(pageModel.locations[0]);
+    expect($ctrl.locations).toBe(pageModel.locations);
+    expect($ctrl.location).toBe(pageModel.locations[0]);
 
     // no location matches, select first one
     const locationsNoIdMatch = {
@@ -235,33 +267,27 @@ describe('PageActionCopy', () => {
       ],
     };
     ChannelService.getNewPageModel.and.returnValue($q.when(locationsNoIdMatch));
-    PageCopyCtrl.channelChanged();
+    $ctrl.channelChanged();
     $rootScope.$digest();
-    expect(PageCopyCtrl.locations).toBe(locationsNoIdMatch.locations);
-    expect(PageCopyCtrl.location).toBe(locationsNoIdMatch.locations[0]);
+    expect($ctrl.locations).toBe(locationsNoIdMatch.locations);
+    expect($ctrl.location).toBe(locationsNoIdMatch.locations[0]);
 
     // a specific location matches, select that one
     siteMapItem.parentLocation.id = 'nested';
     ChannelService.getNewPageModel.and.returnValue($q.when(pageModel));
-    PageCopyCtrl.channelChanged();
+    $ctrl.channelChanged();
     $rootScope.$digest();
-    expect(PageCopyCtrl.locations).toBe(pageModel.locations);
-    expect(PageCopyCtrl.location).toBe(pageModel.locations[2]);
-  });
-
-  it('calls the callback when navigating back', () => {
-    compileDirectiveAndGetController();
-
-    $element.find('.qa-button-back').click();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($ctrl.locations).toBe(pageModel.locations);
+    expect($ctrl.location).toBe(pageModel.locations[2]);
   });
 
   it('successfully copies the page inside the current channel', () => {
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
-    PageCopyCtrl.lastPathInfoElement = 'test';
-    PageCopyCtrl.copy();
+    $ctrl.lastPathInfoElement = 'test';
+    $ctrl.copy();
 
     const headers = {
       siteMapItemUUId: 'siteMapItemId',
@@ -274,17 +300,18 @@ describe('PageActionCopy', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('successfully copies the page inside the current channel - without cross-channel copy support', () => {
     SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
-    PageCopyCtrl.lastPathInfoElement = 'test';
-    PageCopyCtrl.location = pageModel.locations[1];
-    PageCopyCtrl.copy();
+    $ctrl.lastPathInfoElement = 'test';
+    $ctrl.location = pageModel.locations[1];
+    $ctrl.copy();
 
     const headers = {
       siteMapItemUUId: 'siteMapItemId',
@@ -297,21 +324,23 @@ describe('PageActionCopy', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('successfully copies the page into another channel', () => {
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
+
     const copyReturn = {
       renderPathInfo: '/render/path',
       pathInfo: 'path',
     };
 
     SiteMapService.copy.and.returnValue($q.when(copyReturn));
-    PageCopyCtrl.channel = channels[2];
-    PageCopyCtrl.location = pageModel.locations[2];
-    PageCopyCtrl.lastPathInfoElement = 'test';
-    PageCopyCtrl.copy();
+    $ctrl.channel = channels[2];
+    $ctrl.location = pageModel.locations[2];
+    $ctrl.lastPathInfoElement = 'test';
+    $ctrl.copy();
 
     const headers = {
       siteMapItemUUId: 'siteMapItemId',
@@ -321,27 +350,28 @@ describe('PageActionCopy', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(CmsService.publish).toHaveBeenCalledWith('load-channel', PageCopyCtrl.channel.id, copyReturn.pathInfo);
+    expect(CmsService.publish).toHaveBeenCalledWith('load-channel', $ctrl.channel.id, copyReturn.pathInfo);
     $rootScope.$digest();
     expect(SiteMapService.load).not.toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    expect($scope.onDone).not.toHaveBeenCalled();
+    expect($ctrl.onDone).not.toHaveBeenCalled();
   });
 
   it('fails to copy a page', () => {
-    const PageCopyCtrl = compileDirectiveAndGetController();
+    $ctrl.$onInit();
+    $rootScope.$digest();
 
     SiteMapService.copy.and.returnValue($q.reject());
-    PageCopyCtrl.copy();
+    $ctrl.copy();
     $rootScope.$digest();
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_COPY_FAILED', $ctrl.errorMap);
 
     const response = { key: 'value' };
     SiteMapService.copy.and.returnValue($q.reject(response));
-    PageCopyCtrl.copy();
+    $ctrl.copy();
     $rootScope.$digest();
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(response, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_COPY_FAILED', $ctrl.errorMap);
   });
 });
