@@ -28,14 +28,6 @@
     <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <translations source="/instructions/json/translations/videotypes-translations.json" />
     <translations source="/instructions/json/translations/videotemplates-translations.json" />
-  </instructionSet>
-
-  <instructionSet group="jsp">
-    <file action="copy" source="instructions/jsp/video-component.jsp" target="{{jspRoot}}/hstdefault/video-component.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/video-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
     <freemarker action="copy" source="instructions/freemarker/video-component.ftl" target="{{freemarkerRoot}}/hstdefault/video-component.ftl"/>
     <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>

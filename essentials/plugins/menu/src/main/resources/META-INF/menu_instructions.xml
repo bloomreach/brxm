@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-  <instructionSet group="jsp">
-    <file action="copy" source="jsp/essentials-menu.jsp" target="{{jspRoot}}/hstdefault/essentials-menu.jsp"/>
-    <xml action="copy" source="hst/menu-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
+  <instructionSet>
     <freemarker action="copy" source="freemarker/essentials-menu.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu.ftl"/>
     <xml action="copy" source="hst/menu-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/catalog/menu-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/menu.png" target="{{imagesRoot}}/essentials/catalog-component-icons/menu.png"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -43,8 +40,4 @@
           target="{{freemarkerRoot}}/hstdefault/essentials-menu_nl.properties"/>
   </instructionSet>
 
-  <instructionSet>
-    <xml action="copy" source="hst/catalog/menu-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/menu.png" target="{{imagesRoot}}/essentials/catalog-component-icons/menu.png"/>
-  </instructionSet>
 </instructions>

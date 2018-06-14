@@ -25,7 +25,6 @@
         scope: {
           label: '@',
           pluginId: '@',
-          hasNoTemplates: '@',
           hasSampleData: '@',
           hasExtraTemplates: '@'
         },
@@ -34,7 +33,6 @@
           // initialize fields to system defaults.
           $scope.params = {};
           projectService.getSettings().then(function (settings) {
-            $scope.params.templateName = settings.templateLanguage;
             $scope.params.sampleData = settings.useSamples;
             $scope.params.extraTemplates = settings.extraTemplates;
           });

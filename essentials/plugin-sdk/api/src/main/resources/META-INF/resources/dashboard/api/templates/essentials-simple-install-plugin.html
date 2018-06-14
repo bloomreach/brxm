@@ -17,23 +17,10 @@
   <div class="panel panel-default">
     <div class="panel-heading">{{plugin.name}}</div>
     <div class="panel-body">
-      <div ng-hide="hasNoTemplates && !hasSampleData">
+      <div ng-hide="!hasExtraTemplates && !hasSampleData">
         <form novalidate name="templateForm">
           <div ng-hide="hasNoTemplates">
-            <div class="form-group">
-              <label>Please select templating language</label>
-              <div class="radio">
-                <label>
-                  <input type="radio" ng-model="params.templateName" required value="jsp"/> JSP template
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" ng-model="params.templateName" required value="freemarker"/> FreeMarker template
-                </label>
-              </div>
-            </div>
-            <div class="form-group" ng-show="params.templateName === 'freemarker' && hasExtraTemplates">
+            <div class="form-group" ng-show="hasExtraTemplates">
               <label class="control-label">Presentation</label>
               <div class="checkbox">
                 <label>

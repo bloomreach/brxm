@@ -43,7 +43,7 @@
     <translations source="/instructions/json/translations/faqtemplates-translations.json" />
   </instructionSet>
 
-  <instructionSet group="freemarker">
+  <instructionSet>
     <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <freemarker action="copy" source="instructions/freemarker/faq-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/faq-main.ftl"/>
@@ -60,13 +60,6 @@
     <file action="copy"
           source="instructions/freemarker/faqlist-main_nl.properties"
           target="{{freemarkerRoot}}/hstdefault/faqlist-main_nl.properties"/>
-  </instructionSet>
-
-  <instructionSet group="jsp">
-    <file action="copy" source="instructions/jsp/faq-main.jsp" target="{{jspRoot}}/{{namespace}}/faq-main.jsp"/>
-    <file action="copy" source="instructions/jsp/faqlist-main.jsp" target="{{jspRoot}}/hstdefault/faqlist-main.jsp"/>
-    <xml action="copy" source="instructions/hst/faq-faq-template-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/hst/faq-list-template-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="sampleData">

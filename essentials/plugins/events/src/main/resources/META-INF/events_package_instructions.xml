@@ -24,14 +24,7 @@
     <translations source="/json/translations/eventstemplates-translations.json" />
   </instructionSet>
 
-  <instructionSet group="jsp">
-    <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>
-    <file action="copy" source="jsp/eventspage-main.jsp" target="{{jspRoot}}/hstdefault/eventspage-main.jsp"/>
-    <xml action="copy" source="xml/hst/templates/events-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
+  <instructionSet>
     <freemarker action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
     <freemarker action="copy" source="freemarker/eventspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main.ftl"/>
     <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>

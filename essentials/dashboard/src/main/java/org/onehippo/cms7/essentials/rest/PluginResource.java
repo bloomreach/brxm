@@ -253,12 +253,6 @@ public class PluginResource {
     private Map<String, Object> ensureGenericInstallationParameters(final Map<String, Object> parameters) {
         final ProjectSettings settings = settingsService.getSettings();
 
-        final Object templateName = parameters.get(EssentialConst.PROP_TEMPLATE_NAME);
-        final String templateLanguage = (templateName instanceof String)
-                ? (String) templateName
-                : settings.getTemplateLanguage();
-        parameters.put(templateLanguage, true);
-
         final Object sampleData = parameters.get(EssentialConst.PROP_SAMPLE_DATA);
         if (!(sampleData instanceof Boolean)) {
             parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());

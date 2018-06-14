@@ -78,7 +78,6 @@ public final class EssentialConst {
     public static final String REPO_FOLDER_FORMAT = "yyyy/MM";
     public static final String UTF_8 = "UTF8";
     public static final String DEFAULT_INSTRUCTIONS_PATH = "/META-INF/instructions.xml";
-    public static final String PROP_TEMPLATE_NAME = "templateName";
     public static final String PROP_SAMPLE_DATA = "sampleData";
     public static final String PROP_EXTRA_TEMPLATES = "extraTemplates";
     public static final String METHOD_RELATED_DOCUMENTS = "getRelatedDocuments";

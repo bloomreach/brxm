@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,14 +21,6 @@
   <instructionSet>
     <xml action="copy" source="instructions/xml/hst/image-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/images/image.png" target="{{imagesRoot}}/essentials/catalog-component-icons/image.png"/>
-  </instructionSet>
-
-  <instructionSet group="jsp">
-    <file action="copy" source="instructions/jsp/image-component.jsp" target="{{jspRoot}}/hstdefault/image-component.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/image-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
     <freemarker action="copy" source="instructions/freemarker/image-component.ftl" target="{{freemarkerRoot}}/hstdefault/image-component.ftl"/>
     <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>

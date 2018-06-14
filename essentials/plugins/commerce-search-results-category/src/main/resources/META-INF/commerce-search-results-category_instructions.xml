@@ -21,8 +21,6 @@
     <file action="copy" binary="false" overwrite="false" source="css/categories.css" target="{{webfilesRoot}}/css/categories.css"/>
     <xml action="copy" overwrite="false" source="hst/commerce-search-category-list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" overwrite="false" source="images/commerce-search-category-list.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-search-category-list.png"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
     <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-search-category-list.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-search-category-list.ftl"/>
     <xml action="copy" overwrite="false" source="hst/commerce-search-category-list-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>

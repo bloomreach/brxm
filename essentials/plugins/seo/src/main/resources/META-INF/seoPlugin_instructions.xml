@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,14 +23,6 @@
     <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support-repository" targetPom="cms"/>
     <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/seo.png" target="{{imagesRoot}}/essentials/catalog-component-icons/seo.png"/>
-  </instructionSet>
-
-  <instructionSet group="jsp">
-    <xml action="copy" source="instructions/template-seo-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <file action="copy" source="instructions/seo.jsp" target="{{jspRoot}}/hstdefault/seo.jsp"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
     <xml action="copy" source="instructions/template-seo-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <freemarker action="copy" source="instructions/seo.ftl" target="{{freemarkerRoot}}/hstdefault/seo.ftl"/>
   </instructionSet>

@@ -19,12 +19,8 @@
   <instructionSet group="extraTemplates">
     <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-products-grid/commerce-products-grid-flow.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-products-grid/commerce-products-grid-flow.ftl"/>
     <file action="copy" source="freemarker/commerce-products-grid.properties" target="{{freemarkerRoot}}/hstdefault/commerce-products-grid.properties"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
     <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-products-grid.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-products-grid.ftl"/>
     <xml action="copy" overwrite="false" source="hst/commerce-products-grid-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-  <instructionSet>
     <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
     <xml action="copy" overwrite="false" source="hst/commerce-products-grid.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>

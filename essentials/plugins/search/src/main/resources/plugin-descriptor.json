@@ -8,6 +8,7 @@
     "/essentials/feature/images/screenshots/search02.png"
   ],
   "documentationLink": "https://www.onehippo.org/library/setup/hst-components/search-component.html",
+  "installWithParameters": false,
   "packageFile": "/META-INF/searchPlugin_instructions.xml",
   "type": "feature",
   "vendor" : {
