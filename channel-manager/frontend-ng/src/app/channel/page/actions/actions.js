@@ -18,11 +18,10 @@ import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
 
 import PageActionsService from './pageActions.service';
+import pageMoveComponent from './move/pageMove.component';
 import pageNewComponent from './new/pageNew.component';
 import pagePropertiesDirective from './properties/properties.directive';
 import PagePropertiesCtrl from './properties/properties.controller';
-import pageMoveDirective from './move/move.directive';
-import PageMoveCtrl from './move/move.controller';
 import pageCopyDirective from './copy/copy.directive';
 import PageCopyCtrl from './copy/copy.controller';
 
@@ -32,11 +31,10 @@ const channelPageActionsModule = angular
     focusIf,
   ])
   .service('PageActionsService', PageActionsService)
+  .component('pageMove', pageMoveComponent)
   .component('pageNew', pageNewComponent)
   .controller('PagePropertiesCtrl', PagePropertiesCtrl)
   .directive('pageProperties', pagePropertiesDirective)
-  .controller('PageMoveCtrl', PageMoveCtrl)
-  .directive('pageMove', pageMoveDirective)
   .controller('PageCopyCtrl', PageCopyCtrl)
   .directive('pageCopy', pageCopyDirective);
 

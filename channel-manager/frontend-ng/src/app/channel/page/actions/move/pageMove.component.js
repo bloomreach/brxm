@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import template from './move.html';
+import controller from './pageMove.controller';
+import template from './pageMove.html';
 
-function pageMoveDirective() {
-  'ngInject';
+const pageMoveComponent = {
+  bindings: {
+    onDone: '&',
+  },
+  controller,
+  template,
+};
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-    },
-    template,
-    controller: 'PageMoveCtrl',
-    controllerAs: 'pageMove',
-  };
-}
-
-export default pageMoveDirective;
+export default pageMoveComponent;
