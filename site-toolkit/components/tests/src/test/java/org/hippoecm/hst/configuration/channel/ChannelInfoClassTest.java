@@ -23,6 +23,8 @@ import java.util.Map;
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
+import org.hippoecm.hst.platform.configuration.channel.ChannelUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

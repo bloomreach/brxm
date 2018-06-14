@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.sitemap;
 
+import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

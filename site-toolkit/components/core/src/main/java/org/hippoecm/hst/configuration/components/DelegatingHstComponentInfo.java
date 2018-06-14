@@ -16,6 +16,9 @@
 package org.hippoecm.hst.configuration.components;
 
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
+
 /**
  * DelegatingHstComponentInfo
  * 

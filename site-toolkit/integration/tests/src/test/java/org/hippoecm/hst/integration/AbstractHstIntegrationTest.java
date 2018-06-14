@@ -38,7 +38,6 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
 
 public class AbstractHstIntegrationTest {
 

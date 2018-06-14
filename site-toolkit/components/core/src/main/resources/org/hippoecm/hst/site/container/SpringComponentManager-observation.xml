@@ -384,7 +384,7 @@
         </bean>
 
         <!-- Listens to changes in the host configuration. -->
-        <bean class="org.hippoecm.hst.configuration.environment.OptionalEnvironmentEventListenerItemImpl">
+        <bean class="org.hippoecm.hst.platform.configuration.environment.OptionalEnvironmentEventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
           <property name="nodeRemovedEnabled" value="true"/>
           <property name="propertyAddedEnabled" value="true"/>
@@ -402,7 +402,7 @@
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
-            <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.environment.HostConfigListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.platform.configuration.environment.HostConfigListener">
               <property name="hostConfigPublisher" ref="org.hippoecm.hst.configuration.environment.HostConfigPublisher"/>
             </bean>
           </property>

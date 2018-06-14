@@ -25,7 +25,7 @@ import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MountService;
+import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -35,6 +35,8 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.configuration.site.DelegatingHstSiteProvider;
+import org.hippoecm.hst.platform.configuration.site.HstSiteService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;

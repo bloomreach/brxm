@@ -69,12 +69,12 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.configuration.environment.HostConfigPublisher" class="org.hippoecm.hst.configuration.environment.HostConfigPublisher">
+  <bean id="org.hippoecm.hst.configuration.environment.HostConfigPublisher" class="org.hippoecm.hst.platform.configuration.environment.HostConfigPublisher">
     <property name="repository" ref="javax.jcr.Repository.delegating" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider"/>
+  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.configuration.site.DelegatingHstSiteProvider"/>
 
 </beans>
 

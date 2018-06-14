@@ -64,7 +64,7 @@
     </property>
   </bean>
 
-  <bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+  <bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener">
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstEventsCollector" ref="hstEventsCollector"/>
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>

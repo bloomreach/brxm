@@ -30,7 +30,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
+import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;

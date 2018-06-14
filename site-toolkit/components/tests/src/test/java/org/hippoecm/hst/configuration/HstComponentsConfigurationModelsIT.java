@@ -22,9 +22,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
+import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;

@@ -24,6 +24,8 @@ import javax.jcr.observation.EventIterator;
 
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.hippoecm.hst.platform.configuration.cache.HstEvent;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

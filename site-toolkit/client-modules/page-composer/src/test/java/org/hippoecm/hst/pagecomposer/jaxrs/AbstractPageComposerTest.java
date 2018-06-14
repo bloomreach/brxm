@@ -63,7 +63,6 @@ import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
 
 public class AbstractPageComposerTest {
 

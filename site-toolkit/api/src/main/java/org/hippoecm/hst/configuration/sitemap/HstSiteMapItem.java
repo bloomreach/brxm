@@ -38,6 +38,7 @@ import org.hippoecm.hst.core.component.HstComponent;
 
 public interface HstSiteMapItem {
 
+
     /**
      * The id of a <code>HstSiteMapItem</code> is mandatory and must be unique within its containing <code>{@link
      * HstSiteMap}</code> because <code>{@link HstSiteMap#getSiteMapItemById(String)}</code> must uniquely return a

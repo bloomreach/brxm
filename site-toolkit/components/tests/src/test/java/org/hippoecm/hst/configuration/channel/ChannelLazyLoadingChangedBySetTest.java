@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.mock.configuration.MockSiteMapItem;
 import org.hippoecm.hst.mock.configuration.MockSiteMenuConfiguration;
 import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
+import org.hippoecm.hst.platform.configuration.channel.ChannelLazyLoadingChangedBySet;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;

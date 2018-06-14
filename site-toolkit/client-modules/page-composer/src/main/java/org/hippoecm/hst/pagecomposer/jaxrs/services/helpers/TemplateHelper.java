@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;

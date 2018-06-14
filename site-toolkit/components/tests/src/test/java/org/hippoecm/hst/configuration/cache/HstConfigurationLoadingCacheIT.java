@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.cache;
 
+import org.hippoecm.hst.platform.configuration.cache.HstEvent;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;

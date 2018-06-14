@@ -224,48 +224,48 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         return false;
     }
 
-    private void asynchronousBuild() {
-        synchronized (hstModelMutex) {
-            if (state == BuilderState.UP2DATE) {
-                // other thread already built the model
-                return;
-            }
-            if (state == BuilderState.SCHEDULED) {
-                // already scheduled
-                return;
-            } 
-            if (state == BuilderState.RUNNING) {
-                log.error("BuilderState should not be possible to be in RUNNING state at this point. Return");
-                return;
-            }
-            state = BuilderState.SCHEDULED;
-            log.info("Asynchronous hst model build will be scheduled");
-            Thread scheduled = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        long reloadDelay = computeReloadDelay(consecutiveBuildFailCounter);
-                        if (reloadDelay > 0) {
-                            Thread.sleep(reloadDelay);
-                        }
-                        synchronousBuild();
-                    } catch (ContainerException e) {
-                        log.warn("Exception during building virtualhosts model. ", e);
-                    } catch (InterruptedException e) {
-                        log.info("InterruptedException ", e);
-                    }
-                }
-            });
-            scheduled.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(final Thread t, final Throwable e) {
-                    log.warn("Runtime exception "+e.getClass().getName()+" during building asynchronous " +
-                            "HST model. Reason : " + e.getMessage(), e);
-                }
-            });
-            scheduled.start();
-        }
-    }
+//    private void asynchronousBuild() {
+//        synchronized (hstModelMutex) {
+//            if (state == BuilderState.UP2DATE) {
+//                // other thread already built the model
+//                return;
+//            }
+//            if (state == BuilderState.SCHEDULED) {
+//                // already scheduled
+//                return;
+//            }
+//            if (state == BuilderState.RUNNING) {
+//                log.error("BuilderState should not be possible to be in RUNNING state at this point. Return");
+//                return;
+//            }
+//            state = BuilderState.SCHEDULED;
+//            log.info("Asynchronous hst model build will be scheduled");
+//            Thread scheduled = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        long reloadDelay = computeReloadDelay(consecutiveBuildFailCounter);
+//                        if (reloadDelay > 0) {
+//                            Thread.sleep(reloadDelay);
+//                        }
+//                        synchronousBuild();
+//                    } catch (ContainerException e) {
+//                        log.warn("Exception during building virtualhosts model. ", e);
+//                    } catch (InterruptedException e) {
+//                        log.info("InterruptedException ", e);
+//                    }
+//                }
+//            });
+//            scheduled.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//                @Override
+//                public void uncaughtException(final Thread t, final Throwable e) {
+//                    log.warn("Runtime exception "+e.getClass().getName()+" during building asynchronous " +
+//                            "HST model. Reason : " + e.getMessage(), e);
+//                }
+//            });
+//            scheduled.start();
+//        }
+//    }
 
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
@@ -310,54 +310,54 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         return getVirtualHosts(false);
     }
 
-    private VirtualHosts synchronousBuild() throws ContainerException {
-        if (state != BuilderState.UP2DATE) {
-            synchronized (hstModelMutex) {
-                if (state == BuilderState.UP2DATE) {
-                    return virtualHostsModel;
-                } else {
-                    try {
-                        state = BuilderState.RUNNING;
-                        try {
-                            buildSites();
-                            state = BuilderState.UP2DATE;
-                        } catch (ModelLoadingException e) {
-                            state = BuilderState.FAILED;
-                            consecutiveBuildFailCounter++;
-                            if (prevVirtualHostsModel == null) {
-                                throw new ContainerException("HST model failed to load : " + e.toString(), e);
-                            } else {
-                                log.warn("Exception during model loading happened. Return previous stale model. Reason: " + e.toString(), e);
-                            }
-                            return prevVirtualHostsModel;
-                        }
-                    } finally {
-                        if (state == BuilderState.RUNNING) {
-                            log.warn("Model failed to built. Serve old virtualHosts model.");
-                            consecutiveBuildFailCounter++;
-                            state = BuilderState.FAILED;
-                        }
-                    }
-                    if (state == BuilderState.FAILED) {
-                        // do not flush pageCache but return old prev virtual host instance instead
-                        return prevVirtualHostsModel;
-                    }
-                    if (clearPageCacheAfterModelLoad) {
-                        log.info("Clearing page cache after new model is loaded");
-                        pageCache.clear();
-                    } else {
-                        log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
-                    }
-                }
-                if (state == BuilderState.UP2DATE) {
-                    consecutiveBuildFailCounter = 0;
-                    prevVirtualHostsModel = virtualHostsModel;
-                }
-                return virtualHostsModel;
-            }
-        }
-        return virtualHostsModel;
-    }
+//    private VirtualHosts synchronousBuild() throws ContainerException {
+//        if (state != BuilderState.UP2DATE) {
+//            synchronized (hstModelMutex) {
+//                if (state == BuilderState.UP2DATE) {
+//                    return virtualHostsModel;
+//                } else {
+//                    try {
+//                        state = BuilderState.RUNNING;
+//                        try {
+//                            buildSites();
+//                            state = BuilderState.UP2DATE;
+//                        } catch (ModelLoadingException e) {
+//                            state = BuilderState.FAILED;
+//                            consecutiveBuildFailCounter++;
+//                            if (prevVirtualHostsModel == null) {
+//                                throw new ContainerException("HST model failed to load : " + e.toString(), e);
+//                            } else {
+//                                log.warn("Exception during model loading happened. Return previous stale model. Reason: " + e.toString(), e);
+//                            }
+//                            return prevVirtualHostsModel;
+//                        }
+//                    } finally {
+//                        if (state == BuilderState.RUNNING) {
+//                            log.warn("Model failed to built. Serve old virtualHosts model.");
+//                            consecutiveBuildFailCounter++;
+//                            state = BuilderState.FAILED;
+//                        }
+//                    }
+//                    if (state == BuilderState.FAILED) {
+//                        // do not flush pageCache but return old prev virtual host instance instead
+//                        return prevVirtualHostsModel;
+//                    }
+//                    if (clearPageCacheAfterModelLoad) {
+//                        log.info("Clearing page cache after new model is loaded");
+//                        pageCache.clear();
+//                    } else {
+//                        log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
+//                    }
+//                }
+//                if (state == BuilderState.UP2DATE) {
+//                    consecutiveBuildFailCounter = 0;
+//                    prevVirtualHostsModel = virtualHostsModel;
+//                }
+//                return virtualHostsModel;
+//            }
+//        }
+//        return virtualHostsModel;
+//    }
 
     private long computeReloadDelay(final int consecutiveBuildFailCounter) {
         switch (consecutiveBuildFailCounter) {

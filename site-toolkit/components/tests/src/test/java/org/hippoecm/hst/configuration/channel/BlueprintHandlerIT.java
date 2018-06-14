@@ -19,8 +19,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.platform.configuration.channel.BlueprintHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;

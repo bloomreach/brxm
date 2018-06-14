@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.hippoecm.hst.platform.configuration.cache.WeakTaggedCache;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

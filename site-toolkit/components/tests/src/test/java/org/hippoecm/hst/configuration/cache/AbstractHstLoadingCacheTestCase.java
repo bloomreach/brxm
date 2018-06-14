@@ -18,6 +18,10 @@ package org.hippoecm.hst.configuration.cache;
 import java.util.Arrays;
 
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsDispatcher;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;

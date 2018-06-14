@@ -30,9 +30,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
+import org.hippoecm.hst.platform.configuration.channel.ChannelPropertyMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;

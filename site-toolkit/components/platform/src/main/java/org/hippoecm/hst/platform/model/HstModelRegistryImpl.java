@@ -26,12 +26,12 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
-import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.hosting.HstModelRegistry;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
-import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;

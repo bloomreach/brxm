@@ -25,7 +25,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURL;
@@ -45,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.hippoecm.hst.configuration.ConfigurationConstants.CDN_SUPPORTED_PIPELINES;
 import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 
 public class HstLinkImpl implements HstLink {
@@ -378,7 +378,7 @@ public class HstLinkImpl implements HstLink {
     }
 
     private boolean isCdnSupportedPipeline(final String pipeline) {
-        return HstSiteMapItemService.CDN_SUPPORTED_PIPELINES.contains(pipeline);
+        return CDN_SUPPORTED_PIPELINES.contains(pipeline);
     }
 
     public boolean isNotFound() {
