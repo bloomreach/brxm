@@ -65,18 +65,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         this.rewriteContextResolver = rewriteContextResolver;
     }
 
-    /**
-     * @deprecated since 2.30.00 (CMS 10.0). If a cdn host is required, this needs to be configured on hst:virtualhost nodes
-     */
-    @Deprecated
-    public void setBinariesPrefix(String binariesPrefix){
-        if (StringUtils.isNotBlank(binariesPrefix)) {
-          log.warn("hst-config.properties property 'binaries.prefix.path' is not used any more. Ignoring configured value '{}'." +
-                  " If you configured a cdn host in the binaries prefix, you have to configure that now on a hst:virtualhost " +
-                  "or hst:mount configuration node through property '{}'.", binariesPrefix, VIRTUALHOST_PROPERTY_CDN_HOST);
-        }
-    }
-    
     public void setBinaryLocations(String[] binaryLocations) {
         if (binaryLocations == null) {
             this.binaryLocations = null;

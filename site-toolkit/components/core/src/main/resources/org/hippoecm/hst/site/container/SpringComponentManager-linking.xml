@@ -30,7 +30,6 @@
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
         class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
     <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
-    <property name="binariesPrefix" value="${binaries.prefix.path}"/>
     <property name="binaryLocations" ref="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations"/>
     <property name="rewriteContextResolver" ref="org.hippoecm.hst.core.linking.RewriteContextResolver"/>
     <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
