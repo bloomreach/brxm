@@ -1,6 +1,0 @@
-* text=auto !eol
-/LICENSE -text
-/NOTICE -text
-/pom.xml svneol=native#text/plain
-src/test/resources/org/onehippo/cms7/services/contenttype/nt-file.json -text
-src/test/resources/org/onehippo/cms7/services/contenttype/testNode.json -text
