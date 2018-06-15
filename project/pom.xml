@@ -1003,7 +1003,6 @@
                 <exclude>**/*.properties</exclude>
                 <exclude>**/*.yaml</exclude>
                 <exclude>**/*.bin</exclude>
-                <exclude>**/hippoecm-extension.xml</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>**/README.md</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
