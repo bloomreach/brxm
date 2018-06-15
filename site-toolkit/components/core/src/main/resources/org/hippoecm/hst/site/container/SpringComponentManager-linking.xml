@@ -55,7 +55,6 @@
               <property name="sourceList">
                 <list>
                     <bean class="org.hippoecm.hst.core.linking.resolvers.HippoResourceLocationResolver">
-                      <property name="binariesPrefix" value="${binaries.prefix.path}"/>
                       <property name="binaryLocations" ref="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations"/>
                       <property name="resourceContainers" ref="org.hippoecm.hst.core.linking.ResourceContainer.list"/>
                     </bean>
