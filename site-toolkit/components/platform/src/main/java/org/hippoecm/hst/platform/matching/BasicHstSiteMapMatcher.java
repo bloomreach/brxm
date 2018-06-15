@@ -28,7 +28,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkImpl;
+import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;

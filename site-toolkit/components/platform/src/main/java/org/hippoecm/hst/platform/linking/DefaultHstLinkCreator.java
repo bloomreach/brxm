@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking;
+package org.hippoecm.hst.platform.linking;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,12 +27,21 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.linking.HstLinkProcessor;
+import org.hippoecm.hst.core.linking.LocationMapTree;
+import org.hippoecm.hst.core.linking.LocationResolver;
+import org.hippoecm.hst.core.linking.ResourceContainer;
+import org.hippoecm.hst.core.linking.ResourceLocationResolver;
+import org.hippoecm.hst.core.linking.RewriteContext;
+import org.hippoecm.hst.core.linking.RewriteContextException;
+import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstSiteMapUtils;
@@ -42,8 +51,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
 
 public class DefaultHstLinkCreator implements HstLinkCreator {
 
@@ -61,10 +68,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private RewriteContextResolver rewriteContextResolver;
 
+    // TODO HSTTWO-4355 inject from website webapp
     public void setRewriteContextResolver(RewriteContextResolver rewriteContextResolver) {
         this.rewriteContextResolver = rewriteContextResolver;
     }
 
+    // TODO HSTTWO-4355 inject from website webapp
     public void setBinaryLocations(String[] binaryLocations) {
         if (binaryLocations == null) {
             this.binaryLocations = null;
@@ -73,11 +82,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             System.arraycopy(binaryLocations, 0, this.binaryLocations, 0, binaryLocations.length);
         }
     }
-    
+
+    // TODO HSTTWO-4355 inject from website webapp
     public void setLinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
-    
+
+
+    // TODO HSTTWO-4355 inject from website webapp
     public void setLocationResolvers(List<LocationResolver> locationResolvers){
         this.locationResolvers = locationResolvers;
     }
@@ -85,7 +97,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     public List<LocationResolver> getLocationResolvers(){
         return this.locationResolvers;
     }
-    
+
+
+    // TODO HSTTWO-4355 inject from website webapp
     public void setPageNotFoundPath(String pageNotFoundPath){
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
@@ -395,7 +409,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
 
     private RewriteContext createRewriteContext(final Node node, final Mount mount,
-                              final ResolverProperties resolverProperties) throws RepositoryException, RewriteContextException {
+                                                final ResolverProperties resolverProperties) throws RepositoryException, RewriteContextException {
 
         if (rewriteContextResolver == null) {
             new RewriteContext(node.getPath(), mount, resolverProperties.canonicalLink, resolverProperties.navigationStateful);

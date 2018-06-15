@@ -46,8 +46,8 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.platform.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
-import org.hippoecm.hst.core.linking.LocationMapTreeComponentDocuments;
-import org.hippoecm.hst.core.linking.LocationMapTreeSiteMap;
+import org.hippoecm.hst.platform.linking.LocationMapTreeComponentDocuments;
+import org.hippoecm.hst.platform.linking.LocationMapTreeSiteMap;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;

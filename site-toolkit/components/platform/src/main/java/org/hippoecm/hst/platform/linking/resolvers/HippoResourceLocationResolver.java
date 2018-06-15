@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking.resolvers;
+package org.hippoecm.hst.platform.linking.resolvers;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkImpl;
+import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
-import static org.hippoecm.hst.core.linking.DefaultHstLinkCreator.BINARIES_PREFIX;
+import static org.hippoecm.hst.platform.linking.DefaultHstLinkCreator.BINARIES_PREFIX;
 
 public class HippoResourceLocationResolver implements ResourceLocationResolver {
     

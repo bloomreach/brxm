@@ -13,23 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking;
+package org.hippoecm.hst.platform.linking;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.linking.RewriteContext;
+import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class DefaultRewriteContextResolver implements RewriteContextResolver {
 
     @Override
     public RewriteContext resolve(final Node node,
-                          final Mount mount,
-                          final HstRequestContext context,
-                          final boolean canonical,
-                          final boolean navigationStateful) {
+                                  final Mount mount,
+                                  final HstRequestContext context,
+                                  final boolean canonical,
+                                  final boolean navigationStateful) {
         try {
            return new RewriteContext(node.getPath(), mount, canonical, navigationStateful);
         } catch (RepositoryException e) {

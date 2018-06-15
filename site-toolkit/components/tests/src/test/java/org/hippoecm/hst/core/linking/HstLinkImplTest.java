@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.PathEncoder;
+import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.junit.Before;
 import org.junit.Test;
 

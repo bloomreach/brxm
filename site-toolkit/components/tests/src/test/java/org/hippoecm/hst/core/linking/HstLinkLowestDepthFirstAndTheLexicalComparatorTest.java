@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
+import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

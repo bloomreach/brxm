@@ -31,7 +31,6 @@ import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;

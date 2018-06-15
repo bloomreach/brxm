@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking;
+package org.hippoecm.hst.platform.linking;
 
 import java.io.Serializable;
 
@@ -33,7 +33,7 @@ public interface ResolvedLocationMapTreeItem extends Serializable {
     HstSiteMapItem getSiteMapItem();
 
     /**
-     * @return <code>true</code> when the {@link org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem} is a representation
+     * @return <code>true</code> when the {@link ResolvedLocationMapTreeItem} is a representation
      * of a document
      */
     boolean representsDocument();

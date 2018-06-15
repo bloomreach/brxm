@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking;
+package org.hippoecm.hst.platform.linking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,9 +24,11 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.core.linking.LocationMapTree;
+import org.hippoecm.hst.core.linking.LocationMapTreeItem;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
