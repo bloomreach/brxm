@@ -23,15 +23,11 @@ public interface HippoNodeType {
 
     public static final String CONFIGURATION_PATH = "hippo:configuration";
 
-    public static final String DOCUMENTS_PATH = "hippo:documents";
-
     public static final String DOMAINS_PATH = "hippo:domains";
 
     public static final String FRONTEND_PATH = "hippo:frontend";
 
     public static final String GROUPS_PATH = "hippo:groups";
-
-    public static final String INITIALIZE_PATH = "hippo:initialize";
 
     public static final String MODULES_PATH = "hippo:modules";
 
@@ -121,10 +117,6 @@ public interface HippoNodeType {
 
     public static final String NT_IMPLEMENTATION = "hipposys:implementation";
 
-    public static final String NT_INITIALIZEFOLDER = "hippo:initializefolder";
-
-    public static final String NT_INITIALIZEITEM = "hipposys:initializeitem";
-
     public static final String NT_MIRROR = "hippo:mirror";
 
     public static final String NT_MOUNT = "hippo:mount";
@@ -208,27 +200,11 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CASCADEVALIDATION = "hipposysedit:cascadevalidation";
 
-    public static final String HIPPO_CLASS = "hippo:class";
-
     public static final String HIPPO_CLASSNAME = "hipposys:classname";
 
     public static final String HIPPO_PASSWORDMAXAGEDAYS = "hipposys:passwordmaxagedays";
 
-    public static final String HIPPO_CONTENT = "hippo:content";
-
-    public static final String HIPPO_CONTENTRESOURCE = "hippo:contentresource";
-
-    public static final String HIPPO_CONTENTROOT = "hippo:contentroot";
-
-    public static final String HIPPO_CONTEXTPATHS = "hippo:contextpaths";
-
-    public static final String HIPPO_CHANGERECORD = "hippo:changerecord";
-
     public static final String HIPPO_CONFIG = "hipposys:config";
-
-    public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
-
-    public static final String HIPPO_CONTENTPROPDELETE = "hippo:contentpropdelete";
 
     public static final String HIPPO_COUNT = "hippo:count";
 
@@ -253,18 +229,6 @@ public interface HippoNodeType {
     public static final String HIPPO_EQUALS = "hipposys:equals";
 
     public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";
-
-    public static final String HIPPO_EXTENSIONSOURCE = "hipposys:extensionsource";
-
-   /**
-     * @deprecated
-     */
-   @Deprecated
-    public static final String HIPPO_EXTENSIONBUILD = "hipposys:extensionbuild";
-
-    public static final String HIPPO_EXTENSIONVERSION = "hipposys:extensionversion";
-
-    public static final String HIPPO_RELOADONSTARTUP = "hippo:reloadonstartup";
 
     public static final String HIPPO_FACET = "hipposys:facet";
 
@@ -310,19 +274,11 @@ public interface HippoNodeType {
 
     public static final String HIPPO_MULTIPLE = "hipposysedit:multiple";
 
-    public static final String HIPPO_NAMESPACE = "hippo:namespace";
-
     public static final String HIPPO_NODE = "hipposysedit:node";
 
     public static final String HIPPOSYS_NODETYPE = "hipposys:nodetype";
 
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
-
-    public static final String HIPPO_NODETYPE = "hippo:nodetype";
-
-    public static final String HIPPO_NODETYPES = "hippo:nodetypes";
-
-    public static final String HIPPO_NODETYPESRESOURCE = "hippo:nodetypesresource";
 
     public static final String HIPPO_ORDERED = "hipposysedit:ordered";
 
@@ -374,8 +330,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_SEARCH = "hipposys:search";
 
-    public static final String HIPPO_SEQUENCE = "hippo:sequence";
-
     public static final String HIPPOSYS_SUBTYPE = "hipposys:subtype";
 
     public static final String HIPPO_SUPERTYPE = "hipposysedit:supertype";
@@ -405,8 +359,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_UUID = "hippo:uuid";
 
-    public static final String HIPPO_VERSION = "hippo:version";
-
     public static final String HIPPO_VALIDATORS = "hipposysedit:validators";
 
     public static final String HIPPO_VALUE = "hippo:value";
@@ -414,30 +366,6 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_VALUE = "hipposys:value";
 
     public static final String HIPPO_VALUES = "hippo:values";
-
-    public static final String HIPPO_WEB_FILE_BUNDLE = "hippo:webfilebundle";
-
-    public static final String HIPPO_RESOURCEBUNDLES = "hippo:resourcebundles";
-
-    public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
-
-    public static final String HIPPO_CONTENTPROPADD = "hippo:contentpropadd";
-
-    public static final String HIPPO_STATUS = "hippo:status";
-
-    public static final String HIPPO_ERRORMESSAGE = "hippo:errormessage";
-
-    public static final String HIPPO_UPSTREAMITEMS = "hippo:upstreamitems";
-
-    /** @deprecated replaced by {@link #HIPPO_LASTPROCESSEDTIME} */
-    @Deprecated
-    public static final String HIPPO_TIMESTAMP = "hippo:timestamp";
-
-    public static final String HIPPO_LASTPROCESSEDTIME = "hippo:lastprocessedtime";
-
-    /** @deprecated replaced by {@link #HIPPO_CONTEXTPATHS} */
-    @Deprecated
-    public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
     public static final String HIPPOSYS_DESCRIPTION = "hipposys:description";
 
@@ -488,8 +416,6 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
 
     public static final String HIPPOSYS_LOGLEVEL = "hipposys:loglevel";
-
-    public static final String HIPPOSYS_DELTADIRECTIVE = "hipposys:deltadirective";
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
 

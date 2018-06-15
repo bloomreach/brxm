@@ -19,8 +19,7 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0.5'>
 
-// BOOTSTRAP
-
+// obsolete
 [hipposys:initializeitem] > hippo:initializeitem
 - hipposys:extensionsource (string)
 - hipposys:extensionbuild (long) // deprecated
@@ -245,8 +244,7 @@
 
 [hipposys:module] > nt:base
 - hipposys:className (string)
-// deprecated and unused : do not use
-- hipposys:executed (date)
+- hipposys:executed (date) // obsolete
 - hipposys:cmsonly (boolean)
 + hippo:moduleconfig
 
@@ -306,7 +304,7 @@
 [hipposys:configuration] > nt:base
 + hippo:workflows (hipposys:workflowfolder) = hipposys:workflowfolder mandatory
 + hippo:documents (hipposys:ocmqueryfolder) = hipposys:ocmqueryfolder // deprecated
-+ hippo:initialize (hippo:initializefolder) = hippo:initializefolder
++ hippo:initialize (hippo:initializefolder) = hippo:initializefolder // obsolete
 + hippo:temporary (hipposys:temporaryfolder) = hipposys:temporaryfolder autocreated
 + hippo:users (hipposys:userfolder) = hipposys:userfolder
 + hippo:roles (hipposys:rolefolder) = hipposys:rolefolder

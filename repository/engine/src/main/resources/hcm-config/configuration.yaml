@@ -105,9 +105,6 @@ definitions:
           hipposys:roles: [editor]
       /hippo:frontend:
         jcr:primaryType: hipposys:applicationfolder
-      /hippo:initialize:
-        jcr:primaryType: hippo:initializefolder
-        hippo:version: []
       /hippo:modules:
         jcr:primaryType: hipposys:modulefolder
         jcr:lockOwner:

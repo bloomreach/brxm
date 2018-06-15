@@ -124,8 +124,7 @@
 // obsolete
 [hippo:lock] > nt:base, mix:lockable, hippo:lockable
 
-// BOOTSTRAP
-
+// obsolete
 [hippo:initializeitem] > nt:base
 - hippo:sequence (double)
 - hippo:namespace (string)
@@ -151,11 +150,11 @@
 - hippo:resourcebundles (string)
 - hippo:changerecord (string)
 
+// obsolete
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // deprecated, no replacement
 - hippo:sequence (double) // deprecated, no replacement
 + * (hippo:initializeitem) = hippo:initializeitem
-// obsolete
 + hippo:lock (hippo:lock) = hippo:lock
 
 [hippo:deleted] > hippo:document, mix:versionable
