@@ -34,7 +34,6 @@
   </Appenders>
   <Loggers>
 
-    <Logger name="org.onehippo.cm.migration" level="debug"/>
     <Logger name="org.onehippo.cm.model.parser.AbstractBaseParser" level="info"/>
     <Logger name="org.onehippo.cm.model.impl.ConfigurationModelImpl" level="warn"/>
 

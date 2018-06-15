@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="restuser">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:role</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:privileges" sv:type="String">
-    <sv:value>hippo:rest</sv:value>
-  </sv:property>
-</sv:node>
