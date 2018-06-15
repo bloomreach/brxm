@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURLImpl;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.linking.HstLinkImpl;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
@@ -39,6 +37,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 
+import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isNull;
@@ -75,14 +75,10 @@ public class TestHstLinkTag {
         linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
         mockHstRequestContext.setLinkCreator(linkCreator);
 
-        hstLink = new HstLinkImpl(testPath, null) {
-            @Override
-            public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
-                return StringUtils.substringBefore(testPath, "?");
-            }
-        };
-        // expect call for /css/style.css with the query string!
+        hstLink = EasyMock.createNiceMock(HstLink.class);
 
+        expect(hstLink.toUrlForm(anyObject(), anyBoolean())).andStubReturn(StringUtils.substringBefore(testPath, "?"));
+        replay(hstLink);
 
         pageContext = new MockPageContext(servletContext, request, response);
         linkTag = new HstLinkTag();
