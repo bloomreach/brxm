@@ -113,7 +113,6 @@
   </dependencyManagement>
 
   <modules>
-    <module>yaml-converter</module>
     <module>tooling</module>
     <module>test</module>
     <module>maven-plugin</module>
