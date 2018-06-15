@@ -46,6 +46,8 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
@@ -140,14 +142,6 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
-    }
-
-    public HstLinkCreator getLinkCreator(){
-        return this.linkCreator;
-    }
-
-    public void setLinkCreator(HstLinkCreator linkCreator) {
-        this.linkCreator = linkCreator;
     }
 
     public void setSiteMenusManager(HstSiteMenusManager siteMenusManager) {
