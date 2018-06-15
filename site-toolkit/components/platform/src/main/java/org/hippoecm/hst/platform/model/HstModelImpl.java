@@ -44,17 +44,18 @@ import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
 
 public class HstModelImpl implements HstModel {
 
+    private final ComponentManager websiteComponentManager;
+    private final ContainerConfiguration websiteContainerConfiguration;
     private final VirtualHosts virtualHosts;
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
     private final DefaultHstLinkCreator hstLinkCreator;
-    private ComponentManager websiteComponentManager;
 
     public HstModelImpl(final String contextPath, final ComponentManager websiteComponentManager, final HstNodeLoadingCache hstNodeLoadingCache, final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         this.websiteComponentManager = websiteComponentManager;
+        websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
 
-        final ContainerConfiguration containerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
+        virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
 
-        virtualHosts = new VirtualHostsService(contextPath, hstNodeLoadingCache, hstConfigurationLoadingCache);
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
         configureSiteMapMatcher();
 
@@ -102,7 +103,8 @@ public class HstModelImpl implements HstModel {
     private void configureHstLinkCreator() {
         final List<String> binaryLocations = websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".binaryLocations");
         hstLinkCreator.setBinaryLocations(binaryLocations.toArray(new String[binaryLocations.size()]));
-        hstLinkCreator.setPageNotFoundPath(websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".pageNotFoundPath"));
+
+        hstLinkCreator.setPageNotFoundPath(websiteContainerConfiguration.getString("linkrewriting.failed.path", DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH));
 
         hstLinkCreator.setRewriteContextResolver(getRewriteContextResolver(websiteComponentManager));
 

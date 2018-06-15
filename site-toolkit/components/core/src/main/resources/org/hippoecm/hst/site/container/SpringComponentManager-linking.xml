@@ -27,11 +27,6 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.pageNotFoundPath" class="java.lang.String">
-    <constructor-arg value="${linkrewriting.failed.path}"/>
-  </bean>
-
-
   <!--  End projects can inject a custom  RewriteContextResolver used in the platform webapp -->
   <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver" abstract="true"/>
 

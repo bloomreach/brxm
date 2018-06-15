@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
@@ -180,7 +180,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private final Map<String, Blueprint> blueprints = new HashMap<>();
     private boolean bluePrintsPrototypeChecked;
 
-    public VirtualHostsService(final String contextPath, final HstNodeLoadingCache hstNodeLoadingCache,
+    public VirtualHostsService(final String contextPath, final ContainerConfiguration websiteContainerConfiguration, final HstNodeLoadingCache hstNodeLoadingCache,
                                final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         long start = System.currentTimeMillis();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
@@ -213,17 +213,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         String[] ips = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
         Collections.addAll(diagnosticsForIps, ips);
-        if(cmsPreviewPrefix == null) {
-            // there is no explicit cms preview prefix configured. Take the default one from the hstManager
+        if (cmsPreviewPrefix == null) {
+            // there is no explicit cms preview prefix configured. Take the default one from the website container configuration
+            cmsPreviewPrefix = websiteContainerConfiguration.getString("cms.default.cmspreviewprefix", StringUtils.EMPTY);
 
-
-            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!! REMOVE IT FROM HERE
-            // cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
-//            if(cmsPreviewPrefix == null) {
-//                cmsPreviewPrefix = StringUtils.EMPTY;
-//            }
-
-            cmsPreviewPrefix = StringUtils.EMPTY;
         }
         if(StringUtils.isEmpty(cmsPreviewPrefix)) {
             log.info("cmsPreviewPrefix property '{}' on hst:hosts is configured to be empty. This means that when " +
@@ -296,11 +289,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             int statusCode = (int)vHostConfValueProvider.getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
-            if (ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(statusCode)) {
+            if (isSupportedSchemeNotMatchingResponseCode(statusCode)) {
                 schemeNotMatchingResponseCode = statusCode;
             } else {
                 log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                        vHostConfValueProvider.getPath(), ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString()});
+                        vHostConfValueProvider.getPath(), supportedSchemeNotMatchingResponseCodesAsString()});
             }
         }
 

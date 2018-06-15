@@ -56,7 +56,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultHstLinkCreator.class);
 
-    private static final String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
+    public static final String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
     public static final String BINARIES_PREFIX = "/binaries";
     public static final String BINARIES_START_PATH = "binaries/";
     private String[] binaryLocations;

@@ -164,7 +164,6 @@ public interface VirtualHosts {
      * @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
      * to be empty, it will be ""
      */
-    // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
      String getCmsPreviewPrefix();
 
      /**
