@@ -214,7 +214,7 @@ public class HstSiteService implements HstSite {
             ch.setLocale(mountSiteMapConfiguration.getLocale());
             ch.setMountId(mount.getIdentifier());
             ch.setMountPath(mountPath);
-            ch.setContextPath(mountSiteMapConfiguration.getMountContextPath());
+            ch.setContextPath(mountSiteMapConfiguration.getContextPath());
 
             // do not fetch the sitemap id via #getSiteMap() because that part should be invoked lazily
             CompositeConfigurationNode siteMapNode = findSiteMapNode();
@@ -469,7 +469,7 @@ public class HstSiteService implements HstSite {
             }
             locationMapTreeComponentDocuments = new LocationMapTreeComponentDocuments(getSiteMap().getSiteMapItems(),
                     getComponentsConfiguration(), mountSiteMapConfiguration.getMountContentPath(),
-                    mountSiteMapConfiguration.getMountContextPath());
+                    mountSiteMapConfiguration.getContextPath());
             return locationMapTreeComponentDocuments;
         }
     }

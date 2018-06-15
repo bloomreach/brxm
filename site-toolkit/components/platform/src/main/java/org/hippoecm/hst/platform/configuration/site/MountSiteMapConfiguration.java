@@ -48,7 +48,7 @@ public class MountSiteMapConfiguration {
     private final String[] defaultResourceBundleIds;
     private int hashCode;
     private final String mountContentPath;
-    private final String mountContextPath;
+    private final String contextPath;
     private final Map<String, String> responseHeaders;
 
     public MountSiteMapConfiguration(Mount mount) {
@@ -64,7 +64,7 @@ public class MountSiteMapConfiguration {
         defaultResourceBundleIds = mount.getDefaultResourceBundleIds();
         hashCode = computeHashCode();
         mountContentPath = mount.getContentPath();
-        mountContextPath = mount.getContextPath();
+        contextPath = mount.getContextPath();
         responseHeaders = mount.getResponseHeaders();
     }
 
@@ -112,8 +112,8 @@ public class MountSiteMapConfiguration {
         return mountContentPath;
     }
 
-    public String getMountContextPath() {
-        return mountContextPath;
+    public String getContextPath() {
+        return contextPath;
     }
 
     public Map<String, String> getResponseHeaders() {
@@ -164,7 +164,7 @@ public class MountSiteMapConfiguration {
         if (mountContentPath != null ? !mountContentPath.equals(that.mountContentPath) : that.mountContentPath != null) {
             return false;
         }
-        if (mountContextPath != null ? !mountContextPath.equals(that.mountContextPath) : that.mountContextPath != null) {
+        if (contextPath != null ? !contextPath.equals(that.contextPath) : that.contextPath != null) {
             return false;
         }
         if (!Objects.equals(responseHeaders, that.responseHeaders)) {
@@ -190,7 +190,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + schemeNotMatchingResponseCode;
         result = 31 * result + (defaultResourceBundleIds != null ? Arrays.hashCode(defaultResourceBundleIds) : 0);
         result = 31 * result + (mountContentPath != null ? mountContentPath.hashCode() : 0);
-        result = 31 * result + (mountContextPath != null ? mountContextPath.hashCode() : 0);
+        result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
         result = 31 * result + (responseHeaders != null ? responseHeaders.hashCode() : 0);
         return result;
     }
