@@ -1,7 +1,0 @@
-* text=auto !eol
-/LICENSE -text
-/NOTICE -text
-package-app-dependencies/pom.xml svneol=native#text/plain
-package-cms-dependencies/pom.xml svneol=native#text/plain
-package-shared-dependencies/pom.xml -text
-/pom.xml svneol=native#text/plain
