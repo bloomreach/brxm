@@ -28,7 +28,7 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfigurationService;
+import org.hippoecm.hst.platform.configuration.sitemenu.HstSiteMenuConfigurationService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuRepresentation {

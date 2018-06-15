@@ -28,10 +28,10 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
+import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -108,7 +108,6 @@ public class AbstractPageComposerTest {
         createHstConfigBackup(session);
         listener = new HstConfigurationEventListener();
         listener.setHstEventsCollector(hstEventsCollector);
-        listener.setHstManager(hstManager);
         listener.setHstModelMutex(hstModelMutex);
         session.getWorkspace().getObservationManager().addEventListener(listener,
                 Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,

@@ -35,7 +35,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfigurationService;
+import org.hippoecm.hst.platform.configuration.sitemenu.HstSiteMenuConfigurationService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
