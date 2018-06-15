@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package org.onehippo.cms7.essentials.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -42,22 +45,46 @@ public class EssentialsCarouselComponent extends CommonComponent {
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
         final List<HippoDocument> items = getCarouselItems(paramInfo);
         request.setModel(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
+        final List<Integer> unconfiguredItemNumbers = getUnconfiguredItemNumbers(paramInfo);
+        request.setAttribute("freeItems", unconfiguredItemNumbers);
     }
 
     /**
-     * Populates a list of carousel documents
+     * Populates a list of carousel documents.
      *
      * @param componentInfo Carousel component annotation
      * @return list of documents to be populated
      */
     public List<HippoDocument> getCarouselItems(final EssentialsCarouselComponentInfo componentInfo) {
-        final List<HippoDocument> beans = new ArrayList<>();
-        addBeanForPath(componentInfo.getCarouselItem1(), beans);
-        addBeanForPath(componentInfo.getCarouselItem2(), beans);
-        addBeanForPath(componentInfo.getCarouselItem3(), beans);
-        addBeanForPath(componentInfo.getCarouselItem4(), beans);
-        addBeanForPath(componentInfo.getCarouselItem5(), beans);
-        addBeanForPath(componentInfo.getCarouselItem6(), beans);
-        return beans;
+        final List<String> carouselItemsStrings = getCarouselItemStrings(componentInfo);
+        return carouselItemsStrings.stream().map(c -> getHippoBeanForPath(c, HippoDocument.class)).collect(Collectors.toList());
+    }
+
+    /**
+     * Populates a list of items that are not yet configured.
+     * 
+     * @param componentInfo Carousel component annotation
+     * @return numbers of the items that are not yet configured
+     */
+    private List<Integer> getUnconfiguredItemNumbers(final EssentialsCarouselComponentInfo componentInfo) {
+        final List<String> carouselItems = getCarouselItemStrings(componentInfo);
+        return IntStream.rangeClosed(1, 6).filter(i -> StringUtils.isBlank(carouselItems.get(i - 1))).boxed().collect(Collectors.toList());
+    }
+
+    /**
+     * Put the six separate configured items in a List.
+     *
+     * @param componentInfo Carousel component annotation
+     * @return list of carousel item paths
+     */
+    private List<String> getCarouselItemStrings(final EssentialsCarouselComponentInfo componentInfo) {
+        final List<String> carouselItems = new ArrayList<>(6);
+        carouselItems.add(componentInfo.getCarouselItem1());
+        carouselItems.add(componentInfo.getCarouselItem2());
+        carouselItems.add(componentInfo.getCarouselItem3());
+        carouselItems.add(componentInfo.getCarouselItem4());
+        carouselItems.add(componentInfo.getCarouselItem5());
+        carouselItems.add(componentInfo.getCarouselItem6());
+        return carouselItems;        
     }
 }
