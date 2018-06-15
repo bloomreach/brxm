@@ -206,7 +206,6 @@
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/*.properties</exclude>
-                <exclude>**/hippoecm-extension.xml</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
