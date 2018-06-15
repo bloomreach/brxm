@@ -3,9 +3,7 @@ definitions:
     /polldata:
       .meta:residual-child-node-category: system
       jcr:primaryType: poll:polldata
-      jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
-      hippo:lockExpirationTime:
-        .meta:category: system
+      jcr:mixinTypes: ['mix:lockable']
       jcr:lockOwner:
         .meta:category: system
       jcr:lockIsDeep:
