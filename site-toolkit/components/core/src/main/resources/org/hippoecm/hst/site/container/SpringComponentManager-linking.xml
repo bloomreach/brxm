@@ -27,88 +27,13 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
-        class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
-    <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
-    <property name="binaryLocations" ref="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations"/>
-    <property name="rewriteContextResolver" ref="org.hippoecm.hst.core.linking.RewriteContextResolver"/>
-    <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
-    <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
-  </bean>
-
-  <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver"
-        class="org.hippoecm.hst.core.linking.DefaultRewriteContextResolver">
+  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.pageNotFoundPath" class="java.lang.String">
+    <constructor-arg value="${linkrewriting.failed.path}"/>
   </bean>
 
 
-
-  <bean id="org.hippoecm.hst.core.linking.locationResolvers"
-    class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <bean class="org.hippoecm.hst.core.linking.CompositeList">
-        <constructor-arg>
-          <list>
-          
-            <ref bean="customResourceResolvers"/>
-            
-            <bean class="org.springframework.beans.factory.config.ListFactoryBean">
-              <property name="sourceList">
-                <list>
-                    <bean class="org.hippoecm.hst.core.linking.resolvers.HippoResourceLocationResolver">
-                      <property name="binaryLocations" ref="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations"/>
-                      <property name="resourceContainers" ref="org.hippoecm.hst.core.linking.ResourceContainer.list"/>
-                    </bean>
-                </list>
-              </property>
-            </bean>
-          </list>
-        </constructor-arg>
-      </bean>
-    </property>
-  </bean>
-
-  <bean id="org.hippoecm.hst.core.linking.ResourceContainer.list" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <bean class="org.hippoecm.hst.core.linking.CompositeList">
-        <constructor-arg>
-          <list>
-            <ref bean="customResourceContainers"/>
-            <bean class="org.springframework.beans.factory.config.ListFactoryBean">
-              <property name="sourceList">
-                <list>
-                   <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryImageSetContainer">
-                      <property name="primaryItem" value="hippogallery:original"/>
-                      <property name="mappings">
-                        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
-                          <property name="sourceMap">
-                            <map key-type="java.lang.String" value-type="java.lang.String">
-                              <entry key="hippogallery:thumbnail" value="thumbnail"/>
-                            </map>
-                          </property>
-                        </bean>
-                      </property>
-                   </bean>
-                    <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryAssetSet">
-                      <property name="primaryItem" value="hippogallery:asset"/>
-                      <property name="mappings">
-                        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
-                          <property name="sourceMap">
-                            <map key-type="java.lang.String" value-type="java.lang.String">
-                            </map>
-                          </property>
-                        </bean>
-                      </property>
-                    </bean>
-                    <bean class="org.hippoecm.hst.core.linking.containers.DefaultResourceContainer"/>
-                </list>
-              </property>
-            </bean>
-          </list>
-        </constructor-arg>
-      </bean>
-    </property>
-  </bean>
-
+  <!--  End projects can define the below bean id to inject a custom RewriteContextResolver class -->
+  <!--<bean id="org.hippoecm.hst.core.linking.RewriteContextResolver" class="...."></bean>-->
 
   <!-- overridable -->
   <bean id="customResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean">

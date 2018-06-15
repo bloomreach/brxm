@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.platform.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -26,11 +28,24 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
+import org.hippoecm.hst.core.linking.LocationResolver;
+import org.hippoecm.hst.core.linking.ResourceContainer;
+import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
+import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
+import org.hippoecm.hst.platform.linking.containers.DefaultResourceContainer;
+import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
+import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
+import org.hippoecm.hst.platform.linking.resolvers.HippoResourceLocationResolver;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -126,7 +141,9 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             final HstModelImpl hstModel = hstModelSupplier.get();
 
             // Set the custom website webapp specific configurations for for example linkrewriting
-            hstModel.getHstSiteMapMatcherImpl().setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+            configureSiteMapMatcher(websiteComponentManager, hstModel);
+
+            configureHstLinkCreator(websiteComponentManager, hstModel);
 
             return hstModel;
         } finally {
@@ -134,6 +151,74 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
+    }
+
+    private void configureSiteMapMatcher(final ComponentManager websiteComponentManager, final HstModelImpl hstModel) {
+        hstModel.getHstSiteMapMatcherImpl().setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+    }
+
+    private void configureHstLinkCreator(final ComponentManager websiteComponentManager, final HstModelImpl hstModel) {
+        final DefaultHstLinkCreator hstLinkCreator = hstModel.getHstLinkCreatorImpl();
+        final String[] binaryLocations = websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".binaryLocations");
+        hstLinkCreator.setBinaryLocations(binaryLocations);
+        hstLinkCreator.setPageNotFoundPath(websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".pageNotFoundPath"));
+
+        // make sure to request by "String" instead of by Class since most of the time, there won't be a custom RewriteContextResolver
+        RewriteContextResolver rewriteContextResolver = websiteComponentManager.getComponent(RewriteContextResolver.class.getName());
+        if (rewriteContextResolver == null) {
+            rewriteContextResolver = new DefaultRewriteContextResolver();
+        }
+        hstLinkCreator.setRewriteContextResolver(rewriteContextResolver);
+
+        hstLinkCreator.setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+
+        final List<ResourceContainer> immutableResourceContainers = getImmutableResoureceContainers(websiteComponentManager);
+
+        final List<LocationResolver> immutableLocationResolvers =
+                getImmutableResoureceResolvers(websiteComponentManager, immutableResourceContainers, binaryLocations);
+
+        hstLinkCreator.setLocationResolvers(immutableLocationResolvers);
+    }
+
+    private List<LocationResolver> getImmutableResoureceResolvers(final ComponentManager websiteComponentManager,
+                                                                  final List<ResourceContainer> resourceContainers,
+                                                                  final String[] binaryLocations) {
+
+        List<LocationResolver> locationsResolvers = new ArrayList<>();
+        // the spring config id is customResourceResolvers instead of customLocationResolvers
+        List<LocationResolver> customLocationResolvers = websiteComponentManager.getComponent("customResourceResolvers");
+
+        locationsResolvers.addAll(customLocationResolvers);
+
+        final HippoResourceLocationResolver hippoResourceLocationResolver = new HippoResourceLocationResolver();
+        hippoResourceLocationResolver.setBinaryLocations(binaryLocations);
+        hippoResourceLocationResolver.setResourceContainers(resourceContainers);
+
+        locationsResolvers.add(hippoResourceLocationResolver);
+
+        return locationsResolvers;
+    }
+
+    private List<ResourceContainer> getImmutableResoureceContainers(final ComponentManager websiteComponentManager) {
+
+        List<ResourceContainer> resourceContainers = new ArrayList<>();
+        // first add the custom resourceContainers, after that the fallback built in resource containers
+        List<ResourceContainer> customResourceContainers = websiteComponentManager.getComponent("customResourceContainers");
+        resourceContainers.addAll(customResourceContainers);
+
+        final HippoGalleryImageSetContainer hippoGalleryImageSetContainer = new HippoGalleryImageSetContainer();
+        hippoGalleryImageSetContainer.setPrimaryItem("hippogallery:original");
+        hippoGalleryImageSetContainer.setMappings(ImmutableMap.of("hippogallery:thumbnail", "thumbnail"));
+
+        resourceContainers.add(hippoGalleryImageSetContainer);
+
+        final HippoGalleryAssetSet hippoGalleryAssetSet = new HippoGalleryAssetSet();
+        hippoGalleryAssetSet.setPrimaryItem("hippogallery:asset");
+        hippoGalleryAssetSet.setMappings(ImmutableMap.of());
+
+        resourceContainers.add(hippoGalleryAssetSet);
+        resourceContainers.add(new DefaultResourceContainer());
+        return ImmutableList.copyOf(resourceContainers);
     }
 
 }

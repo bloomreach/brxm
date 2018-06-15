@@ -32,9 +32,7 @@
     <constructor-arg ref="containerConfiguration" />
     <constructor-arg ref="org.hippoecm.hst.platform.HstModelProvider"/>
 
-    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
-    <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
     <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />

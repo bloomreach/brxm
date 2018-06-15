@@ -25,13 +25,12 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.model.HstModel;
 
 /**
  * HstRequestContextComponentImpl
@@ -47,7 +46,6 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     private boolean cachingObjectConverter;
     private ContentBeansTool contentBeansTool;
     private HstURLFactory urlFactory;
-    private HstLinkCreator linkCreator;
     private HstSiteMenusManager siteMenusManager;
     private HstQueryManagerFactory hstQueryManagerFactory;
     private List<HstComponentWindowFilter> componentWindowFilters;
@@ -66,8 +64,9 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
         rc.setContainerConfiguration(config);
         rc.setURLFactory(urlFactory);
-        rc.setLinkCreator(linkCreator);
-        rc.setSiteMapMatcher(hstModelProvider.getHstModel().getHstSiteMapMatcher());
+        final HstModel hstModel = hstModelProvider.getHstModel();
+        rc.setLinkCreator(hstModel.getHstLinkCreator());
+        rc.setSiteMapMatcher(hstModel.getHstSiteMapMatcher());
         rc.setHstSiteMenusManager(siteMenusManager);
         rc.setHstQueryManagerFactory(hstQueryManagerFactory);
         rc.setContentBeansTool(contentBeansTool);
@@ -83,10 +82,6 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
 
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
-    }
-
-    public void setLinkCreator(HstLinkCreator linkCreator) {
-        this.linkCreator = linkCreator;
     }
 
     public void setSiteMenusManager(HstSiteMenusManager siteMenusManager) {

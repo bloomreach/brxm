@@ -36,13 +36,11 @@
   <bean id="abstractValve" abstract="true"
         init-method="initialize" destroy-method="destroy">
     <property name="containerConfiguration" ref="containerConfiguration" />
-    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager" />
     <property name="requestContextComponent" ref="org.hippoecm.hst.core.internal.HstRequestContextComponent" />
     <property name="componentFactory" ref="org.hippoecm.hst.core.container.HstComponentFactory" />
     <property name="componentWindowFactory" ref="org.hippoecm.hst.core.container.HstComponentWindowFactory" />
     <property name="componentInvoker" ref="org.hippoecm.hst.core.container.HstComponentInvoker" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
-    <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
     <property name="defaultPageErrorHandler" ref="org.hippoecm.hst.core.container.PageErrorHandler" />

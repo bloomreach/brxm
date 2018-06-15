@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.model;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 
 public interface HstModel {
@@ -23,4 +24,6 @@ public interface HstModel {
     VirtualHosts getVirtualHosts();
 
     HstSiteMapMatcher getHstSiteMapMatcher();
+
+    HstLinkCreator getHstLinkCreator();
 }

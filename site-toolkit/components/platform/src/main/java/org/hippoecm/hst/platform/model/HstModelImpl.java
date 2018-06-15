@@ -16,20 +16,24 @@
 package org.hippoecm.hst.platform.model;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
 
 public class HstModelImpl implements HstModel {
 
     private final VirtualHosts virtualHosts;
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
+    private final DefaultHstLinkCreator hstLinkCreator;
 
     public HstModelImpl(final String contextPath, final HstNodeLoadingCache hstNodeLoadingCache, final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         virtualHosts = new VirtualHostsService(contextPath, hstNodeLoadingCache, hstConfigurationLoadingCache);
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
+        hstLinkCreator = new DefaultHstLinkCreator();
     }
 
     @Override
@@ -42,7 +46,17 @@ public class HstModelImpl implements HstModel {
         return hstSiteMapMatcher;
     }
 
+    @Override
+    public HstLinkCreator getHstLinkCreator() {
+        return hstLinkCreator;
+    }
+
+    // internal package accessor only
     BasicHstSiteMapMatcher getHstSiteMapMatcherImpl() {
         return hstSiteMapMatcher;
+    }
+
+    DefaultHstLinkCreator getHstLinkCreatorImpl() {
+        return hstLinkCreator;
     }
 }
