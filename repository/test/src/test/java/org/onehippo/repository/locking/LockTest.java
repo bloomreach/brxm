@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,25 +30,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
-/**
- * JCR locking is deprecated, use {@link org.onehippo.cms7.services.lock.LockManager} instead. Creating a (cluster wide)
- * lock with {@link org.onehippo.cms7.services.lock.LockManager} can be achieved as follows:
- * <code>
- *     <pre>
- *        final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
- *        try {
- *            lockManager.lock(key);
- *            // do locked work
- *        } catch (LockException e) {
- *            log.info("{} already locked", key);
- *        } finally {
- *            lockManager.unlock(key);
- *        }
- *     </pre>
- * </code>
- * @deprecated since 5.0.3
- */
-@Deprecated
 public class LockTest extends RepositoryTestCase {
 
     private LockManager lockManager;
@@ -79,37 +60,6 @@ public class LockTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testLockContainsHippoExpirationTimeout() throws Exception {
-        session.getWorkspace().getLockManager().lock("/test", false, false, 2l, null);
-        assertTrue(session.propertyExists("/test/hippo:lockExpirationTime"));
-    }
-
-    @Test
-    public void testLockDoesNotContainHippoTimeout() throws Exception {
-        session.getWorkspace().getLockManager().lock("/test", false, false, Long.MAX_VALUE, null);
-        assertFalse(session.propertyExists("/test/hippo:timeout"));
-    }
-
-    @Test
-    public void testExpireLockFailsBeforeTimeout() throws Exception {
-        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
-        lockManager.lock("/test", false, false, Long.MAX_VALUE, null);
-        assertFalse(lockManager.expireLock("/test"));
-    }
-
-    @Test
-    public void testExpireLockSucceedsAfterTimeout() throws Exception {
-        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
-        lockManager.lock("/test", false, false, 2l, null);
-        Thread.sleep(1000l);
-        // refresh on the underlying lock so that hippo:timeout is not updated
-        // but the lock is not released by jackrabbit internally
-        LockManagerDecorator.unwrap(lockManager).getLock("/test").refresh();
-        Thread.sleep(1001l);
-        assertTrue(lockManager.expireLock("/test"));
-    }
-
-    @Test
     public void testLockSucceedsAfterTimeout() throws Exception {
         final LockManager lockManager = session.getWorkspace().getLockManager();
         lockManager.lock("/test", false, false, 2l, null);
@@ -122,36 +72,6 @@ public class LockTest extends RepositoryTestCase {
         final LockManager anonLockManager = anonSession.getWorkspace().getLockManager();
         anonLockManager.lock("/test", false, false, Long.MAX_VALUE, null);
         assertTrue(anonLockManager.isLocked("/test"));
-    }
-
-    @Test
-    public void testNodeLockUsesHippoLockManager() throws Exception {
-        assertTrue(session.getNode("/test").lock(false, false) instanceof HippoLock);
-    }
-
-    @Test
-    public void testLockKeepAliveKeepsLockAlive() throws Exception {
-        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
-        final HippoLock lock = lockManager.lock("/test", false, false, 10l, null);
-        lock.startKeepAlive();
-        Thread.sleep(10001l);
-        assertTrue(lock.isLive());
-        assertFalse(lockManager.expireLock("/test"));
-        lock.stopKeepAlive();
-        Thread.sleep(10001l);
-        assertTrue(lockManager.expireLock("/test"));
-        assertFalse(lock.isLive());
-    }
-
-    @Test
-    public void testLockKeepAliveReLocksDroppedLock() throws Exception {
-        final HippoLockManager lockManager = (HippoLockManager) session.getWorkspace().getLockManager();
-        final HippoLock lock = lockManager.lock("/test", false, false, 10l, null);
-        lock.startKeepAlive();
-        lockManager.unlock("/test");
-        Thread.sleep(3001l);
-        assertTrue(lockManager.isLocked("/test"));
-        lock.stopKeepAlive();
     }
 
     @Test

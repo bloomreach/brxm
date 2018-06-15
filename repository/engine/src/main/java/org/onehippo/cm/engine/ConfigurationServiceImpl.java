@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
@@ -470,7 +470,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 if (!isNamespaceRegistered(HCM_PREFIX)) {
                     session.getWorkspace().getNamespaceRegistry().registerNamespace(HCM_PREFIX, HCM_NAMESPACE);
                 }
-                if (!session.getWorkspace().getNodeTypeManager().hasNodeType(HIPPO_LOCK)) {
+                if (!session.getWorkspace().getNodeTypeManager().hasNodeType(NT_DOCUMENT)) {
                     try (InputStream is = getClass().getResourceAsStream("/" + HCM_CONFIG_FOLDER + "/hippo.cnd")) {
                         NodeTypeUtils.initializeNodeTypes(session, is, "hippo.cnd");
                     }

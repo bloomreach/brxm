@@ -2,9 +2,6 @@ definitions:
   config:
     /hippo:configuration/hippo:update:
       jcr:primaryType: hipposys:update
-      jcr:mixinTypes: ['hippo:lockable']
-      hippo:lockExpirationTime:
-        .meta:category: system
       jcr:lockOwner:
         .meta:category: system
       jcr:lockIsDeep:

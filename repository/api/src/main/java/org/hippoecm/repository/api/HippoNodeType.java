@@ -194,8 +194,6 @@ public interface HippoNodeType {
 
     public static final String NT_SKIPINDEX = "hippo:skipindex";
 
-    public static final String NT_LOCKABLE = "hippo:lockable";
-
     public static final String NT_NAMED = "hippo:named";
 
     public static final String NT_COMPOUND = "hippo:compound";
@@ -243,6 +241,7 @@ public interface HippoNodeType {
     /**
      * @deprecated since 3.0.1 with no substitute
      */
+    @Deprecated
     public static final String HIPPO_DISCRIMINATOR = "hippo:discriminator";
 
     public static final String HIPPO_DISPLAY = "hipposys:display";
@@ -253,11 +252,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_EQUALS = "hipposys:equals";
 
-    /**
-     * @deprecated since REPO 13.0.0
-     */
-    public static final String HIPPO_EXECUTED = "hipposys:executed";
-
     public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";
 
     public static final String HIPPO_EXTENSIONSOURCE = "hipposys:extensionsource";
@@ -265,6 +259,7 @@ public interface HippoNodeType {
    /**
      * @deprecated
      */
+   @Deprecated
     public static final String HIPPO_EXTENSIONBUILD = "hipposys:extensionbuild";
 
     public static final String HIPPO_EXTENSIONVERSION = "hipposys:extensionversion";
@@ -435,11 +430,13 @@ public interface HippoNodeType {
     public static final String HIPPO_UPSTREAMITEMS = "hippo:upstreamitems";
 
     /** @deprecated replaced by {@link #HIPPO_LASTPROCESSEDTIME} */
+    @Deprecated
     public static final String HIPPO_TIMESTAMP = "hippo:timestamp";
 
     public static final String HIPPO_LASTPROCESSEDTIME = "hippo:lastprocessedtime";
 
     /** @deprecated replaced by {@link #HIPPO_CONTEXTPATHS} */
+    @Deprecated
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
     public static final String HIPPOSYS_DESCRIPTION = "hipposys:description";
@@ -495,10 +492,6 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_DELTADIRECTIVE = "hipposys:deltadirective";
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
-
-    public static final String HIPPO_LOCKEXPIRATIONTIME = "hippo:lockExpirationTime";
-
-    public static final String HIPPO_LOCK = "hippo:lock";
 
     public static final String NT_RESOURCEBUNDLES = "hipposys:resourcebundles";
     public static final String NT_RESOURCEBUNDLE = "hipposys:resourcebundle";

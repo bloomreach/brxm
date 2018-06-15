@@ -6,7 +6,7 @@ definitions:
         jcr:primaryType: autoexport:config
         autoexport:enabled: true
         autoexport:modules: ['content:/']
-        autoexport:excluded: ['/**/hippo:lockExpirationTime', '/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
+        autoexport:excluded: ['/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
         autoexport:injectresidualchildnodecategory: []
         autoexport:overrideresidualchildnodecategory: []
         autoexport:filteruuidpaths: []

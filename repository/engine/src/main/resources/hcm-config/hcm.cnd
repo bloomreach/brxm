@@ -94,4 +94,5 @@
   + hcm:baseline (hcm:baseline)
   + hcm:content (hcm:content)
   + hcm:webbundles (hcm:webbundles)
+  // obsolete
   + hippo:lock (hippo:lock)

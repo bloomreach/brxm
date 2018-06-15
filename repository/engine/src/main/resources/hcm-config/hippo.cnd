@@ -117,9 +117,11 @@
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
+// obsolete
 [hippo:lockable] mixin
 - hippo:lockExpirationTime (date)
 
+// obsolete
 [hippo:lock] > nt:base, mix:lockable, hippo:lockable
 
 // BOOTSTRAP
@@ -153,6 +155,7 @@
 - hippo:version (string) multiple // deprecated, no replacement
 - hippo:sequence (double) // deprecated, no replacement
 + * (hippo:initializeitem) = hippo:initializeitem
+// obsolete
 + hippo:lock (hippo:lock) = hippo:lock
 
 [hippo:deleted] > hippo:document, mix:versionable

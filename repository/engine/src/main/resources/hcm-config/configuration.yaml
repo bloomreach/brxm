@@ -108,12 +108,8 @@ definitions:
       /hippo:initialize:
         jcr:primaryType: hippo:initializefolder
         hippo:version: []
-        /hippo:lock:
-          jcr:primaryType: hippo:lock
       /hippo:modules:
         jcr:primaryType: hipposys:modulefolder
-        hippo:lockExpirationTime:
-          .meta:category: system
         jcr:lockOwner:
           .meta:category: system
         jcr:lockIsDeep:
