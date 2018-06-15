@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;
+import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.custom.util.JsonTreeAnnotationsComparator;
 import org.junit.Before;

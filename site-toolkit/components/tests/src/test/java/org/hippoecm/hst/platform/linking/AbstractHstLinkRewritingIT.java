@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.linking;
+package org.hippoecm.hst.platform.linking;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -23,6 +23,7 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
 
