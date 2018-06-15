@@ -49,6 +49,7 @@ public abstract class BaseResource {
         this.channelManager = channelManager;
     }
 
+    // TODO HSTTWO-4355 needs to be done differently once the cms-rest module is moved to platform
     public void setChannelFilter(final Predicate<Channel> channelFilter) {
         this.channelFilter = channelFilter;
     }

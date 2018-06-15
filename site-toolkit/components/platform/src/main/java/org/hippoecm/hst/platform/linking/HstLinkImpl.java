@@ -577,7 +577,6 @@ public class HstLinkImpl implements HstLink {
                 }
             };
 
-            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
             ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(),
                     mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix(), requestContext.getResolvedMount().getPortNumber());
             resolvedHostForLink.setResolvedMount(resMount);

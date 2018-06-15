@@ -384,29 +384,29 @@
         </bean>
 
         <!-- Listens to changes in the host configuration. -->
-        <bean class="org.hippoecm.hst.platform.configuration.environment.OptionalEnvironmentEventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true"/>
-          <property name="nodeRemovedEnabled" value="true"/>
-          <property name="propertyAddedEnabled" value="true"/>
-          <property name="propertyChangedEnabled" value="true"/>
-          <property name="propertyRemovedEnabled" value="true"/>
-          <property name="deep" value="true"/>
-          <property name="uuids">
-            <null/>
-          </property>
-          <property name="nodeTypeNames">
-            <list>
-              <value>hst:virtualhostgroup</value>
-              <value>hst:virtualhost</value>
-            </list>
-          </property>
-          <property name="noLocal" value="false"/>
-          <property name="eventListener">
-            <bean parent="baseEventListener" class="org.hippoecm.hst.platform.configuration.environment.HostConfigListener">
-              <property name="hostConfigPublisher" ref="org.hippoecm.hst.configuration.environment.HostConfigPublisher"/>
-            </bean>
-          </property>
-        </bean>
+        <!--<bean class="org.hippoecm.hst.platform.configuration.environment.OptionalEnvironmentEventListenerItemImpl">-->
+          <!--<property name="nodeAddedEnabled" value="true"/>-->
+          <!--<property name="nodeRemovedEnabled" value="true"/>-->
+          <!--<property name="propertyAddedEnabled" value="true"/>-->
+          <!--<property name="propertyChangedEnabled" value="true"/>-->
+          <!--<property name="propertyRemovedEnabled" value="true"/>-->
+          <!--<property name="deep" value="true"/>-->
+          <!--<property name="uuids">-->
+            <!--<null/>-->
+          <!--</property>-->
+          <!--<property name="nodeTypeNames">-->
+            <!--<list>-->
+              <!--<value>hst:virtualhostgroup</value>-->
+              <!--<value>hst:virtualhost</value>-->
+            <!--</list>-->
+          <!--</property>-->
+          <!--<property name="noLocal" value="false"/>-->
+          <!--<property name="eventListener">-->
+            <!--<bean parent="baseEventListener" class="org.hippoecm.hst.platform.configuration.environment.HostConfigListener">-->
+              <!--<property name="hostConfigPublisher" ref="org.hippoecm.hst.configuration.environment.HostConfigPublisher"/>-->
+            <!--</bean>-->
+          <!--</property>-->
+        <!--</bean>-->
 
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>

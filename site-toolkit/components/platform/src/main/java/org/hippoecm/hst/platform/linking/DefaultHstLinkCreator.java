@@ -68,12 +68,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private RewriteContextResolver rewriteContextResolver;
 
-    // TODO HSTTWO-4355 inject from website webapp
     public void setRewriteContextResolver(RewriteContextResolver rewriteContextResolver) {
         this.rewriteContextResolver = rewriteContextResolver;
     }
 
-    // TODO HSTTWO-4355 inject from website webapp
     public void setBinaryLocations(String[] binaryLocations) {
         if (binaryLocations == null) {
             this.binaryLocations = null;
@@ -83,13 +81,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         }
     }
 
-    // TODO HSTTWO-4355 inject from website webapp
     public void setLinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
 
-
-    // TODO HSTTWO-4355 inject from website webapp
     public void setLocationResolvers(List<LocationResolver> locationResolvers){
         this.locationResolvers = locationResolvers;
     }
@@ -98,8 +93,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return this.locationResolvers;
     }
 
-
-    // TODO HSTTWO-4355 inject from website webapp
     public void setPageNotFoundPath(String pageNotFoundPath){
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }

@@ -42,6 +42,7 @@ import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
+import org.hippoecm.hst.platform.linking.HstLinkProcessorChain;
 import org.hippoecm.hst.platform.linking.containers.DefaultResourceContainer;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
@@ -123,6 +124,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     @Override
     public HstModel getHstModel(final String contextPath, final ComponentManager websiteComponentManager) {
+
         final Supplier<HstModelImpl> hstModelSupplier = modelSuppliers.get(contextPath);
 
         if (hstModelSupplier == null) {
@@ -142,10 +144,15 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
             // Set the custom website webapp specific configurations for for example linkrewriting
             configureSiteMapMatcher(websiteComponentManager, hstModel);
-
             configureHstLinkCreator(websiteComponentManager, hstModel);
 
+            // TODO
+            // TODO configureChannelManager(websiteComponentManager, hstModel);
+
             return hstModel;
+        } catch (Exception e) {
+           log.error("Exception loading model", e);
+           throw e;
         } finally {
             if (platformClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -154,28 +161,39 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     }
 
     private void configureSiteMapMatcher(final ComponentManager websiteComponentManager, final HstModelImpl hstModel) {
-        hstModel.getHstSiteMapMatcherImpl().setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+        hstModel.getHstSiteMapMatcherImpl().setLinkProcessor(getHstLinkProcessor(websiteComponentManager));
+    }
+
+    private HstLinkProcessor getHstLinkProcessor(final ComponentManager websiteComponentManager) {
+        HstLinkProcessor customLinkProcessor = websiteComponentManager.getComponent(HstLinkProcessor.class.getName());
+        if (customLinkProcessor != null) {
+            return customLinkProcessor;
+        }
+        return new HstLinkProcessorChain();
+    }
+
+    private RewriteContextResolver getRewriteContextResolver(final ComponentManager websiteComponentManager) {
+        final RewriteContextResolver customRewriteContextResolver = websiteComponentManager.getComponent(RewriteContextResolver.class.getName());
+        if (customRewriteContextResolver != null) {
+            return customRewriteContextResolver;
+        }
+        return new DefaultRewriteContextResolver();
     }
 
     private void configureHstLinkCreator(final ComponentManager websiteComponentManager, final HstModelImpl hstModel) {
         final DefaultHstLinkCreator hstLinkCreator = hstModel.getHstLinkCreatorImpl();
-        final String[] binaryLocations = websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".binaryLocations");
-        hstLinkCreator.setBinaryLocations(binaryLocations);
+        final List<String> binaryLocations = websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".binaryLocations");
+        hstLinkCreator.setBinaryLocations(binaryLocations.toArray(new String[binaryLocations.size()]));
         hstLinkCreator.setPageNotFoundPath(websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".pageNotFoundPath"));
 
-        // make sure to request by "String" instead of by Class since most of the time, there won't be a custom RewriteContextResolver
-        RewriteContextResolver rewriteContextResolver = websiteComponentManager.getComponent(RewriteContextResolver.class.getName());
-        if (rewriteContextResolver == null) {
-            rewriteContextResolver = new DefaultRewriteContextResolver();
-        }
-        hstLinkCreator.setRewriteContextResolver(rewriteContextResolver);
+        hstLinkCreator.setRewriteContextResolver(getRewriteContextResolver(websiteComponentManager));
 
-        hstLinkCreator.setLinkProcessor(websiteComponentManager.getComponent(HstLinkProcessor.class));
+        hstLinkCreator.setLinkProcessor(getHstLinkProcessor(websiteComponentManager));
 
         final List<ResourceContainer> immutableResourceContainers = getImmutableResoureceContainers(websiteComponentManager);
 
         final List<LocationResolver> immutableLocationResolvers =
-                getImmutableResoureceResolvers(websiteComponentManager, immutableResourceContainers, binaryLocations);
+                getImmutableResoureceResolvers(websiteComponentManager, immutableResourceContainers, binaryLocations.toArray(new String[binaryLocations.size()]));
 
         hstLinkCreator.setLocationResolvers(immutableLocationResolvers);
     }

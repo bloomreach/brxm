@@ -32,8 +32,8 @@
   </bean>
 
 
-  <!--  End projects can define the below bean id to inject a custom RewriteContextResolver class -->
-  <!--<bean id="org.hippoecm.hst.core.linking.RewriteContextResolver" class="...."></bean>-->
+  <!--  End projects can inject a custom  RewriteContextResolver used in the platform webapp -->
+  <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver" abstract="true"/>
 
   <!-- overridable -->
   <bean id="customResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean">

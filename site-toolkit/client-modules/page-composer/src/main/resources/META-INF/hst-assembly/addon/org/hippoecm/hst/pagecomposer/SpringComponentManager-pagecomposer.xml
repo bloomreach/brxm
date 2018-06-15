@@ -111,7 +111,8 @@
   </bean>
 
   <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
-    <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+    <!-- TODO HSTTWO-4355 page-composer should be part of platform only so see about this later -->
+    <!--<property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>-->
     <property name="validatorFactory" ref="validatiorFactory"/>
     <property name="hstConfigurationService" ref="hstConfigurationService"/>
   </bean>

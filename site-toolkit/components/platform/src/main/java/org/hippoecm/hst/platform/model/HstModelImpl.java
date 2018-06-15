@@ -59,4 +59,5 @@ public class HstModelImpl implements HstModel {
     DefaultHstLinkCreator getHstLinkCreatorImpl() {
         return hstLinkCreator;
     }
+
 }

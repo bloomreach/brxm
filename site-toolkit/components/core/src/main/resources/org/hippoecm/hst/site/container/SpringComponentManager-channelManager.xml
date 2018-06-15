@@ -18,27 +18,24 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean id="org.hippoecm.hst.configuration.channel.ChannelManager" class="org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl">
-    <property name="hstModelMutex" ref="hstModelMutex"/>
-    <property name="contentRoot" value="${channel.manager.contentRoot}"/>
-  </bean>
-
-  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
-    <constructor-arg>
-      <map>
-        <entry>
-          <key><value>org.springframework.context.event.ContextStartedEvent</value></key>
-          <list>
-            <bean class="org.springframework.beans.support.ArgumentConvertingMethodInvoker">
-              <property name="targetObject" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
-              <property name="targetMethod" value="addChannelManagerEventListeners" />
-              <property name="arguments" ref="allChannelManagerEventListeners" />
-            </bean>
-          </list>
-        </entry>
-      </map>
-    </constructor-arg>
-  </bean> 
+  <!-- TODO HSTTW-4355 Implement below in platform HstModelRegistryImpl since ChannelManagerImpl instantiation has moved
+       TODO over there -->
+  <!--<bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">-->
+    <!--<constructor-arg>-->
+      <!--<map>-->
+        <!--<entry>-->
+          <!--<key><value>org.springframework.context.event.ContextStartedEvent</value></key>-->
+          <!--<list>-->
+            <!--<bean class="org.springframework.beans.support.ArgumentConvertingMethodInvoker">-->
+              <!--<property name="targetObject" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />-->
+              <!--<property name="targetMethod" value="addChannelManagerEventListeners" />-->
+              <!--<property name="arguments" ref="allChannelManagerEventListeners" />-->
+            <!--</bean>-->
+          <!--</list>-->
+        <!--</entry>-->
+      <!--</map>-->
+    <!--</constructor-arg>-->
+  <!--</bean> -->
 
   <bean id="allChannelManagerEventListeners" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="java.util.List" />
