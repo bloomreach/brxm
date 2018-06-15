@@ -11,10 +11,8 @@ definitions:
         jcr:primaryType: hipposched:triggers
         /nightly:
           jcr:primaryType: hipposched:crontrigger
-          jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
+          jcr:mixinTypes: ['mix:lockable']
           hipposched:cronExpression: 0 0 2 * * ?
-          hippo:lockExpirationTime:
-            .meta:category: system
           hipposched:nextFireTime:
             .meta:category: system
           jcr:lockOwner:
