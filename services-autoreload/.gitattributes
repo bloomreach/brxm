@@ -1,6 +1,0 @@
-* text=auto !eol
-/LICENSE -text
-/NOTICE -text
-src/main/java/org/onehippo/cms7/services/autoreload/AutoReloadServiceModule.java -text
-src/main/resources/autoreload-service-module.xml -text
-src/main/resources/hippoecm-extension.xml -text
