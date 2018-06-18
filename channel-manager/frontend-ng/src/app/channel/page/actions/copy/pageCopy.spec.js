@@ -172,51 +172,62 @@ describe('PageCopyComponent', () => {
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_COPY_TITLE', { pageName: 'name' });
   });
 
-  it('initializes correctly when cross channel copy is enabled', () => {
-    $ctrl.$onInit();
-    $rootScope.$digest();
+  describe('cross channel copy', () => {
+    it('initializes with the current channel', () => {
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    // we're on channel B and channels A, B and C are available, select B
-    expect($ctrl.channels).toBe(channels);
-    expect($ctrl.channel).toBe(channels[1]);
-    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
-    expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountB']);
+      // we're on channel B and channels A, B and C are available, select B
+      expect($ctrl.channels).toBe(channels);
+      expect($ctrl.channel).toBe(channels[1]);
+      expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
+      expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountB']);
+    });
 
-    // we're on channel D and only channel A, B and C are available, select A
-    ChannelService.getId.and.returnValue('channelD');
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('initializes with the first available channel if current channel is not available', () => {
+      // we're on channel D and only channel A, B and C are available, select A
+      ChannelService.getId.and.returnValue('channelD');
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.channel).toBe(channels[0]);
-    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
-    expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountA']);
+      expect($ctrl.channel).toBe(channels[0]);
+      expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
+      expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountA']);
+    });
 
-    // we're on channel D and only channel C is available, select C
-    ChannelService.getPageModifiableChannels.and.returnValue([channels[2]]);
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('initializes with the only available channel if current channel is not available', () => {
+      // we're on channel D and only channel C is available, select C
+      ChannelService.getPageModifiableChannels.and.returnValue([channels[2]]);
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.channel).toBe(channels[2]);
-    expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
-    expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountC']);
+      expect($ctrl.channel).toBe(channels[2]);
+      expect($ctrl.isCrossChannelCopyAvailable).toBe(true);
+      expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual(['channelMountC']);
+    });
 
-    // we're on channel C and only channel C is available, no cross-channel copying available
-    ChannelService.getId.and.returnValue('channelC');
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('does not enable cross-channel copying if the current channel is the only available channel', () => {
+      // we're on channel C and only channel C is available, no cross-channel copying available
+      ChannelService.getPageModifiableChannels.and.returnValue([channels[2]]);
+      ChannelService.getId.and.returnValue('channelC');
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.channel).toBeUndefined();
-    expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
-    expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
+      expect($ctrl.channel).toBeUndefined();
+      expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
+      expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
+    });
 
-    // we're on channel C, but no channels are available, no cross-channel copying available
-    ChannelService.getPageModifiableChannels.and.returnValue([]);
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('does not enable cross-channel copying if no channels are available', () => {
+      // we're on channel C, but no channels are available, no cross-channel copying available
+      ChannelService.getPageModifiableChannels.and.returnValue([]);
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.channel).toBeUndefined();
-    expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
-    expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
+      expect($ctrl.channel).toBeUndefined();
+      expect($ctrl.isCrossChannelCopyAvailable).toBeFalsy();
+      expect(ChannelService.getNewPageModel.calls.mostRecent().args).toEqual([undefined]);
+    });
   });
 
   it('flashes a toast when the retrieval of the locations fails', () => {

@@ -136,50 +136,68 @@ describe('PagePropertiesComponent', () => {
     });
   });
 
-  it('initializes correctly', () => {
-    $ctrl.$onInit();
-    $rootScope.$digest();
+  describe('$onInit', () => {
+    it('initializes correctly', () => {
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_TITLE', { pageName: 'name' });
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE');
-    expect($ctrl.title).toBe('title');
-    expect($ctrl.availableDocuments.length).toBe(3);
-    expect($ctrl.availableDocuments[0].path).toBe('');
-    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
-    expect($ctrl.isAssigningNewTemplate).toBeFalsy();
-    expect(ChannelService.getNewPageModel).toHaveBeenCalled();
-    $rootScope.$digest();
+      expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_TITLE', { pageName: 'name' });
+      expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE');
+      expect($ctrl.title).toBe('title');
 
-    expect($ctrl.prototypes.length).toBe(2);
+      expect(ChannelService.getNewPageModel).toHaveBeenCalled();
+      expect($ctrl.isAssigningNewTemplate).toBeFalsy();
+      expect($ctrl.prototypes.length).toBe(2);
+    });
 
-    // try again with different document settings
-    siteMapItem.primaryDocumentRepresentation = { path: '/test/b' };
-    siteMapItem.availableDocumentRepresentations.shift();
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('adds empty document (NONE) as first option to availableDocuments', () => {
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[2]);
+      expect($ctrl.availableDocuments.length).toBe(3);
+      expect($ctrl.availableDocuments[0].path).toBe('');
+    });
 
-    siteMapItem.primaryDocumentRepresentation = { path: '/test/c' }; // no match, fallback to none-document
-    siteMapItem.availableDocumentRepresentations.shift();
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('selects the first available document as primary document if none is specified by "siteMapItem.primaryDocumentRepresentation"', () => {
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+      expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+    });
 
-    delete siteMapItem.availableDocumentRepresentations;
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('selects the empty document (NONE) as primary document if "availableDocumentRepresentations" is empty', () => {
+      siteMapItem.availableDocumentRepresentations = [];
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.availableDocuments.length).toBe(1);
-    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+      expect($ctrl.availableDocuments.length).toBe(1);
+      expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+    });
 
-    siteMapItem.availableDocumentRepresentations = [];
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('selects the empty document (NONE) as primary document if "availableDocumentRepresentations" is undefined', () => {
+      delete siteMapItem.availableDocumentRepresentations;
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.availableDocuments.length).toBe(1);
-    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+      expect($ctrl.availableDocuments.length).toBe(1);
+      expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+    });
+
+    it('selects the first available document as primary document if document specified by "siteMapItem.primaryDocumentRepresentation" is not available', () => {
+      siteMapItem.primaryDocumentRepresentation = { path: '/test/c' }; // no match, fallback to none-document
+      $ctrl.$onInit();
+      $rootScope.$digest();
+
+      expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+    });
+
+    it('selects the document specified by "siteMapItem.primaryDocumentRepresentation" as primary document', () => {
+      siteMapItem.primaryDocumentRepresentation = { path: '/test/b' };
+      $ctrl.$onInit();
+      $rootScope.$digest();
+
+      expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[2]);
+    });
   });
 
   it('flashes a toast when the retrieval of the templates fails', () => {
@@ -267,25 +285,29 @@ describe('PagePropertiesComponent', () => {
     expect($ctrl.onDone).not.toHaveBeenCalled();
   });
 
-  it('checks if the channel has prototypes available', () => {
-    $ctrl.$onInit();
-    $rootScope.$digest();
+  describe('hasPrototypes', () => {
+    it('returns true if one or more prototypes are returned by the page model', () => {
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.hasPrototypes()).toBe(true);
+      expect($ctrl.hasPrototypes()).toBe(true);
+    });
 
-    siteMapItem.availableDocumentRepresentations.shift();
-    ChannelService.getNewPageModel.and.returnValue($q.when({ prototypes: [] }));
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('returns false if zero prototypes are returned by the page model', () => {
+      ChannelService.getNewPageModel.and.returnValue($q.when({ prototypes: [] }));
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.hasPrototypes()).toBe(false);
+      expect($ctrl.hasPrototypes()).toBe(false);
+    });
 
-    siteMapItem.availableDocumentRepresentations.shift();
-    ChannelService.getNewPageModel.and.returnValue($q.reject());
-    $ctrl.$onInit();
-    $rootScope.$digest();
+    it('returns false if the channel service cannot create a new page model', () => {
+      ChannelService.getNewPageModel.and.returnValue($q.reject());
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
-    expect($ctrl.hasPrototypes()).toBe(false);
+      expect($ctrl.hasPrototypes()).toBe(false);
+    });
   });
 
   it('shows an alert dialog when assigning a new template to a page with container items', () => {
