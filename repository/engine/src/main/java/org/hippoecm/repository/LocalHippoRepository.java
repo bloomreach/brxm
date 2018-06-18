@@ -300,7 +300,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         log.info("LocalHippoRepository initialize configuration");
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
         final Session configurationServiceSession = SessionDecorator.newSessionDecorator(rootSession.impersonate(credentials));
-        migrateToV12IfNeeded(configurationServiceSession, false);
+        migrateToV13IfNeeded(configurationServiceSession, false);
 
         return new ConfigurationServiceImpl().start(configurationServiceSession,() -> start(rootSession));
     }
@@ -317,8 +317,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
     }
 
-    protected void migrateToV12IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
-        new MigrateToV12(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
+    protected void migrateToV13IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
+        new MigrateToV13(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
                 .migrateIfNeeded();
     }
 

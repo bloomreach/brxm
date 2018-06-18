@@ -40,13 +40,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(EasyMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 
-public class MigrateToV12Test {
+public class MigrateToV13Test {
 
     public static final String URL_REWRITER_SRC = "/content/urlrewriter";
     public static final String URL_REWRITER_DEST = "/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig";
     private Session session;
 
-    MigrateToV12 testedClass;
+    MigrateToV13 testedClass;
 
     @Before
     public void setUp() throws Exception {
@@ -62,13 +62,13 @@ public class MigrateToV12Test {
         expect(workspace.getNodeTypeManager()).andReturn(typeManager).once();
         replay(workspace);
 
-        testedClass = new MigrateToV12(session, registry, false);
+        testedClass = new MigrateToV13(session, registry, false);
     }
 
     @Test
     public void migrateUrlRewriter_nodes_do_not_exist() throws Exception {
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MigrateToV12.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MigrateToV13.class).build()) {
             testedClass.migrateUrlRewriter();
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     String.format("Source node %s does not exist, skipping migrating url rewriter", URL_REWRITER_SRC))));
@@ -109,7 +109,7 @@ public class MigrateToV12Test {
         expect(destinationNode.getProperty(propertyName)).andReturn(createNiceMock(Property.class));
         replay(destinationNode);
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MigrateToV12.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(MigrateToV13.class).build()) {
             testedClass.migrateUrlRewriter();
             assertTrue(interceptor.messages().anyMatch(m -> m.contains("Migrating urlrewriter")));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(String.format("Migrating property '%s'", propertyName))));

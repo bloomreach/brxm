@@ -50,9 +50,9 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_MODULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_ROLE;
 
-class MigrateToV12 {
+class MigrateToV13 {
 
-    static final Logger log = LoggerFactory.getLogger(MigrateToV12.class);
+    static final Logger log = LoggerFactory.getLogger(MigrateToV13.class);
 
     private static final String DEPRECATED_NT_HIPPOSYS_AUTOEXPORT = "hipposys:autoexport";
     private static final String HIPPO_NAMESPACES = "/hippo:namespaces";
@@ -95,7 +95,7 @@ class MigrateToV12 {
     private final NodeTypeManager ntm;
     private final QueryManager qm;
 
-    public MigrateToV12(final Session rootSession, final HippoNodeTypeRegistry ntr, final boolean dryRun)
+    public MigrateToV13(final Session rootSession, final HippoNodeTypeRegistry ntr, final boolean dryRun)
             throws RepositoryException {
         this.session = rootSession;
         this.ntr = ntr;
