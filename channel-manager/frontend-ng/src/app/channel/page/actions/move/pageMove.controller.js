@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,27 @@
  */
 
 class PageMoveCtrl {
-  constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
-    FeedbackService) {
+  constructor(
+    $log,
+    $translate,
+    ChannelService,
+    FeedbackService,
+    HippoIframeService,
+    SiteMapService,
+    SiteMapItemService,
+  ) {
     'ngInject';
 
     this.$log = $log;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.SiteMapService = SiteMapService;
     this.SiteMapItemService = SiteMapItemService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
+  }
 
-    this.locations = [];
-    this.siteMapId = ChannelService.getSiteMapId();
-    this.illegalCharacters = '/ :';
-    this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
-      { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+  $onInit() {
     this.errorMap = {
       ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
       ITEM_NOT_FOUND: 'ERROR_PAGE_PARENT_MISSING',
@@ -38,15 +43,20 @@ class PageMoveCtrl {
       ITEM_EXISTS_OUTSIDE_WORKSPACE: 'ERROR_PAGE_PATH_EXISTS',
       INVALID_PATH_INFO: 'ERROR_PAGE_PATH_INVALID',
     };
+    this.illegalCharacters = '/ :';
+    this.illegalCharactersMessage = this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
+      { characters: this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
 
+    this.isEditable = this.SiteMapItemService.isEditable();
     // The PageActionsService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
-    this.item = SiteMapItemService.get();
+    this.item = this.SiteMapItemService.get();
     this.lastPathInfoElement = this.item.name;
-    this.isEditable = SiteMapItemService.isEditable();
-    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_MOVE_TITLE', { pageName: this.item.name });
+    this.locations = [];
+    this.siteMapId = this.ChannelService.getSiteMapId();
+    this.subpageTitle = this.$translate.instant('SUBPAGE_PAGE_MOVE_TITLE', { pageName: this.item.name });
 
-    ChannelService.getNewPageModel()
+    this.ChannelService.getNewPageModel()
       .then((data) => {
         this.locations = data.locations || [];
         this.location = this.locations.find(location => this.item.parentLocation.id === location.id);

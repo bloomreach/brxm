@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,13 @@ class PageCopyCtrl {
   }
 
   $onInit() {
-    this.locations = [];
+    this.channel = undefined;
     this.channels = [];
-    this.siteMapId = this.ChannelService.getSiteMapId();
     this.channelId = this.ChannelService.getId();
+
+    this.errorMap = {
+      ITEM_CANNOT_BE_CLONED: 'ERROR_PAGE_COPY_TARGET_EXISTS',
+    };
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = this.$translate.instant(
       'VALIDATION_ILLEGAL_CHARACTERS',
@@ -52,14 +55,15 @@ class PageCopyCtrl {
         characters: this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT'),
       },
     );
-    this.errorMap = {
-      ITEM_CANNOT_BE_CLONED: 'ERROR_PAGE_COPY_TARGET_EXISTS',
-    };
 
+    this.isCrossChannelCopyAvailable = false;
     // The PageActionsService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
     this.item = this.SiteMapItemService.get();
+
     this.lastPathInfoElement = '';
+    this.locations = [];
+    this.siteMapId = this.ChannelService.getSiteMapId();
     this.subpageTitle = this.$translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
 
     if (this.SessionService.isCrossChannelPageCopySupported()) {

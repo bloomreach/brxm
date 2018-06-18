@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,38 @@
  */
 
 class PagePropertiesCtrl {
-  constructor($translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
-    FeedbackService) {
+  constructor(
+    $mdDialog,
+    $translate,
+    ChannelService,
+    FeedbackService,
+    HippoIframeService,
+    SiteMapItemService,
+    SiteMapService,
+  ) {
     'ngInject';
 
-    this.$translate = $translate;
     this.$mdDialog = $mdDialog;
-    this.SiteMapService = SiteMapService;
-    this.SiteMapItemService = SiteMapItemService;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
+    this.SiteMapItemService = SiteMapItemService;
+    this.SiteMapService = SiteMapService;
+  }
 
+  $onInit() {
     const documentNone = {
-      displayName: $translate.instant('SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE'),
+      displayName: this.$translate.instant('SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE'),
       path: '',
     };
 
     // The PageActionsService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
-    this.item = SiteMapItemService.get();
-    this.isEditable = SiteMapItemService.isEditable();
+    this.item = this.SiteMapItemService.get();
+    this.isEditable = this.SiteMapItemService.isEditable();
 
-    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_PROPERTIES_TITLE', { pageName: this.item.name });
+    this.subpageTitle = this.$translate.instant('SUBPAGE_PAGE_PROPERTIES_TITLE', { pageName: this.item.name });
     this.title = this.item.pageTitle;
     this.availableDocuments = this.item.availableDocumentRepresentations || [];
     this.availableDocuments.unshift(documentNone);
