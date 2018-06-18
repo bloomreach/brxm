@@ -48,7 +48,7 @@
           <requires>
             <require>asciidoctor-diagram</require>
           </requires>
-          <sourceHighlighter>prettify</sourceHighlighter>
+          <sourceHighlighter>coderay</sourceHighlighter>
         </configuration>
         <executions>
           <execution>

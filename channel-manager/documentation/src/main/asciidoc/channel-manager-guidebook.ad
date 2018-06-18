@@ -180,8 +180,8 @@ of this Git repository.
 
 ### Code Examples
 
-.Example Java code snippet
-[source,java]
+.Example Java code snippet (with line numbers)
+[source,java,linenums]
 ----
 Locale getLocale(Node node) throws RepositoryException {
     if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
