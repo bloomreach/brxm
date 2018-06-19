@@ -212,9 +212,10 @@ public class ChannelEditor extends ExtPanel {
     public void viewChannel(final String channelId, final String initialPath, final String branchId) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s', '%s');",
+            final String loadChannelScript = String.format("Ext.getCmp('%s').initChannel('%s', '%s', '%s');",
                     getMarkupId(), channelId, initialPath, branchId);
             target.appendJavaScript(loadChannelScript);
+            // N.B. actually loading the channel is triggered by the activation of the ChannelManagerPerspective
         }
     }
 

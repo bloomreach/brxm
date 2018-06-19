@@ -22,7 +22,6 @@ function config($stateProvider) {
     component: 'channel',
     params: {
       channelId: '',
-      initialRenderPath: '',
     },
   });
 }
