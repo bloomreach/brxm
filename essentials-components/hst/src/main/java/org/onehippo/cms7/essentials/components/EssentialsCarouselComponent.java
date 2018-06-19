@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -43,10 +45,14 @@ public class EssentialsCarouselComponent extends CommonComponent {
 
         final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
-        final List<HippoDocument> items = getCarouselItems(paramInfo);
+
+        final List<String> carouselItemsStrings = getCarouselItemStrings(paramInfo);
+        final List<HippoDocument> items = getCarouselItems(carouselItemsStrings);
         request.setModel(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
-        final List<Integer> unconfiguredItemNumbers = getUnconfiguredItemNumbers(paramInfo);
-        request.setAttribute("freeItems", unconfiguredItemNumbers);
+
+        final Map<Boolean, List<Integer>> configuredItemNumbers = getConfiguredItemNumbers(carouselItemsStrings);
+        request.setAttribute("configuredItems", configuredItemNumbers.get(true));
+        request.setAttribute("freeItems", configuredItemNumbers.get(false));
     }
 
     /**
@@ -54,21 +60,37 @@ public class EssentialsCarouselComponent extends CommonComponent {
      *
      * @param componentInfo Carousel component annotation
      * @return list of documents to be populated
+     * @deprecated use @{link {@link #getCarouselItems(List)}} instead
      */
+    @Deprecated
     public List<HippoDocument> getCarouselItems(final EssentialsCarouselComponentInfo componentInfo) {
         final List<String> carouselItemsStrings = getCarouselItemStrings(componentInfo);
-        return carouselItemsStrings.stream().map(c -> getHippoBeanForPath(c, HippoDocument.class)).collect(Collectors.toList());
+        return getCarouselItems(carouselItemsStrings);
     }
 
     /**
-     * Populates a list of items that are not yet configured.
-     * 
-     * @param componentInfo Carousel component annotation
-     * @return numbers of the items that are not yet configured
+     * Populates a list of carousel documents.
+     *
+     * @param carouselItemsStrings the defined item strings
+     * @return list of documents to be populated
      */
-    private List<Integer> getUnconfiguredItemNumbers(final EssentialsCarouselComponentInfo componentInfo) {
-        final List<String> carouselItems = getCarouselItemStrings(componentInfo);
-        return IntStream.rangeClosed(1, 6).filter(i -> StringUtils.isBlank(carouselItems.get(i - 1))).boxed().collect(Collectors.toList());
+    public List<HippoDocument> getCarouselItems(final List<String> carouselItemsStrings) {
+        return carouselItemsStrings.stream()
+                .map(c -> getHippoBeanForPath(c, HippoDocument.class))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Populates two lists of items that are configured and are not configured.
+     * 
+     * @param carouselItemStrings the item strings
+     * @return a map with two lists
+     */
+    private Map<Boolean, List<Integer>> getConfiguredItemNumbers(final List<String> carouselItemStrings) {
+        return IntStream.rangeClosed(1, 6)
+                .boxed()
+                .collect(Collectors.partitioningBy(i -> StringUtils.isNotBlank(carouselItemStrings.get(i - 1))));
     }
 
     /**
@@ -77,7 +99,7 @@ public class EssentialsCarouselComponent extends CommonComponent {
      * @param componentInfo Carousel component annotation
      * @return list of carousel item paths
      */
-    private List<String> getCarouselItemStrings(final EssentialsCarouselComponentInfo componentInfo) {
+    public List<String> getCarouselItemStrings(final EssentialsCarouselComponentInfo componentInfo) {
         final List<String> carouselItems = new ArrayList<>(6);
         carouselItems.add(componentInfo.getCarouselItem1());
         carouselItems.add(componentInfo.getCarouselItem2());
