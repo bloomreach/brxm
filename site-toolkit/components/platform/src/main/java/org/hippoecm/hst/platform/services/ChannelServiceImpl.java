@@ -14,7 +14,7 @@
 *  limitations under the License.
 */
 
-package org.hippoecm.hst.cmsrest.services;
+package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,7 @@ import java.util.Properties;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.beans.ChannelDataset;
-import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.api.ChannelService;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of {@link ChannelService} for CMS to interact with {@link Channel} resources
  */
-public class ChannelsResource extends BaseResource implements ChannelService {
+public class ChannelServiceImpl implements ChannelService {
 
-    private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
+    private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     @Override
     public ChannelDataset getChannels() {
@@ -45,7 +43,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
         // virtualhosts object since we REALLY need the hst model instance for the current request!!
 
-        final List<Mount> mountsForHostGroup = getVirtualHosts().getMountsByHostGroup(getHostGroupNameForCmsHost());
+        final List<Mount> mountsForHostGroup = BaseResource.getVirtualHosts().getMountsByHostGroup(getHostGroupNameForCmsHost());
         for (Mount mount : mountsForHostGroup) {
             if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
                 log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
@@ -92,12 +90,12 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public Properties getChannelResourceValues(String id, String language) throws ChannelException {
-        Channel channel = getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
+        Channel channel = BaseResource.getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
         if (channel == null) {
             log.warn("Cannot find channel for id '{}'", id);
             throw new ChannelException("Cannot find channel for id '" + id + "'");
         }
-        return InformationObjectsBuilder.buildResourceBundleProperties(getVirtualHosts().getResourceBundle(channel, new Locale(language)));
+        return InformationObjectsBuilder.buildResourceBundleProperties(BaseResource.getVirtualHosts().getResourceBundle(channel, new Locale(language)));
     }
 
 }

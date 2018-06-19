@@ -13,7 +13,7 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 */
-package org.hippoecm.hst.cmsrest.services;
+package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsResource extends BaseResource implements DocumentService {
+public class DocumentService extends BaseResource implements DocumentService {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentService.class);
 
     private HstLinkCreator hstLinkCreator;
     // default no context augmenters
