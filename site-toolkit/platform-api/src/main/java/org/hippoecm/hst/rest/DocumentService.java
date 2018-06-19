@@ -1,5 +1,5 @@
 /*
-*  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,18 +15,10 @@
 */
 package org.hippoecm.hst.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.List;
 
-import org.hippoecm.hst.rest.beans.ChannelDocumentDataset;
+import org.hippoecm.hst.rest.beans.ChannelDocument;
 
-/**
- * JaxRS service that returns information about documents.
- */
-@Path("/documents/")
 public interface DocumentService {
 
     /**
@@ -38,12 +30,8 @@ public interface DocumentService {
      * @return a list of 'channel documents' that provide information about all channels the document is part of,
      * or an empty list if the identifier is unknown or the document is not part of any channel.
      *
-     * @throws javax.ws.rs.WebApplicationException when the client-side invocation of this service fails
      */
-    @GET
-    @Path("/{uuid}/channels/")
-    @Produces(MediaType.APPLICATION_JSON)
-    ChannelDocumentDataset getChannels(@PathParam("uuid") String uuid);
+    List<ChannelDocument> getChannels(String uuid);
 
     /**
      * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
@@ -62,11 +50,7 @@ public interface DocumentService {
      *
      * @return a fully qualified link to the document, or an empty string if no link could be created.
      *
-     * @throws javax.ws.rs.WebApplicationException when the client-side invocation of this service fails
      */
-    @GET
-    @Path("/{uuid}/url/{type}/")
-    @Produces(MediaType.TEXT_PLAIN)
-    String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type);
+    String getUrl(String uuid, String type);
 
 }

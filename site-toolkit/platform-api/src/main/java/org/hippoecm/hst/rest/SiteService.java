@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,20 +16,8 @@
 
 package org.hippoecm.hst.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-/**
- * JAX-RS service implementation which is responsible for interacting with sites resources
- */
-@Path("/sites/")
 public interface SiteService {
 
-    @GET
-    @Path("/_isAlive")
-    @Produces(MediaType.TEXT_PLAIN)
-    public boolean isAlive();
+    boolean isAlive();
 
 }

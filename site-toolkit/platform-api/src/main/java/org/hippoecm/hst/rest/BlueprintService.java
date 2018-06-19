@@ -18,20 +18,9 @@ package org.hippoecm.hst.rest;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.rest.beans.BlueprintDataset;
 
-/**
- * JAX-RS service implementation which is responsible for interacting with {@link Blueprint} resources
- */
-@Path("/blueprints/")
 public interface BlueprintService {
 
     /**
@@ -39,9 +28,7 @@ public interface BlueprintService {
      * 
      * @return {@link List} of all available {@link Blueprint}(s), empty list otherwise
      */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-    BlueprintDataset getBlueprints();
+	List<Blueprint> getBlueprints();
 
     /**
      * Retrieve a blue print identified by an Id
@@ -49,9 +36,6 @@ public interface BlueprintService {
      * @param id - The <code>id</code> of a {@link Blueprint}
      * @return A {@link Blueprint} object instance identified by <code>id</code> if available, <code>null</code> otherwise
      */
-	@GET
-	@Path("/{id}/")
-	@Produces(MediaType.APPLICATION_JSON)
-    Blueprint getBlueprint(@PathParam("id") String id) throws ChannelException;
+    Blueprint getBlueprint(String id) throws ChannelException;
 
 }
