@@ -1,5 +1,5 @@
 # Hippo Essentials
-Hippo Essentials is for developers who want to setup a new [Hippo CMS](http://www.onehippo.org) project. It enables
+Hippo Essentials is for developers who want to setup a new [Hippo CMS](https://www.onehippo.org) project. It enables
 them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise
 or community plugins from the Hippo Marketplace.
 
