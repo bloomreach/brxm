@@ -55,7 +55,7 @@ public class UrlRewriterInstruction implements Instruction {
     @Override
     public Status execute(final Map<String, Object> parameters) {
         if (webXmlService.addFilter(MODULE, FILTER_NAME, FILTER_CLASS, initParams)
-                && webXmlService.addFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS)
+                && webXmlService.insertFilterMapping(MODULE, FILTER_NAME, URL_PATTERNS, "HstFilter")
                 && webXmlService.addDispatchersToFilterMapping(MODULE, FILTER_NAME, DISPATCHERS)
                 && webXmlService.addDispatchersToFilterMapping(MODULE, "HstFilter", DISPATCHERS)) {
             return Status.SUCCESS;
