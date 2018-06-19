@@ -15,16 +15,13 @@
  */
 package org.hippoecm.hst.platform.model;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+public class ModelRegistrationException extends RuntimeException {
 
-public interface HstModel {
+    public ModelRegistrationException(String message) {
+        super(message);
+    }
 
-    VirtualHosts getVirtualHosts();
-
-    HstSiteMapMatcher getHstSiteMapMatcher();
-
-    HstLinkCreator getHstLinkCreator();
-
+    public ModelRegistrationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -85,7 +85,6 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         try (LazyCloseableSession lazyCloseableSession = createLazyCloseableSession()) {
             if (rootNode == null) {
                 rootNode = new HstNodeImpl(lazyCloseableSession.getSession().getNode(rootPath), null);
-                HstServices.setHstConfigurationNodesLoaded(true);
                 events = null;
             } else if (events != null) {
                 // reload only certain parts

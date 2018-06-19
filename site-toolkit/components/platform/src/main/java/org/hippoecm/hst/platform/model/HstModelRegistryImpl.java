@@ -17,7 +17,6 @@ package org.hippoecm.hst.platform.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -26,16 +25,18 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
+import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.HST_HST_PROPERTY_CONTEXT_PATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_HST;
 
@@ -43,15 +44,10 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
-    private volatile Map<String, Function<ComponentManager, HstModelImpl>> modelFunctions = new HashMap<>();
+    private volatile Map<String, HstModel> models = new HashMap<>();
 
     private Repository repository;
     private Credentials credentials;
-
-    public HstModelRegistryImpl() {
-        HippoServiceRegistry.registerService(this, HstModelRegistry.class);
-    }
-
 
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -61,43 +57,62 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         this.credentials = credentials;
     }
 
-    private void stop() {
-        HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
+    private void init() {
+        HippoServiceRegistry.registerService(this, HstModelRegistry.class);
     }
 
-    // TODO register listeners for jcr events!!
-    // TODO if a root hst:hst node gets deleted, remove the listener and remove from virtualHostsSuppliers
-    public void load() {
-        Session session =null;
+    private void stop() {
+        HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
+        // TODO HSTTWO-4355 should we unregister all hst models as well?
+    }
+
+    // TODO HSTTWO-4355 register listeners for jcr events!!
+    // TODO HSTTWO-4355 if a root hst:hst node gets deleted, remove the listener and remove from virtualHostsSuppliers
+    @Override
+    public HstModel registerHstModel(final String contextPath, final ClassLoader websiteClassLoader,
+                                     final ComponentManager websiteComponentManager, final boolean loadHstConfigNodes) throws ModelRegistrationException {
+        Session session = null;
+        if (models.containsKey(contextPath)) {
+            throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
+        }
         try {
             session = repository.login(credentials);
-            for (Node child : new NodeIterable(session.getRootNode().getNodes())) {
-                try {
-                    if (!child.isNodeType(NODETYPE_HST_HST)) {
-                        continue;
-                    }
-                    if (!child.hasProperty("hst:contextpath")) {
-                        log.error("Cannot load hst config '{}' since no contextpath configured on '{}'",
-                                child.getPath(), child.getPath());
-                        continue;
-                    }
-                    // TODO replace with correct constant below
-                    final String contextPath = child.getProperty(HST_HST_PROPERTY_CONTEXT_PATH).getString();
-                    final HstNodeLoadingCache hstNodeLoadingCache = new HstNodeLoadingCache(repository, credentials, child.getPath());
-
-                    final HstConfigurationLoadingCache hstConfigurationLoadingCache = new HstConfigurationLoadingCache(hstNodeLoadingCache,
-                            hstNodeLoadingCache.getRootPath() + "/" + NODENAME_HST_CONFIGURATIONS + "/");
-
-                    modelFunctions.put(contextPath, websiteComponentManager -> new HstModelImpl(contextPath, websiteComponentManager, hstNodeLoadingCache, hstConfigurationLoadingCache));
-
-                } catch (RepositoryException e) {
-                    log.error("Could not load '{}'", child.getPath(), e);
-                }
+            final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
+            final String rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
+            if (rootPath == null) {
+                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since missing 'hst.configuration.rootPath' property", contextPath));
             }
+            if (!session.nodeExists(rootPath)) {
+                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since 'hst.configuration.rootPath' points to nonexisting " +
+                        "jcr node '{}'", contextPath, rootPath));
+            }
+
+            final Node hstHstNode = session.getNode(rootPath);
+            if (!hstHstNode.isNodeType(NODETYPE_HST_HST)) {
+                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since 'hst.configuration.rootPath' points to " +
+                        "jcr node that is not of type '{}'", contextPath, NODETYPE_HST_HST));
+            }
+
+            final HstNodeLoadingCache hstNodeLoadingCache = new HstNodeLoadingCache(repository, credentials, hstHstNode.getPath());
+
+            final HstConfigurationLoadingCache hstConfigurationLoadingCache = new HstConfigurationLoadingCache(hstNodeLoadingCache,
+                    hstNodeLoadingCache.getRootPath() + "/" + NODENAME_HST_CONFIGURATIONS + "/");
+
+            if (loadHstConfigNodes) {
+                loadHstConfigNodes(websiteClassLoader, hstNodeLoadingCache);
+            }
+
+            final HstModelImpl model = new HstModelImpl(contextPath, websiteClassLoader, websiteComponentManager, hstNodeLoadingCache, hstConfigurationLoadingCache);
+            models.put(contextPath, model);
+
+            log.info("Registered HstModel for '{}'", contextPath);
+            return model;
         } catch (LoginException e) {
-            throw new ModelLoadingException("Cannot login JCR Session", e);
+            throw new ModelRegistrationException("Cannot login JCR Session", e);
         } catch (RepositoryException e) {
-            throw new ModelLoadingException("Cannot create HstModelRegistryImpl", e);
+            throw new ModelRegistrationException("Cannot create HstModelRegistryImpl", e);
+        } catch (Exception e) {
+            throw new ModelRegistrationException("Cannot create HstModelRegistryImpl", e);
         } finally {
             if (session != null) {
                 session.logout();
@@ -106,34 +121,59 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     }
 
     @Override
-    public HstModel getHstModel(final String contextPath, final ComponentManager websiteComponentManager) {
-
-        final Function<ComponentManager, HstModelImpl> hstModelFunction = modelFunctions.get(contextPath);
-
-        if (hstModelFunction == null) {
-            throw new ModelLoadingException(String.format("Cannot load an HST model for contextPath '%s'", contextPath));
+    public void unregisterHstModel(final String contextPath) {
+        // TODO HSTTWO-4355 should this do more? Potentially stop the website component manager as well if needed?
+        final HstModel remove = models.remove(contextPath);
+        if (remove == null) {
+            throw new ModelRegistrationException(String.format("Could not remove HstModel for '{}' since no such model present", contextPath));
+        } else {
+            log.info("Unregistered HstModel for '{}'", contextPath);
         }
-        // make sure that the Thread class loader during model loading is the platform classloader!
-        ClassLoader platformClassloader = hstModelFunction.getClass().getClassLoader();
+    }
+
+    @Override
+    public HstModel getHstModel(final String contextPath) {
+
+        final HstModel model = models.get(contextPath);
+        if (model == null) {
+            throw new IllegalArgumentException(String.format("No HstModel present for context '{}'", contextPath));
+        }
+        return model;
+
+    }
+
+    private void loadHstConfigNodes(final ClassLoader websiteClassLoader, final HstNodeLoadingCache hstNodeLoadingCache) throws InterruptedException {
+        final long start = System.currentTimeMillis();
+        // triggers the loading of all the hst configuration nodes
+        HstNode root = null;
+        while (root == null) {
+            try {
+                root = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
+                // don't sweat to much, sleep for 250 ms
+                Thread.sleep(250);
+            } catch (ConfigurationNodesLoadingException e) {
+                if (log.isDebugEnabled()) {
+                    log.info("Exception while trying to load the HST configuration nodes. Try again.", e);
+                } else {
+                    log.info("Exception while trying to load the HST configuration nodes. Try again. Reason: {}", e.getMessage());
+                }
+            }
+        }
+        log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
+        // use the right class loader
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
         try {
-            if (platformClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(platformClassloader);
+            if (websiteClassLoader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(websiteClassLoader);
             }
-            hstModelFunction.getClass().getClassLoader();
-            // TODO support retries in case of model loading failure and synchronization and caching
-            final HstModelImpl hstModel = hstModelFunction.apply(websiteComponentManager);
-
-
-            return hstModel;
+            HstServices.setHstConfigurationNodesLoaded(true);
         } catch (Exception e) {
-           log.error("Exception loading model", e);
-           throw e;
+            log.error("Exception loading model", e);
+            throw e;
         } finally {
-            if (platformClassloader != currentClassloader) {
+            if (websiteClassLoader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
     }
-
 }

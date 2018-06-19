@@ -69,6 +69,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
 
     private static final Set<String> skipProperties = new HashSet<>(Arrays.asList("jcr:baseVersion", "jcr:predecessors", "jcr:versionHistory"));
 
+    private static final Set<String> deprecatedProperties = new HashSet<>(Arrays.asList("hst:onlyforcontextpath","hst:contextpath" +
+            "hst:defaultcontextpath","hst:isSite","hst:channelpath" ,"hst:channelmanagerhostgroup" ,"hst:dummycontent" ,
+            "hst:portletcomponentconfigurationid" ,"hst:refidsitemapitem"));
+
     /**
      * Creates a lazy loading jcr value provider instance without useStringPool and with protected jcr properties included
      */
@@ -613,6 +617,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 if(this.propertyMap.hasProperty(p.getName()) || skipProperties.contains(p.getName())) {
                     // already loaded
                     continue;
+                }
+                if (deprecatedProperties.contains(p.getName())) {
+                    log.warn("Skipping deprecated property '{}' for node '{}'. Property should be removed since not used " +
+                            "any more.", p.getName(), jcrNode.getPath());
                 }
                 if(PropertyType.STRING == p.getType() ||
                         PropertyType.BOOLEAN  == p.getType() || 

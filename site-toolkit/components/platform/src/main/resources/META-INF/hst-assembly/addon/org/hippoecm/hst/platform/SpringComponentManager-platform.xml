@@ -19,7 +19,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
 
-  <bean id="org.hippoecm.hst.configuration.hosting.HstModelRegistry" class="org.hippoecm.hst.platform.model.HstModelRegistryImpl" init-method="load" destroy-method="stop">
+  <bean id="org.hippoecm.hst.configuration.hosting.HstModelRegistry" class="org.hippoecm.hst.platform.model.HstModelRegistryImpl" init-method="init" destroy-method="stop">
     <property name="repository" ref="javax.jcr.Repository.delegating" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>

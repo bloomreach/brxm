@@ -41,32 +41,78 @@ import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
 import org.hippoecm.hst.platform.linking.resolvers.HippoResourceLocationResolver;
 import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstModelImpl implements HstModel {
 
-    private final ComponentManager websiteComponentManager;
+
+    private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
+
+
+    private final String contextPath;
     private final ContainerConfiguration websiteContainerConfiguration;
-    private final VirtualHosts virtualHosts;
+    // not yet used but most likely needed
+    private ClassLoader websiteClassLoader;
+    private final ComponentManager websiteComponentManager;
+    private final HstNodeLoadingCache hstNodeLoadingCache;
+    private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
     private final DefaultHstLinkCreator hstLinkCreator;
 
-    public HstModelImpl(final String contextPath, final ComponentManager websiteComponentManager, final HstNodeLoadingCache hstNodeLoadingCache, final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
+    private volatile VirtualHosts virtualHosts;
+
+
+    public HstModelImpl(final String contextPath,
+                        final ClassLoader websiteClassLoader,
+                        final ComponentManager websiteComponentManager,
+                        final HstNodeLoadingCache hstNodeLoadingCache,
+                        final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
+        this.contextPath = contextPath;
+        this.websiteClassLoader = websiteClassLoader;
         this.websiteComponentManager = websiteComponentManager;
         websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
-
-        virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
+        this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
 
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
         configureSiteMapMatcher();
 
         hstLinkCreator = new DefaultHstLinkCreator();
         configureHstLinkCreator();
-
     }
 
     @Override
     public VirtualHosts getVirtualHosts() {
-        return virtualHosts;
+        VirtualHosts vhosts = virtualHosts;
+        if (vhosts != null) {
+            return vhosts;
+        }
+
+        synchronized (this) {
+            vhosts = virtualHosts;
+            if (vhosts != null) {
+                return vhosts;
+            }
+
+        }
+        // make sure that the Thread class loader during model loading is the platform classloader
+        ClassLoader platformClassloader = this.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        try {
+            if (platformClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(platformClassloader);
+            }
+            virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
+            return virtualHosts;
+        } catch (Exception e) {
+            log.error("Exception loading model", e);
+            throw e;
+        } finally {
+            if (platformClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
 
     @Override

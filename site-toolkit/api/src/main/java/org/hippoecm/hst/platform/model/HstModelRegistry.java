@@ -21,6 +21,10 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface HstModelRegistry {
 
-    HstModel getHstModel(String contextPath, ComponentManager websiteComponentManager);
+    HstModel registerHstModel(String contextPath, ClassLoader websiteClassLoader,
+                              ComponentManager websiteComponentManager, boolean loadHstConfigNodes) throws ModelRegistrationException;
 
+    void unregisterHstModel(String contextPath) throws ModelRegistrationException;
+
+    HstModel getHstModel(String contextPath);
 }

@@ -26,6 +26,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.RepositoryService;
@@ -119,9 +120,14 @@ public class PingFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse)response;
         switch (availabilityCheck) {
             case hstConfigNodes:
-                if (HstServices.isHstConfigurationNodesLoaded()) {
-                    available(request, res);
+                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                try {
+                    hstModelRegistry.getHstModel(request.getServletContext().getContextPath());
+                    // model is available and most likely hst config nodes already loaded
+                    // TODO make sure hst config nodes are really loaded in the HstNodeLoadingCache
                     return;
+                } catch (IllegalArgumentException e) {
+                    log.info("No HST Model available yet for '{}'", request.getServletContext().getContextPath());
                 }
                 break;
             case hstServices:

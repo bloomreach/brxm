@@ -322,7 +322,7 @@
 - hst:showcontextpath (boolean)
 // deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
-// deprecated : only hst:contextpath on hst:hst node is used
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath
 // deprecated and unused: do not use
 - hst:embeddedmountpath
@@ -394,7 +394,7 @@
 - hst:versioninpreviewheader (boolean)
 // deprecated : use hst:contextpath instead
 - hst:onlyforcontextpath (string)
-// deprecated : only hst:contextpath on hst:hst node is used
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
@@ -430,7 +430,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// deprecated : only hst:contextpath on hst:hst node is used
+// deprecated : hst:contextpath is not used any more
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)
@@ -461,7 +461,7 @@
 - hst:contentRoot (string)
 // prototype for the channel properties.
 // Used for default values
-// deprecated : only hst:contextpath on hst:hst node is used
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath (string)
 + hst:channel (hst:channel)
 + hst:configuration (hst:configuration)
@@ -478,8 +478,6 @@
 + hst:blueprints (hst:blueprints) = hst:blueprints version
 + hst:channels (hst:channels) = hst:channels version
 + * (hst:sites) = hst:sites version
-// TODO HSTTWO-4355 do we want this here?
-- hst:contextpath (string)
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
 [hst:contentshare] > hippo:mirror
