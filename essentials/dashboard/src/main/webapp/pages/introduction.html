@@ -15,7 +15,7 @@
   -->
 <div class="row" ng-controller="introductionCtrl">
     <div class="col-sm-12 col-md-10 col-lg-8">
-        <h2>Set up your Hippo Project</h2>
+        <h2>Essentials Setup</h2>
         <p>
             This web application helps you setting up a new Hippo CMS or BloomReach Experience project.
             You can browse the Essentials feature library, install features into your Hippo CMS or BloomReach Experience
@@ -23,20 +23,18 @@
             <a href="https://www.onehippo.org/library/setup/introduction.html" target="_blank">documentation</a>.
         </p>
         <h3>Important Notes</h3>
-        <ul>
-            <li>
-                Please note that while you are using this application, it will be necessary to rebuild your project
-                once in a while. This is caused by the fact that the plugins need to be integrated both into this web
-                application and into your project. For the installation of certain plugins, it will be necessary to
-                rebuild your project twice. The Rebuild indicator will show this need, and the Rebuild page tells you
-                which plugins require a rebuild of the project.
-            </li>
-            <li>
-                Make sure that you publish your changes in the CMS Channel Manager. Otherwise, these changes, which are
-                stored in the preview HST configuration, will be deleted automatically by Essentials, and
-                you will lose any pending changes.
-            </li>
-        </ul>
+        <div class="alert alert-warning">
+            Please note that while you are using this application, it will be necessary to rebuild your project
+            once in a while. This is caused by the fact that the plugins need to be integrated both into this web
+            application and into your project. For the installation of certain plugins, it will be necessary to
+            rebuild your project twice. The Rebuild indicator will show this need, and the Rebuild page tells you
+            which plugins require a rebuild of the project.
+        </div>
+        <div class="alert alert-warning">
+            Make sure that you publish your changes in the CMS Channel Manager. Otherwise, these changes, which are
+            stored in the preview HST configuration, will be deleted automatically by Essentials, and
+            you will lose any pending changes.
+        </div>
 
         <form name="settingsForm" novalidate>
             <h3>Project Settings</h3>
