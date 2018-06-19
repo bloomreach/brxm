@@ -251,12 +251,12 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"absPath\","
                 + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"templateQuery\":\"new-document\""
                 + "} -->"));
     }
 
@@ -277,12 +277,12 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"relPath\","
                 + "\"parameterValueIsRelativePath\":\"true\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"templateQuery\":\"new-document\""
                 + "} -->"));
     }
 
@@ -295,9 +295,9 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"templateQuery\":\"new-document\","
                 + "\"parameterName\":\"string\","
-                + "\"parameterValueIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"templateQuery\":\"new-document\""
                 + "} -->"));
     }
 
@@ -357,13 +357,13 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"parameterValue\":\"/absolute/path\","
+                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\""
                 + "} -->"));
     }
 
@@ -391,13 +391,13 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"relPath\","
-                + "\"parameterValueIsRelativePath\":\"true\","
                 + "\"parameterValue\":\"/mount/path/relative/path\","
+                + "\"parameterValueIsRelativePath\":\"true\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/mount/path\""
+                + "\"pickerRootPath\":\"/mount/path\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\""
                 + "} -->"));
     }
 
@@ -427,13 +427,13 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"parameterValue\":\"/absolute/path\","
+                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\""
                 + "} -->"));
     }
 
@@ -462,13 +462,13 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- "
                 + "{\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
                 + "\"parameterName\":\"absPath\","
-                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"parameterValue\":\"/absolute/path\","
+                + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path\""
+                + "\"pickerRootPath\":\"/my/channel/path\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\""
                 + "} -->"));
     }
 
@@ -526,12 +526,12 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"uuid\":\"" + handle.getIdentifier() + "\","
-                + "\"templateQuery\":\"new-newsdocument\","
-                + "\"rootPath\":\"news/amsterdam\","
                 + "\"defaultPath\":\"2018/09/23\","
                 + "\"parameterName\":\"newsDocument\","
-                + "\"parameterValueIsRelativePath\":\"false\""
+                + "\"parameterValueIsRelativePath\":\"false\","
+                + "\"rootPath\":\"news/amsterdam\","
+                + "\"templateQuery\":\"new-newsdocument\","
+                + "\"uuid\":\"" + handle.getIdentifier() + "\""
                 + "} -->"));
     }
 
@@ -680,12 +680,12 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"rootPath\":\"relative/path\","
                 + "\"parameterName\":\"absPath\","
                 + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path/relative/path\""
+                + "\"pickerRootPath\":\"/my/channel/path/relative/path\","
+                + "\"rootPath\":\"relative/path\""
                 + "} -->"));
     }
 
@@ -789,13 +789,13 @@ public class HstManageContentTagTest {
 
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
-                + "\"rootPath\":\"news\","
                 + "\"parameterName\":\"pickerNews\","
                 + "\"parameterValueIsRelativePath\":\"false\","
                 + "\"pickerConfiguration\":\"cms-pickers/documents\","
                 + "\"pickerInitialPath\":\"/my/channel/path/news\","
                 + "\"pickerRemembersLastVisited\":\"true\","
-                + "\"pickerRootPath\":\"/my/channel/path/news\""
+                + "\"pickerRootPath\":\"/my/channel/path/news\","
+                + "\"rootPath\":\"news\""
                 + "} -->"));
     }
 

@@ -42,4 +42,18 @@ public interface ChannelManagerConstants {
     String HST_INHERITED = "HST-Inherited";
     String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
 
+    // below used in ManageContentTag
+    String DEFAULT_PATH = "defaultPath";
+    String MANAGE_CONTENT_LINK = "MANAGE_CONTENT_LINK";
+    String PARAMETER_NAME = "parameterName";
+    String PARAMETER_VALUE = "parameterValue";
+    String PARAMETER_VALUE_IS_RELATIVE_PATH = "parameterValueIsRelativePath";
+    String PICKER_CONFIGURATION = "pickerConfiguration";
+    String PICKER_INITIAL_PATH = "pickerInitialPath";
+    String PICKER_REMEMBERS_LAST_VISITED = "pickerRemembersLastVisited";
+    String PICKER_ROOT_PATH = "pickerRootPath";
+    String PICKER_SELECTABLE_NODE_TYPES = "pickerSelectableNodeTypes";
+    String ROOT_PATH = "rootPath";
+    String TEMPLATE_QUERY = "templateQuery";
+    String UUID = "uuid";
 }
