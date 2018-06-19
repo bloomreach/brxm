@@ -45,9 +45,7 @@ class ChannelService {
     this.ProjectService = ProjectService;
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
-  }
 
-  initialize() {
     this.isToolbarDisplayed = true;
     this.channel = {};
     this.channels = [];
