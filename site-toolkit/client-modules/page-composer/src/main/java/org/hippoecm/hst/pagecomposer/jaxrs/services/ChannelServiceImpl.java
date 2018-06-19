@@ -57,10 +57,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationE
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
-import org.hippoecm.hst.rest.beans.FieldGroupInfo;
-import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
-import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
+import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
+import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

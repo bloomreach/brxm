@@ -21,6 +21,9 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
+import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

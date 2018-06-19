@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.hst.rest;
+package org.hippoecm.hst.platform.api;
 
 public interface SiteService {
 

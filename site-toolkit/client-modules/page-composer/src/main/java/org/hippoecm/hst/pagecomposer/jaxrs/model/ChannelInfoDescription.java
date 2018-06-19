@@ -20,8 +20,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.rest.beans.FieldGroupInfo;
-import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
+import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
+import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 
 public class ChannelInfoDescription {
     private List<FieldGroupInfo> fieldGroups;

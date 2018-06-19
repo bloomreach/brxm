@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.hst.rest.beans;
+package org.hippoecm.hst.platform.api.beans;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
