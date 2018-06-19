@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,12 +56,11 @@ public class DescriptorsTest extends RepositoryTestCase {
         String vendor = repository.getDescriptor(Repository.REP_VENDOR_DESC);
         String vendorURL = repository.getDescriptor(Repository.REP_VENDOR_URL_DESC);
         String repositoryName = repository.getDescriptor(Repository.REP_NAME_DESC);
-        String repositoryVersion = repository.getDescriptor(Repository.REP_VERSION_DESC);
         assertEquals("true", level1Supported);
         assertEquals("true", level2Supported);
         assertEquals("true", observationSupported);
         assertEquals("true", versioningSupported);
-        assertTrue(vendor.contains("Hippo"));
+        assertTrue(vendor.contains("BloomReach"));
         assertTrue(vendorURL.contains("hippo"));
         assertTrue(repositoryName.contains("Hippo"));
     }
