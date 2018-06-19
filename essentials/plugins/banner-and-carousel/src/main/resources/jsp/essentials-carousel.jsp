@@ -26,7 +26,15 @@
       <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="counter">
         <c:set var="active" value="${counter.first ? ' active':''}"/>
         <div class="item${active}">
-          <hst:manageContent hippobean="${item}"/>
+          <%-- button to edit shown item --%>
+          <c:choose>
+            <c:when test="${requestScope.configuredItems ne null}">
+              <hst:manageContent hippobean="${item}" parameterName="document${requestScope.configuredItems[counter.count-1]}" rootPath="banners"/>
+            </c:when>
+            <c:otherwise>
+              <hst:manageContent hippobean="${item}"/>
+            </c:otherwise>
+          </c:choose>
           <img src="<hst:link hippobean="${item.image}" />" alt="${fn:escapeXml(item.title)}"/>
           <div class="carousel-caption">
             <c:choose>
@@ -60,6 +68,14 @@
         }
       </script>
     </c:if>
+    <%-- buttons for still available items --%>
+    <c:if test="${requestScope.editMode && requestScope.freeItems ne null && fn:length(requestScope.freeItems) gt 0}">
+      <div>
+        <c:forEach var="number" items="${requestScope.freeItems}">
+          <div class="has-new-content-button item-button"><hst:manageContent templateQuery="new-banner-document" parameterName="document${number}" rootPath="banners"/></div>
+        </c:forEach>
+      </div>
+    </c:if>
   </div>
 
   <hst:headContribution category="htmlHead">
@@ -78,12 +94,17 @@
 
       /* Declare heights because of positioning of img element */
       #${componentId} .item {
-        height: ${requestScope.cparam.carouselHeight}px;
-        background-color: ${requestScope.cparam.carouselBackgroundColor};
-      }
+                        height: ${requestScope.cparam.carouselHeight}px;
+                        background-color: ${requestScope.cparam.carouselBackgroundColor};
+                      }
       /* center images*/
       .carousel-inner > .item > img {
         margin: 0 auto;
+      }
+
+      /* order CC-buttons next to each other */
+      .item-button {
+        float: left;
       }
     </style>
   </hst:headContribution>

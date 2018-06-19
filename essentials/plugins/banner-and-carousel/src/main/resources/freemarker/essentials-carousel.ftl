@@ -29,7 +29,12 @@
                     <#assign active = ''/>
                 </#if>
                 <div class="item${active}">
-                  <@hst.manageContent hippobean=item/>
+                  <#-- button to edit shown item -->
+                  <#if configuredItems?? && configuredItems?has_content>
+                    <@hst.manageContent hippobean=item parameterName="document${configuredItems[item_index]}" rootPath="banners"/>
+                  <#else>
+                    <@hst.manageContent hippobean=item/>
+                  </#if>
                   <img src="<@hst.link hippobean=item.image />" alt="${item.title?html}"/>
                     <div class="carousel-caption">
                         <#if item.link??>
@@ -60,6 +65,14 @@
             }
           </script>
         </#if>
+        <#-- buttons for still available items -->
+        <#if editMode && freeItems?? && freeItems?has_content>
+          <div>
+            <#list freeItems as number>
+              <div class="has-new-content-button item-button"><@hst.manageContent templateQuery="new-banner-document" parameterName="document${number}" rootPath="banners"/></div>
+            </#list>
+          </div>
+        </#if>
     </div>
 
     <@hst.headContribution category="htmlHead">
@@ -85,6 +98,11 @@
             /* center images*/
             .carousel-inner > .item > img {
                 margin: 0 auto;
+            }
+          
+            /* order CC-buttons next to each other */
+            .item-button {
+              float: left;
             }
         </style>
     </@hst.headContribution>
