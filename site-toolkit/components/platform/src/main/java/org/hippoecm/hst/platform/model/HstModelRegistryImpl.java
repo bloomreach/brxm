@@ -30,7 +30,6 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;

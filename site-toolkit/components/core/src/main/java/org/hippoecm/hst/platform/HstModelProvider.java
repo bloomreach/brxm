@@ -30,7 +30,7 @@ public class HstModelProvider {
 
     public HstModel getHstModel() {
         HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        return hstModelRegistry.getHstModel(contextPath, HstServices.getComponentManager());
+        return hstModelRegistry.getHstModel(contextPath);
     }
 
 }
