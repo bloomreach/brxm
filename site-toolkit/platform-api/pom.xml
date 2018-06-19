@@ -22,9 +22,9 @@
     <version>13.0.0-hst-platform-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit REST Models</name>
-  <description>Hippo Site Toolkit REST models</description>
-  <artifactId>hst-cms-restapi</artifactId>
+  <name>Hippo Site Toolkit Platform API</name>
+  <description>Hippo Site Toolkit Platform API</description>
+  <artifactId>hst-platform-api</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
