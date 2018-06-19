@@ -45,7 +45,7 @@
     isReloadingPage = false;
     isReconnecting = false;
     hasBeenConnected = true;
-    log("connected");
+    log("enabled");
   }
 
   function onMessage(event) {
@@ -67,14 +67,13 @@
     }
   }
 
-  function onClose(event) {
+  function onClose() {
     if (!isReloadingPage && hasBeenConnected) {
       reconnect();
     }
   }
 
   function connect() {
-    log("connecting...");
     websocket = new window.WebSocket(serverUrl());
     websocket.onopen = onOpen;
     websocket.onmessage = onMessage;
