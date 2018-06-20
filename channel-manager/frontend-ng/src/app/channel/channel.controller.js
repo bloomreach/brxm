@@ -20,7 +20,6 @@ class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
-    $stateParams,
     $translate,
     ChannelActionsService,
     ChannelService,

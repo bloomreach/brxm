@@ -55,11 +55,8 @@ describe('ChannelController', () => {
       OverlayService = _OverlayService_;
       ProjectService = _ProjectService_;
 
-      const $stateParams = {
-        initialRenderPath: '/testPath',
-      };
-
       spyOn(ChannelService, 'clearChannel');
+      spyOn(ChannelService, 'getInitialRenderPath').and.returnValue('/testPath');
       spyOn(ChannelService, 'hasChannel');
       spyOn(ChannelService, 'isEditable');
 
@@ -84,7 +81,6 @@ describe('ChannelController', () => {
       ]);
 
       $ctrl = $componentController('channel', {
-        $stateParams,
         ChannelService,
         SidePanelService,
         ComponentsService,
@@ -115,6 +111,7 @@ describe('ChannelController', () => {
   });
 
   it('loads the initial page', () => {
+    $ctrl.$onInit();
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
