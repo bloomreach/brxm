@@ -18,7 +18,7 @@ import angular from 'angular';
 import 'angular-mocks';
 import moment from 'moment-timezone';
 
-describe('The hippo-cm module', () => {
+describe('The hippo-cm module config', () => {
   let configService;
   let $http;
   let $httpBackend;
