@@ -21,10 +21,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,67 +41,79 @@ import org.slf4j.LoggerFactory;
 public class ChannelServiceImpl implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
+    private HstModelRegistryImpl hstModelRegistry;
+
+    public ChannelServiceImpl(final HstModelRegistryImpl hstModelRegistry) {
+        this.hstModelRegistry = hstModelRegistry;
+    }
 
     @Override
-    public ChannelDataset getChannels() {
-        final ChannelDataset dataset = new ChannelDataset();
+    public List<Channel> getChannels(final String cmsHost) {
         final List<Channel> channels = new ArrayList<>();
-        // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
-        // virtualhosts object since we REALLY need the hst model instance for the current request!!
 
-        final List<Mount> mountsForHostGroup = BaseResource.getVirtualHosts().getMountsByHostGroup(getHostGroupNameForCmsHost());
-        for (Mount mount : mountsForHostGroup) {
-            if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
-                log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
-                        mount.toString());
-                continue;
-            }
-            String requestContextPath = RequestContextProvider.get().getServletRequest().getContextPath();
-            if (mount.getContextPath() == null || !mount.getContextPath().equals(requestContextPath)) {
-                log.debug("Skipping mount '{}' because it can only be rendered for webapp '{}' and not for webapp '{}'",
-                        mount.toString(), mount.getContextPath(), requestContextPath);
-                continue;
-            }
-            final Channel channel = mount.getChannel();
-            if (channel == null) {
-                log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
-                continue;
-            }
-            if (channelFilter.apply(channel)) {
-                log.debug("Including channel '{}' because passes filters.", channel.toString());
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+            final List<Mount> mountsByHostGroup = hstModel.getVirtualHosts().getMountsByHostGroup(cmsHost);
+            for (Mount mount : mountsByHostGroup) {
+                if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
+                    log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
+                            mount.toString());
+                    continue;
+                }
+                String requestContextPath = RequestContextProvider.get().getServletRequest().getContextPath();
+                if (mount.getContextPath() == null || !mount.getContextPath().equals(requestContextPath)) {
+                    log.debug("Skipping mount '{}' because it can only be rendered for webapp '{}' and not for webapp '{}'",
+                            mount.toString(), mount.getContextPath(), requestContextPath);
+                    continue;
+                }
+                final Channel channel = mount.getChannel();
+                if (channel == null) {
+                    log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
+                    continue;
+                }
+                // TODO HSTTWO-4359 we need to come up with an alternative for 'channelFilter'
+//                if (channelFilter.apply(channel)) {
+//                    log.debug("Including channel '{}' because passes filters.", channel.toString());
+//                    channels.add(channel);
+//                } else {
+//                    log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
+//                }
                 channels.add(channel);
-            } else {
-                log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
             }
         }
 
-        dataset.setChannels(channels);
-        return dataset;
+        return channels;
     }
 
     @Override
-    public String persist(String blueprintId, Channel channel) throws ChannelException {
-        try {
-            return channelManager.persist(blueprintId, channel);
-        } catch (ChannelException ce) {
-            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
-            throw ce;
+    public String persist(final Session userSession, final String blueprintId, final Channel channel) throws ChannelException {
+        // TODO HSTTWO-4359  FIX persist
+//        try {
+//            return channelManager.persist(blueprintId, channel);
+//        } catch (ChannelException ce) {
+//            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
+//            throw ce;
+//        }
+        return null;
+    }
+
+    @Override
+    public boolean canUserModifyChannels(final Session userSession) {
+        return true;
+        // TODO HSTTWO-4359  FIX this check
+        // return channelManager.canUserModifyChannels();
+    }
+
+    @Override
+    public Properties getChannelResourceValues(final String cmsHost, final String channelId, final String language) throws ChannelException {
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+            final Channel channel = virtualHosts.getChannelById(cmsHost, channelId);
+            if (channel != null){
+                return InformationObjectsBuilder.buildResourceBundleProperties(virtualHosts.getResourceBundle(channel, new Locale(language)));
+            }
         }
-    }
+        throw new ChannelException(String.format("Cannot find channel for id '%s' and for cms host '%s'", channelId, cmsHost));
 
-    @Override
-    public boolean canUserModifyChannels() {
-        return channelManager.canUserModifyChannels();
-    }
-
-    @Override
-    public Properties getChannelResourceValues(String id, String language) throws ChannelException {
-        Channel channel = BaseResource.getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
-        if (channel == null) {
-            log.warn("Cannot find channel for id '{}'", id);
-            throw new ChannelException("Cannot find channel for id '" + id + "'");
-        }
-        return InformationObjectsBuilder.buildResourceBundleProperties(BaseResource.getVirtualHosts().getResourceBundle(channel, new Locale(language)));
     }
 
 }

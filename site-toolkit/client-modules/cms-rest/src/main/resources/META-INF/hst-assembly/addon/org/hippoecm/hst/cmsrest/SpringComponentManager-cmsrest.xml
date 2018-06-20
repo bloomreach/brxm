@@ -119,7 +119,7 @@
     <property name="channelFilter" ref="channelFilter"/>
   </bean>
 
-  <bean id="org.hippoecm.hst.rest.DocumentService" class="org.hippoecm.hst.cmsrest.services.DocumentsResource" parent="baseResource">
+  <bean id="org.hippoecm.hst.rest.DocumentService" class="org.hippoecm.hst.platform.services.DocumentsResource" parent="baseResource">
     <!-- TODO HSTTWO-4355 cms-rest should be part of platform only so see about this later -->
     <!--<property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>-->
   </bean>
@@ -141,7 +141,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.ChannelsResource" parent="baseResource"/>
+            <bean class="org.hippoecm.hst.platform.services.ChannelsResource" parent="baseResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

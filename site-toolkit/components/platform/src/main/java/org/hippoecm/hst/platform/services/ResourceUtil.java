@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.cmsrest.services;
+package org.hippoecm.hst.platform.services;
 
 import java.util.UUID;
 
@@ -41,12 +41,12 @@ public class ResourceUtil {
     /**
      * Returns the node with the given UUID using the session of the given request context.
      *
-     * @param requestContext the request context
+     * @param userSession the session of the current user
      * @param uuidParam a UUID
      *
      * @return the node with the given UUID, or null if no such node could be found.
      */
-    public static Node getNode(final HstRequestContext requestContext, final String uuidParam) {
+    public static Node getNode(final Session userSession, final String uuidParam) {
         if (uuidParam == null) {
             log.info("UUID is null, returning null", uuidParam);
             return null;
@@ -62,8 +62,7 @@ public class ResourceUtil {
         }
 
         try {
-            final Session jcrSession = requestContext.getSession();
-            return jcrSession.getNodeByIdentifier(uuid);
+            return userSession.getNodeByIdentifier(uuid);
         } catch (ItemNotFoundException e) {
             log.warn("Node not found: '{}', returning null", uuid);
         } catch (RepositoryException e) {

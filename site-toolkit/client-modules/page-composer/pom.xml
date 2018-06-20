@@ -67,11 +67,11 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-cms-restapi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7.hst</groupId>-->
+      <!--<artifactId>hst-cms-restapi</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
 
    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>

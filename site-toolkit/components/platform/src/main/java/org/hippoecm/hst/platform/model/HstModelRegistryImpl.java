@@ -31,6 +31,8 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
+import org.hippoecm.hst.platform.services.PlatformServiceExposer;
+import org.hippoecm.hst.platform.services.PlatformServiceExposerImpl;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -43,7 +45,9 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
-    private volatile Map<String, HstModel> models = new HashMap<>();
+    private final Map<String, HstModel> models = new HashMap<>();
+
+    private PlatformServiceExposerImpl platformServiceExposer;
 
     private Repository repository;
     private Credentials credentials;
@@ -58,11 +62,18 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private void init() {
         HippoServiceRegistry.registerService(this, HstModelRegistry.class);
+        platformServiceExposer = new PlatformServiceExposerImpl(this);
+        HippoServiceRegistry.registerService(platformServiceExposer, PlatformServiceExposer.class);
+    }
+
+    public Map<String, HstModel> getModels() {
+        return models;
     }
 
     private void stop() {
         HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
         // TODO HSTTWO-4355 should we unregister all hst models as well?
+        HippoServiceRegistry.unregisterService(platformServiceExposer, PlatformServiceExposer.class);
     }
 
     // TODO HSTTWO-4355 register listeners for jcr events!!
