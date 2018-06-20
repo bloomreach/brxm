@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.services;
 import org.hippoecm.hst.platform.api.BlueprintService;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.DocumentService;
+import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 
 public class PlatformServicesImpl implements PlatformServices

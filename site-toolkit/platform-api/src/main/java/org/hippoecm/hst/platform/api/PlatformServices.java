@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.services;
+package org.hippoecm.hst.platform.api;
 
 import org.hippoecm.hst.platform.api.BlueprintService;
 import org.hippoecm.hst.platform.api.ChannelService;
