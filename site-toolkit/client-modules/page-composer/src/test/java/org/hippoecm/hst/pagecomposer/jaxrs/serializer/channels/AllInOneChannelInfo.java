@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.test.channels;
+package org.hippoecm.hst.pagecomposer.jaxrs.serializer.channels;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
-import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.pagecomposer.jaxrs.serializer.annotations.AllInOneAnnotation;
+
 
 /**
  * Retrieves the properties of the GoGreen channels.
@@ -27,27 +28,20 @@ import org.hippoecm.hst.core.parameters.Parameter;
 @FieldGroupList({
         @FieldGroup(
                 titleKey = "fields.channel",
-                value = { "logo", "pageTitlePrefix", "themeCss" }
+                value = { "logo", "pageTitlePrefix" }
         )
 })
-public interface WebsiteInfo extends ChannelInfo {
+public interface AllInOneChannelInfo extends ChannelInfo {
 
-    @Parameter(name = "logo")
-    @JcrPath(
-            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
-            pickerInitialPath = "/content/gallery/logos"
-    )
+    @Parameter(name = "logo", displayName = "Logo")
+//    @JcrPath(
+//            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
+//            pickerInitialPath = "/content/gallery/logos"
+//    )
+    @AllInOneAnnotation
     String getLogoPath();
 
-    @Parameter(name = "pageTitlePrefix", defaultValue = "Hippo Go Green")
+    @Parameter(name = "pageTitlePrefix", displayName = "Page title prefix", defaultValue = "Hippo Go Green")
     String getPageTitlePrefix();
-
-    @Parameter(name = "themeCss", defaultValue = "/content/assets/themes/css/green.css")
-    @JcrPath(
-            pickerConfiguration = "cms-pickers/assets",
-            pickerSelectableNodeTypes = {"hippogallery:exampleAssetSet"},
-            pickerInitialPath = "/content/assets/themes/css"
-    )
-    String getThemeCss();
 
 }
