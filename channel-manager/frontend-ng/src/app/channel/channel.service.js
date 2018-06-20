@@ -158,10 +158,8 @@ class ChannelService {
     if (!this.hasChannel()) {
       return false;
     }
-    if (this.channel.id === channel.id) {
-      return true;
-    }
-    return projectId && this.channel.id === this._getChannelIdOfProject(projectId, channel.id);
+    const currentChannelId = projectId ? this._getChannelIdOfProject(projectId, channel.id) : channel.id;
+    return this.channel.id === currentChannelId;
   }
 
   getChannel() {
