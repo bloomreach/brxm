@@ -83,9 +83,8 @@ public interface VirtualHosts {
      * returned. If {@link org.hippoecm.hst.configuration.hosting.Mount#getContentPath()} ()} returns a non-null value,
      * the {@link Mount} can only match for the request if the {@link javax.servlet.http.HttpServletRequest#getContextPath()}
      * is equal to {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()}. Note that the ROOT.war matches
-     * to a {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()} equal to empty String. When {@link
-     * Mount#getContextPath()} returns <code>null</code> the {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     * is ignored for matching. </p>
+     * to a {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()} equal to empty String.
+     * </p>
      *
      * @param hostName
      * @param contextPath the contextPath of the {@link javax.servlet.http.HttpServletRequest}
@@ -118,7 +117,7 @@ public interface VirtualHosts {
     boolean isContextPathInUrl();
 
     /**
-     * @return the context path of the webapp for this hst configuration
+     * @return the context path of the webapp for this hst configuration and never {@code null}
      */
     String getContextPath();
 

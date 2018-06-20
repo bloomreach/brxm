@@ -84,10 +84,12 @@ public interface VirtualHost {
 
     /**
      * <p>
-     *    Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}. A {@link Mount}
-     *    can override this default host contextpath by setting the contextpath explicitly.
+     *    Returns the contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}.
      * </p>
-     * @return Returns the default contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}.
+     * <p>
+     *     This method will never return {@code null}
+     * </p>
+     * @return Returns the contextpath (webapp) for all the {@link Mount}s below this {@link VirtualHost}.
      * The contextpath for the ROOT application must be an empty String. If non-empty, a path starting with a "/" character
      * but that does not end with a "/" character must be returned. It is not allowed to return <code>null</code>
      * @see org.hippoecm.hst.configuration.hosting.Mount#getContextPath()
