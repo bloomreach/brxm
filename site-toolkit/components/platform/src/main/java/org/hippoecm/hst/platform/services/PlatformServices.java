@@ -21,7 +21,7 @@ import org.hippoecm.hst.platform.api.DocumentService;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
-public interface PlatformServiceExposer {
+public interface PlatformServices {
 
     BlueprintService getBlueprintService();
 

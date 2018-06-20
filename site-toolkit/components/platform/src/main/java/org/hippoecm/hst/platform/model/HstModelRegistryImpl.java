@@ -31,8 +31,8 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
-import org.hippoecm.hst.platform.services.PlatformServiceExposer;
-import org.hippoecm.hst.platform.services.PlatformServiceExposerImpl;
+import org.hippoecm.hst.platform.services.PlatformServices;
+import org.hippoecm.hst.platform.services.PlatformServicesImpl;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private final Map<String, HstModel> models = new HashMap<>();
 
-    private PlatformServiceExposerImpl platformServiceExposer;
+    private PlatformServicesImpl platformServices;
 
     private Repository repository;
     private Credentials credentials;
@@ -62,8 +62,8 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private void init() {
         HippoServiceRegistry.registerService(this, HstModelRegistry.class);
-        platformServiceExposer = new PlatformServiceExposerImpl(this);
-        HippoServiceRegistry.registerService(platformServiceExposer, PlatformServiceExposer.class);
+        platformServices = new PlatformServicesImpl(this);
+        HippoServiceRegistry.registerService(platformServices, PlatformServices.class);
     }
 
     public Map<String, HstModel> getModels() {
@@ -73,7 +73,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     private void stop() {
         HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
         // TODO HSTTWO-4355 should we unregister all hst models as well?
-        HippoServiceRegistry.unregisterService(platformServiceExposer, PlatformServiceExposer.class);
+        HippoServiceRegistry.unregisterService(platformServices, PlatformServices.class);
     }
 
     // TODO HSTTWO-4355 register listeners for jcr events!!

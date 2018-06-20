@@ -18,15 +18,14 @@ package org.hippoecm.hst.platform.services;
 import org.hippoecm.hst.platform.api.BlueprintService;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.DocumentService;
-import org.hippoecm.hst.platform.api.SiteService;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 
-public class PlatformServiceExposerImpl implements PlatformServiceExposer
+public class PlatformServicesImpl implements PlatformServices
 {
 
     private HstModelRegistryImpl hstModelRegistry;
 
-    public PlatformServiceExposerImpl(final HstModelRegistryImpl hstModelRegistry) {
+    public PlatformServicesImpl(final HstModelRegistryImpl hstModelRegistry) {
         this.hstModelRegistry = hstModelRegistry;
     }
 
