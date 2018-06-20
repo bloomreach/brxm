@@ -62,13 +62,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7.hst.components</groupId>-->
-      <!--<artifactId>hst-platform</artifactId>-->
-      <!--<version>${project.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
   </dependencies>
 
   <reporting>

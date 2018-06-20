@@ -48,18 +48,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-cms-restapi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-cms-rest</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-security</artifactId>
       <version>${project.version}</version>

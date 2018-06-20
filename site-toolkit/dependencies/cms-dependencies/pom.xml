@@ -31,18 +31,7 @@
   
   <dependencies>
 
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-cms-restapi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
+    <!-- TODO is this pom still needed?? -->
   </dependencies>
   
 </project>
