@@ -58,6 +58,6 @@ public interface DocumentService {
      * @return a fully qualified link to the document, or an empty string if no link could be created.
      *
      */
-    String getUrl(Session userSession, String uuid, String cmsHost, String type);
+    String getUrl(Session userSession, String cmsHost, String uuid, String type);
 
 }
