@@ -73,7 +73,7 @@
     <spring.version>5.0.6.RELEASE</spring.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.15</groovy.version>
-    <freemarker.version>2.3.24-incubating</freemarker.version>
+    <freemarker.version>2.3.28</freemarker.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.2.3</maven.required.version>
