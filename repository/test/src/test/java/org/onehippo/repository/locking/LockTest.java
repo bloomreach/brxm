@@ -18,10 +18,10 @@ package org.onehippo.repository.locking;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 
-import org.hippoecm.repository.impl.LockManagerDecorator;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
@@ -60,18 +60,20 @@ public class LockTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testLockSucceedsAfterTimeout() throws Exception {
+    public void testLockTimeoutAfterRefresh() throws Exception {
         final LockManager lockManager = session.getWorkspace().getLockManager();
-        lockManager.lock("/test", false, false, 2l, null);
-        Thread.sleep(1000l);
-        // refresh on the underlying lock so that hippo:timeout is not updated
-        // but the lock is not released by jackrabbit internally
-        LockManagerDecorator.unwrap(lockManager).getLock("/test").refresh();
-        Thread.sleep(1001l);
         final Session anonSession = session.getRepository().login(CREDENTIALS);
         final LockManager anonLockManager = anonSession.getWorkspace().getLockManager();
-        anonLockManager.lock("/test", false, false, Long.MAX_VALUE, null);
+        // lock timeout: current time + 2s
+        Lock lock = lockManager.lock("/test", false, false, 2l, null);
+        Thread.sleep(1000l);
+        // refresh the lock timeout = current time + 2s
+        lock.refresh();
+        Thread.sleep(1000l);
         assertTrue(anonLockManager.isLocked("/test"));
+        Thread.sleep(1000l);
+        assertFalse(anonLockManager.isLocked("/test"));
+        anonSession.logout();
     }
 
     @Test
