@@ -42,11 +42,9 @@ class HippoCmCtrl {
       $('body').addClass('ie11');
     }
 
-    this.ChannelService.initialize();
-
-    this.CmsService.subscribe('load-channel', (channel, projectId, initialPath) => {
+    this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
       if (!this.ChannelService.matchesChannel(channel, projectId)) {
-        this.ChannelService.initializeChannel(channel, projectId, initialPath);
+        this.ChannelService.initializeChannel(channel, initialPath, projectId);
       } else if (angular.isString(initialPath) // a null path means: reuse the current render path
         && this.HippoIframeService.getCurrentRenderPathInfo() !== initialPath) {
         this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
