@@ -213,41 +213,5 @@
     </property>
   </bean>
 
-  <!-- configure that call to the programmatic creation of the _cmsrest Mount for Host 127.0.0.1 -->
-  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Void" />
-    <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-    <property name="targetMethod" value="addHstConfigurationAugmenter"/>
-    <property name="arguments">
-      <bean class="org.hippoecm.hst.core.hosting.CustomMountAndVirtualHostAugmenter">
-        <property name="customMountName" value="_cmsrest"/>
-        <property name="customHostName" value="127.0.0.1"/>
-        <property name="customMountNamedPipeline" value="CmsRestPipeline"/>
-        <!--
-          the type must be 'preview' as the links that are created through the CMS rest mount need to
-          be done against preview site map configurations
-        -->
-        <property name="customMountType" value="preview"/>
-      </bean>
-    </property>
-  </bean>
-
-  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Void" />
-    <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-    <property name="targetMethod" value="addHstConfigurationAugmenter"/>
-    <property name="arguments">
-      <bean class="org.hippoecm.hst.core.hosting.CustomMountAndVirtualHostAugmenter">
-        <property name="customMountName" value="_cmsrest"/>
-        <property name="customHostName" value="[::1]"/>
-        <property name="customMountNamedPipeline" value="CmsRestPipeline"/>
-        <!--
-          the type must be 'preview' as the links that are created through the CMS rest mount need to
-          be done against preview site map configurations
-        -->
-        <property name="customMountType" value="preview"/>
-      </bean>
-    </property>
-  </bean>
 
 </beans>
