@@ -40,20 +40,18 @@ public interface ChannelManagerConstants {
     String HST_LOCKED_ON = "HST-LockedOn";
     String HST_LAST_MODIFIED = "HST-LastModified";
     String HST_INHERITED = "HST-Inherited";
+    String HST_TYPE_MANAGE_CONTENT_LINK = "MANAGE_CONTENT_LINK";
     String HST_TYPE_PAGE_META_DATA = "PAGE-META-DATA";
-
-    // below used in ManageContentTag
-    String DEFAULT_PATH = "defaultPath";
-    String MANAGE_CONTENT_LINK = "MANAGE_CONTENT_LINK";
-    String PARAMETER_NAME = "parameterName";
-    String PARAMETER_VALUE = "parameterValue";
-    String PARAMETER_VALUE_IS_RELATIVE_PATH = "parameterValueIsRelativePath";
-    String PICKER_CONFIGURATION = "pickerConfiguration";
-    String PICKER_INITIAL_PATH = "pickerInitialPath";
-    String PICKER_REMEMBERS_LAST_VISITED = "pickerRemembersLastVisited";
-    String PICKER_ROOT_PATH = "pickerRootPath";
-    String PICKER_SELECTABLE_NODE_TYPES = "pickerSelectableNodeTypes";
-    String ROOT_PATH = "rootPath";
-    String TEMPLATE_QUERY = "templateQuery";
-    String UUID = "uuid";
+    String MANAGE_CONTENT_DEFAULT_PATH = "defaultPath";
+    String MANAGE_CONTENT_PARAMETER_NAME = "parameterName";
+    String MANAGE_CONTENT_PARAMETER_VALUE = "parameterValue";
+    String MANAGE_CONTENT_PARAMETER_VALUE_IS_RELATIVE_PATH = "parameterValueIsRelativePath";
+    String MANAGE_CONTENT_PICKER_CONFIGURATION = "pickerConfiguration";
+    String MANAGE_CONTENT_PICKER_INITIAL_PATH = "pickerInitialPath";
+    String MANAGE_CONTENT_PICKER_REMEMBERS_LAST_VISITED = "pickerRemembersLastVisited";
+    String MANAGE_CONTENT_PICKER_ROOT_PATH = "pickerRootPath";
+    String MANAGE_CONTENT_PICKER_SELECTABLE_NODE_TYPES = "pickerSelectableNodeTypes";
+    String MANAGE_CONTENT_ROOT_PATH = "rootPath";
+    String MANAGE_CONTENT_TEMPLATE_QUERY = "templateQuery";
+    String MANAGE_CONTENT_UUID = "uuid";
 }
