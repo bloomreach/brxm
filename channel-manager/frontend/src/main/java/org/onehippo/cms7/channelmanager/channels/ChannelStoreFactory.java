@@ -84,7 +84,7 @@ public final class ChannelStoreFactory {
             try {
                 // TODO CHANNELMGR-1949 get rid of this extensibility?
                 Class<?> customChannelStore = Class.forName(channelStoreClassName);
-                Constructor<?> channelStoreConstructor = customChannelStore.getConstructor(String.class, List.class, String.class, ChannelStore.SortOrder.class, LocaleResolver.class, Map.class, BlueprintStore.class);
+                Constructor<?> channelStoreConstructor = customChannelStore.getConstructor(String.class, List.class, String.class, ChannelStore.SortOrder.class, LocaleResolver.class, BlueprintStore.class);
                 return (ChannelStore) channelStoreConstructor.newInstance(storeId, fieldList, sortColumn, sortOrder, localeResolver, blueprintStore);
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | ClassCastException e) {
                 log.error("Could not instantiate custom channel store: {}", channelStoreClassName, e);
