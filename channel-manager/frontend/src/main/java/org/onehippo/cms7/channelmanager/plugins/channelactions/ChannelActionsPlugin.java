@@ -23,12 +23,10 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
@@ -41,6 +39,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
@@ -49,22 +48,20 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.hst.rest.DocumentService;
-import org.hippoecm.hst.rest.beans.ChannelDocument;
+import org.hippoecm.frontend.util.RequestUtils;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.hippoecm.hst.platform.api.beans.ChannelDocument;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
 @SuppressWarnings({"deprecation", "serial"})
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
@@ -139,40 +136,27 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         return service;
     }
 
+
+    private javax.jcr.Session getUserJcrSession() {
+        return UserSession.get().getJcrSession();
+    }
+
+    // TODO CHANNELMGR-1949 Should we improve how to get the CMS HOST? Can't we store it somewhere in the cluster settings instead
+    // TODO CHANNELMGR-1949 of having to take it from the request (now we can only use this code if we have an http request)
+    private String getCmsHost() {
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+        return RequestUtils.getFarthestRequestHost(httpServletRequest);
+    }
+
+
     private MarkupContainer createMenu(final String documentUuid) {
 
-        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(getPluginContext(), getPluginConfig());
-        if (liveRestProxyServices.isEmpty()) {
-            log.info("No rest proxies services available. Cannot create menu for available channels");
-            return new EmptyPanel("channels");
-        }
-
-        // a rest proxy can only return ChannelDocument for the webapp the proxy belongs to. Hence we need to
-        // invoke all rest proxies to get all available channel documents
-        List<Callable<List<ChannelDocument>>> restProxyJobs = new ArrayList<>();
-
-        for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
-            final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
-            restProxyJobs.add(() -> documentService.getChannels(documentUuid).getChannelDocuments());
-        }
-
-        final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
-        final List<Future<List<ChannelDocument>>> futures = submitJobs(restProxyJobs);
-        for (Future<List<ChannelDocument>> future : futures) {
-            try {
-                combinedChannelDocuments.addAll(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Exception while trying to find Channel for document with uuid '{}'.", documentUuid, e);
-                } else {
-                    log.warn("Exception while trying to find Channel for document with uuid '{}' : {}", documentUuid, e.toString());
-                }
-            }
-        }
-        combinedChannelDocuments.sort(getChannelDocumentComparator());
+        final List<ChannelDocument> channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
+                .getDocumentService().getChannels(getUserJcrSession(), getCmsHost(), documentUuid);
+        channelDocuments.sort(getChannelDocumentComparator());
 
         final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<>();
-        for (final ChannelDocument channelDocument : combinedChannelDocuments) {
+        for (final ChannelDocument channelDocument : channelDocuments) {
             idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
         }
 

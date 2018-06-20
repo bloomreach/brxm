@@ -5,7 +5,6 @@ definitions:
       /channel-manager-perspective:
         jcr:primaryType: frontend:plugin
         plugin.class: org.onehippo.cms7.channelmanager.ChannelManagerPerspective
-        rest.proxy.service.id: hst.rest.proxy.service
         wicket.id: service.tab
         /channel-list:
           jcr:primaryType: frontend:pluginconfig

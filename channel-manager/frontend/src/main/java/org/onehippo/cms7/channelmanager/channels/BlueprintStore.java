@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,31 +15,24 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.configuration.channel.Blueprint;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
-import org.hippoecm.hst.rest.BlueprintService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
 public class BlueprintStore extends ExtJsonStore<Object> {
 
@@ -49,15 +42,9 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
-    private transient Map<String, Blueprint> blueprints;
-    private transient int availableRestProxiesHashCode;
-    final Map<String, IRestProxyService> restProxyServices;
-
-    public BlueprintStore(final Map<String, IRestProxyService> restProxyServices) {
+    public BlueprintStore() {
         super(Arrays.asList(new ExtDataField(FIELD_NAME), new ExtDataField(FIELD_DESCRIPTION), new ExtDataField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtDataField(FIELD_CONTENT_ROOT)));
-        this.restProxyServices = restProxyServices;
     }
 
     @Override
@@ -88,7 +75,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-        for (Blueprint blueprint : getBlueprints().values()) {
+        for (Blueprint blueprint : getBlueprints()) {
             JSONObject object = new JSONObject();
             object.put("id", blueprint.getId());
             object.put(FIELD_NAME, blueprint.getName());
@@ -105,42 +92,8 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         return data;
     }
 
-    public Map<String, Blueprint> getBlueprints() {
-        // check whether previously loaded blueprints are from same live proxies as current live proxies
-        if (blueprints != null && availableRestProxiesHashCode == restProxyServices.keySet().hashCode()) {
-            return blueprints;
-        }
-
-        availableRestProxiesHashCode = restProxyServices.keySet().hashCode();
-        blueprints = new HashMap<>();
-
-        List<Callable<List<Blueprint>>> restProxyJobs = new ArrayList<>();
-        for (final IRestProxyService restProxyService : restProxyServices.values()) {
-            final BlueprintService blueprintService = restProxyService.createSecureRestProxy(BlueprintService.class);
-            restProxyJobs.add(new Callable<List<Blueprint>>() {
-                @Override
-                public List<Blueprint> call() throws Exception {
-                    return blueprintService.getBlueprints().getBlueprints();
-                }
-            });
-        }
-
-        final List<Future<List<Blueprint>>> futures = submitJobs(restProxyJobs);
-        for (Future<List<Blueprint>> future : futures) {
-            try {
-                for (Blueprint blueprint : future.get()) {
-                    blueprints.put(blueprint.getId(), blueprint);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to load blueprint for one or more rest proxies.", e);
-                } else{
-                    log.warn("Failed to load blueprint for one or more rest proxies : {}", e.toString());
-                }
-            }
-        }
-
-        return blueprints;
+    public List<Blueprint> getBlueprints() {
+        return HippoServiceRegistry.getService(PlatformServices.class).getBlueprintService().getBlueprints();
     }
 
 

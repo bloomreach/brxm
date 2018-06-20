@@ -71,10 +71,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-cms-dependencies</artifactId>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
       <version>${hippo.hst.version}</version>
-      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-platform-api</artifactId>
+      <version>${hippo.hst.version}</version>
       <scope>provided</scope>
     </dependency>
 

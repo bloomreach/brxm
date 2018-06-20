@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.onehippo.cms7.services.hst.Channel;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,10 +45,9 @@ public class CountryGroupingChannelStore extends ChannelStore {
                                        final String sortFieldName,
                                        final SortOrder sortOrder,
                                        final LocaleResolver localeResolver,
-                                       final Map<String, IRestProxyService> restProxyServices,
                                        final BlueprintStore blueprintStore) {
 
-        super(storeId, fields, sortFieldName, sortOrder, localeResolver, restProxyServices, blueprintStore);
+        super(storeId, fields, sortFieldName, sortOrder, localeResolver, blueprintStore);
     }
 
     protected void populateChannelRegion(final Channel channel, final JSONObject object) throws JSONException {
