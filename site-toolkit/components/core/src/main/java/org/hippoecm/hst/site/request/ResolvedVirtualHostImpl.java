@@ -88,25 +88,13 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
             }
             position++;
         }
-        
-        if(contextPath != null && mount.getContextPath() != null) {
-            // Check if the Mount that has a valid contextpath
-            while(mount != null && contextPath != null && (mount.getContextPath() != null && !mount.getContextPath().equals(contextPath) )) {
-                log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Try parent Mount's if present.'"
-                        +mount.getContextPath()+"' ", mount.getName(), contextPath);
-                mount = mount.getParent();
-                position--;
-            }
-        }
-        
-        if(mount == null) {
-            log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}' and contextpath '{}': " +
-                    "We cannot return a ResolvedMount. Return null",
-                    virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()), contextPath);
+
+        if (!contextPath.equals(mount.getContextPath())) {
+            log.info("Context path '{}' from the mount '{}' does not match the context path '{}' from the request.",
+                    mount.getContextPath(), mount, contextPath);
             return null;
         }
-        
-        
+
         // reconstruct the prefix that needs to be stripped of from the request because it belongs to the Mount
         // we thus create the resolvedPathInfoPrefix
         StringBuilder builder = new StringBuilder();
