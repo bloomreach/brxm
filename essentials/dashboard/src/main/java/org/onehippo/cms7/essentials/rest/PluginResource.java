@@ -146,6 +146,7 @@ public class PluginResource {
         final Map<String, Object> parameters = createDefaultInstallationParameters();
         final UserFeedback feedback = new UserFeedback();
 
+        parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
         if (!installStateMachine.tryBoarding(pluginId, pluginSet, parameters, feedback)) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
         }
@@ -167,6 +168,7 @@ public class PluginResource {
         final PluginSet pluginSet = pluginStore.loadPlugins();
         final UserFeedback feedback = new UserFeedback();
         ensureGenericInstallationParameters(parameters);
+        parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
 
         if (!installStateMachine.tryInstallation(pluginId, pluginSet, parameters, feedback)) {
             response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);

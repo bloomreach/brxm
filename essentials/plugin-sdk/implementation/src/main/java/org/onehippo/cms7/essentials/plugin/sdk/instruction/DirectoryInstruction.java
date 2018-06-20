@@ -42,6 +42,7 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialsFileUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
             case CREATE:
                 return create();
             case COPY:
-                return copy(placeholderData);
+                return copy(placeholderData, parameters);
         }
         return Status.FAILED;
     }
@@ -125,7 +126,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
 
-    private Status copy(final Map<String, Object> placeholderData) {
+    private Status copy(final Map<String, Object> placeholderData, final Map<String, Object> parameters) {
         if (Strings.isNullOrEmpty(source)) {
             log.warn("Source was not defined");
             return Status.FAILED;
@@ -135,7 +136,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
             return Status.FAILED;
         }
 
-        return copyResources(source, new File(target), placeholderData);
+        return copyResources(source, new File(target), placeholderData, parameters);
     }
 
     private Status create() {
@@ -197,7 +198,8 @@ public class DirectoryInstruction extends BuiltinInstruction {
     //
     //############################################
 
-    private Status copyResources(final String source, final File targetDirectory, final Map<String, Object> placeholderData) {
+    private Status copyResources(final String source, final File targetDirectory,
+                                 final Map<String, Object> placeholderData, final Map<String, Object> parameters) {
 
         if (!targetDirectory.exists()) {
             log.info("Directory {} doesn't exist, creating new one", targetDirectory);
@@ -211,21 +213,19 @@ public class DirectoryInstruction extends BuiltinInstruction {
         }
 
         try {
-            final JarURLConnection connection = createConnection(source);
+            final JarURLConnection connection = createConnection(parameters);
             if (connection == null) {
                 log.warn("Couldn't process jar source: {}", source);
                 return Status.FAILED;
             }
-            final String name = connection.getEntryName();
-            log.debug("Processing zip file for connection: {}", name);
+            final String entryPrefix = normalizeRelativeDirectoryPath(source);
             final JarFile jarFile = connection.getJarFile();
             final Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 final JarEntry jarEntry = entries.nextElement();
                 final String entryName = jarEntry.getName();
-                log.debug("Processing jar entry: {}", entryName);
-                if (entryName.startsWith(name + '/')) {
-                    final String fileName = entryName.substring(name.length());
+                if (entryName.startsWith(entryPrefix)) {
+                    final String fileName = entryName.substring(entryPrefix.length());
                     final File file = new File(targetDirectory, fileName);
                     if (file.exists()) {
                         if (overwrite) {
@@ -263,11 +263,28 @@ public class DirectoryInstruction extends BuiltinInstruction {
         return Status.SUCCESS;
     }
 
-    private JarURLConnection createConnection(final String source) throws IOException {
-        if (Strings.isNullOrEmpty(source)) {
+    private String normalizeRelativeDirectoryPath(String resourcePath) {
+        if (resourcePath.startsWith("/")) {
+            resourcePath = resourcePath.substring(1);
+        }
+        return resourcePath;
+    }
+
+    private JarURLConnection createConnection(final Map<String, Object> parameters)
+            throws IOException {
+        final PluginDescriptor pluginDescriptor = (PluginDescriptor)parameters.get(EssentialConst.PROP_PLUGIN_DESCRIPTOR);
+        if (pluginDescriptor == null) {
+            log.warn("Failed to execute directory-copy: unable to access plugin descriptor.");
             return null;
         }
-        final URL resource = getClass().getResource(source);
+
+        final String sourceForJar = pluginDescriptor.getPackageFile();
+        if (Strings.isNullOrEmpty(sourceForJar)) {
+            log.warn("Failed to execute directory-copy: no packageFile available for identifying the plugin JAR.");
+            return null;
+        }
+
+        final URL resource = getClass().getResource(sourceForJar);
         if (resource == null) {
             return null;
         }
