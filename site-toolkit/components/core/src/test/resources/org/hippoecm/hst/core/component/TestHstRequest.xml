@@ -18,14 +18,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-   <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
-         class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
-   
     <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
     <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
-    <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
     <property name="referenceNamespaceIgnored" value="false" />
   </bean>
   

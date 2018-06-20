@@ -47,14 +47,10 @@
     </property>
   </bean>
   
-  <bean id="org.hippoecm.hst.core.container.HstNavigationalStateCodec"
-        class="org.hippoecm.hst.core.container.HstNavigationalStateCodecImpl" />
-  
   <bean id="org.hippoecm.hst.core.component.HstURLFactory"
         class="org.hippoecm.hst.core.component.HstURLFactoryImpl">
     <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
-    <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
     <property name="referenceNamespaceIgnored" value="${parameter.namespace.ignored}" />
   </bean>
   
