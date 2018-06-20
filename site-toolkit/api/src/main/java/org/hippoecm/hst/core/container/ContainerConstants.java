@@ -198,4 +198,10 @@ public interface ContainerConstants {
 
     String PAGE_MODEL_API_VERSION = "API-Version";
 
+    /**
+     * The attribute used to find the node that will be used to represent a document.
+     * This attribute should be set when a {@link org.hippoecm.hst.configuration.site.HstSiteProvider} determines what
+     * {@link org.hippoecm.hst.configuration.site.HstSite} to return to the hst engine.
+     */
+    String RENDER_BRANCH_ID = "org.hippoecm.hst.container.render_branch_id";
 }

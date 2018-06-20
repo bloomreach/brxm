@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,9 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -27,18 +27,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
+import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.services.hst.Channel;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
@@ -50,21 +51,22 @@ import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
 
 public class ObjectConverterImpl implements ObjectConverter {
-    
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
+
+    private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
+    private static final String BRANCH_ID_MASTER = "master";
 
     protected Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs;
     protected Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs;
-    protected String [] fallBackJcrNodeTypes;
-    
-    public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String [] fallBackJcrNodeTypes) {
+    protected String[] fallBackJcrNodeTypes;
+
+    public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String[] fallBackJcrNodeTypes) {
         this.jcrPrimaryNodeTypeBeanPairs = jcrPrimaryNodeTypeBeanPairs;
-        this.jcrBeanPrimaryNodeTypePairs = new HashMap<Class<? extends HippoBean>, String>();
-        
-        for(Entry<String, Class<? extends HippoBean>> entry: jcrPrimaryNodeTypeBeanPairs.entrySet()) {
+        this.jcrBeanPrimaryNodeTypePairs = new HashMap<>();
+
+        for (Entry<String, Class<? extends HippoBean>> entry : jcrPrimaryNodeTypeBeanPairs.entrySet()) {
             jcrBeanPrimaryNodeTypePairs.put(entry.getValue(), entry.getKey());
         }
-        
+
         if (fallBackJcrNodeTypes != null) {
             this.fallBackJcrNodeTypes = new String[fallBackJcrNodeTypes.length];
             System.arraycopy(fallBackJcrNodeTypes, 0, this.fallBackJcrNodeTypes, 0, fallBackJcrNodeTypes.length);
@@ -72,7 +74,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
-        if(StringUtils.isEmpty(path) || !path.startsWith("/")) {
+        if (StringUtils.isEmpty(path) || !path.startsWith("/")) {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
@@ -82,28 +84,28 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (RepositoryException re) {
             throw new ObjectBeanManagerException("Impossible to get the object at " + path, re);
         }
-           
+
     }
 
     public Object getObject(Node node, String relPath) throws ObjectBeanManagerException {
-        if(StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
+        if (StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
             log.info("'{}' is not a valid relative path. Return null.", relPath);
             return null;
         }
-        if(node == null) {
+        if (node == null) {
             log.info("Node is null. Cannot get document with relative path '{}'", relPath);
             return null;
         }
         String nodePath = null;
         try {
             if (node instanceof HippoBeanFrozenNode) {
-                nodePath = ((HippoBeanFrozenNode)node).getFrozenNode().getPath();
+                nodePath = ((HippoBeanFrozenNode) node).getFrozenNode().getPath();
             } else {
                 nodePath = node.getPath();
             }
             final Node relNode = JcrUtils.getNodeIfExists(node, relPath);
             if (relNode == null) {
-                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
+                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
                 return null;
             }
             if (relNode.isNodeType(NT_HANDLE)) {
@@ -118,8 +120,8 @@ public class ObjectConverterImpl implements ObjectConverter {
                 }
             } else {
                 return getObject(relNode);
-            }   
-            
+            }
+
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath, e);
@@ -129,7 +131,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             return null;
         }
     }
-    
+
     public Object getObject(String uuid, Session session) throws ObjectBeanManagerException {
         checkUUID(uuid);
         try {
@@ -138,7 +140,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (ItemNotFoundException e) {
             log.info("ItemNotFoundException for uuid '{}'. Return null.", uuid);
         } catch (RepositoryException e) {
-            log.info("RepositoryException for uuid '{}' : {}. Return null.",uuid, e);
+            log.info("RepositoryException for uuid '{}' : {}. Return null.", uuid, e);
         }
         return null;
     }
@@ -151,7 +153,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
         return null;
     }
-    
+
     public Object getObject(final Node node) throws ObjectBeanManagerException {
 
         String jcrPrimaryNodeType;
@@ -165,8 +167,8 @@ public class ObjectConverterImpl implements ObjectConverter {
                 return null;
             }
 
-            if(useNode.isNodeType(NT_HANDLE) ) {
-                if(useNode.hasNode(useNode.getName())) {
+            if (useNode.isNodeType(NT_HANDLE)) {
+                if (useNode.hasNode(useNode.getName())) {
                     return getObject(useNode.getNode(useNode.getName()));
                 } else {
                     return null;
@@ -174,7 +176,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
-          
+
             if (proxyInterfacesOrDelegateeClass == null) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
                     log.info("Encountered useNode of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
@@ -183,19 +185,19 @@ public class ObjectConverterImpl implements ObjectConverter {
                 }
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
-                    
-                    if(!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
+
+                    if (!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
                         continue;
                     }
                     // take the first fallback type
                     proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                    if(proxyInterfacesOrDelegateeClass != null) {
-                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, proxyInterfacesOrDelegateeClass);
+                    if (proxyInterfacesOrDelegateeClass != null) {
+                        log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, proxyInterfacesOrDelegateeClass);
                         break;
                     }
                 }
             }
-            
+
             if (proxyInterfacesOrDelegateeClass != null) {
                 Object object = ServiceFactory.create(useNode, proxyInterfacesOrDelegateeClass);
                 if (object instanceof NodeAware) {
@@ -212,7 +214,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to convert the useNode", e);
         }
-        log.info("No Descriptor found for useNode '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
+        log.info("No Descriptor found for useNode '{}'. Cannot return a Bean for '{}'.", path, jcrPrimaryNodeType);
         return null;
     }
 
@@ -248,9 +250,9 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        final Mount mount = requestContext.getResolvedMount().getMount();
-        final Channel channel = mount.getChannel();
-        if (channel == null || channel.getBranchOf() == null) {
+        final String branchId = getBranchIdFromContext(requestContext);
+        final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BRANCH_ID_MASTER);
+        if (branchIdOfNode.equals(branchId)) {
             return node;
         }
 
@@ -262,12 +264,11 @@ public class ObjectConverterImpl implements ObjectConverter {
                         handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
                 return node;
             }
-
             final String versionLabel;
-            if (mount.isPreview()) {
-                versionLabel = channel.getBranchId() + "-preview";
+            if (requestContext.getResolvedMount().getMount().isPreview()) {
+                versionLabel = branchId + "-unpublished";
             } else {
-                versionLabel = channel.getBranchId() + "-live";
+                versionLabel = branchId + "-published";
             }
 
             final Optional<Node> version = getVersionForLabel(versionHistory, versionLabel);
@@ -288,9 +289,17 @@ public class ObjectConverterImpl implements ObjectConverter {
 
     }
 
+    private String getBranchIdFromContext(final HstRequestContext requestContext) {
+        String branchId = (String) requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID);
+        if (branchId == null) {
+            return BRANCH_ID_MASTER;
+        }
+        return branchId;
+    }
+
     private Optional<Node> getVersionForLabel(final Node versionHistory, final String versionLabel) throws RepositoryException {
         if (!versionHistory.hasProperty(JCR_VERSIONLABELS + "/" + versionLabel)) {
-           return Optional.empty();
+            return Optional.empty();
         }
         return Optional.of(versionHistory.getProperty(JCR_VERSIONLABELS + "/" + versionLabel).getNode());
     }
@@ -300,8 +309,8 @@ public class ObjectConverterImpl implements ObjectConverter {
         String path;
         try {
 
-            if(node.isNodeType(NT_HANDLE) ) {
-                if(node.hasNode(node.getName())) {
+            if (node.isNodeType(NT_HANDLE)) {
+                if (node.hasNode(node.getName())) {
                     return getPrimaryObjectType(node.getNode(node.getName()));
                 } else {
                     return null;
@@ -309,7 +318,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
             jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
             boolean isObjectType = jcrPrimaryNodeTypeBeanPairs.containsKey(jcrPrimaryNodeType);
-          
+
             if (!isObjectType) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
                     log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
@@ -318,22 +327,22 @@ public class ObjectConverterImpl implements ObjectConverter {
                 }
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
-                    
-                    if(!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+
+                    if (!node.isNodeType(fallBackJcrPrimaryNodeType)) {
                         continue;
                     }
                     // take the first fallback type
                     isObjectType = jcrPrimaryNodeTypeBeanPairs.containsKey(fallBackJcrPrimaryNodeType);
-                    if(isObjectType) {
-                    	log.debug("No primary node type found for {}, using fallback type {} instead", jcrPrimaryNodeType, fallBackJcrPrimaryNodeType);
-                    	jcrPrimaryNodeType = fallBackJcrPrimaryNodeType;
+                    if (isObjectType) {
+                        log.debug("No primary node type found for {}, using fallback type {} instead", jcrPrimaryNodeType, fallBackJcrPrimaryNodeType);
+                        jcrPrimaryNodeType = fallBackJcrPrimaryNodeType;
                         break;
                     }
                 }
             }
-            
+
             if (isObjectType) {
-            	return jcrPrimaryNodeType;
+                return jcrPrimaryNodeType;
             }
             path = node.getPath();
         } catch (RepositoryException e) {
@@ -341,22 +350,22 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to determine node type for node", e);
         }
-        log.info("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path , jcrPrimaryNodeType);
+        log.info("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path, jcrPrimaryNodeType);
         return null;
     }
-    
-    private void checkUUID(String uuid) throws ObjectBeanManagerException{
+
+    private void checkUUID(String uuid) throws ObjectBeanManagerException {
         try {
             UUID.fromString(uuid);
-        } catch (IllegalArgumentException e){
-            throw new ObjectBeanManagerException("Uuid is not parseable to a valid uuid: '"+uuid+"'");
+        } catch (IllegalArgumentException e) {
+            throw new ObjectBeanManagerException("Uuid is not parseable to a valid uuid: '" + uuid + "'");
         }
     }
 
     public Class<? extends HippoBean> getAnnotatedClassFor(String jcrPrimaryNodeType) {
         return this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
     }
-    
+
     public String getPrimaryNodeTypeNameFor(Class<? extends HippoBean> hippoBean) {
         return jcrBeanPrimaryNodeTypePairs.get(hippoBean);
     }

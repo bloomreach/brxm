@@ -26,6 +26,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
+import javax.management.relation.RelationException;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -37,6 +38,8 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.repository.api.Document;
@@ -51,7 +54,11 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
@@ -115,8 +122,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
     }
 
     /**
-     * below creates version 1.0, 1.1 and 1.2 of the home page document and labels them with christmas-live or master-live
-     * and it creates version 1.0, 1.1 and 1.2 of the about-us document and labels them also with christmas-live and
+     * below creates version 1.0, 1.1 and 1.2 of the home page document and labels them with christmas-published or master-live
+     * and it creates version 1.0, 1.1 and 1.2 of the about-us document and labels them also with christmas-published and
      * master-live
      */
     private void createVersionHistoryFixture() throws WorkflowException, RepositoryException, RemoteException {
@@ -130,7 +137,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         final Document doc = wf.version();
         assertThat(doc.getNode(session).getName()).isEqualTo("1.1");
-        versionHistoryHome.addVersionLabel("1.1", "christmas-live", true);
+        versionHistoryHome.addVersionLabel("1.1", "christmas-published", true);
 
         changeTitleContentAndCommit(homeHandle, wf, "The master Title", "This is the content of the master homepage");
 
@@ -154,7 +161,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         final Document doc2 = wf2.version();
         assertThat(doc2.getNode(session).getName()).isEqualTo("1.1");
-        versionHistoryAboutUs.addVersionLabel("1.1", "christmas-live", true);
+        versionHistoryAboutUs.addVersionLabel("1.1", "christmas-published", true);
 
         changeTitleAndCommit(aboutUsHandle, wf2, "The master Title About us");
 
@@ -164,8 +171,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         changeTitleAndCommit(aboutUsHandle, wf2, "The new Christmas Title About us");
         // publish triggers new version
         wf2.publish();
-        // overrides the 1.0 christmas-live version
-        versionHistoryAboutUs.addVersionLabel("1.3", "christmas-live", true);
+        // overrides the 1.0 christmas-published version
+        versionHistoryAboutUs.addVersionLabel("1.3", "christmas-published", true);
 
         confirm_version_fixture();
     }
@@ -205,13 +212,13 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         final Version homeMaster = versionHistoryHome.getVersionByLabel("master-live");
         assertThat(homeMaster.getName()).isEqualTo("1.3");
 
-        final Version homeChristmas = versionHistoryHome.getVersionByLabel("christmas-live");
+        final Version homeChristmas = versionHistoryHome.getVersionByLabel("christmas-published");
         assertThat(homeChristmas.getName()).isEqualTo("1.1");
 
         final Version aboutMaster = versionHistoryAboutUs.getVersionByLabel("master-live");
         assertThat(aboutMaster.getName()).isEqualTo("1.2");
 
-        final Version aboutChristmas = versionHistoryAboutUs.getVersionByLabel("christmas-live");
+        final Version aboutChristmas = versionHistoryAboutUs.getVersionByLabel("christmas-published");
         assertThat(aboutChristmas.getName()).isEqualTo("1.3");
 
     }
@@ -238,6 +245,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         final HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getResolvedMount()).andStubReturn(resolvedMount);
+        expect(requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID)).andStubReturn(branch);
 
         ModifiableRequestContextProvider.set(requestContext);
 
@@ -294,16 +302,16 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         final Object bean = versionedHomePage.getBean("unittestproject:body");
         assertThat(bean instanceof HippoHtml).isTrue();
 
-        assertThat(body.isSelf((HippoHtml) bean));
+        assertThat(body.isSelf((HippoHtml) bean)).isTrue();
 
         final List<HippoHtml> childBeans = versionedHomePage.getChildBeans(HippoHtml.class);
         assertThat(childBeans.size()).isEqualTo(1);
-        assertThat(childBeans.get(0).isSelf(body));
+        assertThat(childBeans.get(0).isSelf(body)).isTrue();
 
         final List<HippoBean> allChildren = versionedHomePage.getChildBeans(HippoBean.class);
 
         assertThat(allChildren.size()).isEqualTo(1);
-        assertThat(allChildren.get(0).isSelf(body));
+        assertThat(allChildren.get(0).isSelf(body)).isTrue();
 
         final PersistableTextPage versionedHomePageViaBody = (PersistableTextPage) body.getParentBean();
 
@@ -357,7 +365,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         changeTitleContentAndCommit(homeHandle, wf, "The Christmas Title", "This is the content of the Christmas homepage");
 
         wf.version();
-        versionHistoryHome.addVersionLabel("1.4", "christmas-live", true);
+        versionHistoryHome.addVersionLabel("1.4", "christmas-published", true);
 
         initContext("christmas");
 
