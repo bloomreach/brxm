@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.platform.services;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,10 +57,12 @@ public class ChannelServiceImpl implements ChannelService {
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
-            final String hostGroupNameForCmsHost = ResourceUtil.getHostGroupNameForCmsHost(virtualHosts, cmsHost);
+
+            String hostGroupNameForCmsHost = ResourceUtil.getHostGroupNameForCmsHost(virtualHosts, cmsHost);
+
             if (hostGroupNameForCmsHost == null) {
-                log.warn("Cannot match cms host '{}' for hst virtualhosts for context path '{}'", cmsHost, virtualHosts.getContextPath());
-                return channels;
+                log.info("Cannot match cms host '{}' for hst virtualhosts for context path '{}'", cmsHost, virtualHosts.getContextPath());
+                continue;
             }
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
             for (Mount mount : mountsByHostGroup) {
@@ -79,7 +82,8 @@ public class ChannelServiceImpl implements ChannelService {
                     log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
                     continue;
                 }
-                // TODO HSTTWO-4359 we need to come up with an alternative for 'channelFilter'
+                // TODO HSTTWO-4359 we need to come up with an alternative for 'channelFilter' Most likely we can just
+                // TODO plugin channelFilter BUT it cannot use the HstRequestContext since we do not have one anymore
 //                if (channelFilter.apply(channel)) {
 //                    log.debug("Including channel '{}' because passes filters.", channel.toString());
 //                    channels.add(channel);

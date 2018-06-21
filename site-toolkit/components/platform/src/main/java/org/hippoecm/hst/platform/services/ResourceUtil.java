@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.platform.services;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
@@ -22,6 +26,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.MutableVirtualHost;
+import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.PathUtils;
@@ -46,11 +53,30 @@ public class ResourceUtil {
      * @return the host group name for {@code cmsHost} and {@code null} if the {@code cmsHost} cannot be matched
      */
     public static String getHostGroupNameForCmsHost(final VirtualHosts virtualHosts, final String cmsHost) {
-        final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost(cmsHost);
-        if (resolvedVirtualHost == null) {
-            return null;
+
+        for (Map.Entry<String, Map<String, MutableVirtualHost>> entry : ((MutableVirtualHosts)virtualHosts).getRootVirtualHostsByGroup().entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                continue;
+            }
+
+            final String hostGroup = entry.getKey();
+
+            // every host within one hostgroup has all the cms locations
+            final List<String> cmsLocationsForHostGroup = entry.getValue().values().iterator().next().getCmsLocations();
+            for (String cmsLocation : cmsLocationsForHostGroup) {
+                try {
+                    final URI uri = new URI(cmsLocation);
+                    if (StringUtils.substringBefore(cmsHost, ":").equals(uri.getHost())) {
+                        return hostGroup;
+                    }
+                } catch (URISyntaxException e) {
+                    log.error("Incorrectly configured cms location '{}' on host group '{}'", cmsLocation, hostGroup);
+                    continue;
+                }
+            }
         }
-        return resolvedVirtualHost.getVirtualHost().getHostGroupName();
+
+        return null;
     }
 
 
