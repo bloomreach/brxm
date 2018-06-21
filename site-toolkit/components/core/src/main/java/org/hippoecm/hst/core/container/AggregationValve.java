@@ -37,6 +37,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
+import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -254,6 +255,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             servletRequest.setAttribute(ContainerConstants.HST_FORWARD_PATH_INFO, forwardPathInfo);
 
         } else {
+            // process HeadContributable's.
+            processHeadContributables(context, responseMap.get(rootRenderingWindow));
             // process doRender() of each component as reversed sort order, child first.
             processWindowsRender(requestContainerConfig, sortedComponentRenderingWindows, requestMap, responseMap);
             // handle page errors if exists
@@ -456,6 +459,24 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
             logPossibleWaste(responseMap, window);
         }
+    }
+
+    /**
+     * Process {@link HeadContributable} objects in {@link HstRequestContext}.
+     * @param context {@link ValveContext} instance
+     * @param hstResponse {@link HstResponse} object through which {@link HeadContributable} objects may contribute {@link HeadElement}s.
+     * @throws ContainerException if HST Container exception occurs
+     */
+    private void processHeadContributables(final ValveContext context, final HstResponse hstResponse) throws ContainerException {
+        final HstRequestContext requestContext = context.getRequestContext();
+        final Map<String, HeadContributable> headContributableMap = requestContext.getHeadContributableMap();
+
+        if (headContributableMap.isEmpty()) {
+            return;
+        }
+
+        headContributableMap.values().forEach(headContributable -> headContributable.contributeHeadElements(hstResponse));
+
     }
 
     /**
