@@ -268,7 +268,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             final boolean preview = requestContext.getResolvedMount().getMount().isPreview();
             Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
-                // lookup master revision in absence of a barnch version
+                // lookup master revision in absence of a branch version
                 version = getVersionForLabel(versionHistory, BRANCH_ID_MASTER, preview);
             }
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
