@@ -132,8 +132,8 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     public void viewChannel(final String channelId, final String channelPath, final String branchId) {
         if (siteIsUp) {
-            rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
             rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_EDITOR);
+            rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
             focus(null);
         }
     }

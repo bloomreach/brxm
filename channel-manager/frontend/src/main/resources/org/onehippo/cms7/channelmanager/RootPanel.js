@@ -218,6 +218,7 @@
         });
 
         this.layout.setActiveItem(itemId);
+        this._onActivate();
       } else {
         this.layout.setActiveItem(0);
       }
