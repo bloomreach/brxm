@@ -30,8 +30,8 @@ public interface HeadContributable {
 
     /**
      * Contribute head elements to the given {@code response}.
-     * @param response {@link HstResponse} through which this can contribute head elements to the page.
+     * @param rootResponse the root {@link HstResponse} through which this can contribute head elements to the page.
      */
-    void contributeHeadElements(HstResponse response);
+    void contributeHeadElements(HstResponse rootResponse);
 
 }

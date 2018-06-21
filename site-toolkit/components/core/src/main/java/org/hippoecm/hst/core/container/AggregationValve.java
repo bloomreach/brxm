@@ -475,9 +475,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             return;
         }
 
-        headContributableMap.forEach((name, headContributable) -> {
-            headContributable.contributeHeadElements(hstResponse);
-        });
+        headContributableMap.values().forEach(headContributable -> headContributable.contributeHeadElements(hstResponse));
+
     }
 
     /**
