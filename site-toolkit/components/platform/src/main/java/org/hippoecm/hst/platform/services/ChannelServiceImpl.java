@@ -27,11 +27,11 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
+import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +53,8 @@ public class ChannelServiceImpl implements ChannelService {
     public List<Channel> getChannels(final String cmsHost) {
         final List<Channel> channels = new ArrayList<>();
 
+        // TODO move the mount decorator impl to platform
+        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
@@ -66,20 +68,12 @@ public class ChannelServiceImpl implements ChannelService {
             }
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
             for (Mount mount : mountsByHostGroup) {
-                if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
-                    log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
-                            mount.toString());
-                    continue;
-                }
-                String requestContextPath = RequestContextProvider.get().getServletRequest().getContextPath();
-                if (mount.getContextPath() == null || !mount.getContextPath().equals(requestContextPath)) {
-                    log.debug("Skipping mount '{}' because it can only be rendered for webapp '{}' and not for webapp '{}'",
-                            mount.toString(), mount.getContextPath(), requestContextPath);
-                    continue;
-                }
-                final Channel channel = mount.getChannel();
+
+                final Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+
+                final Channel channel = previewMount.getChannel();
                 if (channel == null) {
-                    log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
+                    log.debug("No channel present for mount '{}'", mount);
                     continue;
                 }
                 // TODO HSTTWO-4359 we need to come up with an alternative for 'channelFilter' Most likely we can just
