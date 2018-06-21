@@ -118,7 +118,8 @@
         if (this.layout.activeItem === Hippo.ChannelManager.ChannelEditor.Instance) {
           return;
         }
-        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId, null, 'master');
+        Hippo.ChannelManager.ChannelEditor.Instance.initChannel(channelId, '', 'master');
+        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel();
         self._showChannelEditor();
       };
 
@@ -133,7 +134,7 @@
     _onActivate: function() {
       this._showBreadcrumb();
       if (this._isChannelEditorShown()) {
-        this.layout.activeItem.reloadPage();
+        this.layout.activeItem.loadChannel();
       }
     },
 

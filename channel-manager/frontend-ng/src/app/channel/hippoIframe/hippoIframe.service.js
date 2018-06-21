@@ -34,8 +34,6 @@ class HippoIframeService {
     this.ConfigService = ConfigService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
-
-    CmsService.subscribe('reload-page', () => this.reload());
   }
 
   initialize(iframeJQueryElement) {
