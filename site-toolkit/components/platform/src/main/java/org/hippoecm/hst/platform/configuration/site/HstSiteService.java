@@ -171,12 +171,6 @@ public class HstSiteService implements HstSite {
     }
 
     private void loadChannel(final HstNode site, final Mount mount, final boolean isPreviewSite, final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
-        HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if (mount.getContextPath() != null && !mount.getContextPath().equals(mngr.getContextPath())) {
-            log.info("channel for different context path can't be loaded because of channel info class");
-            channel = Optional.absent();
-            return;
-        }
         final Channel ch;
         if (mount.hasNoChannelInfo()) {
             ch = null;
