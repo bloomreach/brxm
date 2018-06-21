@@ -49,6 +49,7 @@ import javax.jcr.Session;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.poi.ss.formula.functions.T;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
@@ -684,15 +685,26 @@ public class DefinitionMergeService {
             final ContentDefinitionImpl def = source.getContentDefinition();
             final JcrPath defPath = def.getNode().getJcrPath();
 
-            // exclude all paths that have their own sources
-            final Set<String> excludedPaths = allExportableContentPaths.stream()
-                    // (but don't exclude what we're exporting!)
-                    .filter(isEqual(defPath).negate())
-                    .map(JcrPath::toString).collect(toImmutableSet());
-
             try {
-                new JcrContentExporter(autoExportConfig).exportNode(
-                        jcrSession.getNode(defPath.toString()), def, true, contentOrderBefores.get(defPath), excludedPaths);
+                if (jcrSession.nodeExists(defPath.toString())) {
+                    // exclude all paths that have their own sources
+                    final Set<String> excludedPaths = allExportableContentPaths.stream()
+                            // (but don't exclude what we're exporting!)
+                            .filter(isEqual(defPath).negate())
+                            .map(JcrPath::toString).collect(toImmutableSet());
+
+                    new JcrContentExporter(autoExportConfig)
+                            .exportNode(jcrSession.getNode(defPath.toString()), def, true,
+                                    contentOrderBefores.get(defPath), excludedPaths);
+                }
+                // If the node doesn't exist, we have a content source with no corresponding data in the JCR
+                // this shouldn't happen unless a dev has changed the sources while auto-export is running.
+                // Log a warning, but leave this source alone for now.
+                else {
+                    source.markUnchanged();
+                    log.warn("Attempting to update a content source with no data in the repository.\n" +
+                            "A developer probably edited files while auto-export is running:\n{}", defPath);
+                }
             }
             catch (RepositoryException e) {
                 throw new RuntimeException("Exception while regenerating changed content source file for " + defPath, e);
