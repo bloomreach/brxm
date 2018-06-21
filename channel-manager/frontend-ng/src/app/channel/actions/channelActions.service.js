@@ -321,7 +321,10 @@ class ChannelActionsService extends MenuService {
   // Close
   _closeChannel() {
     this.$state.go('hippo-cm')
-      .then(() => this.CmsService.publish('close-channel'));
+      .then(() => {
+        this.ChannelService.clearChannel();
+        this.CmsService.publish('close-channel');
+      });
   }
 }
 

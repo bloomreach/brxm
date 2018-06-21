@@ -303,6 +303,16 @@ describe('ChannelActionsService', () => {
     });
 
     // close channel
+    it('clears the channel upon closing', () => {
+      spyOn(ChannelService, 'clearChannel');
+      const close = getItem('close');
+
+      close.onClick();
+      $rootScope.$apply();
+
+      expect(ChannelService.clearChannel).toHaveBeenCalled();
+    });
+
     it('closes a channel by publishing a close-channel event', () => {
       const close = getItem('close');
 
