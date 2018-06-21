@@ -47,12 +47,21 @@ public class ChannelServiceImpl implements ChannelService {
         this.hstModelRegistry = hstModelRegistry;
     }
 
+
     @Override
     public List<Channel> getChannels(final String cmsHost) {
         final List<Channel> channels = new ArrayList<>();
 
+
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
-            final List<Mount> mountsByHostGroup = hstModel.getVirtualHosts().getMountsByHostGroup(cmsHost);
+
+            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+            final String hostGroupNameForCmsHost = ResourceUtil.getHostGroupNameForCmsHost(virtualHosts, cmsHost);
+            if (hostGroupNameForCmsHost == null) {
+                log.warn("Cannot match cms host '{}' for hst virtualhosts for context path '{}'", cmsHost, virtualHosts.getContextPath());
+                return channels;
+            }
+            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
             for (Mount mount : mountsByHostGroup) {
                 if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
                     log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",

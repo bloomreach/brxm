@@ -22,7 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,23 @@ public class ResourceUtil {
     private ResourceUtil() {
         // prevent instantiation
     }
+
+    /**
+     *
+     * @param virtualHosts the current {@link VirtualHosts} object
+     * @param cmsHost the host to match
+     * @return the host group name for {@code cmsHost} and {@code null} if the {@code cmsHost} cannot be matched
+     */
+    public static String getHostGroupNameForCmsHost(final VirtualHosts virtualHosts, final String cmsHost) {
+        final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost(cmsHost);
+        if (resolvedVirtualHost == null) {
+            return null;
+        }
+        return resolvedVirtualHost.getVirtualHost().getHostGroupName();
+    }
+
+
+
 
     /**
      * Returns the node with the given UUID using the session of the given request context.
