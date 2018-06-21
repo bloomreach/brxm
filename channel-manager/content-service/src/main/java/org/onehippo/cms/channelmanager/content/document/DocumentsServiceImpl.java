@@ -44,6 +44,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.EditingService;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -89,16 +90,21 @@ public class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
 
     private HintsInspector hintsInspector;
+    private EditingService editingService;
 
     public void setHintsInspector(final HintsInspector hintsInspector) {
         this.hintsInspector = hintsInspector;
+    }
+
+    public void setEditingService(final EditingService editingService) {
+        this.editingService = editingService;
     }
 
     @Override
     public Document obtainEditableDocument(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final EditableWorkflow workflow = getEditableWorkflow(handle);
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         final Map<String, Serializable> hints = getHints(workflow, contextPayload);
         if (!hintsInspector.canObtainEditableDocument(hints)) {
@@ -116,7 +122,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draftNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node draftNode = editingService.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
 
@@ -177,10 +183,10 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
-        final EditableWorkflow newWorkflow = getEditableWorkflow(handle);
+        final DocumentWorkflow newWorkflow = getDocumentWorkflow(handle);
         final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
 
-        final Node newDraftNode = EditingUtils.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node newDraftNode = editingService.getEditableDocumentNode(newWorkflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
         setDocumentState(document.getInfo(), newDraftNode);
 
