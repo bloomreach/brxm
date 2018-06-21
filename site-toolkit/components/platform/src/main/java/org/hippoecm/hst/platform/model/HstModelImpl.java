@@ -100,7 +100,7 @@ public class HstModelImpl implements HstModel {
 
 
             // make sure that the Thread class loader during model loading is the platform classloader
-            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+            final ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
             try {
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(platformClassloader);

@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.builtin.components.StandardContainerComponent;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -243,9 +244,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_COMPONENT;
             if (componentClassName == null) {
-                // TODO do not depend on hardcoded location 'org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent'
                 log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'", new String[]{"org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
-                componentClassName = "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent";
+                componentClassName = StandardContainerComponent.class.getName();
             }
         } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;

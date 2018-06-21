@@ -47,7 +47,6 @@
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- TODO HSTTWO-4355 get rid of this dependency?? Move the entire org.hippoecm.hst.configuration package from core to platform! -->
