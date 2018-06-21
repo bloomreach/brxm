@@ -264,15 +264,15 @@ public class ObjectConverterImpl implements ObjectConverter {
                         handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY, NT_VERSION_HISTORY);
                 return node;
             }
-            final String versionLabel;
-            if (requestContext.getResolvedMount().getMount().isPreview()) {
-                versionLabel = branchId + "-unpublished";
-            } else {
-                versionLabel = branchId + "-published";
-            }
 
-            final Optional<Node> version = getVersionForLabel(versionHistory, versionLabel);
+            final boolean preview = requestContext.getResolvedMount().getMount().isPreview();
+            Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
+                // lookup master revision in absence of a barnch version
+                version = getVersionForLabel(versionHistory, BRANCH_ID_MASTER, preview);
+            }
+            if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
+                // return current (published or unpublished) in absence of a branch and master version
                 return node;
             }
 
@@ -297,11 +297,17 @@ public class ObjectConverterImpl implements ObjectConverter {
         return branchId;
     }
 
-    private Optional<Node> getVersionForLabel(final Node versionHistory, final String versionLabel) throws RepositoryException {
-        if (!versionHistory.hasProperty(JCR_VERSIONLABELS + "/" + versionLabel)) {
-            return Optional.empty();
+    private Optional<Node> getVersionForLabel(final Node versionHistory, final String branchId, final boolean preview) throws RepositoryException {
+        final String versionLabel;
+        if (preview) {
+            versionLabel = branchId + "-unpublished";
+        } else {
+            versionLabel = branchId + "-published";
         }
-        return Optional.of(versionHistory.getProperty(JCR_VERSIONLABELS + "/" + versionLabel).getNode());
+        if (versionHistory.hasProperty(JCR_VERSIONLABELS + "/" + versionLabel)) {
+            return Optional.of(versionHistory.getProperty(JCR_VERSIONLABELS + "/" + versionLabel).getNode());
+        }
+        return Optional.empty();
     }
 
     public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
