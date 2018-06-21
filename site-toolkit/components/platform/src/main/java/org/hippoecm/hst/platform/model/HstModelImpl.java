@@ -22,8 +22,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.linking.LocationResolver;
@@ -46,14 +49,13 @@ import org.slf4j.LoggerFactory;
 
 public class HstModelImpl implements HstModel {
 
-
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
-
 
     private final String contextPath;
     private final ContainerConfiguration websiteContainerConfiguration;
     // not yet used but most likely needed
     private ClassLoader websiteClassLoader;
+    private ClassLoader platformClassloader = this.getClass().getClassLoader();
     private final ComponentManager websiteComponentManager;
     private final HstNodeLoadingCache hstNodeLoadingCache;
     private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
@@ -95,23 +97,36 @@ public class HstModelImpl implements HstModel {
                 return vhosts;
             }
 
+
+
+            // make sure that the Thread class loader during model loading is the platform classloader
+            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+            try {
+                if (platformClassloader != currentClassloader) {
+                    Thread.currentThread().setContextClassLoader(platformClassloader);
+                }
+                final VirtualHostsService virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
+                augment(virtualHosts);
+                this.virtualHosts = virtualHosts;
+                return this.virtualHosts;
+            } catch (RuntimeException e) {
+                log.error("Exception loading model", e);
+                throw e;
+            } catch (Exception e) {
+                log.error("Exception loading model", e);
+                throw new RuntimeException(e);
+            } finally {
+                if (platformClassloader != currentClassloader) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
+            }
         }
-        // make sure that the Thread class loader during model loading is the platform classloader
-        ClassLoader platformClassloader = this.getClass().getClassLoader();
-        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-        try {
-            if (platformClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(platformClassloader);
-            }
-            virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
-            return virtualHosts;
-        } catch (Exception e) {
-            log.error("Exception loading model", e);
-            throw e;
-        } finally {
-            if (platformClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
-            }
+    }
+
+    private void augment(final VirtualHostsService virtualHosts) throws ContainerException {
+        List<HstConfigurationAugmenter> configurationAugmenters = websiteComponentManager.getComponent(HstManager.class).getHstConfigurationAugmenters();
+        for (HstConfigurationAugmenter configurationAugmenter : configurationAugmenters) {
+            configurationAugmenter.augment(virtualHosts);
         }
     }
 

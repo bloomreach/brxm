@@ -23,16 +23,12 @@ import javax.servlet.ServletContext;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
-import org.hippoecm.hst.site.HstServices;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
@@ -92,7 +88,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
      * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object
      * has been created
      */
-    List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
+    List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<>();
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -148,7 +144,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
         return hstModelProvider.getHstModel().getHstSiteMapMatcher();
     }
-    
+
     @Override
     public List<HstConfigurationAugmenter> getHstConfigurationAugmenters() {
         return hstConfigurationAugmenters;

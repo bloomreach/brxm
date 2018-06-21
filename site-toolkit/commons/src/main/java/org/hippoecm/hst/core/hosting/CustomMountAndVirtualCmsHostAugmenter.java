@@ -563,7 +563,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     }
 
-    private final static String fakeNonExistingPath = "/fakePath/" + UUID.randomUUID().toString();
+    private final static String FAKE_NON_EXISTING_PATH = "/fakePath/" + UUID.randomUUID().toString();
 
     private class CustomMount implements MutableMount {
 
@@ -747,13 +747,13 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getContentPath() {
-            return fakeNonExistingPath;
+            return FAKE_NON_EXISTING_PATH;
         }
 
         @Override
         @Deprecated
         public String getCanonicalContentPath() {
-            return fakeNonExistingPath;
+            return FAKE_NON_EXISTING_PATH;
         }
 
         @Override
