@@ -81,9 +81,9 @@ public class HstManageContentTag extends TagSupport {
     private String rootPath;
     private String defaultPath;
 
-    private HstRequestContext requestContext;
+    private HstRequestContext cmsRequestContext;
     private JcrPath jcrPath;
-    private final SortedMap<String, String> result = new TreeMap<>();
+    private SortedMap<String, String> result;
 
     public void setHippobean(final HippoBean hippoBean) {
         this.hippoBean = hippoBean;
@@ -120,11 +120,16 @@ public class HstManageContentTag extends TagSupport {
 
     @Override
     public int doEndTag() throws JspException {
-        try {
-            requestContext = RequestContextProvider.get();
-            jcrPath = getJcrPath();
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (!isCmsRequest(requestContext)) {
+            return EVAL_PAGE;
+        }
 
-            checkCmsRequest();
+        try {
+            cmsRequestContext = requestContext;
+            jcrPath = getJcrPath();
+            result = new TreeMap<>();
+
             checkMandatoryParameters();
             checkRootPath();
 
@@ -140,11 +145,23 @@ public class HstManageContentTag extends TagSupport {
         } catch (ManageContentTagException e) {
             log.warn(e.getMessage());
         } finally {
-            requestContext = null;
+            cmsRequestContext = null;
             jcrPath = null;
             result.clear();
         }
         return EVAL_PAGE;
+    }
+
+    private static boolean isCmsRequest(final HstRequestContext requestContext) {
+        if (requestContext == null) {
+            log.warn("Cannot create a manageContent button outside the hst request.");
+            return false;
+        }
+        if (!requestContext.isCmsRequest()) {
+            log.debug("Skipping manageContent tag because not in cms preview.");
+            return false;
+        }
+        return true;
     }
 
     private JcrPath getJcrPath() {
@@ -157,15 +174,6 @@ public class HstManageContentTag extends TagSupport {
         final ComponentConfiguration componentConfig = component.getComponentConfiguration();
         final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
         return ParametersInfoUtils.getParameterAnnotation(paramsInfo, parameterName, JcrPath.class);
-    }
-
-    private void checkCmsRequest() throws ManageContentTagException, SkipManageContentTagException {
-        if (requestContext == null) {
-            throw new ManageContentTagException("Cannot create a manageContent button outside the hst request.");
-        }
-        if (!requestContext.isCmsRequest()) {
-            throw new SkipManageContentTagException("Skipping manageContent tag because not in cms preview.");
-        }
     }
 
     private void checkMandatoryParameters() throws SkipManageContentTagException {
@@ -194,7 +202,7 @@ public class HstManageContentTag extends TagSupport {
         final String absoluteRootPath = getAbsoluteRootPath();
 
         try {
-            final Node rootPathNode = requestContext.getSession().getNode(absoluteRootPath);
+            final Node rootPathNode = cmsRequestContext.getSession().getNode(absoluteRootPath);
             if (!rootPathNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !rootPathNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
                 log.warn("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath of manageContent tag"
                         + " in template '{}' are ignored.", rootPath, getComponentRenderPath());
@@ -279,7 +287,7 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.startsWith(rootPath, "/")) {
             return rootPath;
         } else {
-            return "/" + requestContext.getSiteContentBasePath() + "/" + rootPath;
+            return "/" + cmsRequestContext.getSiteContentBasePath() + "/" + rootPath;
         }
     }
 
@@ -340,7 +348,7 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private String getChannelRootPath() {
-        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        final ResolvedMount resolvedMount = cmsRequestContext.getResolvedMount();
         return resolvedMount.getMount().getContentPath();
     }
 
