@@ -11,13 +11,17 @@
         "name": "sun1",
         "hOffset": 250,
         "vOffset": 250,
-        "alignment": "center"
+        "alignment": "center",
+        "exifVersion": [48, 50, 50, 49],
+        "exifGeoLocation": ["N42", "W71"]
       },{
         "src": "Images/Moon.png",
         "name": "moon1",
         "hOffset": 100,
         "vOffset": 100,
-        "alignment": "left"
+        "alignment": "left",
+        "exifVersion": [48, 50, 50, 49],
+        "exifGeoLocation": ["N42", "W71"]
       }
     ],
     "text": {

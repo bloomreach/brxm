@@ -157,6 +157,10 @@ public class JacksonResource extends AbstractResource {
                 tempValueMap.put(fieldName, fieldValue);
             }
 
+            if (jsonNode.isValueNode()) {
+                tempValueMap.put("", JacksonUtils.getJsonScalaValue(jsonNode));
+            }
+
             internalValueMap = tempValueMap;
         }
 
@@ -187,10 +191,7 @@ public class JacksonResource extends AbstractResource {
 
                 for (Iterator<JsonNode> it = jsonNode.elements(); it.hasNext();) {
                     value = it.next();
-
-                    if (value.isContainerNode()) {
-                        list.add(this.toChildIndexedJacksonResource(value, ++index));
-                    }
+                    list.add(toChildIndexedJacksonResource(value, ++index));
                 }
             }
 

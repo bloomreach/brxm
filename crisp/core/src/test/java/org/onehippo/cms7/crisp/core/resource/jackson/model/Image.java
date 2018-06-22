@@ -24,6 +24,8 @@ public class Image {
     private int hOffset;
     private int vOffset;
     private String alignment;
+    private int[] exifVersion;
+    private String[] exifGeoLocation;
 
     @JsonProperty("src")
     public String getSource() {
@@ -64,6 +66,22 @@ public class Image {
 
     public void setAlignment(String alignment) {
         this.alignment = alignment;
+    }
+
+    public int[] getExifVersion() {
+        return exifVersion;
+    }
+
+    public void setExifVersion(int[] exifVersion) {
+        this.exifVersion = exifVersion;
+    }
+
+    public String[] getExifGeoLocation() {
+        return exifGeoLocation;
+    }
+
+    public void setExifGeoLocation(String[] exifGeoLocation) {
+        this.exifGeoLocation = exifGeoLocation;
     }
 
 }
