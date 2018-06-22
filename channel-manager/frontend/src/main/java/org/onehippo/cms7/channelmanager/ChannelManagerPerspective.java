@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     public void viewChannel(final String channelId, final String channelPath, final String branchId) {
         if (siteIsUp) {
-            rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_EDITOR);
+            rootPanel.activateCard(RootPanel.CardId.CHANNEL_EDITOR);
             rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
             focus(null);
         }
