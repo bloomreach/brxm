@@ -122,7 +122,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draftNode = editingService.getEditableDocumentNode(workflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node draftNode = editingService.getEditableDocumentNode(workflow, hints, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
 
@@ -186,7 +186,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentWorkflow newWorkflow = getDocumentWorkflow(handle);
         final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
 
-        final Node newDraftNode = editingService.getEditableDocumentNode(newWorkflow, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
+        final Node newDraftNode = editingService.getEditableDocumentNode(newWorkflow, hints, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
         setDocumentState(document.getInfo(), newDraftNode);
 

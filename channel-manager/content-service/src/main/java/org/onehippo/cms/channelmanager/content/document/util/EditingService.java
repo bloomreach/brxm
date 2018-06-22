@@ -17,6 +17,8 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -30,8 +32,9 @@ public interface EditingService {
      * Get a backing JCR node of a document.
      *
      * @param documentWorkflow workflow for the desired document
+     * @param hints            the hints obtained earlier from the workflow
      * @param session          JCR session for obtaining the backing node
      * @return JCR node or nothing, wrapped in an Optional
      */
-    Optional<Node> getEditableDocumentNode(DocumentWorkflow documentWorkflow, Session session);
+    Optional<Node> getEditableDocumentNode(DocumentWorkflow documentWorkflow, Map<String, Serializable> hints, Session session);
 }

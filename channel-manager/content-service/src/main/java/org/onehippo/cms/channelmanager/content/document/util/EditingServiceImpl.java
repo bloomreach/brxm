@@ -17,6 +17,8 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -27,7 +29,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 public class EditingServiceImpl implements EditingService {
 
     @Override
-    public Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, final Session session) {
+    public Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session) {
         return EditingUtils.getEditableDocumentNode(workflow, session);
     }
 
