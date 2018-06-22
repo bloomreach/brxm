@@ -36,6 +36,10 @@ import static org.junit.Assert.fail;
 
 public class JacksonResourceTest {
 
+    private static final int[] EXIF_VERSION = { 48, 50, 50, 49 };
+    private static final String[] EXIF_GEO_LOCATION = { "N42", "W71" };
+
+
     private JsonNode rootNode;
     private Resource rootResource;
     private ObjectMapper objectMapper;
@@ -113,7 +117,6 @@ public class JacksonResourceTest {
         assertEquals(250, image.getValueMap().get("hOffset"));
         assertEquals(250, image.getValueMap().get("vOffset"));
         assertEquals("center", image.getValueMap().get("alignment"));
-        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -128,7 +131,6 @@ public class JacksonResourceTest {
         assertEquals(100, image.getValueMap().get("hOffset"));
         assertEquals(100, image.getValueMap().get("vOffset"));
         assertEquals("left", image.getValueMap().get("alignment"));
-        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -146,7 +148,6 @@ public class JacksonResourceTest {
         assertEquals(250, image.getValueMap().get("hOffset"));
         assertEquals(250, image.getValueMap().get("vOffset"));
         assertEquals("center", image.getValueMap().get("alignment"));
-        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -161,7 +162,6 @@ public class JacksonResourceTest {
         assertEquals(100, image.getValueMap().get("hOffset"));
         assertEquals(100, image.getValueMap().get("vOffset"));
         assertEquals("left", image.getValueMap().get("alignment"));
-        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
     }
@@ -248,4 +248,30 @@ public class JacksonResourceTest {
         }
     }
 
+    @Test
+    public void testArrays() throws Exception {
+        Resource widget = rootResource.getValueMap().get("widget", Resource.class);
+        Resource images = widget.getValueMap().get("images", Resource.class);
+        ResourceCollection imageResources = images.getChildren();
+
+        Resource image = imageResources.get(0);
+
+        Resource exifVersion = image.getValueMap().get("exifVersion", Resource.class);
+        ResourceCollection children = exifVersion.getChildren();
+        assertEquals(4, children.size());
+
+        for (int i = 0; i < children.size(); i++) {
+            Resource child = children.get(i);
+            assertEquals(EXIF_VERSION[i], child.getDefaultValue());
+        }
+
+        Resource exifGeoLocation = image.getValueMap().get("exifGeoLocation", Resource.class);
+        children = exifGeoLocation.getChildren();
+        assertEquals(2, children.size());
+
+        for (int i = 0; i < children.size(); i++) {
+            Resource child = children.get(i);
+            assertEquals(EXIF_GEO_LOCATION[i], child.getDefaultValue());
+        }
+    }
 }
