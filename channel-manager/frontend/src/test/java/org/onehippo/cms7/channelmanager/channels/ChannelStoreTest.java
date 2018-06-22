@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.junit.After;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,9 +30,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wicketstuff.js.ext.data.ExtDataField;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,15 +42,25 @@ import static org.junit.Assert.assertFalse;
 /**
  * Tests {ChannelStore}.
  */
+// TODO fix UserSession.get().getJcrSession() returning null
 public class ChannelStoreTest {
 
     private ChannelService mockedChannelService;
+    private PlatformServices platformServices;
 
     @Before
     public void initMocks() {
         mockedChannelService = createNiceMock(ChannelService.class);
+        platformServices = createNiceMock(PlatformServices.class);
 
+        expect(platformServices.getChannelService()).andStubReturn(mockedChannelService);
+        replay(platformServices);
+        HippoServiceRegistry.registerService(platformServices, PlatformServices.class);
+    }
 
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregisterService(platformServices, PlatformServices.class);
     }
 
     @Test
@@ -72,7 +87,7 @@ public class ChannelStoreTest {
 
         // although the channel service returns three channels, only the channel with the correct contextpath /site
         // should be returned
-        expect(mockedChannelService.getChannels(anyString())).andReturn(Arrays.asList(channel1,channel2, channel3));
+        expect(mockedChannelService.getChannels(anyObject(), anyString())).andReturn(Arrays.asList(channel1,channel2, channel3));
         replay(mockedChannelService);
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
@@ -94,7 +109,7 @@ public class ChannelStoreTest {
         channel.setLocale("nl_NL");
         channel.setContextPath("/site");
         channel.setHostname("host.example.com");
-        expect(mockedChannelService.getChannels(anyString())).andReturn(Collections.singletonList(channel));
+        expect(mockedChannelService.getChannels(anyObject(), anyString())).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
@@ -116,7 +131,7 @@ public class ChannelStoreTest {
     public void testChannelWithoutProperties() throws Exception {
         Channel channel = new Channel("testchannelid");
         channel.setContextPath("/site");
-        expect(mockedChannelService.getChannels(anyString())).andReturn(Collections.singletonList(channel));
+        expect(mockedChannelService.getChannels(anyObject(), anyString())).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
         final List<ExtDataField> dummyFields = Collections.emptyList();

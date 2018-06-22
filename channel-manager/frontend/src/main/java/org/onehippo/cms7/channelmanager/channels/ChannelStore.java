@@ -466,7 +466,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     protected void loadChannels() {
 
-        final List<Channel> channelList = getChannelService().getChannels(getCmsHost());
+        final List<Channel> channelList = getChannelService().getChannels(getUserJcrSession(), getCmsHost());
         channels = channelList.stream().collect(Collectors.toMap(Channel::getId, Function.identity()));
 
     }
