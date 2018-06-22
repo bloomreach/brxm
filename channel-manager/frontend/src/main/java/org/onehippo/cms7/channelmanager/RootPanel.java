@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager;
 
 import java.util.Map;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -165,7 +166,7 @@ public class RootPanel extends ExtPanel {
         }
     }
 
-    private void selectActiveItem(final PluginRequestTarget target) {
+    private void selectActiveItem(final AjaxRequestTarget target) {
         final String script = String.format("Ext.getCmp('rootPanel').selectCard(%s);", activeItem);
         target.appendJavaScript(script);
     }
@@ -206,9 +207,25 @@ public class RootPanel extends ExtPanel {
         return this.channelEditor;
     }
 
+    /**
+     * Activates the given card when the root panel is rendered.
+     * @param rootPanelCard ID of the card
+     */
     public void setActiveCard(CardId rootPanelCard) {
         this.activeItem = rootPanelCard.getTabIndex();
         redraw();
     }
 
+    /**
+     * Activates the given card directly. Subsequent JavaScript actions (e.g. _onActivate) will
+     * be done when the Channel Manager card is active.
+     */
+    void activateCard(final CardId cardId) {
+        setActiveCard(cardId);
+        final AjaxRequestTarget ajaxRequestTarget = getRequestCycle().find(AjaxRequestTarget.class);
+        if (ajaxRequestTarget != null) {
+            selectActiveItem(ajaxRequestTarget);
+            redraw = false;
+        }
+    }
 }
