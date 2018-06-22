@@ -22,7 +22,9 @@ function config($stateProvider) {
 
   $stateProvider.state({
     name: 'hippo-cm.channel.edit-content',
-    url: 'edit-content/{documentId}',
+    params: {
+      documentId: '',
+    },
     views: {
       main: {
         controller: 'editContentMainCtrl',
