@@ -37,11 +37,6 @@ public class ChannelIconPanel extends ExtPanel {
     @ExtProperty
     private String userId;
 
-    // TODO is composerRestMountUrl still needed?
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String composerRestMountUrl;
-
     public ChannelIconPanel(IPluginConfig channelListConfig, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
         this.userId = UserSession.get().getJcrSession().getUserID();
