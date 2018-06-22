@@ -144,7 +144,9 @@ public class RestPluginResource {
         try {
             final Node targetNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
             if (targetNode.hasNode(mountName)) {
-                LOG.warn("Generic REST API mount '{}' already exists, skipping creation.");
+                LOG.warn("REST API mount '{}' already exists, skipping creation.", mountName);
+                feedback.addError("REST API mount '" + mountName + " already exists, skipping creation. See back-end logs for mode details.");
+                return false;
             } else {
                 jcrService.importResource(targetNode, "/plain_mount.xml", properties);
                 session.save();
