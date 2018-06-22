@@ -38,7 +38,9 @@
       </c:if></div>
       </li>
     </ul>
-  </c:forEach> <c:if test="${fn:length(pages) gt 0}">
+  </c:forEach>
+
+  <c:if test="${fn:length(pages) gt 0}">
     <ul id="paging-nav">
       <c:forEach var="page" items="${pages}">
         <c:set var="active" value="" />
@@ -56,4 +58,10 @@
         </c:choose>
       </c:forEach>
     </ul>
-</c:if></div>
+  </c:if>
+
+  <div>
+    <a href="<hst:resourceURL resourceId='download'/>">Download document list in CSV!</a>
+  </div>
+
+</div>
