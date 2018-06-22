@@ -17,6 +17,9 @@ package org.hippoecm.hst.platform.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
+
+import javax.jcr.Session;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,6 +47,8 @@ import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
 import org.hippoecm.hst.platform.linking.resolvers.HippoResourceLocationResolver;
 import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
+import org.hippoecm.hst.platform.services.channel.ContentBasedChannelFilter;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +68,7 @@ public class HstModelImpl implements HstModel {
     private final DefaultHstLinkCreator hstLinkCreator;
 
     private volatile VirtualHosts virtualHosts;
+    private BiPredicate<Session, Channel> channelFilter;
 
 
     public HstModelImpl(final String contextPath,
@@ -82,6 +88,8 @@ public class HstModelImpl implements HstModel {
 
         hstLinkCreator = new DefaultHstLinkCreator();
         configureHstLinkCreator();
+
+        channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
     }
 
     @Override
@@ -96,7 +104,6 @@ public class HstModelImpl implements HstModel {
             if (vhosts != null) {
                 return vhosts;
             }
-
 
 
             // make sure that the Thread class loader during model loading is the platform classloader
@@ -138,6 +145,10 @@ public class HstModelImpl implements HstModel {
     @Override
     public HstLinkCreator getHstLinkCreator() {
         return hstLinkCreator;
+    }
+
+    public BiPredicate<Session, Channel> getChannelFilter() {
+        return channelFilter;
     }
 
 
@@ -218,6 +229,19 @@ public class HstModelImpl implements HstModel {
         resourceContainers.add(hippoGalleryAssetSet);
         resourceContainers.add(new DefaultResourceContainer());
         return ImmutableList.copyOf(resourceContainers);
+    }
+
+    private BiPredicate<Session, Channel> configureChannelFilter(final BiPredicate<Session, Channel> builtinFilter) {
+
+        BiPredicate<Session, Channel> compositeFilter = builtinFilter;
+
+        List<BiPredicate<Session, Channel>> customChannelFilters = websiteComponentManager.getComponent("customChannelFilters");
+
+        for (BiPredicate<Session, Channel> customChannelFilter : customChannelFilters) {
+            compositeFilter = customChannelFilter.and(customChannelFilter);
+        }
+
+        return compositeFilter;
     }
 
 }

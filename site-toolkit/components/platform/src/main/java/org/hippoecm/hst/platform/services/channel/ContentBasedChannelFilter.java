@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package org.hippoecm.hst.cmsrest.filter;
+package org.hippoecm.hst.platform.services.channel;
 
+
+import java.util.function.BiPredicate;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.base.Predicate;
-
 import org.onehippo.cms7.services.hst.Channel;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * only channels that the authenticated cms user is allowed to read the content from will pass the {@link Predicate}
+ * only channels that the authenticated cms user is allowed to read the content from will pass the {@link BiPredicate}
  */
-public class ContentBasedChannelFilter implements Predicate<Channel> {
+public class ContentBasedChannelFilter implements BiPredicate<Session, Channel> {
 
     private static final Logger log = LoggerFactory.getLogger(ContentBasedChannelFilter.class);
 
     @Override
-    public boolean apply(final Channel channel) {
+    public boolean test(final Session userSession, final Channel channel) {
         try {
-            Session cmsSession = RequestContextProvider.get().getSession();
-            if (cmsSession.nodeExists(channel.getContentRoot())) {
+            if (userSession.nodeExists(channel.getContentRoot())) {
                 log.debug("Predicate passed for channel '{}' because user has read access on '{}'",
-                        new String[]{channel.toString(), cmsSession.getUserID(), channel.getContentRoot()});
+                        new String[]{channel.toString(), userSession.getUserID(), channel.getContentRoot()});
                 return true;
             }
             log.info("Skipping channel '{}' for user '{}' because she has no read access on '{}'",
-                    new String[]{channel.toString(), cmsSession.getUserID(), channel.getContentRoot()});
+                    new String[]{channel.toString(), userSession.getUserID(), channel.getContentRoot()});
             return false;
         } catch (RepositoryException e) {
             log.warn("Exception while trying to check channel {}. Skip that channel:", channel.getContentRoot(), e);

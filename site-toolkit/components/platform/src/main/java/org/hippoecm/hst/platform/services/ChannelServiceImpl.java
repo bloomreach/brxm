@@ -16,11 +16,11 @@
 
 package org.hippoecm.hst.platform.services;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.function.BiPredicate;
 
 import javax.jcr.Session;
 
@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.onehippo.cms7.services.hst.Channel;
@@ -50,7 +51,7 @@ public class ChannelServiceImpl implements ChannelService {
 
 
     @Override
-    public List<Channel> getChannels(final String cmsHost) {
+    public List<Channel> getChannels(final Session userSession, final String cmsHost) {
         final List<Channel> channels = new ArrayList<>();
 
         // TODO move the mount decorator impl to platform
@@ -76,15 +77,14 @@ public class ChannelServiceImpl implements ChannelService {
                     log.debug("No channel present for mount '{}'", mount);
                     continue;
                 }
-                // TODO HSTTWO-4359 we need to come up with an alternative for 'channelFilter' Most likely we can just
-                // TODO plugin channelFilter BUT it cannot use the HstRequestContext since we do not have one anymore
-//                if (channelFilter.apply(channel)) {
-//                    log.debug("Including channel '{}' because passes filters.", channel.toString());
-//                    channels.add(channel);
-//                } else {
-//                    log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
-//                }
-                channels.add(channel);
+
+                final BiPredicate<Session, Channel> channelFilter = ((HstModelImpl) hstModel).getChannelFilter();
+
+                if (channelFilter.test(userSession, channel)) {
+                    channels.add(channel);
+                } else {
+                    log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
+                }
             }
         }
 

@@ -100,7 +100,7 @@
   <bean id="defaultChannelFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean id="contentBasedChannelFilter" class="org.hippoecm.hst.cmsrest.filter.ContentBasedChannelFilter"/>
+        <bean id="contentBasedChannelFilter" class="org.hippoecm.hst.platform.services.channel.ContentBasedChannelFilter"/>
       </list>
     </property>
   </bean>

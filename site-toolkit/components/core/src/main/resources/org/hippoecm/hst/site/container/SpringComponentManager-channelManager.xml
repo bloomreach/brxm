@@ -18,6 +18,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+  <!-- Custom channel filters may be overriden in their project specific assembly. -->
+  <bean id="customChannelFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
   <!-- TODO HSTTW-4355 Implement below in platform HstModelRegistryImpl since ChannelManagerImpl instantiation has moved
        TODO over there -->
   <!--<bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">-->

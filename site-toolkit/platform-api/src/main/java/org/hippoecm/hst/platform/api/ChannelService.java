@@ -32,12 +32,13 @@ public interface ChannelService {
     /**
      * List all managed channels, identified by their channel IDs
      *
+	 * @param userSession - the jcr session of the current user
 	 * @param cmsHost the host over which the cms is accessed
      * @return {@link List} of {@link Channel}s of all available channels, empty list otherwise. Note that if for
      * a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version is returned as
      * that is typically the version that is needed to work with through this {@link ChannelService}
      */
-	List<Channel> getChannels(final String cmsHost);
+	List<Channel> getChannels(Session userSession, String cmsHost);
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id
