@@ -390,19 +390,20 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getContextPath() {
-           // the cms host mounts must be contextpath agnostic!
-           return null;
+           return virtualHosts.getContextPath();
         }
 
         @Override
         public boolean isPortInUrl() {
             // do not set to true : for _cmsrest, the port and contextpath must not be taken from the mount
+            // TODO what to do with this? We do not use _cmsrest any more
             return false;
         }
 
         @Override
         public boolean isContextPathInUrl() {
             // do not set to true : for _cmsrest, the port and contextpath must not be taken from the mount
+            // TODO what to do with this? We do not use _cmsrest any more
             return false;
         }
 
@@ -681,12 +682,14 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         @Override
         public boolean isContextPathInUrl() {
             // must be false for CMS REST MOUNT
+            // TODO what to do with this? We do not use _cmsrest any more
             return false;
         }
 
         @Override
         public boolean isPortInUrl() {
             // must be false for CMS REST MOUNT
+            // TODO what to do with this? We do not use _cmsrest any more
             return false;
         }
 
@@ -706,8 +709,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getContextPath() {
-            // the cms host mounts must be contextpath agnostic!
-            return null;
+            return virtualHost.getContextPath();
         }
 
         @Override
