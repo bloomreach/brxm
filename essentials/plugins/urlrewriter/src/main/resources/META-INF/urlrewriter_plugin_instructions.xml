@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,12 +18,16 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd"
               xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
+    <mavenDependency targetPom="cms" groupId="com.onehippo.cms7" artifactId="hippo-addon-urlrewriter-module-cms"/>
+    <mavenDependency targetPom="cms" groupId="com.onehippo.cms7" artifactId="hippo-addon-urlrewriter-module-repository"/>
+    <mavenDependency targetPom="site" groupId="com.onehippo.cms7" artifactId="hippo-addon-urlrewriter-module-hst"/>
     <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class" />
     <execute class="com.onehippo.cms7.essentials.plugins.urlrewriter.UrlRewriterInstruction" />
     <file action="copy" source="instructions/xml/spring/urlrewriter-context.xml" target="{{siteResources}}/META-INF/hst-assembly/overrides/urlrewriter-context.xml"/>
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <xml action="copy" source="instructions/xml/content/sample-rules.xml" target="/content/urlrewriter"/>
+    <file action="copy" source="instructions/yaml/sample-rewriter-rules.yaml" target="{{developmentContent}}/essentials/urlrewriter/sample-rewriter-rules.yaml"/>
+    <file action="copy" source="instructions/xml/content/sample-rule.xml" target="{{developmentContent}}/essentials/urlrewriter/sample-rule.xml"/>
   </instructionSet>
 </instructions>
