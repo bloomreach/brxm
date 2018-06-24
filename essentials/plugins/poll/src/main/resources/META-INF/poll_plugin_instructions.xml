@@ -29,6 +29,6 @@
     <translations source="/json/polltemplates-translations.json" />
   </instructionSet>
   <instructionSet group="sampleData">
-    <file action="copy" source="yaml/sample-poll-document.yaml" target="{{applicationContent}}/essentials/poll/sample-poll-document.yaml"/>
+    <file action="copy" source="yaml/sample-poll-document.yaml" target="{{developmentContent}}/essentials/poll/sample-poll-document.yaml"/>
   </instructionSet>
 </instructions>
