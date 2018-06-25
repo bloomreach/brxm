@@ -239,6 +239,7 @@
                 <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
                 <exclude>plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css</exclude>
                 <exclude>plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js</exclude>
+                <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/content/sample-rule.xml</exclude>
                 <exclude>**/target/**</exclude>
               </excludes>
             </configuration>
