@@ -65,6 +65,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 

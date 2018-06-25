@@ -28,6 +28,7 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 
+// TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public interface ChannelService {
 
     ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException;
