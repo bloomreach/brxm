@@ -79,6 +79,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         composerModeEnabled,
         contentRoot,
         hostname,
+        hostGroup,
         hstConfigPath,
         hstMountPoint,
         id, // channel id
@@ -109,7 +110,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
                         ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
-                        ChannelField.previewHstConfigExists.name()));
+                        ChannelField.previewHstConfigExists.name(),
+                        ChannelField.hostGroup.name()));
     }
 
     public enum SortOrder {ascending, descending}

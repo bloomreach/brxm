@@ -27,6 +27,7 @@ class ConfigService {
     Object.assign(this, CmsService.getConfig());
 
     this.contextPath = this.contextPaths[0];
+    this.hostGroup = '';
   }
 
   // TODO: the current context path is a property
@@ -35,6 +36,14 @@ class ConfigService {
   // because the HstService has no access to the ChannelService.
   setContextPathForChannel(contextPath) {
     this.contextPath = contextPath;
+  }
+
+  // TODO: the current host group is a property
+  // of the current channel, and therefore belongs into the ChannelService.
+  // Keeping this state here is a temporary work-around,
+  // because the HstService has no access to the ChannelService.
+  setHostGroupForChannel(hostGroup) {
+    this.hostGroup = hostGroup;
   }
 
   getCmsContextPath() {

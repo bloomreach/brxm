@@ -90,6 +90,7 @@ class ChannelService {
 
     return setupPromise
       .then(() => this.ConfigService.setContextPathForChannel(channel.contextPath))
+      .then(() => this.ConfigService.setHostGroupForChannel(channel.hostGroup))
       .then(() => this.loadChannel(channelId))
       .then(() => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
