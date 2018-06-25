@@ -44,7 +44,7 @@
     <hippo.jackrabbit.version>2.16.1-h2</hippo.jackrabbit.version>
 
     <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>13.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-channel-manager.version>13.0.0-hst-platform-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>13.0.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.ckeditor.version>4.7.1-h13.0.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
@@ -595,7 +595,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
-        <artifactId>hst-cms-restapi</artifactId>
+        <artifactId>hst-platform-api</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
