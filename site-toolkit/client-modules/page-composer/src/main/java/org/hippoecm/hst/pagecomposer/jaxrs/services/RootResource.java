@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -52,6 +53,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +70,7 @@ public class RootResource extends AbstractConfigResource {
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private boolean isCrossChannelPageCopySupported;
 
+    // TODO get rid of this channel service! We already have one, see org.hippoecm.hst.platform.api.ChannelService
     private ChannelService channelService;
     private SecurityModel securityModel;
 
@@ -119,9 +124,18 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getChannel(@PathParam("id") String channelId) {
+    public Response getChannel(@HeaderParam("contextPath") final String contextPath,
+                               @HeaderParam("hostGroup") final String hostGroup,
+                               @PathParam("id") String channelId) {
         try {
-            final Channel channel = channelService.getChannel(channelId);
+
+            HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
+
+            final Channel channel = hstModel.getVirtualHosts().getChannelById(hostGroup, channelId);
+            if (channel == null) {
+                throw new ChannelNotFoundException(channelId);
+            }
             return Response.ok().entity(channel).build();
         } catch (ChannelNotFoundException e) {
             log.warn(e.getMessage());
@@ -228,7 +242,7 @@ public class RootResource extends AbstractConfigResource {
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
 
-
+        // HSTTWO-4365 TODO below does not get the correct channel and does not check for the correct webapp (platform at this moment!)
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
         final boolean isConfigurationLocked = isConfigurationLocked(mountId);
         try {
