@@ -51,18 +51,13 @@ class ChannelService {
     this.channels = [];
   }
 
-  initializeChannel(channel, initialPath, passedProjectId) {
-    let channelId = channel.id;
+  initializeChannel(channel, initialPath, projectId = 'master') {
+    const channelId = this._getChannelIdOfProject(projectId, channel.id);
     let setupPromise;
 
     if (this.ConfigService.projectsEnabled) {
       setupPromise = this.$q
-        .when(passedProjectId || this.ProjectService.getActiveProject())
-        .then((selectedProjectId) => {
-          channelId = this._getChannelIdOfProject(selectedProjectId, channelId);
-          return selectedProjectId;
-        })
-        .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId))
+        .then(() => this.ProjectService.load(channel.mountId, projectId))
         .then(() => {
           this.ProjectService.registerUpdateListener(() => {
             const baseChannelId = this.ProjectService.getBaseChannelId(channelId);

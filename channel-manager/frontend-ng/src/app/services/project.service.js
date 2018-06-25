@@ -50,13 +50,6 @@ class ProjectService {
     return channel && channel.branchOf ? channel.branchOf : channelId;
   }
 
-  getActiveProject() {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
-    return this.$http
-      .get(url)
-      .then(result => result.data);
-  }
-
   updateSelectedProject(projectId) {
     const selectedProject = this.projects.find(project => project.id === projectId);
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
