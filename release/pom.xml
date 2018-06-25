@@ -52,7 +52,7 @@
     <hippo.hst.version>13.0.0-hst-platform-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>13.0.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>13.0.0-hst-platform-SNAPSHOT</hippo.services.version>
     <hippo.services.autoreload.version>13.0.0-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>13.0.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>13.0.0-SNAPSHOT</hippo.services.eventbus.version>
