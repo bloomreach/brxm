@@ -223,6 +223,7 @@ public class HstSiteService implements HstSite {
             // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
             ch.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
             ch.setHostname(virtualHost.getHostName());
+            ch.setHostGroup(virtualHost.getHostGroupName());
 
             StringBuilder url = new StringBuilder();
             url.append(mount.getScheme());
