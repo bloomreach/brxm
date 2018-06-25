@@ -37,6 +37,7 @@ describe('HstService', () => {
       apiUrlPrefix,
       cmsUser: 'testUser',
       contextPath,
+      getCmsContextPath: () => contextPath,
       rootUuid,
     };
 
@@ -141,18 +142,6 @@ describe('HstService', () => {
   it('constructs a valid handshake url when initializing a channel session', () => {
     $httpBackend.expectGET(handshakeUrl).respond(200);
     hstService.initializeSession(hostname, mountId);
-    $httpBackend.flush();
-  });
-
-  it('uses the new context path after it has been changed', () => {
-    $httpBackend.expectGET('/testContextPath/testApiUrlPrefix/1234./test').respond(200);
-    hstService.doGet('1234', 'test');
-    $httpBackend.flush();
-
-    ConfigServiceMock.contextPath = '/newContextPath';
-
-    $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
-    hstService.doGet('1234', 'test');
     $httpBackend.flush();
   });
 
@@ -318,13 +307,8 @@ describe('HstService', () => {
     hstService.doGet('uuid', undefined, 'one');
     $httpBackend.flush();
 
-    delete ConfigServiceMock.contextPath;
-    $httpBackend.expectGET(`${apiUrlPrefix}/uuid./`).respond(200);
-    hstService.doGet('uuid');
-    $httpBackend.flush();
-
     delete ConfigServiceMock.apiUrlPrefix;
-    $httpBackend.expectGET('uuid./').respond(200);
+    $httpBackend.expectGET(`${contextPath}/uuid./`).respond(200);
     hstService.doGet('uuid');
     $httpBackend.flush();
     ConfigServiceMock.apiUrlPrefix = apiUrlPrefix;

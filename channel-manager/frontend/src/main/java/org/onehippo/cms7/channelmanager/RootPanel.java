@@ -138,7 +138,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.add(this.blueprintStore);
         add(channelManagerCard);
 
-        // TODO CHANNELMGR-1705 is contextPaths property still really needed?
+        // TODO CHANNELMGR-1705 is contextPaths property still really needed? Is it needed in this way?
         final Set<String> contextPathSet = ServletContextRegistry.getContexts(ServletContextRegistry.WebAppType.HST).keySet();
         contextPaths = contextPathSet.toArray(new String[contextPathSet.size()]);
 

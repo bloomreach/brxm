@@ -109,7 +109,7 @@ class HstService {
   }
 
   _createApiUrl(uuid, pathElements, params) {
-    let apiUrl = this.PathService.concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
+    let apiUrl = this.PathService.concatPaths(this.config.getCmsContextPath(), this.config.apiUrlPrefix);
     apiUrl = this.PathService.concatPaths(apiUrl, uuid);
     apiUrl += './';
 
