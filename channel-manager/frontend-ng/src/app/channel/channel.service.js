@@ -77,7 +77,7 @@ class ChannelService {
       .then(() => this.ConfigService.setContextPathForChannel(channel.contextPath))
       .then(() => this.loadChannel(channelId))
       .then(() => {
-        this.initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
+        this.initialRenderPath = this.makeRenderPath(initialPath);
         this.$state.go('hippo-cm.channel', {
           channelId: this.channel.id,
         });
@@ -176,6 +176,10 @@ class ChannelService {
 
   getPreviewPaths() {
     return this.ConfigService.contextPaths.map(path => this._makeContextPrefix(path));
+  }
+
+  makeRenderPath(channelRelativePath) {
+    return this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
   }
 
   makePath(renderPath) {
