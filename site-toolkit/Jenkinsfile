@@ -1,5 +1,3 @@
-@Library('hippo-global@feature/goals') _
-
 /*
  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
