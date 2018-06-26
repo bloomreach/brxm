@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -32,6 +34,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -67,6 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
@@ -98,6 +102,21 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     public void setEditingService(final EditingService editingService) {
         this.editingService = editingService;
+    }
+
+    @Override
+    public Stream<Document> getVariants(final String uuid, final Session session, final Locale locale, Stream<Variant> variants) throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        final DocumentType docType = getDocumentType(handle, locale);
+        return variants
+                .map(variant -> WorkflowUtils.getDocumentVariantNode(handle, variant)
+                        .map(variantNode -> {
+                            final Document document = assembleDocument(uuid, handle, variantNode, docType);
+                            FieldTypeUtils.readFieldValues(variantNode, docType.getFields(), document.getFields());
+                            return document;
+                        })
+                        .orElse(null))
+                .filter(Objects::nonNull);
     }
 
     @Override
@@ -188,7 +207,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node newDraftNode = editingService.getEditableDocumentNode(newWorkflow, hints, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
 
-        setDocumentState(document.getInfo(), newDraftNode);
+        setDocumentPublicationState(document.getInfo(), newDraftNode);
 
         FieldTypeUtils.readFieldValues(newDraftNode, docType.getFields(), document.getFields());
 
@@ -250,15 +269,9 @@ public class DocumentsServiceImpl implements DocumentsService {
     @Override
     public Document getPublished(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
-        final Node handle = getHandle(uuid, session);
-        final DocumentType docType = getDocumentType(handle, locale);
 
-        return WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)
-                .map(node -> {
-                    final Document document = assembleDocument(uuid, handle, node, docType);
-                    FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields());
-                    return document;
-                })
+        return getVariants(uuid, session, locale, Stream.of(PUBLISHED))
+                .findFirst()
                 .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
     }
 
@@ -441,7 +454,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
-        setDocumentState(documentInfo, variant);
+        setDocumentPublicationState(documentInfo, variant);
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
@@ -449,10 +462,17 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         document.setRepositoryPath(JcrUtils.getNodePathQuietly(handle));
 
+        try {
+            final DocumentVariant documentVariant = new DocumentVariant(variant);
+            document.setState(documentVariant.getState());
+            document.setBranchId(documentVariant.getBranchId());
+        } catch (RepositoryException e) {
+            log.warn("Failed to set state and branchId for document with id '{}'", uuid, e);
+        }
         return document;
     }
 
-    private static void setDocumentState(final DocumentInfo documentInfo, final Node variant) {
+    private static void setDocumentPublicationState(final DocumentInfo documentInfo, final Node variant) {
         final PublicationState state = PublicationStateUtils.getPublicationStateFromVariant(variant);
         documentInfo.setPublicationState(state);
     }
@@ -485,4 +505,5 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
         return new HashMap<>();
     }
+
 }

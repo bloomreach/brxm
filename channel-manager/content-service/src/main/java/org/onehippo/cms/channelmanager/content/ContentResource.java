@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -45,12 +45,18 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
+
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 @Produces("application/json")
 @Path("/")
@@ -114,12 +120,17 @@ public class ContentResource {
         });
     }
 
-    // for easy debugging:
     @GET
     @Path("documents/{documentId}")
-    public Response getPublishedDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+    public Response getDocument(
+            @PathParam("documentId") final String id,
+            @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.getPublished(id, session, locale));
+                (session, locale) -> documentService
+                        .getVariants(id, session, locale, Stream.of(DRAFT, UNPUBLISHED, PUBLISHED))
+                        .findFirst()
+                        .orElseThrow(() -> new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)))
+        );
     }
 
     @GET
