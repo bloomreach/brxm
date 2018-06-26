@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
 public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
+
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = {
-            "nodetypes",
-    };
+    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes" };
+
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;

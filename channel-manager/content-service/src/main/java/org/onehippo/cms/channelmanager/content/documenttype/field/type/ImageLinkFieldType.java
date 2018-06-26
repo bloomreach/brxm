@@ -17,7 +17,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
