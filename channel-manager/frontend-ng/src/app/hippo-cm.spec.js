@@ -46,6 +46,7 @@ describe('hippoCm', () => {
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'initializeChannel',
+        'makeRenderPath',
         'matchesChannel',
         'reload',
       ]);
@@ -102,6 +103,7 @@ describe('hippoCm', () => {
 
     it('changes the page in the current channel', () => {
       ChannelService.matchesChannel.and.returnValue(true);
+      ChannelService.makeRenderPath.and.returnValue('/different/path');
       HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/path');
       spyOn($rootScope, '$apply').and.callThrough();
 
@@ -114,6 +116,7 @@ describe('hippoCm', () => {
 
     it('changes to the home page in the current channel', () => {
       ChannelService.matchesChannel.and.returnValue(true);
+      ChannelService.makeRenderPath.and.returnValue('');
       HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/path');
       spyOn($rootScope, '$apply').and.callThrough();
 
@@ -126,6 +129,7 @@ describe('hippoCm', () => {
 
     it('reloads a page in the current channel', () => {
       ChannelService.matchesChannel.and.returnValue(true);
+      ChannelService.makeRenderPath.and.returnValue('/path');
       HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/path');
 
       $ctrl.$onInit();
@@ -142,6 +146,19 @@ describe('hippoCm', () => {
       $window.CMS_TO_APP.publish('load-channel', { id: 'testChannel' }, null, 'testProject');
 
       expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('changes to the same channel-relative path in a different channel', () => {
+      ChannelService.matchesChannel.and.returnValue(true);
+      ChannelService.makeRenderPath.and.returnValue('/mount-of-channel2/path');
+      HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/mount-of-channel1/path');
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', { id: 'channel2' }, '/path', 'testProject');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/mount-of-channel2/path');
     });
   });
 

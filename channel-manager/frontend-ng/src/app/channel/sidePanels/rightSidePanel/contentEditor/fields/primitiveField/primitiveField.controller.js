@@ -15,9 +15,10 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(FieldService, SharedSpaceToolbarService) {
+  constructor($scope, FieldService, SharedSpaceToolbarService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
   }
@@ -45,6 +46,10 @@ class PrimitiveFieldCtrl {
       const field = this.form[fieldName];
       return field && field.$invalid;
     });
+  }
+
+  onLabelClick() {
+    this.$scope.$broadcast('primitive-field:focus');
   }
 
   focusPrimitive($event = null) {
