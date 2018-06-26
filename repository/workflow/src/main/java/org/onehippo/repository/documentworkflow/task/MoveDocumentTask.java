@@ -29,7 +29,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for moving document.

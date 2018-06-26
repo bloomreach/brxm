@@ -32,8 +32,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowListBranchesTest extends AbstractDocumentWorkflowIntegrationTest {

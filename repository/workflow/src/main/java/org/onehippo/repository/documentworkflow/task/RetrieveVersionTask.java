@@ -24,7 +24,7 @@ import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for retrieving a specific a document variant version its frozen node as {@link Document}.

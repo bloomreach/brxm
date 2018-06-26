@@ -25,10 +25,10 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 

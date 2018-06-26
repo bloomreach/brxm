@@ -26,7 +26,7 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -34,7 +34,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PR
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 
 /**

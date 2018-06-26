@@ -25,7 +25,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -36,7 +35,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIntegrationTest {

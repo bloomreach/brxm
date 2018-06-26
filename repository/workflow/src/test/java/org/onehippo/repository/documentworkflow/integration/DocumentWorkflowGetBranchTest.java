@@ -16,10 +16,6 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -28,15 +24,9 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
-import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
-import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -46,8 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 

@@ -30,7 +30,7 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 
 /**

@@ -27,7 +27,7 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ArrayUtils.removeElement;
@@ -38,7 +38,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class RemoveBranchTask extends AbstractDocumentTask {
 

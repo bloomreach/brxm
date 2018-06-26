@@ -26,7 +26,7 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +38,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class BranchTask extends AbstractDocumentTask {
 

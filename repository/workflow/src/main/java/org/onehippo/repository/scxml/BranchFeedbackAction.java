@@ -26,14 +26,14 @@ import javax.jcr.Session;
 import org.apache.commons.scxml2.ActionExecutionContext;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 
 public class BranchFeedbackAction extends AbstractAction {

@@ -1,19 +1,20 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
-package org.onehippo.repository.documentworkflow;
+package org.hippoecm.repository.standardworkflow;
 
 import java.util.Date;
 
@@ -28,8 +29,6 @@ import org.hippoecm.repository.util.JcrUtils;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 /**
  * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
@@ -37,17 +36,18 @@ import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 public class DocumentVariant extends Document {
 
     public static final String MASTER_BRANCH_ID = "master";
-    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + PUBLISHED.getState();
-    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + UNPUBLISHED.getState();
+    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + HippoStdNodeType.PUBLISHED;
+    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + HippoStdNodeType.UNPUBLISHED;
 
     public DocumentVariant() {
     }
 
     /**
      * Enabling package access
+     *
      * @return backing Node
      */
-    protected Node getNode() {
+    public Node getNode() {
         return super.getNode();
     }
 
@@ -55,8 +55,8 @@ public class DocumentVariant extends Document {
         super(node);
     }
 
-   public void setState(String state) throws RepositoryException {
-       setStringProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
+    public void setState(String state) throws RepositoryException {
+        setStringProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
     }
 
     public String getState() throws RepositoryException {
@@ -86,8 +86,7 @@ public class DocumentVariant extends Document {
     public void setAvailability(String[] availability) throws RepositoryException {
         if (availability != null) {
             setStringsProperty(HippoNodeType.HIPPO_AVAILABILITY, availability);
-        }
-        else {
+        } else {
             setStringsProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
         }
     }
@@ -111,7 +110,7 @@ public class DocumentVariant extends Document {
         // do not nodetype check since getNode can also be a frozenNode, see DocumentWorkflowImpl.getBranch()
         final String branchIdProperty = JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, null);
         if (branchIdProperty == null) {
-            return  branchId.equals(MASTER_BRANCH_ID);
+            return branchId.equals(MASTER_BRANCH_ID);
         } else {
             return branchId.equals(branchIdProperty);
         }
@@ -139,7 +138,7 @@ public class DocumentVariant extends Document {
         return false;
     }
 
-    public void setModified(String username) throws RepositoryException{
+    public void setModified(String username) throws RepositoryException {
         setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, username);
         setDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new Date());
     }

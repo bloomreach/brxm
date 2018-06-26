@@ -44,7 +44,7 @@ import org.onehippo.repository.scxml.MockWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 

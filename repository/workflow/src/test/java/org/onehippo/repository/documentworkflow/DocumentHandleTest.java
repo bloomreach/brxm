@@ -23,6 +23,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.scxml.MockWorkflowContext;

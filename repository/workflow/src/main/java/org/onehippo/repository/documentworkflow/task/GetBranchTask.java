@@ -20,7 +20,7 @@ import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;

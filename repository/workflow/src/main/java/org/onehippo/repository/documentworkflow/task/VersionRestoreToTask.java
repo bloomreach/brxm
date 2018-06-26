@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
@@ -35,7 +34,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for restoring a version to a specified target node using custom/manual copying of the content of

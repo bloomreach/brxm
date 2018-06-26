@@ -19,7 +19,7 @@ import java.util.Calendar;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.RetrieveVersionTask;
 
 /**

@@ -37,7 +37,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class DocumentWorkflowVersioningTest extends AbstractDocumentWorkflowIntegrationTest {
 

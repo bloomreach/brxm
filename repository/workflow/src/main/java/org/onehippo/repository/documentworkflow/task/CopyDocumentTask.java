@@ -29,7 +29,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

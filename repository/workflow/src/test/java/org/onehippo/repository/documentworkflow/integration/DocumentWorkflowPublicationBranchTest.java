@@ -27,7 +27,7 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.documentworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkflowIntegrationTest {
 

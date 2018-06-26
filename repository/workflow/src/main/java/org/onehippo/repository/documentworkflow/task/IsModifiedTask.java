@@ -31,7 +31,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for determining if current draft is modified compared to the unpublished variant.

@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.WorkflowRequest;
 
 /**
