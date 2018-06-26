@@ -59,7 +59,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private final BranchAwareStdWorkflow infoEditAction;
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
-    private final BranchIdModelObservable branchIdModelObservable;
+    private BranchIdModelObservable branchIdModelObservable;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -143,10 +143,14 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         add(editAction);
 
         final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
-        branchIdModelObservable = new BranchIdModelObservable(context, config,
-                branchId -> Stream.of(infoEditAction, infoAction).forEach(action -> action.onBranchIdChanged(branchId)));
-        branchIdModelObservable
-                .observeBranchId(initialBranchId);
+        try {
+            branchIdModelObservable = new BranchIdModelObservable(context, getWorkflow().getNode().getIdentifier(),
+                    branchId -> Stream.of(infoEditAction, infoAction).forEach(action -> action.onBranchIdChanged(branchId)));
+            branchIdModelObservable
+                    .observeBranchId(initialBranchId);
+        } catch (RepositoryException e) {
+            log.warn("Could not get identifier", e);
+        }
         hideInvalidActions();
     }
 

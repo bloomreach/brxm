@@ -38,20 +38,19 @@ public class BranchIdModelObservable {
 
     private final Logger log = LoggerFactory.getLogger(BranchIdModelObservable.class);
     private final IPluginContext context;
-    private final IPluginConfig config;
     private final Consumer<String> onEvent;
+    private final String identifier;
     private IModelReference<String> branchIdModelReference;
 
-    public BranchIdModelObservable(final IPluginContext context, final IPluginConfig config, final Consumer<String> onEvent) {
+    public BranchIdModelObservable(final IPluginContext context, final String identifier, final Consumer<String> onEvent) {
         this.context = context;
-        this.config = config;
         this.onEvent = onEvent;
+        this.identifier = identifier;
     }
 
     public IModelReference<String> observeBranchId(final String initialBranchId) {
-        final String editorId = getEditorId();
 
-        branchIdModelReference = context.getService(editorId, IModelReference.class);
+        branchIdModelReference = context.getService(identifier, IModelReference.class);
         if (branchIdModelReference == null) {
             branchIdModelReference = registerModelReference(initialBranchId);
         }
@@ -80,17 +79,11 @@ public class BranchIdModelObservable {
     }
 
     private ModelReference<String> registerModelReference(final String initialBranchId) {
-        final String editorId = getEditorId();
-        log.debug("No service found with id:{} of type{}", editorId, IModelReference.class.getName());
+        log.debug("No service found with id:{} of type{}", identifier, IModelReference.class.getName());
         log.debug("Creating model reference for a model containing the branchId ( initially '{}') ", initialBranchId);
-        final ModelReference<String> modelReference = new ModelReference<>(editorId, new Model<>(initialBranchId));
+        final ModelReference<String> modelReference = new ModelReference<>(identifier, new Model<>(initialBranchId));
         modelReference.init(context);
         return modelReference;
     }
-
-    private String getEditorId() {
-        return config.getString("editor.id");
-    }
-
 
 }
