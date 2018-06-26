@@ -37,6 +37,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
@@ -285,7 +286,12 @@ public class HstRequestUtils {
 
         HttpSession session = request.getSession(false);
         if (session != null) {
-            return (String) session.getAttribute(ContainerConstants.RENDERING_HOST);
+
+            // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            if (cmsSessionContext != null) {
+                return (String) cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
+            }
         }
         return null;
     }

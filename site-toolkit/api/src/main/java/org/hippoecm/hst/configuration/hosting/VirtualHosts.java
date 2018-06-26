@@ -163,6 +163,7 @@ public interface VirtualHosts {
      * @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
      * to be empty, it will be ""
      */
+    // TODO 13.0.0 : is it still allowed and possible that cmsPreviewPrefix can be empty? I am not sure
      String getCmsPreviewPrefix();
 
      /**

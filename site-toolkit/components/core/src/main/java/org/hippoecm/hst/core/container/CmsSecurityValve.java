@@ -33,6 +33,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -71,22 +72,36 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         this.sessionSecurityDelegation = sessionSecurityDelegation;
     }
 
+    public boolean isCmsSecuredRequest(final ValveContext context) {
+        final HstRequestContext requestContext = context.getRequestContext();
+        if (requestContext.isCmsRequest()) {
+            return true;
+        }
+        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        String ignoredPrefix = resolvedMount.getMatchingIgnoredPrefix();
+
+        if (StringUtils.isEmpty(ignoredPrefix)) {
+            // TODO HSTTWO-4374can we still allow ignoredPrefix to be empty on production?
+            return false;
+        }
+
+        // TODO HSTTWO-4374 is #getCmsPreviewPrefix allowed to be empty still? should be possible if the matched mount is a cms
+        // TODO HSTTWO-4374 host but how will this work again?
+        if (ignoredPrefix.equals(resolvedMount
+                .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
-        if (!requestContext.isCmsRequest()) {
-            String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
-
-            // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
-            if (!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount()
-                    .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
-                // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT
-                sendError(servletResponse, HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
+        if (!isCmsSecuredRequest(context)) {
             context.invokeNext();
             return;
         }
@@ -96,8 +111,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         HttpSession httpSession = servletRequest.getSession(false);
         CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
-        if (httpSession == null || cmsSessionContext == null)
-        {
+        if (httpSession == null || cmsSessionContext == null) {
             CmsContextService cmsContextService = HippoServiceRegistry.getService(CmsContextService.class);
             if (cmsContextService == null) {
                 log.debug("No CmsContextService available");
@@ -136,7 +150,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             if (httpSession != null) {
                 HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION, httpSession);
                 HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
-            }else {
+            } else {
                 httpSession = servletRequest.getSession(true);
             }
 
@@ -169,7 +183,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 }
 
                 if (jcrSession != null) {
-                    ((HstMutableRequestContext)requestContext).setSession(jcrSession);
+                    ((HstMutableRequestContext) requestContext).setSession(jcrSession);
                 }
                 context.invokeNext();
 

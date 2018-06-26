@@ -16,6 +16,7 @@
 package org.hippoecm.hst.container;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -451,13 +452,21 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             return;
         }
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        // we must not set the CMS_REQUEST_RENDERING_MOUNT_ID on the http session in case the resolved sitemap item
+        // we must not set the CMS_REQUEST_RENDERING_MOUNT_ID on the cmsSessionContext in case the resolved sitemap item
         // is a 'container resource' : A container resource always matches the root mount, and loading an image, css, js
         // etc file should not (re)set the CMS_REQUEST_RENDERING_MOUNT_ID as it will break in case of concurrent requests
         // for a submount if container resource requests are also involved
         if (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource()) {
-            session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
-            session.setAttribute(ContainerConstants.RENDERING_HOST, requestContext.getRenderHost());
+
+            // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            if (cmsSessionContext == null) {
+                // no cms
+                return;
+            }
+            final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+            contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
+            contextPayload.put(ContainerConstants.RENDERING_HOST, requestContext.getRenderHost());
         }
     }
 

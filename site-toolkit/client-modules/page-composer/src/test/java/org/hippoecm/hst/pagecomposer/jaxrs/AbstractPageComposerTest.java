@@ -232,6 +232,7 @@ public class AbstractPageComposerTest {
 
         final String mountId = mount.getMount().getIdentifier();
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+        // TODO HSTTWO-4374 this does not work any more, use CmsSessionContext instead?
         mockRequest.getSession().setAttribute(ContainerConstants.RENDERING_HOST, host);
         mockRequest.getSession().setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 

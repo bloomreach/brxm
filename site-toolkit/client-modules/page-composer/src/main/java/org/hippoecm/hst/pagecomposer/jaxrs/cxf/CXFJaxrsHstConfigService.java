@@ -41,6 +41,7 @@ import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,9 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
             if (node.isNodeType(NODETYPE_HST_MOUNT)) {
                 final HttpSession httpSession = requestContext.getServletRequest().getSession();
-                httpSession.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
+                CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+                // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+                cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
             }
 
         } catch (ItemNotFoundException e) {

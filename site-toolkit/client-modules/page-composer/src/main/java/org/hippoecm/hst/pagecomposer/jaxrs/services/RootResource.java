@@ -15,8 +15,10 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
@@ -53,6 +55,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,9 +238,14 @@ public class RootResource extends AbstractConfigResource {
                                     @PathParam("renderingHost") String renderingHost,
                                     @PathParam("mountId") String mountId) {
         HttpSession session = servletRequest.getSession(true);
-        session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
-        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
-        session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+
+
+        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+        CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+        contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
+        contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
+        contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
 
@@ -281,8 +289,12 @@ public class RootResource extends AbstractConfigResource {
     public Response previewMode(@Context HttpServletRequest servletRequest,
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
-        session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
-        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
+
+        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+        CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+        contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
+        contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
         log.info("Preview-Mode successful");
         return ok("Preview-Mode successful", null);
     }

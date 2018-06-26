@@ -46,8 +46,8 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.HstResponseUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -526,8 +526,13 @@ public class LoginServlet extends HttpServlet {
 
     private boolean loginSiteFromTemplateComposer(final HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute(ContainerConstants.RENDERING_HOST) != null) {
-            return true;
+        if (session != null) {
+
+            // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            if (cmsSessionContext != null && cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST) != null) {
+                return true;
+            }
         }
         return false;
     }

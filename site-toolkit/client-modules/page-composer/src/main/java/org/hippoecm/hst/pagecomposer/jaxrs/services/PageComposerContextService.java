@@ -20,6 +20,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -29,6 +30,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.platform.model.HstModel;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +78,11 @@ public class PageComposerContextService {
     }
 
     public String getRenderingMountId() {
-        final String renderingMountId = (String) getRequestContext().getServletRequest().getSession(true).getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
+
+        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+        final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        final String renderingMountId = (String) cmsSessionContext.getContextPayload().get(CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
             throw new IllegalStateException("Could not find rendering mount id on request session.");
         }
@@ -84,12 +90,20 @@ public class PageComposerContextService {
     }
 
     public void removeRenderingMountId() {
-        getRequestContext().getServletRequest().getSession(true).removeAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
+
+        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+        final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        cmsSessionContext.getContextPayload().remove(CMS_REQUEST_RENDERING_MOUNT_ID);
     }
 
 
     public boolean isRenderingMountSet() {
-        return getRequestContext().getServletRequest().getSession(true).getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID) != null;
+
+        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
+        final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        return cmsSessionContext.getContextPayload().get(CMS_REQUEST_RENDERING_MOUNT_ID) != null;
     }
 
     public String getEditingLiveConfigurationPath() {
