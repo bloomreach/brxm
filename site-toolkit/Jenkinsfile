@@ -17,4 +17,4 @@
  */
 
 // TODO temporarily switch off the jenkins build
-cmsPipeline( mavenGoals: "clean deploy" )
+// cmsPipeline( mavenGoals: "clean deploy" )
