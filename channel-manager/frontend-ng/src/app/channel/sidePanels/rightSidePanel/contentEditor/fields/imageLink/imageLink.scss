@@ -21,11 +21,11 @@ $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 
 image-link {
   .input-bottom-border {
+    bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
     border-bottom: 1px solid;
     max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
-    width: 100%;
     position: absolute;
-    bottom: 2px;
+    width: 100%;
   }
 
   .input-bottom-border,
@@ -81,10 +81,10 @@ image-link {
       min-width: $thumbnail-width;
       user-select: none;
     }
-    
+
     &:not(.image-has-url),
     &:not(.image-has-url) > span {
-      width: 100%
+      width: 100%;
     }
 
     .md-button.md-icon-button {
