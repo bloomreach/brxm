@@ -98,6 +98,7 @@ $blue-shadow: rgba(0, 94, 171, .25);
 $black-shadow: rgba(0, 0, 0, .25);
 $half-white: rgba(255, 255, 255, .5);
 $canvas-bgcolor: #c1c3c5;
+$border-color: rgba(0, 0, 0, .12);
 
 // Hippo-specific colors for publication states
 $hippo-red: #ff4040;
@@ -116,7 +117,7 @@ $resize-handle-width-left: 20px;
 $resize-handle-width-right: 10px;
 
 // Tabs
-$tabs-bottom-border-color: rgba(0, 0, 0, .12);
+$tabs-bottom-border-color: $border-color;
 $tabs-header-height: 48px;
 
 // Picker

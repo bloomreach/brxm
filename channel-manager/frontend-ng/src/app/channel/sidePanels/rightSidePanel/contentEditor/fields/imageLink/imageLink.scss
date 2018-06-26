@@ -23,17 +23,32 @@ image-link {
   .input-bottom-border {
     border-bottom: 1px solid;
     max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
+    width: 100%;
+    position: absolute;
+    bottom: 2px;
   }
 
   .input-bottom-border,
   input {
     // hide checkered background for readonly input fields
     background-image: none !important;
-    border-bottom-color: rgba(0, 0, 0, .12) !important;
+    border-bottom-color: $border-color !important;
   }
 
   .input-bottom-border-limited-empty {
     max-width: $thumbnail-width + $first-button-left-padding + $button-width;
+  }
+
+  .hippo-imagelink-input {
+    min-width: 100%;
+  }
+
+  .has-focused-field & {
+    .hippo-imagelink-input.has-focus,
+    .input-bottom-border.has-focus {
+      border-bottom-color: $blue-500 !important;
+      border-bottom-width: 2px;
+    }
   }
 
   img {
@@ -65,6 +80,11 @@ image-link {
       color: transparent;
       min-width: $thumbnail-width;
       user-select: none;
+    }
+    
+    &:not(.image-has-url),
+    &:not(.image-has-url) > span {
+      width: 100%
     }
 
     .md-button.md-icon-button {

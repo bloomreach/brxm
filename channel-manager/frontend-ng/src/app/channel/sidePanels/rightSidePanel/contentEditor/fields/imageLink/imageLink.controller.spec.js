@@ -17,20 +17,26 @@
 describe('imageLinkController', () => {
   let $componentController;
   let $ctrl;
+  let $rootScope;
   let $scope;
+  let $timeout;
   let CmsService;
   let ngModel;
   let config;
+  let onBlur;
+  let onFocus;
 
   const $element = angular.element('<div></div>');
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.fieldsModule');
 
-    inject((_$componentController_, _$rootScope_, _CmsService_) => {
+    inject((_$componentController_, _$rootScope_, _$timeout_, _CmsService_) => {
       $componentController = _$componentController_;
       CmsService = _CmsService_;
+      $rootScope = _$rootScope_;
       $scope = _$rootScope_.$new();
+      $timeout = _$timeout_;
     });
 
     ngModel = jasmine.createSpyObj('ngModel', [
@@ -43,17 +49,22 @@ describe('imageLinkController', () => {
       imagepicker: 'image-picker-config',
     };
 
+    onBlur = jasmine.createSpy('onBlur');
+    onFocus = jasmine.createSpy('onFocus');
+
     $ctrl = $componentController('imageLink', {
       $scope,
       $element,
       CmsService,
     }, {
-      ngModel,
-      name: 'TestField',
       ariaLabel: 'TestAriaLabel',
       config,
       hint: 'TestHint',
       index: 0,
+      name: 'TestField',
+      ngModel,
+      onBlur,
+      onFocus,
       url: 'TestUrl',
     });
   });
@@ -74,7 +85,6 @@ describe('imageLinkController', () => {
       expect($ctrl.config).toEqual(config);
       expect($ctrl.hint).toEqual('TestHint');
       expect($ctrl.url).toEqual('TestUrl');
-      expect($ctrl.labelElement).toBeDefined();
       expect($ctrl.imagePicked).toBeFalsy();
     });
 
@@ -98,18 +108,103 @@ describe('imageLinkController', () => {
     });
   });
 
+  describe('focus handling', () => {
+    beforeEach(() => {
+      spyOn($ctrl, 'setFocus').and.callThrough();
+    });
+
+    it('sets focus if parent component broadcasts event "primitive-field:focus" and index is 0', () => {
+      $ctrl.index = 0;
+      init();
+
+      $rootScope.$broadcast('primitive-field:focus');
+      expect($ctrl.setFocus).toHaveBeenCalled();
+    });
+
+    it('does not set focus if parent component broadcasts event "primitive-field:focus" and index is not 0', () => {
+      $ctrl.index = 1;
+      init();
+
+      $rootScope.$broadcast('primitive-field:focus');
+      expect($ctrl.setFocus).not.toHaveBeenCalled();
+    });
+
+    it('sets focus on the "select" button if no image is yet selected', () => {
+      const imgEl = [];
+      const selectEl = jasmine.createSpyObj('selectElement', ['focus']);
+      // find() is called twice, first to check if there are any images, then to find the select button
+      spyOn($element, 'find').and.returnValues(imgEl, selectEl);
+
+      $ctrl.setFocus();
+
+      expect($element.find).toHaveBeenCalledWith('img');
+      expect($element.find).toHaveBeenCalledWith('.hippo-imagelink-select');
+      expect(selectEl.focus).toHaveBeenCalled();
+    });
+
+    it('sets focus on the "clear" button if an image has been selected', () => {
+      const imgEl = ['img'];
+      const clearEl = jasmine.createSpyObj('clearElement', ['focus']);
+      // find() is called twice, first to check if there are any images, then to find the clear button
+      spyOn($element, 'find').and.returnValues(imgEl, clearEl);
+
+      $ctrl.setFocus();
+
+      expect($element.find).toHaveBeenCalledWith('img');
+      expect($element.find).toHaveBeenCalledWith('.hippo-imagelink-clear');
+      expect(clearEl.focus).toHaveBeenCalled();
+    });
+
+    it('emits button focus event and set buttonHasFocus to true', () => {
+      const event = {};
+      $ctrl.onFocusButton(event);
+
+      expect($ctrl.buttonHasFocus).toBe(true);
+      expect(onFocus).toHaveBeenCalledWith(event);
+    });
+
+    it('emits button blur event and set buttonHasFocus to false after timeout', () => {
+      $ctrl.buttonHasFocus = true;
+      const event = {};
+      $ctrl.onBlurButton(event);
+
+      expect($ctrl.buttonHasFocus).toBe(true);
+      expect(onBlur).toHaveBeenCalledWith(event);
+
+      $timeout.flush();
+      expect($ctrl.buttonHasFocus).toBe(false);
+    });
+
+    it('cancels the timeout if a focus event is fired right after the blur event', () => {
+      spyOn($timeout, 'cancel').and.callThrough();
+      $ctrl.buttonHasFocus = true;
+      $ctrl.onBlurButton();
+      $ctrl.onFocusButton();
+      $timeout.flush();
+
+      expect($timeout.cancel).toHaveBeenCalled();
+      expect($ctrl.buttonHasFocus).toBe(true);
+    });
+  });
+
   describe('openImagePicker', () => {
     beforeEach(() => {
       init();
       spyOn(CmsService, 'publish');
-      spyOn($ctrl.labelElement, 'focus');
-      spyOn($ctrl, '_focusImageElement');
+      spyOn($ctrl, '_focusClearButton');
+      spyOn($ctrl, '_focusSelectButton');
+
       $ctrl.openImagePicker();
     });
 
     it('opens the picker by publishing the "show-image-picker" event', () => {
-      expect(CmsService.publish).toHaveBeenCalledWith('show-image-picker', 'image-picker-config', { uuid: 'model-value' },
-        jasmine.any(Function), jasmine.any(Function));
+      expect(CmsService.publish).toHaveBeenCalledWith(
+        'show-image-picker',
+        'image-picker-config',
+        { uuid: 'model-value' },
+        jasmine.any(Function),
+        jasmine.any(Function),
+      );
     });
 
     it('stores the URL and the UUID of the picked image', () => {
@@ -122,12 +217,12 @@ describe('imageLinkController', () => {
 
       expect($ctrl.imagePicked).toBe(true);
       // the image will be focussed by the focus-if directive
-      expect($ctrl._focusImageElement).not.toHaveBeenCalled();
+      expect($ctrl._focusClearButton).not.toHaveBeenCalled();
       expect($ctrl.url).toEqual('new-url');
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
     });
 
-    it('sets focus on the imageElement if an image was previously picked', () => {
+    it('sets focus on the clear button if an image was previously picked', () => {
       $ctrl.imagePicked = true;
       const okCallback = CmsService.publish.calls.mostRecent().args[3];
       okCallback({
@@ -136,22 +231,22 @@ describe('imageLinkController', () => {
       });
       $scope.$apply();
 
-      expect($ctrl._focusImageElement).toHaveBeenCalled();
+      expect($ctrl._focusClearButton).toHaveBeenCalled();
     });
 
-    it('sets focus on the imageElement when the picker is cancelled and an image was previously picked', () => {
-      spyOn($ctrl, '_hasImageElement').and.returnValue(true);
+    it('sets focus on the clear button when the picker is cancelled and an image was previously picked', () => {
+      spyOn($ctrl, '_hasImage').and.returnValue(true);
       const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
       cancelCallback();
 
-      expect($ctrl._focusImageElement).toHaveBeenCalled();
+      expect($ctrl._focusClearButton).toHaveBeenCalled();
     });
 
-    it('sets focus on the labelElement when the picker is cancelled and no image has been picked yet', () => {
+    it('sets focus on the select button when the picker is cancelled and no image has been picked yet', () => {
       const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
       cancelCallback();
 
-      expect($ctrl.labelElement.focus).toHaveBeenCalled();
+      expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
   });
 
