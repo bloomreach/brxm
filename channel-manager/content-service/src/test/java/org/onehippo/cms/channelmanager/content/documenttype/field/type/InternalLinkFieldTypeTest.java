@@ -56,10 +56,10 @@ import static org.powermock.api.support.membermodification.MemberModifier.suppre
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({AbstractFieldType.class})
-public class DocumentLinkFieldTypeTest {
+public class InternalLinkFieldTypeTest {
 
     private String documentItemUrl;
-    private DocumentLinkFieldType documentLink;
+    private InternalLinkFieldType documentLink;
 
     @Before
     public void setUp() {
@@ -67,13 +67,13 @@ public class DocumentLinkFieldTypeTest {
         expect(mockImageItem.getPrimaryUrl(anyObject())).andAnswer(() -> documentItemUrl).anyTimes();
         replayAll();
 
-        documentLink = new DocumentLinkFieldType();
+        documentLink = new InternalLinkFieldType();
         documentItemUrl =  "http://example.com";
     }
 
     @Test
     public void constructor() {
-        assertThat(new DocumentLinkFieldType().getType(), equalTo(Type.DOCUMENT_LINK));
+        assertThat(new InternalLinkFieldType().getType(), equalTo(Type.INTERNAL_LINK));
     }
 
     @Test
