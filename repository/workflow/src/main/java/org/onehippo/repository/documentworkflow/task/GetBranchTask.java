@@ -72,7 +72,7 @@ public class GetBranchTask extends AbstractDocumentTask {
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
 
-        final String variantBranchId = getStringProperty(variant.getNode(workflowSession), HIPPO_PROPERTY_BRANCH_ID, null);
+        final String variantBranchId = getStringProperty(variant.getNode(workflowSession), HIPPO_PROPERTY_BRANCH_ID, DocumentVariant.MASTER_BRANCH_ID);
         if (branchId.equals(variantBranchId)) {
             // variant is the correct value
             return variant;
