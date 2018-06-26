@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.frontend.editor;
 
 import java.util.Collections;
 import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -45,6 +48,7 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.usagestatistics.UsageEvent;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -473,5 +477,9 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
             final String eventJs = editorActivated.getJavaScript();
             OnLoadHeaderItem.forScript(eventJs).render(response);
         }
+    }
+
+    protected boolean isParentOfFrozenNode(final Node node) throws RepositoryException {
+        return node.isNodeType(JcrConstants.NT_VERSION);
     }
 }

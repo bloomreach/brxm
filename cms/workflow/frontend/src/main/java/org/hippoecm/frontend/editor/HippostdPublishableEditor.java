@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -29,9 +30,11 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.BranchIdModelObservation;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -51,6 +54,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +82,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
+    private String branchId;
+
     // CMS-10723 Made WorkflowState package-private to be able to unit test
     static class WorkflowState {
         private IModel<Node> draft;
@@ -84,16 +91,28 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         private IModel<Node> published;
         private boolean isHolder;
         private String user;
+        private final Optional<DocumentWorkflow> documentWorkflow;
+        private final String branchId;
+
+        public WorkflowState(){
+            this.documentWorkflow = Optional.empty();
+            this.branchId = null;
+        }
+
+        public WorkflowState(final Optional<DocumentWorkflow> documentWorkflow, final String branchId) {
+            this.documentWorkflow = documentWorkflow;
+            this.branchId = branchId;
+        }
 
         void process(final Node child) throws RepositoryException {
             if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
                 final String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                 switch (state) {
                     case HippoStdNodeType.UNPUBLISHED:
-                        unpublished = new JcrNodeModel(child);
+                        this.unpublished = getVariantNodeModel(child, WorkflowUtils.Variant.UNPUBLISHED);
                         break;
                     case HippoStdNodeType.PUBLISHED:
-                        published = new JcrNodeModel(child);
+                        this.published = getVariantNodeModel(child, WorkflowUtils.Variant.PUBLISHED);
                         break;
                     case HippoStdNodeType.DRAFT:
                         draft = new JcrNodeModel(child);
@@ -104,6 +123,32 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         break;
                 }
             }
+        }
+
+        private JcrNodeModel getVariantNodeModel(final Node child, final WorkflowUtils.Variant variant){
+            JcrNodeModel result = new JcrNodeModel(child);
+            if (documentWorkflow.isPresent() && branchId != null) {
+                try {
+                    Optional<Document> variantWithBranchId = Optional.ofNullable(documentWorkflow.get().getBranch(branchId, variant));
+                    if (variantWithBranchId.isPresent()) {
+                        result = new JcrNodeModel(variantWithBranchId.get().getNode(UserSession.get().getJcrSession()));
+                    } else if (variant.equals(WorkflowUtils.Variant.PUBLISHED)) {
+                        log.info("Find 'master' version for published variant if there is no published version for branch:{} for node:{} to determine correct diff", branchId, child.getPath());
+                        Optional<Document> publishedMasterVersion = Optional.ofNullable(documentWorkflow.get().getBranch("master", WorkflowUtils.Variant.PUBLISHED));
+                        if (publishedMasterVersion.isPresent()) {
+                            result = new JcrNodeModel(publishedMasterVersion.get().getNode(UserSession.get().getJcrSession()));
+                        } else {
+                            log.warn("Could not find published 'master' variant in version history for node:{}, using published variant under handle", child);
+                        }
+                    }
+                } catch (WorkflowException e) {
+                    log.debug("No {} variant found", variant.getState());
+                } catch (RepositoryException e) {
+                    log.warn(e.getMessage(), e);
+                }
+            }
+            return result;
+
         }
 
         void setUser(final String user) {
@@ -136,6 +181,32 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
         super(manager, context, config, model, getMode(model));
+        try {
+            new BranchIdModelObservation(context, config, this::updateModel)
+                    .observeBranchId(getInitialBranchId());
+        } catch (WorkflowException | RemoteException | RepositoryException e) {
+            throw new EditorException(e);
+        }
+    }
+
+    String getInitialBranchId() throws WorkflowException, RemoteException, RepositoryException {
+        String result = null;
+        DocumentWorkflow documentWorkflow = null;
+        try {
+            documentWorkflow = getDocumentWorkflow();
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(),e);
+        }
+        if (documentWorkflow!=null){
+            result =  BranchWorkflowUtils.getBranchId(documentWorkflow.hints(),WorkflowUtils.Variant.UNPUBLISHED, WorkflowUtils.Variant.PUBLISHED);
+        }
+        return result;
+    }
+
+    private void updateModel(final String branchId) {
+        log.debug("Updated branch:{}", branchId);
+        this.branchId = branchId;
+
     }
 
     @Override
@@ -144,14 +215,27 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         Node node = model.getObject();
         boolean compareToVersion = false;
         try {
-            if (node.isNodeType(JcrConstants.NT_VERSION)) {
+            if (isParentOfFrozenNode(node)) {
                 node = getVersionHandle(node);
                 compareToVersion = true;
             }
         } catch (final RepositoryException ex) {
             throw new EditorException("Error locating editor model", ex);
         }
-        final WorkflowState state = getWorkflowState(node);
+        DocumentWorkflow documentWorkflow = null;
+        try {
+            documentWorkflow = getDocumentWorkflow();
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(),e);
+        }
+        final WorkflowState state;
+        if (documentWorkflow==null){
+            state = getWorkflowState(node);
+        }
+        else{
+            state = getWorkflowState(node, Optional.of(documentWorkflow), branchId);
+        }
+
         switch (getMode()) {
             case EDIT:
                 if (state.draft == null || !state.isHolder) {
@@ -185,7 +269,13 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Error locating base revision", ex);
         }
 
-        final WorkflowState state = getWorkflowState(node);
+        DocumentWorkflow documentWorkflow = null;
+        try {
+            documentWorkflow = getDocumentWorkflow();
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(),e);
+        }
+        final WorkflowState state = getWorkflowState(node, Optional.ofNullable(documentWorkflow), branchId);
         switch (getMode()) {
             case EDIT:
                 throw new EditorException("Base model is not supported in edit mode");
@@ -288,17 +378,31 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     private EditableWorkflow getEditableWorkflow() throws RepositoryException {
+        final Workflow workflow = getWorkflow();
+        if (!(workflow instanceof EditableWorkflow)) {
+            throw new RepositoryException("Editing workflow not of type EditableWorkflow");
+        }
+        return (EditableWorkflow) workflow;
+    }
+
+    private Workflow getWorkflow() throws RepositoryException {
         final Node handleNode = getModel().getObject();
         if (handleNode == null) {
             throw new RepositoryException("No handle node available");
         }
         final HippoSession session = (HippoSession) handleNode.getSession();
         final WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        final Workflow workflow = manager.getWorkflow("editing", handleNode);
+        return manager.getWorkflow("editing", handleNode);
+    }
+
+    private DocumentWorkflow getDocumentWorkflow() throws RepositoryException  {
+        final Workflow workflow = getWorkflow();
         if (!(workflow instanceof EditableWorkflow)) {
             throw new RepositoryException("Editing workflow not of type EditableWorkflow");
         }
-        return (EditableWorkflow) workflow;
+        return (DocumentWorkflow) workflow;
+
+
     }
 
     public boolean isValid() throws EditorException {
@@ -561,7 +665,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return new DocumentUsageEvent(name, model, "publishable-editor");
     }
 
-    static Mode getMode(final IModel<Node> nodeModel) throws EditorException {
+    static Mode getMode(final IModel<Node> nodeModel) throws EditorException{
+        return getMode(nodeModel, null, null);
+    }
+
+    static Mode getMode(final IModel<Node> nodeModel, final DocumentWorkflow documentWorkflow, final String branchId) throws EditorException {
         final Node node = nodeModel.getObject();
         try {
             if (node.isNodeType(JcrConstants.NT_VERSION)) {
@@ -577,7 +685,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException e) {
             throw new EditorException("Could not determine mode", e);
         }
-        final WorkflowState wfState = getWorkflowState(nodeModel.getObject());
+        final WorkflowState wfState = getWorkflowState(node, Optional.ofNullable(documentWorkflow), branchId);
 
         // select draft if it exists
         if (wfState.draft != null) {
@@ -602,8 +710,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return Mode.VIEW;
     }
 
-    static WorkflowState getWorkflowState(final Node handleNode) throws EditorException {
-        final WorkflowState wfState = new WorkflowState();
+    static WorkflowState getWorkflowState(final Node handleNode) throws EditorException{
+        return getWorkflowState(handleNode, Optional.empty(), null);
+    }
+
+    static WorkflowState getWorkflowState(final Node handleNode, final Optional<DocumentWorkflow> documentWorkflow, final String branchId) throws EditorException {
+        final WorkflowState wfState = new WorkflowState(documentWorkflow, branchId);
         try {
             final String user = UserSession.get().getJcrSession().getUserID();
             wfState.setUser(user);
@@ -618,7 +730,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             }
         } catch (final RepositoryException ex) {
             throw new EditorException("Could not determine workflow state", ex);
-        }
+        } 
         return wfState;
     }
 

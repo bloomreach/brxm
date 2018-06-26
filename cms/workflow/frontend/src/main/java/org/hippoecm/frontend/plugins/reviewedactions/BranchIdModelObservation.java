@@ -71,6 +71,10 @@ public class BranchIdModelObservation {
         return branchIdModelReference;
     }
 
+    public String lastBranchId(){
+        return branchIdModelReference.getModel().getObject();
+    }
+
     private ModelReference<String> registerModelReference(final String initialBranchId) {
         final String editorId = getEditorId();
         log.debug("No service found with id:{} of type{}", editorId, IModelReference.class.getName());

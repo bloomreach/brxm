@@ -45,7 +45,6 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
@@ -59,10 +58,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private final BranchAwareStdWorkflow infoEditAction;
     private final BranchAwareStdWorkflow editAction;
     private final Map<String, Serializable> info;
+    private final BranchIdModelObservation branchIdModelObservation;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-        final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), new WorkflowUtils.Variant[]{UNPUBLISHED, PUBLISHED});
+
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         info = getHints();
@@ -122,6 +122,10 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
+                String branchId = AbstractPreviewWorkflowPlugin.this.branchIdModelObservation.lastBranchId();
+                if (branchId != null) {
+                    workflow.checkoutBranch(branchId);
+                }
                 Document docRef = workflow.obtainEditableInstance();
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
@@ -142,8 +146,10 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         };
         add(editAction);
 
-        new BranchIdModelObservation(context, config,
-                branchId -> Stream.of(editAction, infoEditAction, infoAction).forEach(action -> action.updateBranch(branchId)))
+        final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
+        branchIdModelObservation = new BranchIdModelObservation(context, config,
+                branchId -> Stream.of(editAction, infoEditAction, infoAction).forEach(action -> action.updateBranch(branchId)));
+        branchIdModelObservation
                 .observeBranchId(initialBranchId);
         hideInvalidActions();
     }
