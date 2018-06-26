@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DocumentLinkFieldType extends LinkFieldType {
+public class InternalLinkFieldType extends LinkFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentLinkFieldType.class);
+    private static final Logger log = LoggerFactory.getLogger(InternalLinkFieldType.class);
 
     private static final String[] DOCUMENT_PICKER_STRING_PROPERTIES = {
             "base.path",
@@ -46,8 +46,8 @@ public class DocumentLinkFieldType extends LinkFieldType {
         return config;
     }
 
-    public DocumentLinkFieldType() {
-        setType(Type.DOCUMENT_LINK);
+    public InternalLinkFieldType() {
+        setType(Type.INTERNAL_LINK);
     }
 
     @Override

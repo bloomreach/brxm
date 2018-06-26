@@ -45,7 +45,7 @@ public interface FieldType {
         CHOICE, // "content blocks"
         COMPOUND,
         IMAGE_LINK,
-        DOCUMENT_LINK
+        INTERNAL_LINK
     }
 
     /**
