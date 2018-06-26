@@ -1,3 +1,5 @@
+@Library('hippo-global@feature/goals') _
+
 /*
  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
@@ -14,5 +16,5 @@
  * limitations under the License.
  */
 
-// TODO temporarily switch of the jenkins build
-// cmsPipeline()
+// TODO temporarily switch off the jenkins build
+cmsPipeline( mavenGoals: "clean deploy" )
