@@ -262,7 +262,7 @@
                   <location>${dollar}{project.basedir}/cms/target/cms.war</location>
                 </deployable>
                 <deployable>
-                  <location>${dollar}{project.basedir}/site/target/site.war</location>
+                  <location>${dollar}{project.basedir}/site/webapp/target/site.war</location>
                   <type>war</type>
                   <properties>
                     <context>/site</context>
