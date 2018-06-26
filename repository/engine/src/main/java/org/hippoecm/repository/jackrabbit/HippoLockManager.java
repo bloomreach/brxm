@@ -47,7 +47,7 @@ public class HippoLockManager extends LockManagerImpl {
      * @throws javax.jcr.RepositoryException if an error occurs
      */
     public HippoLockManager(org.apache.jackrabbit.core.SessionImpl session, FileSystem fs, ScheduledExecutorService executor) throws RepositoryException {
-        super(session, fs, executor);
+        super(session, fs, null);
     }
 
     @Override
