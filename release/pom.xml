@@ -41,7 +41,7 @@
   <properties>
     <hippo.release.version>12.5.0-SNAPSHOT</hippo.release.version>
 
-    <hippo.jackrabbit.version>2.16.1-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.2-h1</hippo.jackrabbit.version>
 
     <hippo.configuration-management.version>1.5.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.5.0-SNAPSHOT</hippo.addon-channel-manager.version>
