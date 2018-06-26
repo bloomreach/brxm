@@ -182,7 +182,18 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throws EditorException {
         super(manager, context, config, model, getMode(model));
         try {
-            new BranchIdModelObservable(context, getDocumentWorkflow().getNode().getIdentifier(), this::updateModel)
+            DocumentWorkflow documentWorkflow = null;
+            try{
+                documentWorkflow = getDocumentWorkflow();
+            }
+            catch (RepositoryException e){
+                log.warn("Could not find documentWorkflow", e);
+            }
+            String identifier = null;
+            if (documentWorkflow != null) {
+                identifier = documentWorkflow.getNode().getIdentifier();
+            }
+            new BranchIdModelObservable(context, identifier, this::updateModel)
                     .observeBranchId(getInitialBranchId());
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             throw new EditorException(e);
