@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.internal;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 
 /**
@@ -24,7 +26,7 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
  * <p>A mount decorator can decorate a {@link Mount} to act like a preview {@link Mount}.
  *
  */
-public interface MountDecorator {
+public interface PreviewDecorator {
 
     /**
      * This method decorates the <code>mount</code> to a preview {@link Mount}.
@@ -32,4 +34,8 @@ public interface MountDecorator {
      * @return the decorated {@link Mount}
      */
     Mount decorateMountAsPreview(Mount mount);
+
+    VirtualHosts decorateVirtualHostsAsPreview(VirtualHosts virtualHosts);
+
+    VirtualHost decorateVirtualHostAsPreview(VirtualHost virtualHost);
 }

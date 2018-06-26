@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.platform.api;
 
-import org.hippoecm.hst.platform.api.BlueprintService;
-import org.hippoecm.hst.platform.api.ChannelService;
-import org.hippoecm.hst.platform.api.DocumentService;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService

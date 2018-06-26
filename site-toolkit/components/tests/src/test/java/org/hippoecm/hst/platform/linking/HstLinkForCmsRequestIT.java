@@ -33,7 +33,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -77,7 +77,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     private HstManager hstManager;
     private HstURLFactory hstURLFactory;
     private HstSiteMapMatcher siteMapMatcher;
-    protected MountDecorator mountDecorator;
+    protected PreviewDecorator previewDecorator;
 
     @Before
     public void setUp() throws Exception {
@@ -85,7 +85,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         this.hstManager = getComponent(HstManager.class.getName());
         this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
-        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+        this.previewDecorator = HstServices.getComponentManager().getComponent(PreviewDecorator.class.getName());
 
     }
 
@@ -331,7 +331,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
-        final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        final Mount decorated = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
         return resolvedMount.matchSiteMapItem(url.getPathInfo());
     }

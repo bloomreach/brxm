@@ -24,7 +24,7 @@
     <property name="hstRequestContextComponent" ref="org.hippoecm.hst.core.internal.HstRequestContextComponent" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
     <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
-    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
+    <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator" />
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="hstRequestProcessor" ref="org.hippoecm.hst.core.container.HstRequestProcessor" />
   </bean>

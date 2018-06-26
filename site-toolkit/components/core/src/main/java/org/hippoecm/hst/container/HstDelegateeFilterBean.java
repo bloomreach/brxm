@@ -48,7 +48,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -93,7 +93,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private HstRequestContextComponent requestContextComponent;
 
-    private MountDecorator mountDecorator;
+    private PreviewDecorator previewDecorator;
 
     private Repository repository;
 
@@ -124,8 +124,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
     }
 
-    public void setMountDecorator(MountDecorator mountDecorator) {
-        this.mountDecorator = mountDecorator;
+    public void setPreviewDecorator(PreviewDecorator previewDecorator) {
+        this.previewDecorator = previewDecorator;
     }
 
     public void setRepository(Repository repository) {
@@ -278,7 +278,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                                             "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
                                     throw new MatchException(msg);
                                 }
-                                Mount decoratedMount = mountDecorator.decorateMountAsPreview(undecoratedMount);
+                                Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
                                 if (decoratedMount == undecoratedMount) {
                                     log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", undecoratedMount.getMountPoint());
                                 } else {

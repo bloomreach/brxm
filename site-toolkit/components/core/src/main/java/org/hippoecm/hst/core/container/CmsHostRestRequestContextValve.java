@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -28,10 +28,10 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  */
 public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
 
-    private MountDecorator mountDecorator;
+    private PreviewDecorator previewDecorator;
 
-    public void setMountDecorator(final MountDecorator mountDecorator) {
-        this.mountDecorator = mountDecorator;
+    public void setPreviewDecorator(final PreviewDecorator previewDecorator) {
+        this.previewDecorator = previewDecorator;
     }
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -43,7 +43,7 @@ public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
         // decorate the mount to a preview mount
         final ResolvedMount resolvedMount = requestContext.getResolvedMount();
         requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
-        final Mount decoratedPreviewMount = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        final Mount decoratedPreviewMount = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decoratedPreviewMount);
         context.invokeNext();
 

@@ -15,18 +15,33 @@
  */
 package org.hippoecm.hst.platform.services;
 
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.api.BlueprintService;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.DocumentService;
 import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public class PlatformServicesImpl implements PlatformServices
 {
 
     private HstModelRegistryImpl hstModelRegistry;
+    private PreviewDecorator previewDecorator;
 
-    public PlatformServicesImpl(final HstModelRegistryImpl hstModelRegistry) {
+    private void init() {
+        HippoServiceRegistry.registerService(this, PlatformServices.class);
+    }
+
+    private void stop() {
+        HippoServiceRegistry.unregisterService(this, PlatformServices.class);
+    }
+
+    public void setPreviewDecorator(final PreviewDecorator previewDecorator) {
+        this.previewDecorator = previewDecorator;
+    }
+
+    public void setHstModelRegistry(final HstModelRegistryImpl hstModelRegistry) {
         this.hstModelRegistry = hstModelRegistry;
     }
 
@@ -37,12 +52,11 @@ public class PlatformServicesImpl implements PlatformServices
 
     @Override
     public ChannelService getChannelService() {
-        return new ChannelServiceImpl(hstModelRegistry);
+        return new ChannelServiceImpl(hstModelRegistry, previewDecorator);
     }
 
     @Override
     public DocumentService getDocumentService() {
         return new DocumentServiceImpl(hstModelRegistry);
     }
-
 }

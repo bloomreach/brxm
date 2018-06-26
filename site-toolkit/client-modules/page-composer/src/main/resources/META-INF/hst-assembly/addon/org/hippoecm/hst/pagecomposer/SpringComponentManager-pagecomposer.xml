@@ -70,6 +70,7 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+    <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator"/>
   </bean>
 
 
@@ -107,6 +108,7 @@
   </bean>
 
   <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
+    <!-- TODO FIX this since 'hst.configuration.rootPath' does not work for platform webapp -->
     <constructor-arg value="${hst.configuration.rootPath}/hst:configurations"/>
   </bean>
 

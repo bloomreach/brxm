@@ -16,10 +16,7 @@
 package org.hippoecm.hst.platform.configuration;
 
 
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -30,13 +27,12 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.request.MountDecoratorImpl;
+import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -406,8 +402,8 @@ public class MatchHostAndUrlIT extends AbstractTestConfigurations {
             assertFalse("We should have a LIVE mount", resolvedMount.getMount().isPreview());
 
 
-            MountDecorator mountDecorator = new MountDecoratorImpl();
-            Mount decoratedMount = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+            PreviewDecorator previewDecorator = new PreviewDecoratorImpl();
+            Mount decoratedMount = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
             ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
             // assert we now have a PREVIEW mount as ResolvedMount
             assertTrue("We should have a PREVIEW mount", resolvedMount.getMount().isPreview());

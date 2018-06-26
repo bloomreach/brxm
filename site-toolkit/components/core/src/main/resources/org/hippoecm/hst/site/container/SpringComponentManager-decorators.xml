@@ -18,8 +18,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="org.hippoecm.hst.core.internal.MountDecorator" 
-          class="org.hippoecm.hst.site.request.MountDecoratorImpl">
+    <bean id="org.hippoecm.hst.core.internal.PreviewDecorator"
+          class="org.hippoecm.hst.site.request.PreviewDecoratorImpl">
      
     </bean>
 

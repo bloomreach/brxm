@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestMountDecoratorImpl {
+public class TestPreviewDecoratorImpl {
 
     @Before
     public void setUp() {
@@ -67,7 +67,7 @@ public class TestMountDecoratorImpl {
         expect(mount.getTypes()).andReturn(types).anyTimes();
         
         replay(mount);
-        Mount decoratedMount = new MountDecoratorImpl().decorateMountAsPreview(mount);
+        Mount decoratedMount = new PreviewDecoratorImpl().decorateMountAsPreview(mount);
         assertTrue("The decorated mount is expected to be a preview. ", decoratedMount.isPreview());
         assertEquals("The decorated mount should have a mountPoint '/hst:hst/hst:sites/myproject'. ","/hst:hst/hst:sites/myproject", decoratedMount.getMountPoint());
 
@@ -92,7 +92,7 @@ public class TestMountDecoratorImpl {
 
         expect(mount.isPreview()).andReturn(true).anyTimes();
         replay(mount);
-        Mount decoratedMount = new MountDecoratorImpl().decorateMountAsPreview(mount);
+        Mount decoratedMount = new PreviewDecoratorImpl().decorateMountAsPreview(mount);
         assertFalse("The decoratedMount of a mount that is already preview should still be decorated. ", decoratedMount == mount);
 
     }
@@ -102,7 +102,7 @@ public class TestMountDecoratorImpl {
         Mount mount = createNiceMock(Mount.class);
         expect(mount.isPreview()).andReturn(false).anyTimes();
         replay(mount);
-        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
         Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
 
         assertTrue(decoratedMount.isPreview());
@@ -125,19 +125,19 @@ public class TestMountDecoratorImpl {
 
         replay(mount, virtualHost, portMount);
 
-        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
 
         Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
 
         assertTrue(decoratedMount.isPreview());
 
         final VirtualHost decoratedHost = decoratedMount.getVirtualHost();
-        assertTrue(decoratedHost instanceof MountDecoratorImpl.PreviewDecoratedVirtualHost);
+        assertTrue(decoratedHost instanceof PreviewDecoratorImpl.PreviewDecoratedVirtualHost);
         final PortMount decoratedPort = decoratedHost.getPortMount(0);
-        assertTrue(decoratedPort instanceof MountDecoratorImpl.PreviewDecoratedPortMount);
+        assertTrue(decoratedPort instanceof PreviewDecoratorImpl.PreviewDecoratedPortMount);
 
         final Mount decoratedMountViaHostPort = decoratedPort.getRootMount();
-        assertTrue(decoratedMountViaHostPort instanceof MountDecoratorImpl.PreviewDecoratedMount);
+        assertTrue(decoratedMountViaHostPort instanceof PreviewDecoratorImpl.PreviewDecoratedMount);
 
         // via via you get a new decorated instance
         assertFalse(decoratedMountViaHostPort == mountDecorator);
@@ -177,25 +177,25 @@ public class TestMountDecoratorImpl {
 
         replay(mount1, mount2, mount3, resolvedMount1, resolvedMount2, resolvedMount3, virtualHost, virtualHosts);
 
-        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
         Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount1);
         assertTrue(decoratedMount.isPreview());
 
         final VirtualHosts decoratedHosts = decoratedMount.getVirtualHost().getVirtualHosts();
-        assertTrue(decoratedHosts instanceof MountDecoratorImpl.PreviewDecoratedVirtualHosts);
+        assertTrue(decoratedHosts instanceof PreviewDecoratorImpl.PreviewDecoratedVirtualHosts);
 
         final Mount mountByGroupAliasAndType = decoratedHosts.getMountByGroupAliasAndType("foo", "bar", "live");
 
-        assertTrue(mountByGroupAliasAndType instanceof MountDecoratorImpl.PreviewDecoratedMount);
+        assertTrue(mountByGroupAliasAndType instanceof PreviewDecoratorImpl.PreviewDecoratedMount);
         assertTrue(mountByGroupAliasAndType.isPreview());
         assertTrue(mountByGroupAliasAndType.getType().equals(Mount.PREVIEW_NAME));
 
         final Mount decoratedByUUID = decoratedHosts.getMountByIdentifier("uuid");
-        assertTrue(decoratedByUUID instanceof MountDecoratorImpl.PreviewDecoratedMount);
+        assertTrue(decoratedByUUID instanceof PreviewDecoratorImpl.PreviewDecoratedMount);
 
         final List<Mount> decoratedHostsMountsViaHosts = decoratedHosts.getMountsByHostGroup("foo");
         for (Mount decoratedHostsMountsViaHost : decoratedHostsMountsViaHosts) {
-            assertTrue(decoratedHostsMountsViaHost instanceof MountDecoratorImpl.PreviewDecoratedMount);
+            assertTrue(decoratedHostsMountsViaHost instanceof PreviewDecoratorImpl.PreviewDecoratedMount);
         }
     }
 
@@ -227,7 +227,7 @@ public class TestMountDecoratorImpl {
 
         replay(mount1, mount2, resolvedMount1, resolvedMount2, virtualHost, virtualHosts);
 
-        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
         Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount1);
         final VirtualHosts decoratedHosts = decoratedMount.getVirtualHost().getVirtualHosts();
 

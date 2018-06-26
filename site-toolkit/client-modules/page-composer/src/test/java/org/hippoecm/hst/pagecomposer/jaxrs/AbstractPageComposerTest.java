@@ -28,6 +28,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -42,7 +43,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -73,7 +73,7 @@ public class AbstractPageComposerTest {
     protected HstEventsCollector hstEventsCollector;
     protected HippoSession session;
     protected Object hstModelMutex;
-    protected MountDecorator mountDecorator;
+    protected PreviewDecorator previewDecorator;
     private HstConfigurationEventListener listener;
     protected final MockServletContext servletContext = new MockServletContext();
 
@@ -101,7 +101,7 @@ public class AbstractPageComposerTest {
         hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
-        mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+        previewDecorator = HstServices.getComponentManager().getComponent(PreviewDecorator.class.getName());
 
         session = (HippoSession)createSession();
 
@@ -242,7 +242,7 @@ public class AbstractPageComposerTest {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
         requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
-        final Mount decorated = mountDecorator.decorateMountAsPreview(resolvedMount.getMount());
+        final Mount decorated = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
         String pathInfo = url.getPathInfo();
         if (StringUtils.isNotEmpty(resolvedMount.getResolvedMountPath())) {

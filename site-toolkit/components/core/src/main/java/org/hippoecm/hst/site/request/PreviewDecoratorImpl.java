@@ -40,7 +40,7 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -50,11 +50,11 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MountDecoratorImpl implements MountDecorator {
+public class PreviewDecoratorImpl implements PreviewDecorator {
 
-    protected final static Logger log = LoggerFactory.getLogger(MountDecoratorImpl.class);
+    protected final static Logger log = LoggerFactory.getLogger(PreviewDecoratorImpl.class);
     @Override
-    public Mount decorateMountAsPreview(Mount mount) {
+    public Mount decorateMountAsPreview(final Mount mount) {
         if (mount instanceof PreviewDecoratedMount) {
             log.debug("Already preview decorated mount '{}'. Return", mount.toString());
             return mount;
@@ -63,6 +63,24 @@ public class MountDecoratorImpl implements MountDecorator {
             log.debug("Mount {} is already a preview mount. Still decorate the backing virtualhosts to preview", mount.toString());
         }
         return new PreviewDecoratedMount(mount);
+    }
+
+    @Override
+    public VirtualHosts decorateVirtualHostsAsPreview(final VirtualHosts virtualHosts) {
+        if (virtualHosts instanceof PreviewDecoratedVirtualHosts) {
+            log.debug("Already preview");
+            return virtualHosts;
+        }
+        return new PreviewDecoratedVirtualHosts(virtualHosts);
+    }
+
+    @Override
+    public VirtualHost decorateVirtualHostAsPreview(final VirtualHost virtualHost) {
+        if (virtualHost instanceof PreviewDecoratedVirtualHost) {
+            log.debug("Already preview");
+            return virtualHost;
+        }
+        return new PreviewDecoratedVirtualHost(virtualHost);
     }
 
     class PreviewDecoratedMount implements Mount {

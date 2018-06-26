@@ -27,12 +27,12 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
-import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,18 +44,16 @@ public class ChannelServiceImpl implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
     private HstModelRegistryImpl hstModelRegistry;
+    private PreviewDecorator previewDecorator;
 
-    public ChannelServiceImpl(final HstModelRegistryImpl hstModelRegistry) {
+    public ChannelServiceImpl(final HstModelRegistryImpl hstModelRegistry, final PreviewDecorator previewDecorator) {
         this.hstModelRegistry = hstModelRegistry;
+        this.previewDecorator = previewDecorator;
     }
-
 
     @Override
     public List<Channel> getChannels(final Session userSession, final String cmsHost) {
         final List<Channel> channels = new ArrayList<>();
-
-        // TODO move the mount decorator impl to platform
-        final MountDecoratorImpl mountDecorator = new MountDecoratorImpl();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
@@ -70,7 +68,7 @@ public class ChannelServiceImpl implements ChannelService {
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
             for (Mount mount : mountsByHostGroup) {
 
-                final Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+                final Mount previewMount = previewDecorator.decorateMountAsPreview(mount);
 
                 final Channel channel = previewMount.getChannel();
                 if (channel == null) {
