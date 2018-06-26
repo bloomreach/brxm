@@ -30,6 +30,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.BranchAwareStdWorkflow;
 import org.hippoecm.addon.workflow.BranchWorkflowUtils;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -56,9 +57,9 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private final BranchAwareStdWorkflow infoAction;
     private final BranchAwareStdWorkflow infoEditAction;
-    private final BranchAwareStdWorkflow editAction;
+    private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
-    private final BranchIdModelObservation branchIdModelObservation;
+    private final BranchIdModelObservable branchIdModelObservable;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,7 +71,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         infoAction = new BranchAwareStdWorkflow("info", "info") {
 
             @Override
-            public void updateBranch(final String branchId) {
+            public void onBranchIdChanged(final String branchId) {
                 log.debug("Updating branch:{}", branchId);
             }
 
@@ -102,12 +103,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         infoEditAction = getInfoEditAction();
         add(infoEditAction);
 
-        editAction = new BranchAwareStdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
-
-            @Override
-            public void updateBranch(final String branchId) {
-                log.debug("Updating branch:{}", branchId);
-            }
+        editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -122,7 +118,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                String branchId = AbstractPreviewWorkflowPlugin.this.branchIdModelObservation.lastBranchId();
+                String branchId = AbstractPreviewWorkflowPlugin.this.branchIdModelObservable.getBranchId();
                 if (branchId != null) {
                     workflow.checkoutBranch(branchId);
                 }
@@ -147,9 +143,9 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         add(editAction);
 
         final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
-        branchIdModelObservation = new BranchIdModelObservation(context, config,
-                branchId -> Stream.of(editAction, infoEditAction, infoAction).forEach(action -> action.updateBranch(branchId)));
-        branchIdModelObservation
+        branchIdModelObservable = new BranchIdModelObservable(context, config,
+                branchId -> Stream.of(infoEditAction, infoAction).forEach(action -> action.onBranchIdChanged(branchId)));
+        branchIdModelObservable
                 .observeBranchId(initialBranchId);
         hideInvalidActions();
     }

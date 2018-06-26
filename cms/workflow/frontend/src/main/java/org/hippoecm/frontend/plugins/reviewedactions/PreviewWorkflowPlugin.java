@@ -39,7 +39,7 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
         return new BranchAwareStdWorkflow("infoEdit", "infoEdit") {
 
             @Override
-            public void updateBranch(final String branchId) {
+            public void onBranchIdChanged(final String branchId) {
                 log.debug("Updating branch:{}", branchId);
             }
 

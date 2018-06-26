@@ -34,22 +34,22 @@ import org.slf4j.LoggerFactory;
  * <p>
  * To notify other observers of changes use @see(org.hippoecm.frontend.model.IModelReference#
  */
-public class BranchIdModelObservation {
+public class BranchIdModelObservable {
 
-    private final Logger log = LoggerFactory.getLogger(BranchIdModelObservation.class);
+    private final Logger log = LoggerFactory.getLogger(BranchIdModelObservable.class);
     private final IPluginContext context;
     private final IPluginConfig config;
     private final Consumer<String> onEvent;
     private IModelReference<String> branchIdModelReference;
 
-    public BranchIdModelObservation(final IPluginContext context, final IPluginConfig config, final Consumer<String> onEvent) {
+    public BranchIdModelObservable(final IPluginContext context, final IPluginConfig config, final Consumer<String> onEvent) {
         this.context = context;
         this.config = config;
         this.onEvent = onEvent;
     }
 
     public IModelReference<String> observeBranchId(final String initialBranchId) {
-        final String editorId = config.getString("editor.id");
+        final String editorId = getEditorId();
 
         branchIdModelReference = context.getService(editorId, IModelReference.class);
         if (branchIdModelReference == null) {
@@ -71,14 +71,18 @@ public class BranchIdModelObservation {
         return branchIdModelReference;
     }
 
-    public String lastBranchId(){
+    public String getBranchId(){
         return branchIdModelReference.getModel().getObject();
+    }
+
+    public void setBranchId(String branchId){
+        branchIdModelReference.getModel().setObject(branchId);
     }
 
     private ModelReference<String> registerModelReference(final String initialBranchId) {
         final String editorId = getEditorId();
         log.debug("No service found with id:{} of type{}", editorId, IModelReference.class.getName());
-        log.debug("Creating model reference for a model containting the branchId ( initially '{}') ", initialBranchId);
+        log.debug("Creating model reference for a model containing the branchId ( initially '{}') ", initialBranchId);
         final ModelReference<String> modelReference = new ModelReference<>(editorId, new Model<>(initialBranchId));
         modelReference.init(context);
         return modelReference;

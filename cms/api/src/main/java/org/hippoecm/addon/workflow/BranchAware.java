@@ -17,5 +17,5 @@ package org.hippoecm.addon.workflow;
 
 public interface BranchAware {
 
-    void updateBranch(String branchId);
+    void onBranchIdChanged(String branchId);
 }

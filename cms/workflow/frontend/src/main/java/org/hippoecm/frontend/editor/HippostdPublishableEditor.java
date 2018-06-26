@@ -34,7 +34,7 @@ import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.BranchIdModelObservation;
+import org.hippoecm.frontend.plugins.reviewedactions.BranchIdModelObservable;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -182,7 +182,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throws EditorException {
         super(manager, context, config, model, getMode(model));
         try {
-            new BranchIdModelObservation(context, config, this::updateModel)
+            new BranchIdModelObservable(context, config, this::updateModel)
                     .observeBranchId(getInitialBranchId());
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             throw new EditorException(e);
