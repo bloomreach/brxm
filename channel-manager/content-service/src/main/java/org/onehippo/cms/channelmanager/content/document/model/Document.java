@@ -29,11 +29,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class Document {
     private String id;                // UUID
+    private String branchId;
     private String displayName;
     private String urlName;
     private String repositoryPath;
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, List<FieldValue>> fields;
+    private String state;
 
     public Document() {
         setInfo(new DocumentInfo());
@@ -46,6 +48,14 @@ public class Document {
 
     public void setId(final String id) {
         this.id = id;
+    }
+
+    public String getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(final String branchId) {
+        this.branchId = branchId;
     }
 
     public String getDisplayName() {
@@ -86,5 +96,13 @@ public class Document {
 
     public void setFields(final Map<String, List<FieldValue>> fields) {
         this.fields = fields;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(final String state) {
+        this.state = state;
     }
 }
