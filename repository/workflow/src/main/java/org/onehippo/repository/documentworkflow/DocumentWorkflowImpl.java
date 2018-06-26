@@ -206,7 +206,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public Document obtainEditableInstance(final String branchId) throws WorkflowException {
+    public Document obtainEditableInstance(final String branchId, final String branchName) throws WorkflowException {
         // TODO (meggermont): implement
         return this.obtainEditableInstance();
     }

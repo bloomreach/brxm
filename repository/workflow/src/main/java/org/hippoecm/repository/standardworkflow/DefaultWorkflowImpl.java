@@ -70,7 +70,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     @Override
-    public Document obtainEditableInstance(final String branchId) {
+    public Document obtainEditableInstance(final String branchId, final String branchName) {
         // TODO (meggermont): implement
         return this.obtainEditableInstance();
     }

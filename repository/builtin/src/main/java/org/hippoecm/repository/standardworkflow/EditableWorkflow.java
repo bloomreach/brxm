@@ -50,14 +50,15 @@ public interface EditableWorkflow extends Workflow {
     /**
      * Request this editable copy of the document for the given branch.
      *
-     * @param branchId id of the branch for which to obtain an editable instance.
+     * @param branchId   id of the branch for which to obtain an editable instance.
+     * @param branchName name of the branch
      * @return A reference to the document that may actually be modified, and should either be committed or disposed.
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the repository
      */
-    Document obtainEditableInstance(String branchId)
+    Document obtainEditableInstance(String branchId, String branchName)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
