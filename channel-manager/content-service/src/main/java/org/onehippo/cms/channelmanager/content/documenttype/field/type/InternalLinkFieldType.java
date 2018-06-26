@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,13 +61,23 @@ public class InternalLinkFieldType extends LinkFieldType {
                 .strings(DOCUMENT_PICKER_STRING_PROPERTIES)
                 .multipleStrings(PICKER_MULTIPLE_STRING_PROPERTIES)
                 .build();
-        config.set("documentpicker", documentPickerConfig);
+        config.set("linkpicker", documentPickerConfig);
 
         return super.init(fieldContext);
     }
 
     @Override
     protected String createUrl(final String uuid, final Session session) {
-        return null;
+        if (StringUtils.isNotEmpty(uuid)) {
+            try {
+                final Node node = session.getNodeByIdentifier(uuid);
+                return node.getName();
+            } catch (ItemNotFoundException e) {
+                log.warn("Unable to find item: {} : {} ", uuid, e);
+            } catch (RepositoryException e) {
+                log.warn("Error while trying to get node name for: {}", uuid, e);
+            }
+        }
+        return "";
     }
 }
