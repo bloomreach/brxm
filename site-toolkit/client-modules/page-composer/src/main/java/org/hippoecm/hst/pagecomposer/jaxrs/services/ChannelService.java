@@ -31,17 +31,17 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 // TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public interface ChannelService {
 
-    ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException;
+    ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException;
 
-    Channel getChannel(String channelId) throws ChannelException;
+    Channel getChannel(String channelId, final String hostGroup) throws ChannelException;
 
-    void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
+    void saveChannel(Session session, String channelId, Channel channel, final String hostGroup) throws RepositoryException, ChannelException;
 
-    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches, boolean skipConfigurationLocked);
+    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches, boolean skipConfigurationLocked, final String hostGroup);
 
-    Optional<Channel> getChannelByMountId(final String mountId);
+    Optional<Channel> getChannelByMountId(final String mountId, final String hostGroup);
 
-    boolean canChannelBeDeleted(String channelId) throws ChannelException;
+    boolean canChannelBeDeleted(String channelId, final String hostGroup) throws ChannelException;
 
     boolean canChannelBeDeleted(Channel channel);
 

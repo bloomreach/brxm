@@ -102,7 +102,8 @@ public class RootResource extends AbstractConfigResource {
 
     @GET
     @Path("/channels")
-    public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
+    public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
+                                @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
                                 @QueryParam("skipBranches") final boolean skipBranches,
                                 @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked) {
@@ -110,7 +111,8 @@ public class RootResource extends AbstractConfigResource {
             final List<Channel> channels = this.channelService.getChannels(previewConfigRequired,
                     workspaceRequired,
                     skipBranches,
-                    skipConfigurationLocked);
+                    skipConfigurationLocked,
+                    hostGroup);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -144,12 +146,13 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels/{id}/info")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getChannelInfoDescription(@PathParam("id") String channelId, @QueryParam("locale") String locale) {
+    public Response getChannelInfoDescription(@HeaderParam("hostGroup") final String hostGroup,
+                                              @PathParam("id") String channelId, @QueryParam("locale") String locale) {
         if (StringUtils.isEmpty(locale)) {
             locale = Locale.ENGLISH.getLanguage();
         }
         try {
-            final ChannelInfoDescription channelInfoDescription = channelService.getChannelInfoDescription(channelId, locale);
+            final ChannelInfoDescription channelInfoDescription = channelService.getChannelInfoDescription(channelId, locale, hostGroup);
             return Response.ok().entity(channelInfoDescription).build();
         } catch (ChannelException e) {
             final String error = "Could not get channel setting information";
@@ -165,10 +168,12 @@ public class RootResource extends AbstractConfigResource {
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response saveChannel(@PathParam("id") String channelId, final Channel channel) {
+    public Response saveChannel(@HeaderParam("hostGroup") final String hostGroup,
+                                @PathParam("id") final String channelId,
+                                final Channel channel) {
         try {
             final Session session = RequestContextProvider.get().getSession();
-            this.channelService.saveChannel(session, channelId, channel);
+            this.channelService.saveChannel(session, channelId, channel, hostGroup);
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().entity(channel).build();
@@ -182,7 +187,8 @@ public class RootResource extends AbstractConfigResource {
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
-    public Response deleteChannel(@PathParam("id") String channelId) {
+    public Response deleteChannel(@HeaderParam("hostGroup") final String hostGroup,
+                                  @PathParam("id") String channelId) {
         if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
             // strip the preview suffix
             channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
@@ -191,7 +197,7 @@ public class RootResource extends AbstractConfigResource {
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
             final Session session = hstRequestContext.getSession();
-            final Channel channel = channelService.getChannel(channelId);
+            final Channel channel = channelService.getChannel(channelId, hostGroup);
             final List<Mount> mountsOfChannel = channelService.findMounts(channel);
 
             channelService.preDeleteChannel(session, channel, mountsOfChannel);
@@ -224,7 +230,8 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response composerModeGet(@Context HttpServletRequest servletRequest,
+    public Response composerModeGet(@HeaderParam("hostGroup") final String hostGroup,
+                                    @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
                                     @PathParam("mountId") String mountId) {
         HttpSession session = servletRequest.getSession(true);
@@ -235,8 +242,8 @@ public class RootResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
 
         // HSTTWO-4365 TODO below does not get the correct channel and does not check for the correct webapp (platform at this moment!)
-        final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
-        final boolean isConfigurationLocked = isConfigurationLocked(mountId);
+        final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId, hostGroup);
+        final boolean isConfigurationLocked = isConfigurationLocked(mountId, hostGroup);
         try {
             final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
             final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
@@ -256,14 +263,14 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
-    private boolean isChannelDeletionSupported(final String mountId) {
-        return channelService.getChannelByMountId(mountId)
+    private boolean isChannelDeletionSupported(final String mountId, final String hostGroup) {
+        return channelService.getChannelByMountId(mountId, hostGroup)
                 .map(channel -> channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
                 .orElse(false);
     }
 
-    private boolean isConfigurationLocked(final String mountId) {
-        return channelService.getChannelByMountId(mountId)
+    private boolean isConfigurationLocked(final String mountId, final String hostGroup) {
+        return channelService.getChannelByMountId(mountId, hostGroup)
                 .map(channel -> channel.isConfigurationLocked())
                 .orElse(false);
     }

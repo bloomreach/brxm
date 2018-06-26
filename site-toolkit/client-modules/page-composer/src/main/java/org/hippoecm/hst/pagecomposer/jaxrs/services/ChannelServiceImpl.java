@@ -61,9 +61,12 @@ import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 
 // TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public class ChannelServiceImpl implements ChannelService {
@@ -74,18 +77,18 @@ public class ChannelServiceImpl implements ChannelService {
     private HstConfigurationService hstConfigurationService;
 
     @Override
-    public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
+    public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException {
         try {
-            final Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(getCurrentVirtualHost().getHostGroupName(), channelId);
+            final Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(hostGroup, channelId);
 
             if (channelInfoClass == null) {
                 throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
 
             final List<Class<? extends ChannelInfo>> channelInfoMixins = getAllVirtualHosts()
-                    .getChannelInfoMixins(getCurrentVirtualHost().getHostGroupName(), channelId);
+                    .getChannelInfoMixins(hostGroup, channelId);
 
-            final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId);
+            final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId, hostGroup);
             final Set<String> annotatedFields = propertyDefinitions.stream()
                     .map(HstPropertyDefinition::getName)
                     .collect(Collectors.toSet());
@@ -100,12 +103,12 @@ public class ChannelServiceImpl implements ChannelService {
                     propertyDefinitions);
             final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, channelInfoMixins,
                     annotatedFields, hiddenFields);
-            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
+            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale, hostGroup);
 
             augmentDropDownAnnotatedPropertyDefinitionValues(visiblePropertyDefinitions, localizedResources);
 
-            final String lockedBy = getChannelLockedBy(channelId);
-            final boolean editable = isChannelSettingsEditable(channelId);
+            final String lockedBy = getChannelLockedBy(channelId, hostGroup);
+            final boolean editable = isChannelSettingsEditable(channelId, hostGroup);
             return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
@@ -249,20 +252,17 @@ public class ChannelServiceImpl implements ChannelService {
                 .collect(Collectors.toMap(HstPropertyDefinitionInfo::getName, Function.identity()));
     }
 
-    private List<HstPropertyDefinition> getHstPropertyDefinitions(final String channelId) {
-        final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
-        return getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId);
+    private List<HstPropertyDefinition> getHstPropertyDefinitions(final String channelId, final String hostGroup) {
+        return getAllVirtualHosts().getPropertyDefinitions(hostGroup, channelId);
     }
 
-    private boolean isChannelSettingsEditable(final String channelId) {
-        final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
-        Channel channel = getAllVirtualHosts().getChannelById(hostGroupName, channelId);
+    private boolean isChannelSettingsEditable(final String channelId, final String hostGroup) {
+        Channel channel = getAllVirtualHosts().getChannelById(hostGroup, channelId);
         return channel.isChannelSettingsEditable();
     }
 
-    private String getChannelLockedBy(final String channelId) {
-        final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
-        final String channelPath = getAllVirtualHosts().getChannelById(hostGroupName, channelId).getChannelPath();
+    private String getChannelLockedBy(final String channelId, final String hostGroup) {
+        final String channelPath = getAllVirtualHosts().getChannelById(hostGroup, channelId).getChannelPath();
         try {
             final Node channelNode = RequestContextProvider.get().getSession().getNode(channelPath);
             if (channelNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
@@ -278,8 +278,8 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language) throws ChannelException {
-        final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
+    private Map<String, String> getLocalizedResources(final String channelId, final String language, final String hostGroup) throws ChannelException {
+        final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId, hostGroup), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
         }
@@ -289,9 +289,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String channelId) throws ChannelException {
-        final VirtualHost virtualHost = getCurrentVirtualHost();
-        final Channel channel = getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+    public Channel getChannel(final String channelId, final String hostGroup) throws ChannelException {
+        final Channel channel = getAllVirtualHosts().getChannelById(hostGroup, channelId);
         if (channel == null) {
             throw new ChannelNotFoundException(channelId);
         }
@@ -299,7 +298,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public void saveChannel(Session session, final String channelId, Channel channel) throws RepositoryException, IllegalStateException, ChannelException {
+    public void saveChannel(final Session session, final String channelId, final Channel channel, final String hostGroup) throws RepositoryException, IllegalStateException, ChannelException {
         if (!StringUtils.equals(channel.getId(), channelId)) {
             throw new ChannelException("Channel object does not contain the correct id, that should be " + channelId);
         }
@@ -309,18 +308,17 @@ public class ChannelServiceImpl implements ChannelService {
                     "not part of the HST workspace");
         }
 
-        final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
-
-        this.channelManager.save(currentHostGroupName, channel);
+        this.channelManager.save(hostGroup, channel);
     }
 
     @Override
     public List<Channel> getChannels(final boolean previewConfigRequired,
                                      final boolean workspaceRequired,
                                      final boolean skipBranches,
-                                     final boolean skipConfigurationLocked) {
-        final VirtualHost virtualHost = getCurrentVirtualHost();
-        return virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
+                                     final boolean skipConfigurationLocked,
+                                     final String hostGroup) {
+        final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
+        return virtualHosts.getChannels(hostGroup)
                 .values()
                 .stream()
                 .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
@@ -331,12 +329,12 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Optional<Channel> getChannelByMountId(final String mountId) {
+    public Optional<Channel> getChannelByMountId(final String mountId, final String hostGroup) {
         if (StringUtils.isBlank(mountId)) {
             throw new IllegalArgumentException("MountId argument must not be blank");
         }
-        final VirtualHost virtualHost = getCurrentVirtualHost();
-        final List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
+        final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
+        final List<Mount> mounts = virtualHosts.getMountsByHostGroup(hostGroup);
         return mounts.stream()
                 .filter(mount -> StringUtils.equals(mount.getIdentifier(), mountId))
                 .map(Mount::getChannel)
@@ -345,8 +343,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public boolean canChannelBeDeleted(final String channelId) throws ChannelException {
-        return canChannelBeDeleted(getChannel(channelId));
+    public boolean canChannelBeDeleted(final String channelId, final String hostGroup) throws ChannelException {
+        return canChannelBeDeleted(getChannel(channelId, hostGroup));
     }
 
     @Override
@@ -462,8 +460,8 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    private VirtualHost getCurrentVirtualHost() {
-        return RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost();
+    private VirtualHosts getEditingPreviewVirtualHosts() {
+        return ((HstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
     }
 
     private VirtualHosts getAllVirtualHosts() {
