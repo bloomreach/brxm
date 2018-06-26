@@ -28,11 +28,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +56,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     private Repository repository;
     private Credentials credentials;
+    private PreviewDecorator previewDecorator;
 
     public CXFJaxrsHstConfigService(String serviceName) {
         super(serviceName);
@@ -64,6 +73,11 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     public void setCredentials(final Credentials credentials) {
         this.credentials = credentials;
     }
+
+    public void setPreviewDecorator(final PreviewDecorator previewDecorator) {
+        this.previewDecorator = previewDecorator;
+    }
+
 
     @Override
     /*
@@ -89,6 +103,23 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
         Session session = null;
         try {
+            // set the correct 'editing virtual hosts object' on the HstRequestContext : This hst request context is for the
+            // platform webapp but the 'rest' endpoints need to interact with the hst model of the site webapps.
+            final String contextPath = requestContext.getServletRequest().getHeader("contextPath");
+            if (contextPath == null) {
+                throw new IllegalArgumentException("'contextPath' header is missing");
+            }
+
+            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final HstModel liveHstModel = hstModelRegistry.getHstModel(contextPath);
+
+            final HstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
+            final HstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
+
+            requestContext.setAttribute(PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
+            requestContext.setAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
+
+
             // we need the HST configuration user jcr session since some CMS user sessions (for example authors) typically
             // don't have read access on the hst configuration nodes. So we cannot use the session from the request context here
             // session below will be pooled hst config reader session
@@ -140,5 +171,44 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     @Override
     public void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException {
         super.invoke(requestContext, request, response);
+    }
+
+    private static class HstModelSnapshot implements HstModel {
+
+        private final HstModel delegatee;
+        private PreviewDecorator previewDecorator;
+        private VirtualHosts cache;
+
+        private HstModelSnapshot(final HstModel delegatee) {
+            this.delegatee = delegatee;
+        }
+        private HstModelSnapshot(final HstModel delegatee, final PreviewDecorator previewDecorator) {
+            this.delegatee = delegatee;
+            this.previewDecorator = previewDecorator;
+        }
+
+
+        @Override
+        public VirtualHosts getVirtualHosts() {
+            if (cache != null) {
+                return cache;
+            }
+            if (previewDecorator == null) {
+                cache = delegatee.getVirtualHosts();
+            } else {
+                cache = previewDecorator.decorateVirtualHostsAsPreview(delegatee.getVirtualHosts());
+            }
+            return cache;
+        }
+
+        @Override
+        public HstSiteMapMatcher getHstSiteMapMatcher() {
+            return null;
+        }
+
+        @Override
+        public HstLinkCreator getHstLinkCreator() {
+            return null;
+        }
     }
 }

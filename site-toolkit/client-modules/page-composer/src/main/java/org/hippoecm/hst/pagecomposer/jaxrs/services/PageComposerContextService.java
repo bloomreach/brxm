@@ -23,10 +23,12 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,9 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REN
 public class PageComposerContextService {
 
     private static final Logger log = LoggerFactory.getLogger(PageComposerContextService.class);
+
+    public static final String LIVE_EDITING_HST_MODEL_ATTR = PageComposerContextService.class.getName() + ".live";
+    public static final String PREVIEW_EDITING_HST_MODEL_ATTR = PageComposerContextService.class.getName() + ".preview";
 
     public HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
@@ -121,9 +126,8 @@ public class PageComposerContextService {
     }
 
     public Mount getEditingMount() {
-        final HstRequestContext requestContext = getRequestContext();
         final String renderingMountId = getRenderingMountId();
-        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
+        Mount mount = getEditingPreviewVirtualHosts().getMountByIdentifier(renderingMountId);
         if (mount == null) {
             String msg = String.format("Could not find a Mount for identifier + '%s'", renderingMountId);
             throw new IllegalStateException(msg);
@@ -143,6 +147,15 @@ public class PageComposerContextService {
     public Channel getEditingPreviewChannel() {
         return getEditingMount().getChannel();
     }
+
+    public VirtualHosts getEditingPreviewVirtualHosts() {
+        return ((HstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
+    }
+
+    public VirtualHosts getEditingLiveVirtualHosts() {
+        return ((HstModel)getRequestContext().getAttribute(LIVE_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
+    }
+
 
     public boolean hasPreviewConfiguration() {
         return getEditingPreviewSite().hasPreviewConfiguration();

@@ -53,9 +53,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,15 +121,10 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getChannel(@HeaderParam("contextPath") final String contextPath,
-                               @HeaderParam("hostGroup") final String hostGroup,
+    public Response getChannel(@HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
         try {
-
-            HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            final HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
-
-            final Channel channel = hstModel.getVirtualHosts().getChannelById(hostGroup, channelId);
+            final Channel channel = getPageComposerContextService().getEditingPreviewVirtualHosts().getChannelById(hostGroup, channelId);
             if (channel == null) {
                 throw new ChannelNotFoundException(channelId);
             }
