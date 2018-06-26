@@ -24,12 +24,12 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 
 public class EditingServiceImpl implements EditingService {
 
     @Override
-    public Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session) {
+    public Optional<Node> getEditableDocumentNode(EditableWorkflow workflow, Map<String, Serializable> hints, Session session) {
         return EditingUtils.getEditableDocumentNode(workflow, session);
     }
 
