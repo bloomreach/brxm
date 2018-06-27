@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,19 +128,7 @@ class GuavaEventBusListenerProxyFactory {
             if (m.getParameterTypes().length == 1) {
                 Method subscribeMethod = getSubscribeMethod(m);
                 if (subscribeMethod != null) {
-                    Annotation[] annotations = subscribeMethod.getAnnotations();
-                    boolean ignoreMethod = false;
-                    for (Annotation ann : annotations) {
-                        if (ann.getClass().getName().equals("org.onehippo.repository.events.Persisted")) {
-                            log.warn("Method " + subscribeMethod + "is annotated with both @Subscribe and @Persisted, "+
-                                    "which is no longer supported: Listener method ignored.");
-                            ignoreMethod = true;
-                            break;
-                        }
-                    }
-                    if (!ignoreMethod) {
-                        subscribeMethods.add(subscribeMethod);
-                    }
+                    subscribeMethods.add(subscribeMethod);
                 }
             }
         }
