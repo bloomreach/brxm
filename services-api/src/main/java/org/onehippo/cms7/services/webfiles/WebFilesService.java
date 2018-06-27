@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,6 @@ import java.util.zip.ZipFile;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.services.SingletonService;
-import org.onehippo.cms7.services.WhiteboardService;
-
-@SingletonService
-@WhiteboardService
 @SuppressWarnings("UnusedDeclaration")
 public interface WebFilesService {
 
