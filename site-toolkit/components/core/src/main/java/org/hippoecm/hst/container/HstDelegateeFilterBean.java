@@ -270,7 +270,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     String renderingHost = getRenderingHost(containerRequest);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
-                        if (requestComesFromCms(vHosts, resolvedMount) && session != null && CmsSessionContext.getContext(session) != null) {
+                        if (requestComesFromCms(vHosts, resolvedMount)) {
                             requestContext.setCmsRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();

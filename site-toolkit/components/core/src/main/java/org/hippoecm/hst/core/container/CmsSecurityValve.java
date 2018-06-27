@@ -72,36 +72,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         this.sessionSecurityDelegation = sessionSecurityDelegation;
     }
 
-    public boolean isCmsSecuredRequest(final ValveContext context) {
-        final HstRequestContext requestContext = context.getRequestContext();
-        if (requestContext.isCmsRequest()) {
-            return true;
-        }
-        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        String ignoredPrefix = resolvedMount.getMatchingIgnoredPrefix();
-
-        if (StringUtils.isEmpty(ignoredPrefix)) {
-            // TODO HSTTWO-4374can we still allow ignoredPrefix to be empty on production?
-            return false;
-        }
-
-        // TODO HSTTWO-4374 is #getCmsPreviewPrefix allowed to be empty still? should be possible if the matched mount is a cms
-        // TODO HSTTWO-4374 host but how will this work again?
-        if (ignoredPrefix.equals(resolvedMount
-                .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
-            return true;
-        }
-
-        return false;
-    }
-
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
-        if (!isCmsSecuredRequest(context)) {
+        if (!requestContext.isCmsRequest()) {
             context.invokeNext();
             return;
         }
