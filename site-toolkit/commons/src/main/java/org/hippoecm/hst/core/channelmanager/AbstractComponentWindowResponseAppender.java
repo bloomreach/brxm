@@ -17,11 +17,14 @@ package org.hippoecm.hst.core.channelmanager;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.w3c.dom.Comment;
 
 public abstract class AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
@@ -38,7 +41,15 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
     }
 
     protected boolean isComposerMode(final HstRequest request) {
-        Boolean composerMode = (Boolean) request.getSession().getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return false;
+        }
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        if (cmsSessionContext == null) {
+            return false;
+        }
+        final Boolean composerMode = (Boolean) cmsSessionContext.getContextPayload().get(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
         return Boolean.TRUE.equals(composerMode);
     }
 
