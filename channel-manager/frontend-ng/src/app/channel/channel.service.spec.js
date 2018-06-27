@@ -121,9 +121,8 @@ describe('ChannelService', () => {
     ChannelService.initializeChannel(testChannel, '/testPath');
     $rootScope.$digest();
 
-    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
     expect($state.go).toHaveBeenCalledWith(
@@ -163,9 +162,8 @@ describe('ChannelService', () => {
     ChannelService.initializeChannel(testChannel, '/testPath');
     $rootScope.$digest();
 
-    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
 
     expect($state.go).toHaveBeenCalledWith(
       'hippo-cm.channel',
@@ -196,9 +194,8 @@ describe('ChannelService', () => {
     ChannelService.initializeChannel(testChannel, '/testPath');
     $rootScope.$digest();
 
-    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
     expect($log.error).toHaveBeenCalledWith('Failed to load channel \'testChannelId\'.', 'Failed to create preview configuration');
@@ -402,7 +399,7 @@ describe('ChannelService', () => {
 
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);
-    expect(SessionService.initialize).toHaveBeenCalledWith(channelB.hostname, channelB.mountId);
+    expect(SessionService.initialize).toHaveBeenCalledWith(channelB);
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.

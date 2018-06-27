@@ -89,11 +89,9 @@ class ChannelService {
   loadChannel(channelId) {
     return this.HstService
       .getChannel(channelId)
-      .then(channel =>
-        this.SessionService
-          .initialize(channel.hostname, channel.mountId)
-          .then(() => this._ensurePreviewHstConfigExists(channel))
-          .then(previewChannel => this._setChannel(previewChannel)),
+      .then(channel => this.SessionService.initialize(channel)
+        .then(() => this._ensurePreviewHstConfigExists(channel))
+        .then(previewChannel => this._setChannel(previewChannel)),
       )
       .catch((error) => {
         this.$log.error(`Failed to load channel '${channelId}'.`, error);

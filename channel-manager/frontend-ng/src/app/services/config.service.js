@@ -25,16 +25,6 @@ class ConfigService {
     this.contextPaths = ['/site'];
 
     Object.assign(this, CmsService.getConfig());
-
-    this.contextPath = this.contextPaths[0];
-  }
-
-  // TODO: the current context path is a property
-  // of the current channel, and therefore belongs into the ChannelService.
-  // Keeping this state here is a temporary work-around,
-  // because the HstService has no access to the ChannelService.
-  setContextPathForChannel(contextPath) {
-    this.contextPath = contextPath;
   }
 
   getCmsContextPath() {
