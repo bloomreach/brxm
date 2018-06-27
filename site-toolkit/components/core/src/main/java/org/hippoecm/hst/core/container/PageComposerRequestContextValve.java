@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,35 +16,21 @@
 package org.hippoecm.hst.core.container;
 
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.internal.PreviewDecorator;
-import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
  * PageComposerRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
  */
 public class PageComposerRequestContextValve extends AbstractBaseOrderableValve {
 
-    private PreviewDecorator previewDecorator;
 
-    public void setPreviewDecorator(final PreviewDecorator previewDecorator) {
-        this.previewDecorator = previewDecorator;
-    }
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
         context.getServletRequest().setAttribute(ContainerConstants.CHANNEL_MGR_PAGE_COMPOSER_REQUEST_CONTEXT, Boolean.TRUE);
         final HstRequestContext requestContext = context.getRequestContext();
-
         ((HstMutableRequestContext) requestContext).setCmsRequest(true);
-        // decorate the mount to a preview mount
-        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
-        final Mount decoratedPreviewMount = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
-        ((MutableResolvedMount) resolvedMount).setMount(decoratedPreviewMount);
         context.invokeNext();
 
     }

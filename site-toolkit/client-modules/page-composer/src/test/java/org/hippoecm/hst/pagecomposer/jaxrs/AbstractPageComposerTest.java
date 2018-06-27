@@ -242,7 +242,6 @@ public class AbstractPageComposerTest {
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url, final HstMutableRequestContext requestContext) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
-        requestContext.setAttribute(ContainerConstants.UNDECORATED_MOUNT, resolvedMount.getMount());
         final Mount decorated = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
         String pathInfo = url.getPathInfo();
