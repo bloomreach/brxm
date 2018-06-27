@@ -18,8 +18,6 @@ import ListingCtrl from './listing.controller';
 import listingDirective from './listing.directive';
 import PickerService from './picker.service';
 import PickerCtrl from './picker.controller';
-import scrollToIfDirective from './../scrollToIf.directive';
-import stopPropagationDirective from './../stopPropagation.directive';
 import uiTreeModule from '../tree/tree';
 
 const pickerModule = angular
@@ -29,8 +27,6 @@ const pickerModule = angular
   .controller('PickerCtrl', PickerCtrl)
   .controller('ListingCtrl', ListingCtrl)
   .service('PickerService', PickerService)
-  .directive('listing', listingDirective)
-  .directive('scrollToIf', scrollToIfDirective)
-  .directive('stopPropagation', stopPropagationDirective);
+  .directive('listing', listingDirective);
 
 export default pickerModule;
