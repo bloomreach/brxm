@@ -741,6 +741,7 @@ public class ContentBeanUtils {
             // if there exists subject based session, do use the credentials of that session to create session from disposable pool
             Session existingSession = requestContext.getSession(false);
 
+            // TODO HSTTWO-4375 we really need to get rid of this logic in the ContentBeanUtils
             if (requestContext.isCmsRequest() && existingSession instanceof HippoSession) {
                 // this is an non-proxied jcr session : for this, we do not instantiate disposable session pools
                 // we need to get a fresh session to avoid reusing already built up virtual states
@@ -785,6 +786,7 @@ public class ContentBeanUtils {
         }
     }
 
+    // TODO HSTTWO-4375 we really need to get rid of this logic in the ContentBeanUtils
     public static Session getPreviewCmsQuerySession(HstRequestContext requestContext, String sessionIdentifier) throws HstComponentException {
         try {
             SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());

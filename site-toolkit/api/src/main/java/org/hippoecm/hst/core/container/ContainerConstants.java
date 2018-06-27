@@ -98,6 +98,7 @@ public interface ContainerConstants {
     /**
      * Name of the http servlet request attribute with the CMS repository credentials during a CMS initiated request
      */
+    // TODO HSTTWO-4375  remove this attribute once we have addressed HSTTWO-4375
     String CMS_REQUEST_REPO_CREDS_ATTR = "org.hippoecm.hst.container.cms.request.repo.creds";
 
     /**

@@ -164,6 +164,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
 
         servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
+        // TODO HSTTWO-4375  remove this attribute once we have addressed HSTTWO-4375
         servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager.
