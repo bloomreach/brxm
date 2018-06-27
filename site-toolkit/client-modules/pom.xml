@@ -27,7 +27,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <!--<module>cms-rest</module>-->
     <module>page-composer</module>
     <module>google-analytics</module>
   </modules>

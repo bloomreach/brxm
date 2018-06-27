@@ -311,7 +311,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION,
                     request.getSession(), credentials, sessionSecurityDelegation::getDelegatedSession);
             // This returns a plain session for credentials where access is not merged with for example preview user session
-            // For cms rest calls to page composer or cms-rest we must *NEVER* combine the security with other sessions
             log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
         } catch (LoginException e) {
