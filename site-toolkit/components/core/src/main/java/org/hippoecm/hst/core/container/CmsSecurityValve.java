@@ -170,7 +170,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
-                if (isCmsRestOrPageComposerRequest(servletRequest)) {
+                if (isPageComposerRequest(servletRequest)) {
                     jcrSession = getOrCreateCmsChannelManagerRestSession(servletRequest);
                 } else {
                     // request preview website, for example in channel manager. The request is not
@@ -299,7 +299,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         return destinationPath.toString();
     }
 
-    private static boolean isCmsRestOrPageComposerRequest(final HttpServletRequest servletRequest) {
+    private static boolean isPageComposerRequest(final HttpServletRequest servletRequest) {
         return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT));
     }
 
