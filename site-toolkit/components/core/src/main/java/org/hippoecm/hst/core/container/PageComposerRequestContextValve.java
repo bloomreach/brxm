@@ -36,7 +36,7 @@ public class PageComposerRequestContextValve extends AbstractBaseOrderableValve 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
-        context.getServletRequest().setAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT, Boolean.TRUE);
+        context.getServletRequest().setAttribute(ContainerConstants.CHANNEL_MGR_PAGE_COMPOSER_REQUEST_CONTEXT, Boolean.TRUE);
         final HstRequestContext requestContext = context.getRequestContext();
 
         ((HstMutableRequestContext) requestContext).setCmsRequest(true);

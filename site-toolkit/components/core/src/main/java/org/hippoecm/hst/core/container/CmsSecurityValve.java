@@ -301,7 +301,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     }
 
     private static boolean isPageComposerRequest(final HttpServletRequest servletRequest) {
-        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT));
+        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CHANNEL_MGR_PAGE_COMPOSER_REQUEST_CONTEXT));
     }
 
     private Session getOrCreateCmsChannelManagerRestSession(final HttpServletRequest request) throws LoginException, ContainerException {
