@@ -241,7 +241,7 @@ public class RootResource extends AbstractConfigResource {
 
 
         // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
-        CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
         final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
         contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
         contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);

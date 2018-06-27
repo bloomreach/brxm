@@ -529,7 +529,7 @@ public class LoginServlet extends HttpServlet {
         if (session != null) {
 
             // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
-            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
             if (cmsSessionContext != null && cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST) != null) {
                 return true;
             }

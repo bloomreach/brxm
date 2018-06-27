@@ -76,8 +76,8 @@ public class HippoDocumentResource extends AbstractConfigResource {
                     // find first the mount for current request
                     HttpSession session = getPageComposerContextService().getRequestContext().getServletRequest().getSession();
                     // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
-                    CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
-                    String renderingHost = (String)cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
+                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+                    final String renderingHost = (String)cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
                     final VirtualHost virtualHost = getPageComposerContextService().getRequestContext().getResolvedMount().getMount().getVirtualHost();
                     final Mount editingMount = getPageComposerContextService().getEditingMount();
                     final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, editingMount.getMountPath());

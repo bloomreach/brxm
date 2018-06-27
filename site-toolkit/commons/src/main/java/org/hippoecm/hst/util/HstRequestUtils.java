@@ -288,7 +288,7 @@ public class HstRequestUtils {
         if (session != null) {
 
             // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
-            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+            final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
             if (cmsSessionContext != null) {
                 return (String) cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
             }
