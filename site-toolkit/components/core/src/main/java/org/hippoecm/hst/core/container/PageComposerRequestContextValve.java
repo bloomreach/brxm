@@ -19,9 +19,6 @@ package org.hippoecm.hst.core.container;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-/**
- * PageComposerRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
- */
 public class PageComposerRequestContextValve extends AbstractBaseOrderableValve {
 
 
