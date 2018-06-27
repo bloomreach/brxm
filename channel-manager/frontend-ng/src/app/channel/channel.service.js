@@ -93,7 +93,8 @@ class ChannelService {
       .then(() => this.ConfigService.setHostGroupForChannel(channel.hostGroup))
       .then(() => this.loadChannel(channelId))
       .then(() => {
-        const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
+        const renderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
+        const initialRenderPath = `${renderPath}?org.hippoecm.hst.container.render_host=${channel.hostname}`;
         this.$state.go('hippo-cm.channel', {
           channelId: this.channel.id,
           initialRenderPath,
