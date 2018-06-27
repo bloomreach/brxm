@@ -61,8 +61,8 @@
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
   </bean>
 
-  <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve">
-    <property name="valveName" value="cmsHostRestRequestContextValve" />
+  <bean id="pageComposerRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageComposerRequestContextValve">
+    <property name="valveName" value="pageComposerRequestContextValve" />
     <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator"/>
   </bean>
 

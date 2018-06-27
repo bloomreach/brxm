@@ -275,7 +275,7 @@
           <property name="initializationValves">
             <list>
               <ref bean="initializationValve"/>
-              <ref bean="cmsHostRestRequestContextValve"/>
+              <ref bean="pageComposerRequestContextValve"/>
               <ref bean="cmsSecurityValve"/>
             </list>
           </property>

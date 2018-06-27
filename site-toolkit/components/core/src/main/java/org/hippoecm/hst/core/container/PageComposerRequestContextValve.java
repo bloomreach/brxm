@@ -24,9 +24,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
- * CmsHostRestRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
+ * PageComposerRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
  */
-public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
+public class PageComposerRequestContextValve extends AbstractBaseOrderableValve {
 
     private PreviewDecorator previewDecorator;
 
