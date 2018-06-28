@@ -24,10 +24,10 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
@@ -40,7 +40,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -58,17 +57,33 @@ import static org.powermock.api.support.membermodification.MemberModifier.suppre
 @PrepareForTest({AbstractFieldType.class})
 public class InternalLinkFieldTypeTest {
 
-    private String documentItemUrl;
-    private InternalLinkFieldType documentLink;
+    private InternalLinkFieldType linkFieldType;
+    private MockNode documentNode;
+    private MockNode root;
 
     @Before
-    public void setUp() {
-        final ImageItem mockImageItem = createMock(ImageItem.class);
-        expect(mockImageItem.getPrimaryUrl(anyObject())).andAnswer(() -> documentItemUrl).anyTimes();
-        replayAll();
+    public void setUp() throws RepositoryException {
+        linkFieldType = new InternalLinkFieldType();
+        documentNode = new MockNode("documentNode");
 
-        documentLink = new InternalLinkFieldType();
-        documentItemUrl =  "http://example.com";
+        root = MockNode.root();
+        root.addNode(documentNode);
+    }
+
+    private String addLink(final String linkNodeName, final String linkedNodeDisplayName) throws RepositoryException {
+        final MockNode linkedNode = new MockNode("linkedNodeName", "hippo:handle");
+        linkedNode.setProperty("hippo:name", linkedNodeDisplayName);
+        root.addNode(linkedNode);
+
+        final MockNode documentLinkNode = documentNode.addNode(linkNodeName, HippoNodeType.NT_MIRROR);
+        final String identifier = linkedNode.getIdentifier();
+        documentLinkNode.setProperty(HippoNodeType.HIPPO_DOCBASE, identifier);
+        return identifier;
+    }
+
+    private static void assertFieldValue(final FieldValue fieldValue, final String linkId, final String displayName) {
+        assertThat(fieldValue.getValue(), equalTo(linkId));
+        assertThat(fieldValue.getMetadata().get("displayName"), equalTo(displayName));
     }
 
     @Test
@@ -90,226 +105,210 @@ public class InternalLinkFieldTypeTest {
         clusterOptions.setProperty("cluster.name", "cms-pickers/documents-only");
         clusterOptions.setProperty("last.visited.enabled", "true");
         clusterOptions.setProperty("last.visited.key", "");
-        clusterOptions.setProperty("last.visited.last.visited.nodetypes", "");
+        clusterOptions.setProperty("last.visited.nodetypes", "");
+        clusterOptions.setProperty("language.context.aware", true);
         clusterOptions.setProperty("nodetypes", new String[0]);
 
         final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
-        documentLink.init(context);
+        linkFieldType.init(context);
 
-        final JsonNode imagePickerConfig = documentLink.getConfig().get("imagepicker");
-        assertThat(imagePickerConfig.get("base.path").asText(), equalTo(""));
-        assertThat(imagePickerConfig.get("base.uuid").asText(), equalTo(""));
-        assertThat(imagePickerConfig.get("cluster.name").asText(), equalTo("cms-pickers/documents-only"));
-        assertThat(imagePickerConfig.get("last.visited.enabled").asText(), equalTo("true"));
-        assertThat(imagePickerConfig.get("last.visited.key").asText(), equalTo(""));
-        assertThat(imagePickerConfig.get("last.visited.nodetypes").asText(), equalTo(""));
-        assertThat(imagePickerConfig.get("nodetypes").size(), equalTo(0));
+        final JsonNode linkPickerConfig = linkFieldType.getConfig().get("linkpicker");
+        assertThat(linkPickerConfig.get("base.path").asText(), equalTo(""));
+        assertThat(linkPickerConfig.get("base.uuid").asText(), equalTo(""));
+        assertThat(linkPickerConfig.get("cluster.name").asText(), equalTo("cms-pickers/documents-only"));
+        assertThat(linkPickerConfig.get("last.visited.enabled").asText(), equalTo("true"));
+        assertThat(linkPickerConfig.get("last.visited.key").asText(), equalTo(""));
+        assertThat(linkPickerConfig.get("last.visited.nodetypes").asText(), equalTo(""));
+        assertThat(linkPickerConfig.get("language.context.aware").asBoolean(), equalTo(true));
+        assertThat(linkPickerConfig.get("nodetypes").size(), equalTo(0));
     }
 
     @Test
     public void getDefault() {
-        assertThat(documentLink.getDefault(), equalTo(""));
+        assertThat(linkFieldType.getDefault(), equalTo(""));
     }
 
     @Test
     public void getPropertyType() {
-        assertThat(documentLink.getPropertyType(), equalTo(PropertyType.STRING));
+        assertThat(linkFieldType.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test
     public void readMissingValues() {
-        documentLink.setId("my:documentlink");
-        final MockNode documentNode = MockNode.root();
-        final List<FieldValue> fieldValues = documentLink.readValues(documentNode);
+        linkFieldType.setId("my:documentlink");
+
+        final List<FieldValue> fieldValues = linkFieldType.readValues(documentNode);
+
         assertTrue(fieldValues.isEmpty());
     }
 
     @Test
     public void readSingleValue() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
+        final String linkId = addLink("my:documentlink", "My linked node");
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
-        documentLinkNode.setProperty("hippo:docbase", "1234");
+        final List<FieldValue> fieldValues = linkFieldType.readValues(documentNode);
 
-        final List<FieldValue> fieldValues = documentLink.readValues(documentNode);
         assertThat(fieldValues.size(), equalTo(1));
-        final FieldValue fieldValue = fieldValues.get(0);
-        assertThat(fieldValue.getValue(), equalTo("1234"));
-        assertThat(fieldValue.getUrl(), equalTo(documentItemUrl));
+        assertFieldValue(fieldValues.get(0), linkId, "My linked node");
     }
 
     @Test
     public void readMultipleValues() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
+        final String linkId1 = addLink("my:documentlink", "Link1");
+        final String linkId2 = addLink("my:documentlink", "Link2");
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
-        documentLinkNode1.setProperty("hippo:docbase", "1");
-        final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
-        documentLinkNode2.setProperty("hippo:docbase", "2");
+        final List<FieldValue> fieldValues = linkFieldType.readValues(documentNode);
 
-        final List<FieldValue> fieldValues = documentLink.readValues(documentNode);
         assertThat(fieldValues.size(), equalTo(2));
-
-        final FieldValue fieldValue1 = fieldValues.get(0);
-        assertThat(fieldValue1.getValue(), equalTo("1"));
-        assertThat(fieldValue1.getUrl(), equalTo(documentItemUrl));
-
-        final FieldValue fieldValue2 = fieldValues.get(1);
-        assertThat(fieldValue2.getValue(), equalTo("2"));
-        assertThat(fieldValue2.getUrl(), equalTo(documentItemUrl));
+        assertFieldValue(fieldValues.get(0), linkId1, "Link1");
+        assertFieldValue(fieldValues.get(1), linkId2, "Link2");
     }
 
     @Test
     public void readDefaultValue() throws Exception {
-        documentLink.setId("my:documentlink");
-        documentItemUrl =  "";
+        linkFieldType.setId("my:documentlink");
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
+        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippo:mirror");
         documentLinkNode.setProperty("hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe");
+        final List<FieldValue> fieldValues = linkFieldType.readValues(documentNode);
 
-        final List<FieldValue> fieldValues = documentLink.readValues(documentNode);
         assertThat(fieldValues.size(), equalTo(1));
-        final FieldValue fieldValue = fieldValues.get(0);
-        assertThat(fieldValue.getValue(), equalTo(""));
-        assertThat(fieldValue.getUrl(), equalTo(documentItemUrl));
+        assertFieldValue(fieldValues.get(0), "", "");
     }
 
     @Test
     public void readValuesThrowsRepositoryException() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
 
         final Node node = createMock(Node.class);
         expect(node.getNodes(anyString())).andThrow(new RepositoryException());
         replayAll();
 
-        final List<FieldValue> fieldValues = documentLink.readValues(node);
+        final List<FieldValue> fieldValues = linkFieldType.readValues(node);
         assertTrue(fieldValues.isEmpty());
     }
 
     @Test
     public void readValue() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
+        final String linkId1 = addLink("my:documentlink", "Link1");
 
-        final MockNode documentLinkNode = MockNode.root();
-        documentLinkNode.setProperty("hippo:docbase", "1234");
+        final FieldValue fieldValue = linkFieldType.readValue(documentNode.getNode("my:documentlink"));
 
-        final FieldValue fieldValue = documentLink.readValue(documentLinkNode);
-        assertThat(fieldValue.getValue(), equalTo("1234"));
-        assertThat(fieldValue.getUrl(), equalTo(documentItemUrl));
+        assertFieldValue(fieldValue, linkId1, "Link1");
     }
 
     @Test
     public void readValueThrowsException() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
 
         final Node documentLinkNode = createMock(Node.class);
         expect(documentLinkNode.getProperty(anyString())).andThrow(new RepositoryException());
         expect(documentLinkNode.getPath()).andReturn("/my:documentlink");
         replayAll();
 
-        final FieldValue fieldValue = documentLink.readValue(documentLinkNode);
+        final FieldValue fieldValue = linkFieldType.readValue(documentLinkNode);
         assertNull(fieldValue.getValue());
-        assertNull(fieldValue.getUrl());
+        assertNull(fieldValue.getMetadata());
     }
 
     @Test(expected = BadRequestException.class)
     public void writeMissingValues() throws Exception {
-        documentLink.setId("my:documentlink");
-        final MockNode documentNode = MockNode.root();
-        documentLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        linkFieldType.setId("my:documentlink");
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
     }
 
     @Test
     public void writeZeroOptionalValues() throws Exception {
-        documentLink.setId("my:documentlink");
-        documentLink.setMinValues(0);
-        documentLink.setMaxValues(1);
-        final MockNode documentNode = MockNode.root();
-        documentLink.writeValues(documentNode, Optional.of(Collections.emptyList()), true);
+        linkFieldType.setId("my:documentlink");
+        linkFieldType.setMinValues(0);
+        linkFieldType.setMaxValues(1);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.emptyList()), true);
     }
 
     @Test
     public void writeSingleValue() throws Exception {
-        documentLink.setId("my:documentlink");
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
+        linkFieldType.setId("my:documentlink");
+        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        documentLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
 
         assertThat(documentLinkNode.getProperty("hippo:docbase").getString(), equalTo("1234"));
     }
 
     @Test
     public void clearSingleValue() throws Exception {
-        documentLink.setId("my:documentlink");
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
+        linkFieldType.setId("my:documentlink");
+        final MockNode documentLinkNode = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        documentLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))), true);
 
-        assertThat(documentLinkNode.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(documentLinkNode.getProperty("hippo:docbase").getString(),
+                equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test
     public void clearMultipleValues() throws Exception {
-        documentLink.setId("my:documentlink");
-        documentLink.setMinValues(0);
-        documentLink.setMaxValues(Integer.MAX_VALUE);
+        linkFieldType.setId("my:documentlink");
+        linkFieldType.setMinValues(0);
+        linkFieldType.setMaxValues(Integer.MAX_VALUE);
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
-        final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
+        final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippo:mirror");
+        final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        documentLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))),
+                true);
 
-        assertThat(documentLinkNode1.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
-        assertThat(documentLinkNode2.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(documentLinkNode1.getProperty("hippo:docbase").getString(),
+                equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(documentLinkNode2.getProperty("hippo:docbase").getString(),
+                equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test
     public void writeAndClearMultipleValues() throws Exception {
-        documentLink.setId("my:documentlink");
-        documentLink.setMinValues(0);
-        documentLink.setMaxValues(Integer.MAX_VALUE);
+        linkFieldType.setId("my:documentlink");
+        linkFieldType.setMinValues(0);
+        linkFieldType.setMaxValues(Integer.MAX_VALUE);
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
-        final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippogallypicker:imagelink");
+        final MockNode documentLinkNode1 = documentNode.addNode("my:documentlink", "hippo:mirror");
+        final MockNode documentLinkNode2 = documentNode.addNode("my:documentlink", "hippo:mirror");
 
-        documentLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))), true);
+        linkFieldType.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))),
+                true);
 
         assertThat(documentLinkNode1.getProperty("hippo:docbase").getString(), equalTo("1234"));
-        assertThat(documentLinkNode2.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(documentLinkNode2.getProperty("hippo:docbase").getString(),
+                equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test(expected = InternalServerErrorException.class)
     public void writeValuesThrowsRepositoryException() throws Exception {
-        documentLink.setId("my:documentlink");
+        linkFieldType.setId("my:documentlink");
 
         final Node node = createMock(Node.class);
         expect(node.getNodes(anyString())).andThrow(new RepositoryException());
         replayAll();
 
-        documentLink.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
+        linkFieldType.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
     }
 
     @Test
     public void validateValueNotRequired() {
-        assertTrue(documentLink.validateValue(new FieldValue()));
+        assertTrue(linkFieldType.validateValue(new FieldValue()));
     }
 
     @Test
     public void validateValueRequiredNotEmpty() {
-        documentLink.addValidator(FieldType.Validator.REQUIRED);
-        assertTrue(documentLink.validateValue(new FieldValue("1234")));
+        linkFieldType.addValidator(FieldType.Validator.REQUIRED);
+        assertTrue(linkFieldType.validateValue(new FieldValue("1234")));
     }
 
     @Test
     public void validateValueRequiredAndEmpty() {
-        documentLink.addValidator(FieldType.Validator.REQUIRED);
-        assertFalse(documentLink.validateValue(new FieldValue("")));
+        linkFieldType.addValidator(FieldType.Validator.REQUIRED);
+        assertFalse(linkFieldType.validateValue(new FieldValue("")));
     }
 }

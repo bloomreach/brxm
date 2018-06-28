@@ -90,6 +90,9 @@ No values available for node of type 'node:name'
 Failed to read nodes for IMAGE_LINK type 'my:imagelink'
 Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
 Failed to write IMAGE_LINK field 'my:imagelink'
+Failed to read nodes for INTERNAL_LINK type 'my:documentlink'
+Failed to read INTERNAL_LINK 'my:documentlink' from node '/my:documentlink'
+Failed to write INTERNAL_LINK field 'my:documentlink'
 Could not determine publication state of document
 Document workflow action 'actionNotYetImplemented' is not implemented
 Cancel request received but no pending request found for 'uuid'.
