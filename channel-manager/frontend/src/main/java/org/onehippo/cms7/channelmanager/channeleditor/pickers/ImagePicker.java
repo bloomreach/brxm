@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.channelmanager.channeleditor;
+package org.onehippo.cms7.channelmanager.channeleditor.pickers;
 
 import java.util.Map;
 
@@ -34,13 +34,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * Manages the picker dialog for imagelink fields. The dialog is used to select an image.
  */
-class ImagePicker extends ChannelEditorPicker<String> {
+public class ImagePicker extends ChannelEditorPicker<String> {
 
     private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
     private final Model<String> dialogModel;
 
-    ImagePicker(final IPluginContext context, final String channelEditorId) {
+    public ImagePicker(final IPluginContext context, final String channelEditorId) {
         super(context, null, channelEditorId);
         dialogModel = Model.of(StringUtils.EMPTY);
     }
