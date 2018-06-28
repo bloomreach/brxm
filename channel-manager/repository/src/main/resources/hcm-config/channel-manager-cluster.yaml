@@ -16,7 +16,7 @@ definitions:
           sort.order: ascending
         /templatecomposer:
           jcr:primaryType: frontend:pluginconfig
-          composerRestMountPath: /_rp
+          composerRestMountPath: _rp
           extAjaxTimeoutMillis: 30000
           initialHstConnectionTimeout: 60000
           manage.changes.privileges: hippo:admin

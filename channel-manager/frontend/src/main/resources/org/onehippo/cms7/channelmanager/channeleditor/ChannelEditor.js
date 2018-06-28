@@ -192,7 +192,7 @@
         renderTo: this.el,
         constrain: true,
         hidden: true,
-        composerRestMountUrl: this.selectedChannel.contextPath + this.apiUrlPrefix,
+        composerRestMountUrl: window.location.pathname + this.apiUrlPrefix,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
         mountId: this.selectedChannel.mountId,

@@ -120,7 +120,7 @@
                     break;
                 case 'show-preview':
                     this.synchronousAjaxRequest(
-                      record.get('contextPath') + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?Force-Client-Host=true',
+                      window.location.pathname + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?Force-Client-Host=true',
                       {
                           'CMS-User': this.cmsUser,
                           'Force-Client-Host': 'true'

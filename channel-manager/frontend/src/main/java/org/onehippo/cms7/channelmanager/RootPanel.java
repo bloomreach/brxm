@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class RootPanel extends ExtPanel {
     public static final String CONFIG_CHANNEL_LIST = "channel-list";
     public static final String CONFIG_TEMPLATE_COMPOSER = "templatecomposer";
     public static final String COMPOSER_REST_MOUNT_PATH_PROPERTY = "composerRestMountPath";
-    public static final String DEFAULT_COMPOSER_REST_MOUNT_PATH = "/_rp";
+    public static final String DEFAULT_COMPOSER_REST_MOUNT_PATH = "_rp";
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
@@ -114,6 +114,9 @@ public class RootPanel extends ExtPanel {
             composerRestMountPath = DEFAULT_COMPOSER_REST_MOUNT_PATH;
         } else {
             composerRestMountPath = editorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
+        }
+        if (composerRestMountPath.startsWith("/")) {
+            composerRestMountPath = composerRestMountPath.substring(1);
         }
 
         this.blueprintStore = new BlueprintStore();
