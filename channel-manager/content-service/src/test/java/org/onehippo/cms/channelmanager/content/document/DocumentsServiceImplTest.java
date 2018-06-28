@@ -71,6 +71,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static java.util.Collections.emptyMap;
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -447,7 +448,10 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        replayAll();
+        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
+        replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
@@ -495,7 +499,10 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(true);
         expectLastCall();
 
-        replayAll();
+        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
+        replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
@@ -547,7 +554,10 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        replayAll();
+        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
+        replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, session, locale, emptyMap());
         assertThat(document.getId(), equalTo("uuid"));
@@ -1441,7 +1451,10 @@ public class DocumentsServiceImplTest {
         expect(docType.getId()).andReturn("document:type");
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
-        replayAll();
+        expect(published.getIdentifier()).andReturn(uuid);
+        expect(published.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(published), anyString(), eq(null))).andReturn("published");
+        replayAll(published);
 
         final Document document = documentsService.getPublished(uuid, session, locale);
 
@@ -1650,7 +1663,10 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
         expectLastCall();
 
-        replayAll();
+        expect(documentDraft.getIdentifier()).andReturn("uuid");
+        expect(documentDraft.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
+        replayAll(documentDraft);
 
         final Document document = documentsService.createDocument(info, session, locale);
 
@@ -1719,7 +1735,11 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
         expectLastCall();
 
-        replayAll();
+        expect(documentDraft.getIdentifier()).andReturn("uuid");
+        expect(documentDraft.isNodeType(anyString())).andReturn(false);
+        expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
+        replayAll(documentDraft);
+
 
         final Document document = documentsService.createDocument(info, session, locale);
 
