@@ -153,6 +153,12 @@
         <include>pom.xml</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>cms-dependencies</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
 
     <!-- site module -->
     <fileSet filtered="true" packaged="true" encoding="UTF-8">

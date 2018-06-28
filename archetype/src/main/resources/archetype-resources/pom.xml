@@ -61,6 +61,8 @@
 
   <properties>
 
+    <!-- PROPERTIES_MARKER -->
+
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
@@ -214,6 +216,7 @@
         </property>
       </activation>
       <modules>
+        <module>cms-dependencies</module>
         <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
