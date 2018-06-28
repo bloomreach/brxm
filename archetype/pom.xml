@@ -38,7 +38,7 @@
     <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
     <gettingstarted.app.version>0.1.0</gettingstarted.app.version>
     <gettingstarted.app.name>Getting Started</gettingstarted.app.name>
-    <maven.archetype.plugin.version>2.4</maven.archetype.plugin.version>
+    <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
   </properties>
 
