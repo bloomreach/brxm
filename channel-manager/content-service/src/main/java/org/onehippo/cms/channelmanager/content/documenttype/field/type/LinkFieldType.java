@@ -3,6 +3,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -83,14 +84,16 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
         try {
             final String uuid = readUuid(node);
             value.setValue(uuid);
-            value.setUrl(createUrl(uuid, node.getSession()));
+            value.setMetadata(createMetadata(uuid, node, node.getSession()));
         } catch (final RepositoryException e) {
             log.warn("Failed to read image link '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
         }
         return value;
     }
 
-    protected abstract String createUrl(final String uuid, final Session session);
+    protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) throws RepositoryException {
+        return null;
+    }
 
     private static String readUuid(final Node node) throws RepositoryException {
         final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, StringUtils.EMPTY);
