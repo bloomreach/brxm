@@ -58,6 +58,7 @@ class ProjectService {
   }
 
   updateSelectedProject(projectId) {
+    this.projectIdFromToggle = projectId;
     const selectedProject = this.projects.find(project => project.id === projectId);
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
@@ -72,29 +73,6 @@ class ProjectService {
 
   registerUpdateListener(cb) {
     this.updateListeners.push(cb);
-  }
-
-  associateWithProject(documentId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
-    return this.$http
-      .post(url)
-      .then(() => {
-        this._getAllProjects();
-        this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
-          name: this.selectedProject.name,
-        });
-      });
-  }
-
-  showAddToProjectForDocument(documentId) {
-    const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.selectedProject && !associatedProject;
-  }
-
-  _getProjectByDocumentId(documentId) {
-    // returns undefined if document is not part of any project
-    // and therefore is part of core
-    return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
   }
 
   _callListeners(listeners, ...args) {

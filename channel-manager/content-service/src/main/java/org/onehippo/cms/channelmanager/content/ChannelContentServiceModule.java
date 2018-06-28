@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.util.EditingService;
+import org.onehippo.cms.channelmanager.content.document.util.EditingServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -69,13 +71,27 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         super.doInitialize(session);
+        this.documentsService.setHintsInspector(createHintsInspector(session));
+        this.documentsService.setEditingService(createEditingService(session));
+    }
 
+    private HintsInspector createHintsInspector(final Session session) throws RepositoryException {
         final String propertyPath = moduleConfigPath + "/hintsInspectorClass";
         final String defaultValue = HintsInspectorImpl.class.getName();
-        final String hintsInspectorClassName = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
+        final String className = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
-            final HintsInspector hintsInspector = (HintsInspector) Class.forName(hintsInspectorClassName).newInstance();
-            documentsService.setHintsInspector(hintsInspector);
+            return (HintsInspector) Class.forName(className).newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    private EditingService createEditingService(final Session session) throws RepositoryException {
+        final String propertyPath = moduleConfigPath + "/editingServiceClass";
+        final String defaultValue = EditingServiceImpl.class.getName();
+        final String className = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
+        try {
+            return (EditingService) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }

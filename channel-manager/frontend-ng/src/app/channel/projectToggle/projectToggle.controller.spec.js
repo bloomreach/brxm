@@ -71,7 +71,7 @@ describe('projectToggle component', () => {
       ProjectService.selectedProject = null;
       // activate onInit to get the core set up
       $ctrl.$onInit();
-      const expectedCoreProject = { name: 'CORE' };
+      const expectedCoreProject = { id: 'master', name: 'CORE' };
 
       expect($ctrl.selectedProject).toEqual(expectedCoreProject);
     });

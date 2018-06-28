@@ -32,6 +32,7 @@ class ProjectToggleController {
 
   $onInit() {
     this.core = {
+      id: 'master',
       name: this.$translate.instant('CORE'),
     };
   }

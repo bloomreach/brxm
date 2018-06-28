@@ -44,6 +44,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
+import org.onehippo.cms.channelmanager.content.document.util.EditingServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -113,6 +114,7 @@ public class DocumentsServiceImplTest {
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl();
         documentsService.setHintsInspector(hintsInspector);
+        documentsService.setEditingService(new EditingServiceImpl());
 
         PowerMock.mockStatic(DocumentNameUtils.class);
         PowerMock.mockStatic(PublicationStateUtils.class);
@@ -196,7 +198,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.empty());
 
         replayAll();
 
@@ -217,11 +219,11 @@ public class DocumentsServiceImplTest {
     public void obtainEditableDocumentNotEditable() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(false);
         expect(hintsInspector.determineEditingFailure(emptyMap(), session)).andReturn(Optional.empty());
@@ -242,14 +244,14 @@ public class DocumentsServiceImplTest {
     public void obtainEditableDocumentOtherHolder() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final ErrorInfo errorInfo = new ErrorInfo(Reason.OTHER_HOLDER);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.CHANGED);
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andStubReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(false);
         expect(hintsInspector.determineEditingFailure(emptyMap(), session)).andReturn(Optional.of(errorInfo));
@@ -271,12 +273,12 @@ public class DocumentsServiceImplTest {
     public void obtainEditableDocumentNoDocumentNodeType() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(true);
 
@@ -297,12 +299,12 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final String variantType = "project:newsdocument";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
         expect(workflow.hints()).andReturn(emptyMap());
@@ -327,12 +329,12 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final String variantType = "project:newsdocument";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(true);
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
@@ -357,12 +359,12 @@ public class DocumentsServiceImplTest {
     public void obtainEditableDocumentUnknownValidator() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(true);
 
@@ -387,11 +389,11 @@ public class DocumentsServiceImplTest {
     public void obtainEditableDocumentFailed() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canObtainEditableDocument(emptyMap())).andReturn(true);
         expect(EditingUtils.getEditableDocumentNode(workflow, session)).andReturn(Optional.empty());
@@ -416,13 +418,13 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
@@ -467,13 +469,13 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap());
@@ -515,14 +517,14 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final Node unpublished = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final List<FieldType> fields = Collections.emptyList();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
 
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
@@ -895,12 +897,13 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(emptyMap())).andReturn(true);
         expect(workflow.commitEditableInstance()).andReturn(null);
@@ -942,12 +945,13 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
-        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(2);
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(workflow.hints()).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(emptyMap())).andReturn(true);
         expect(workflow.commitEditableInstance()).andReturn(null);
@@ -2197,8 +2201,8 @@ public class DocumentsServiceImplTest {
 
         expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.UNKNOWN);
 
-        final EditableWorkflow workflow = createMock(DocumentWorkflow.class);
-        expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(EditableWorkflow.class))).andReturn(Optional.of(workflow));
+        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
         expect(workflow.hints()).andReturn(emptyMap());
 
         final Map<String, Serializable> contextPayload = new HashMap<>();

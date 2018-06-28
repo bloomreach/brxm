@@ -12,18 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-import './addToProject.scss';
-import controller from './addToProject.controller';
-import template from './addToProject.html';
+package org.onehippo.cms.channelmanager.content.document.util;
 
-const addToProjectComponent = {
-  bindings: {
-    onClose: '&',
-  },
-  controller,
-  template,
-};
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Optional;
 
-export default addToProjectComponent;
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+public class EditingServiceImpl implements EditingService {
+
+    @Override
+    public Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session) {
+        return EditingUtils.getEditableDocumentNode(workflow, session);
+    }
+
+}

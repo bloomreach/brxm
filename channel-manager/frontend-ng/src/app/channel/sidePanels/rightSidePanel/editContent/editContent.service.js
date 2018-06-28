@@ -15,12 +15,25 @@
  */
 
 class EditContentService {
-  constructor($state, $transitions, $translate, CmsService, ContentEditor, RightSidePanelService) {
+  constructor(
+    $state,
+    $transitions,
+    $translate,
+    CmsService,
+    ConfigService,
+    ContentEditor,
+    ContentService,
+    ProjectService,
+    RightSidePanelService,
+  ) {
     'ngInject';
 
     this.$state = $state;
     this.$translate = $translate;
+    this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
+    this.ContentService = ContentService;
+    this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
@@ -46,6 +59,25 @@ class EditContentService {
   }
 
   startEditing(documentId) {
+    if (!this.ConfigService.projectsEnabled) {
+      this.editDocument(documentId);
+    } else {
+      this.ContentService.getDocument(documentId).then(
+        (document) => {
+          if (this.ProjectService.projectIdFromToggle && document.branchId !== this.ProjectService.projectIdFromToggle) {
+            // set the title
+            const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
+            this.RightSidePanelService.setTitle(documentTitle);
+            this.$state.go('hippo-cm.channel.add-to-project', { documentId });
+          } else {
+            this.editDocument(documentId);
+          }
+        },
+      );
+    }
+  }
+
+  editDocument(documentId) {
     this.$state.go('hippo-cm.channel.edit-content', { documentId });
   }
 
