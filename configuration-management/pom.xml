@@ -30,14 +30,14 @@
 
   <groupId>org.onehippo.cms</groupId>
   <artifactId>hippo-configuration-management</artifactId>
-  <version>13.0.0-SNAPSHOT</version>
+  <version>13.0.0-msdts-SNAPSHOT</version>
   
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
     <hippo.testutils.version>13.0.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>13.0.0-msdts-SNAPSHOT</hippo.services.version>
     <hippo.jackrabbit.version>2.16.2-h1</hippo.jackrabbit.version>
     <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
     <snakeyaml.version>1.18</snakeyaml.version>
