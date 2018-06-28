@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './addToProject/addToProject.scss';
 import addToProjectTemplate from './addToProject/addToProject.html';
 import editContentMainTemplate from './editContentMain.html';
 import editContentToolsTemplate from './editContentTools.html';
