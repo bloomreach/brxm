@@ -24,17 +24,17 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public interface EditingService {
 
     /**
      * Get a backing JCR node of a document.
      *
-     * @param editableWorkflow workflow for the desired document
-     * @param hints            the hints obtained earlier from the workflow
-     * @param session          JCR session for obtaining the backing node
+     * @param workflow workflow for the desired document
+     * @param hints    the hints obtained earlier from the workflow
+     * @param session  JCR session for obtaining the backing node
      * @return JCR node or nothing, wrapped in an Optional
      */
-    Optional<Node> getEditableDocumentNode(EditableWorkflow editableWorkflow, Map<String, Serializable> hints, Session session);
+    Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session);
 }
