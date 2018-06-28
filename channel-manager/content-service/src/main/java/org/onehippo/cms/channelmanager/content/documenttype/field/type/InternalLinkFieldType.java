@@ -15,12 +15,15 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.ItemNotFoundException;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.util.collections.MiniMap;
+import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.json.Json;
@@ -42,6 +45,8 @@ public class InternalLinkFieldType extends LinkFieldType {
             "last.visited.nodetypes",
             "language.context.aware",
     };
+
+    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes" };
 
     private ObjectNode config;
 
@@ -67,16 +72,19 @@ public class InternalLinkFieldType extends LinkFieldType {
     }
 
     @Override
-    protected String createUrl(final String uuid, final Session session) {
+    protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) throws RepositoryException {
+        final MiniMap<String, Object> map = new MiniMap<>(1);
+        map.put("displayName", getDisplayName(uuid, session));
+        return map;
+    }
+
+    private String getDisplayName(final String uuid, final Session session) throws RepositoryException {
         if (StringUtils.isNotEmpty(uuid)) {
-            try {
-                final Node node = session.getNodeByIdentifier(uuid);
-                return node.getName();
-            } catch (ItemNotFoundException e) {
-                log.warn("Unable to find item: {} : {} ", uuid, e);
-            } catch (RepositoryException e) {
-                log.warn("Error while trying to get node name for: {}", uuid, e);
+            final Node node = session.getNodeByIdentifier(uuid);
+            if (node instanceof HippoNode) {
+                return ((HippoNode) node).getDisplayName();
             }
+            return node.getName();
         }
         return "";
     }

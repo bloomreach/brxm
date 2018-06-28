@@ -28,7 +28,6 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
 
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes" };
 
     @Override
     protected String getDefault() {
