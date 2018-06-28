@@ -120,10 +120,11 @@
                     break;
                 case 'show-preview':
                     this.synchronousAjaxRequest(
-                      window.location.pathname + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?Force-Client-Host=true',
+                      window.location.pathname + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname'),
                       {
                           'CMS-User': this.cmsUser,
-                          'Force-Client-Host': 'true'
+                          'Force-Client-Host': 'true',
+                          'contextPath' : record.get('contextPath')
                       }
                     );
                     break;

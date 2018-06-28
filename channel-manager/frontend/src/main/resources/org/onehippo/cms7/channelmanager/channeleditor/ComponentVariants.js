@@ -38,6 +38,7 @@
       this.componentId = config.componentId;
       this.lastModified = config.lastModified;
       this.composerRestMountUrl = config.composerRestMountUrl;
+      this.siteContextPath = config.siteContextPath;
       this.locale = config.locale;
 
       Hippo.ChannelManager.ChannelEditor.ComponentVariants.superclass.constructor.call(this, config);
@@ -79,7 +80,8 @@
             Ext.Ajax.request({
               url: self.composerRestMountUrl + '/' + self.componentId,
               headers: {
-                'Force-Client-Host': 'true'
+                'Force-Client-Host': 'true',
+                'contextPath': self.siteContextPath
               },
               success: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText),
@@ -116,7 +118,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Force-Client-Host': 'true'
+            'Force-Client-Host': 'true',
+            'contextPath': this.siteContextPath
           },
           params: Ext.util.JSON.encode(variantIds),
           success: function(result) {
@@ -147,7 +150,8 @@
             headers: {
               'Force-Client-Host': 'true',
               'Content-Type': 'application/json',
-              'lastModifiedTimestamp': this.lastModified
+              'lastModifiedTimestamp': this.lastModified,
+              'contextPath': this.siteContextPath
             },
             params: Ext.util.JSON.encode(variantIds),
             scope: this,

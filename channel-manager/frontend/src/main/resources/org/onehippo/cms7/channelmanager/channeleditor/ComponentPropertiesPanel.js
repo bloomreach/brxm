@@ -33,6 +33,7 @@
 
     // set in constructor
     composerRestMountUrl: null,
+    siteContextPath: null,
     mountId: null,
     variantsUuid: null,
     locale: null,
@@ -48,6 +49,7 @@
 
     constructor: function (config) {
       this.composerRestMountUrl = config.composerRestMountUrl;
+      this.siteContextPath = config.siteContextPath;
       this.variantsUuid = config.variantsUuid;
       this.pageRequestVariants = config.pageRequestVariants;
       this.mountId = config.mountId;
@@ -124,6 +126,7 @@
         componentId: component.id,
         lastModified: component.lastModified,
         composerRestMountUrl: this.composerRestMountUrl,
+        siteContextPath: this.siteContextPath,
         variantsUuid: this.variantsUuid,
         locale: this.locale
       });
@@ -260,6 +263,7 @@
     _createVariantAdder: function (variant, skipVariantIds) {
       return Hippo.ExtWidgets.create('Hippo.ChannelManager.ChannelEditor.ComponentVariantAdder', {
         composerRestMountUrl: this.composerRestMountUrl,
+        siteContextPath: this.siteContextPath,
         componentId: this.componentId,
         locale: this.locale,
         skipVariantIds: skipVariantIds,
@@ -282,6 +286,7 @@
           variant: variant,
           mountId: this.mountId,
           composerRestMountUrl: this.composerRestMountUrl,
+          siteContextPath: this.siteContextPath,
           locale: this.locale,
           componentId: this.componentId,
           lastModified: this.lastModified,
