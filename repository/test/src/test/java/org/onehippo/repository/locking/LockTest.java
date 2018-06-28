@@ -19,16 +19,15 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.lock.Lock;
-import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 public class LockTest extends RepositoryTestCase {
 
@@ -69,48 +68,13 @@ public class LockTest extends RepositoryTestCase {
         Thread.sleep(1000l);
         // refresh the lock timeout = current time + 2s
         lock.refresh();
-        Thread.sleep(1000l);
+        long secondsRemaining = lock.getSecondsRemaining();
+        assertEquals(2, secondsRemaining);
         assertTrue(anonLockManager.isLocked("/test"));
-        Thread.sleep(1000l);
+        do {
+            Thread.sleep(1000l);
+        } while (lock.getSecondsRemaining() > 0);
         assertFalse(anonLockManager.isLocked("/test"));
         anonSession.logout();
     }
-
-    @Test
-    public void timedOutLockIsNotLocked() throws Exception {
-        lockManager.lock("/test", false, false, 1l, null);
-        Thread.sleep(1001l);
-        assertFalse("Timed out lock is still locked", lockManager.isLocked("/test"));
-        lockManager.lock("/test", false, false, 1l, null);
-        Thread.sleep(1001l);
-        try {
-            lockManager.getLock("/test");
-            fail("Expected lock exception on getting timed out lock");
-        } catch (LockException ignore) {}
-        lockManager.lock("/test", false, false, 1l, null);
-        Thread.sleep(1001l);
-        try {
-            lockManager.unlock("/test");
-            fail("Expected lock exception on unlocking timed out lock");
-        } catch (LockException ignore) {}
-        lockManager.lock("/test", false, false, 1l, null);
-        Thread.sleep(1001l);
-        try {
-            lockManager.lock("/test", false, false, 1l, null);
-        } catch (LockException e) {
-            fail("Can't lock node on which previous lock has timed out: " + e);
-        }
-        Thread.sleep(1001l);
-        assertFalse("Timed out lock is still held", lockManager.holdsLock("/test"));
-        lockManager.lock("/test", false, false, 1l, null);
-        Thread.sleep(1001l);
-        final Session testSession = session.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-        try {
-            testSession.getNode("/test").setProperty("key", "value");
-            testSession.save();
-        } catch (LockException e) {
-            fail("Can't set property on node on which lock has timed out");
-        }
-    }
-
 }
