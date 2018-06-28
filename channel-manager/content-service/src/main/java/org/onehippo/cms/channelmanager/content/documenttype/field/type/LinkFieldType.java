@@ -48,7 +48,7 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
             final NodeIterator children = node.getNodes(valueName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write image link field '{}'", valueName, e);
+            log.warn("Failed to write {} field '{}'", getType(), valueName, e);
             throw new InternalServerErrorException();
         }
     }
@@ -73,7 +73,7 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
             }
             return values;
         } catch (final RepositoryException e) {
-            log.warn("Failed to read nodes for image link type '{}'", getId(), e);
+            log.warn("Failed to read nodes for {} type '{}'", getType(), getId(), e);
         }
         return Collections.emptyList();
     }
@@ -86,7 +86,7 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
             value.setValue(uuid);
             value.setMetadata(createMetadata(uuid, node, node.getSession()));
         } catch (final RepositoryException e) {
-            log.warn("Failed to read image link '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
+            log.warn("Failed to read {} '{}' from node '{}'", getType(), getId(), JcrUtils.getNodePathQuietly(node), e);
         }
         return value;
     }
