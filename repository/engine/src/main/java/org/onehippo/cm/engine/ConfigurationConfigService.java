@@ -73,8 +73,6 @@ import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.repository.util.PartialZipFile;
 import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
-import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

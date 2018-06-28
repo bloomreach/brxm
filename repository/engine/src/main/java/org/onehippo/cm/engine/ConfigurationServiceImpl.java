@@ -80,7 +80,6 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.cms7.services.extension.ExtensionEvent;
 import org.onehippo.cms7.services.extension.ExtensionRegistry;
-import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +88,6 @@ import com.google.common.io.Files;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
