@@ -92,7 +92,7 @@ public class BranchIdModelReferenceSubject {
     }
 
     public void setInitialBranchId(String branchId){
-        if (getBranchId().equals(UNDEFINED)){
+        if (UNDEFINED.equals(getBranchId())){
             setBranchId(branchId);
         }
     }
