@@ -32,19 +32,19 @@
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-addon-cms",
       "scope": "compile",
-      "targetPom": "cms"
+      "targetPom": "cms-dependencies"
     },
     {
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-addon-repository",
       "scope": "compile",
-      "targetPom": "cms"
+      "targetPom": "cms-dependencies"
     },
     {
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-hst-client",
       "scope": "compile",
-      "targetPom": "site"
+      "targetPom": "components"
     }
   ]
 }

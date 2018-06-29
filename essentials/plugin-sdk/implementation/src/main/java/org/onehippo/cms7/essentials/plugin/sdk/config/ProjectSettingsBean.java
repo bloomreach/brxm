@@ -43,7 +43,10 @@ public class ProjectSettingsBean implements ProjectSettings {
     private boolean extraTemplates;
 
     private String siteModule;
+    private String siteComponentsSubModule;
+    private String siteWebappSubModule;
     private String cmsModule;
+    private String cmsDependenciesModule;
     private String repositoryDataModule;
     private String applicationSubModule;
     private String developmentSubModule;
@@ -75,6 +78,26 @@ public class ProjectSettingsBean implements ProjectSettings {
     }
 
     @Override
+    public String getSiteComponentsSubModule() {
+        return Strings.isNullOrEmpty(siteComponentsSubModule) ?
+                Module.SITE_COMPONENTS.getName() : siteComponentsSubModule;
+    }
+
+    public void setSiteComponentsSubModule(final String siteComponentsSubModule) {
+        this.siteComponentsSubModule = siteComponentsSubModule;
+    }
+
+    @Override
+    public String getSiteWebappSubModule() {
+        return Strings.isNullOrEmpty(siteWebappSubModule) ?
+                Module.SITE_WEBAPP.getName() : siteWebappSubModule;
+    }
+
+    public void setSiteWebappSubModule(final String siteWebappSubModule) {
+        this.siteWebappSubModule = siteWebappSubModule;
+    }
+
+    @Override
     public String getCmsModule() {
         if (Strings.isNullOrEmpty(cmsModule)) {
             return Module.CMS.getName();
@@ -84,6 +107,18 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setCmsModule(final String cmsModule) {
         this.cmsModule = cmsModule;
+    }
+
+    @Override
+    public String getCmsDependenciesModule() {
+        if (Strings.isNullOrEmpty(cmsDependenciesModule)) {
+            return Module.CMS_DEPENDENCIES.getName();
+        }
+        return cmsDependenciesModule;
+    }
+
+    public void setCmsDependenciesModule(final String cmsDependenciesModule) {
+        this.cmsDependenciesModule = cmsDependenciesModule;
     }
 
     @Override

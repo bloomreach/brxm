@@ -49,9 +49,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     private static final String MODULE_NAME_APPLICATION = "application";
     private static final String MODULE_NAME_CMS = "cms";
+    private static final String MODULE_NAME_CMS_DEPENDENCIES = "cms-dependencies";
     private static final String MODULE_NAME_DEVELOPMENT = "development";
     private static final String MODULE_NAME_REPOSITORY_DATA = "repository-data";
     private static final String MODULE_NAME_SITE = "site";
+    private static final String MODULE_NAME_SITE_COMPONENTS = "components";
+    private static final String MODULE_NAME_SITE_WEBAPP = "webapp";
     private static final String MODULE_NAME_WEB_FILES = "webfiles";
     private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
@@ -73,8 +76,14 @@ public class ProjectServiceImpl implements ProjectService {
                 return projectPath.resolve(ProjectUtils.getEssentialsModuleName());
             case SITE:
                 return projectPath.resolve(getSiteModuleName());
+            case SITE_COMPONENTS:
+                return projectPath.resolve(getSiteModuleName()).resolve(getSiteComponentsModuleName());
+            case SITE_WEBAPP:
+                return projectPath.resolve(getSiteModuleName()).resolve(getSiteWebappModuleName());
             case CMS:
                 return projectPath.resolve(getCmsModuleName());
+            case CMS_DEPENDENCIES:
+                return projectPath.resolve(getCmsDependenciesModuleName());
             case REPOSITORY_DATA:
                 return projectPath.resolve(getRepositoryDataModuleName());
             case REPOSITORY_DATA_APPLICATION:
@@ -122,7 +131,7 @@ public class ProjectServiceImpl implements ProjectService {
             return projectPath.resolve(explicitBeansFolder);
         }
 
-        return getJavaRootPathForModule(Module.SITE);
+        return getJavaRootPathForModule(Module.SITE_COMPONENTS);
     }
 
     @Override
@@ -134,13 +143,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Path getRestPackagePath() {
         final String restPackage = settingsService.getSettings().getSelectedRestPackage();
-        return makePackagePath(getJavaRootPathForModule(Module.SITE), restPackage);
+        return makePackagePath(getJavaRootPathForModule(Module.SITE_COMPONENTS), restPackage);
     }
 
     @Override
     public Path getComponentsPackagePath() {
         final String componentsPackage = settingsService.getSettings().getSelectedComponentsPackage();
-        return makePackagePath(getJavaRootPathForModule(Module.SITE), componentsPackage);
+        return makePackagePath(getJavaRootPathForModule(Module.SITE_COMPONENTS), componentsPackage);
     }
 
     @Override
@@ -166,9 +175,24 @@ public class ProjectServiceImpl implements ProjectService {
         return StringUtils.isNotBlank(siteModuleName) ? siteModuleName : MODULE_NAME_SITE;
     }
 
+    private String getSiteComponentsModuleName() {
+        final String siteComponentsModuleName = settingsService.getSettings().getSiteComponentsSubModule();
+        return StringUtils.isNotBlank(siteComponentsModuleName) ? siteComponentsModuleName: MODULE_NAME_SITE_COMPONENTS;
+    }
+
+    private String getSiteWebappModuleName() {
+        final String siteWebappModuleName = settingsService.getSettings().getSiteWebappSubModule();
+        return StringUtils.isNotBlank(siteWebappModuleName) ? siteWebappModuleName: MODULE_NAME_SITE_WEBAPP;
+    }
+
     private String getCmsModuleName() {
         final String cmsModuleName = settingsService.getSettings().getCmsModule();
         return StringUtils.isNotBlank(cmsModuleName) ? cmsModuleName : MODULE_NAME_CMS;
+    }
+
+    private String getCmsDependenciesModuleName() {
+        final String cmsDependenciesModuleName = settingsService.getSettings().getCmsDependenciesModule();
+        return StringUtils.isNotBlank(cmsDependenciesModuleName) ? cmsDependenciesModuleName : MODULE_NAME_CMS_DEPENDENCIES;
     }
 
     private String getRepositoryDataModuleName() {

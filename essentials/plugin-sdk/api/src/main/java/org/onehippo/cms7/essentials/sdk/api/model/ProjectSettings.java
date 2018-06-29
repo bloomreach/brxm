@@ -31,9 +31,24 @@ public interface ProjectSettings {
     String getSiteModule();
 
     /**
+     * The name of the sub-directory of the site components module, representing the components module, defaults to 'components'.
+     */
+    String getSiteComponentsSubModule();
+
+    /**
+     * The name of the sub-directory of the site webapp module, representing the web application module, defaults to 'webapp'.
+     */
+    String getSiteWebappSubModule();
+
+    /**
      * The name of the project root-level directory representing the 'cms' module, defaults to 'cms'.
      */
     String getCmsModule();
+
+    /**
+     * The name of the project root-level directory representing the 'cms-dependencies' module, defaults to 'cms-dependencies'.
+     */
+    String getCmsDependenciesModule();
 
     /**
      * The name of the project root-level directory representing the repository data module, defaults to 'repository-data'.
@@ -119,7 +134,7 @@ public interface ProjectSettings {
      * Development environments with different separators (i.e. Unix vs. Windows) is currently not supported for this
      * parameter.
      *
-     * Example/default: 'site/src/main/java'
+     * Example/default: 'site/components/src/main/java'
      */
     String getBeansFolder();
 }

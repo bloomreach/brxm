@@ -30,19 +30,19 @@
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-cms",
       "scope": "compile",
-      "targetPom": "cms"
+      "targetPom": "cms-dependencies"
     },
     {
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-repository",
       "scope": "compile",
-      "targetPom": "cms"
+      "targetPom": "cms-dependencies"
     },
     {
       "groupId": "com.onehippo.cms7",
       "artifactId": "hippo-addon-urlrewriter-module-hst",
       "scope": "compile",
-      "targetPom": "site"
+      "targetPom": "components"
     }
   ],
   "pluginDependencies": [
