@@ -24,11 +24,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.Matchers;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +63,9 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
@@ -109,7 +114,8 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
+                .andReturn(Stream.of(testDocument));
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -125,7 +131,8 @@ public class ContentResourceTest extends CXFTest {
     public void getPublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new NotFoundException());
+        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
+                .andReturn(Stream.empty());
         replay(documentsService);
 
         when()
