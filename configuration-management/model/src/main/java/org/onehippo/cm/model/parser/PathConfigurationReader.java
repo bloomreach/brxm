@@ -96,6 +96,9 @@ public class PathConfigurationReader {
 
             final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
             final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
+
+            // TODO: determine and set actual extension name
+
             final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
             readModule(module, moduleContext, verifyOnly);
             return new ReadResult(moduleContext);

@@ -110,7 +110,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @since 2.0
      */
     public Set<String> getExtensionNames() {
-        final Set<String> names = getModulesStream().map(ModuleImpl::getExtension).collect(Collectors.toSet());
+        final Set<String> names = getModulesStream().map(ModuleImpl::getExtensionName).collect(Collectors.toSet());
         names.remove(null);
         return names;
     }
@@ -262,10 +262,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // TODO: fix groupSorter to do this properly with lexical sort by extension name, so getModulesStream() does this consistently
         // TODO: disallow dependencies that force an ordering that violates extension isolation
         getModulesStream()
-                .filter(m -> Objects.isNull(m.getExtension()))
+                .filter(m -> Objects.isNull(m.getExtensionName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
         getModulesStream()
-                .filter(m -> Objects.nonNull(m.getExtension()))
+                .filter(m -> Objects.nonNull(m.getExtensionName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
@@ -359,7 +359,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
-            if (StringUtils.equalsIgnoreCase(extension, m.getExtension())) {
+            if (StringUtils.equalsIgnoreCase(extension, m.getExtensionName())) {
                 m.compileManifest(this, manifest);
             }
         }

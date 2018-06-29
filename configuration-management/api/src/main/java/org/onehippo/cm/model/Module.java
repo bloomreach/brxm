@@ -53,10 +53,20 @@ public interface Module extends OrderableByName {
     Project getProject();
 
     /**
-     * @return Extension name of the Module or null if it is a core Module
-     * @since 2.0
+     * @return true if this module is explicitly marked as part of the core model and not an extension
      */
-    String getExtension();
+    boolean isExplicitCore();
+
+    /**
+     * @return true if this module is part of an extension; false if this module is in the core model
+     */
+    boolean isExtension();
+
+    /**
+     * @return Extension name of the Module or null if it is a core Module
+     * @since 13.0
+     */
+    String getExtensionName();
 
     /**
      * @return The immutable set of all {@link Source}s of this module, in undefined order.

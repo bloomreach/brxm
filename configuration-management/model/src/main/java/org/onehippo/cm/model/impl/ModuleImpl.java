@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
@@ -81,7 +80,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private String extension;
+    private String extensionName = null;
+    private boolean explicitCore = false;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
             .comparing(SourceImpl::getPath)
@@ -143,7 +143,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         sortedSources.forEach(source -> source.setModule(this));
 
         mvnPath = module.getMvnPath();
-        extension = module.getExtension();
+        extensionName = module.getExtensionName();
         archiveFile = module.getArchiveFile();
         build();
     }
@@ -241,20 +241,38 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         lastExecutedAction = value;
     }
 
+    @Override
+    public String getExtensionName() {
+        return extensionName;
+    }
+
+    public void setExtensionName(final String extension) {
+        this.extensionName = extension;
+    }
+
     /**
      * @return true if this module is part of an extension; false if this module is in the core model
      */
+    @Override
     public boolean isExtension() {
-        return extension != null;
+        return extensionName != null;
+    }
+
+    /**
+     * Marks this node as explicitly (rather than implicitly) belonging to the "core" configuration model.
+     * Calling with a true argument has the side-effect of setting the extension name property to null.
+     * @param explicitCore
+     */
+    public void setExplicitCore(final boolean explicitCore) {
+        this.explicitCore = explicitCore;
+        if (explicitCore) {
+            extensionName = null;
+        }
     }
 
     @Override
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(final String extension) {
-        this.extension = extension;
+    public boolean isExplicitCore() {
+        return explicitCore;
     }
 
     /**
@@ -641,7 +659,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
-                ((extension==null)? "": ("extension='" + extension +"', ")) +
+                ((extensionName ==null)? "": ("extensionName='" + extensionName +"', ")) +
                 ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
@@ -676,7 +694,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
-            newModule.setExtension(extension);
+            newModule.setExtensionName(extensionName);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 

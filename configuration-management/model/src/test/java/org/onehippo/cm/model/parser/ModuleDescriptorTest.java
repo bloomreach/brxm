@@ -22,10 +22,14 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.junit.Test;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class ModuleDescriptorTest {
 
@@ -33,36 +37,63 @@ public class ModuleDescriptorTest {
     public void testLoadSaveFull() throws ParserException, IOException {
 
         final String resource = "/hcm-module-full.yaml";
-        final InputStream stream = getClass().getResourceAsStream(resource);
-        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
-        final ModuleImpl module = moduleDescriptorParser.parse(stream, "");
-        IOUtils.closeQuietly(stream);
+        final ModuleImpl module = loadDescriptor(resource);
 
-        final ModuleDescriptorSerializer serializer = new ModuleDescriptorSerializer(true);
-        final StringBuffer out = new StringBuffer();
-        final StringBufferOutputStream outputStream = new StringBufferOutputStream(out);
-        serializer.serialize(outputStream, module);
-        final String original = IOUtils.toString(getClass().getResourceAsStream(resource), StandardCharsets.UTF_8);
-        assertEquals(original, out.toString().trim());
+        assertTrue("module SHOULD be marked as explicitly a core module", module.isExplicitCore());
+        assertFalse("module should NOT be marked as an extension module", module.isExtension());
+        assertNull("module extension name should be null", module.getExtensionName());
 
+        writeDescriptor(resource, module);
     }
 
     @Test
     public void testLoadShort() throws ParserException, IOException {
 
         final String resource = "/hcm-module-short.yaml";
+        ModuleImpl module = loadDescriptor(resource);
+
+        assertFalse("module should NOT be marked as explicitly a core module", module.isExplicitCore());
+        assertFalse("module should NOT be marked as an extension module", module.isExtension());
+        assertNull("module extension name should be null", module.getExtensionName());
+
+        writeDescriptor(resource, module);
+    }
+
+    @Test
+    public void testLoadShortExtension() throws ParserException, IOException {
+
+        final String resource = "/hcm-module-short-extension.yaml";
+        ModuleImpl module = loadDescriptor(resource);
+
+        assertFalse("module should NOT be marked as explicitly a core module", module.isExplicitCore());
+        assertTrue("module SHOULD be marked as an extension module", module.isExtension());
+        assertEquals("module extension name should be a known constant", Constants.SCOPE_EXTENSION_KEY, module.getExtensionName());
+
+        writeDescriptor(resource, module);
+    }
+
+    @Test(expected = ParserException.class)
+    public void testLoadShortExtensionFail() throws ParserException {
+
+        // we expect a parser exception if "scope" value is not one of the two expected constants
+        loadDescriptor("/hcm-module-short-extension-fail.yaml");
+    }
+
+    private ModuleImpl loadDescriptor(final String resource) throws ParserException {
         final InputStream stream = getClass().getResourceAsStream(resource);
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
-        ModuleImpl module = moduleDescriptorParser.parse(stream, "");
+        final ModuleImpl module = moduleDescriptorParser.parse(stream, "");
         IOUtils.closeQuietly(stream);
+        return module;
+    }
 
+    private void writeDescriptor(final String resource, final ModuleImpl module) throws IOException {
         final ModuleDescriptorSerializer serializer = new ModuleDescriptorSerializer(true);
         final StringBuffer out = new StringBuffer();
         final StringBufferOutputStream outputStream = new StringBufferOutputStream(out);
         serializer.serialize(outputStream, module);
         final String original = IOUtils.toString(getClass().getResourceAsStream(resource), StandardCharsets.UTF_8);
         assertEquals(original, out.toString().trim());
-
     }
 
 }

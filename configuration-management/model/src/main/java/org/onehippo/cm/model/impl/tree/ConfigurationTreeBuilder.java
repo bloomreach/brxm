@@ -160,8 +160,8 @@ public class ConfigurationTreeBuilder {
         if (!CollectionUtils.isEmpty(definitionNode.getProperties())) {
             final TreeDefinitionImpl<?> definition = definitionNode.getDefinition();
             final TreeDefinitionImpl<?> bucketDefinition = node.getDefinitions().get(0).getDefinition();
-            if (!Objects.equals(definition.getSource().getModule().getExtension(),
-                    bucketDefinition.getSource().getModule().getExtension())) {
+            if (!Objects.equals(definition.getSource().getModule().getExtensionName(),
+                    bucketDefinition.getSource().getModule().getExtensionName())) {
                 final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
                         "extensions or in both core and an extension: %s -> %s",
                         definition.getNode().getPath(), bucketDefinition.getSource(), definition.getSource());

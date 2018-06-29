@@ -1,0 +1,4 @@
+group: hippo-cms
+project: hippo-addon-urlrewriter
+module: shortModule
+scope: some-extension-name

@@ -25,11 +25,13 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 import static org.onehippo.cm.model.Constants.AFTER_KEY;
-import static org.onehippo.cm.model.Constants.EXTENSION_KEY;
+import static org.onehippo.cm.model.Constants.SCOPE_EXTENSION_KEY;
 import static org.onehippo.cm.model.Constants.GROUP_KEY;
 import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.NAME_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
+import static org.onehippo.cm.model.Constants.SCOPE_CORE_KEY;
+import static org.onehippo.cm.model.Constants.SCOPE_KEY;
 
 public class ModuleDescriptorParser extends AbstractBaseParser {
 
@@ -39,16 +41,18 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
 
     public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
-        final Map<String, Node> rootNodeMap = asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
+        final Map<String, Node> rootNodeMap =
+                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, new String[]{SCOPE_KEY});
 
         final Node groupNode = rootNodeMap.get(GROUP_KEY);
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
         final Node moduleNode = rootNodeMap.get(MODULE_KEY);
+        final Node scopeNode = rootNodeMap.get(SCOPE_KEY);
 
         final GroupImpl groupImpl = constructGroup(groupNode);
         final ProjectImpl project = constructProject(projectNode, groupImpl);
 
-        return constructModule(moduleNode, project);
+        return constructModule(moduleNode, scopeNode, project);
     }
 
     protected GroupImpl constructGroup(final Node src) throws ParserException {
@@ -76,19 +80,39 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
+    protected ModuleImpl constructModule(final Node src, final Node scopeNode, final ProjectImpl parent) throws ParserException {
+        ModuleImpl module;
         if (src instanceof ScalarNode) {
-            return parent.addModule(asStringScalar(src));
+            module = parent.addModule(asStringScalar(src));
         } else {
-            final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY, EXTENSION_KEY});
+            final Map<String, Node> map =
+                    asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY, SCOPE_EXTENSION_KEY});
             final String name = asStringScalar(map.get(NAME_KEY));
-            final ModuleImpl module = parent.addModule(name);
+            module = parent.addModule(name);
             module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
-            final Node extensionNode = map.get(EXTENSION_KEY);
-            if (extensionNode != null) {
-                module.setExtension(asStringScalar(extensionNode));
-            }
-            return module;
         }
+
+        if (scopeNode == null) {
+            // null extensionName indicates a core module, but this isn't _explicitly_ a core module
+            module.setExtensionName(null);
+        }
+        else {
+            final String scope = asStringScalar(scopeNode);
+            switch (scope) {
+                case SCOPE_CORE_KEY:
+                    // this is explicitly marked as a core module
+                    module.setExplicitCore(true);
+                    break;
+                case SCOPE_EXTENSION_KEY:
+                    // we don't know the actual extension name here, so use a constant value as stand-in
+                    module.setExplicitCore(false);
+                    module.setExtensionName(SCOPE_EXTENSION_KEY);
+                    break;
+                default:
+                    throw new ParserException("Module scope must have value \"core\" or \"extension\" but found: " + scope);
+            }
+        }
+
+        return module;
     }
 }
