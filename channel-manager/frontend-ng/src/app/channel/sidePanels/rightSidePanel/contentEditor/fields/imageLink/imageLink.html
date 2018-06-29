@@ -38,11 +38,11 @@
      ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint, 'image-has-label': $ctrl.index === 0}">
   <span>{{::$ctrl.hiddenLabel}}</span>
   <md-button class="md-icon-button hippo-imagelink-clear"
-             ng-if="$ctrl.url"
              focus-if="$ctrl.imagePicked"
              ng-blur="$ctrl.onBlurButton($event)"
              ng-click="$ctrl.clearPickedImage()"
-             ng-focus="$ctrl.onFocusButton($event)">
+             ng-focus="$ctrl.onFocusButton($event)"
+             ng-if="$ctrl.url">
     <md-icon md-font-icon="mdi-close"></md-icon>
   </md-button>
   <md-button class="md-icon-button hippo-imagelink-select"
