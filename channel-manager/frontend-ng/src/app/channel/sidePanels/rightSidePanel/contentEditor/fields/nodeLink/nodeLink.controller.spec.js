@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-describe('internalLinkController', () => {
+describe('nodeLinkController', () => {
   let $componentController;
   let $ctrl;
   let $scope;
+  let $timeout;
   let CmsService;
-  let ngModel;
   let config;
+  let ngModel;
+  let onBlur;
+  let onFocus;
 
   const $element = angular.element('<div></div>');
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.fieldsModule');
 
-    inject((_$componentController_, _$rootScope_, _CmsService_) => {
+    inject((_$componentController_, _$rootScope_, _$timeout_, _CmsService_) => {
       $componentController = _$componentController_;
       CmsService = _CmsService_;
       $scope = _$rootScope_.$new();
+      $timeout = _$timeout_;
     });
 
     ngModel = jasmine.createSpyObj('ngModel', [
@@ -40,21 +44,26 @@ describe('internalLinkController', () => {
 
     ngModel.$modelValue = 'model-value';
     config = {
-      imagepicker: 'image-picker-config',
+      linkpicker: 'link-picker-config',
     };
 
-    $ctrl = $componentController('imageLink', {
+    onBlur = jasmine.createSpy('onBlur');
+    onFocus = jasmine.createSpy('onFocus');
+
+    $ctrl = $componentController('nodeLink', {
       $scope,
       $element,
       CmsService,
     }, {
-      ngModel,
-      name: 'TestField',
       ariaLabel: 'TestAriaLabel',
       config,
+      displayName: 'TestDisplayName',
       hint: 'TestHint',
       index: 0,
-      url: 'TestUrl',
+      name: 'TestField',
+      ngModel,
+      onBlur,
+      onFocus,
     });
   });
 
@@ -67,101 +76,144 @@ describe('internalLinkController', () => {
     it('initializes the component', () => {
       init();
 
-      expect($ctrl.ngModel.$modelValue).toEqual('model-value');
-      expect($ctrl.name).toEqual('TestField');
       expect($ctrl.ariaLabel).toEqual('TestAriaLabel');
-      expect($ctrl.hiddenLabel).toEqual('TestAriaLabel');
       expect($ctrl.config).toEqual(config);
+      expect($ctrl.displayName).toEqual('TestDisplayName');
       expect($ctrl.hint).toEqual('TestHint');
-      expect($ctrl.url).toEqual('TestUrl');
-      expect($ctrl.labelElement).toBeDefined();
-      expect($ctrl.imagePicked).toBeFalsy();
+      expect($ctrl.index).toEqual(0);
+      expect($ctrl.linkPicked).toBeFalsy();
+      expect($ctrl.name).toEqual('TestField');
+      expect($ctrl.ngModel.$modelValue).toEqual('model-value');
     });
+  });
 
-    it('adds an asterisk to the hiddenLabel for required image links', () => {
-      $ctrl.isRequired = true;
-      init();
-
-      expect($ctrl.hiddenLabel).toEqual('TestAriaLabel *');
-    });
-
-    it('only renders a hidden label for the first image', () => {
+  describe('focus handling', () => {
+    it('calls onFocusFromParent when parent broadcasts event "primitive-field:focus" and index is zero', () => {
+      spyOn($ctrl, 'onFocusFromParent');
       $ctrl.index = 0;
       init();
 
-      expect($ctrl.hiddenLabel).not.toEqual('');
+      $scope.$parent.$broadcast('primitive-field:focus');
 
+      expect($ctrl.onFocusFromParent).toHaveBeenCalled();
+    });
+
+    it('does not call onFocusFromParent when parent broadcasts event "primitive-field:focus" and index is not zero', () => {
+      spyOn($ctrl, 'onFocusFromParent');
       $ctrl.index = 1;
       init();
 
-      expect($ctrl.hiddenLabel).toEqual('');
+      $scope.$parent.$broadcast('primitive-field:focus');
+
+      expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
+    });
+
+    it('opens the linkPicker if model is empty', () => {
+      spyOn($ctrl, 'openLinkPicker');
+      ngModel.$modelValue = '';
+      init();
+
+      $ctrl.onFocusFromParent();
+
+      expect($ctrl.openLinkPicker).toHaveBeenCalled();
+    });
+
+    it('puts focus on the "clear" button if model is not empty', () => {
+      const clearBtn = jasmine.createSpyObj('clearButton', ['focus']);
+      spyOn($element, 'find').and.returnValues(clearBtn);
+      init();
+
+      $ctrl.onFocusFromParent();
+
+      expect(clearBtn.focus).toHaveBeenCalled();
+    });
+
+    it('emits focus event and set hasFocus to true', () => {
+      const event = {};
+      $ctrl.focus(event);
+
+      expect($ctrl.hasFocus).toBe(true);
+      expect(onFocus).toHaveBeenCalledWith(event);
+    });
+
+    it('emits blur event and set hasFocus to false after timeout', () => {
+      $ctrl.hasFocus = true;
+      const event = {};
+      $ctrl.blur(event);
+
+      expect($ctrl.hasFocus).toBe(true);
+      expect(onBlur).toHaveBeenCalledWith(event);
+
+      $timeout.flush();
+      expect($ctrl.hasFocus).toBe(false);
+    });
+
+    it('cancels the timeout if a focus event is fired right after the blur event', () => {
+      spyOn($timeout, 'cancel').and.callThrough();
+      $ctrl.hasFocus = true;
+      $ctrl.blur();
+      $ctrl.focus();
+      $timeout.flush();
+
+      expect($timeout.cancel).toHaveBeenCalled();
+      expect($ctrl.hasFocus).toBe(true);
     });
   });
 
-  describe('openImagePicker', () => {
+  describe('openLinkPicker', () => {
     beforeEach(() => {
       init();
       spyOn(CmsService, 'publish');
-      spyOn($ctrl.labelElement, 'focus');
-      spyOn($ctrl, '_focusImageElement');
-      $ctrl.openImagePicker();
+      spyOn($ctrl, '_focusSelectButton');
+      $ctrl.openLinkPicker();
     });
 
-    it('opens the picker by publishing the "show-image-picker" event', () => {
-      expect(CmsService.publish).toHaveBeenCalledWith('show-image-picker', 'image-picker-config', { uuid: 'model-value' },
+    it('opens the picker by publishing the "show-link-picker" event', () => {
+      expect(CmsService.publish).toHaveBeenCalledWith('show-link-picker', 'link-picker-config', { uuid: 'model-value' },
         jasmine.any(Function), jasmine.any(Function));
     });
 
-    it('stores the URL and the UUID of the picked image', () => {
+    it('stores the UUID and displayName of the picked link', () => {
       const okCallback = CmsService.publish.calls.mostRecent().args[3];
       okCallback({
-        url: 'new-url',
+        displayName: 'new-display-name',
         uuid: 'new-uuid',
       });
       $scope.$apply();
 
-      expect($ctrl.imagePicked).toBe(true);
-      // the image will be focussed by the focus-if directive
-      expect($ctrl._focusImageElement).not.toHaveBeenCalled();
-      expect($ctrl.url).toEqual('new-url');
+      expect($ctrl.linkPicked).toBe(true);
+      expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
+      expect($ctrl.displayName).toEqual('new-display-name');
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
     });
 
-    it('sets focus on the imageElement if an image was previously picked', () => {
-      $ctrl.imagePicked = true;
+    it('sets focus on the select-button if a link was previously picked', () => {
+      $ctrl.linkPicked = true;
       const okCallback = CmsService.publish.calls.mostRecent().args[3];
       okCallback({
-        url: 'new-url',
+        displayName: 'new-display-name',
         uuid: 'new-uuid',
       });
       $scope.$apply();
 
-      expect($ctrl._focusImageElement).toHaveBeenCalled();
+      expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
 
-    it('sets focus on the imageElement when the picker is cancelled and an image was previously picked', () => {
-      spyOn($ctrl, '_hasImageElement').and.returnValue(true);
+    it('sets focus on the select button when the picker is cancelled and a link was previously picked', () => {
       const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
       cancelCallback();
 
-      expect($ctrl._focusImageElement).toHaveBeenCalled();
-    });
-
-    it('sets focus on the labelElement when the picker is cancelled and no image has been picked yet', () => {
-      const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
-      cancelCallback();
-
-      expect($ctrl.labelElement.focus).toHaveBeenCalled();
+      expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
   });
 
-  describe('clearPickedImage', () => {
-    it('resets the value of the url and ngModel.$viewValue', () => {
+  describe('clear link', () => {
+    it('resets the value of the displayName and ngModel.$viewValue', () => {
       init();
-      $ctrl.clearPickedImage();
+      $ctrl.clear();
 
-      expect($ctrl.url).toEqual('');
-      expect($ctrl.imagePicked).toBe(false);
+      expect($ctrl.displayName).toEqual('');
+      expect($ctrl.linkPicked).toBe(false);
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('');
     });
   });

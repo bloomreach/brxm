@@ -26,13 +26,15 @@ class nodeLinkController {
 
   $onInit() {
     if (this.index === 0) {
-      this.$scope.$on('primitive-field:focus', () => {
-        if (this.ngModel.$viewValue === '') {
-          this.openLinkPicker();
-        } else {
-          this._focusClearButton();
-        }
-      });
+      this.$scope.$on('primitive-field:focus', () => this.onFocusFromParent());
+    }
+  }
+
+  onFocusFromParent() {
+    if (this.ngModel.$modelValue === '') {
+      this.openLinkPicker();
+    } else {
+      this._focusClearButton();
     }
   }
 
