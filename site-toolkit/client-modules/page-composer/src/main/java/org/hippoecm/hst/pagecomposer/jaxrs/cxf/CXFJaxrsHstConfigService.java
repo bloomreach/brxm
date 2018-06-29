@@ -190,6 +190,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             this.previewDecorator = previewDecorator;
         }
 
+        @Override
+        public ClassLoader getWebsiteClassLoader() {
+            return delegatee.getWebsiteClassLoader();
+        }
 
         @Override
         public VirtualHosts getVirtualHosts() {
@@ -206,12 +210,12 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
         @Override
         public HstSiteMapMatcher getHstSiteMapMatcher() {
-            return null;
+            return delegatee.getHstSiteMapMatcher();
         }
 
         @Override
         public HstLinkCreator getHstLinkCreator() {
-            return null;
+            return delegatee.getHstLinkCreator();
         }
     }
 }

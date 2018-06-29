@@ -21,6 +21,8 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 
 public interface HstModel {
 
+    ClassLoader getWebsiteClassLoader();
+
     VirtualHosts getVirtualHosts();
 
     HstSiteMapMatcher getHstSiteMapMatcher();

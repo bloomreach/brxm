@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil.executeWithWebsiteClassLoader;
 
 public class ContainerItemComponentServiceImpl implements ContainerItemComponentService {
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentServiceImpl.class);
@@ -231,7 +232,16 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
                                                            final Locale locale,
                                                            final String prefix) throws RepositoryException, ClassNotFoundException {
         final String contentPath = getContentPath();
-        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
+
+
+        ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node -> {
+            try {
+                return ParametersInfoAnnotationUtils.getParametersInfoAnnotation(node);
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+        }, componentItemNode);
+
         if (parametersInfo == null) {
             parametersInfo = defaultMissingParametersInfo;
         }
@@ -265,6 +275,7 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
     private void doCreateVariant(final Node containerItem,
                          final HstComponentParameters componentParameters,
                          final String variantId) throws RepositoryException, IllegalStateException {
+
         Map<String, String> annotatedParameters = PageComposerUtil.getAnnotatedDefaultValues(containerItem);
 
         for (String parameterName : annotatedParameters.keySet()) {

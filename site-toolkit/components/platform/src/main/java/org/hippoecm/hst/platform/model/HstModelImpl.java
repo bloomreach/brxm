@@ -93,6 +93,11 @@ public class HstModelImpl implements HstModel {
     }
 
     @Override
+    public ClassLoader getWebsiteClassLoader() {
+        return websiteClassLoader;
+    }
+
+    @Override
     public VirtualHosts getVirtualHosts() {
         VirtualHosts vhosts = virtualHosts;
         if (vhosts != null) {

@@ -21,13 +21,17 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,15 @@ public class PageComposerUtil {
      * @return the Map of all {@link Parameter} names and their default value
      */
     public static Map<String, String> getAnnotatedDefaultValues(final Node componentItemNode) throws RepositoryException, IllegalArgumentException {
-        ParametersInfo parametersInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
+        final ParametersInfo parametersInfo = executeWithWebsiteClassLoader(node -> {
+            try {
+                return ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentItemNode);
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
+        }, componentItemNode);
+
+        // Parameter is part of shared class loader so below doesn't need to be done with the 'website classloader'
         if (parametersInfo != null) {
             Class<?> classType = parametersInfo.type();
             if (classType == null) {
@@ -63,4 +75,25 @@ public class PageComposerUtil {
         }
         return Collections.emptyMap();
     }
+
+    /**
+     * @param function the function to be executed with the website classloader
+     * @param input the input of the {@code function}
+     * @param <R> the type of the output of the {@code function}
+     * @param <T> the type of the input of the {@code function}
+     * @return
+     */
+    public static <T, R> R executeWithWebsiteClassLoader(final Function<T,R> function, final T input) {
+        final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            final HstModel websiteHstModel = (HstModel) RequestContextProvider.get().getAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR);
+            if (websiteHstModel != null) {
+                Thread.currentThread().setContextClassLoader(websiteHstModel.getWebsiteClassLoader());
+            }
+            return function.apply(input);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
+    }
+
 }
