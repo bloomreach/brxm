@@ -28,7 +28,7 @@ class nodeLinkController {
     if (this.index === 0) {
       this.$scope.$on('primitive-field:focus', () => {
         if (this.ngModel.$viewValue === '') {
-          this._focusSelectButton();
+          this.openLinkPicker();
         } else {
           this._focusClearButton();
         }

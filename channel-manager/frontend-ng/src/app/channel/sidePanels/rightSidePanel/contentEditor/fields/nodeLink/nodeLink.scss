@@ -17,8 +17,12 @@
 $button-width: 40px;
 $first-button-left-padding: 8px;
 
-.field-type-node_link.has-focused-field:not(.md-input-has-value) {
+.field-type-node_link:not(.md-input-has-value) {
   label {
+    cursor: pointer;
+  }
+
+  &.has-focused-field label {
     color: $text-disabled !important;
 
     md-icon {
