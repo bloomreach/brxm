@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -56,6 +59,7 @@ public class HstModelImpl implements HstModel {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
 
+    private Session session;
     private final String contextPath;
     private final ContainerConfiguration websiteContainerConfiguration;
     // not yet used but most likely needed
@@ -70,12 +74,16 @@ public class HstModelImpl implements HstModel {
     private volatile VirtualHosts virtualHosts;
     private BiPredicate<Session, Channel> channelFilter;
 
+    private InvalidationMonitor invalidationMonitor;
 
-    public HstModelImpl(final String contextPath,
+
+    public HstModelImpl(final Session session,
+                        final String contextPath,
                         final ClassLoader websiteClassLoader,
                         final ComponentManager websiteComponentManager,
                         final HstNodeLoadingCache hstNodeLoadingCache,
-                        final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
+                        final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws RepositoryException {
+        this.session = session;
         this.contextPath = contextPath;
         this.websiteClassLoader = websiteClassLoader;
         this.websiteComponentManager = websiteComponentManager;
@@ -90,11 +98,23 @@ public class HstModelImpl implements HstModel {
         configureHstLinkCreator();
 
         channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
+
+        invalidationMonitor = new InvalidationMonitor(session, hstNodeLoadingCache, hstConfigurationLoadingCache, this);
+
+    }
+
+    public void destroy() throws RepositoryException {
+        invalidationMonitor.destroy();
+        session.logout();
     }
 
     @Override
     public ClassLoader getWebsiteClassLoader() {
         return websiteClassLoader;
+    }
+
+    public synchronized void invalidate() {
+        virtualHosts = null;
     }
 
     @Override
@@ -110,6 +130,8 @@ public class HstModelImpl implements HstModel {
                 return vhosts;
             }
 
+            // dispatch all events
+            invalidationMonitor.dispatchHstEvents();
 
             // make sure that the Thread class loader during model loading is the platform classloader
             final ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
@@ -119,6 +141,7 @@ public class HstModelImpl implements HstModel {
                 }
                 final VirtualHostsService virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
                 augment(virtualHosts);
+
                 this.virtualHosts = virtualHosts;
                 return this.virtualHosts;
             } catch (RuntimeException e) {
@@ -248,5 +271,4 @@ public class HstModelImpl implements HstModel {
 
         return compositeFilter;
     }
-
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -103,32 +103,6 @@
   <bean id="defaultJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
     <property name="sourceList"> 
       <list>
-
-        <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
-        <!--<bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">-->
-          <!--<property name="nodeAddedEnabled" value="true"/>-->
-          <!--<property name="nodeRemovedEnabled" value="true"/>-->
-          <!--<property name="propertyAddedEnabled" value="true"/>-->
-          <!--<property name="propertyChangedEnabled" value="true"/>-->
-          <!--<property name="propertyRemovedEnabled" value="true"/>-->
-          <!--<property name="absolutePath" value="${hst.configuration.rootPath}"/>-->
-          <!--<property name="deep" value="true"/>-->
-          <!--<property name="uuids">-->
-            <!--<null/>-->
-          <!--</property>-->
-          <!--<property name="nodeTypeNames">-->
-            <!--<null/>-->
-          <!--</property>-->
-          <!--<property name="noLocal" value="false"/>-->
-
-          <!--<property name="eventListener">-->
-            <!--<bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">-->
-              <!--<property name="hstModelMutex" ref="hstModelMutex"/>-->
-              <!--<property name="hstEventsCollector" ref="hstEventsCollector"/>-->
-              <!--<property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>-->
-            <!--</bean>-->
-          <!--</property>-->
-        <!--</bean>-->
 
         <!-- Changes in the content will invalidate the page cache if pageCache.clearOnContentChange is true . -->
         <bean class="org.hippoecm.hst.core.jcr.OptionalEventListenerItemImpl">

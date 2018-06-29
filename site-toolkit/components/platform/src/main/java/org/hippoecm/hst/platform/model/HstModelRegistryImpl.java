@@ -43,7 +43,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
-    private final Map<String, HstModel> models = new HashMap<>();
+    private final Map<String, HstModelImpl> models = new HashMap<>();
 
     private Repository repository;
     private Credentials credentials;
@@ -66,7 +66,9 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     }
 
     public Map<String, HstModel> getModels() {
-        return models;
+        final HashMap<String, HstModel> hstModels = new HashMap<>();
+        hstModels.putAll(models);
+        return hstModels;
     }
 
     // TODO HSTTWO-4355 register listeners for jcr events!!
@@ -74,12 +76,11 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     @Override
     public HstModel registerHstModel(final String contextPath, final ClassLoader websiteClassLoader,
                                      final ComponentManager websiteComponentManager, final boolean loadHstConfigNodes) throws ModelRegistrationException {
-        Session session = null;
         if (models.containsKey(contextPath)) {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
         try {
-            session = repository.login(credentials);
+            final Session session = repository.login(credentials);
             final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
             final String rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
             if (rootPath == null) {
@@ -105,7 +106,8 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                 loadHstConfigNodes(websiteClassLoader, hstNodeLoadingCache);
             }
 
-            final HstModelImpl model = new HstModelImpl(contextPath, websiteClassLoader, websiteComponentManager, hstNodeLoadingCache, hstConfigurationLoadingCache);
+            final HstModelImpl model = new HstModelImpl(session, contextPath, websiteClassLoader, websiteComponentManager,
+                    hstNodeLoadingCache, hstConfigurationLoadingCache);
             models.put(contextPath, model);
 
             log.info("Registered HstModel for '{}'", contextPath);
@@ -116,20 +118,23 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             throw new ModelRegistrationException("Cannot create HstModelRegistryImpl", e);
         } catch (Exception e) {
             throw new ModelRegistrationException("Cannot create HstModelRegistryImpl", e);
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
         }
     }
 
     @Override
     public void unregisterHstModel(final String contextPath) {
         // TODO HSTTWO-4355 should this do more? Potentially stop the website component manager as well if needed?
-        final HstModel remove = models.remove(contextPath);
+        // TODO currently this methods is invoked by org.hippoecm.hst.site.container.DefaultHstSiteConfigurer.destroy()
+        // TODO which stops the component manager as well...shouldn't we do that here?
+        final HstModelImpl remove = models.remove(contextPath);
         if (remove == null) {
             throw new ModelRegistrationException(String.format("Could not remove HstModel for '{}' since no such model present", contextPath));
         } else {
+            try {
+                remove.destroy();
+            } catch (Exception e) {
+                log.error("Exception while destroying the model for '{}'", contextPath, e);
+            }
             log.info("Unregistered HstModel for '{}'", contextPath);
         }
     }

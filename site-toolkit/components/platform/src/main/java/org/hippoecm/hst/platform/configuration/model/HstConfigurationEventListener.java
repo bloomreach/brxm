@@ -20,44 +20,28 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstConfigurationEventListener extends GenericEventListener implements EventListenersContainerListener {
+public class HstConfigurationEventListener extends GenericEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
-
-    private Object hstModelMutex;
+    private HstModelImpl hstModelImpl;
     private HstEventsCollector hstEventsCollector;
 
-    public void setHstModelMutex(Object hstModelMutex) {
-        this.hstModelMutex = hstModelMutex;
-    }
-
-    public void setHstEventsCollector(HstEventsCollector hstEventsCollector) {
+    public HstConfigurationEventListener(final HstModelImpl hstModelImpl, final HstEventsCollector hstEventsCollector) {
+        this.hstModelImpl = hstModelImpl;
         this.hstEventsCollector = hstEventsCollector;
     }
 
     @Override
     public void onEvent(EventIterator events) {
-        synchronized(hstModelMutex) {
+        synchronized(hstModelImpl) {
             hstEventsCollector.collect(events);
             if (hstEventsCollector.hasEvents()) {
-                // TODO HSTTWO-4355 get rid of the hstManager : This should live in the platform webapp!
-                // hstManager.markStale();
+                hstModelImpl.invalidate();
             }
         }
     }
-    
-    public void onEventListenersContainerStarted() {
-        // do nothing
-    }
-    
-    public void onEventListenersContainerRefreshed() {
-        // do nothing
-    }
-    
-    public void onEventListenersContainerStopped() {
-        // do nothing
-    }
+
 }
