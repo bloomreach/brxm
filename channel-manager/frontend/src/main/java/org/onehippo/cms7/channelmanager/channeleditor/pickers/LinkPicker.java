@@ -75,7 +75,7 @@ public class LinkPicker extends ChannelEditorPicker<String> {
         final Session session = UserSession.get().getJcrSession();
         try {
             final Node pickedNode = session.getNodeByIdentifier(uuid);
-            picked.put("uuid", getNodeName(pickedNode));
+            picked.put("displayName", getNodeName(pickedNode));
         } catch (ItemNotFoundException e) {
             log.warn("Unable to find item: {} : {} ", uuid, e);
         } catch (RepositoryException e) {

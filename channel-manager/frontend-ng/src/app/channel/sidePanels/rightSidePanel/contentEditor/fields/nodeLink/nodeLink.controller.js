@@ -81,7 +81,7 @@ class nodeLinkController {
         this._focusClearButton();
       }
       this.linkPicked = true;
-      this.displayName = link.url;
+      this.displayName = link.displayName;
       this.ngModel.$setViewValue(link.uuid);
     });
   }
