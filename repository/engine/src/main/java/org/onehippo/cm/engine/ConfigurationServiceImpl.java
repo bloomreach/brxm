@@ -74,7 +74,6 @@ import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
@@ -96,7 +95,7 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
@@ -150,14 +149,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
 
         final Collection<ModuleImpl> extensionModules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
-                .filter(m -> Objects.equals(extensionName, m.getExtension())).collect(Collectors.toList());
+                .filter(m -> Objects.equals(extensionName, m.getExtensionName())).collect(Collectors.toList());
         extensionModules.forEach(runtimeConfigurationModel::addReplacementModule);
 
         ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
 
         final List<ModuleImpl> extensionModulesFromSourceFiles =
                 readModulesFromSourceFiles(runtimeConfigurationModel).stream()
-                        .filter(m -> extensionName.equals(m.getExtension())).collect(toList());
+                        .filter(m -> extensionName.equals(m.getExtensionName())).collect(toList());
 
         if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
             newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
@@ -178,7 +177,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
             //process webfilebundle instructions from extensions which are not from the current site
             final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
-                    filter(m -> extensionName.equals(m.getExtension())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
+                    filter(m -> extensionName.equals(m.getExtensionName())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
             configService.writeWebfiles(webfileBundleDefs, baselineService, session);
 
             ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
@@ -240,7 +239,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
 
                             final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
-                                    .filter(m -> m.getExtension() == null || knownExtensions.contains(m.getExtension())).collect(toList());
+                                    .filter(m -> m.getExtensionName() == null || knownExtensions.contains(m.getExtensionName())).collect(toList());
                             bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
                         } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
@@ -594,7 +593,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * @return a List of newly-loaded filesystem-backed Modules
      */
     private List<ModuleImpl> readModulesFromSourceFiles(final ConfigurationModelImpl bootstrapModel) throws IOException, ParserException {
-        final String projectDir = System.getProperty(org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY);
+        final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
 
         // if project.basedir is defined, and auto-export config mentions a module, load it from the filesystem
         final ConfigurationPropertyImpl autoExportModulesProp =

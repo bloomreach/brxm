@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
 
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
-import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 
 /**
  * Create a LocalHippoRepository running in its own isolated classloader. Running the repository in its own classloader

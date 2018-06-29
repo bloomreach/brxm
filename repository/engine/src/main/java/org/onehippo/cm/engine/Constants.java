@@ -76,4 +76,5 @@ public final class Constants {
     // Default HST root node -- needed for auto-export to handle locationMapper rules correctly
     public static final String HST_DEFAULT_ROOT_PATH = "/hst:hst";
 
+    public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
 }

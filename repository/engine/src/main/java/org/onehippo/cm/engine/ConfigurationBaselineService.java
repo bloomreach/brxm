@@ -45,7 +45,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.MavenComparableVersion;
-import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -165,7 +164,7 @@ public class ConfigurationBaselineService {
                 final ModuleImpl module = loadModuleDescriptor(moduleNode);
 
                 // if the stored module is from an extension we're processing now, remove it
-                if (extensions.contains(module.getExtension())) {
+                if (extensions.contains(module.getExtensionName())) {
                     moduleNode.remove();
                 }
             }
@@ -191,7 +190,7 @@ public class ConfigurationBaselineService {
                         Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
                         // process each module in detail, if part of an appropriate extension
-                        if (extensions.contains(module.getExtension())) {
+                        if (extensions.contains(module.getExtensionName())) {
                             storeBaselineModule(module, moduleNode, session, false);
                         }
                     }
@@ -670,7 +669,7 @@ public class ConfigurationBaselineService {
         for (Node moduleNode : findModuleNodes(baselineNode)) {
             final ModuleImpl module = loadModuleDescriptor(moduleNode);
 
-            if (extensions.contains(module.getExtension())) {
+            if (extensions.contains(module.getExtensionName())) {
                 modules.add(module);
             }
         }
@@ -698,6 +697,8 @@ public class ConfigurationBaselineService {
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
+
+            // TODO: determine and set actual extension name
 
             final String lastExecutedAction = getLastExecutedAction(moduleNode);
             module.setLastExecutedAction(lastExecutedAction);
