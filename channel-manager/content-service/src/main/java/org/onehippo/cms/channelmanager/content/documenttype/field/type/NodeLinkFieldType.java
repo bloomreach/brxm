@@ -42,11 +42,10 @@ public class NodeLinkFieldType extends LinkFieldType {
             "cluster.name",
             "last.visited.enabled",
             "last.visited.key",
-            "last.visited.nodetypes",
             "language.context.aware",
     };
 
-    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes" };
+    private static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes", "last.visited.nodetypes" };
 
     private ObjectNode config;
 
