@@ -30,11 +30,12 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.addon.workflow.BranchIdObserver;
 import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.BranchIdModelObservable;
+import org.hippoecm.frontend.plugins.reviewedactions.BranchIdModelReferenceSubject;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
@@ -76,13 +77,15 @@ import org.slf4j.LoggerFactory;
  * </p>
  * The editor model is the variant that is shown.
  */
-public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implements EventListener {
+public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implements EventListener, BranchIdObserver {
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
     private String branchId;
+    private final BranchIdModelReferenceSubject branchModelIdSubject = new BranchIdModelReferenceSubject();
+
 
     // CMS-10723 Made WorkflowState package-private to be able to unit test
     static class WorkflowState {
@@ -181,26 +184,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
         super(manager, context, config, model, getMode(model));
-        try {
-            DocumentWorkflow documentWorkflow = null;
-            try{
-                documentWorkflow = getDocumentWorkflow();
-            }
-            catch (RepositoryException e){
-                log.warn("Could not find documentWorkflow", e);
-            }
-            String identifier = null;
-            if (documentWorkflow != null) {
-                identifier = documentWorkflow.getNode().getIdentifier();
-            }
-            new BranchIdModelObservable(context, identifier, this::updateModel)
-                    .observeBranchId(getInitialBranchId());
-        } catch (WorkflowException | RemoteException | RepositoryException e) {
-            throw new EditorException(e);
-        }
+
+
     }
 
-    String getInitialBranchId() throws WorkflowException, RemoteException, RepositoryException {
+    String getInitialBranchId() {
         String result = null;
         DocumentWorkflow documentWorkflow = null;
         try {
@@ -209,15 +197,36 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             log.warn(e.getMessage(),e);
         }
         if (documentWorkflow!=null){
-            result =  BranchWorkflowUtils.getBranchId(documentWorkflow.hints(),WorkflowUtils.Variant.UNPUBLISHED, WorkflowUtils.Variant.PUBLISHED);
+            try {
+                result =  BranchWorkflowUtils.getBranchId(documentWorkflow.hints(),WorkflowUtils.Variant.UNPUBLISHED, WorkflowUtils.Variant.PUBLISHED);
+            } catch (WorkflowException | RemoteException | RepositoryException e) {
+                log.warn(e.getMessage(),e);
+            }
         }
         return result;
     }
 
-    private void updateModel(final String branchId) {
+
+    @Override
+    public void onBranchIdChanged(final String branchId) {
         log.debug("Updated branch:{}", branchId);
         this.branchId = branchId;
+    }
 
+    @Override
+    public IPluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
+
+    @Override
+    public String getBranchIdModelReferenceIdentifier() {
+        try {
+            return getModel().getObject().getIdentifier();
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(),e);
+        }
+        return null;
     }
 
     @Override
@@ -581,7 +590,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     public void start() throws EditorException {
+        branchModelIdSubject.registerObserver(this);
+        branchModelIdSubject.setInitialBranchId(getInitialBranchId());
+        branchId = branchModelIdSubject.getBranchId();
         super.start();
+
         editorModel = getEditorModel();
         if (getMode() == Mode.EDIT) {
             try {
@@ -615,6 +628,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     @Override
     public void stop() {
         super.stop();
+        branchModelIdSubject.unregisterObserver(this);
         if (getMode() == Mode.EDIT) {
             try {
                 final UserSession session = UserSession.get();

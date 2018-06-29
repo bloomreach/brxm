@@ -44,5 +44,4 @@ public abstract class BranchAwareStdWorkflow extends StdWorkflow implements Bran
         super(id, name, iconReference, pluginContext, model);
     }
 
-    public abstract void onBranchIdChanged(final String branchId);
 }

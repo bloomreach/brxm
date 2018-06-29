@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,7 +27,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.BranchAwareStdWorkflow;
+import org.hippoecm.addon.workflow.BranchIdObserver;
 import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -51,15 +50,15 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
-public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
+public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin implements BranchIdObserver {
 
     private static final long serialVersionUID = 1L;
 
-    private final BranchAwareStdWorkflow infoAction;
-    private final BranchAwareStdWorkflow infoEditAction;
+    private final StdWorkflow infoAction;
+    private final StdWorkflow infoEditAction;
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
-    private BranchIdModelObservable branchIdModelObservable;
+    private BranchIdModelReferenceSubject branchIdModelReferenceSubject = new BranchIdModelReferenceSubject();
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -68,12 +67,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         info = getHints();
 
-        infoAction = new BranchAwareStdWorkflow("info", "info") {
-
-            @Override
-            public void onBranchIdChanged(final String branchId) {
-                log.debug("Updating branch:{}", branchId);
-            }
+        infoAction = new StdWorkflow("info", "info") {
 
             @Override
             public String getSubMenu() {
@@ -118,8 +112,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                String branchId = AbstractPreviewWorkflowPlugin.this.branchIdModelObservable.getBranchId();
-                if (branchId != null) {
+                String branchId = AbstractPreviewWorkflowPlugin.this.branchIdModelReferenceSubject.getBranchId();
+                if (isModelBasedOnVersionHistory(branchId)) {
                     workflow.checkoutBranch(branchId);
                 }
                 Document docRef = workflow.obtainEditableInstance();
@@ -139,19 +133,17 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 }
                 return null;
             }
+
+            private boolean isModelBasedOnVersionHistory(final String branchId) {
+                return !AbstractPreviewWorkflowPlugin.this.getInitialBranchId().equals(branchId);
+            }
         };
         add(editAction);
-
-        final String initialBranchId = BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
-        try {
-            branchIdModelObservable = new BranchIdModelObservable(context, getWorkflow().getNode().getIdentifier(),
-                    branchId -> Stream.of(infoEditAction, infoAction).forEach(action -> action.onBranchIdChanged(branchId)));
-            branchIdModelObservable
-                    .observeBranchId(initialBranchId);
-        } catch (RepositoryException e) {
-            log.warn("Could not get identifier", e);
-        }
         hideInvalidActions();
+    }
+
+    private String getInitialBranchId() {
+        return BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
     }
 
 
@@ -184,6 +176,51 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         return StringUtils.EMPTY;
     }
 
-    protected abstract BranchAwareStdWorkflow getInfoEditAction();
+    protected abstract StdWorkflow getInfoEditAction();
 
+    @Override
+    public void onBranchIdChanged(final String branchId) {
+        log.debug("branchId changed to: {}", branchId);
+    }
+
+    @Override
+    public IPluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
+    @Override
+    public String getBranchIdModelReferenceIdentifier() {
+        try {
+            return getWorkflow().getNode().getIdentifier();
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Called during the start phase of the plugin.  Services and trackers that were registered
+     * during construction have been made available to other plugins.
+     * <p>
+     * NOTE* If you override this, you *must* call super.onStop() within your
+     * implementation.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        branchIdModelReferenceSubject.registerObserver(this);
+        branchIdModelReferenceSubject.setInitialBranchId(getInitialBranchId());
+    }
+
+    /**
+     * Called during the stop phase of the plugin.
+     * <p>
+     * NOTE* If you override this, you *must* call super.onStop() within your
+     * implementation.
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        branchIdModelReferenceSubject.unregisterObserver(this);
+    }
 }

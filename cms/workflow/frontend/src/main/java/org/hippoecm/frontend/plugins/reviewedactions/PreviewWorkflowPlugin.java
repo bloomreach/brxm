@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.BranchAwareStdWorkflow;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -35,13 +35,8 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
         inUseBy = getHint("inUseBy");
     }
 
-    protected BranchAwareStdWorkflow getInfoEditAction() {
-        return new BranchAwareStdWorkflow("infoEdit", "infoEdit") {
-
-            @Override
-            public void onBranchIdChanged(final String branchId) {
-                log.debug("Updating branch:{}", branchId);
-            }
+    protected StdWorkflow getInfoEditAction() {
+        return new StdWorkflow("infoEdit", "infoEdit") {
 
             /**
              * Gets whether this component and any children are visible.
