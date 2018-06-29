@@ -17,7 +17,17 @@
 $button-width: 40px;
 $first-button-left-padding: 8px;
 
-internal-link {
+.field-type-node_link.has-focused-field:not(.md-input-has-value) {
+  label {
+    color: $text-disabled !important;
+
+    md-icon {
+      color: $text-dim !important;
+    }
+  }
+}
+
+node-link {
   md-input-container & .md-input[disabled].ng-not-empty {
     color: $text-dark;
   }
@@ -37,7 +47,7 @@ internal-link {
     margin: 0;
   }
 
-  .hippo-internallink-buttons {
+  .hippo-node-link-buttons {
     display: flex;
     justify-content: flex-end;
     min-height: $button-width;

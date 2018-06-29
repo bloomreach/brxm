@@ -22,21 +22,20 @@
        ng-focus="$ctrl.focus($event)"
        ng-model="$ctrl.displayName"
        ng-required="$ctrl.isRequired"
-       placeholder="Internal link"
        readonly="readonly"
-       type="text"
-       >
+       tabindex="-1"
+       type="text">
 
-<div class="hippo-internallink-buttons">
-  <md-button class="md-icon-button hippo-internallink-clear"
-             focus-if="$ctrl.linkPicked"
+<div class="hippo-node-link-buttons">
+  <md-button class="md-icon-button hippo-node-link-clear"
              ng-blur="$ctrl.blur($event)"
              ng-click="$ctrl.clear()"
              ng-focus="$ctrl.focus($event)"
              ng-if="$ctrl.displayName">
     <md-icon md-font-icon="mdi-close"></md-icon>
   </md-button>
-  <md-button class="md-icon-button hippo-internallink-select"
+  <md-button class="md-icon-button hippo-node-link-select"
+             focus-if="$ctrl.linkPicked"
              ng-blur="$ctrl.blur($event)"
              ng-click="$ctrl.openLinkPicker()"
              ng-focus="$ctrl.focus($event)">

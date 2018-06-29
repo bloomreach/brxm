@@ -27,25 +27,21 @@ class nodeLinkController {
   $onInit() {
     if (this.index === 0) {
       this.$scope.$on('primitive-field:focus', () => {
-        this.setFocus();
+        if (this.ngModel.$viewValue === '') {
+          this._focusSelectButton();
+        } else {
+          this._focusClearButton();
+        }
       });
     }
   }
 
-  setFocus() {
-    if (this.displayName) {
-      this._focusClearButton();
-    } else {
-      this._focusSelectButton();
-    }
-  }
-
   _focusClearButton() {
-    this.$element.find('.hippo-internallink-clear').focus();
+    this.$element.find('.hippo-node-link-clear').focus();
   }
 
   _focusSelectButton() {
-    this.$element.find('.hippo-internallink-select').focus();
+    this.$element.find('.hippo-node-link-select').focus();
   }
 
   // set "hasFocus" to false after a short timeout to prevent the bottom-border styling
@@ -71,14 +67,14 @@ class nodeLinkController {
     const uuid = this.ngModel.$modelValue;
     this.CmsService.publish('show-link-picker', this.config.linkpicker, { uuid },
       link => this._onLinkPicked(link),
-      () => this.setFocus(),
+      () => this._focusSelectButton(),
     );
   }
 
   _onLinkPicked(link) {
     this.$scope.$apply(() => {
       if (this.linkPicked) {
-        this._focusClearButton();
+        this._focusSelectButton();
       }
       this.linkPicked = true;
       this.displayName = link.displayName;

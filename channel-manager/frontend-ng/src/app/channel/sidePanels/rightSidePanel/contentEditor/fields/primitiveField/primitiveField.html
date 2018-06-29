@@ -16,7 +16,7 @@
 <div class="field"
      layout="column"
      ng-class="{'has-invalid-field': !$ctrl.isValid()}">
-  <md-input-container class="qa-field"
+  <md-input-container class="qa-field field-type-{{:: $ctrl.fieldType.type | lowercase }}"
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
