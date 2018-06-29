@@ -64,7 +64,10 @@ class EditContentService {
     } else {
       this.ContentService.getDocument(documentId).then(
         (document) => {
-          if (this.ProjectService.projectIdFromToggle && document.branchId !== this.ProjectService.projectIdFromToggle) {
+          const selectedProject = this.ProjectService.selectedProject;
+          const selectedProjectId = selectedProject ? selectedProject.id : undefined;
+
+          if (selectedProjectId && document.branchId !== selectedProjectId) {
             // set the title
             const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
             this.RightSidePanelService.setTitle(documentTitle);

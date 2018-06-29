@@ -58,7 +58,6 @@ class ProjectService {
   }
 
   updateSelectedProject(projectId) {
-    this.projectIdFromToggle = projectId;
     const selectedProject = this.projects.find(project => project.id === projectId);
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
