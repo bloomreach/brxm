@@ -45,13 +45,8 @@ class HippoCmCtrl {
     this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
       if (!this.ChannelService.matchesChannel(channel, projectId)) {
         this.ChannelService.initializeChannel(channel, initialPath, projectId);
-      } else if (angular.isString(initialPath) // a null path means: reuse the current render path
-        && this.HippoIframeService.getCurrentRenderPathInfo() !== initialPath) {
-        this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
-          this.HippoIframeService.load(initialPath);
-        });
       } else {
-        this.HippoIframeService.reload();
+        this._initializePath(initialPath);
       }
     });
 
@@ -62,6 +57,19 @@ class HippoCmCtrl {
 
     // Handle reloading of iframe by Webpack during development
     this.CmsService.publish('reload-channel');
+  }
+
+  _initializePath(channelRelativePath) {
+    const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
+
+    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
+      && this.HippoIframeService.getCurrentRenderPathInfo() !== initialRenderPath) {
+      this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
+        this.HippoIframeService.load(initialRenderPath);
+      });
+    } else {
+      this.HippoIframeService.reload();
+    }
   }
 }
 
