@@ -48,7 +48,6 @@ class ChannelService {
 
     this.isToolbarDisplayed = true;
     this.channel = {};
-    this.channels = [];
   }
 
   initializeChannel(channel, initialPath, passedProjectId) {
