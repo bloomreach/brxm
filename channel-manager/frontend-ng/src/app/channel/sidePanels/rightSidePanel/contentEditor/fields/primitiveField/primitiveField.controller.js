@@ -48,7 +48,8 @@ class PrimitiveFieldCtrl {
     });
   }
 
-  onLabelClick() {
+  onLabelClick($event) {
+    $event.preventDefault();
     this.$scope.$broadcast('primitive-field:focus');
   }
 
