@@ -47,7 +47,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.InternalLinkFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
@@ -124,7 +124,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
         FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(InternalLinkFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(NodeLinkFieldType.class, NODE_FIELD_PLUGIN));
 
         STRUCTURE_PLUGIN_CLASSES = new HashSet<>();
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");

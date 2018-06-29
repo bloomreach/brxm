@@ -55,15 +55,15 @@ import static org.powermock.api.support.membermodification.MemberModifier.suppre
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({AbstractFieldType.class})
-public class InternalLinkFieldTypeTest {
+public class NodeLinkFieldTypeTest {
 
-    private InternalLinkFieldType linkFieldType;
+    private NodeLinkFieldType linkFieldType;
     private MockNode documentNode;
     private MockNode root;
 
     @Before
     public void setUp() throws RepositoryException {
-        linkFieldType = new InternalLinkFieldType();
+        linkFieldType = new NodeLinkFieldType();
         documentNode = new MockNode("documentNode");
 
         root = MockNode.root();
@@ -88,7 +88,7 @@ public class InternalLinkFieldTypeTest {
 
     @Test
     public void constructor() {
-        assertThat(new InternalLinkFieldType().getType(), equalTo(Type.INTERNAL_LINK));
+        assertThat(new NodeLinkFieldType().getType(), equalTo(Type.NODE_LINK));
     }
 
     @Test

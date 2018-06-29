@@ -142,7 +142,7 @@ public class ChoiceFieldUtils {
             imageLink.init(fieldContext);
             return imageLink;
         } else if (contentType.isContentType(HippoNodeType.NT_MIRROR)) {
-            final InternalLinkFieldType link = new InternalLinkFieldType();
+            final NodeLinkFieldType link = new NodeLinkFieldType();
             link.init(fieldContext);
             return link;
         }
@@ -238,7 +238,7 @@ public class ChoiceFieldUtils {
         }
 
         if (contentType.isContentType(HippoNodeType.NT_MIRROR)) {
-            final InternalLinkFieldType link = new InternalLinkFieldType();
+            final NodeLinkFieldType link = new NodeLinkFieldType();
             link.init(fieldContext);
             return link;
         }
