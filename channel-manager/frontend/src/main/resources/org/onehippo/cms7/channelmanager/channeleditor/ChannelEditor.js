@@ -53,9 +53,10 @@
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
-      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
-      this.iframeToHost.subscribe('show-image-variant-picker', this._showImageVariantPicker, this);
       this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
+      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-link-picker', this._showRichTextLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-image-picker', this._showRichTextImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -250,18 +251,22 @@
       this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
     },
 
-    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      selectedLink.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
-    },
-
-    _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      selectedImage.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
-    },
-
     _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
       this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showLinkPicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+    },
+
+    _showRichTextImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      selectedImage.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
+    },
+
+    _showRichTextLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
+      selectedLink.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
     },
 
     _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {
