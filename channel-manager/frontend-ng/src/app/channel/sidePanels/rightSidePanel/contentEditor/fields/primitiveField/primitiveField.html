@@ -144,6 +144,20 @@
                 url="::fieldValue.metadata.url">
     </image-link>
 
+    <node-link ng-switch-when="NODE_LINK"
+               aria-label="{{::$ctrl.fieldType.displayName}}"
+               config="::$ctrl.fieldType.config"
+               display-name="::fieldValue.metadata.displayName"
+               hint="::$ctrl.fieldType.hint"
+               index="::$index"
+               is-required="::$ctrl.fieldType.required"
+               name="{{::$ctrl.getFieldName($index)}}"
+               ng-model="fieldValue.value"
+               ng-change="$ctrl.valueChanged()"
+               on-focus="$ctrl.focusPrimitive($event)"
+               on-blur="$ctrl.blurPrimitive($event)">
+    </node-link>
+
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
