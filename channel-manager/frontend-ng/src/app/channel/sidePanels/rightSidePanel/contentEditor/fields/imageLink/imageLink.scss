@@ -19,6 +19,20 @@ $first-button-left-padding: 8px;
 $button-width: 40px;
 $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 
+.field-type-image_link:not(.md-input-has-value) {
+  label {
+    cursor: pointer;
+  }
+
+  &.has-focused-field label {
+    color: $text-disabled !important;
+
+    md-icon {
+      color: $text-dim !important;
+    }
+  }
+}
+
 image-link {
   .input-bottom-border {
     bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
