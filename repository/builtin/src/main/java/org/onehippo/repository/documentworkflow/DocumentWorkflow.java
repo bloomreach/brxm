@@ -508,6 +508,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *
      * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     Set<String> listBranches() throws WorkflowException;
 
     /**
@@ -546,6 +547,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * be a state below the handle <em>or</em> a frozenNode from version history.
      * @throws WorkflowException If there is no branch for {@code branchId}
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     Document getBranch(String branchId, WorkflowUtils.Variant state) throws WorkflowException;
 
     /**
@@ -574,6 +576,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch
      *                            is not allowed in the current document state
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     Document checkoutBranch(String branchId) throws WorkflowException;
 
     /**
@@ -611,6 +614,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @param publish {@code true} if the document also needs to be (re)published as part of the reintegrate
      * @throws WorkflowException if there is no branch for {@code branchId}
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void reintegrateBranch(String branchId, boolean publish) throws WorkflowException;
 
     /**
@@ -624,6 +628,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version does not
      * exist
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void publishBranch(String branchId) throws WorkflowException;
 
     /**
@@ -638,6 +643,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * equal to 'master' which is not allowed to be depublished as branch or in case the right published version does not
      * exist
      */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void depublishBranch(String branchId) throws WorkflowException;
 
     /**
