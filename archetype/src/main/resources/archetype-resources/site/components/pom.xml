@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>${groupId}</groupId>
-    <artifactId>${rootArtifactId}</artifactId>
+    <artifactId>${artifactId}-site</artifactId>
     <version>${version}</version>
   </parent>
   <artifactId>${artifactId}-components</artifactId>
