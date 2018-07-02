@@ -576,7 +576,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
             final Map<String, ExtensionEvent> contexts = ExtensionRegistry.getHstRoots();
             for (ExtensionEvent event : contexts.values()) {
-                model = modelReader.readExtension(event.getClassLoader(), model);
+                model = modelReader.readExtension(event.getExtensionName(), event.getClassLoader(), model);
             }
             return model;
         } catch (Exception e) {
