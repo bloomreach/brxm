@@ -26,4 +26,5 @@ definitions:
               site-title: Site Title
               site-title-in-template: Use title-tag provided by page templates
               template-page-title: Template Page Title
+              group.imagesettings: Image settings
               document-image-bean-props: Image field(s) in the documents

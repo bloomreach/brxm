@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,11 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 value = {
                         "document-description-bean-props",
                         "default-meta-description",
+                }
+        ),
+        @FieldGroup(
+                titleKey = "group.imagesettings",
+                value = {
                         "document-image-bean-props"
                 }
         ),
