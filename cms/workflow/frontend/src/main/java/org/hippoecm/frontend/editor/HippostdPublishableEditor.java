@@ -84,7 +84,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
     private String branchId;
-    private final BranchIdModelReferenceSubject branchModelIdSubject = new BranchIdModelReferenceSubject();
+    private final BranchIdModelReferenceSubject branchIdModelReferenceSubject = new BranchIdModelReferenceSubject();
 
 
     // CMS-10723 Made WorkflowState package-private to be able to unit test
@@ -590,9 +590,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     public void start() throws EditorException {
-        branchModelIdSubject.registerObserver(this);
-        branchModelIdSubject.setInitialBranchId(getInitialBranchId());
-        branchId = branchModelIdSubject.getBranchId();
+        branchIdModelReferenceSubject.registerObserver(this);
+        branchIdModelReferenceSubject.setInitialBranchId(getInitialBranchId());
+        branchId = branchIdModelReferenceSubject.getBranchId();
         super.start();
 
         editorModel = getEditorModel();
@@ -628,7 +628,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     @Override
     public void stop() {
         super.stop();
-        branchModelIdSubject.unregisterObserver(this);
+        branchIdModelReferenceSubject.unregisterObserver(this);
         if (getMode() == Mode.EDIT) {
             try {
                 final UserSession session = UserSession.get();
