@@ -133,9 +133,17 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public void viewChannel(final String channelId, final String channelPath, final String branchId) {
         if (siteIsUp) {
             rootPanel.activateCard(RootPanel.CardId.CHANNEL_EDITOR);
-            rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
+
+            final String branchedChannelId = branchedChannelId(channelId, branchId);
+            rootPanel.getChannelEditor().viewChannel(branchedChannelId, channelPath, branchId);
             focus(null);
         }
     }
 
+    private String branchedChannelId(final String channelId, final String branchId) {
+        if (branchId.equals("master")) {
+            return channelId;
+        }
+        return channelId.replaceFirst("-preview$", "-" + branchId + "-preview");
+    }
 }

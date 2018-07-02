@@ -59,7 +59,6 @@ class ChannelCtrl {
   }
 
   $onInit() {
-    this.HippoIframeService.load(this.ChannelService.getInitialRenderPath());
     this.CmsService.subscribe('reload-channel', this._reloadChannel, this);
   }
 

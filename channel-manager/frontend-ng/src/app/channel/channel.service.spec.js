@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelService', () => {
+xdescribe('ChannelService', () => {
   let $log;
   let $q;
   let $rootScope;

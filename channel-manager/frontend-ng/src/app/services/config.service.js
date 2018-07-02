@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import isDevMode from '../dev-mode';
+
 class ConfigService {
   constructor($window, CmsService) {
     'ngInject';
@@ -29,6 +31,10 @@ class ConfigService {
 
   getCmsContextPath() {
     return this.$window.parent ? this.$window.parent.location.pathname : '/cms/';
+  }
+
+  isDevMode() {
+    return isDevMode();
   }
 }
 

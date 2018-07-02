@@ -50,57 +50,41 @@ class ChannelService {
     this.channel = {};
   }
 
-  initializeChannel(channel, initialPath, passedProjectId) {
-    let channelId = channel.id;
-    let setupPromise;
-
-    if (this.ConfigService.projectsEnabled) {
-      setupPromise = this.$q
-        .when(passedProjectId || this.ProjectService.getActiveProject())
-        .then((selectedProjectId) => {
-          channelId = this._getChannelIdOfProject(selectedProjectId, channelId);
-          return selectedProjectId;
-        })
-        .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId))
-        .then(() => {
-          this.ProjectService.registerUpdateListener(() => {
-            const baseChannelId = this.ProjectService.getBaseChannelId(channelId);
-            this.CmsService.publish('load-channel', baseChannelId);
-          });
-        });
-    } else {
-      setupPromise = this.$q.resolve();
-    }
-
-    return setupPromise
-      .then(() => this.ConfigService.setContextPathForChannel(channel.contextPath))
-      .then(() => this.loadChannel(channelId))
-      .then(() => {
-        this.initialRenderPath = this.makeRenderPath(initialPath);
-        this.$state.go('hippo-cm.channel', {
-          channelId: this.channel.id,
-        });
-      });
+  /**
+   * Initializes the channel editor. When the channel to load does not have a preview configuration yet it will be
+   * created. Note that a branched channel (e.g. with a branch ID in the channel ID) will always have a preview
+   * configuration already.
+   *
+   * @param channelId the ID of the channel to load.
+   * @param branchId the ID of the channel branch to show. Defaults to the active project.
+   * @returns {*}
+   */
+  initializeChannel(channelId, branchId) {
+    return this._loadChannel(channelId, branchId).then(() => {
+      this._initializeState();
+    });
   }
 
-  _getChannelIdOfProject(projectId, channelId) {
-    if (projectId === 'master') {
-      return channelId;
-    }
-    return channelId.replace(/-preview$/, `-${projectId}-preview`);
+  _loadChannel(channelId, branchId) {
+    return this.$q.when(branchId || this.ProjectService.getActiveProject())
+      .then(projectId => this.HstService.getChannel(channelId)
+        .then(channel => this.SessionService.initialize(channel)
+          .then(() => this._ensurePreviewHstConfigExists(channel))
+          .then(previewChannel => this._loadProject(channel, projectId)
+            .then(() => this._setChannel(previewChannel)),
+          ),
+        )
+        .catch((error) => {
+          this.$log.error(`Failed to load channel '${channelId}'.`, error);
+          return this.$q.reject();
+        }),
+      );
   }
 
-  loadChannel(channelId) {
-    return this.HstService
-      .getChannel(channelId)
-      .then(channel => this.SessionService.initialize(channel)
-        .then(() => this._ensurePreviewHstConfigExists(channel))
-        .then(previewChannel => this._setChannel(previewChannel)),
-      )
-      .catch((error) => {
-        this.$log.error(`Failed to load channel '${channelId}'.`, error);
-        return this.$q.reject();
-      });
+  _initializeState() {
+    this.$state.go('hippo-cm.channel', {
+      channelId: this.channel.id,
+    });
   }
 
   _ensurePreviewHstConfigExists(channel) {
@@ -121,6 +105,13 @@ class ChannelService {
     return this.$q.resolve(channel);
   }
 
+  _loadProject(channel, branchId) {
+    if (!this.ConfigService.projectsEnabled) {
+      return this.$q.resolve();
+    }
+    return this.ProjectService.load(channel.mountId, branchId);
+  }
+
   _setChannel(channel) {
     this.channel = channel;
 
@@ -133,6 +124,8 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
+
+    this.CmsService.publish('set-breadcrumb', this.channel.name);
   }
 
   _makeContextPrefix(contextPath) {
@@ -151,24 +144,16 @@ class ChannelService {
     return !!this.channel.id;
   }
 
-  matchesChannel(channel, projectId) {
-    if (!this.hasChannel()) {
-      return false;
-    }
-    const currentChannelId = projectId ? this._getChannelIdOfProject(projectId, channel.id) : channel.id;
-    return this.channel.id === currentChannelId;
+  matchesChannel(channelId) {
+    return this.hasChannel() && this.channel.id === channelId;
   }
 
   getChannel() {
     return this.channel;
   }
 
-  getInitialRenderPath() {
-    return this.initialRenderPath;
-  }
-
-  reload(channelId = this.channel.id) {
-    return this.loadChannel(channelId);
+  reload() {
+    return this._loadChannel(this.channel.id, this.channel.branchId);
   }
 
   getPreviewPaths() {

@@ -30,7 +30,6 @@ class RenderingService {
     OverlayService,
     PageMetaDataService,
     PageStructureService,
-    ProjectService,
   ) {
     'ngInject';
 
@@ -46,7 +45,6 @@ class RenderingService {
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
-    this.ProjectService = ProjectService;
   }
 
   init(iframeJQueryElement) {
@@ -105,26 +103,12 @@ class RenderingService {
   }
 
   _updateChannelIfSwitched() {
-    const channelToLoad = this._getChannelToLoad();
-    if (channelToLoad !== null) {
-      const path = this.PageMetaDataService.getPathInfo();
-      this.CmsService.publish('load-channel', channelToLoad, path);
-    }
-  }
-
-  _getChannelToLoad() {
     const channelIdFromService = this.ChannelService.getId();
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
-    if (channelIdFromService === channelIdFromPage) {
-      return null;
+    if (channelIdFromService !== channelIdFromPage) {
+      this.ChannelService.initializeChannel(channelIdFromPage);
     }
-
-    if (this.ConfigService.projectsEnabled) {
-      const projectId = this.ChannelService.selectedProjectId;
-      return this.ProjectService.getBaseChannelId(projectId ? channelIdFromService : channelIdFromPage);
-    }
-    return channelIdFromPage;
   }
 
   _parseLinks() {

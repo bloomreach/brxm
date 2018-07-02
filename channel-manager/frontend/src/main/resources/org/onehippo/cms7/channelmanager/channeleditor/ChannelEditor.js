@@ -37,19 +37,8 @@
       });
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.constructor.call(this, config);
 
-      // In case of reloading the iframe, the ng-app will ask us to provide the channel info (again)
-      this.iframeToHost.subscribe('reload-channel', function() {
-        if (this.channel) {
-          this.loadChannel();
-        }
-      }, this);
-
+      this.iframeToHost.subscribe('set-breadcrumb', this.setTitle, this);
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
-      this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
-      this.iframeToHost.subscribe('load-channel', function(channelId, initialPath, branchId) {
-        this.initChannel(channelId, initialPath, branchId);
-        this.loadChannel();
-      }, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
@@ -74,10 +63,9 @@
     },
 
     loadChannel: function() {
-      this._setChannel(this.channelId).when(function(channelRecord) {
-        this.hostToIFrame.publish('load-channel', channelRecord.json, this.initialPath, this.branchId);
-        delete this.initialPath;  // reset initial path so subsequent load-channel calls reload the current page
-      }.bind(this));
+      this._destroyComponentPropertiesWindow();
+      this.hostToIFrame.publish('load-channel', this.channelId, this.initialPath, this.branchId);
+      delete this.initialPath;  // reset initial path so subsequent load-channel calls reload the current page
     },
 
     /**
@@ -97,17 +85,8 @@
     },
 
     _syncChannel: function() {
-      this._reloadChannels().when(function (channelStore) {
-        var id = this.channel.id,
-          channelRecord = channelStore.getById(id);
-        if (channelRecord) {
-          this.channel = channelRecord.json;
-        } else {
-          // we may just have created the preview config of this channel
-          this.channel = channelStore.getById(id + '-preview').json;
-        }
-        this.hostToIFrame.publish('channel-changed-in-extjs');
-      }.bind(this));
+      this.hostToIFrame.publish('channel-changed-in-extjs');
+      this._reloadChannels();
     },
 
     _renderComponent: function(componentId, propertiesMap) {
@@ -151,38 +130,7 @@
       this.hostToIFrame.publish('close-content-result', uuid, isClosed);
     },
 
-    _setChannel: function(channelId) {
-      return new Hippo.Future(function (success, failure) {
-        this._reloadChannels().when(function (channelStore) {
-          var channelRecord = this._getChannelRecord(channelStore, channelId);
-          if (channelRecord) {
-            this._initialize(channelRecord.json);
-            success(channelRecord);
-          } else {
-            failure();
-          }
-        }.bind(this));
-      }.bind(this));
-    },
-
-    _getChannelRecord: function(channelStore, channelId) {
-      var channelRecord = channelStore.getById(channelId);
-      if (!channelRecord && !channelId.endsWith('-preview')) {
-        channelRecord = channelStore.getById(channelId+'-preview');
-      }
-      return channelRecord;
-    },
-
-    _initialize: function(channel) {
-      this.channel = channel;
-
-      this._destroyComponentPropertiesWindow();
-
-      // update breadcrumb
-      this.setTitle(channel.name);
-    },
-
-    _createComponentPropertiesWindow: function() {
+    _createComponentPropertiesWindow: function(channel) {
       return new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow({
         id: 'componentPropertiesWindow',
         title: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-default-title'],
@@ -196,10 +144,10 @@
         renderTo: this.el,
         constrain: true,
         hidden: true,
-        composerRestMountUrl: this.channel.contextPath + this.apiUrlPrefix,
+        composerRestMountUrl: channel.contextPath + this.apiUrlPrefix,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
-        mountId: this.channel.mountId,
+        mountId: channel.mountId,
         listeners: {
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
@@ -223,7 +171,7 @@
 
     _showComponentProperties: function(selected) {
       if (!this.componentPropertiesWindow) {
-        this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+        this.componentPropertiesWindow = this._createComponentPropertiesWindow(selected.channel);
       }
       this.componentPropertiesWindow.showComponent(
         selected.component,

@@ -31,12 +31,11 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoGlobal = HippoGlobal;
+
+    this.listeners = [];
   }
 
   load(mountId, projectId) {
-    this.channels = [];
-    this.updateListeners = [];
-    this.selectListeners = [];
     this.mountId = mountId;
     this.projectId = projectId;
 
@@ -45,16 +44,14 @@ class ProjectService {
     return this._setupProjects();
   }
 
-  getBaseChannelId(channelId) {
-    const channel = this.channels.find(ch => ch.id === channelId);
-    return channel && channel.branchOf ? channel.branchOf : channelId;
-  }
-
   getActiveProject() {
+    if (!this.ConfigService.projectsEnabled) {
+      return this.$q.resolve('master');
+    }
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
     return this.$http
       .get(url)
-      .then(result => result.data);
+      .then(result => result.data || 'master');
   }
 
   updateSelectedProject(projectId) {
@@ -62,16 +59,12 @@ class ProjectService {
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
     return selectionPromise.then(() => {
-      this._callListeners(this.selectListeners, projectId);
+      this._callListeners(projectId);
     });
   }
 
-  registerSelectListener(cb) {
-    this.selectListeners.push(cb);
-  }
-
-  registerUpdateListener(cb) {
-    this.updateListeners.push(cb);
+  registerListener(cb) {
+    this.listeners.push(cb);
   }
 
   associateWithProject(documentId) {
@@ -97,8 +90,8 @@ class ProjectService {
     return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
   }
 
-  _callListeners(listeners, ...args) {
-    listeners.forEach(listener => listener(...args));
+  _callListeners(...args) {
+    this.listeners.forEach(listener => listener(...args));
   }
 
   _setupProjects() {
@@ -106,7 +99,6 @@ class ProjectService {
       .all([
         this._getProjects(),
         this._getAllProjects(),
-        this._getChannels(),
       ])
       .then(() => {
         const selectedProject = this.allProjects.find(project => project.id === this.projectId);
@@ -149,7 +141,7 @@ class ProjectService {
       .then((response) => { this.selectedProject = response.data; })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.updateListeners);
+        this._callListeners(this.selectedProject.id);
       });
   }
 
@@ -169,7 +161,7 @@ class ProjectService {
       })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.updateListeners);
+        this._callListeners(this.selectedProject.id);
       });
   }
 
@@ -200,18 +192,6 @@ class ProjectService {
       });
   }
 
-  _getChannels() {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/channels/`;
-
-    return this.$http
-      .get(url)
-      .then(response => response.data)
-      .then((channels) => {
-        this.channels = channels;
-        return channels;
-      });
-  }
-
   _setupProjectSync() {
     if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
       this.projectEvents = this.HippoGlobal.Projects.events;
@@ -219,8 +199,8 @@ class ProjectService {
       this.projectEvents.unsubscribeAll();
 
       this.projectEvents.subscribe('project-updated', () => this._getProjects());
-      this.projectEvents.subscribe('project-status-updated', () => this._callListeners(this.updateListeners));
-      this.projectEvents.subscribe('project-channel-added', () => this._callListeners(this.updateListeners));
+      this.projectEvents.subscribe('project-status-updated', () => this._callListeners());
+      this.projectEvents.subscribe('project-channel-added', () => this._callListeners());
       this.projectEvents.subscribe('project-deleted', (projectId) => {
         this._getProjects().then(() => this.updateSelectedProject(projectId));
       });

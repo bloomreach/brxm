@@ -1,11 +1,11 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-function config($stateProvider) {
-  'ngInject';
-
-  $stateProvider.state({
-    name: 'hippo-cm.channel',
-    component: 'channel',
-    params: {
-      channelId: {
-        dynamic: true,
-        type: 'string',
-        value: '',
-      },
-    },
-  });
+export default function isDevMode() {
+  // check whether the the CMS runs in 'Wicket development mode'
+  return window.parent.document.documentElement.classList.contains('wicket-development-mode');
 }
-
-export default config;

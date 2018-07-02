@@ -21,6 +21,7 @@ class HippoCmCtrl {
     BrowserService,
     ChannelService,
     CmsService,
+    ConfigService,
     HippoIframeService,
   ) {
     'ngInject';
@@ -30,6 +31,7 @@ class HippoCmCtrl {
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.HippoIframeService = HippoIframeService;
   }
 
@@ -42,33 +44,47 @@ class HippoCmCtrl {
       $('body').addClass('ie11');
     }
 
-    this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
-      if (!this.ChannelService.matchesChannel(channel, projectId)) {
-        this.ChannelService.initializeChannel(channel, initialPath, projectId);
-      } else {
-        this._initializePath(initialPath);
-      }
-    });
+    this.CmsService.subscribe('load-channel', this._loadChannel, this);
 
     // Reload current channel
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
       this.$rootScope.$apply(() => this.ChannelService.reload());
     });
 
-    // Handle reloading of iframe by Webpack during development
-    this.CmsService.publish('reload-channel');
+    if (this.ConfigService.isDevMode()) {
+      this.CmsService.subscribe('load-channel', this._storeAppState, this);
+      this._restoreAppState();
+    }
   }
 
-  _initializePath(channelRelativePath) {
-    const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
-
-    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
-      && this.HippoIframeService.getCurrentRenderPathInfo() !== initialRenderPath) {
-      this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
-        this.HippoIframeService.load(initialRenderPath);
-      });
+  _loadChannel(channelId, initialPath, branchId) {
+    if (!this.ChannelService.matchesChannel(channelId)) {
+      this._initializeChannel(channelId, initialPath, branchId);
     } else {
-      this.HippoIframeService.reload();
+      this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
+        this.HippoIframeService.initializePath(initialPath);
+      });
+    }
+  }
+
+  _initializeChannel(channelId, initialPath, branchId) {
+    this.ChannelService.initializeChannel(channelId, branchId)
+      .then(() => this.HippoIframeService.initializePath(initialPath));
+  }
+
+  _storeAppState(channelId, initialPath, branchId) {
+    sessionStorage.channelId = channelId;
+    sessionStorage.channelPath = initialPath;
+    sessionStorage.channelBranch = branchId;
+  }
+
+  _restoreAppState() {
+    if (sessionStorage.channelId) {
+      this._initializeChannel(
+        sessionStorage.channelId,
+        sessionStorage.channelPath,
+        sessionStorage.channelBranch,
+      );
     }
   }
 }

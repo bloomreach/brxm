@@ -58,6 +58,48 @@ describe('HippoIframeService', () => {
     iframe.attr('src', iframeSrc);
   }
 
+  describe('initializePath', () => {
+    beforeEach(() => {
+      HippoIframeService.renderPathInfo = '/path';
+      spyOn(ChannelService, 'makeRenderPath');
+      spyOn(HippoIframeService, 'load');
+      spyOn(HippoIframeService, 'reload');
+    });
+
+    it('changes the page in the current channel', () => {
+      ChannelService.makeRenderPath.and.returnValue('/different/path');
+      HippoIframeService.initializePath('/different/path');
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/different/path');
+    });
+
+    it('changes to the home page in the current channel', () => {
+      ChannelService.makeRenderPath.and.returnValue('');
+      HippoIframeService.initializePath('');
+      expect(HippoIframeService.load).toHaveBeenCalledWith('');
+    });
+
+    it('reloads a page in the current channel', () => {
+      ChannelService.makeRenderPath.and.returnValue('/path');
+      HippoIframeService.initializePath('/path');
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('reloads the current page in the current channel', () => {
+      ChannelService.makeRenderPath.and.returnValue('');
+      HippoIframeService.initializePath(null);
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('changes to the same channel-relative path in a different channel', () => {
+      HippoIframeService.renderPathInfo = '/mount-of-channel1/path';
+      ChannelService.makeRenderPath.and.returnValue('/mount-of-channel2/path');
+
+      HippoIframeService.initializePath('/path');
+
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/mount-of-channel2/path');
+    });
+  });
+
   it('knows when a page has been loaded', () => {
     expect(HippoIframeService.isPageLoaded()).toBe(false);
     HippoIframeService.load('dummy');

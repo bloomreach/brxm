@@ -56,7 +56,6 @@ describe('ChannelController', () => {
       ProjectService = _ProjectService_;
 
       spyOn(ChannelService, 'clearChannel');
-      spyOn(ChannelService, 'getInitialRenderPath').and.returnValue('/testPath');
       spyOn(ChannelService, 'hasChannel');
       spyOn(ChannelService, 'isEditable');
 
@@ -108,11 +107,6 @@ describe('ChannelController', () => {
       expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(arg);
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(arg);
     });
-  });
-
-  it('loads the initial page', () => {
-    $ctrl.$onInit();
-    expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
   it('checks whether the channel is loaded', () => {

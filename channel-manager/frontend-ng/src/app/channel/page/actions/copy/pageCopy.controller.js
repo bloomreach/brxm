@@ -19,7 +19,6 @@ class PageCopyCtrl {
     $log,
     $translate,
     ChannelService,
-    CmsService,
     FeedbackService,
     HippoIframeService,
     SessionService,
@@ -32,7 +31,6 @@ class PageCopyCtrl {
     this.$translate = $translate;
 
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
@@ -102,7 +100,7 @@ class PageCopyCtrl {
 
   _returnToNewUrl(renderPathInfo, pathInfo) {
     if (this.channel && this.channel.id !== this.channelId) {
-      this.CmsService.publish('load-channel', this.channel.id, pathInfo);
+      this.ChannelService.initializeChannel(this.channel.id, pathInfo);
     } else {
       this.HippoIframeService.load(renderPathInfo);
       this.SiteMapService.load(this.siteMapId);

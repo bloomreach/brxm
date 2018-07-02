@@ -15,7 +15,7 @@
  *
  */
 
-describe('ProjectService', () => {
+xdescribe('ProjectService', () => {
   let $httpBackend;
   let ConfigService;
   let ProjectService;
