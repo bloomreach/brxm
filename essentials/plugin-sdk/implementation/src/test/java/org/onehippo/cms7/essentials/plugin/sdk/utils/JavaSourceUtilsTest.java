@@ -62,6 +62,7 @@ public class JavaSourceUtilsTest extends BaseTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        settingsService.setSettings(projectSettings);
         final URL resource = getClass().getResource("/project");
         final Path myDir = new File(GlobalUtils.decodeUrl(resource.getPath())).toPath();
         setProjectRoot(myDir);
