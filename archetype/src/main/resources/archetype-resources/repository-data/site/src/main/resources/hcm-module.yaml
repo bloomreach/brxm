@@ -3,5 +3,5 @@ group:
   after: hippo-cms
 project: ${artifactId}
 module:
-  name: ${artifactId}-repository-data-webfiles
+  name: ${artifactId}-repository-data-site
   scope: extension

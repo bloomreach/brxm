@@ -13,14 +13,10 @@
   <name>${projectName} CMS Dependencies</name>
   <description>${projectName} CMS Dependencies</description>
   <dependencies>
+    <!-- PARENT_PROJECT_DEPENDENCIES -->
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-repository-data-application</artifactId>
-      <version>${dollar}{project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-repository-data-webfiles</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
     <dependency>

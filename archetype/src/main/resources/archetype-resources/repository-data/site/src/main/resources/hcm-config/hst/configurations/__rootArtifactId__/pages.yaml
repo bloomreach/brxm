@@ -5,5 +5,5 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:prototypepages:
+    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:pages:
       jcr:primaryType: hst:pages

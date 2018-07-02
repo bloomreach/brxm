@@ -1,6 +1,6 @@
 ##########################################################################
 #                                                                        #
-#   This file must contain all files and folders that                   #
+#   This file must contain all files and folders that                    #
 #   most be publicly available over http. Typically folders              #
 #   that contain server side scripts, such a freemarker                  #
 #   templates, should not be added as they in general should             #

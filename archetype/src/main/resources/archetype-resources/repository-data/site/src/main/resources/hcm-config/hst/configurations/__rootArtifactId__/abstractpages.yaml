@@ -5,6 +5,5 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:pages:
-      .meta:residual-child-node-category: content
+    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:abstractpages:
       jcr:primaryType: hst:pages

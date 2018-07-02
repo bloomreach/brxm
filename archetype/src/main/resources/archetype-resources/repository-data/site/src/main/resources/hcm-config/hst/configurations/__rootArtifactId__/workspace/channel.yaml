@@ -5,7 +5,7 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:channel:
+    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:channel:
       .meta:residual-child-node-category: content
       jcr:primaryType: hst:channel
       hst:name: ${projectName}

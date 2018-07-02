@@ -5,6 +5,6 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:hst/hst:sites/${rootArtifactId.replace($hyphen,$empty)}:
+    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:sites/${rootArtifactId.replace($hyphen,$empty)}:
       jcr:primaryType: hst:site
       hst:content: /content/documents/${rootArtifactId.replace($hyphen,$empty)}

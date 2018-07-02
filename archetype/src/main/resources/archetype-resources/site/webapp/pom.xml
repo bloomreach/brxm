@@ -16,6 +16,16 @@
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-repository-data-site</artifactId>
+      <version>${dollar}{project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-repository-data-webfiles</artifactId>
+      <version>${dollar}{project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
       <artifactId>${artifactId}-components</artifactId>
       <version>${version}</version>
     </dependency>

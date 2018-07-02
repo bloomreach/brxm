@@ -5,5 +5,5 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:containers:
+    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:containers:
       jcr:primaryType: hst:containercomponentfolder
