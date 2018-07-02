@@ -87,9 +87,12 @@ Property 'displayName' cannot be empty
 Property 'urlName' cannot be empty
 No values available for node of type 'choice'
 No values available for node of type 'node:name'
-Failed to read nodes for image link type 'my:imagelink'
-Failed to read image link 'my:imagelink' from node '/my:imagelink'
-Failed to write image link field 'my:imagelink'
+Failed to read nodes for IMAGE_LINK type 'my:imagelink'
+Failed to read IMAGE_LINK 'my:imagelink' from node '/my:imagelink'
+Failed to write IMAGE_LINK field 'my:imagelink'
+Failed to read nodes for NODE_LINK type 'my:documentlink'
+Failed to read NODE_LINK 'my:documentlink' from node '/my:documentlink'
+Failed to write NODE_LINK field 'my:documentlink'
 Could not determine publication state of document
 Document workflow action 'actionNotYetImplemented' is not implemented
 Cancel request received but no pending request found for 'uuid'.

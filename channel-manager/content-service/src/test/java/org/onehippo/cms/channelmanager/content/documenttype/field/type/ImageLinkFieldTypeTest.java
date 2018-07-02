@@ -93,6 +93,7 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("last.visited.enabled", "true");
         clusterOptions.setProperty("last.visited.key", "gallerypicker-imagelink");
         clusterOptions.setProperty("nodetypes", new String[0]);
+        clusterOptions.setProperty("last.visited.nodetypes", new String[0]);
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
         final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
@@ -138,7 +139,7 @@ public class ImageLinkFieldTypeTest {
         assertThat(fieldValues.size(), equalTo(1));
         final FieldValue fieldValue = fieldValues.get(0);
         assertThat(fieldValue.getValue(), equalTo("1234"));
-        assertThat(fieldValue.getUrl(), equalTo(imageItemUrl));
+        assertThat(fieldValue.getMetadata().get("url"), equalTo(imageItemUrl));
     }
 
     @Test
@@ -156,11 +157,11 @@ public class ImageLinkFieldTypeTest {
 
         final FieldValue fieldValue1 = fieldValues.get(0);
         assertThat(fieldValue1.getValue(), equalTo("1"));
-        assertThat(fieldValue1.getUrl(), equalTo(imageItemUrl));
+        assertThat(fieldValue1.getMetadata().get("url"), equalTo(imageItemUrl));
 
         final FieldValue fieldValue2 = fieldValues.get(1);
         assertThat(fieldValue2.getValue(), equalTo("2"));
-        assertThat(fieldValue2.getUrl(), equalTo(imageItemUrl));
+        assertThat(fieldValue2.getMetadata().get("url"), equalTo(imageItemUrl));
     }
 
     @Test
@@ -176,7 +177,7 @@ public class ImageLinkFieldTypeTest {
         assertThat(fieldValues.size(), equalTo(1));
         final FieldValue fieldValue = fieldValues.get(0);
         assertThat(fieldValue.getValue(), equalTo(""));
-        assertThat(fieldValue.getUrl(), equalTo(imageItemUrl));
+        assertThat(fieldValue.getMetadata().get("url"), equalTo(imageItemUrl));
     }
 
     @Test
@@ -200,7 +201,7 @@ public class ImageLinkFieldTypeTest {
 
         final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
         assertThat(fieldValue.getValue(), equalTo("1234"));
-        assertThat(fieldValue.getUrl(), equalTo(imageItemUrl));
+        assertThat(fieldValue.getMetadata().get("url"), equalTo(imageItemUrl));
     }
 
     @Test
@@ -214,7 +215,7 @@ public class ImageLinkFieldTypeTest {
 
         final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
         assertNull(fieldValue.getValue());
-        assertNull(fieldValue.getUrl());
+        assertNull(fieldValue.getMetadata());
     }
 
     @Test(expected = BadRequestException.class)

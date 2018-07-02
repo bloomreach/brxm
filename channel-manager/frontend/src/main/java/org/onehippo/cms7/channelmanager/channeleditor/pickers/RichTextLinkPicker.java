@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.channeleditor;
+package org.onehippo.cms7.channelmanager.channeleditor.pickers;
 
 import java.util.Map;
 
@@ -26,11 +26,11 @@ import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 
 public class RichTextLinkPicker extends RichTextPicker<RichTextEditorDocumentLink> {
 
-    protected RichTextLinkPicker(final IPluginContext context, final String channelEditorId) {
+    public RichTextLinkPicker(final IPluginContext context, final String channelEditorId) {
         this(context, CKEditorNodePlugin.DEFAULT_LINK_PICKER_CONFIG, channelEditorId);
     }
 
-    protected RichTextLinkPicker(final IPluginContext context, final IPluginConfig config, final String channelEditorId) {
+    public RichTextLinkPicker(final IPluginContext context, final IPluginConfig config, final String channelEditorId) {
         super(context, config, channelEditorId);
     }
 
