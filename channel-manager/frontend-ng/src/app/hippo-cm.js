@@ -25,7 +25,6 @@ import 'angular-translate-loader-static-files';
 import uiRouter from '@uirouter/angularjs';
 
 import channelModule from './channel/channel';
-import directivesModule from './directives/directives.module';
 import factoriesModule from './factories/factories.module';
 import filtersModule from './filters/filters.module';
 import servicesModule from './services/services.module';
@@ -45,7 +44,6 @@ const hippoCmModule = angular
     ngTranslate,
     uiRouter,
     channelModule.name,
-    directivesModule,
     factoriesModule,
     filtersModule,
     servicesModule,
