@@ -40,11 +40,9 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -61,34 +59,34 @@ import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
-import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getEditingPreviewVirtualHosts;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getPreviewHstModel;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getRequestContext;
 
 // TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
-    private ChannelManager channelManager;
     private ValidatorFactory validatorFactory;
     private HstConfigurationService hstConfigurationService;
 
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException {
         try {
-            final Class<? extends ChannelInfo> channelInfoClass = getAllVirtualHosts().getChannelInfoClass(hostGroup, channelId);
+            final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
+            final Class<? extends ChannelInfo> channelInfoClass = virtualHosts.getChannelInfoClass(hostGroup, channelId);
 
             if (channelInfoClass == null) {
                 throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
 
-            final List<Class<? extends ChannelInfo>> channelInfoMixins = getAllVirtualHosts()
-                    .getChannelInfoMixins(hostGroup, channelId);
+            final List<Class<? extends ChannelInfo>> channelInfoMixins = virtualHosts.getChannelInfoMixins(hostGroup, channelId);
 
-            final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId, hostGroup);
+            final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(virtualHosts, channelId, hostGroup);
             final Set<String> annotatedFields = propertyDefinitions.stream()
                     .map(HstPropertyDefinition::getName)
                     .collect(Collectors.toSet());
@@ -99,16 +97,15 @@ public class ChannelServiceImpl implements ChannelService {
                     .collect(Collectors.toSet());
 
 
-            final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(
-                    propertyDefinitions);
+            final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(propertyDefinitions);
             final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, channelInfoMixins,
                     annotatedFields, hiddenFields);
-            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale, hostGroup);
+            final Map<String, String> localizedResources = getLocalizedResources(virtualHosts, channelId, locale, hostGroup);
 
             augmentDropDownAnnotatedPropertyDefinitionValues(visiblePropertyDefinitions, localizedResources);
 
-            final String lockedBy = getChannelLockedBy(channelId, hostGroup);
-            final boolean editable = isChannelSettingsEditable(channelId, hostGroup);
+            final String lockedBy = getChannelLockedBy(virtualHosts, channelId, hostGroup);
+            final boolean editable = isChannelSettingsEditable(virtualHosts, channelId, hostGroup);
             return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
@@ -252,17 +249,18 @@ public class ChannelServiceImpl implements ChannelService {
                 .collect(Collectors.toMap(HstPropertyDefinitionInfo::getName, Function.identity()));
     }
 
-    private List<HstPropertyDefinition> getHstPropertyDefinitions(final String channelId, final String hostGroup) {
-        return getAllVirtualHosts().getPropertyDefinitions(hostGroup, channelId);
+    private List<HstPropertyDefinition> getHstPropertyDefinitions(final VirtualHosts virtualHosts,
+                                                                  final String channelId, final String hostGroup) {
+        return virtualHosts.getPropertyDefinitions(hostGroup, channelId);
     }
 
-    private boolean isChannelSettingsEditable(final String channelId, final String hostGroup) {
-        Channel channel = getAllVirtualHosts().getChannelById(hostGroup, channelId);
+    private boolean isChannelSettingsEditable(final VirtualHosts virtualHosts, final String channelId, final String hostGroup) {
+        Channel channel = virtualHosts.getChannelById(hostGroup, channelId);
         return channel.isChannelSettingsEditable();
     }
 
-    private String getChannelLockedBy(final String channelId, final String hostGroup) {
-        final String channelPath = getAllVirtualHosts().getChannelById(hostGroup, channelId).getChannelPath();
+    private String getChannelLockedBy(final VirtualHosts virtualHosts, final String channelId, final String hostGroup) {
+        final String channelPath = virtualHosts.getChannelById(hostGroup, channelId).getChannelPath();
         try {
             final Node channelNode = RequestContextProvider.get().getSession().getNode(channelPath);
             if (channelNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
@@ -278,8 +276,9 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language, final String hostGroup) throws ChannelException {
-        final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId, hostGroup), new Locale(language));
+    private Map<String, String> getLocalizedResources(final VirtualHosts virtualHosts, final String channelId,
+                                                      final String language, final String hostGroup) throws ChannelException {
+        final ResourceBundle resourceBundle = virtualHosts.getResourceBundle(getChannel(channelId, hostGroup), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
         }
@@ -290,7 +289,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Channel getChannel(final String channelId, final String hostGroup) throws ChannelException {
-        final Channel channel = getAllVirtualHosts().getChannelById(hostGroup, channelId);
+        final Channel channel = getEditingPreviewVirtualHosts().getChannelById(hostGroup, channelId);
         if (channel == null) {
             throw new ChannelNotFoundException(channelId);
         }
@@ -308,7 +307,7 @@ public class ChannelServiceImpl implements ChannelService {
                     "not part of the HST workspace");
         }
 
-        this.channelManager.save(hostGroup, channel);
+        getPreviewHstModel().getChannelManager().save(hostGroup, channel);
     }
 
     @Override
@@ -322,7 +321,7 @@ public class ChannelServiceImpl implements ChannelService {
                 .values()
                 .stream()
                 .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
-                .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                .filter(channel -> workspaceFiltered(virtualHosts, channel, workspaceRequired))
                 .filter(channel -> !skipBranches || channel.getBranchOf() == null)
                 .filter(channel -> !channel.isConfigurationLocked())
                 .collect(Collectors.toList());
@@ -374,9 +373,6 @@ public class ChannelServiceImpl implements ChannelService {
         removeMountNodes(session, mountsOfChannel);
     }
 
-    private HstRequestContext getRequestContext() {
-        return RequestContextProvider.get();
-    }
 
     private void removeConfigurationNodes(final Channel channel) throws RepositoryException {
         final String hstConfigPath = channel.getHstConfigPath();
@@ -412,7 +408,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public List<Mount> findMounts(final Channel channel) {
-        final List<Mount> allMounts = loadAllMounts();
+        final List<Mount> allMounts = loadAllMounts(getEditingPreviewVirtualHosts());
 
         final String mountPoint = channel.getHstMountPoint();
         return allMounts.stream()
@@ -420,8 +416,7 @@ public class ChannelServiceImpl implements ChannelService {
                 .collect(Collectors.toList());
     }
 
-    private List<Mount> loadAllMounts() {
-        final VirtualHosts virtualHosts = getAllVirtualHosts();
+    private List<Mount> loadAllMounts(final VirtualHosts virtualHosts) {
 
         final List<Mount> allMounts = new ArrayList<>();
         for (String hostGroup : virtualHosts.getHostGroupNames()) {
@@ -460,33 +455,21 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    private VirtualHosts getEditingPreviewVirtualHosts() {
-        return ((HstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
-    }
-
-    private VirtualHosts getAllVirtualHosts() {
-        return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
-    }
-
     private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
         return !previewConfigRequired || channel.isPreview();
     }
 
-    private boolean workspaceFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
+    private boolean workspaceFiltered(final VirtualHosts virtualHosts, final Channel channel, final boolean required) throws RuntimeRepositoryException {
         if (!required) {
             return true;
         }
-        final Mount mount = getAllVirtualHosts().getMountByIdentifier(channel.getMountId());
+        final Mount mount = virtualHosts.getMountByIdentifier(channel.getMountId());
         final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
         try {
             return RequestContextProvider.get().getSession().nodeExists(workspacePath);
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
-    }
-
-    public void setChannelManager(final ChannelManager channelManager) {
-        this.channelManager = channelManager;
     }
 
     public void setValidatorFactory(final ValidatorFactory validatorFactory) {

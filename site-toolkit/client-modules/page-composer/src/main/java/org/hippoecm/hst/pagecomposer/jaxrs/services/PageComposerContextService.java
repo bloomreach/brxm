@@ -29,6 +29,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
@@ -163,13 +164,8 @@ public class PageComposerContextService {
     }
 
     public VirtualHosts getEditingPreviewVirtualHosts() {
-        return ((HstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
+        return HstConfigurationUtils.getEditingPreviewVirtualHosts();
     }
-
-    public VirtualHosts getEditingLiveVirtualHosts() {
-        return ((HstModel)getRequestContext().getAttribute(LIVE_EDITING_HST_MODEL_ATTR)).getVirtualHosts();
-    }
-
 
     public boolean hasPreviewConfiguration() {
         return getEditingPreviewSite().hasPreviewConfiguration();

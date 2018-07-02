@@ -23,9 +23,14 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
@@ -39,6 +44,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 import static org.hippoecm.hst.util.JcrSessionUtils.getPendingChangePaths;
 
 
@@ -68,7 +74,7 @@ public class HstConfigurationUtils {
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
         session.save();
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        EventPathsInvalidator invalidator = getPreviewHstModel().getEventPathsInvalidator();
         // after the save the paths need to be send, not before!
         if (invalidator != null && pathsToBeChanged != null) {
             invalidator.eventPaths(pathsToBeChanged);
@@ -180,5 +186,16 @@ public class HstConfigurationUtils {
         }
     }
 
+
+    public static VirtualHosts getEditingPreviewVirtualHosts() {
+        return getPreviewHstModel().getVirtualHosts();
+    }
+
+    public static PlatformHstModel getPreviewHstModel() {
+        return (PlatformHstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
+    }
+    public static HstRequestContext getRequestContext() {
+        return RequestContextProvider.get();
+    }
 
 }
