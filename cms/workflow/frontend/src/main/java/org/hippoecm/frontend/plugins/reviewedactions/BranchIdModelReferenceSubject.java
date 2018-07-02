@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class BranchIdModelReferenceSubject {
 
     public static final String UNDEFINED = "undefined";
-    private final Logger log = LoggerFactory.getLogger(BranchIdModelReferenceSubject.class);
+    private static final Logger log = LoggerFactory.getLogger(BranchIdModelReferenceSubject.class);
     private IModelReference<String> branchIdModelReference;
     private IObserver<IModelReference<String>> modelReferenceObserverService;
 
@@ -101,9 +101,11 @@ public class BranchIdModelReferenceSubject {
         return UserSession.get().getJcrSession().getUserID();
     }
 
+    @SuppressWarnings("unchecked")
     private IModelReference<String> getOrCreateModelReference(IPluginContext context, String identifier) {
-        final Optional<IModelReference> service = Optional.ofNullable(context.getService(identifier, IModelReference.class));
-        return service.orElse(createBranchIdModelReference(context, identifier));
+        return Optional
+                .ofNullable((IModelReference<String>)context.getService(identifier, IModelReference.class))
+                .orElseGet(() -> createBranchIdModelReference(context, identifier));
     }
 
     private IModelReference<String> createBranchIdModelReference(final IPluginContext context, final String identifier) {
