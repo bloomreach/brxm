@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,29 +25,31 @@ import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ChannelInfoClassTest {
 
     static interface TestInfo extends ChannelInfo {
+
         @Parameter(name = "test-name", required = true)
         String getTestName();
-        
+
     }
-    
+
     @Test
     public void requiredParameterIsFound() {
         int numberOfParameterAnnotationsOnChannelInfo = ChannelInfoClassProcessor.getProperties(ChannelInfo.class).size();
         List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(TestInfo.class);
         assertEquals(1 + numberOfParameterAnnotationsOnChannelInfo, properties.size());
-        
+
         // make sure that "test-name" is amongst the three properties
         HstPropertyDefinition propDef = getPropertyDefinition("test-name", properties);
         assertNotNull(propDef);
-        assertEquals(true, propDef.isRequired());
+        assertTrue(propDef.isRequired());
         assertEquals(HstValueType.STRING, propDef.getValueType());
-
     }
 
     @Test
@@ -59,7 +61,8 @@ public class ChannelInfoClassTest {
         assertEquals("aap", info.getTestName());
     }
 
-    public static interface ExtendedTestInfo extends ChannelInfo {
+    static interface ExtendedTestInfo extends ChannelInfo {
+
         @Parameter(name = "color")
         @Color
         String getColor();
@@ -74,7 +77,6 @@ public class ChannelInfoClassTest {
         List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(ExtendedTestInfo.class);
         assertEquals(2 + numberOfParameterAnnotationsOnChannelInfo, properties.size());
 
-        
         HstPropertyDefinition hpd = getPropertyDefinition("color", properties);
         assertEquals("color", hpd.getName());
         assertEquals(HstValueType.STRING, hpd.getValueType());
@@ -83,14 +85,65 @@ public class ChannelInfoClassTest {
         assertEquals(1, annotations.size());
         assertEquals(Color.class, annotations.get(0).annotationType());
     }
-    
-    
+
+    static interface AnalyticsChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "analyticsEnabled")
+        Boolean isAnalyticsEnabled();
+
+        @Parameter(name = "scriptlet")
+        String getScriptlet();
+
+    }
+
+    static interface CategorizingChannelInfoMixin extends ChannelInfo {
+
+        @Parameter(name = "categorizationEnabled")
+        Boolean isCategorizationEnabled();
+
+        @Parameter(name = "categories")
+        String getCategories();
+
+    }
+
+    @Test
+    public void testChannelInfoMixins() {
+        final List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(TestInfo.class,
+                AnalyticsChannelInfoMixin.class, CategorizingChannelInfoMixin.class);
+
+        HstPropertyDefinition propDef = getPropertyDefinition("test-name", properties);
+        assertNotNull(propDef);
+        assertTrue(propDef.isRequired());
+        assertEquals(HstValueType.STRING, propDef.getValueType());
+
+        propDef = getPropertyDefinition("analyticsEnabled", properties);
+        assertNotNull(propDef);
+        assertFalse(propDef.isRequired());
+        assertEquals(HstValueType.BOOLEAN, propDef.getValueType());
+
+        propDef = getPropertyDefinition("scriptlet", properties);
+        assertNotNull(propDef);
+        assertFalse(propDef.isRequired());
+        assertEquals(HstValueType.STRING, propDef.getValueType());
+
+        propDef = getPropertyDefinition("categorizationEnabled", properties);
+        assertNotNull(propDef);
+        assertFalse(propDef.isRequired());
+        assertEquals(HstValueType.BOOLEAN, propDef.getValueType());
+
+        propDef = getPropertyDefinition("categories", properties);
+        assertNotNull(propDef);
+        assertFalse(propDef.isRequired());
+        assertEquals(HstValueType.STRING, propDef.getValueType());
+    }
+
     private HstPropertyDefinition getPropertyDefinition(String propertyName, List<HstPropertyDefinition> properties) {
         for(HstPropertyDefinition propDef : properties) {
             if (propDef.getName().equals(propertyName)) {
                 return propDef;
             }
         }
+
         return null;
     }
 }

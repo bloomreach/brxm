@@ -816,6 +816,17 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public List<Class<? extends ChannelInfo>> getChannelInfoMixins(Channel channel) throws ChannelException {
+            return delegatee.getChannelInfoMixins(channel);
+        }
+
+        @Override
+        public List<Class<? extends ChannelInfo>> getChannelInfoMixins(String hostGroup, String id)
+                throws ChannelException {
+            return delegatee.getChannelInfoMixins(hostGroup, id);
+        }
+
+        @Override
         public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
             return delegatee.getResourceBundle(channel, locale);
         }

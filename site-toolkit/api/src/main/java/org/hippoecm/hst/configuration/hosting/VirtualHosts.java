@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -283,6 +283,24 @@ public interface VirtualHosts {
      * @return The {@link ChannelInfo} {@link Class} type of {@link Channel} identified by id
      */
     Class<? extends ChannelInfo> getChannelInfoClass(String hostGroup, String id) throws ChannelException;
+
+    /**
+     * The channel info mixin classes for this channel.  Since these classes come from a separate
+     * context, it cannot be deserialized.
+     *
+     * @param channel - {@link Channel} for which {@link org.hippoecm.hst.configuration.channel.ChannelInfo} is going to be retrieved
+     * @return List of {@link org.hippoecm.hst.configuration.channel.ChannelInfo} {@link Class} mixin types of {@link Channel}
+     */
+    List<Class<? extends ChannelInfo>> getChannelInfoMixins(Channel channel) throws ChannelException;
+
+    /**
+     * The channel info mixin classes for this channel identified by id.
+     *
+     * @param hostGroup the name of the host group to get channel for
+     * @param id - {@link Channel} id
+     * @return List of {@link ChannelInfo} {@link Class} mixin types of {@link Channel} identified by id
+     */
+    List<Class<? extends ChannelInfo>> getChannelInfoMixins(String hostGroup, String id) throws ChannelException;
 
     /**
      * The channel info for this channel.  It is an instance of the {@link #getChannelInfoClass} class.
