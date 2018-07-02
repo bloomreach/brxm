@@ -27,25 +27,24 @@ import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.json.Json;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class NodeLinkFieldType extends LinkFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(NodeLinkFieldType.class);
-
     private static final String[] DOCUMENT_PICKER_STRING_PROPERTIES = {
             "base.path",
             "base.uuid",
             "cluster.name",
+            "language.context.aware",
             "last.visited.enabled",
             "last.visited.key",
-            "language.context.aware",
     };
 
-    private static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = { "nodetypes", "last.visited.nodetypes" };
+    private static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = {
+            "last.visited.nodetypes",
+            "nodetypes"
+    };
 
     private ObjectNode config;
 
