@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.channeleditor;
+package org.onehippo.cms7.channelmanager.channeleditor.pickers;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

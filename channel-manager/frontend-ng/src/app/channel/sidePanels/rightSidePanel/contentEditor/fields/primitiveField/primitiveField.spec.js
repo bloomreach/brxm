@@ -238,4 +238,18 @@ describe('PrimitiveField', () => {
 
     expect(FieldService.saveField).not.toHaveBeenCalled();
   });
+
+  it('broadcasts event "primitive-field:focus" when clicking on the field label', () => {
+    spyOn($ctrl.$scope, '$broadcast');
+    $ctrl.onLabelClick({ preventDefault: angular.noop });
+
+    expect($ctrl.$scope.$broadcast).toHaveBeenCalledWith('primitive-field:focus');
+  });
+
+  it('prevents default event behavior when clicking on the field label', () => {
+    const preventDefault = jasmine.createSpy('preventDefault');
+    $ctrl.onLabelClick({ preventDefault });
+
+    expect(preventDefault).toHaveBeenCalled();
+  });
 });

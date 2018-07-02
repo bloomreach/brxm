@@ -39,20 +39,24 @@
 
       // In case of reloading the iframe, the ng-app will ask us to provide the channel info (again)
       this.iframeToHost.subscribe('reload-channel', function() {
-        if (this.selectedChannel) {
-          this.loadChannel(this.selectedChannel.id);
+        if (this.channel) {
+          this.loadChannel();
         }
-      }.bind(this));
+      }, this);
 
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
-      this.iframeToHost.subscribe('load-channel', this.loadChannel, this);
+      this.iframeToHost.subscribe('load-channel', function(channelId, initialPath, branchId) {
+        this.initChannel(channelId, initialPath, branchId);
+        this.loadChannel();
+      }, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
-      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
-      this.iframeToHost.subscribe('show-image-variant-picker', this._showImageVariantPicker, this);
       this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
+      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-link-picker', this._showRichTextLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-image-picker', this._showRichTextImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -64,9 +68,16 @@
       this.addEvents('show-channel-overview');
     },
 
-    loadChannel: function(channelId, initialPath, branchId) {
-      this._setChannel(channelId).when(function(channelRecord) {
-        this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
+    initChannel: function(channelId, initialPath, branchId) {
+      this.channelId = channelId;
+      this.initialPath = initialPath;
+      this.branchId = branchId;
+    },
+
+    loadChannel: function() {
+      this._setChannel(this.channelId).when(function(channelRecord) {
+        this.hostToIFrame.publish('load-channel', channelRecord.json, this.initialPath, this.branchId);
+        delete this.initialPath;  // reset initial path so subsequent load-channel calls reload the current page
       }.bind(this));
     },
 
@@ -86,21 +97,15 @@
       }.bind(this));
     },
 
-    reloadPage: function() {
-      if (this.selectedChannel) {
-        this.hostToIFrame.publish('reload-page');
-      }
-    },
-
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
-        var id = this.selectedChannel.id,
+        var id = this.channel.id,
           channelRecord = channelStore.getById(id);
         if (channelRecord) {
-          this.selectedChannel = channelRecord.json;
+          this.channel = channelRecord.json;
         } else {
           // we may just have created the preview config of this channel
-          this.selectedChannel = channelStore.getById(id + '-preview').json;
+          this.channel = channelStore.getById(id + '-preview').json;
         }
         this.hostToIFrame.publish('channel-changed-in-extjs');
       }.bind(this));
@@ -170,7 +175,7 @@
     },
 
     _initialize: function(channel) {
-      this.selectedChannel = channel;
+      this.channel = channel;
 
       this._destroyComponentPropertiesWindow();
 
@@ -192,10 +197,10 @@
         renderTo: this.el,
         constrain: true,
         hidden: true,
-        composerRestMountUrl: this.selectedChannel.contextPath + this.apiUrlPrefix,
+        composerRestMountUrl: this.channel.contextPath + this.apiUrlPrefix,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
-        mountId: this.selectedChannel.mountId,
+        mountId: this.channel.mountId,
         listeners: {
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
@@ -246,18 +251,22 @@
       this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
     },
 
-    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      selectedLink.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
-    },
-
-    _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      selectedImage.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
-    },
-
     _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
       this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showLinkPicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+    },
+
+    _showRichTextImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      selectedImage.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
+    },
+
+    _showRichTextLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
+      selectedLink.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
     },
 
     _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {

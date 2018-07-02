@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
+import ngMessages from 'angular-messages';
+import illegalCharactersDirective from './illegalCharacters.directive';
 
 import PageActionsService from './pageActions.service';
 import pageCopyComponent from './copy/pageCopy.component';
@@ -28,10 +29,11 @@ const channelPageActionsModule = angular
     ngMessages,
     focusIf,
   ])
-  .service('PageActionsService', PageActionsService)
   .component('pageCopy', pageCopyComponent)
   .component('pageMove', pageMoveComponent)
   .component('pageNew', pageNewComponent)
-  .component('pageProperties', pagePropertiesComponent);
+  .component('pageProperties', pagePropertiesComponent)
+  .directive('illegalCharacters', illegalCharactersDirective)
+  .service('PageActionsService', PageActionsService);
 
 export default channelPageActionsModule;

@@ -20,7 +20,6 @@ class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
-    $stateParams,
     $translate,
     ChannelActionsService,
     ChannelService,
@@ -53,8 +52,6 @@ class ChannelCtrl {
 
     this.projectsEnabled = ConfigService.projectsEnabled;
 
-    this.HippoIframeService.load($stateParams.initialRenderPath);
-
     this.menus = [
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
       PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
@@ -62,6 +59,7 @@ class ChannelCtrl {
   }
 
   $onInit() {
+    this.HippoIframeService.load(this.ChannelService.getInitialRenderPath());
     this.CmsService.subscribe('reload-channel', this._reloadChannel, this);
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-function stopPropagationDirective() {
-  'ngInject';
+import template from './nodeLink.html';
+import controller from './nodeLink.controller';
+import './nodeLink.scss';
 
-  return {
-    restrict: 'A',
-    link: (scope, element) => {
-      element.bind('click', e => e.stopPropagation());
-    },
-  };
-}
+const nodeLinkComponent = {
+  controller,
+  template,
+  bindings: {
+    ariaLabel: '@',
+    config: '<',
+    displayName: '<',
+    hint: '<',
+    index: '<',
+    isRequired: '<',
+    name: '@',
+    onBlur: '&',
+    onFocus: '&',
+  },
+  require: {
+    ngModel: 'ngModel',
+  },
+};
 
-export default stopPropagationDirective;
+export default nodeLinkComponent;

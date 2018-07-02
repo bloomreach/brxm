@@ -15,11 +15,22 @@
  */
 
 class HippoCmCtrl {
-  constructor($state, BrowserService) {
+  constructor(
+    $rootScope,
+    $state,
+    BrowserService,
+    ChannelService,
+    CmsService,
+    HippoIframeService,
+  ) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.$state = $state;
     this.BrowserService = BrowserService;
+    this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+    this.HippoIframeService = HippoIframeService;
   }
 
   $onInit() {
@@ -29,6 +40,35 @@ class HippoCmCtrl {
     // add ie11 class for ie11 specific hacks
     if (this.BrowserService.isIE()) {
       $('body').addClass('ie11');
+    }
+
+    this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
+      if (!this.ChannelService.matchesChannel(channel, projectId)) {
+        this.ChannelService.initializeChannel(channel, initialPath, projectId);
+      } else {
+        this._initializePath(initialPath);
+      }
+    });
+
+    // Reload current channel
+    this.CmsService.subscribe('channel-changed-in-extjs', () => {
+      this.$rootScope.$apply(() => this.ChannelService.reload());
+    });
+
+    // Handle reloading of iframe by Webpack during development
+    this.CmsService.publish('reload-channel');
+  }
+
+  _initializePath(channelRelativePath) {
+    const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
+
+    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
+      && this.HippoIframeService.getCurrentRenderPathInfo() !== initialRenderPath) {
+      this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
+        this.HippoIframeService.load(initialRenderPath);
+      });
+    } else {
+      this.HippoIframeService.reload();
     }
   }
 }

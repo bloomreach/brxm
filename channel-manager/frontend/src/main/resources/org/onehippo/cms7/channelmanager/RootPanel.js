@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,8 @@
         if (this.layout.activeItem === Hippo.ChannelManager.ChannelEditor.Instance) {
           return;
         }
-        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId, null, 'master');
+        Hippo.ChannelManager.ChannelEditor.Instance.initChannel(channelId, '', 'master');
+        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel();
         self._showChannelEditor();
       };
 
@@ -133,7 +134,7 @@
     _onActivate: function() {
       this._showBreadcrumb();
       if (this._isChannelEditorShown()) {
-        this.layout.activeItem.reloadPage();
+        this.layout.activeItem.loadChannel();
       }
     },
 

@@ -102,13 +102,6 @@ describe('HippoIframeService', () => {
     });
   });
 
-  it('reloads the iframe when a "reload-page" event is received', () => {
-    spyOn(HippoIframeService, 'reload');
-    $window.CMS_TO_APP.publish('reload-page');
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-
   it('logs a warning upon a reload request when a reload is already ongoing', (done) => {
     spyOn($log, 'warn');
 

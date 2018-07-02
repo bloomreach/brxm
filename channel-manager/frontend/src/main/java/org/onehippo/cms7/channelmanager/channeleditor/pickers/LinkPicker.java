@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,40 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.channelmanager.channeleditor;
+package org.onehippo.cms7.channelmanager.channeleditor.pickers;
 
 import java.util.Map;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogManager;
+import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.onehippo.addon.frontend.gallerypicker.ImageItem;
-import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Manages the picker dialog for imagelink fields. The dialog is used to select an image.
+ * Manages the picker dialog for internal link fields. The dialog is used to select a node in the repository.
  */
-class ImagePicker extends ChannelEditorPicker<String> {
+public class LinkPicker extends ChannelEditorPicker<String> {
 
-    private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
+    private static final Logger log = LoggerFactory.getLogger(LinkPicker.class);
 
     private final Model<String> dialogModel;
 
-    ImagePicker(final IPluginContext context, final String channelEditorId) {
+    public LinkPicker(final IPluginContext context, final String channelEditorId) {
         super(context, null, channelEditorId);
         dialogModel = Model.of(StringUtils.EMPTY);
     }
@@ -50,7 +57,7 @@ class ImagePicker extends ChannelEditorPicker<String> {
         return new DialogManager<String>(context, config) {
             @Override
             protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
-                return new GalleryPickerDialog(context, config, dialogModel);
+                return new LinkPickerDialog(context, config, dialogModel);
             }
 
             @Override
@@ -61,14 +68,26 @@ class ImagePicker extends ChannelEditorPicker<String> {
     }
 
     @Override
-    protected String toJson(final String pickedItem) {
-        final ImageItem imageItem = IMAGE_ITEM_FACTORY.createImageItem(pickedItem);
-        final String url = imageItem.getPrimaryUrl();
-
+    protected String toJson(final String uuid) {
         final ObjectNode picked = Json.object();
-        picked.put("uuid", pickedItem);
-        picked.put("url", url);
+        picked.put("uuid", uuid);
+
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            final Node pickedNode = session.getNodeByIdentifier(uuid);
+            picked.put("displayName", getNodeName(pickedNode));
+        } catch (ItemNotFoundException e) {
+            log.warn("Unable to find item: {} : {} ", uuid, e);
+        } catch (RepositoryException e) {
+            log.warn("Unable to retrieve name for item: {} : {} ", uuid, e);
+        }
 
         return picked.toString();
+    }
+
+    private String getNodeName(final Node node) throws RepositoryException {
+        return  node instanceof HippoNode
+            ? ((HippoNode) node).getDisplayName()
+            : node.getName();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * FieldValue encapsulates the value of a field.
@@ -37,7 +37,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 public class FieldValue {
     private String value;                         // Stringified value for primitive fields
     private String id;                            // UUID of the field, if needed
-    private String url;                           // URL of the field value, if needed
+    private Map<String, Object> metadata;         // Optional metadata
     private Map<String, List<FieldValue>> fields; // Subfields of compound
     private String chosenId;                      // ID of a choice in case of a choice field
     private FieldValue chosenValue;               // Singular value of a choice field
@@ -85,12 +85,12 @@ public class FieldValue {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public Map<String, Object> getMetadata() {
+        return metadata;
     }
 
-    public void setUrl(final String url) {
-        this.url = url;
+    public void setMetadata(final Map<String, Object> metadata) {
+        this.metadata = metadata;
     }
 
     public Optional<Map<String, List<FieldValue>>> findFields() {

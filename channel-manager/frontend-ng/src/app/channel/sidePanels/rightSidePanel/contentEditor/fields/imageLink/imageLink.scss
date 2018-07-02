@@ -19,21 +19,51 @@ $first-button-left-padding: 8px;
 $button-width: 40px;
 $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 
+.field-type-image_link:not(.md-input-has-value) {
+  label {
+    cursor: pointer;
+  }
+
+  &.has-focused-field label {
+    color: $text-disabled !important;
+
+    md-icon {
+      color: $text-dim !important;
+    }
+  }
+}
+
 image-link {
   .input-bottom-border {
+    bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
     border-bottom: 1px solid;
     max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
+    position: absolute;
+    width: 100%;
   }
 
   .input-bottom-border,
   input {
     // hide checkered background for readonly input fields
     background-image: none !important;
-    border-bottom-color: rgba(0, 0, 0, .12) !important;
+    border-bottom-color: $border-color !important;
   }
 
   .input-bottom-border-limited-empty {
     max-width: $thumbnail-width + $first-button-left-padding + $button-width;
+  }
+
+  .hippo-imagelink-input {
+    cursor: pointer;
+    min-width: 100%;
+  }
+
+  .has-focused-field & {
+    .hippo-imagelink-input.has-focus,
+    .input-bottom-border.has-focus {
+      border-bottom-color: $blue-500 !important;
+      border-bottom-width: 2px;
+    }
   }
 
   img {
@@ -65,6 +95,11 @@ image-link {
       color: transparent;
       min-width: $thumbnail-width;
       user-select: none;
+    }
+
+    &:not(.image-has-url),
+    &:not(.image-has-url) > span {
+      width: 100%;
     }
 
     .md-button.md-icon-button {

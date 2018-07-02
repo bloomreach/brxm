@@ -30,7 +30,6 @@ import overlayToggleModule from './overlayToggle/overlayToggle';
 import config from './channel.config';
 import ChannelComponent from './channel.component';
 import ChannelService from './channel.service';
-import run from './channel.run';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
@@ -50,7 +49,6 @@ const channelModule = angular
   ])
   .config(config)
   .component('channel', ChannelComponent)
-  .service('ChannelService', ChannelService)
-  .run(run);
+  .service('ChannelService', ChannelService);
 
 export default channelModule;
