@@ -93,6 +93,7 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("last.visited.enabled", "true");
         clusterOptions.setProperty("last.visited.key", "gallerypicker-imagelink");
         clusterOptions.setProperty("nodetypes", new String[0]);
+//        clusterOptions.setProperty("last.visited.nodetypes", new String[0]);
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
         final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
