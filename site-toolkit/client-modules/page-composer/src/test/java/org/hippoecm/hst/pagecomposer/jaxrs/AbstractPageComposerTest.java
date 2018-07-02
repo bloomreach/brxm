@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.observation.Event;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -32,7 +31,6 @@ import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -74,7 +72,6 @@ public class AbstractPageComposerTest {
     protected HippoSession session;
     protected Object hstModelMutex;
     protected PreviewDecorator previewDecorator;
-    private HstConfigurationEventListener listener;
     protected final MockServletContext servletContext = new MockServletContext();
 
 
@@ -106,16 +103,6 @@ public class AbstractPageComposerTest {
         session = (HippoSession)createSession();
 
         createHstConfigBackup(session);
-        listener = new HstConfigurationEventListener();
-        listener.setHstEventsCollector(hstEventsCollector);
-        listener.setHstModelMutex(hstModelMutex);
-        session.getWorkspace().getObservationManager().addEventListener(listener,
-                Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                "/hst:hst",
-                true,
-                null,
-                null,
-                false);
 
     }
 
@@ -124,7 +111,6 @@ public class AbstractPageComposerTest {
 
         // to avoid jr problems with current session with shared depth kind of issues, use a refresh
         session.refresh(false);
-        session.getWorkspace().getObservationManager().removeEventListener(listener);
         restoreHstConfigBackup(session);
 
         session.logout();

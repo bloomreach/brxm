@@ -21,13 +21,13 @@ import java.util.function.BiPredicate;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -39,8 +39,10 @@ import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
@@ -55,7 +57,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstModelImpl implements HstModel {
+public class HstModelImpl implements PlatformHstModel {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
 
@@ -70,6 +72,7 @@ public class HstModelImpl implements HstModel {
     private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
     private final DefaultHstLinkCreator hstLinkCreator;
+    private final ChannelManager channelManager;
 
     private volatile VirtualHosts virtualHosts;
     private BiPredicate<Session, Channel> channelFilter;
@@ -101,6 +104,10 @@ public class HstModelImpl implements HstModel {
 
         invalidationMonitor = new InvalidationMonitor(session, hstNodeLoadingCache, hstConfigurationLoadingCache, this);
 
+        final String contentRoot = websiteContainerConfiguration.getString("channel.manager.contentRoot", ChannelManagerImpl.DEFAULT_CONTENT_ROOT);
+        channelManager = new ChannelManagerImpl(this, invalidationMonitor.getEventPathsInvalidator(), hstNodeLoadingCache, contentRoot);
+
+        // TODO add the channelManagerEventListeners
     }
 
     public void destroy() throws RepositoryException {
@@ -175,10 +182,29 @@ public class HstModelImpl implements HstModel {
         return hstLinkCreator;
     }
 
+    // internal api!
+    @Override
     public BiPredicate<Session, Channel> getChannelFilter() {
         return channelFilter;
     }
 
+    // internal api!
+    @Override
+    public ChannelManager getChannelManager() {
+        return channelManager;
+    }
+
+    // internal api!
+    @Override
+    public String getConfigurationRootPath() {
+        return hstNodeLoadingCache.getRootPath();
+    }
+
+    // internal api!
+    @Override
+    public EventPathsInvalidator getEventPathsInvalidator() {
+        return invalidationMonitor.getEventPathsInvalidator();
+    }
 
     private void configureSiteMapMatcher() {
         hstSiteMapMatcher.setLinkProcessor(getHstLinkProcessor(websiteComponentManager));

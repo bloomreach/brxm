@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
@@ -28,7 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -36,12 +39,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,10 +116,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             }
 
             final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            final HstModel liveHstModel = hstModelRegistry.getHstModel(contextPath);
+            final PlatformHstModel liveHstModel = (PlatformHstModel)hstModelRegistry.getHstModel(contextPath);
 
-            final HstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
-            final HstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
+            final PlatformHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
+            final PlatformHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
 
             requestContext.setAttribute(PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
             requestContext.setAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
@@ -176,16 +180,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         super.invoke(requestContext, request, response);
     }
 
-    private static class HstModelSnapshot implements HstModel {
+    private static class HstModelSnapshot implements PlatformHstModel {
 
-        private final HstModel delegatee;
+        private final PlatformHstModel delegatee;
         private PreviewDecorator previewDecorator;
         private VirtualHosts cache;
 
-        private HstModelSnapshot(final HstModel delegatee) {
+        private HstModelSnapshot(final PlatformHstModel delegatee) {
             this.delegatee = delegatee;
         }
-        private HstModelSnapshot(final HstModel delegatee, final PreviewDecorator previewDecorator) {
+        private HstModelSnapshot(final PlatformHstModel delegatee, final PreviewDecorator previewDecorator) {
             this.delegatee = delegatee;
             this.previewDecorator = previewDecorator;
         }
@@ -216,6 +220,26 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         @Override
         public HstLinkCreator getHstLinkCreator() {
             return delegatee.getHstLinkCreator();
+        }
+
+        @Override
+        public BiPredicate<Session, Channel> getChannelFilter() {
+            return delegatee.getChannelFilter();
+        }
+
+        @Override
+        public ChannelManager getChannelManager() {
+            return delegatee.getChannelManager();
+        }
+
+        @Override
+        public String getConfigurationRootPath() {
+            return delegatee.getConfigurationRootPath();
+        }
+
+        @Override
+        public EventPathsInvalidator getEventPathsInvalidator() {
+            return delegatee.getEventPathsInvalidator();
         }
     }
 }

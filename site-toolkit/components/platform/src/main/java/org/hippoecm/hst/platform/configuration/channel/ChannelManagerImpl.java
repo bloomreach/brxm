@@ -46,9 +46,9 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -75,12 +75,11 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH
 public class ChannelManagerImpl implements ChannelManager {
 
     private static final String DEFAULT_HST_SITES = "hst:sites";
-    private static final String DEFAULT_CONTENT_ROOT = "/content/documents";
+    public static final String DEFAULT_CONTENT_ROOT = "/content/documents";
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
     private String sites = DEFAULT_HST_SITES;
-    private String contentRoot = DEFAULT_CONTENT_ROOT;
 
     /**
      * The codec which is used for the channel ID
@@ -90,22 +89,17 @@ public class ChannelManagerImpl implements ChannelManager {
     private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(
             new ArrayList<ChannelManagerEventListener>());
 
-    // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
-    // TODO we will for now get NPE's
-    private EventPathsInvalidator eventPathsInvalidator;
-    private Object hstModelMutex;
-    private HstNodeLoadingCache hstNodeLoadingCache;
+    private final HstModelImpl hstModel;
+    private final EventPathsInvalidator eventPathsInvalidator;
+    private final HstNodeLoadingCache hstNodeLoadingCache;
+    private final String contentRoot;
 
-    public void setHstModelMutex(Object hstModelMutex) {
-        this.hstModelMutex = hstModelMutex;
-    }
-
-    public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
+    public ChannelManagerImpl(final HstModelImpl hstModel, final EventPathsInvalidator eventPathsInvalidator,
+                              final HstNodeLoadingCache hstNodeLoadingCache, final String contentRoot) {
+        this.hstModel = hstModel;
+        this.eventPathsInvalidator = eventPathsInvalidator;
         this.hstNodeLoadingCache = hstNodeLoadingCache;
-    }
-
-    public void setContentRoot(final String contentRoot) {
-        this.contentRoot = contentRoot.trim();
+        this.contentRoot = contentRoot;
     }
 
     public void addChannelManagerEventListeners(ChannelManagerEventListener... listeners) {
@@ -128,8 +122,8 @@ public class ChannelManagerImpl implements ChannelManager {
 
     @Override
     public String persist(final String blueprintId, Channel channel) throws ChannelException {
-        synchronized (hstModelMutex) {
-            Blueprint blueprint = getVirtualHosts().getBlueprint(blueprintId);
+        synchronized (hstModel) {
+            Blueprint blueprint = hstModel.getVirtualHosts().getBlueprint(blueprintId);
             if (blueprint == null) {
                 throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
             }
@@ -168,7 +162,6 @@ public class ChannelManagerImpl implements ChannelManager {
 
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
-                // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
                 return channelName;
             } catch (RepositoryException e) {
@@ -220,7 +213,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     @Override
     public void save(final String hostGroupName, final Channel channel) throws ChannelException {
-        synchronized (hstModelMutex) {
+        synchronized (hstModel) {
             try {
                 final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
@@ -247,7 +240,6 @@ public class ChannelManagerImpl implements ChannelManager {
                 }
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
-                // TODO HSTTWO-4354 eventPathsInvalidator needs to be retrieved from the model instead of via Spring wiring
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
             } catch (RepositoryException | IllegalArgumentException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -421,6 +413,7 @@ public class ChannelManagerImpl implements ChannelManager {
     private String getHostGroupNameFromContext() throws ChannelException {
         // FIXME: move all modification methods to the 'cmsrest' module and use the
         // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
+        // TODO FIXME below does not work any more!!!!
         final String hostGroupForCmsHost = (String) RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
         if (StringUtils.isEmpty(hostGroupForCmsHost)) {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
@@ -706,10 +699,6 @@ public class ChannelManagerImpl implements ChannelManager {
         public Node getConfigRootNode() {
             return configRootNode;
         }
-    }
-
-    private static VirtualHosts getVirtualHosts() {
-        return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
     }
 
     protected Session getSession() throws RepositoryException {

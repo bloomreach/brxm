@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.configuration.model;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 
 /**
  * To dispatch events (for example from a HippoSession) directly, for example without having persisted the changes yet. This is important
@@ -25,29 +26,20 @@ import org.hippoecm.hst.configuration.model.HstManager;
  */
 public class EventPathsInvalidatorImpl implements EventPathsInvalidator {
 
-    private Object hstModelMutex;
-    private HstEventsCollector hstEventsCollector;
+    private final HstModelImpl hstModelImpl;
+    private final HstEventsCollector hstEventsCollector;
 
-    private HstManager hstManager;
-
-    public void setHstManager(HstManager hstManager) {
-        this.hstManager = hstManager;
-    }
-
-    public void setHstModelMutex(Object hstModelMutex) {
-        this.hstModelMutex = hstModelMutex;
-    }
-
-    public void setHstEventsCollector(HstEventsCollector hstEventsCollector) {
+    public EventPathsInvalidatorImpl(final HstModelImpl hstModelImpl, final HstEventsCollector hstEventsCollector) {
+        this.hstModelImpl = hstModelImpl;
         this.hstEventsCollector = hstEventsCollector;
     }
 
     @Override
     public void eventPaths(final String... absEventPaths) {
-        synchronized(hstModelMutex) {
+        synchronized(hstModelImpl) {
             hstEventsCollector.collect(absEventPaths);
             if (hstEventsCollector.hasEvents()) {
-                hstManager.markStale();
+                hstModelImpl.invalidate();
             }
         }
     }

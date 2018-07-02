@@ -103,6 +103,8 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
+    // TODO when is below used? We already have org.hippoecm.hst.platform.api.ChannelService.getChannels() which fetches
+    // TODO all channels from all hst configs. When is this #getChannels used?
     @GET
     @Path("/channels")
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,

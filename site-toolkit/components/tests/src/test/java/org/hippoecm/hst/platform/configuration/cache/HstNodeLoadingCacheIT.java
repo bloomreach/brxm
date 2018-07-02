@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,11 +26,9 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -536,13 +534,11 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
         CommonHstConfigSetup() throws RepositoryException {
             session = createSession();
-            listener = registerConfigListener();
             createHstConfigBackup();
         }
 
         @Override
         public void close() throws Exception {
-            removeListener();
             restoreHstConfigBackup();
             session.logout();
         }
@@ -563,22 +559,5 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             }
         }
 
-        private void removeListener() throws RepositoryException {
-            session.getWorkspace().getObservationManager().removeEventListener(listener);
-        }
-
-        private EventListener registerConfigListener() throws RepositoryException {
-            HstConfigurationEventListener configurationEventListener = new HstConfigurationEventListener();
-            configurationEventListener.setHstEventsCollector(hstEventsCollector);
-            configurationEventListener.setHstModelMutex(hstModelMutex);
-            session.getWorkspace().getObservationManager().addEventListener(configurationEventListener,
-                    Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                    "/hst:hst",
-                    true,
-                    null,
-                    null,
-                    false);
-            return configurationEventListener;
-        }
     }
 }

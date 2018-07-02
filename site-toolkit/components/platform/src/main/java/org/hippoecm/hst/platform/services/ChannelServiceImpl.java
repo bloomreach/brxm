@@ -30,8 +30,8 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class ChannelServiceImpl implements ChannelService {
                     continue;
                 }
 
-                final BiPredicate<Session, Channel> channelFilter = ((HstModelImpl) hstModel).getChannelFilter();
+                final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) hstModel).getChannelFilter();
 
                 if (channelFilter.test(userSession, channel)) {
                     channels.add(channel);
@@ -91,14 +91,15 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public String persist(final Session userSession, final String blueprintId, final Channel channel) throws ChannelException {
-        // TODO HSTTWO-4359  FIX persist
-//        try {
-//            return channelManager.persist(blueprintId, channel);
-//        } catch (ChannelException ce) {
-//            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
-//            throw ce;
-//        }
-        return null;
+
+        final PlatformHstModel hstModel = hstModelRegistry.getPlatformHstModel(channel.getContextPath());
+
+        try {
+            return hstModel.getChannelManager().persist(blueprintId, channel);
+        } catch (ChannelException ce) {
+            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
+            throw ce;
+        }
     }
 
     @Override

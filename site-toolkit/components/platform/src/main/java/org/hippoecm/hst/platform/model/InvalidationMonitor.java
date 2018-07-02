@@ -20,11 +20,13 @@ import java.util.Arrays;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstEventConsumer;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.model.EventPathsInvalidatorImpl;
 import org.hippoecm.hst.platform.configuration.model.HstConfigurationEventListener;
 
 import static javax.jcr.observation.Event.NODE_ADDED;
@@ -39,6 +41,7 @@ public class InvalidationMonitor {
 
     private final Session session;
     private final HstConfigurationEventListener hstConfigurationEventListener;
+    private final EventPathsInvalidator eventPathsInvalidator;
     private final HstEventsDispatcher hstEventsDispatcher;
 
 
@@ -51,7 +54,11 @@ public class InvalidationMonitor {
 
         final HstEventsCollector hstEventsCollector = new HstEventsCollector(hstNodeLoadingCache.getRootPath());
 
+        // jcr listener to collect hst events in 'hstEventsCollector'
         hstConfigurationEventListener = new HstConfigurationEventListener(hstModelImpl, hstEventsCollector);
+
+        // EventPathsInvalidatorImpl to be able to push events manually and to collect in the hstEventsCollector
+        eventPathsInvalidator = new EventPathsInvalidatorImpl(hstModelImpl, hstEventsCollector);
 
         session.getWorkspace().getObservationManager().addEventListener(hstConfigurationEventListener,
                 getAnyEventType(), hstNodeLoadingCache.getRootPath(), true, null, null, false);
@@ -66,6 +73,10 @@ public class InvalidationMonitor {
     protected void destroy() throws RepositoryException {
         session.getWorkspace().getObservationManager().removeEventListener(hstConfigurationEventListener);
 
+    }
+
+    protected EventPathsInvalidator getEventPathsInvalidator() {
+        return eventPathsInvalidator;
     }
 
     private int getAnyEventType() {

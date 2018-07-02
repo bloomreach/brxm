@@ -28,6 +28,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
@@ -148,6 +149,10 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         }
         return model;
 
+    }
+
+    public PlatformHstModel getPlatformHstModel(final String contextPath) {
+        return (PlatformHstModel)getHstModel(contextPath);
     }
 
     private void loadHstConfigNodes(final ClassLoader websiteClassLoader, final HstNodeLoadingCache hstNodeLoadingCache) throws InterruptedException {
