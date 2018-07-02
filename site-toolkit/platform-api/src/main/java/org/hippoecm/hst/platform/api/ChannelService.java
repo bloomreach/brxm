@@ -51,11 +51,12 @@ public interface ChannelService {
     String persist(Session userSession, String blueprintId, Channel channel) throws ChannelException;
 
 	/**
-	 * Check whether use can modify {@link Channel}(s) or not
+	 * Check whether user can modify {@link Channel}(s) or not for site webapp belonging to {@code contextPath}
 	 *
 	 * @param userSession the jcr session which must should be used for the check
 	 * @return <code>true</code> if use can modify {@link Channel}, <code>false</code> otherwise
 	 */
+	// TODO CHANNELMGR-1971 this api method does not suffice and needs to be done differently
 	boolean canUserModifyChannels(Session userSession);
 
     /**
