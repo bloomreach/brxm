@@ -71,6 +71,16 @@ public interface ProjectSettings {
     String getWebfilesSubModule();
 
     /**
+     * The name of hst root node.
+     */
+    String getHstRoot();
+
+    /**
+     * The name of webfile bundle.
+     */
+    String getWebfileBundleName();
+
+    /**
      * The primary JCR namespace used by the project, for example 'myhippoproject'.
      */
     String getProjectNamespace();

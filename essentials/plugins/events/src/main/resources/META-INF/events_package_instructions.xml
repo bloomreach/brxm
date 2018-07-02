@@ -27,15 +27,15 @@
   <instructionSet group="jsp">
     <file action="copy" source="jsp/eventslist-main-eventslist.jsp" target="{{jspRoot}}/hstdefault/eventslist-main-eventslist.jsp"/>
     <file action="copy" source="jsp/eventspage-main.jsp" target="{{jspRoot}}/hstdefault/eventspage-main.jsp"/>
-    <xml action="copy" source="xml/hst/templates/events-main-content-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-content-jsp.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/eventslist-main-eventslist.ftl" target="{{freemarkerRoot}}/hstdefault/eventslist-main-eventslist.ftl"/>
     <freemarker action="copy" source="freemarker/eventspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/eventspage-main.ftl"/>
-    <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-content-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/eventslist-main-eventslist-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -60,13 +60,13 @@
   </instructionSet>
 
   <instructionSet>
-    <xml action="copy" source="xml/hst/workspace/eventslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="xml/hst/workspace/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="xml/hst/workspace/eventslist.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="xml/hst/workspace/eventspage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="xml/hst/sitemap/events.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
     <file action="copy" source="java/EventsDocument.txt" target="{{beansFolder}}/EventsDocument.java"/>
-    <xml action="copy" source="xml/hst/pages/eventslist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="xml/hst/pages/eventslist.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/eventspage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="xml/hst/catalog/eventslist.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/events-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/events-list.png"/>
   </instructionSet>
 
@@ -76,7 +76,7 @@
     //############################################
   -->
   <instructionSet>
-    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    <xml action="copy" source="xml/hst/menu/menu-item-events.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
   </instructionSet>
 
   <!-- SAMPLES GROUP-->

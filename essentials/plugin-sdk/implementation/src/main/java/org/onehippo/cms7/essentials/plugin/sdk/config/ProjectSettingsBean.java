@@ -29,6 +29,8 @@ import com.google.common.base.Strings;
 @XmlRootElement(name = "project")
 public class ProjectSettingsBean implements ProjectSettings {
 
+    public static final String DEFAULT_HST_ROOT = "/hst:hst";
+    public static final String DEFAULT_BUNDLE_NAME = "site";
     private String projectNamespace;
 
     private String selectedBeansPackage;
@@ -52,6 +54,9 @@ public class ProjectSettingsBean implements ProjectSettings {
     private String developmentSubModule;
     private String webfilesSubModule;
     private String beansFolder;
+
+    private String hstRoot;
+    private String webfileBundleName;
 
     private boolean setupDone;
     private Set<String> pluginRepositories = new HashSet<>();
@@ -143,6 +148,24 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setApplicationSubModule(final String applicationSubModule) {
         this.applicationSubModule = applicationSubModule;
+    }
+
+    @Override
+    public String getHstRoot() {
+        return Strings.isNullOrEmpty(hstRoot) ? DEFAULT_HST_ROOT : hstRoot;
+    }
+
+    public void setHstRoot(final String hstRoot) {
+        this.hstRoot = hstRoot;
+    }
+
+    @Override
+    public String getWebfileBundleName() {
+        return Strings.isNullOrEmpty(webfileBundleName) ? DEFAULT_BUNDLE_NAME : webfileBundleName;
+    }
+
+    public void setWebfileBundleName(final String webfileBundleName) {
+        this.webfileBundleName = webfileBundleName;
     }
 
     @Override

@@ -142,7 +142,8 @@ public class RestPluginResource {
 
         final Session session = jcrService.createSession();
         try {
-            final Node targetNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final Node targetNode = session.getNode(settingsService.getSettings().getHstRoot()
+                    + "/hst:hosts/dev-localhost/localhost/hst:root");
             jcrService.importResource(targetNode, "/plain_mount.xml", properties);
             session.save();
         } catch (RepositoryException e) {

@@ -18,12 +18,12 @@
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet group="freemarker">
     <freemarker action="copy" binary="false" overwrite="false" source="freemarker/commerce-detail.ftl" target="{{freemarkerRoot}}/hstdefault/commerce-detail.ftl"/>
-    <xml action="copy" overwrite="false" source="hst/commerce-detail-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-detail-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
   <instructionSet>
     <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
-    <xml action="copy" overwrite="false" source="hst/commerce-detail.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" overwrite="false" source="hst/commerce-detail.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" overwrite="false" source="images/commerce-detail.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-detail.png"/>
   </instructionSet>
 </instructions>
