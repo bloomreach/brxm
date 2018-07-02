@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ public class RichTextEditorImageService implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(RichTextEditorImageService.class);
 
-    private RichTextImageFactory factory;
+    private final RichTextImageFactory factory;
 
-    public RichTextEditorImageService(RichTextImageFactory factory) {
+    public RichTextEditorImageService(final RichTextImageFactory factory) {
         this.factory = factory;
     }
 
-    public RichTextEditorImageLink createRichTextEditorImage(Map<String, String> p) {
+    public RichTextEditorImageLink createRichTextEditorImage(final Map<String, String> p) {
         final RichTextImage rti = loadImageItem(p);
         final String path = rti != null ? rti.getPath() : null;
         final IModel<Node> parentModel = path != null ? new JcrNodeModel(path).getParentModel() : null;
@@ -54,16 +54,19 @@ public class RichTextEditorImageService implements IDetachable {
             }
 
             @Override
-            public void setLinkTarget(IModel<Node> model) {
+            public void setLinkTarget(final IModel<Node> model) {
                 super.setLinkTarget(model);
-                setInitType(getType());
+
+                if (model != null) {
+                    setInitType(getType());
+                }
             }
 
             @Override
             public void save() {
                  if (isAttacheable() || !isSameType(getType())) {
                     try {
-                        RichTextImage item = createImageItem(getLinkTarget());
+                        final RichTextImage item = createImageItem(getLinkTarget());
                         final String type = getType();
                         if (!isSameType(type) || !isExisting()) {
                             put(WIDTH, "");
@@ -71,7 +74,7 @@ public class RichTextEditorImageService implements IDetachable {
                         }
                         item.setSelectedResourceDefinition(type);
                         setUrl(item.getUrl());
-                    } catch (RichTextException e) {
+                    } catch (final RichTextException e) {
                         log.error("Could not create link");
                     }
                 }
@@ -79,7 +82,7 @@ public class RichTextEditorImageService implements IDetachable {
 
             @Override
             public void delete() {
-                RichTextImage item = loadImageItem(this);
+                final RichTextImage item = loadImageItem(this);
                 if (item != null) {
                     setType("");
                     setUrl("");
@@ -94,20 +97,20 @@ public class RichTextEditorImageService implements IDetachable {
         factory.release();
     }
 
-    private RichTextImage loadImageItem(Map<String, String> values) {
+    private RichTextImage loadImageItem(final Map<String, String> values) {
         final String uuid = values.get(RichTextEditorImageLink.UUID);
         if (!Strings.isEmpty(uuid)) {
             final String type = values.get(RichTextEditorImageLink.TYPE);
             try {
                 return factory.loadImageItem(uuid, type);
-            } catch (RichTextException e) {
+            } catch (final RichTextException e) {
                 log.warn("Could not load rich text image " + uuid);
             }
         }
         return null;
     }
 
-    private RichTextImage createImageItem(IModel<Node> nodeModel) throws RichTextException {
+    private RichTextImage createImageItem(final IModel<Node> nodeModel) throws RichTextException {
         return factory.createImageItem(WicketModel.of(nodeModel));
     }
 }
