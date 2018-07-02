@@ -108,27 +108,49 @@ describe('imageLinkController', () => {
     });
   });
 
-  describe('focus handling', () => {
+  describe('onFocusFromParent', () => {
     beforeEach(() => {
-      spyOn($ctrl, 'setFocus').and.callThrough();
+      spyOn($ctrl, 'onFocusFromParent').and.callThrough();
     });
 
-    it('sets focus if parent component broadcasts event "primitive-field:focus" and index is 0', () => {
+    it('calls "onFocusFromParent" when parent component broadcasts event "primitive-field:focus" and index is 0', () => {
       $ctrl.index = 0;
       init();
 
       $rootScope.$broadcast('primitive-field:focus');
-      expect($ctrl.setFocus).toHaveBeenCalled();
+      expect($ctrl.onFocusFromParent).toHaveBeenCalled();
     });
 
-    it('does not set focus if parent component broadcasts event "primitive-field:focus" and index is not 0', () => {
+    it('does not call "onFocusFromParent" when parent component broadcasts event "primitive-field:focus" and index is not 0', () => {
       $ctrl.index = 1;
       init();
 
       $rootScope.$broadcast('primitive-field:focus');
-      expect($ctrl.setFocus).not.toHaveBeenCalled();
+      expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
     });
 
+    it('opens the imagePicker if model is empty', () => {
+      spyOn($ctrl, 'openImagePicker');
+      ngModel.$modelValue = '';
+      init();
+
+      $ctrl.onFocusFromParent();
+
+      expect($ctrl.openImagePicker).toHaveBeenCalled();
+    });
+
+    it('puts focus on the "select" button if model is not empty', () => {
+      const selectBtn = jasmine.createSpyObj('selectBtn', ['focus']);
+      spyOn($element, 'find').and.returnValues(selectBtn);
+      init();
+
+      $ctrl.onFocusFromParent();
+
+      expect(selectBtn.focus).toHaveBeenCalled();
+    });
+  });
+
+  describe('focus handling', () => {
     it('sets focus on the "select" button if no image is yet selected', () => {
       const imgEl = [];
       const selectEl = jasmine.createSpyObj('selectElement', ['focus']);
