@@ -60,9 +60,8 @@ class ChannelService {
    * @returns {*}
    */
   initializeChannel(channelId, branchId) {
-    return this._loadChannel(channelId, branchId).then(() => {
-      this._initializeState();
-    });
+    return this._loadChannel(channelId, branchId)
+      .then(() => this._initializeState());
   }
 
   _loadChannel(channelId, branchId) {
@@ -119,7 +118,7 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
-    this.SiteMapService.load(channel.siteMapId);
+    this.SiteMapService.load(this.getSiteMapId());
 
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();

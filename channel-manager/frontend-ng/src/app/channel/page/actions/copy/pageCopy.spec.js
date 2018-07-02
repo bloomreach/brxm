@@ -118,6 +118,7 @@ describe('PageCopyComponent', () => {
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showErrorResponse');
+    spyOn(HippoIframeService, 'initializePath');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -347,6 +348,9 @@ describe('PageCopyComponent', () => {
     $ctrl.channel = channels[2];
     $ctrl.location = pageModel.locations[2];
     $ctrl.lastPathInfoElement = 'test';
+
+    ChannelService.initializeChannel.and.returnValue($q.resolve());
+
     $ctrl.copy();
 
     const headers = {
@@ -357,11 +361,10 @@ describe('PageCopyComponent', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id, copyReturn.pathInfo);
+    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id);
     $rootScope.$digest();
-    expect(SiteMapService.load).not.toHaveBeenCalled();
-    expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    expect($ctrl.onDone).not.toHaveBeenCalled();
+    expect(HippoIframeService.initializePath).toHaveBeenCalledWith(copyReturn.pathInfo);
+    expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('fails to copy a page', () => {

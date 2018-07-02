@@ -100,7 +100,11 @@ class PageCopyCtrl {
 
   _returnToNewUrl(renderPathInfo, pathInfo) {
     if (this.channel && this.channel.id !== this.channelId) {
-      this.ChannelService.initializeChannel(this.channel.id, pathInfo);
+      this.ChannelService.initializeChannel(this.channel.id)
+        .then(() => {
+          this.HippoIframeService.initializePath(pathInfo);
+          this.onDone();
+        });
     } else {
       this.HippoIframeService.load(renderPathInfo);
       this.SiteMapService.load(this.siteMapId);
