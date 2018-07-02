@@ -41,11 +41,6 @@ public class NodeLinkFieldType extends LinkFieldType {
             "last.visited.key",
     };
 
-    private static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = {
-            "last.visited.nodetypes",
-            "nodetypes"
-    };
-
     private ObjectNode config;
 
     public ObjectNode getConfig() {

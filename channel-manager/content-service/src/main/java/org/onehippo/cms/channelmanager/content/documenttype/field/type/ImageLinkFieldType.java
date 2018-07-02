@@ -42,9 +42,6 @@ public class ImageLinkFieldType extends LinkFieldType {
             "last.visited.enabled",
             "last.visited.key",
     };
-    private static final String[] IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES = {
-            "nodetypes",
-    };
 
     private static final String IMAGE_PICKER_PROPERTY_PREFIX = "image.";
     private static final String[] IMAGE_PICKER_PREFIXED_STRING_PROPERTIES = {
@@ -75,7 +72,7 @@ public class ImageLinkFieldType extends LinkFieldType {
 
         final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
                 .strings(IMAGE_PICKER_STRING_PROPERTIES)
-                .multipleStrings(IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES)
+                .multipleStrings(PICKER_MULTIPLE_STRING_PROPERTIES)
                 .removePrefix(IMAGE_PICKER_PROPERTY_PREFIX)
                 .strings(IMAGE_PICKER_PREFIXED_STRING_PROPERTIES)
                 .build();

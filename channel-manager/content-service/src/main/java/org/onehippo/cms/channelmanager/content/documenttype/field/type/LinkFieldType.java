@@ -29,6 +29,11 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
 
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 
+    protected static final String[] PICKER_MULTIPLE_STRING_PROPERTIES = {
+            "last.visited.nodetypes",
+            "nodetypes"
+    };
+    
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
