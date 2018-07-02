@@ -32,9 +32,15 @@ class ImageLinkController {
     this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.isRequired ? ' *' : '') : '';
 
     if (this.index === 0) {
-      this.$scope.$on('primitive-field:focus', () => {
-        this.setFocus();
-      });
+      this.$scope.$on('primitive-field:focus', () => this.onFocusFromParent());
+    }
+  }
+
+  onFocusFromParent() {
+    if (this.ngModel.$modelValue === '') {
+      this.openImagePicker();
+    } else {
+      this._focusClearButton();
     }
   }
 
