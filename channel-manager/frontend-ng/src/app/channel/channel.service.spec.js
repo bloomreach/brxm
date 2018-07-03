@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-xdescribe('ChannelService', () => {
+describe('ChannelService', () => {
   let $log;
   let $q;
   let $rootScope;
@@ -99,7 +99,7 @@ xdescribe('ChannelService', () => {
   });
 
   function loadChannel(id = 'testChannelId') {
-    ChannelService.initializeChannel({ id });
+    ChannelService.initializeChannel(id);
     $rootScope.$digest();
   }
 
@@ -114,11 +114,10 @@ xdescribe('ChannelService', () => {
       previewHstConfigExists: true,
     };
 
-    spyOn(CmsService, 'subscribe');
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
     spyOn($state, 'go');
 
-    ChannelService.initializeChannel(testChannel, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
@@ -131,7 +130,6 @@ xdescribe('ChannelService', () => {
         channelId: testChannel.id,
       },
     );
-    expect(ChannelService.getInitialRenderPath()).toBe('/testMount/testPath');
   });
 
   it('should initialize a channel that is not editable yet', () => {
@@ -154,12 +152,11 @@ xdescribe('ChannelService', () => {
       previewHstConfigExists: true,
     };
 
-    spyOn(CmsService, 'subscribe');
     HstService.getChannel.and.returnValues($q.resolve(testChannel), $q.resolve(editableTestChannel));
     HstService.doPost.and.returnValue($q.resolve());
     spyOn($state, 'go');
 
-    ChannelService.initializeChannel(testChannel, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
@@ -171,7 +168,6 @@ xdescribe('ChannelService', () => {
         channelId: editableTestChannel.id,
       },
     );
-    expect(ChannelService.getInitialRenderPath()).toBe('/testMount/testPath');
   });
 
   it('should fallback to the non-editable channel if creating preview configuration fails', () => {
@@ -185,13 +181,12 @@ xdescribe('ChannelService', () => {
       previewHstConfigExists: false,
     };
 
-    spyOn(CmsService, 'subscribe');
     HstService.getChannel.and.returnValues($q.resolve(testChannel));
     HstService.doPost.and.returnValue($q.reject({ message: 'Failed to create preview configuration' }));
     spyOn($log, 'error');
     spyOn($state, 'go');
 
-    ChannelService.initializeChannel(testChannel, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
@@ -205,7 +200,6 @@ xdescribe('ChannelService', () => {
         channelId: testChannel.id,
       },
     );
-    expect(ChannelService.getInitialRenderPath()).toBe('/testMount/testPath');
     expect(ChannelService.isEditable()).toBe(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
@@ -260,39 +254,17 @@ xdescribe('ChannelService', () => {
 
   describe('matchesChannel', () => {
     it('returns false when no channel is loaded yet', () => {
-      expect(ChannelService.matchesChannel()).toBe(false);
+      expect(ChannelService.matchesChannel(channelMock.id)).toBe(false);
     });
 
     it('returns true for the current channel', () => {
       loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel(channelMock)).toBe(true);
+      expect(ChannelService.matchesChannel(channelMock.id)).toBe(true);
     });
 
     it('returns false for another channel', () => {
       loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel({ id: 'anotherChannelId' })).toBe(false);
-    });
-
-    it('returns true for the master project of the current channel', () => {
-      loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel(channelMock, 'master')).toBe(true);
-    });
-
-    it('returns false for a master project of another channel', () => {
-      loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel({ id: 'anotherChannelId' }, 'master')).toBe(false);
-    });
-
-    it('returns true for a project of the current channel', () => {
-      channelMock.id = 'channelId-testProject-preview';
-      loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel({ id: 'channelId-preview' }, 'testProject')).toBe(true);
-    });
-
-    it('returns false for a project of another channel', () => {
-      channelMock.id = 'channelId-testProject-preview';
-      loadChannel(channelMock.id);
-      expect(ChannelService.matchesChannel({ id: 'anotherChannelId-preview' }, 'testProject')).toBe(false);
+      expect(ChannelService.matchesChannel('anotherChannelId')).toBe(false);
     });
   });
 
@@ -394,8 +366,8 @@ xdescribe('ChannelService', () => {
     expect(ChannelService.getChannel()).toEqual(channelMock);
 
     HstService.getChannel.and.callFake(() => $q.resolve(channelB));
-    ChannelService.loadChannel(channelB.id);
-    $rootScope.$digest();
+
+    loadChannel(channelB.id);
 
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);

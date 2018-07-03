@@ -15,7 +15,7 @@
  *
  */
 
-xdescribe('ProjectService', () => {
+describe('ProjectService', () => {
   let $httpBackend;
   let ConfigService;
   let ProjectService;
@@ -33,17 +33,6 @@ xdescribe('ProjectService', () => {
     },
   ];
   const currentProject = projects[0];
-
-  const channels = [
-    {
-      mountId: 'mountId1',
-      id: 'channelId1',
-    },
-    {
-      mountId: 'mountId2',
-      id: 'channelId2',
-    },
-  ];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm', ($provide) => {
@@ -77,8 +66,6 @@ xdescribe('ProjectService', () => {
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
     $httpBackend.expectGET('/test/ws/projects').respond(200, projects);
-    $httpBackend.expectGET('/test/ws/channels/').respond(200, channels);
-
 
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${currentProject.id}`).respond(200, currentProject.id);
 
