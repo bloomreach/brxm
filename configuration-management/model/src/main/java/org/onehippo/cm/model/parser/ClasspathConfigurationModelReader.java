@@ -136,11 +136,15 @@ public class ClasspathConfigurationModelReader {
     }
 
     // TODO: this is scary -- almost guaranteed to be a bad resource leak of open FileSystems!
-    public Collection<ModuleImpl> collectExtensionModules(final ClassLoader classLoader)
+    public Collection<ModuleImpl> collectExtensionModules(final String extensionName, final ClassLoader classLoader)
             throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionClasspathGroups =
+        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
                 readModulesFromClasspath(classLoader, false, true);
-        return extensionClasspathGroups.getRight();
+
+        // insert extension name into each module
+        extensionModules.getRight().forEach(module -> module.setExtensionName(extensionName));
+
+        return extensionModules.getRight();
     }
 
     /**
