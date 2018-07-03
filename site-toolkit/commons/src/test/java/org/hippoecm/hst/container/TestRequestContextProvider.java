@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class TestRequestContextProvider {
 
     public static void setCurrentRequestContext(HstRequestContext hrc) {
-        RequestContextProvider.set(hrc);
+        new RequestContextProvider.ModifiableRequestContextProvider(){}.set(hrc);
     }
 
     @Test
@@ -46,9 +46,9 @@ public class TestRequestContextProvider {
         try {
             assertTrue(hrc == RequestContextProvider.get());
         } finally {
-            RequestContextProvider.clear();
+            new RequestContextProvider.ModifiableRequestContextProvider(){}.clear();
             // should be okay with multiple clearances.
-            RequestContextProvider.clear();
+            new RequestContextProvider.ModifiableRequestContextProvider(){}.clear();
         }
 
         assertNull(RequestContextProvider.get());

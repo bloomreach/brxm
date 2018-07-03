@@ -104,6 +104,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private HstURLFactory urlFactory;
 
+    /**
+     * Note the '{}' below looks funny but very important to avoid IllegalAccessError because the RequestContextProvider
+     * lives in the shared lib and from the RequestContextProvider we do not want to expose
+     * RequestContextProvider#set(HstRequestContext) or RequestContextProvider#clear(), hence we need to extent a
+     * protected
+     */
+    private final RequestContextProvider.ModifiableRequestContextProvider modifiableRequestContextProvider =
+            new RequestContextProvider.ModifiableRequestContextProvider() {};
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -256,7 +265,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             // sets up the current thread's active request context object.
             initializeResourceLifecycleManagements();
-            RequestContextProvider.set(requestContext);
+            modifiableRequestContextProvider.set(requestContext);
+
             requestContextSetToProvider = true;
 
             ResolvedMount resolvedMount = requestContext.getResolvedMount();
@@ -412,15 +422,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                 }
             }
-        }
-        catch (MatchException | ContainerNotFoundException e) {
+        } catch (MatchException | ContainerNotFoundException e) {
             if(log.isDebugEnabled()) {
                 log.info("{} for '{}':",e.getClass().getName(), containerRequest , e);
             } else {
                 log.info("{} for '{}': '{}'" , e.getClass().getName(), containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-        } catch (ContainerException e) {
+        } catch (Exception e) {
             if(log.isDebugEnabled()) {
                 log.warn("ContainerException for '{}':", containerRequest, e);
             } else {
@@ -433,7 +442,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             // clears up the current thread's active request context object.
             if (requestContextSetToProvider) {
                 disposeHstRequestContext();
-                RequestContextProvider.clear();
+                modifiableRequestContextProvider.clear();
             }
             cleanupResourceLifecycleManagements();
             if (rootTask != null) {

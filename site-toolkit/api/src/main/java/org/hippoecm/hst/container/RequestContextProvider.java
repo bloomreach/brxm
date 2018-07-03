@@ -42,7 +42,7 @@ public final class RequestContextProvider {
      * 
      * @param requestContext
      */
-    static void set(HstRequestContext requestContext) {
+    private static void set(HstRequestContext requestContext) {
         tlRequestContextHolder.set(requestContext);
     }
 
@@ -50,7 +50,18 @@ public final class RequestContextProvider {
      * Clears the {@link HstRequestContext} for the current threads active request.
      *
      */
-    static void clear() {
+    private static void clear() {
         tlRequestContextHolder.remove();
+    }
+
+    protected static class ModifiableRequestContextProvider {
+
+        public void set(final HstRequestContext requestContext) {
+            RequestContextProvider.set(requestContext);
+        }
+        public void clear() {
+            RequestContextProvider.clear();
+        }
+
     }
 }
