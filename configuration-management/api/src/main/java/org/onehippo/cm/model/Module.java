@@ -53,11 +53,6 @@ public interface Module extends OrderableByName {
     Project getProject();
 
     /**
-     * @return true if this module is explicitly marked as part of the core model and not an extension
-     */
-    boolean isExplicitCore();
-
-    /**
      * @return true if this module is part of an extension; false if this module is in the core model
      */
     boolean isExtension();

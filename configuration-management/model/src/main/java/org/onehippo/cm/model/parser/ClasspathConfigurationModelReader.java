@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,8 @@ public class ClasspathConfigurationModelReader {
         final Pair<Set<FileSystem>, List<ModuleImpl>> coreModules =
                 readModulesFromClasspath(classLoader, verifyOnly, false);
 
+        // TODO: filter out isExtension() modules
+
         // add classpath modules to model
         coreModules.getRight().forEach(model::addModule);
 
@@ -108,13 +111,16 @@ public class ClasspathConfigurationModelReader {
      * @throws ParserException
      */
     // TODO: Why do we need a separate code path for this? Why not just load everything available to the classloader?
-    public ConfigurationModelImpl readExtension(final ClassLoader classLoader, final ConfigurationModelImpl model)
+    public ConfigurationModelImpl readExtension(final String extensionName, final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
                 readModulesFromClasspath(classLoader, false, true);
+
+        // insert extension name into each module
+        extensionModules.getRight().forEach(module -> module.setExtensionName(extensionName));
 
         // TODO: why use the override addReplacementModule codepath here instead of the normal addModule?
         extensionModules.getRight().forEach(model::addReplacementModule);
@@ -153,8 +159,17 @@ public class ClasspathConfigurationModelReader {
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
         final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
+        final Enumeration<URL> parentResourcesEn = classLoader.getParent().getResources(Constants.HCM_MODULE_YAML);
+        final HashSet<URL> parentResources = new HashSet<>(Collections.list(parentResourcesEn));
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
+
+            // Skip modules in the parent (shared in web container) classloader during extension loading.
+            // These should be considered part of the core HCM model.
+            if (extensions && parentResources.contains(resource)) {
+                continue;
+            }
+
             final String resourcePath = resource.getPath();
 
             // look for the marker that indicates this is a path within a jar file
@@ -185,12 +200,10 @@ public class ClasspathConfigurationModelReader {
                 moduleImpl.setArchiveFile(archiveFile);
 
 
-                if (extensions == moduleImpl.isExtension()) {
-                    // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
-                    modules.getLeft().add(fs);
+                // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
+                modules.getLeft().add(fs);
 
-                    modules.getRight().add(moduleImpl);
-                }
+                modules.getRight().add(moduleImpl);
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
@@ -200,9 +213,7 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                if (extensions == result.getModuleContext().getModule().isExtension()) {
-                    modules.getRight().add(result.getModuleContext().getModule());
-                }
+                modules.getRight().add(result.getModuleContext().getModule());
             }
         }
         return modules;

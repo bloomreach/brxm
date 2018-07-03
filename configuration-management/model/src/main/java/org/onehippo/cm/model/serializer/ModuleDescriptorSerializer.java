@@ -41,9 +41,6 @@ import static org.onehippo.cm.model.Constants.GROUP_KEY;
 import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.NAME_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
-import static org.onehippo.cm.model.Constants.SCOPE_CORE_KEY;
-import static org.onehippo.cm.model.Constants.SCOPE_EXTENSION_KEY;
-import static org.onehippo.cm.model.Constants.SCOPE_KEY;
 
 public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
 
@@ -67,16 +64,7 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
         final Node moduleNode = representNode(module);
         final NodeTuple moduleTuple = new NodeTuple(createStrScalar(MODULE_KEY), moduleNode);
 
-        final List<NodeTuple> rootTuples;
-        if (module.isExplicitCore() || module.isExtension()) {
-            final Node scopeNode = createStrScalar(module.isExtension() ? SCOPE_EXTENSION_KEY : SCOPE_CORE_KEY);
-            final NodeTuple scopeTuple = new NodeTuple(createStrScalar(SCOPE_KEY), scopeNode);
-            rootTuples = ImmutableList.of(groupTuple, projectTuple, moduleTuple, scopeTuple);
-        }
-        else {
-            rootTuples = ImmutableList.of(groupTuple, projectTuple, moduleTuple);
-        }
-
+        final List<NodeTuple> rootTuples = ImmutableList.of(groupTuple, projectTuple, moduleTuple);
         final MappingNode mappingNode = new MappingNode(Tag.MAP, rootTuples, false);
 
         serializeNode(outputStream, mappingNode);

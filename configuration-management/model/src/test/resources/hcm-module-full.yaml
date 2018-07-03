@@ -7,4 +7,3 @@ project:
 module:
     name: sdfgdf
     after: hippo-cms
-scope: core

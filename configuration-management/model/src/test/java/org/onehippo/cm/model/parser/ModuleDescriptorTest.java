@@ -35,48 +35,16 @@ public class ModuleDescriptorTest {
 
     @Test
     public void testLoadSaveFull() throws ParserException, IOException {
-
         final String resource = "/hcm-module-full.yaml";
         final ModuleImpl module = loadDescriptor(resource);
-
-        assertTrue("module SHOULD be marked as explicitly a core module", module.isExplicitCore());
-        assertFalse("module should NOT be marked as an extension module", module.isExtension());
-        assertNull("module extension name should be null", module.getExtensionName());
-
         writeDescriptor(resource, module);
     }
 
     @Test
     public void testLoadShort() throws ParserException, IOException {
-
         final String resource = "/hcm-module-short.yaml";
         ModuleImpl module = loadDescriptor(resource);
-
-        assertFalse("module should NOT be marked as explicitly a core module", module.isExplicitCore());
-        assertFalse("module should NOT be marked as an extension module", module.isExtension());
-        assertNull("module extension name should be null", module.getExtensionName());
-
         writeDescriptor(resource, module);
-    }
-
-    @Test
-    public void testLoadShortExtension() throws ParserException, IOException {
-
-        final String resource = "/hcm-module-short-extension.yaml";
-        ModuleImpl module = loadDescriptor(resource);
-
-        assertFalse("module should NOT be marked as explicitly a core module", module.isExplicitCore());
-        assertTrue("module SHOULD be marked as an extension module", module.isExtension());
-        assertEquals("module extension name should be a known constant", Constants.SCOPE_EXTENSION_KEY, module.getExtensionName());
-
-        writeDescriptor(resource, module);
-    }
-
-    @Test(expected = ParserException.class)
-    public void testLoadShortExtensionFail() throws ParserException {
-
-        // we expect a parser exception if "scope" value is not one of the two expected constants
-        loadDescriptor("/hcm-module-short-extension-fail.yaml");
     }
 
     private ModuleImpl loadDescriptor(final String resource) throws ParserException {

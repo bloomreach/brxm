@@ -259,23 +259,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     /**
-     * Marks this node as explicitly (rather than implicitly) belonging to the "core" configuration model.
-     * Calling with a true argument has the side-effect of setting the extension name property to null.
-     * @param explicitCore
-     */
-    public void setExplicitCore(final boolean explicitCore) {
-        this.explicitCore = explicitCore;
-        if (explicitCore) {
-            extensionName = null;
-        }
-    }
-
-    @Override
-    public boolean isExplicitCore() {
-        return explicitCore;
-    }
-
-    /**
      * Returns existing or adds new source to the source list
      * @param source
      * @return
