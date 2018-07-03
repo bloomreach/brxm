@@ -148,12 +148,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         log.info("New site extension detected: {}", extensionName);
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
 
-        final Collection<ModuleImpl> extensionModules = modelReader.collectExtensionModules(event.getClassLoader()).stream()
-                .filter(m -> Objects.equals(extensionName, m.getExtensionName())).collect(Collectors.toList());
+        final Collection<ModuleImpl> extensionModules =
+                modelReader.collectExtensionModules(event.getExtensionName(), event.getClassLoader());
         extensionModules.forEach(runtimeConfigurationModel::addReplacementModule);
 
         ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
 
+        // TODO: find source modules that match modules loaded from extension classloader
+        // TODO: check all other usages of module.getExtensionName() to make sure it is initialized when used
         final List<ModuleImpl> extensionModulesFromSourceFiles =
                 readModulesFromSourceFiles(runtimeConfigurationModel).stream()
                         .filter(m -> extensionName.equals(m.getExtensionName())).collect(toList());
