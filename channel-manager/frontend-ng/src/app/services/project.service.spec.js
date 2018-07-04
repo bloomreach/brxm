@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ describe('ProjectService', () => {
   it('loads projects and sets the current project', () => {
     expect(ProjectService.projects).toEqual(projects);
     expect(ProjectService.allProjects).toEqual(projects);
-    expect(ProjectService.selectedProject).toEqual(currentProject);
+    expect(ProjectService.project).toEqual(currentProject);
   });
 
   it('selects the core if the selectedProject is not a project', () => {
@@ -109,7 +109,7 @@ describe('ProjectService', () => {
 
     ProjectService.reject(channelId, message);
     $httpBackend.flush();
-    expect(ProjectService.selectedProject).toEqual(rejectedProject);
+    expect(ProjectService.project).toEqual(rejectedProject);
   });
 
   it('updates channel when reject call fails', () => {
