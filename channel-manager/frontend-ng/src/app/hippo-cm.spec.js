@@ -102,10 +102,12 @@ describe('hippoCm', () => {
     it('opens a different channel', () => {
       ChannelService.matchesChannel.and.returnValue(false);
       ChannelService.initializeChannel.and.returnValue($q.resolve());
+      spyOn($rootScope, '$apply').and.callThrough();
 
       $ctrl.$onInit();
       $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/some/path', 'testProject');
 
+      expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', 'testProject');
       $rootScope.$digest();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');

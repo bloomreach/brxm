@@ -44,7 +44,9 @@ class HippoCmCtrl {
       $('body').addClass('ie11');
     }
 
-    this.CmsService.subscribe('load-channel', this._loadChannel, this);
+    this.CmsService.subscribe('load-channel', (channelId, initialPath, branchId) => {
+      this.$rootScope.$apply(() => this._loadChannel(channelId, initialPath, branchId));
+    });
 
     // Reload current channel
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
@@ -52,7 +54,9 @@ class HippoCmCtrl {
     });
 
     if (this.ConfigService.isDevMode()) {
-      this.CmsService.subscribe('load-channel', this._storeAppState, this);
+      this.CmsService.subscribe('load-channel', (channelId, initialPath, branchId) => {
+        this.$rootScope.$apply(() => this._storeAppState(channelId, initialPath, branchId));
+      });
       this._restoreAppState();
     }
   }
@@ -61,9 +65,7 @@ class HippoCmCtrl {
     if (!this.ChannelService.matchesChannel(channelId)) {
       this._initializeChannel(channelId, initialPath, branchId);
     } else {
-      this.$rootScope.$apply(() => { // change from outside, so the trigger digest loop to let AngularJs pick it up
-        this.HippoIframeService.initializePath(initialPath);
-      });
+      this.HippoIframeService.initializePath(initialPath);
     }
   }
 
