@@ -253,7 +253,13 @@ class PageStructureService {
 
     this.MaskService.mask();
 
+    const channel = this.ChannelService.getChannel();
+
     this.CmsService.publish('show-component-properties', {
+      channel: {
+        contextPath: channel.contextPath,
+        mountId: channel.mountId,
+      },
       component: {
         id: componentElement.getId(),
         label: componentElement.getLabel(),

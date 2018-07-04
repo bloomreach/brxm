@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,17 @@
 
 class ProjectToggleController {
   constructor(
-    $translate,
-    ProjectService,
     CmsService,
-    $mdSelect,
+    ProjectService,
   ) {
     'ngInject';
 
-    this.$translate = $translate;
-    this.ProjectService = ProjectService;
     this.CmsService = CmsService;
-    this.$mdSelect = $mdSelect;
+    this.ProjectService = ProjectService;
   }
 
   $onInit() {
-    this.core = {
-      name: this.$translate.instant('CORE'),
-    };
+    this.core = this.ProjectService.getCore();
   }
 
   getProjects() {
@@ -41,14 +35,14 @@ class ProjectToggleController {
   }
 
   get selectedProject() {
-    return this.ProjectService.selectedProject || this.core;
+    return this.ProjectService.project;
   }
 
   set selectedProject(selectedProject) {
-    this.$mdSelect.hide().then(() => {
+    if (selectedProject.id !== this.ProjectService.getActiveProjectId()) {
       this.ProjectService.updateSelectedProject(selectedProject.id);
       this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
-    });
+    }
   }
 }
 

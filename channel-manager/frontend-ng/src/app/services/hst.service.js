@@ -29,12 +29,16 @@ class HstService {
     http = $http;
 
     this.CmsService = CmsService;
-    this.config = ConfigService;
+    this.ConfigService = ConfigService;
     this.PathService = PathService;
+
+    this.contextPath = ConfigService.contextPaths[0];
   }
 
-  initializeSession(hostname, mountId) {
-    return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
+  initializeSession(channel) {
+    this.contextPath = channel.contextPath;
+
+    return this.doGet(this.ConfigService.rootUuid, 'composermode', channel.hostname, channel.mountId)
       .then((response) => {
         if (response) {
           return response.data;
@@ -47,7 +51,7 @@ class HstService {
     if (!id) {
       throw new Error('Channel id must be defined');
     }
-    return this.doGet(this.config.rootUuid, 'channels', id);
+    return this.doGet(this.ConfigService.rootUuid, 'channels', id);
   }
 
   getSiteMap(id) {
@@ -98,7 +102,7 @@ class HstService {
     const url = this._createApiUrl(uuid, pathElements, params);
 
     headers = headers || {};
-    headers['CMS-User'] = this.config.cmsUser;
+    headers['CMS-User'] = this.ConfigService.cmsUser;
     headers['Force-Client-Host'] = 'true';
 
     return q((resolve, reject) => {
@@ -109,7 +113,7 @@ class HstService {
   }
 
   _createApiUrl(uuid, pathElements, params) {
-    let apiUrl = this.PathService.concatPaths(this.config.contextPath, this.config.apiUrlPrefix);
+    let apiUrl = this.PathService.concatPaths(this.contextPath, this.ConfigService.apiUrlPrefix);
     apiUrl = this.PathService.concatPaths(apiUrl, uuid);
     apiUrl += './';
 

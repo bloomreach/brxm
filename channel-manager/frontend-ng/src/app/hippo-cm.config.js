@@ -16,6 +16,8 @@
 
 import moment from 'moment-timezone';
 
+import isDevMode from './dev-mode';
+
 const FALLBACK_LOCALE = 'en';
 
 function config(
@@ -201,9 +203,8 @@ function config(
     .icon('toggle_components_overlay', `images/toggle_components_overlay.svg${antiCache}`)
     .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`);
 
-  // only enable Angular debug information when the CMS runs in 'Wicket development mode'
-  const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
-  $compileProvider.debugInfoEnabled(devMode);
+  // only enable Angular debug information during development
+  $compileProvider.debugInfoEnabled(isDevMode());
 
   // report all HTTP requests as 'user activity' to the CMS to prevent active logout
   $httpProvider.interceptors.push((CmsService) => {

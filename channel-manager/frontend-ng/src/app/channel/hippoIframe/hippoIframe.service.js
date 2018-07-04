@@ -41,9 +41,22 @@ class HippoIframeService {
     this.pageLoaded = false;
 
     if (this.ConfigService.projectsEnabled) {
-      this.ProjectService.registerSelectListener(() => {
+      this.ProjectService.registerListener(() => {
+        // Reloads the current page when the project changes so new data will be shown.
+        // When another project became active the page reload will trigger a channel switch.
         this.reload();
       });
+    }
+  }
+
+  initializePath(channelRelativePath) {
+    const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
+
+    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
+      && this.renderPathInfo !== initialRenderPath) {
+      this.load(initialRenderPath);
+    } else {
+      this.reload();
     }
   }
 
@@ -108,6 +121,10 @@ class HippoIframeService {
     }
 
     this.CmsService.publish('user-activity');
+
+    if (this.ConfigService.isDevMode()) {
+      sessionStorage.channelPath = this.renderPathInfo;
+    }
   }
 
   _determineRenderPathInfo() {
