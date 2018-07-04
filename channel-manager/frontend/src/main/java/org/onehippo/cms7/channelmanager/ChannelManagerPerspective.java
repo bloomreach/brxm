@@ -144,6 +144,9 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         if (branchId.equals("master")) {
             return channelId;
         }
-        return channelId.replaceFirst("-preview$", "-" + branchId + "-preview");
+        if (channelId.endsWith("-preview")) {
+            return channelId.replaceFirst("-preview$", "-" + branchId + "-preview");
+        }
+        return channelId + "-" + branchId;
     }
 }

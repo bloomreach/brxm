@@ -62,6 +62,7 @@ class ChannelService {
       .then(projectId => this.HstService.getChannel(channelId)
         .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))
+          .then(() => this._getPreviewChannel(channel))
           .then(previewChannel => this._loadProject(channel, projectId)
             .then(() => this._setChannel(previewChannel)),
           ),
@@ -77,18 +78,22 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
       return this.HstService
         .doPost(null, channel.mountId, 'edit')
-        .then(() => this.HstService.getChannel(`${channel.id}-preview`))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
           this.FeedbackService.showError('ERROR_ENTER_EDIT');
-
-          // initialize the app with the non-editable channel so it becomes read-only
-          return this.$q.resolve(channel);
+          return this.$q.reject();
         });
     }
 
     // channel is already editable or the user is not allowed to edit it
     return this.$q.resolve(channel);
+  }
+
+  _getPreviewChannel(channel) {
+    if (channel.preview) {
+      return this.$q.resolve(channel);
+    }
+    return this.HstService.getChannel(`${channel.id}-preview`);
   }
 
   _loadProject(channel, branchId) {
