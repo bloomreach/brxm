@@ -225,27 +225,27 @@ describe('ChannelController', () => {
     expect($ctrl.isComponentsOverlayEnabled).toBeFalsy();
   });
 
-  describe('reload-channel event from ExtJS', () => {
+  describe('reload-page event from ExtJS', () => {
     beforeEach(() => {
       $ctrl.$onInit();
     });
 
-    it('handles the reload-channel event from ExtJS when an item is already locked', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
+    it('handles the reload-page event from ExtJS when an item is already locked', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', { lockedBy: 'admin' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('handles the reload-channel event from ExtJS when an item is not found', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_NOT_FOUND', parameterMap: { component: 'Banner' } });
+    it('handles the reload-page event from ExtJS when an item is not found', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: 'ITEM_NOT_FOUND', parameterMap: { component: 'Banner' } });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_COMPONENT_DELETED', { component: 'Banner' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('handles the reload-channel event from ExtJS when editing a component failed', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+    it('handles the reload-page event from ExtJS when editing a component failed', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: '' });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
       expect(HippoIframeService.reload).toHaveBeenCalled();
@@ -253,7 +253,7 @@ describe('ChannelController', () => {
 
     it('is unsubscribed when the controller is destroyed', () => {
       $ctrl.$onDestroy();
-      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+      $window.CMS_TO_APP.publish('reload-page', { error: '' });
       expect(FeedbackService.showError).not.toHaveBeenCalled();
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
     });

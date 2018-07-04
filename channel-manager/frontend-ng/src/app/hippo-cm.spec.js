@@ -61,6 +61,7 @@ describe('hippoCm', () => {
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
         'initializePath',
+        'reload',
       ]);
 
       $ctrl = $componentController('hippoCm', {
@@ -138,6 +139,21 @@ describe('hippoCm', () => {
       expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith(null);
       expect($state.go).not.toHaveBeenCalledWith('hippo-cm.channel');
+    });
+  });
+
+  describe('the reload-channel event', () => {
+    it('reloads the current channel and page', () => {
+      ChannelService.reload.and.returnValue($q.resolve());
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('reload-channel');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.reload).toHaveBeenCalled();
+      $rootScope.$digest();
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 

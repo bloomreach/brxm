@@ -47,6 +47,9 @@ class HippoCmCtrl {
     this.CmsService.subscribe('load-channel', (channelId, initialPath, branchId) => {
       this.$rootScope.$apply(() => this._loadChannel(channelId, initialPath, branchId));
     });
+    this.CmsService.subscribe('reload-channel', () => {
+      this.$rootScope.$apply(() => this._reloadChannel());
+    });
 
     // Reload current channel
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
@@ -73,6 +76,11 @@ class HippoCmCtrl {
     this.ChannelService.initializeChannel(channelId, branchId)
       .then(() => this.$state.go('hippo-cm.channel'))
       .then(() => this.HippoIframeService.initializePath(initialPath));
+  }
+
+  _reloadChannel() {
+    this.ChannelService.reload()
+      .then(() => this.HippoIframeService.reload());
   }
 
   _storeAppState(channelId, initialPath, branchId) {

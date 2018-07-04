@@ -64,8 +64,15 @@
 
     loadChannel: function() {
       this._destroyComponentPropertiesWindow();
-      this.hostToIFrame.publish('load-channel', this.channelId, this.initialPath, this.branchId);
-      delete this.initialPath;  // reset initial path so subsequent load-channel calls reload the current page
+      if (this.channelId) {
+        this.hostToIFrame.publish('load-channel', this.channelId, this.initialPath, this.branchId);
+      } else {
+        this.hostToIFrame.publish('reload-channel');
+      }
+
+      // reset the state; the state in the app is leading. When loadChannel is called again,
+      // we'll send a reload-channel event instead that reloads the current app state.
+      this.initChannel(null, null, null);
     },
 
     /**
@@ -103,9 +110,9 @@
       this._syncChannel();
     },
 
-    _closeDialogAndNotifyReloadChannel: function(data) {
+    _closeDialogAndNotifyReloadPage: function(data) {
       this._destroyComponentPropertiesWindow();
-      this.hostToIFrame.publish('reload-channel', data);
+      this.hostToIFrame.publish('reload-page', data);
     },
 
     _destroyComponentPropertiesWindow: function() {
@@ -153,8 +160,8 @@
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
           componentChanged: this._onComponentChanged,
-          loadFailed: this._closeDialogAndNotifyReloadChannel,
-          componentLocked: this._closeDialogAndNotifyReloadChannel,
+          loadFailed: this._closeDialogAndNotifyReloadPage,
+          componentLocked: this._closeDialogAndNotifyReloadPage,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },

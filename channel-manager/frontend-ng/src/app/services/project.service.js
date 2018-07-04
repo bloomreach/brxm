@@ -22,7 +22,6 @@ class ProjectService {
     $q,
     ConfigService,
     FeedbackService,
-    HippoGlobal,
   ) {
     'ngInject';
 
@@ -31,7 +30,6 @@ class ProjectService {
 
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
-    this.HippoGlobal = HippoGlobal;
 
     this.listeners = [];
     this.core = {
@@ -42,9 +40,6 @@ class ProjectService {
 
   load(mountId, projectId) {
     this.mountId = mountId;
-
-    this._setupProjectSync();
-
     return this._setupProjects(projectId);
   }
 
@@ -193,24 +188,6 @@ class ProjectService {
       .then((projects) => {
         this.allProjects = projects;
       });
-  }
-
-  _setupProjectSync() {
-    if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
-      this.projectEvents = this.HippoGlobal.Projects.events;
-
-      this.projectEvents.unsubscribeAll();
-
-      this.projectEvents.subscribe('project-updated', () => this._getProjects());
-      this.projectEvents.subscribe('project-status-updated', () => this._callListeners());
-      this.projectEvents.subscribe('project-channel-added', () => this._callListeners());
-      this.projectEvents.subscribe('project-deleted', (projectId) => {
-        this._getProjects().then(() => this.updateSelectedProject(projectId));
-      });
-      this.projectEvents.subscribe('project-channel-deleted', (projectId) => {
-        this._getProjects().then(() => this.updateSelectedProject(projectId));
-      });
-    }
   }
 
   _activateProject(projectId) {
