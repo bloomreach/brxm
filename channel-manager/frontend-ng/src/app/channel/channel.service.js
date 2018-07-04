@@ -58,7 +58,7 @@ class ChannelService {
    * @returns {*}
    */
   initializeChannel(channelId, branchId) {
-    return this.$q.when(branchId || this.ProjectService.getActiveProject())
+    return this.$q.when(branchId || this.ProjectService.getActiveProjectId())
       .then(projectId => this.HstService.getChannel(channelId)
         .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))

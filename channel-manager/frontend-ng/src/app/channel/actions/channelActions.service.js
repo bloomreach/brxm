@@ -123,7 +123,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _isBranch() {
-    return this.ProjectService.selectedProject && this.ConfigService.projectsEnabled;
+    return this.ProjectService.isBranch();
   }
 
   _hasWriteAccess() {
@@ -222,7 +222,7 @@ class ChannelActionsService extends MenuService {
     let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
 
     if (this._isBranch()) {
-      const project = this.ProjectService.selectedProject;
+      const project = this.ProjectService.project;
 
       content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE', {
         channelName: channel.name,

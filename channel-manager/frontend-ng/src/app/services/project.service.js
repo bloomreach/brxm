@@ -18,6 +18,7 @@
 class ProjectService {
   constructor(
     $http,
+    $translate,
     $q,
     ConfigService,
     FeedbackService,
@@ -33,34 +34,35 @@ class ProjectService {
     this.HippoGlobal = HippoGlobal;
 
     this.listeners = [];
+    this.core = {
+      id: 'master',
+      name: $translate.instant('CORE'),
+    };
   }
 
   load(mountId, projectId) {
     this.mountId = mountId;
-    this.projectId = projectId;
 
     this._setupProjectSync();
 
-    return this._setupProjects();
+    return this._setupProjects(projectId);
   }
 
-  getActiveProject() {
-    if (!this.ConfigService.projectsEnabled) {
-      return this.$q.resolve('master');
-    }
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
-    return this.$http
-      .get(url)
-      .then(result => result.data || 'master');
+  getActiveProjectId() {
+    return this.ConfigService.projectsEnabled ? this.project.id : this.core.id;
+  }
+
+  isBranch() {
+    return this.getActiveProjectId() !== 'master';
+  }
+
+  getCore() {
+    return this.core;
   }
 
   updateSelectedProject(projectId) {
-    const selectedProject = this.projects.find(project => project.id === projectId);
-    const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
-
-    return selectionPromise.then(() => {
-      this._callListeners(projectId);
-    });
+    return this._selectProject(projectId)
+      .then(() => this._callListeners(projectId));
   }
 
   registerListener(cb) {
@@ -68,20 +70,20 @@ class ProjectService {
   }
 
   associateWithProject(documentId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/associate/${documentId}`;
     return this.$http
       .post(url)
       .then(() => {
         this._getAllProjects();
         this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
-          name: this.selectedProject.name,
+          name: this.project.name,
         });
       });
   }
 
   showAddToProjectForDocument(documentId) {
     const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.selectedProject && !associatedProject;
+    return this.project && !associatedProject;
   }
 
   _getProjectByDocumentId(documentId) {
@@ -94,61 +96,62 @@ class ProjectService {
     this.listeners.forEach(listener => listener(...args));
   }
 
-  _setupProjects() {
+  _setupProjects(projectId) {
     return this.$q
       .all([
         this._getProjects(),
         this._getAllProjects(),
       ])
-      .then(() => {
-        const selectedProject = this.allProjects.find(project => project.id === this.projectId);
-        this.selectedProject = selectedProject;
-        return this.selectedProject ? this._selectProject(this.selectedProject.id) : this._selectCore();
-      });
+      .then(() => this._selectProject(projectId));
+  }
+
+  _selectProject(projectId) {
+    this.project = this.allProjects.find(project => project.id === projectId) || this.core;
+    return this.project.id === this.core.id ? this._activateCore() : this._activateProject(this.project.id);
   }
 
   isContentOverlayEnabled() {
     // For now, to prevent all kinds of corner cases, we only enable the content overlay
     // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.selectedProject || this.selectedProject.state === 'UNAPPROVED';
+    return !this.project || this.project.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
-    return !this.selectedProject
-      || this.selectedProject.state === 'UNAPPROVED'
-      || (this.selectedProject.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
+    return !this.project
+      || this.project.state === 'UNAPPROVED'
+      || (this.project.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
     // The action resetChannel puts a channel back into review.
     // It is only enabled if a channel has been rejected and the project is in review.
   }
 
   isRejectEnabled() {
-    return this.selectedProject
-      && this.selectedProject.state === 'IN_REVIEW'
+    return this.project
+      && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('rejectChannel');
   }
 
   isAcceptEnabled() {
-    return this.selectedProject
-      && this.selectedProject.state === 'IN_REVIEW'
+    return this.project
+      && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('approveChannel');
   }
 
   accept(channelId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/channel/approve`;
 
     return this.$http
       .post(url, channelId)
-      .then((response) => { this.selectedProject = response.data; })
+      .then((response) => { this.project = response.data; })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.selectedProject.id);
+        this._callListeners(this.project.id);
       });
   }
 
   reject(channelId, message) {
     const request = {
       method: 'POST',
-      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/reject/${channelId}`,
+      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/channel/reject/${channelId}`,
       headers: {
         'Content-Type': 'text/plain',
       },
@@ -157,16 +160,16 @@ class ProjectService {
 
     return this.$http(request)
       .then((response) => {
-        this.selectedProject = response.data;
+        this.project = response.data;
       })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.selectedProject.id);
+        this._callListeners(this.project.id);
       });
   }
 
   _isActionEnabled(action) {
-    const channelInfo = this.selectedProject.channels.find(c => c.mountId === this.mountId);
+    const channelInfo = this.project.channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;
   }
 
@@ -210,13 +213,13 @@ class ProjectService {
     }
   }
 
-  _selectProject(projectId) {
+  _activateProject(projectId) {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
     return this.$http
       .put(url);
   }
 
-  _selectCore() {
+  _activateCore() {
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject`;
     return this.$http
       .delete(url);
