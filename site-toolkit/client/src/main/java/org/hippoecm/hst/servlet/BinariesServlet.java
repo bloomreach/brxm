@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.servlet.utils.BinariesCache;
 import org.hippoecm.hst.servlet.utils.BinaryPage;
 import org.hippoecm.hst.servlet.utils.BinaryPage.CacheKey;
@@ -54,6 +56,7 @@ import org.hippoecm.hst.servlet.utils.ResourceUtils;
 import org.hippoecm.hst.servlet.utils.SessionUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -642,18 +645,20 @@ public class BinariesServlet extends HttpServlet {
         }
         
         if (HstServices.isAvailable()) {
-            initPrefix2ResourceMappers();
-            initAllResourceContainers();
+            HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final HstModel hstModel = hstModelRegistry.getHstModel(getServletContext().getContextPath());
+            initPrefix2ResourceMappers(hstModel);
+            initAllResourceContainers(hstModel);
             initBinariesCache();
             initialized = true;
         }
     }
 
-    private void initPrefix2ResourceMappers() {
+    private void initPrefix2ResourceMappers(final HstModel hstModel) {
         if (prefix2ResourceContainer != null) {
             return;
         }
-        HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
+        final HstLinkCreator linkCreator = hstModel.getHstLinkCreator();
         if (linkCreator.getLocationResolvers() == null) {
             prefix2ResourceContainer = Collections.emptyMap();
             return;
@@ -679,11 +684,11 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void initAllResourceContainers() {
+    private void initAllResourceContainers(final HstModel hstModel) {
         if (allResourceContainers != null) {
             return;
         }
-        HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
+        final HstLinkCreator linkCreator = hstModel.getHstLinkCreator();
         if (linkCreator.getLocationResolvers() == null) {
             allResourceContainers = Collections.emptyList();
             return;
