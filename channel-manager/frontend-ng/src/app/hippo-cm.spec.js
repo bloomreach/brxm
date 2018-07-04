@@ -44,7 +44,7 @@ describe('hippoCm', () => {
       $window = _$window_;
       CmsService = _CmsService_;
 
-      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler']);
+      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'go']);
 
       BrowserService = jasmine.createSpyObj('$state', ['isIE']);
 
@@ -111,6 +111,7 @@ describe('hippoCm', () => {
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', 'testProject');
       $rootScope.$digest();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
     });
 
     it('changes the page in the current channel', () => {
@@ -123,6 +124,7 @@ describe('hippoCm', () => {
       expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+      expect($state.go).not.toHaveBeenCalledWith('hippo-cm.channel');
     });
 
     it('reloads the current page in the current channel', () => {
@@ -135,6 +137,7 @@ describe('hippoCm', () => {
       expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith(null);
+      expect($state.go).not.toHaveBeenCalledWith('hippo-cm.channel');
     });
   });
 

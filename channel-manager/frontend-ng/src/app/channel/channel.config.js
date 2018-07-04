@@ -20,13 +20,6 @@ function config($stateProvider) {
   $stateProvider.state({
     name: 'hippo-cm.channel',
     component: 'channel',
-    params: {
-      channelId: {
-        dynamic: true,
-        type: 'string',
-        value: '',
-      },
-    },
   });
 }
 

@@ -19,7 +19,6 @@ class ChannelService {
     $log,
     $q,
     $rootScope,
-    $state,
     CatalogService,
     CmsService,
     ConfigService,
@@ -35,7 +34,6 @@ class ChannelService {
     this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.$state = $state;
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -51,7 +49,7 @@ class ChannelService {
   }
 
   /**
-   * Initializes the channel editor. When the channel to load does not have a preview configuration yet it will be
+   * Loads a channel. When the channel to load does not have a preview configuration yet it will be
    * created. Note that a branched channel (e.g. with a branch ID in the channel ID) will always have a preview
    * configuration already.
    *
@@ -60,11 +58,6 @@ class ChannelService {
    * @returns {*}
    */
   initializeChannel(channelId, branchId) {
-    return this._loadChannel(channelId, branchId)
-      .then(() => this._initializeState());
-  }
-
-  _loadChannel(channelId, branchId) {
     return this.$q.when(branchId || this.ProjectService.getActiveProject())
       .then(projectId => this.HstService.getChannel(channelId)
         .then(channel => this.SessionService.initialize(channel)
@@ -78,12 +71,6 @@ class ChannelService {
           return this.$q.reject();
         }),
       );
-  }
-
-  _initializeState() {
-    this.$state.go('hippo-cm.channel', {
-      channelId: this.channel.id,
-    });
   }
 
   _ensurePreviewHstConfigExists(channel) {
@@ -152,7 +139,7 @@ class ChannelService {
   }
 
   reload() {
-    return this._loadChannel(this.channel.id, this.channel.branchId);
+    return this.initializeChannel(this.channel.id, this.channel.branchId);
   }
 
   getPreviewPaths() {

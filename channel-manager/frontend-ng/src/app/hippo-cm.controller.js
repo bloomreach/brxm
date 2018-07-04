@@ -71,7 +71,8 @@ class HippoCmCtrl {
 
   _initializeChannel(channelId, initialPath, branchId) {
     this.ChannelService.initializeChannel(channelId, branchId)
-      .then(() => this.HippoIframeService.initializePath(initialPath));
+      .then(() => this.HippoIframeService.initializePath(initialPath))
+      .then(() => this.$state.go('hippo-cm.channel'));
   }
 
   _storeAppState(channelId, initialPath, branchId) {

@@ -143,7 +143,7 @@ describe('RightSidePanel', () => {
     $ctrl.$onInit();
     SidePanelService.open.and.returnValue($q.resolve());
 
-    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
     expect($element.hasClass('sidepanel-open')).toBe(true);
@@ -159,7 +159,7 @@ describe('RightSidePanel', () => {
 
     $ctrl.$onInit();
 
-    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
     $state.go('hippo-cm.channel');

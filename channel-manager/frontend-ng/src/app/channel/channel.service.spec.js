@@ -18,7 +18,6 @@ describe('ChannelService', () => {
   let $log;
   let $q;
   let $rootScope;
-  let $state;
   let CatalogService;
   let ChannelService;
   let CmsService;
@@ -61,7 +60,6 @@ describe('ChannelService', () => {
       _$log_,
       _$q_,
       _$rootScope_,
-      _$state_,
       _CatalogService_,
       _ChannelService_,
       _CmsService_,
@@ -73,7 +71,6 @@ describe('ChannelService', () => {
       $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $state = _$state_;
       CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -115,7 +112,6 @@ describe('ChannelService', () => {
     };
 
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
-    spyOn($state, 'go');
 
     ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
@@ -123,13 +119,6 @@ describe('ChannelService', () => {
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
-
-    expect($state.go).toHaveBeenCalledWith(
-      'hippo-cm.channel',
-      {
-        channelId: testChannel.id,
-      },
-    );
   });
 
   it('should initialize a channel that is not editable yet', () => {
@@ -154,20 +143,12 @@ describe('ChannelService', () => {
 
     HstService.getChannel.and.returnValues($q.resolve(testChannel), $q.resolve(editableTestChannel));
     HstService.doPost.and.returnValue($q.resolve());
-    spyOn($state, 'go');
 
     ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
-
-    expect($state.go).toHaveBeenCalledWith(
-      'hippo-cm.channel',
-      {
-        channelId: editableTestChannel.id,
-      },
-    );
   });
 
   it('should fallback to the non-editable channel if creating preview configuration fails', () => {
@@ -184,7 +165,6 @@ describe('ChannelService', () => {
     HstService.getChannel.and.returnValues($q.resolve(testChannel));
     HstService.doPost.and.returnValue($q.reject({ message: 'Failed to create preview configuration' }));
     spyOn($log, 'error');
-    spyOn($state, 'go');
 
     ChannelService.initializeChannel(testChannel.id, '/testPath');
     $rootScope.$digest();
@@ -194,12 +174,6 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect($log.error).toHaveBeenCalledWith('Failed to load channel \'testChannelId\'.', 'Failed to create preview configuration');
-    expect($state.go).toHaveBeenCalledWith(
-      'hippo-cm.channel',
-      {
-        channelId: testChannel.id,
-      },
-    );
     expect(ChannelService.isEditable()).toBe(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
