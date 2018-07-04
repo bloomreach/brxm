@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -35,7 +36,9 @@ import org.slf4j.LoggerFactory;
  *
  * This class does not destroy the {@link ModelReference} instance. When the user logs out it is destroyed.
  */
-public class BranchIdModelReferenceSubject {
+public class BranchIdModelReferenceSubject implements Serializable  {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String UNDEFINED = "undefined";
     private static final Logger log = LoggerFactory.getLogger(BranchIdModelReferenceSubject.class);
