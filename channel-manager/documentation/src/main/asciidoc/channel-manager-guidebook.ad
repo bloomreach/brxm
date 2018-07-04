@@ -178,37 +178,6 @@ REST API resides in the `hippo-site-toolkit` Git repository.
 The content of a channel is modified via a REST API that resides in the `content-service` module 
 of this Git repository.
 
-### Code Examples
-
-.Example Java code snippet (with line numbers)
-[source,java,linenums]
-----
-Locale getLocale(Node node) throws RepositoryException {
-    if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-        String localeName = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
-        return localeProvider.getLocale(localeName).getLocale();
-    }
-    return null;
-}
-----
-
-.Example JavaScript code snippet
-[source,javascript]
-----
-load(siteMapId) {
-  return this.HstService.getSiteMap(siteMapId)
-    .then((siteMap) => {
-      this.siteMap = siteMap;
-    })
-    .catch(() => {
-      this.siteMap = []; // <1>
-      this.FeedbackService.showError('ERROR_SITEMAP_RETRIEVAL_FAILED'); // <2>
-    });
-}
-----
-<1> Reset site map
-<2> Shows toast message to the user
-
 ### Hippo CMS
 
 Most of the Channel Editor functionality is available in Hippo CMS (also known as the 'open source' 
