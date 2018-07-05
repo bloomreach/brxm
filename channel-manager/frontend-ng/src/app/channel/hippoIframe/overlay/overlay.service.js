@@ -433,7 +433,7 @@ class OverlayService {
       const selectDocumentButton = {
         id: 'select-document',
         mainIcon: searchWhiteSvg,
-        optionIcon: searchSvg,
+        optionIcon: searchWhiteSvg,
         callback: () => this._pickPath(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
@@ -445,7 +445,7 @@ class OverlayService {
       const createContentButton = {
         id: 'create-content',
         mainIcon: plusWhiteSvg,
-        optionIcon: plusSvg,
+        optionIcon: plusWhiteSvg,
         callback: () => this._createContent(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,

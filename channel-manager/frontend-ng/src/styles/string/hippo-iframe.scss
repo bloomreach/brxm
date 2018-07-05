@@ -339,7 +339,6 @@
     animation-duration: .2s;
     animation-fill-mode: forwards;
     animation-name: enter;
-    background-color: $white;
     border: 0;
     display: flex;
     fill: $overlay-link-shadow-color;
@@ -351,7 +350,7 @@
     width: 32px;
 
     &:hover {
-      background-color: darken($white, 10%);
+      background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-hover !important;
     }
 
@@ -372,6 +371,7 @@
 
     svg {
       transform: scale(.8);
+      fill: $white;
     }
   }
 
