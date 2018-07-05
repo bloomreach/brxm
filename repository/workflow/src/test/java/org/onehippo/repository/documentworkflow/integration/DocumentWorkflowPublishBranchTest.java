@@ -15,25 +15,34 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.rmi.RemoteException;
+import java.util.Optional;
+
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -79,7 +88,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         workflow.branch("foo", "Foo");
 
         assertTrue(workflow.hints().containsKey("publish"));
-        assertFalse("Normal Publication should be disabled for branches", (Boolean)workflow.hints().get("publish"));
+        assertFalse("Normal Publication should be disabled for branches", (Boolean) workflow.hints().get("publish"));
 
         workflow.publishBranch("foo");
 
@@ -257,4 +266,48 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
 
     }
 
+    @Test
+    public void republish_branch_puts_branch_live() throws RepositoryException, WorkflowException {
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        final String branchId = "branchId";
+        workflow.branch(branchId, "branchName");
+        workflow.publishBranch(branchId);
+        workflow.depublishBranch(branchId);
+        workflow.publishBranch(branchId);
+
+
+        final Optional<Node> publishedVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED);
+        assertTrue(publishedVariant.isPresent());
+        final String[] availabilities = JcrUtils.getMultipleStringProperty(publishedVariant.get(), HippoNodeType.HIPPO_AVAILABILITY, null);
+        assertNotNull(availabilities);
+        assertEquals(availabilities[0], "live");
+    }
+
+
+    @Test
+    public void republish_branch_puts_branch_live_while_master_is_edited() throws RepositoryException, WorkflowException, RemoteException {
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        final String branchId = "branchId";
+        workflow.branch(branchId, "branchName");
+        workflow.publishBranch(branchId);
+        workflow.depublishBranch(branchId);
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+        final Document document = workflow.obtainEditableInstance();
+        final Node variant = document.getNode(session);
+        variant.setProperty("foo", "bar");
+        session.save();
+        workflow.commitEditableInstance();
+
+        workflow.publishBranch(branchId);
+
+
+        final Optional<Node> publishedVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED);
+        assertTrue(publishedVariant.isPresent());
+        final String[] availabilities = JcrUtils.getMultipleStringProperty(publishedVariant.get(), HippoNodeType.HIPPO_AVAILABILITY, null);
+        assertNotNull(availabilities);
+        assertEquals(availabilities[0], "live");
+    }
 }

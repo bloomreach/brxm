@@ -676,7 +676,7 @@
                                    errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be published because it doesn\'t exist'"/>
 
 
-          <if cond="!!published">
+          <if cond="live">
             <!-- there is a published variant, we only publish to version history -->
             <if cond="unpublished.isBranch(_event.data?.branchId)">
               <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
@@ -688,7 +688,7 @@
 
           </if>
 
-          <if cond="!published">
+          <if cond="!live">
             <!-- there is not yet a published variant : really publish the preview -->
             <if cond="!unpublished.isBranch(_event.data?.branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
