@@ -88,6 +88,11 @@ describe('nodeLinkController', () => {
   });
 
   describe('focus handling', () => {
+    let preventDefault;
+    beforeEach(() => {
+      preventDefault = jasmine.createSpy('preventDefault');
+    });
+
     it('calls onFocusFromParent when parent broadcasts event "primitive-field:focus" and index is zero', () => {
       spyOn($ctrl, 'onFocusFromParent');
       $ctrl.index = 0;
@@ -108,12 +113,17 @@ describe('nodeLinkController', () => {
       expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
     });
 
+    it('prevents default event behavior when receiving focus from parent', () => {
+      $ctrl.onFocusFromParent({ preventDefault });
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
     it('opens the linkPicker if model is empty', () => {
       spyOn($ctrl, 'openLinkPicker');
       ngModel.$modelValue = '';
       init();
 
-      $ctrl.onFocusFromParent();
+      $ctrl.onFocusFromParent({ preventDefault });
 
       expect($ctrl.openLinkPicker).toHaveBeenCalled();
     });
@@ -123,7 +133,7 @@ describe('nodeLinkController', () => {
       spyOn($element, 'find').and.returnValues(clearBtn);
       init();
 
-      $ctrl.onFocusFromParent();
+      $ctrl.onFocusFromParent({ preventDefault });
 
       expect(clearBtn.focus).toHaveBeenCalled();
     });
