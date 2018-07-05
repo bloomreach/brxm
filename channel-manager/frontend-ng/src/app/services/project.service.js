@@ -108,11 +108,11 @@ class ProjectService {
   isContentOverlayEnabled() {
     // For now, to prevent all kinds of corner cases, we only enable the content overlay
     // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.project || this.project.state === 'UNAPPROVED';
+    return !this.project.state || this.project.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
-    return !this.project
+    return !this.project.state
       || this.project.state === 'UNAPPROVED'
       || (this.project.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
     // The action resetChannel puts a channel back into review.
@@ -120,13 +120,13 @@ class ProjectService {
   }
 
   isRejectEnabled() {
-    return this.project
+    return this.project.state
       && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('rejectChannel');
   }
 
   isAcceptEnabled() {
-    return this.project
+    return this.project.state
       && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('approveChannel');
   }
