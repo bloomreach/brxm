@@ -83,7 +83,8 @@ describe('projectToggle component', () => {
     });
 
     it('should not update selected project when it did not change', () => {
-      ProjectService.project = project;
+      spyOn(ProjectService, 'getActiveProjectId').and.returnValue(project.id);
+
       $ctrl.selectedProject = project;
       $rootScope.$digest();
 
