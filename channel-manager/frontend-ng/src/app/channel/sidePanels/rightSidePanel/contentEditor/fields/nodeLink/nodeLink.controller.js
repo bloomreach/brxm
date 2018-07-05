@@ -26,11 +26,15 @@ class nodeLinkController {
 
   $onInit() {
     if (this.index === 0) {
-      this.$scope.$on('primitive-field:focus', () => this.onFocusFromParent());
+      this.$scope.$on('primitive-field:focus', ($event, focusEvent) => this.onFocusFromParent(focusEvent));
     }
   }
 
-  onFocusFromParent() {
+  onFocusFromParent(focusEvent) {
+    // Don't let the click event bubble through the label as it can trigger an
+    // unexpected click on the input element
+    focusEvent.preventDefault();
+
     if (this.ngModel.$modelValue === '') {
       this.openLinkPicker();
     } else {

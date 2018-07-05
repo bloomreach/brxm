@@ -49,10 +49,7 @@ class PrimitiveFieldCtrl {
   }
 
   onLabelClick($event) {
-    this.$scope.$broadcast('primitive-field:focus');
-    // Don't let the click event bubble through the label as it can trigger an
-    // unexpected click on the associated input
-    $event.preventDefault();
+    this.$scope.$broadcast('primitive-field:focus', $event);
   }
 
   focusPrimitive($event = null) {
