@@ -43,16 +43,8 @@ class ProjectService {
     return this._setupProjects(projectId);
   }
 
-  getActiveProjectId() {
-    return this.ConfigService.projectsEnabled ? this.project.id : this.core.id;
-  }
-
   isBranch() {
-    return this.getActiveProjectId() !== 'master';
-  }
-
-  getCore() {
-    return this.core;
+    return this.project !== this.core;
   }
 
   updateSelectedProject(projectId) {
@@ -78,7 +70,7 @@ class ProjectService {
 
   showAddToProjectForDocument(documentId) {
     const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.project && !associatedProject;
+    return this.isBranch() && !associatedProject;
   }
 
   _getProjectByDocumentId(documentId) {
@@ -102,7 +94,11 @@ class ProjectService {
 
   _selectProject(projectId) {
     this.project = this.allProjects.find(project => project.id === projectId) || this.core;
-    return this.project.id === this.core.id ? this._activateCore() : this._activateProject(this.project.id);
+    return this._setProjectInHST();
+  }
+
+  _setProjectInHST() {
+    return this.project === this.core ? this._activateCore() : this._activateProject(this.project.id);
   }
 
   isContentOverlayEnabled() {
@@ -164,7 +160,8 @@ class ProjectService {
   }
 
   _isActionEnabled(action) {
-    const channelInfo = this.project.channels.find(c => c.mountId === this.mountId);
+    const channels = this.project.channels;
+    const channelInfo = channels && channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;
   }
 
