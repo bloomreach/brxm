@@ -36,6 +36,7 @@ public class ImageLinkFieldType extends LinkFieldType {
     private static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
 
     private static final String[] IMAGE_PICKER_STRING_PROPERTIES = {
+            "base.path",
             "base.uuid",
             "cluster.name",
             "enable.upload",
