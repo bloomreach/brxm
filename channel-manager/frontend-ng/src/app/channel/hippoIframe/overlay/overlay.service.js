@@ -22,9 +22,7 @@ import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 import dropSvg from '../../../../images/html/add.svg';
 import disabledSvg from '../../../../images/html/not-allowed.svg';
 import plusSvg from '../../../../images/html/plus.svg';
-import plusWhiteSvg from '../../../../images/html/plus-white.svg';
 import searchSvg from '../../../../images/html/search.svg';
-import searchWhiteSvg from '../../../../images/html/search-white.svg';
 
 class OverlayService {
   constructor(
@@ -432,8 +430,8 @@ class OverlayService {
     if (config.parameterName) {
       const selectDocumentButton = {
         id: 'select-document',
-        mainIcon: searchWhiteSvg,
-        optionIcon: searchWhiteSvg,
+        mainIcon: searchSvg,
+        optionIcon: searchSvg,
         callback: () => this._pickPath(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
@@ -444,8 +442,8 @@ class OverlayService {
     if (config.templateQuery) {
       const createContentButton = {
         id: 'create-content',
-        mainIcon: plusWhiteSvg,
-        optionIcon: plusWhiteSvg,
+        mainIcon: plusSvg,
+        optionIcon: plusSvg,
         callback: () => this._createContent(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
