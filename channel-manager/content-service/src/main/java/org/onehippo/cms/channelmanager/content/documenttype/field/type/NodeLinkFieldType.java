@@ -26,20 +26,12 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.picker.DocumentPicker;
 import org.onehippo.cms.json.Json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class NodeLinkFieldType extends LinkFieldType {
-
-    private static final String[] DOCUMENT_PICKER_STRING_PROPERTIES = {
-            "base.path",
-            "base.uuid",
-            "cluster.name",
-            "language.context.aware",
-            "last.visited.enabled",
-            "last.visited.key",
-    };
 
     private ObjectNode config;
 
@@ -54,12 +46,7 @@ public class NodeLinkFieldType extends LinkFieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         config = Json.object();
-
-        final ObjectNode documentPickerConfig = new FieldTypeConfig(fieldContext)
-                .strings(DOCUMENT_PICKER_STRING_PROPERTIES)
-                .multipleStrings(PICKER_MULTIPLE_STRING_PROPERTIES)
-                .build();
-        config.set("linkpicker", documentPickerConfig);
+        config.set("linkpicker", DocumentPicker.init(fieldContext));
 
         return super.init(fieldContext);
     }

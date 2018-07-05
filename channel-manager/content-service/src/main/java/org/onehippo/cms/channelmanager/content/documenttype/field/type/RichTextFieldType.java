@@ -37,6 +37,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
+import org.onehippo.cms.channelmanager.content.picker.InternalLinkPicker;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
@@ -65,39 +67,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
-    private static final String[] LINKPICKER_BOOLEAN_PROPERTIES = {
-            "linkpicker.language.context.aware",
-            "linkpicker.last.visited.enabled",
-            "linkpicker.open.in.new.window.enabled"
-    };
-    private static final String[] LINKPICKER_STRING_PROPERTIES = {
-            "linkpicker.base.uuid",
-            "linkpicker.cluster.name",
-            "linkpicker.last.visited.key"
-    };
-    private static final String[] LINKPICKER_MULTIPLE_STRING_PROPERTIES = {
-            "linkpicker.last.visited.nodetypes",
-            "linkpicker.nodetypes"
-    };
-    private static final String LINKPICKER_REMOVED_PREFIX = "linkpicker.";
-
-    private static final String[] IMAGEPICKER_BOOLEAN_PROPERTIES = {
-            "imagepicker.last.visited.enabled"
-    };
-    private static final String[] IMAGEPICKER_STRING_PROPERTIES = {
-            "imagepicker.base.uuid",
-            "imagepicker.cluster.name",
-            "imagepicker.last.visited.key",
-            "imagepicker.preferred.image.variant"
-    };
-
-    private static final String[] IMAGEPICKER_MULTIPLE_STRING_PROPERTIES = {
-            "excluded.image.variants",
-            "imagepicker.last.visited.nodetypes",
-            "imagepicker.nodetypes",
-            "included.image.variants"
-    };
-    private static final String IMAGEPICKER_REMOVED_PREFIX = "imagepicker.";
 
     private static final String DEFAULT_HTMLPROCESSOR_ID = "richtext";
 
@@ -122,23 +91,11 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        final ObjectNode internalLinkConfig = new FieldTypeConfig(fieldContext)
-                .removePrefix(LINKPICKER_REMOVED_PREFIX)
-                .booleans(LINKPICKER_BOOLEAN_PROPERTIES)
-                .strings(LINKPICKER_STRING_PROPERTIES)
-                .multipleStrings(LINKPICKER_MULTIPLE_STRING_PROPERTIES)
-                .build();
-        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, internalLinkConfig);
+        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, InternalLinkPicker.init(fieldContext));
     }
 
     private void initImagePicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
-                .removePrefix(IMAGEPICKER_REMOVED_PREFIX)
-                .booleans(IMAGEPICKER_BOOLEAN_PROPERTIES)
-                .strings(IMAGEPICKER_STRING_PROPERTIES)
-                .multipleStrings(IMAGEPICKER_MULTIPLE_STRING_PROPERTIES)
-                .build();
-        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, imagePickerConfig);
+        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, ImagePicker.init(fieldContext));
     }
 
     @Override
