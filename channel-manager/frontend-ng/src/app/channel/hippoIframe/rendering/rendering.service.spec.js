@@ -25,7 +25,6 @@ describe('RenderingService', () => {
   let OverlayService;
   let PageMetaDataService;
   let PageStructureService;
-  let ProjectService;
   let RenderingService;
 
   const iframeDocument = {
@@ -49,7 +48,6 @@ describe('RenderingService', () => {
       _OverlayService_,
       _PageMetaDataService_,
       _PageStructureService_,
-      _ProjectService_,
       _RenderingService_,
     ) => {
       $q = _$q_;
@@ -62,7 +60,6 @@ describe('RenderingService', () => {
       OverlayService = _OverlayService_;
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
-      ProjectService = _ProjectService_;
       RenderingService = _RenderingService_;
     });
 
@@ -126,9 +123,8 @@ describe('RenderingService', () => {
     it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
       const deferred = $q.defer();
 
-      spyOn(ChannelService, 'loadChannel').and.returnValue(deferred.promise);
+      spyOn(ChannelService, 'initializeChannel').and.returnValue(deferred.promise);
       spyOn(RenderingService, '_parseLinks');
-      spyOn(ProjectService, 'getBaseChannelId').and.callFake(channelId => channelId);
 
       spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
       spyOn(ChannelService, 'getId').and.returnValue('channelY');

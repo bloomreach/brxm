@@ -17,8 +17,6 @@
 describe('addToProjectComponent', () => {
   let $controller;
   let $ctrl;
-  let $q;
-  let $rootScope;
   let $uiRouterGlobals;
   let ProjectService;
   let EditContentService;
@@ -34,25 +32,20 @@ describe('addToProjectComponent', () => {
 
     inject((
       _$controller_,
-      _$q_,
-      _$rootScope_,
       _$uiRouterGlobals_,
       _ProjectService_,
       _EditContentService_,
     ) => {
       $controller = _$controller_;
-      $q = _$q_;
-      $rootScope = _$rootScope_;
       $uiRouterGlobals = _$uiRouterGlobals_;
       ProjectService = _ProjectService_;
       EditContentService = _EditContentService_;
     });
 
-    ProjectService.selectedProject = testProject;
+    ProjectService.project = testProject;
     $uiRouterGlobals.params = { documentId: testDocumentId };
 
     $ctrl = $controller('addToProjectCtrl');
-
   });
 
   describe('getSelectedProject', () => {

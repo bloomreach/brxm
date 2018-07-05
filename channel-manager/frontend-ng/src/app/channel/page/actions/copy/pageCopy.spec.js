@@ -23,7 +23,6 @@ describe('PageCopyComponent', () => {
   let $rootScope;
   let $translate;
   let ChannelService;
-  let CmsService;
   let FeedbackService;
   let HippoIframeService;
   let SessionService;
@@ -45,7 +44,6 @@ describe('PageCopyComponent', () => {
       _$rootScope_,
       _$translate_,
       _ChannelService_,
-      _CmsService_,
       _FeedbackService_,
       _HippoIframeService_,
       _SessionService_,
@@ -59,7 +57,6 @@ describe('PageCopyComponent', () => {
       $rootScope = _$rootScope_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
-      CmsService = _CmsService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       SessionService = _SessionService_;
@@ -113,15 +110,15 @@ describe('PageCopyComponent', () => {
     spyOn($log, 'info');
     spyOn($translate, 'instant').and.callFake(key => key);
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
-    spyOn(CmsService, 'publish');
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
-    spyOn(ChannelService, 'loadChannel').and.returnValue($q.when());
+    spyOn(ChannelService, 'initializeChannel').and.returnValue();
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showErrorResponse');
+    spyOn(HippoIframeService, 'initializePath');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -351,6 +348,9 @@ describe('PageCopyComponent', () => {
     $ctrl.channel = channels[2];
     $ctrl.location = pageModel.locations[2];
     $ctrl.lastPathInfoElement = 'test';
+
+    ChannelService.initializeChannel.and.returnValue($q.resolve());
+
     $ctrl.copy();
 
     const headers = {
@@ -361,11 +361,10 @@ describe('PageCopyComponent', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(CmsService.publish).toHaveBeenCalledWith('load-channel', $ctrl.channel.id, copyReturn.pathInfo);
+    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id);
     $rootScope.$digest();
-    expect(SiteMapService.load).not.toHaveBeenCalled();
-    expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    expect($ctrl.onDone).not.toHaveBeenCalled();
+    expect(HippoIframeService.initializePath).toHaveBeenCalledWith(copyReturn.pathInfo);
+    expect($ctrl.onDone).toHaveBeenCalled();
   });
 
   it('fails to copy a page', () => {

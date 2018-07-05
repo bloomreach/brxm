@@ -30,7 +30,7 @@ class AddToProjectController {
   }
 
   getSelectedProject() {
-    return this.ProjectService.selectedProject;
+    return this.ProjectService.project;
   }
 
   addDocumentToProject() {

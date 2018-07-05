@@ -20,10 +20,8 @@ import 'angular-mocks';
 describe('projectToggle component', () => {
   let $ctrl;
   let $rootScope;
-  let $q;
   let ProjectService;
   let CmsService;
-  let $mdSelect;
   let project;
 
   beforeEach(() => {
@@ -32,19 +30,14 @@ describe('projectToggle component', () => {
     inject((
       $componentController,
       _$rootScope_,
-      _$q_,
       _HippoIframeService_,
       _ProjectService_,
       _CmsService_,
-      _ChannelActionsService_,
-      _$mdSelect_,
     ) => {
       $ctrl = $componentController('projectToggle', {});
       $rootScope = _$rootScope_;
-      $q = _$q_;
       ProjectService = _ProjectService_;
       CmsService = _CmsService_;
-      $mdSelect = _$mdSelect_;
     });
 
     project = { name: 'testProject', id: 1 };
@@ -67,43 +60,36 @@ describe('projectToggle component', () => {
   });
 
   describe('get selectedProjects', () => {
-    it('return core project if there are no selected projects', () => {
-      ProjectService.selectedProject = null;
-      // activate onInit to get the core set up
-      $ctrl.$onInit();
-      const expectedCoreProject = { id: 'master', name: 'CORE' };
-
-      expect($ctrl.selectedProject).toEqual(expectedCoreProject);
-    });
-
-    it('return the selected project if set', () => {
-      ProjectService.selectedProject = project;
-
+    it('returns the selected project if set', () => {
+      ProjectService.project = project;
       expect($ctrl.selectedProject).toEqual(project);
     });
   });
 
-  describe('set selectedProject', () => {
+  describe('sets selectedProject', () => {
     beforeEach(() => {
       // init to get core project
       $ctrl.$onInit();
-      spyOn($mdSelect, 'hide').and.returnValue($q.resolve());
       spyOn(ProjectService, 'updateSelectedProject');
       spyOn(CmsService, 'reportUsageStatistic');
     });
 
-    it('should call $mdSelect hide', () => {
+    it('should update selected project on project service with the selected project id', () => {
       $ctrl.selectedProject = project;
-
-      expect($mdSelect.hide).toHaveBeenCalled();
-    });
-
-    it('should call update selectedProject on project service with the selected project id', () => {
-      $ctrl.selectedProject = project;
-      $rootScope.$apply();
+      $rootScope.$digest();
 
       expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(project.id);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
+    });
+
+    it('should not update selected project when it did not change', () => {
+      spyOn(ProjectService, 'getActiveProjectId').and.returnValue(project.id);
+
+      $ctrl.selectedProject = project;
+      $rootScope.$digest();
+
+      expect(ProjectService.updateSelectedProject).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
     });
   });
 });

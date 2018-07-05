@@ -109,7 +109,10 @@ describe('imageLinkController', () => {
   });
 
   describe('onFocusFromParent', () => {
+    let preventDefault;
+
     beforeEach(() => {
+      preventDefault = jasmine.createSpy('preventDefault');
       spyOn($ctrl, 'onFocusFromParent').and.callThrough();
     });
 
@@ -117,7 +120,7 @@ describe('imageLinkController', () => {
       $ctrl.index = 0;
       init();
 
-      $rootScope.$broadcast('primitive-field:focus');
+      $rootScope.$broadcast('primitive-field:focus', { preventDefault });
       expect($ctrl.onFocusFromParent).toHaveBeenCalled();
     });
 
@@ -129,12 +132,17 @@ describe('imageLinkController', () => {
       expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
     });
 
+    it('prevents default event behavior when receiving focus from parent', () => {
+      $ctrl.onFocusFromParent({ preventDefault });
+      expect(preventDefault).toHaveBeenCalled();
+    });
+
     it('opens the imagePicker if model is empty', () => {
       spyOn($ctrl, 'openImagePicker');
       ngModel.$modelValue = '';
       init();
 
-      $ctrl.onFocusFromParent();
+      $ctrl.onFocusFromParent({ preventDefault });
 
       expect($ctrl.openImagePicker).toHaveBeenCalled();
     });
@@ -144,7 +152,7 @@ describe('imageLinkController', () => {
       spyOn($element, 'find').and.returnValues(selectBtn);
       init();
 
-      $ctrl.onFocusFromParent();
+      $ctrl.onFocusFromParent({ preventDefault });
 
       expect(selectBtn.focus).toHaveBeenCalled();
     });

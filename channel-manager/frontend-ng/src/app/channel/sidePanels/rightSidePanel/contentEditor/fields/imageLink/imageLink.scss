@@ -119,8 +119,10 @@ image-link {
     }
 
     &.image-has-url {
+      bottom: -4px;
       height: 100%;
       padding-left: $thumbnail-width;
+      top: initial;
 
       > span {
         display: none;
