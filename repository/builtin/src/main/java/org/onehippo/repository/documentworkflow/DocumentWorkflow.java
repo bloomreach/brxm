@@ -508,7 +508,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *
      * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     Set<String> listBranches() throws WorkflowException;
 
     /**
@@ -547,7 +547,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * be a state below the handle <em>or</em> a frozenNode from version history.
      * @throws WorkflowException If there is no branch for {@code branchId}
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     Document getBranch(String branchId, WorkflowUtils.Variant state) throws WorkflowException;
 
     /**
@@ -559,6 +559,8 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     branch to be removed. If the current <em>preview</em> variant is for the current branch <em>or</em> the
      *     current <em>live</em> variant is for the current branch, only the branch info will be removed from those
      *     variants. This method will not restore a different branch from version history.
+     *     // TODO does this make sense? Should we include a second argument, something like that it can replace the
+     *     // TODO existing branch which is dissociated with 'core' or other version from version history?
      * </p>
      * @param branchId the {@code branchId} to remove
      * @return {@link Document} wrapping the workspace preview node variant
@@ -576,7 +578,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch
      *                            is not allowed in the current document state
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     Document checkoutBranch(String branchId) throws WorkflowException;
 
     /**
@@ -614,7 +615,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @param publish {@code true} if the document also needs to be (re)published as part of the reintegrate
      * @throws WorkflowException if there is no branch for {@code branchId}
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void reintegrateBranch(String branchId, boolean publish) throws WorkflowException;
 
     /**
@@ -628,7 +628,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version does not
      * exist
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void publishBranch(String branchId) throws WorkflowException;
 
     /**
@@ -643,7 +642,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * equal to 'master' which is not allowed to be depublished as branch or in case the right published version does not
      * exist
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
     void depublishBranch(String branchId) throws WorkflowException;
 
     /**
