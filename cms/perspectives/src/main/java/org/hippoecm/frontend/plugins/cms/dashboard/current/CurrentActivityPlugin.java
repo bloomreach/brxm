@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import com.google.common.collect.ImmutableSet;
 
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -184,11 +187,14 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
      */
     private static class DefaultNodeFilter implements NodeFilter, Serializable {
 
+        private static final Set<String> SKIP_WORKFLOW_METHOD_NAMES = ImmutableSet.of(
+                "publishBranch","depublishBranch", "reintegrateBranch", "checkoutBranch");
+
         @Override
         public boolean accept(final JcrNodeModel nodeModel) {
             final Node node = nodeModel.getNode();
             try {
-                return isValidEvent(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node);
+                return isValidEvent(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node) && !filterWorkflowMethodName(node);
             } catch (RepositoryException e) {
                 log.warn("Node rejected due to an exception", e);
             }
@@ -214,6 +220,19 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                     case HippoEventConstants.CATEGORY_SECURITY:
                         return true;
                 }
+            }
+            return false;
+        }
+
+        /**
+         * A bit 'nasty' but we do for now not want to show in activity something like 'publishBranch' because typically
+         * this goes with possibly tens or hundreds documents at once adding no value in the activity dashboard. In the
+         * future, we might be able to show these if we can 'just' filter in the cms UI itself
+         */
+        private boolean filterWorkflowMethodName(final Node node) throws RepositoryException {
+            final String methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", null);
+            if (SKIP_WORKFLOW_METHOD_NAMES.contains(methodName)) {
+                return true;
             }
             return false;
         }
