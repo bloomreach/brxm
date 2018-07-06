@@ -199,6 +199,7 @@
             HST,
             jQuery,
             localStorage,
+            sessionStorage,
             YAHOO,
             Wicket,
             window
