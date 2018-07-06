@@ -260,7 +260,9 @@ public class MountResource extends AbstractConfigResource {
                 if (branchOf.equals(liveConfigurationNodeName)) {
                     log.debug("Preview config for branch '{}' does not exist, creating it now", configurationNodeName);
                     final String branchConfigurationPath = configurationNode.getPath();
-                    createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                    if (!session.nodeExists(branchConfigurationPath + "-preview")) {
+                        createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                    }
                 }
             }
 
