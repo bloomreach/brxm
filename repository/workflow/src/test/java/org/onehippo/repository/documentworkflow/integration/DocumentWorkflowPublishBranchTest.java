@@ -286,7 +286,16 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
 
 
     @Test
-    public void republish_branch_puts_branch_live_while_master_is_edited() throws RepositoryException, WorkflowException, RemoteException {
+    public void republish_branch_puts_branch_live_while_master_is_changed() throws RepositoryException, WorkflowException, RemoteException {
+        assertionsForRepublish(true);
+    }
+
+    @Test
+    public void republish_branch_puts_branch_live_while_master_is_being_edited() throws RepositoryException, WorkflowException, RemoteException {
+        assertionsForRepublish(false);
+    }
+
+    private void assertionsForRepublish(final boolean commitEditableInstance) throws RepositoryException, WorkflowException, RemoteException {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         final String branchId = "branchId";
@@ -299,7 +308,9 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         final Node variant = document.getNode(session);
         variant.setProperty("foo", "bar");
         session.save();
-        workflow.commitEditableInstance();
+        if (commitEditableInstance) {
+            workflow.commitEditableInstance();
+        }
 
         workflow.publishBranch(branchId);
 
