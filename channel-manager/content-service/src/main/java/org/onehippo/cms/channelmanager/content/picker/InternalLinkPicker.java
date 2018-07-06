@@ -20,6 +20,16 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * Internal Link Picker
+ * <p>
+ * <smell>
+ * The configuration of this picker is looked up in the _default_ plugin cluster of hippostd:html
+ * instead of in the 'root/linkpicker' child node. The only difference is that the names in the
+ * latter don't start with 'linkpicker.'. To fix this, this prefix is removed for the keys of the JSON configuration 
+ * of this field so the resulting configuration matches the properties expected by the link picker code.
+ * </smell>
+ */
 public class InternalLinkPicker {
 
     private static final String[] BOOLEAN_PROPERTIES = {

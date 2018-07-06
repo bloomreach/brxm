@@ -54,14 +54,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A document field of type hippostd:html.
- * <p>
- * <smell>
- * The configuration of the link- and image pickers is looked up in the _default_ plugin cluster of hippostd:html
- * instead of in the 'root/linkpicker' and 'root/imagepicker' child nodes. The only difference is that the names in the
- * latter don't start with 'linkpicker.' and 'imagepicker.', respectively. To fix this, these prefixes are removed for
- * the keys of the JSON configuration of this field so the resulting configuration matches the properties expected by
- * the link- and image picker code.
- * </smell>
  */
 public class RichTextFieldType extends FormattedTextFieldType implements NodeFieldType {
 
@@ -84,18 +76,10 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
-        initInternalLinkPicker(fieldContext, hippoPickerConfig);
-        initImagePicker(fieldContext, hippoPickerConfig);
+        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, InternalLinkPicker.init(fieldContext));
+        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, ImagePicker.init(fieldContext));
 
         return fieldsInfo;
-    }
-
-    private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, InternalLinkPicker.init(fieldContext));
-    }
-
-    private void initImagePicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
-        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, ImagePicker.init(fieldContext));
     }
 
     @Override
