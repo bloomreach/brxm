@@ -36,6 +36,8 @@ class ProjectService {
       id: 'master',
       name: $translate.instant('CORE'),
     };
+    this.project = this.core;
+    this.allProjects = [];
   }
 
   load(mountId, projectId) {
@@ -89,7 +91,7 @@ class ProjectService {
         this._getProjects(),
         this._getAllProjects(),
       ])
-      .then(() => this._selectProject(projectId));
+      .finally(() => this._selectProject(projectId));
   }
 
   _selectProject(projectId) {
