@@ -24,9 +24,8 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.repository.api.HippoNode;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.picker.DocumentPicker;
+import org.onehippo.cms.channelmanager.content.picker.NodePicker;
 import org.onehippo.cms.json.Json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -46,7 +45,7 @@ public class NodeLinkFieldType extends LinkFieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         config = Json.object();
-        config.set("linkpicker", DocumentPicker.init(fieldContext));
+        config.set("linkpicker", NodePicker.build(fieldContext));
 
         return super.init(fieldContext);
     }
@@ -66,6 +65,6 @@ public class NodeLinkFieldType extends LinkFieldType {
             }
             return node.getName();
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 }

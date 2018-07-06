@@ -15,47 +15,27 @@
  */
 package org.onehippo.cms.channelmanager.content.picker;
 
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-/**
- * Image Picker
- * <p>
- * <smell>
- * The configuration of this picker is looked up in the _default_ plugin cluster of hippostd:html
- * instead of in the 'root/imagepicker' child node. The only difference is that the names in the
- * latter don't start with 'imagepicker.'. To fix this, this prefix is removed for the keys of the JSON configuration 
- * of this field so the resulting configuration matches the properties expected by the image picker code.
- * </smell>
- */
 public class ImagePicker {
 
     private static final String[] BOOLEAN_PROPERTIES = {
-            "imagepicker.last.visited.enabled"
-    };
-    private static final String[] STRING_PROPERTIES = {
-            "imagepicker.base.uuid",
-            "imagepicker.cluster.name",
-            "imagepicker.last.visited.key",
-            "imagepicker.preferred.image.variant"
+            "enable.upload",
     };
 
-    private static final String[] MULTIPLE_STRING_PROPERTIES = {
-            "excluded.image.variants",
-            "imagepicker.last.visited.nodetypes",
-            "imagepicker.nodetypes",
-            "included.image.variants"
+    private static final String[] PREFIXED_STRING_PROPERTIES = {
+            "validator.id"
     };
-    private static final String REMOVED_PREFIX = "imagepicker.";
 
-    public static ObjectNode init(final FieldTypeContext fieldContext) {
-        return new FieldTypeConfig(fieldContext)
-                .removePrefix(REMOVED_PREFIX)
+    private static final String PREFIX = "image.";
+
+    public static ObjectNode build(final FieldTypeContext fieldContext) {
+        return Picker.configure(fieldContext)
                 .booleans(BOOLEAN_PROPERTIES)
-                .strings(STRING_PROPERTIES)
-                .multipleStrings(MULTIPLE_STRING_PROPERTIES)
+                .prefix(PREFIX)
+                .strings(PREFIXED_STRING_PROPERTIES)
                 .build();
     }
 }

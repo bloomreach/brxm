@@ -18,16 +18,15 @@ package org.onehippo.cms.channelmanager.content.picker;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+class Picker {
 
-public class ImageLinkPicker {
+    private static final String[] BOOLEAN_PROPERTIES = {
+            "last.visited.enabled",
+    };
 
     private static final String[] STRING_PROPERTIES = {
-            "base.path",
             "base.uuid",
             "cluster.name",
-            "enable.upload",
-            "last.visited.enabled",
             "last.visited.key",
     };
 
@@ -36,18 +35,15 @@ public class ImageLinkPicker {
             "nodetypes"
     };
 
-    private static final String PROPERTY_PREFIX = "image.";
+    static FieldTypeConfig configure(final FieldTypeContext fieldContext) {
+        return configure(new FieldTypeConfig(fieldContext));
+    }
 
-    private static final String[] PREFIXED_STRING_PROPERTIES = {
-            PROPERTY_PREFIX + "validator.id"
-    };
+    static FieldTypeConfig configure(final FieldTypeConfig fieldConfig) {
+        return fieldConfig
+                .booleans(Picker.BOOLEAN_PROPERTIES)
+                .strings(Picker.STRING_PROPERTIES)
+                .multipleStrings(Picker.MULTIPLE_STRING_PROPERTIES);
 
-    public static ObjectNode init(final FieldTypeContext fieldContext) {
-        return new FieldTypeConfig(fieldContext)
-                .strings(STRING_PROPERTIES)
-                .multipleStrings(MULTIPLE_STRING_PROPERTIES)
-                .removePrefix(PROPERTY_PREFIX)
-                .strings(PREFIXED_STRING_PROPERTIES)
-                .build();
     }
 }

@@ -15,31 +15,24 @@
  */
 package org.onehippo.cms.channelmanager.content.picker;
 
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class DocumentPicker {
+public class NodePicker {
+
+    static final String[] BOOLEAN_PROPERTIES = {
+            "language.context.aware"
+    };
 
     private static final String[] STRING_PROPERTIES = {
             "base.path",
-            "base.uuid",
-            "cluster.name",
-            "language.context.aware",
-            "last.visited.enabled",
-            "last.visited.key",
-    };
-    
-    private static final String[] MULTIPLE_STRING_PROPERTIES = {
-            "last.visited.nodetypes",
-            "nodetypes"
     };
 
-    public static ObjectNode init(final FieldTypeContext fieldContext) {
-        return new FieldTypeConfig(fieldContext)
+    public static ObjectNode build(final FieldTypeContext fieldContext) {
+        return Picker.configure(fieldContext)
+                .booleans(BOOLEAN_PROPERTIES)
                 .strings(STRING_PROPERTIES)
-                .multipleStrings(MULTIPLE_STRING_PROPERTIES)
                 .build();
     }
 }

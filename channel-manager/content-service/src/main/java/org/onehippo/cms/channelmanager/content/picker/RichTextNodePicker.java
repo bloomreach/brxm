@@ -26,34 +26,25 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * <smell>
  * The configuration of this picker is looked up in the _default_ plugin cluster of hippostd:html
  * instead of in the 'root/linkpicker' child node. The only difference is that the names in the
- * latter don't start with 'linkpicker.'. To fix this, this prefix is removed for the keys of the JSON configuration 
- * of this field so the resulting configuration matches the properties expected by the link picker code.
+ * latter don't start with 'linkpicker.'. To fix this, this prefix is appended to the keys in the JCR configuration
+ * object.
  * </smell>
  */
-public class InternalLinkPicker {
+public class RichTextNodePicker {
 
     private static final String[] BOOLEAN_PROPERTIES = {
-            "linkpicker.language.context.aware",
-            "linkpicker.last.visited.enabled",
-            "linkpicker.open.in.new.window.enabled"
+            "open.in.new.window.enabled"
     };
-    private static final String[] STRING_PROPERTIES = {
-            "linkpicker.base.uuid",
-            "linkpicker.cluster.name",
-            "linkpicker.last.visited.key"
-    };
-    private static final String[] MULTIPLE_STRING_PROPERTIES = {
-            "linkpicker.last.visited.nodetypes",
-            "linkpicker.nodetypes"
-    };
-    private static final String REMOVED_PREFIX = "linkpicker.";
 
-    public static ObjectNode init(final FieldTypeContext fieldContext) {
-        return new FieldTypeConfig(fieldContext)
-                .removePrefix(REMOVED_PREFIX)
+    private static final String PREFIX = "linkpicker.";
+
+    public static ObjectNode build(final FieldTypeContext fieldContext) {
+        final FieldTypeConfig fieldConfig = new FieldTypeConfig(fieldContext)
+                .prefix(PREFIX);
+
+        return Picker.configure(fieldConfig)
+                .booleans(NodePicker.BOOLEAN_PROPERTIES)
                 .booleans(BOOLEAN_PROPERTIES)
-                .strings(STRING_PROPERTIES)
-                .multipleStrings(MULTIPLE_STRING_PROPERTIES)
                 .build();
     }
 }

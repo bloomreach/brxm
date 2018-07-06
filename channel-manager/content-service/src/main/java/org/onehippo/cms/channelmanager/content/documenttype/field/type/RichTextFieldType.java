@@ -32,13 +32,12 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.ckeditor.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
-import org.onehippo.cms.channelmanager.content.picker.InternalLinkPicker;
+import org.onehippo.cms.channelmanager.content.picker.RichTextImagePicker;
+import org.onehippo.cms.channelmanager.content.picker.RichTextNodePicker;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
@@ -59,7 +58,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
-
     private static final String DEFAULT_HTMLPROCESSOR_ID = "richtext";
 
     // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
@@ -76,8 +74,8 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         final FieldsInformation fieldsInfo = super.init(fieldContext);
 
         final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
-        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, InternalLinkPicker.init(fieldContext));
-        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, ImagePicker.init(fieldContext));
+        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, RichTextNodePicker.build(fieldContext));
+        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, RichTextImagePicker.build(fieldContext));
 
         return fieldsInfo;
     }

@@ -23,23 +23,18 @@ import javax.jcr.Session;
 import org.apache.wicket.util.collections.MiniMap;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.picker.ImageLinkPicker;
+import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
 import org.onehippo.cms.json.Json;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ImageLinkFieldType extends LinkFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
-
     private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
     private ObjectNode config;
-    private ImageItemFactory imageItemFactory;
+    private final ImageItemFactory imageItemFactory;
 
     public ImageLinkFieldType() {
         this(IMAGE_ITEM_FACTORY);
@@ -57,7 +52,7 @@ public class ImageLinkFieldType extends LinkFieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         config = Json.object();
-        config.set("imagepicker", ImageLinkPicker.init(fieldContext));
+        config.set("imagepicker", ImagePicker.build(fieldContext));
 
         return super.init(fieldContext);
     }
