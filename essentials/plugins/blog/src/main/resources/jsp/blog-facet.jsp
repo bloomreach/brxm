@@ -24,7 +24,11 @@
     <ul class="nav">
       <c:forEach var="facetvalue" items="${requestScope.facets.folders}">
         <c:if test="${not empty facetvalue.folders}">
-          <li><label class="nav-header"><c:out value="${facetvalue.name}"/></label>
+          <li>
+            <label class="nav-header">
+              <c:out value="${facetvalue.name}"/>
+              <c:if test="${facetvalue.name eq 'Authors'}"><hst:manageContent templateQuery="new-blogauthor-document" rootPath="blog/authors"/></c:if>
+            </label>
             <ul class="nav">
               <c:forEach items="${facetvalue.folders}" var="item" varStatus="index">
                 <c:choose>

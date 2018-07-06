@@ -6,9 +6,10 @@
 <hst:setBundle basename="essentials.blog"/>
 <c:if test="${(requestScope.pageable ne null)}">
   <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading has-edit-button">
       <h3 class="panel-title">
         <fmt:message key="blog.moreby" var="moreby"/><c:out value="${moreby}"/>&nbsp;<c:out value="${requestScope.author.fullName}"/>
+        <hst:manageContent hippobean="${author}"/>
       </h3>
     </div>
     <c:choose>
