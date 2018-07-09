@@ -64,8 +64,7 @@ class EditContentService {
     } else {
       this.ContentService.getDocument(documentId).then(
         (document) => {
-          const selectedProject = this.ProjectService.selectedProject;
-          const selectedProjectId = selectedProject ? selectedProject.id : undefined;
+          const selectedProjectId = this.ProjectService.project.id;
 
           if (selectedProjectId && document.branchId !== selectedProjectId) {
             // set the title
