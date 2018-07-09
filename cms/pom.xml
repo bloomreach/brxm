@@ -113,7 +113,8 @@
 
     <jetty.version>6.1.22</jetty.version>
 
-    <wicket.version>6.26.0</wicket.version>
+    <wicket.version>6.29.0</wicket.version>
+    <wicketstuff.version>6.28.0</wicketstuff.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <httpclient.version>4.5.5</httpclient.version>
 
@@ -294,9 +295,15 @@
         <version>${wicket.version}</version>
       </dependency>
       <dependency>
+        <!-- code is maintained in https://code.onehippo.org -->
         <groupId>org.wicketstuff</groupId>
         <artifactId>wicket-extjs</artifactId>
         <version>${wicket-extjs.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.wicketstuff</groupId>
+        <artifactId>wicketstuff-input-events</artifactId>
+        <version>${wicketstuff.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.yui</groupId>
