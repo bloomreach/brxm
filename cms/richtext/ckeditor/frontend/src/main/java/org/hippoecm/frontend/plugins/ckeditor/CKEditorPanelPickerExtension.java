@@ -20,9 +20,9 @@ import java.util.Arrays;
 
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.dialog.DialogManager;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
-import org.onehippo.ckeditor.HippoPicker;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

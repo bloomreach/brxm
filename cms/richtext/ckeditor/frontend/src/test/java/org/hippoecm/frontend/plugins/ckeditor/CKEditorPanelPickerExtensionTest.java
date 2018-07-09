@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.dialog.DialogBehavior;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerManager;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.ckeditor.HippoPicker;
 import org.onehippo.ckeditor.Json;
 
 import com.fasterxml.jackson.databind.JsonNode;
