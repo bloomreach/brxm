@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import MenuService from '../menu/menu.service';
+import MenuService from '../menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
 import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 
-class ChannelActionsService extends MenuService {
+class ChannelMenuService extends MenuService {
   constructor(
     $log,
     $state,
@@ -328,4 +328,4 @@ class ChannelActionsService extends MenuService {
   }
 }
 
-export default ChannelActionsService;
+export default ChannelMenuService;

@@ -17,22 +17,21 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ChannelActionsService', () => {
-  let $rootScope;
+describe('ChannelMenuService', () => {
   let $q;
+  let $rootScope;
   let $state;
   let $translate;
   let $window;
-  let ConfigService;
+  let ChannelMenuService;
   let ChannelService;
   let CmsService;
+  let ConfigService;
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
-  let SiteMapService;
   let ProjectService;
-
-  let ChannelActionsService;
+  let SiteMapService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
   confirmDialog.title.and.returnValue(confirmDialog);
@@ -54,7 +53,7 @@ describe('ChannelActionsService', () => {
     });
   });
 
-  const getItem = name => ChannelActionsService.menu.items.find(item => item.name === name);
+  const getItem = name => ChannelMenuService.menu.items.find(item => item.name === name);
 
   function doInject() {
     inject((
@@ -63,7 +62,7 @@ describe('ChannelActionsService', () => {
       _$state_,
       _$translate_,
       _$window_,
-      _ChannelActionsService_,
+      _ChannelMenuService_,
       _ConfigService_,
       _ChannelService_,
       _CmsService_,
@@ -78,7 +77,7 @@ describe('ChannelActionsService', () => {
       $state = _$state_;
       $translate = _$translate_;
       $window = _$window_;
-      ChannelActionsService = _ChannelActionsService_;
+      ChannelMenuService = _ChannelMenuService_;
       ConfigService = _ConfigService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -127,7 +126,7 @@ describe('ChannelActionsService', () => {
 
     // menu button
     it('shows an icon in the menu button if there are any changes', () => {
-      const menu = ChannelActionsService.menu;
+      const menu = ChannelMenuService.menu;
       expect(menu.isIconVisible()).toBe(false);
 
       ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
@@ -158,10 +157,10 @@ describe('ChannelActionsService', () => {
     });
 
     it('opens the channel-settings subpage when "settings" option is clicked', () => {
-      spyOn(ChannelActionsService, 'showSubPage');
+      spyOn(ChannelMenuService, 'showSubPage');
 
       getItem('settings').onClick();
-      expect(ChannelActionsService.showSubPage).toHaveBeenCalledWith('channel-settings');
+      expect(ChannelMenuService.showSubPage).toHaveBeenCalledWith('channel-settings');
     });
 
     // first divider
@@ -291,10 +290,10 @@ describe('ChannelActionsService', () => {
     });
 
     it('opens the manages-changes subpage when "manages changes" option is clicked', () => {
-      spyOn(ChannelActionsService, 'showSubPage');
+      spyOn(ChannelMenuService, 'showSubPage');
       getItem('manage-changes').onClick();
 
-      expect(ChannelActionsService.showSubPage).toHaveBeenCalledWith('manage-changes');
+      expect(ChannelMenuService.showSubPage).toHaveBeenCalledWith('manage-changes');
     });
 
     // second divider
@@ -459,7 +458,7 @@ describe('ChannelActionsService', () => {
       });
       DialogService.show.and.returnValue($q.resolve(message));
 
-      ChannelActionsService._reject();
+      ChannelMenuService._reject();
       $rootScope.$digest();
 
       expect(ProjectService.reject).toHaveBeenCalledWith(channelId, message);
@@ -494,7 +493,7 @@ describe('ChannelActionsService', () => {
     it('the menu has only the close option', () => {
       const close = getItem('close');
       expect(close).toBeDefined();
-      expect(ChannelActionsService.menu.items.length).toBe(1);
+      expect(ChannelMenuService.menu.items.length).toBe(1);
     });
   });
 });

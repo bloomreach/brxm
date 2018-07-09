@@ -55,7 +55,7 @@ class PageCopyCtrl {
     );
 
     this.isCrossChannelCopyAvailable = false;
-    // The PageActionsService has retrieved the page meta-data when opening the page menu.
+    // The PageMenuService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
     this.item = this.SiteMapItemService.get();
 
