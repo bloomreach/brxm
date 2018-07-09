@@ -38,10 +38,6 @@ right-side-panel {
     margin: 0 !important;
   }
 
-  &.in-resize {
-    user-select: none;
-  }
-
   .right-side-panel-top-toolbar {
     max-height: 64px;
     z-index: 3 !important;

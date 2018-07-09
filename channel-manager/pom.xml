@@ -207,7 +207,6 @@
     <module>frontend</module>
     <module>frontend-ng</module>
     <module>repository</module>
-    <module>documentation</module>
   </modules>
 
   <scm>
