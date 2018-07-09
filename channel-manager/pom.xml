@@ -140,8 +140,13 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor-config</artifactId>
-        <version>${hippo.ckeditor.version}</version>
+        <artifactId>hippo-cms-richtext-ckeditor-config</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
+        <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
