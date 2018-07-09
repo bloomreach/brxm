@@ -70,6 +70,12 @@ class ProjectService {
       });
   }
 
+  hasBranchOfProject(channelId) {
+    const baseChannelId = channelId.replace(/-preview$/, '');
+    const channels = this.selectedProject.channels;
+    return channels && !!channels.find(c => c.id === baseChannelId);
+  }
+
   showAddToProjectForDocument(documentId) {
     const associatedProject = this._getProjectByDocumentId(documentId);
     return this.isBranch() && !associatedProject;
