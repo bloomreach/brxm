@@ -58,7 +58,8 @@ describe('projectToggle component', () => {
   describe('getProjects', () => {
     it('return projects list from projectService', () => {
       ProjectService.projects = [];
-      const projectList = $ctrl.getProjects();
+      $ctrl.$onInit();
+      const projectList = $ctrl.projects;
       expect(projectList).toEqual([]);
     });
   });

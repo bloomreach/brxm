@@ -19,19 +19,22 @@ class ProjectToggleController {
   constructor(
     CmsService,
     ProjectService,
+    $q,
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.CmsService = CmsService;
     this.ProjectService = ProjectService;
   }
 
   $onInit() {
     this.core = this.ProjectService.core;
+    this.getProjects();
   }
 
   getProjects() {
-    return this.ProjectService.projects;
+    this.projects = this.ProjectService.projects;
   }
 
   get selectedProject() {
