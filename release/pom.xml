@@ -46,7 +46,6 @@
     <hippo.configuration-management.version>1.5.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.5.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.5.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.ckeditor.version>4.9.2-h12.5.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.5.0-SNAPSHOT</hippo.hst.version>
@@ -883,28 +882,6 @@
         <artifactId>hippo-plugin-taxonomy-hstclient</artifactId>
         <version>${hippo.plugin.taxonomy.version}</version>
       </dependency>
-
-      <!-- All Hippo Github artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>optimized</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>sources</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor-config</artifactId>
-        <version>${hippo.ckeditor.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
