@@ -107,10 +107,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     /**
      * Note the '{}' below looks funny but very important to avoid IllegalAccessError because the RequestContextProvider
      * lives in the shared lib and from the RequestContextProvider we do not want to expose
-     * RequestContextProvider#set(HstRequestContext) or RequestContextProvider#clear(), hence we need to extent a
-     * protected
+     * RequestContextProvider#set(HstRequestContext) or RequestContextProvider#clear(), hence we need to extent the
+     * protected ModifiableRequestContextProvider
      */
-    private final RequestContextProvider.ModifiableRequestContextProvider modifiableRequestContextProvider =
+    private static final RequestContextProvider.ModifiableRequestContextProvider modifiableRequestContextProvider =
             new RequestContextProvider.ModifiableRequestContextProvider() {};
 
     @Override
