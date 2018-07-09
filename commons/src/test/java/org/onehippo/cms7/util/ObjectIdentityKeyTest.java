@@ -27,6 +27,12 @@ import static org.junit.Assert.assertTrue;
 
 public class ObjectIdentityKeyTest {
 
+    /**
+     * Trivial wrapper class to ensure the <em>opposite</em> behavior of the {@link ObjectIdentityKey}
+     * for testing the contract. Note that Object equality is the default (natural) behavior but specific
+     * 'key' classes can override this (like the {@link ObjectIdentityKey}), so this test class needs a
+     * guaranteed behavior to validate its opposite behavior.
+     */
     private static class ObjectEqualityKey {
         private final Object object;
 
