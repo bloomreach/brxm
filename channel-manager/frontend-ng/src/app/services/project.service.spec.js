@@ -81,7 +81,7 @@ describe('ProjectService', () => {
   it('loads projects and sets the current project', () => {
     expect(ProjectService.projects).toEqual(projects);
     expect(ProjectService.allProjects).toEqual(projects);
-    expect(ProjectService.project).toEqual(currentProject);
+    expect(ProjectService.selectedProject).toEqual(currentProject);
   });
 
   it('selects the core if the selectedProject is not a project', () => {
@@ -109,7 +109,7 @@ describe('ProjectService', () => {
 
     ProjectService.reject(channelId, message);
     $httpBackend.flush();
-    expect(ProjectService.project).toEqual(rejectedProject);
+    expect(ProjectService.selectedProject).toEqual(rejectedProject);
   });
 
   it('updates channel when reject call fails', () => {

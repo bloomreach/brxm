@@ -44,7 +44,7 @@ describe('projectToggle component', () => {
       CmsService = _CmsService_;
     });
 
-    ProjectService.project = projectMock;
+    ProjectService.selectedProject = projectMock;
   });
 
   describe('onInit', () => {
@@ -63,7 +63,7 @@ describe('projectToggle component', () => {
     });
   });
 
-  describe('get selectedProjects', () => {
+  describe('get selectedProject', () => {
     it('returns the selected project if set', () => {
       expect($ctrl.selectedProject).toEqual(projectMock);
     });
@@ -87,7 +87,7 @@ describe('projectToggle component', () => {
     });
 
     it('should not update selected project when it did not change', () => {
-      ProjectService.project = projectMock;
+      ProjectService.selectedProject = projectMock;
       $ctrl.selectedProject = projectMock;
       $rootScope.$digest();
 
