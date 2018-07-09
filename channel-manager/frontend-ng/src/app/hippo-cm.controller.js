@@ -18,6 +18,7 @@ class HippoCmCtrl {
   constructor(
     $rootScope,
     $state,
+    $timeout,
     BrowserService,
     ChannelService,
     CmsService,
@@ -28,6 +29,7 @@ class HippoCmCtrl {
 
     this.$rootScope = $rootScope;
     this.$state = $state;
+    this.$timeout = $timeout;
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -91,11 +93,14 @@ class HippoCmCtrl {
 
   _restoreAppState() {
     if (sessionStorage.channelId) {
-      this._initializeChannel(
-        sessionStorage.channelId,
-        sessionStorage.channelPath,
-        sessionStorage.channelBranch,
-      );
+      // wait 100 ms to give Chrome enough time to fetch styles, otherwise it'll display huge SVG icons
+      this.$timeout(() => {
+        this._initializeChannel(
+          sessionStorage.channelId,
+          sessionStorage.channelPath,
+          sessionStorage.channelBranch,
+        );
+      }, 100);
     }
   }
 }
