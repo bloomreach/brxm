@@ -22,6 +22,7 @@ describe('hippoCm', () => {
   let $q;
   let $rootScope;
   let $state;
+  let $timeout;
   let $window;
   let BrowserService;
   let ChannelService;
@@ -36,11 +37,13 @@ describe('hippoCm', () => {
       $componentController,
       _$q_,
       _$rootScope_,
+      _$timeout_,
       _$window_,
       _CmsService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       $window = _$window_;
       CmsService = _CmsService_;
 
@@ -197,6 +200,7 @@ describe('hippoCm', () => {
       sessionStorage.channelBranch = 'testProject';
 
       $ctrl.$onInit();
+      $timeout.flush();
 
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', 'testProject');
       $rootScope.$digest();
