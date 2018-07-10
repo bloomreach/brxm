@@ -94,7 +94,7 @@ definitions:
               hst:types: rest
             /preview:
               jcr:primaryType: hst:mount
-              hst:alias: site
+              hst:alias: site_preview
               hst:authenticated: true
               hst:mountpoint: /hst:hst/hst:sites/demosite
               hst:mountrest: restapi
@@ -102,14 +102,14 @@ definitions:
               hst:type: preview
               /demosite_fr:
                 jcr:primaryType: hst:mount
-                hst:alias: fr_site
+                hst:alias: fr_site_preview
                 hst:homepage: accueil
                 hst:locale: fr_FR
                 hst:mountpoint: /hst:hst/hst:sites/demosite_fr
                 hst:pagenotfound: erreur
               /restapi:
                 jcr:primaryType: hst:mount
-                hst:alias: restapi
+                hst:alias: restapi_preview
                 hst:authenticated: false
                 hst:mountassets: restapi-assets
                 hst:mountgallery: restapi-gallery
@@ -121,7 +121,7 @@ definitions:
                 hst:types: preview-rest
                 /gallery:
                   jcr:primaryType: hst:mount
-                  hst:alias: restapi-gallery
+                  hst:alias: restapi-gallery_preview
                   hst:ismapped: false
                   hst:mountassets: restapi-assets
                   hst:mountpoint: /content/gallery
@@ -131,14 +131,14 @@ definitions:
                   hst:types: preview-rest
                 /assets:
                   jcr:primaryType: hst:mount
-                  hst:alias: restapi-assets
+                  hst:alias: restapi-assets_preview
                   hst:ismapped: false
                   hst:mountpoint: /content/assets
                   hst:nochannelinfo: true
                   hst:types: preview-rest
               /restservices:
                 jcr:primaryType: hst:mount
-                hst:alias: restservices
+                hst:alias: restservices_preview
                 hst:ismapped: true
                 hst:namedpipeline: JaxrsRestPlainPipeline
                 hst:nochannelinfo: true
