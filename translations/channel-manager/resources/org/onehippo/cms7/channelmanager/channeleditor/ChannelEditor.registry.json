@@ -42,8 +42,14 @@
       "locales" : null
     },
     "properties-window-button-delete" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "properties-form-load-exception-response" : {
       "status" : "CLEAN",
@@ -70,8 +76,14 @@
       "locales" : null
     },
     "properties-form-button-delete" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "properties-form-create-new-document-button-cancel" : {
       "status" : "CLEAN",
