@@ -303,9 +303,26 @@
     },
 
     _startApp: function() {
+      if (this._isDevMode()) {
+        this._clearAppState();
+      }
+
       var url = './angular/hippo-cm/index.html';
       url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
       this.setLocation(url);
+    },
+
+    _isDevMode: function() {
+      return document.documentElement.classList.contains('wicket-development-mode');
+    },
+
+    _clearAppState: function() {
+      // The app uses sessionStorage to store state in dev mode, so reloads by Webpack retain the current channel and
+      // page. Clear that state so a reload of the CMS (or loading a different CMS) in the same tab won't reuse the
+      // state and request non-existing channels or pages.
+      delete sessionStorage.channelId;
+      delete sessionStorage.channelPath;
+      delete sessionStorage.channelBranch;
     }
   });
 

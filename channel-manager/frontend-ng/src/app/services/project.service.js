@@ -36,6 +36,8 @@ class ProjectService {
       id: 'master',
       name: $translate.instant('CORE'),
     };
+    this.project = this.core;
+    this.allProjects = [];
   }
 
   load(mountId, projectId) {
@@ -43,16 +45,8 @@ class ProjectService {
     return this._setupProjects(projectId);
   }
 
-  getActiveProjectId() {
-    return this.ConfigService.projectsEnabled ? this.project.id : this.core.id;
-  }
-
   isBranch() {
-    return this.getActiveProjectId() !== 'master';
-  }
-
-  getCore() {
-    return this.core;
+    return this.project !== this.core;
   }
 
   updateSelectedProject(projectId) {
@@ -78,7 +72,7 @@ class ProjectService {
 
   showAddToProjectForDocument(documentId) {
     const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.project && !associatedProject;
+    return this.isBranch() && !associatedProject;
   }
 
   _getProjectByDocumentId(documentId) {
@@ -97,22 +91,26 @@ class ProjectService {
         this._getProjects(),
         this._getAllProjects(),
       ])
-      .then(() => this._selectProject(projectId));
+      .finally(() => this._selectProject(projectId));
   }
 
   _selectProject(projectId) {
     this.project = this.allProjects.find(project => project.id === projectId) || this.core;
-    return this.project.id === this.core.id ? this._activateCore() : this._activateProject(this.project.id);
+    return this._setProjectInHST();
+  }
+
+  _setProjectInHST() {
+    return this.project === this.core ? this._activateCore() : this._activateProject(this.project.id);
   }
 
   isContentOverlayEnabled() {
     // For now, to prevent all kinds of corner cases, we only enable the content overlay
     // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.project || this.project.state === 'UNAPPROVED';
+    return !this.project.state || this.project.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
-    return !this.project
+    return !this.project.state
       || this.project.state === 'UNAPPROVED'
       || (this.project.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
     // The action resetChannel puts a channel back into review.
@@ -120,13 +118,13 @@ class ProjectService {
   }
 
   isRejectEnabled() {
-    return this.project
+    return this.project.state
       && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('rejectChannel');
   }
 
   isAcceptEnabled() {
-    return this.project
+    return this.project.state
       && this.project.state === 'IN_REVIEW'
       && this._isActionEnabled('approveChannel');
   }
@@ -164,7 +162,8 @@ class ProjectService {
   }
 
   _isActionEnabled(action) {
-    const channelInfo = this.project.channels.find(c => c.mountId === this.mountId);
+    const channels = this.project.channels;
+    const channelInfo = channels && channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;
   }
 

@@ -72,8 +72,7 @@
   <md-content class="channel-content"
               layout="row"
               flex>
-    <left-side-panel layout="row"
-                     is-configuration-locked="$ctrl.isConfigurationLocked()"
+    <left-side-panel is-configuration-locked="$ctrl.isConfigurationLocked()"
                      components-visible="$ctrl.isComponentsOverlayDisplayed">
     </left-side-panel>
 
@@ -84,8 +83,7 @@
                   on-edit-menu="$ctrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row"
-                      ng-show="$ctrl.isChannelLoaded()">
+    <right-side-panel ng-show="$ctrl.isChannelLoaded()">
     </right-side-panel>
   </md-content>
 </div>
