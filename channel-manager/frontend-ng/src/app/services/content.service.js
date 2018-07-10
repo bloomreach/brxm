@@ -33,8 +33,8 @@ class ContentService {
     return this._send('POST', ['documents', id, 'editable']);
   }
 
-  getDocument(id) {
-    return this._send('GET', ['documents', id]);
+  getDocument(id, branchId) {
+    return this._send('GET', ['documents', id, branchId]);
   }
 
   saveDocument(doc) {

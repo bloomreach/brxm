@@ -30,7 +30,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.Matchers;
-import org.hippoecm.repository.util.WorkflowUtils;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,10 +62,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.junit.Assert.assertThat;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
@@ -109,7 +108,7 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void getPublishedDocument() throws Exception {
+    public void getPublishedMasterDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
@@ -119,12 +118,40 @@ public class ContentResourceTest extends CXFTest {
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
-
         when()
-                .get("/documents/" + requestedUuid)
+            .get("/documents/" + requestedUuid + "/master")
         .then()
-                .statusCode(200)
-                .body(equalTo(expectedBody));
+            .statusCode(200)
+            .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void getPublishedBranchDocument() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String uuid = "returned-uuid";
+
+        final Document branchDocument = createDocument(uuid);
+        final String branchId = "branchId";
+        branchDocument.setBranchId(branchId);
+
+        final Document masterDocument = createDocument(uuid);
+        masterDocument.setBranchId(DocumentVariant.MASTER_BRANCH_ID);
+
+        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
+                .andReturn(Stream.of(masterDocument, branchDocument));
+        replay(documentsService);
+
+        final Document expected =
+                when()
+                    .get("/documents/" + requestedUuid + "/" + branchId)
+                .then()
+                    .statusCode(200)
+                    .and()
+                    .extract()
+                    .body()
+                    .as(Document.class);
+
+        assertThat(expected.getBranchId(), is(branchId));
     }
 
     @Test
@@ -136,7 +163,7 @@ public class ContentResourceTest extends CXFTest {
         replay(documentsService);
 
         when()
-                .get("/documents/" + requestedUuid)
+                .get("/documents/" + requestedUuid + "/master")
         .then()
                 .statusCode(404);
     }

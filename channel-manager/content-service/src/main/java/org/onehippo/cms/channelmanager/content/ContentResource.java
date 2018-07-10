@@ -121,14 +121,24 @@ public class ContentResource {
     }
 
     @GET
-    @Path("documents/{documentId}")
+    @Path("documents/{documentId}/{branchId}")
     public Response getDocument(
             @PathParam("documentId") final String id,
+            @PathParam("branchId") final String branchId,
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
                 (session, locale) -> documentService
                         .getVariants(id, session, locale, Stream.of(DRAFT, UNPUBLISHED, PUBLISHED))
-                        .findFirst()
+                        .reduce((current, next) -> {
+                                    if (branchId.equals(current.getBranchId())) {
+                                        return current;
+                                    }
+                                    if (branchId.equals(next.getBranchId())) {
+                                        return next;
+                                    }
+                                    return current;
+                                }
+                        )
                         .orElseThrow(() -> new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST)))
         );
     }

@@ -62,10 +62,9 @@ class EditContentService {
     if (!this.ConfigService.projectsEnabled) {
       this.editDocument(documentId);
     } else {
-      this.ContentService.getDocument(documentId).then(
+      const selectedProjectId = this.ProjectService.project.id;
+      this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
-          const selectedProjectId = this.ProjectService.project.id;
-
           if (selectedProjectId && document.branchId !== selectedProjectId) {
             // set the title
             const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
