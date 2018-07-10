@@ -78,10 +78,10 @@ describe('HippoIframeService', () => {
       expect(HippoIframeService.load).toHaveBeenCalledWith('');
     });
 
-    it('reloads a page in the current channel', () => {
+    it('loads the same render path, possibly in a different context path', () => {
       ChannelService.makeRenderPath.and.returnValue('/path');
       HippoIframeService.initializePath('/path');
-      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(HippoIframeService.load).toHaveBeenCalled();
     });
 
     it('reloads the current page in the current channel', () => {

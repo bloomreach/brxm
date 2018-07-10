@@ -206,7 +206,7 @@ describe('HstService', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
 
     $httpBackend.expectGET(url).respond(200, channelA);
-    hstService.getChannel('channelA')
+    hstService.getChannel('channelA', contextPath)
       .then(catchSpy);
 
     $httpBackend.flush();
@@ -223,7 +223,7 @@ describe('HstService', () => {
     const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
     $httpBackend.expectGET(url).respond(500);
     hstService
-      .getChannel('test')
+      .getChannel('test', contextPath)
       .catch(catchSpy);
 
     $httpBackend.flush();

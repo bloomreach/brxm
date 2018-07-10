@@ -52,8 +52,7 @@ class HippoIframeService {
   initializePath(channelRelativePath) {
     const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
 
-    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
-      && this.renderPathInfo !== initialRenderPath) {
+    if (angular.isString(channelRelativePath)) { // a null path means: reuse the current render path
       this.load(initialRenderPath);
     } else {
       this.reload();
