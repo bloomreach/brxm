@@ -107,7 +107,8 @@ class RenderingService {
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
     if (channelIdFromService !== channelIdFromPage) {
-      this.ChannelService.initializeChannel(channelIdFromPage);
+      const contextPathFromPage = this.PageMetaDataService.getContextPath();
+      this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage);
     }
   }
 

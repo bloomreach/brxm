@@ -21,6 +21,7 @@ class HippoIframeService {
     ChannelService,
     CmsService,
     ConfigService,
+    PageMetaDataService,
     ProjectService,
     ScrollService,
   ) {
@@ -32,6 +33,7 @@ class HippoIframeService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
   }
@@ -53,11 +55,19 @@ class HippoIframeService {
     const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
 
     if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
-      && this.renderPathInfo !== initialRenderPath) {
+      && this._isDifferentPage(initialRenderPath)) {
       this.load(initialRenderPath);
     } else {
       this.reload();
     }
+  }
+
+  _isDifferentPage(renderPath) {
+    return this.renderPathInfo !== renderPath || this._isDifferentContextPath();
+  }
+
+  _isDifferentContextPath() {
+    return this.PageMetaDataService.getContextPath() !== this.ChannelService.getChannel().contextPath;
   }
 
   isPageLoaded() {
