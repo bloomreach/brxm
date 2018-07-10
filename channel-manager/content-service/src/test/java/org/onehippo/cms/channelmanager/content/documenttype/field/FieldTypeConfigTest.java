@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -112,20 +112,20 @@ public class FieldTypeConfigTest {
     }
 
     @Test
-    public void removePrefix() {
+    public void setPrefix() {
         expect(context.getStringConfig(eq("one"))).andReturn(Optional.of("first"));
-        expect(context.getStringConfig(eq("foo-two"))).andReturn(Optional.of("second"));
-        expect(context.getStringConfig(eq("foo-three"))).andReturn(Optional.of("third"));
-        expect(context.getStringConfig(eq("bar-four"))).andReturn(Optional.of("fourth"));
+        expect(context.getStringConfig(eq("foo.two"))).andReturn(Optional.of("second"));
+        expect(context.getStringConfig(eq("foo.three"))).andReturn(Optional.of("third"));
+        expect(context.getStringConfig(eq("bar.four"))).andReturn(Optional.of("fourth"));
         replay(context);
 
         ObjectNode json = config
                 .strings("one")
-                .removePrefix("foo-")
-                .strings("foo-two")
-                .strings("foo-three")
-                .removePrefix("bar-")
-                .strings("bar-four")
+                .prefix("foo.")
+                .strings("two")
+                .strings("three")
+                .prefix("bar.")
+                .strings("four")
                 .build();
 
         assertThat(json.size(), equalTo(4));

@@ -87,6 +87,7 @@ public class ImageLinkFieldTypeTest {
 
         // put the default bootstrapped configuration in a fake 'cluster.options' node to simplify testing
         final MockNode clusterOptions = editorConfigNode.addNode("cluster.options", "frontend:plugincluster");
+        clusterOptions.setProperty("base.path", "");
         clusterOptions.setProperty("base.uuid", "");
         clusterOptions.setProperty("cluster.name", "cms-pickers/images");
         clusterOptions.setProperty("enable.upload", "true");

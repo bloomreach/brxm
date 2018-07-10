@@ -37,7 +37,6 @@
     <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.5.0-SNAPSHOT</hippo.hst.version>
-    <hippo.ckeditor.version>4.7.1-h12.3.0</hippo.ckeditor.version>
     <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
     <hippo.plugin.gallerypicker.version>4.5.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
@@ -140,8 +139,13 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor-config</artifactId>
-        <version>${hippo.ckeditor.version}</version>
+        <artifactId>hippo-cms-richtext-ckeditor-config</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
+        <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -207,7 +211,6 @@
     <module>frontend</module>
     <module>frontend-ng</module>
     <module>repository</module>
-    <module>documentation</module>
   </modules>
 
   <scm>

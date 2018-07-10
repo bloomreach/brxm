@@ -22,7 +22,11 @@ describe('projectToggle component', () => {
   let $rootScope;
   let ProjectService;
   let CmsService;
-  let project;
+
+  const projectMock = {
+    name: 'testProject',
+    id: 1,
+  };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -40,7 +44,7 @@ describe('projectToggle component', () => {
       CmsService = _CmsService_;
     });
 
-    project = { name: 'testProject', id: 1 };
+    ProjectService.project = projectMock;
   });
 
   describe('onInit', () => {
@@ -61,8 +65,7 @@ describe('projectToggle component', () => {
 
   describe('get selectedProjects', () => {
     it('returns the selected project if set', () => {
-      ProjectService.project = project;
-      expect($ctrl.selectedProject).toEqual(project);
+      expect($ctrl.selectedProject).toEqual(projectMock);
     });
   });
 
@@ -75,17 +78,17 @@ describe('projectToggle component', () => {
     });
 
     it('should update selected project on project service with the selected project id', () => {
-      $ctrl.selectedProject = project;
+      const projectMock2 = { id: 'test' };
+      $ctrl.selectedProject = projectMock2;
       $rootScope.$digest();
 
-      expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(project.id);
+      expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(projectMock2.id);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
     });
 
     it('should not update selected project when it did not change', () => {
-      spyOn(ProjectService, 'getActiveProjectId').and.returnValue(project.id);
-
-      $ctrl.selectedProject = project;
+      ProjectService.project = projectMock;
+      $ctrl.selectedProject = projectMock;
       $rootScope.$digest();
 
       expect(ProjectService.updateSelectedProject).not.toHaveBeenCalled();

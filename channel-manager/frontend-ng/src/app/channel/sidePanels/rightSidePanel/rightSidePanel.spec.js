@@ -91,7 +91,7 @@ describe('RightSidePanel', () => {
     $ctrl.onResize(800);
 
     expect($ctrl.lastSavedWidth).toBe('800px');
-    expect($ctrl.localStorageService.get('rightSidePanelWidth')).toBe('800px');
+    expect($ctrl.localStorageService.get('channelManager.sidePanel.right.width')).toBe('800px');
   });
 
   it('detects ESC keypress', () => {
@@ -117,14 +117,14 @@ describe('RightSidePanel', () => {
 
     $ctrl.$onInit();
 
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
     expect($ctrl.lastSavedWidth).toBe('800px');
 
     $ctrl.localStorageService.get.and.callFake(() => null);
 
     $ctrl.$onInit();
 
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 

@@ -66,14 +66,29 @@
     loadChannel: function() {
       this._destroyComponentPropertiesWindow();
       if (this.channelId) {
-        this.hostToIFrame.publish('load-channel', this.channelId, this.initialPath, this.branchId);
+        this._getContextPath(this.channelId).when(function (contextPath) {
+          this.hostToIFrame.publish('load-channel', this.channelId, contextPath, this.branchId, this.initialPath);
+
+          // reset the state; the state in the app is leading. When loadChannel is called again,
+          // we'll send a reload-channel event instead that reloads the current app state.
+          this.initChannel(null, null, null);
+        }.bind(this));
       } else {
         this.hostToIFrame.publish('reload-channel');
       }
+    },
 
-      // reset the state; the state in the app is leading. When loadChannel is called again,
-      // we'll send a reload-channel event instead that reloads the current app state.
-      this.initChannel(null, null, null);
+    _getContextPath: function(channelId) {
+      return new Hippo.Future(function (success, fail) {
+        this.channelStoreFuture.when(function (config) {
+          var channelRecord = config.store.getById(channelId);
+          if (channelRecord) {
+            success(channelRecord.json.contextPath);
+          } else {
+            fail();
+          }
+        }.bind(this));
+      }.bind(this));
     },
 
     /**
@@ -303,9 +318,26 @@
     },
 
     _startApp: function() {
+      if (this._isDevMode()) {
+        this._clearAppState();
+      }
+
       var url = './angular/hippo-cm/index.html';
       url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
       this.setLocation(url);
+    },
+
+    _isDevMode: function() {
+      return document.documentElement.classList.contains('wicket-development-mode');
+    },
+
+    _clearAppState: function() {
+      // The app uses sessionStorage to store state in dev mode, so reloads by Webpack retain the current channel and
+      // page. Clear that state so a reload of the CMS (or loading a different CMS) in the same tab won't reuse the
+      // state and request non-existing channels or pages.
+      delete sessionStorage.channelId;
+      delete sessionStorage.channelPath;
+      delete sessionStorage.channelBranch;
     }
   });
 
