@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.left.width';
+
 class LeftSidePanelCtrl {
   constructor(
     $element,
@@ -36,7 +38,7 @@ class LeftSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get('leftSidePanelWidth') || '320px';
+    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '320px';
     this.sideNavElement = this.$element.find('.left-side-panel');
     this.sideNavElement.css('width', this.lastSavedWidth);
   }
@@ -47,7 +49,7 @@ class LeftSidePanelCtrl {
 
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set('leftSidePanelWidth', this.lastSavedWidth);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
   }
 
   get selectedTab() {

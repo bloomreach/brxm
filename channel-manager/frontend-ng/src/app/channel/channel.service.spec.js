@@ -24,12 +24,18 @@ describe('ChannelService', () => {
   let ConfigServiceMock;
   let FeedbackService;
   let HstService;
+  let ProjectService;
   let SessionService;
   let SiteMapService;
   let channelMock;
+  let projectMock;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    projectMock = {
+      id: 'master',
+    };
 
     channelMock = {
       contextPath: '/testContextPath',
@@ -65,6 +71,7 @@ describe('ChannelService', () => {
       _CmsService_,
       _FeedbackService_,
       _HstService_,
+      _ProjectService_,
       _SessionService_,
       _SiteMapService_,
     ) => {
@@ -76,6 +83,7 @@ describe('ChannelService', () => {
       CmsService = _CmsService_;
       FeedbackService = _FeedbackService_;
       HstService = _HstService_;
+      ProjectService = _ProjectService_;
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
     });
@@ -93,6 +101,7 @@ describe('ChannelService', () => {
     spyOn(SessionService, 'initialize').and.returnValue($q.when());
     spyOn(SessionService, 'hasWriteAccess').and.returnValue(true);
     spyOn(SiteMapService, 'load');
+    ProjectService.project = projectMock;
   });
 
   function loadChannel(id = 'testChannelId') {
