@@ -118,7 +118,7 @@ describe('ChannelActionsService', () => {
       spyOn(ProjectService, 'isBranch').and.returnValue(true);
       spyOn(SiteMapService, 'load');
 
-      ProjectService.project = {
+      ProjectService.selectedProject = {
         name: 'testProject',
       };
 
