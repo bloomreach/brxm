@@ -349,7 +349,7 @@
     transform-origin: bottom center;
     width: 32px;
 
-    &:hover {
+    &:hover:not(.hippo-fab-option-disabled) {
       background-color: darken($overlay-link-bgcolor, 12%);
       box-shadow: $overlay-link-shadow-hover !important;
     }
@@ -371,7 +371,12 @@
 
     svg {
       transform: scale(.8);
-      fill: $white;
+    }
+
+    &:not(.hippo-fab-option-disabled) {
+      svg {
+        fill: $white;
+      }
     }
   }
 
