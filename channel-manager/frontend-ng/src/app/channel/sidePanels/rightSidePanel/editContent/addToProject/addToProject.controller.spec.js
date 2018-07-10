@@ -42,7 +42,7 @@ describe('addToProjectComponent', () => {
       EditContentService = _EditContentService_;
     });
 
-    ProjectService.project = testProject;
+    ProjectService.selectedProject = testProject;
     $uiRouterGlobals.params = { documentId: testDocumentId };
 
     $ctrl = $controller('addToProjectCtrl');

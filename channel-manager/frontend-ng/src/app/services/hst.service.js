@@ -47,11 +47,17 @@ class HstService {
       });
   }
 
-  getChannel(id) {
+  getChannel(id, contextPath) {
     if (!id) {
       throw new Error('Channel id must be defined');
     }
-    return this.doGet(this.ConfigService.rootUuid, 'channels', id);
+    const currentContextPath = this.contextPath;
+    try {
+      this.contextPath = contextPath;
+      return this.doGet(this.ConfigService.rootUuid, 'channels', id);
+    } finally {
+      this.contextPath = currentContextPath;
+    }
   }
 
   getSiteMap(id) {

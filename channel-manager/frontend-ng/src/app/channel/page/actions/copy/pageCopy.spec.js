@@ -91,16 +91,19 @@ describe('PageCopyComponent', () => {
 
     channels = [
       {
+        contextPath: '/site',
         id: 'channelA',
         mountId: 'channelMountA',
         name: 'Channel A',
       },
       {
+        contextPath: '/site',
         id: 'channelB',
         mountId: 'channelMountB',
         name: 'Channel B',
       },
       {
+        contextPath: '/intranet',
         id: 'channelC',
         mountId: 'channelMountC',
         name: 'Channel C',
@@ -335,11 +338,12 @@ describe('PageCopyComponent', () => {
     expect($ctrl.onDone).toHaveBeenCalled();
   });
 
-  it('successfully copies the page into another channel', () => {
+  it('successfully copies the page to another channel', () => {
     $ctrl.$onInit();
     $rootScope.$digest();
 
     const copyReturn = {
+      contextPath: '/another',
       renderPathInfo: '/render/path',
       pathInfo: 'path',
     };
@@ -361,7 +365,7 @@ describe('PageCopyComponent', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id);
+    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id, $ctrl.channel.contextPath);
     $rootScope.$digest();
     expect(HippoIframeService.initializePath).toHaveBeenCalledWith(copyReturn.pathInfo);
     expect($ctrl.onDone).toHaveBeenCalled();
