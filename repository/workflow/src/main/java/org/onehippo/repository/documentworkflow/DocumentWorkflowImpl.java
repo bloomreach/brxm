@@ -28,6 +28,7 @@ import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
@@ -43,6 +44,7 @@ import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayload
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.STATE;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.VERSION;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DESTINATION;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.NAME;
@@ -349,6 +351,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         return (Document) triggerAction(DocumentWorkflowAction.restoreVersion().addEventPayload(DATE,historic));
+    }
+
+    @Override
+    public Document restoreVersionToBranch(final Version version, final String branchId) throws WorkflowException, RepositoryException {
+        return (Document) triggerAction(DocumentWorkflowAction.restoreVersionToBranch().addEventPayload(VERSION, version).addEventPayload(BRANCH_ID,branchId));
     }
 
     @Override

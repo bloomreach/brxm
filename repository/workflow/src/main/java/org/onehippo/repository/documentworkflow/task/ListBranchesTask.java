@@ -93,7 +93,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
             branches.add(MASTER_BRANCH_ID);
         }
 
-        // validate all branches are available (either as preview below handle and otherwise in version history
+        // validate all branches are available (either as preview below handle and otherwise in version history)
         final Set<String> realAvailableBranches = getRealAvailableBranches(workflowSession, variant);
 
         // only keep the branches that are really available (for example skip branches which are present on the

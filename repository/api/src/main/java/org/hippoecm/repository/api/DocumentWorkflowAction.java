@@ -102,6 +102,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("restoreVersion");
     }
 
+    public static DocumentWorkflowAction restoreVersionToBranch() {
+        return new DocumentWorkflowAction("restoreVersionToBranch");
+    }
+
     public static DocumentWorkflowAction listVersions() {
         return new DocumentWorkflowAction("listVersions");
     }
@@ -190,6 +194,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         REQUEST("request"),
         REASON("reason"),
         BRANCH_ID("branchId"),
+        VERSION("version"),
         BRANCH_NAME("branchName"),
         STATE("state"),
         ;

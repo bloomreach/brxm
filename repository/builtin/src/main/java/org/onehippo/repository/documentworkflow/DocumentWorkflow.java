@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
@@ -448,6 +449,20 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      */
     Document versionRestoreTo(Calendar historic, Document target)
             throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     *     Restores the {@core version} to the unpublished variant for branch with id {@core branchId}. If the current
+     *     unpublished variant is not for {@code branchId}, first the branch for {@core branchId} will be checked out
+     * </p>
+     * @param version the {@link Version} to restore
+     * @param branchId the id of the branch to restore to
+     * @return the restored document (unpublished variant)
+     * @throws WorkflowException if there does not exist a branch for {@code branchId} or some other workflow exception happens
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     */
+    Document restoreVersionToBranch(Version version, final String branchId) throws WorkflowException, RepositoryException;
 
     /**
      * Lists the available historic versions of this document.  A historic version is created using the {@link

@@ -119,6 +119,10 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.VersionRestoreToAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /restoreVersionToBranch:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RestoreVersionToBranchAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /workflowException:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.scxml.WorkflowExceptionAction

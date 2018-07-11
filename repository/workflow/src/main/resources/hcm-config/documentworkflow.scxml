@@ -459,6 +459,7 @@
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
+            <hippo:action action="restoreVersionToBranch" enabledExpr="true"/>
           </if>
         </onentry>
 
@@ -485,6 +486,22 @@
           <hippo:restoreVersion historic="_event.data?.date"  variant="unpublished" />
         </transition>
 
+        <transition event="restoreVersionToBranch">
+          <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
+
+          <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
+                                   errorExpr="'Cannot restore version to branch \'' + _event.data?.branchId + '\' since it doesn\'t exist'"/>
+
+          <!-- to avoid potentially loosing unpublished changes, first version -->
+          <hippo:version variant="unpublished"/>
+
+          <if cond="!unpublished.isBranch(_event.data?.branchId)">
+              <!-- current unpublished is not for the branch to restore to. First checkout the branch -->
+            <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+          </if>
+          <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
+          <hippo:restoreVersionToBranch version="_event.data?.version" target="unpublished" />
+        </transition>
       </state>
 
     </state>

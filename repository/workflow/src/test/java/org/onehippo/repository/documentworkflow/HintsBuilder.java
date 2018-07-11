@@ -53,6 +53,7 @@ public class HintsBuilder {
     public static String ACTION_VERSION = "version";
     public static String ACTION_RESTORE_VERSION = "restoreVersion";
     public static String ACTION_VERSION_RESTORE_TO = "versionRestoreTo";
+    public static String ACTION_RESTORE_VERSION_TO_BRANCH = "restoreVersionToBranch";
     public static String ACTION_REQUEST_DELETE = "requestDelete";
     public static String ACTION_LIST_BRANCHES = "listBranches";
     public static String ACTION_BRANCH = "branch";
@@ -203,6 +204,7 @@ public class HintsBuilder {
         actions.put(ACTION_VERSION, true);
         actions.put(ACTION_RESTORE_VERSION, true);
         actions.put(ACTION_VERSION_RESTORE_TO, true);
+        actions.put(ACTION_RESTORE_VERSION_TO_BRANCH, true);
         return this;
     }
 
