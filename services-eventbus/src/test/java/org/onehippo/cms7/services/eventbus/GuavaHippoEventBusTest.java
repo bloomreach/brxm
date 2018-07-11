@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.eventbus;
 
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -36,22 +35,10 @@ public class GuavaHippoEventBusTest {
     }
 
     @Test
-    public void testEventBusWithDirectListener() throws InterruptedException {
-        GuavaHippoEventBus eventBus = new GuavaHippoEventBus();
-        Listener listener = new Listener();
-        eventBus.register(listener);
-        eventBus.post(new Object());
-        synchronized (this) {
-            wait(500);
-        }
-        assertTrue(listener.fired);
-    }
-
-    @Test
-    public void testEventBusWithWhiteboardListener() throws InterruptedException {
+    public void testEventBusWithWhiteboardServiceTracker() throws InterruptedException {
         HippoEventBus eventBus = new GuavaHippoEventBus();
         Listener listener = new Listener();
-        HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(listener);
         eventBus.post(new Object());
         synchronized (this) {
             wait(500);
@@ -59,7 +46,7 @@ public class GuavaHippoEventBusTest {
         assertTrue(listener.fired);
 
         listener.fired = false;
-        HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(listener);
         eventBus.post(new Object());
         synchronized (this) {
             wait(500);

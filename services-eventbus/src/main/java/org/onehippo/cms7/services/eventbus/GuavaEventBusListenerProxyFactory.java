@@ -31,7 +31,7 @@ import com.google.common.collect.SetMultimap;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.onehippo.cms7.services.HippoServiceRegistration;
+import org.onehippo.cms7.services.ServiceHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,12 +255,12 @@ class GuavaEventBusListenerProxyFactory {
      *   object.
      * </p>
      * <p>
-     *   If the provided listener is an instance of {@link HippoServiceRegistration}, a proxy for the
-     *   {@link HippoServiceRegistration#getService()} is created instead, and its
-     *   {@link HippoServiceRegistration#getClassLoader()} is used instead of the current ContextClassLoader to be
+     *   If the provided listener is an instance of {@link ServiceHolder}, a proxy for the
+     *   {@link ServiceHolder#getServiceObject()} is created instead, and its
+     *   {@link ServiceHolder#getClassLoader()} is used instead of the current ContextClassLoader to be
      *   used by the proxy instance when delegating and invoking the {@link Subscribe} annotated listener method.
      * </p>
-     * @param subject The listener for which to generate a proxy wrapper, or a HippoRegistration with a listener service
+     * @param subject The listener for which to generate a proxy wrapper, or a {@link ServiceHolder} with a listener service
      * @return A new proxy wrapper for the provided listener, or null if the provided listener does not have any
      *         (proper) {@link Subscribe} annotations.
      */
@@ -269,10 +269,10 @@ class GuavaEventBusListenerProxyFactory {
         if (proxy == null) {
             Object listener;
             ClassLoader cl;
-            if (subject instanceof HippoServiceRegistration) {
-                HippoServiceRegistration registration = (HippoServiceRegistration)subject;
-                listener = registration.getService();
-                cl = registration.getClassLoader();
+            if (subject instanceof ServiceHolder) {
+                ServiceHolder serviceHolder = (ServiceHolder)subject;
+                listener = serviceHolder.getServiceObject();
+                cl = serviceHolder.getClassLoader();
             } else {
                 listener = subject;
                 cl = Thread.currentThread().getContextClassLoader();
@@ -309,8 +309,8 @@ class GuavaEventBusListenerProxyFactory {
         GuavaEventBusListenerProxy proxy = proxyMap.remove(subject);
         if (proxy != null) {
             Object listener;
-            if (subject instanceof HippoServiceRegistration) {
-                listener = ((HippoServiceRegistration)subject).getService();
+            if (subject instanceof ServiceHolder) {
+                listener = ((ServiceHolder)subject).getServiceObject();
             }
             else {
                 listener = subject;
