@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -330,13 +330,13 @@ public class Main extends PluginApplication {
             if ( cmsContextService == null) {
                 cmsContextServiceImpl = new CmsContextServiceImpl();
                 cmsContextService = cmsContextServiceImpl;
-                HippoServiceRegistry.registerService(cmsContextServiceImpl, new Class[]{CmsContextService.class,CmsInternalCmsContextService.class});
+                HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class,CmsInternalCmsContextService.class);
             }
 
             cmsEventDispatcherService = HippoServiceRegistry.getService(CmsEventDispatcherService.class);
             if ( cmsEventDispatcherService == null) {
                 cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
-                HippoServiceRegistry.registerService(cmsEventDispatcherService, new Class[]{CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class});
+                HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
             }
             mount(new MountMapper("auth", new IMountedRequestMapper() {
 
@@ -639,7 +639,7 @@ public class Main extends PluginApplication {
     @Override
     protected void onDestroy() {
         if (cmsContextServiceImpl != null) {
-            HippoServiceRegistry.unregisterService(cmsContextServiceImpl, CmsContextService.class);
+            HippoServiceRegistry.unregister(cmsContextServiceImpl, CmsContextService.class);
             cmsContextServiceImpl = null;
         }
         cmsContextService = null;
