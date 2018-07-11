@@ -70,7 +70,6 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
-    <property name="hstModelProvider" ref="org.hippoecm.hst.platform.HstModelProvider"/>
     <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator"/>
   </bean>
 

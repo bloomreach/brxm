@@ -41,8 +41,10 @@ import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -61,7 +63,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     private Repository repository;
     private Credentials credentials;
     private PreviewDecorator previewDecorator;
-    private HstModelProvider hstModelProvider;
 
     public CXFJaxrsHstConfigService(String serviceName) {
         super(serviceName);
@@ -77,10 +78,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     public void setCredentials(final Credentials credentials) {
         this.credentials = credentials;
-    }
-
-    public void setHstModelProvider(final HstModelProvider hstModelProvider) {
-        this.hstModelProvider = hstModelProvider;
     }
 
     public void setPreviewDecorator(final PreviewDecorator previewDecorator) {
@@ -119,7 +116,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
                 throw new IllegalArgumentException("'contextPath' header is missing");
             }
 
-            final PlatformHstModel liveHstModel = (PlatformHstModel)hstModelProvider.getHstModel();
+            // note you CANNOT use HstModelProvider spring bean since that will always give you the platform HstModel
+            // instead of for the contextPath for the current request
+            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final PlatformHstModel liveHstModel = (PlatformHstModel)hstModelRegistry.getHstModel(contextPath);
 
             final PlatformHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
             final PlatformHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
