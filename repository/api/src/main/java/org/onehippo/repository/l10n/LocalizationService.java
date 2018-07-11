@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.onehippo.repository.l10n;
 
 import java.util.Locale;
-
-import org.onehippo.cms7.services.SingletonService;
 
 /**
  * <p>
@@ -49,7 +47,6 @@ import org.onehippo.cms7.services.SingletonService;
  * all the way up to the default bundle.
  * </p>
  */
-@SingletonService
 public interface LocalizationService {
 
     /**

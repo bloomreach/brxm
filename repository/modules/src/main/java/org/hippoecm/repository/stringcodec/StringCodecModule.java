@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.repository.stringcodec;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.StringCodecService;
@@ -40,13 +39,13 @@ public class StringCodecModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doInitialize(final Session session) {
         service = new StringCodecServiceImpl(config);
-        HippoServiceRegistry.registerService(service, StringCodecService.class);
+        HippoServiceRegistry.register(service, StringCodecService.class);
     }
 
     @Override
     protected void doShutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, StringCodecService.class);
+            HippoServiceRegistry.unregister(service, StringCodecService.class);
         }
     }
 }

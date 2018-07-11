@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,14 +78,14 @@ public class SCXMLWorkflowExecutorTest {
     public void before() throws Exception {
         registry = new MockRepositorySCXMLRegistry();
         factory = new RepositorySCXMLExecutorFactory();
-        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
-        HippoServiceRegistry.registerService(factory, SCXMLExecutorFactory.class);
+        HippoServiceRegistry.register(registry, SCXMLRegistry.class);
+        HippoServiceRegistry.register(factory, SCXMLExecutorFactory.class);
     }
 
     @After
     public void after() throws Exception {
-        HippoServiceRegistry.unregisterService(factory, SCXMLExecutorFactory.class);
-        HippoServiceRegistry.unregisterService(registry, SCXMLRegistry.class);
+        HippoServiceRegistry.unregister(factory, SCXMLExecutorFactory.class);
+        HippoServiceRegistry.unregister(registry, SCXMLRegistry.class);
     }
 
     @Test

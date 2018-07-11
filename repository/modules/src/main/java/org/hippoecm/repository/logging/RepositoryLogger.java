@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import javax.jcr.ValueFactory;
 
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
@@ -79,7 +79,7 @@ public class RepositoryLogger implements DaemonModule {
             session.save();
         }
 
-        HippoServiceRegistry.registerService(this, HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(this);
     }
 
     @Subscribe
@@ -215,6 +215,6 @@ public class RepositoryLogger implements DaemonModule {
 
     @Override
     public void shutdown() {
-        HippoServiceRegistry.unregisterService(this, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(this);
     }
 }

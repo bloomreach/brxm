@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,9 @@ import org.onehippo.repository.scxml.WorkflowExceptionAction;
  */
 public class BaseDocumentWorkflowTest {
 
+    private static SCXMLRegistry scxmlRegistry;
+    private static SCXMLExecutorFactory scxmlExecutorFactory;
+
     protected static String loadSCXML() throws Exception {
         return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/hcm-config/documentworkflow.scxml"));
     }
@@ -91,13 +94,13 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
-        HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
+        HippoServiceRegistry.register(scxmlRegistry = registry, SCXMLRegistry.class);
+        HippoServiceRegistry.register(scxmlExecutorFactory = new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
     }
 
     protected static void destroyDocumentWorkflowSCXMLRegistry() throws Exception {
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLExecutorFactory.class), SCXMLExecutorFactory.class);
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLRegistry.class), SCXMLRegistry.class);
+        HippoServiceRegistry.unregister(scxmlExecutorFactory, SCXMLExecutorFactory.class);
+        HippoServiceRegistry.unregister(scxmlRegistry, SCXMLRegistry.class);
     }
 
     protected static MockNode addVariant(MockNode handle, String state) throws RepositoryException {

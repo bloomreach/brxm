@@ -46,7 +46,7 @@ public class WorkflowLoggerTest {
     @Before
     public void createService() throws RepositoryException {
         eventBus = createNiceMock(HippoEventBus.class);
-        HippoServiceRegistry.registerService(eventBus, HippoEventBus.class);
+        HippoServiceRegistry.register(eventBus, HippoEventBus.class);
         session = createNiceMock(Session.class);
         workflowLogger = new WorkflowLogger(session);
 
@@ -67,7 +67,7 @@ public class WorkflowLoggerTest {
 
     @After
     public void removeService() {
-        HippoServiceRegistry.unregisterService(eventBus, HippoEventBus.class);
+        HippoServiceRegistry.unregister(eventBus, HippoEventBus.class);
     }
 
     @Test

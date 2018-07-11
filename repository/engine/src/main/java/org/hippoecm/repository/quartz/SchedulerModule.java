@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,13 +82,13 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
             return;
         }
         service = new RepositorySchedulerImpl(session, scheduler, moduleConfigPath);
-        HippoServiceRegistry.registerService(service, RepositoryScheduler.class);
+        HippoServiceRegistry.register(service, RepositoryScheduler.class);
     }
 
     @Override
     public void shutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, RepositoryScheduler.class);
+            HippoServiceRegistry.unregister(service, RepositoryScheduler.class);
         }
         if(scheduler != null) {
             scheduler.shutdown(true);

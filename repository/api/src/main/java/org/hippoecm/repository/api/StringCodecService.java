@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
  */
 package org.hippoecm.repository.api;
 
-import org.onehippo.cms7.services.SingletonService;
-
 /**
  * Provides {@link StringCodec} instances for certain encodings, possibly customized for a certain locale.
  */
-@SingletonService
 public interface StringCodecService {
 
     enum Encoding {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 }
             }
         };
-        HippoServiceRegistry.registerService(updaterService, NodeUpdaterService.class);
+        HippoServiceRegistry.register(updaterService, NodeUpdaterService.class);
 
         lockManager = HippoServiceRegistry.getService(LockManager.class);
         // check if any updaters are queued and execute them on startup
@@ -114,7 +114,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         } catch (InterruptedException ignore) {
         }
         if (updaterRegistry != null) {
-            HippoServiceRegistry.unregisterService(updaterService, NodeUpdaterService.class);
+            HippoServiceRegistry.unregister(updaterService, NodeUpdaterService.class);
             updaterRegistry.stop();
         }
     }

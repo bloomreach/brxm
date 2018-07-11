@@ -281,14 +281,14 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         jackrabbitRepository = createLocalRepository(createRepositoryConfig());
         initializeLockManager();
 
-        HippoServiceRegistry.registerService(lockManager, new Class[]{LockManager.class, InternalLockManager.class});
+        HippoServiceRegistry.register(lockManager, LockManager.class, InternalLockManager.class);
 
         repository = RepositoryDecorator.newRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
 
         configurationService = initializeConfiguration(rootSession);
         if (configurationService != null) {
-            HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
+            HippoServiceRegistry.register(configurationService, ConfigurationService.class, InternalConfigurationService.class);
         }
     }
 
@@ -333,11 +333,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             nodeTypesChangeTracker = null;
         }
         if (configurationService != null) {
-            HippoServiceRegistry.unregisterService(configurationService, ConfigurationService.class);
+            HippoServiceRegistry.unregister(configurationService, ConfigurationService.class);
             configurationService.stop();
         }
         if (lockManager != null) {
-            HippoServiceRegistry.unregisterService(lockManager, LockManager.class);
+            HippoServiceRegistry.unregister(lockManager, LockManager.class);
             lockManager.destroy();
         }
         if (jackrabbitRepository != null) {

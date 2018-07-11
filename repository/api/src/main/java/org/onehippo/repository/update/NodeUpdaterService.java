@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.onehippo.repository.update;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms7.services.SingletonService;
-
 /**
  * The node updater service runs registered &amp; not-yet-completed updater visitors.
  * It is intended to be used by code that assumes the content to have been updated.
@@ -27,7 +25,6 @@ import org.onehippo.cms7.services.SingletonService;
  * there is a lot of content, a node may not yet have been updated by a background
  * process.
  */
-@SingletonService
 public interface NodeUpdaterService {
 
     enum NodeUpdaterResult {
