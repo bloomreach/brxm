@@ -5,4 +5,3 @@ project:
   name: extension-test
 module: 
   name: extension-test
-  extension: m1

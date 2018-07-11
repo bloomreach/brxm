@@ -71,9 +71,8 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.repository.util.NodeTypeUtils;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.cms7.services.extension.ExtensionEvent;
 import org.onehippo.cms7.services.extension.ExtensionRegistry;
@@ -136,7 +135,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             throw e;
         }
 
-        HippoServiceRegistry.registerService(this, HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(this);
         return this;
     }
 
@@ -368,7 +367,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     public void stop() {
         log.info("ConfigurationService: stop");
 
-        HippoServiceRegistry.unregisterService(this, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(this);
 
         if (autoExportService != null) {
             autoExportService.close();
