@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,18 +62,18 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
         watchedFiles.excludeDirectories(config.getExcludedDirectories());
 
         service = new WebFilesServiceImpl(watchedFiles, config.getMaxFileLengthBytes(), config.getReloadMode());
-        HippoServiceRegistry.registerService(service, WebFilesService.class);
+        HippoServiceRegistry.register(service, WebFilesService.class);
 
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         final AutoReloadService autoReload = HippoServiceRegistry.getService(AutoReloadService.class);
         watcher = new WebFilesWatcher(config, service, session, eventBus, autoReload);
-        HippoServiceRegistry.registerService(watcher, WebFilesWatcherService.class);
+        HippoServiceRegistry.register(watcher, WebFilesWatcherService.class);
     }
 
     @Override
     protected void doShutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, WebFilesService.class);
+            HippoServiceRegistry.unregister(service, WebFilesService.class);
         }
         if (watcher != null) {
             try {
@@ -81,6 +81,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+            HippoServiceRegistry.unregister(watcher, WebFilesWatcherService.class);
         }
     }
 }
