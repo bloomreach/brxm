@@ -71,13 +71,13 @@ public class LocalizationUtilsTest {
 
     private void setLocalizationService(final LocalizationService ls) {
         testLocalizationService = ls;
-        HippoServiceRegistry.registerService(testLocalizationService, LS);
+        HippoServiceRegistry.register(testLocalizationService, LS);
     }
 
     @After
     public void resetLocalizationService() {
         if (testLocalizationService != null) {
-            HippoServiceRegistry.unregisterService(testLocalizationService, LS);
+            HippoServiceRegistry.unregister(testLocalizationService, LS);
             testLocalizationService = null;
         }
     }
