@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ public class ContentTypeServiceModule implements DaemonModule {
     @Override
     public void initialize(Session session) throws RepositoryException {
         service = new HippoContentTypeService(session);
-        HippoServiceRegistry.registerService(service, ContentTypeService.class);
+        HippoServiceRegistry.register(service, ContentTypeService.class);
     }
 
     @Override
     public void shutdown() {
-        HippoServiceRegistry.unregisterService(service, ContentTypeService.class);
+        HippoServiceRegistry.unregister(service, ContentTypeService.class);
         service.shutdown();
     }
 }
