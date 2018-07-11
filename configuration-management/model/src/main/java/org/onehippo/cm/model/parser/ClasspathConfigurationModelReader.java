@@ -163,7 +163,8 @@ public class ClasspathConfigurationModelReader {
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
         final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
-        final Enumeration<URL> parentResourcesEn = classLoader.getParent().getResources(Constants.HCM_MODULE_YAML);
+        final Enumeration<URL> parentResourcesEn = classLoader.getParent() != null ?
+                classLoader.getParent().getResources(Constants.HCM_MODULE_YAML) : Collections.emptyEnumeration();
         final HashSet<URL> parentResources = new HashSet<>(Collections.list(parentResourcesEn));
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
