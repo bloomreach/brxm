@@ -21,8 +21,10 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,6 +82,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import static java.util.Collections.emptyList;
+import static java.util.function.Function.identity;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -257,8 +260,15 @@ public class ConfigurationConfigService {
         //       Therefore, both the baseline configuration and the forceApply flag are immaterial
         //       to the handling of namespaces. The same applies to node types, at least, as far as
         //       BootstrapUtils#initializeNodetypes offers support.
-        applyNamespaces(update.getNamespaceDefinitions(), session);
-        applyNodeTypes(baseline.getNamespaceDefinitions(), update.getNamespaceDefinitions(), session);
+
+        final Collection<? extends NamespaceDefinition> updateNsDefs =
+                removeDuplicateNamespaceDefinitions(update.getNamespaceDefinitions());
+
+        final Collection<? extends NamespaceDefinition> baselineNsDefs =
+                removeDuplicateNamespaceDefinitions(baseline.getNamespaceDefinitions());
+
+        applyNamespaces(updateNsDefs, session);
+        applyNodeTypes(baselineNsDefs, updateNsDefs, session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -269,7 +279,21 @@ public class ConfigurationConfigService {
         postProcessReferences(unprocessedReferences);
     }
 
-    private void applyNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
+    /**
+     * Return a collection of namespace definitions without duplicates. Only last namespace
+     * in a list with the same prefix is preserved
+     * @param definitions Definitions to clean
+     */
+    private Collection<? extends NamespaceDefinition> removeDuplicateNamespaceDefinitions(final List<? extends NamespaceDefinition> definitions) {
+        return definitions.stream().collect(
+                Collectors.toMap(NamespaceDefinition::getPrefix, identity(), (d1, d2) -> {
+                    log.warn(String.format("Duplicate namespace definitions %s, %s", d1, d2));
+                    return d2;
+                }, LinkedHashMap::new))
+                .values();
+    }
+
+    private void applyNamespaces(final Collection<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
             throws RepositoryException {
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
 
@@ -295,8 +319,8 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void applyNodeTypes(final List<? extends NamespaceDefinition> baselineDefs,
-                                final List<? extends NamespaceDefinition> nsDefinitions,
+    private void applyNodeTypes(final Collection<? extends NamespaceDefinition> baselineDefs,
+                                final Collection<? extends NamespaceDefinition> nsDefinitions,
                                 final Session session) throws RepositoryException, IOException {
         // index baseline defs by prefix for faster lookups later
         final ImmutableMap<String, ? extends NamespaceDefinition> baselineDefsByPrefix =

@@ -49,7 +49,6 @@ import javax.jcr.Session;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.poi.ss.formula.functions.T;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
@@ -102,6 +101,7 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.HST_DEFAULT_ROOT_PATH;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
@@ -709,25 +709,30 @@ public class DefinitionMergeService {
      *
      */
     protected void mergeNamespace(final NamespaceDefinitionImpl nsd) {
-        // find the corresponding definition by namespace prefix -- only one is permitted
-        final Optional<NamespaceDefinitionImpl> found = model.getNamespaceDefinitions().stream()
-                .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
-                .findFirst();
+
+        // find all corresponding definitions by namespace prefix
+        final List<NamespaceDefinitionImpl> nsDefs =
+                model.getNamespaceDefinitions().stream()
+                        .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
+                        .collect(toList());
+
+        final NamespaceDefinitionImpl lastNsDef = isNotEmpty(nsDefs) ? nsDefs.get(nsDefs.size() - 1): null;
 
         // clone the CndPath Value which retains a "foreign source" back-reference for use later when copying data
         final ValueImpl cndPath = nsd.getCndPath().clone();
 
-        if (found.isPresent()) {
+        if (lastNsDef != null) {
             // this is an update to an existing namespace def
             // find the corresponding source by path
-            final SourceImpl oldSource = found.get().getSource();
+            final SourceImpl oldSource = lastNsDef.getSource();
 
             // this source will have a reference to a module in the baseline, not our clones, so lookup by mvnPath
             final ModuleImpl newModule = toExport.get(oldSource.getModule().getMvnPath());
 
             // short-circuit this loop iteration if we cannot create a valid merged definition
             if (newModule == null) {
-                log.error("Cannot merge a namespace: {} that belongs to an upstream module", nsd.getPrefix());
+                log.warn("Cannot merge a namespace: {} that belongs to an upstream module", nsd.getPrefix());
+                createNsDefinition(nsd, cndPath);
                 return;
             }
 
@@ -752,29 +757,33 @@ public class DefinitionMergeService {
             }
         }
         else {
-            // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
-            final JcrPath incomingPath = JcrPaths.getPath("/hippo:namespaces", nsd.getPrefix());
-
-            // what module should we put it in?
-            final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath);
-
-            // what source should we put it in?
-            final ConfigSourceImpl newSource;
-            if (newModule.getNamespaceDefinitions().isEmpty()) {
-                // We don't have any namespaces yet, so we can generate a new source and put it there
-                newSource = createConfigSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
-            }
-            else {
-                // if we have any existing namespace definitions in the destination module, we have to keep all
-                // new namespaces in that same source file, due to validation rules on our model
-                newSource = newModule.getNamespaceDefinitions().get(0).getSource();
-            }
-
-            log.debug("Creating new namespace definition: {} in module: {} aka {} in file {}",
-                    nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
-
-            newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI(), cndPath);
+            createNsDefinition(nsd, cndPath);
         }
+    }
+
+    private void createNsDefinition(final NamespaceDefinitionImpl nsd, final ValueImpl cndPath) {
+        // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
+        final JcrPath incomingPath = JcrPaths.getPath("/hippo:namespaces", nsd.getPrefix());
+
+        // what module should we put it in?
+        final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath);
+
+        // what source should we put it in?
+        final ConfigSourceImpl newSource;
+        if (newModule.getNamespaceDefinitions().isEmpty()) {
+            // We don't have any namespaces yet, so we can generate a new source and put it there
+            newSource = createConfigSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
+        }
+        else {
+            // if we have any existing namespace definitions in the destination module, we have to keep all
+            // new namespaces in that same source file, due to validation rules on our model
+            newSource = newModule.getNamespaceDefinitions().get(0).getSource();
+        }
+
+        log.debug("Creating new namespace definition: {} in module: {} aka {} in file {}",
+                nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
+
+        newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI(), cndPath);
     }
 
     /**
