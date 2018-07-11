@@ -90,7 +90,7 @@ public class HstModelImpl implements PlatformHstModel {
         this.contextPath = contextPath;
         this.websiteClassLoader = websiteClassLoader;
         this.websiteComponentManager = websiteComponentManager;
-        websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
+        websiteContainerConfiguration = websiteComponentManager.getContainerConfiguration();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
         this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
 
