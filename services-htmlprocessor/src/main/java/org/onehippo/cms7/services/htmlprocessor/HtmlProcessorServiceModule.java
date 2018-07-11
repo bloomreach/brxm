@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,13 +46,13 @@ public class HtmlProcessorServiceModule extends AbstractReconfigurableDaemonModu
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         service = new HtmlProcessorServiceImpl(config);
-        HippoServiceRegistry.registerService(service, HtmlProcessorService.class);
+        HippoServiceRegistry.register(service, HtmlProcessorService.class);
     }
 
     @Override
     protected void doShutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, HtmlProcessorService.class);
+            HippoServiceRegistry.unregister(service, HtmlProcessorService.class);
         }
     }
 }
