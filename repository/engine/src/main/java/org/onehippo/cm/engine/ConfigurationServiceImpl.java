@@ -30,9 +30,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -156,9 +154,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         // TODO: find source modules that match modules loaded from extension classloader
         // TODO: check all other usages of module.getExtensionName() to make sure it is initialized when used
-        final List<ModuleImpl> extensionModulesFromSourceFiles =
-                readModulesFromSourceFiles(runtimeConfigurationModel).stream()
-                        .filter(m -> extensionName.equals(m.getExtensionName())).collect(toList());
+
+        final List<ModuleImpl> allModules = newRuntimeConfigModel.getModulesStream().collect(toList());
+
+        //TODO SS: Document this
+        final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel).stream()
+                .filter(allModules::contains).peek(m -> m.setExtensionName(allModules.get(allModules.indexOf(m)).getExtensionName()))
+                .filter(m -> m.getExtensionName() != null).collect(toList());
 
         if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
             newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
@@ -174,7 +176,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         if (success) {
             runtimeConfigurationModel = newRuntimeConfigModel;
-            storeBaselineModel(newRuntimeConfigModel, extensionName);
+            //store only extension modules
+            final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
+                    .filter(m -> extensionName.equals(m.getExtensionName())).collect(toList());
+            baselineService.storeExtension(extensionName, modulesToSave, session);
             baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
 
             //process webfilebundle instructions from extensions which are not from the current site
@@ -240,8 +245,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
 
+                            final List<ModuleImpl> allModules = bootstrapModel.getModulesStream().collect(toList());
+
+                            //TODO SS: Document this and combine with same function at onNewSiteEvent method
                             final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
-                                    .filter(m -> m.getExtensionName() == null || knownExtensions.contains(m.getExtensionName())).collect(toList());
+                                    .filter(allModules::contains)
+                                    .peek(m -> m.setExtensionName(allModules.get(allModules.indexOf(m)).getExtensionName()))
+                                    .collect(toList());
+
                             bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
                         } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
@@ -275,7 +286,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         runtimeConfigurationModel = bootstrapModel;
 
                         log.info("ConfigurationService: store bootstrap config");
-                        success = storeBaselineModel(bootstrapModel, null);
+                        success = storeBaselineModel(bootstrapModel);
                     }
                     if (success) {
                         log.info("ConfigurationService: apply bootstrap content");
@@ -748,9 +759,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private boolean storeBaselineModel(final ConfigurationModelImpl model, final String extension) {
+    private boolean storeBaselineModel(final ConfigurationModelImpl model) {
         try {
-            baselineService.storeBaseline(model, session, extension);
+            baselineService.storeBaseline(model, session);
             // session.save() isn't necessary here, because storeBaseline() already does it
             return true;
         } catch (Exception e) {

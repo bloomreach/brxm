@@ -28,6 +28,8 @@ public final class Constants {
 
     public static final String NT_HCM_ROOT = "hcm:hcm";
     public static final String NT_HCM_BASELINE = "hcm:baseline";
+    public static final String NT_HCM_EXTENSIONS = "hcm:extensions";
+    public static final String NT_HCM_EXTENSION = "hcm:extension";
     public static final String NT_HCM_GROUP = "hcm:group";
     public static final String NT_HCM_PROJECT = "hcm:project";
     public static final String NT_HCM_MODULE = "hcm:module";
@@ -44,6 +46,7 @@ public final class Constants {
 
     public static final String HCM_ROOT = NT_HCM_ROOT;
     public static final String HCM_BASELINE = "hcm:baseline";
+    public static final String HCM_EXTENSIONS = "hcm:extensions";
     public static final String HCM_LAST_UPDATED = "hcm:lastupdated";
     public static final String HCM_MODULE_DESCRIPTOR = HCM_MODULE_YAML;
     public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";

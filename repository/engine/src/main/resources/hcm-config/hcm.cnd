@@ -77,9 +77,17 @@
 [hcm:group]
   + * (hcm:project)
 
+[hcm:extension]
+  + * (hcm:group)
+
+[hcm:extensions]
+  + * (hcm:extension)
+
+
 // Stores an entire configuration baseline with multiple groups, projects, and modules
 [hcm:baseline] > mix:lockable, hcm:digested
   - hcm:lastupdated (date)
+  + hcm:extensions (hcm:extensions)
   + * (hcm:group)
 
 // Stores history of content processing

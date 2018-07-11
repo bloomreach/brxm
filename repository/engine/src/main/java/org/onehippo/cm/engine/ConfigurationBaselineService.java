@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -67,6 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
@@ -79,6 +79,7 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
+import static org.onehippo.cm.engine.Constants.HCM_EXTENSIONS;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
@@ -96,6 +97,8 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.NT_HCM_EXTENSION;
+import static org.onehippo.cm.engine.Constants.NT_HCM_EXTENSIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
@@ -124,9 +127,8 @@ public class ConfigurationBaselineService {
      *
      * @param model   the configuration model to store as the new baseline
      * @param session the session for processing the model
-     * @param extension if not null, store only modules for a specific extension; if null, store all modules present
      */
-    public void storeBaseline(final ConfigurationModelImpl model, final Session session, final String extension)
+    public void storeBaseline(final ConfigurationModelImpl model, final Session session)
             throws RepositoryException, IOException, ParserException {
         configurationLockManager.lock();
         try {
@@ -145,27 +147,25 @@ public class ConfigurationBaselineService {
             // set lastupdated date to now
             baselineNode.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-            // what extensions are we storing?
-            final Set<String> extensions;
-            if (extension != null) {
-                extensions = Collections.singleton(extension);
-            }
-            else {
-                extensions = model.getExtensionNames();
-                extensions.add(null);
-            }
+            final Node extensionsNode = createNodeIfNecessary(baselineNode, HCM_EXTENSIONS, NT_HCM_EXTENSIONS, false);
 
+
+            // TODO: implement a smarter partial-update process instead of brute-force removal
+            // clear existing group nodes before creating new ones
             // clear any module whose extension is present in the model, plus any core module
             // this gives us a clean slate for storing the new baseline for core and extensions that are available now
+            //TODO SS: Remove all extensions at once?
+            for (String extensionName: model.getExtensionNames()) {
+                if (extensionsNode.hasNode(extensionName)) {
+                    extensionsNode.getNode(extensionName).remove();
+                }
+            }
 
-            // for each module node under this baseline
-            for (Node moduleNode : findModuleNodes(baselineNode)) {
-                // load the descriptor to find the module's extension
-                final ModuleImpl module = loadModuleDescriptor(moduleNode);
-
-                // if the stored module is from an extension we're processing now, remove it
-                if (extensions.contains(module.getExtensionName())) {
-                    moduleNode.remove();
+            // for each group node under this baseline
+            for (NodeIterator nodes = baselineNode.getNodes(); nodes.hasNext();) {
+                final Node groupNode = nodes.nextNode();
+                if (groupNode.getPrimaryNodeType().isNodeType(NT_HCM_GROUP)) {
+                    groupNode.remove();
                 }
             }
 
@@ -178,6 +178,13 @@ public class ConfigurationBaselineService {
 
             // create group, project, and module nodes, if necessary
             // foreach group
+
+            final List<ModuleImpl> extensionModules = model.getModulesStream().filter(m -> m.getExtensionName() != null)
+                    .collect(toList());
+            for (ModuleImpl module: extensionModules) {
+                storeExtensionModule(module, extensionsNode, session);
+            }
+
             for (GroupImpl group : model.getSortedGroups()) {
                 Node groupNode = createNodeIfNecessary(baselineNode, group.getName(), NT_HCM_GROUP, true);
 
@@ -187,12 +194,12 @@ public class ConfigurationBaselineService {
 
                     // foreach module
                     for (ModuleImpl module : project.getModules()) {
-                        Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
-
-                        // process each module in detail, if part of an appropriate extension
-                        if (extensions.contains(module.getExtensionName())) {
+                        if (!module.isExtension()) {
+                            Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
+                            // process each core module in detail
                             storeBaselineModule(module, moduleNode, session, false);
                         }
+
                     }
                 }
             }
@@ -202,13 +209,54 @@ public class ConfigurationBaselineService {
 
             session.save();
             stopWatch.stop();
-            log.info("ConfigurationModel stored as baseline configuration for extensions {} in {}", extensions, stopWatch.toString());
-        } catch (RepositoryException | IOException | ParserException e) {
+            log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
+        } catch (RepositoryException | IOException e) {
             log.error("Failed to store baseline configuration", e);
             throw e;
         } finally {
             configurationLockManager.unlock();
         }
+    }
+
+
+    //TODO SS: Add javadocs
+    public void storeExtension(String extensionName, final Collection<ModuleImpl> modules, final Session session)
+            throws RepositoryException, IOException {
+        configurationLockManager.lock();
+        try {
+
+            session.refresh(true);
+            final Node extensionsCatalogNode = session.getNode(HCM_BASELINE_PATH).getNode(HCM_EXTENSIONS);
+
+            if (extensionsCatalogNode.hasNode(extensionName)) {
+                extensionsCatalogNode.getNode(extensionName).remove();
+            }
+
+            for (ModuleImpl module: modules) {
+                storeExtensionModule(module, extensionsCatalogNode, session);
+            }
+            session.save();
+
+        } finally {
+            configurationLockManager.unlock();
+        }
+    }
+
+
+    //TODO SS: Add javadocs
+    private void storeExtensionModule(final ModuleImpl module, final Node parentNode, final Session session)
+            throws RepositoryException, IOException {
+        if (StringUtils.isEmpty(module.getExtensionName())) {
+            throw new ConfigurationRuntimeException(String.format("Module %s is not an extension", module));
+        }
+        final Node extensionNode = createNodeIfNecessary(parentNode, module.getExtensionName(), NT_HCM_EXTENSION, false);
+        final ProjectImpl project = module.getProject();
+        final GroupImpl group = project.getGroup();
+
+        final Node groupNode = createNodeIfNecessary(extensionNode, group.getName(), NT_HCM_GROUP, true);
+        final Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
+        final Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
+        storeBaselineModule(module, moduleNode, session, false);
     }
 
     /**
@@ -232,7 +280,8 @@ public class ConfigurationBaselineService {
             stopWatch.start();
 
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
-            Node baseline = hcmRootNode.getNode(HCM_BASELINE);
+            final Node baseline = hcmRootNode.getNode(HCM_BASELINE);
+            final Node extensionsNode = baseline.getNode(HCM_EXTENSIONS);
 
             final Set<ModuleImpl> newBaselineModules = new HashSet<>();
             for (final ModuleImpl module : modules) {
@@ -241,16 +290,13 @@ public class ConfigurationBaselineService {
                 // set lastupdated date to now
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-                Node moduleNode = null;
-                try {
+                Node moduleNode;
+                if (module.isExtension()) {
+                    final Node extensionNode = extensionsNode.getNode(module.getExtensionName());
+                    moduleNode = getModuleNode(extensionNode, module);
+                } else {
                     moduleNode = getModuleNode(baseline, module);
-                } catch(Exception ex) {
-                    final Node group = createNodeIfNecessary(baseline, module.getProject().getGroup().getName(), NT_HCM_GROUP, true);
-                    final Node project = createNodeIfNecessary(group, module.getProject().getName(), NT_HCM_PROJECT, true);
-                    moduleNode = createNodeIfNecessary(project, module.getName(), NT_HCM_MODULE, true);
-                    storeBaselineModule(module, moduleNode, session, false);
                 }
-                // do incremental update
                 storeBaselineModule(module, moduleNode, session, true);
 
                 // now that we've saved the baseline, we should clear the dirty flags on all sources
@@ -259,6 +305,7 @@ public class ConfigurationBaselineService {
                 }
 
                 final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
+                reloadedModule.setExtensionName(module.getExtensionName());
                 parseSources(singletonList(reloadedModule));
                 newBaselineModules.add(reloadedModule);
             }
@@ -301,7 +348,7 @@ public class ConfigurationBaselineService {
      * managed in storeBaseline().
      * @param module the module to store
      * @param moduleNode the JCR node destination for the module
-     * @see #storeBaseline(ConfigurationModelImpl, Session, String)
+     * @see #storeBaseline(ConfigurationModelImpl, Session)
      */
     protected void storeBaselineModule(final ModuleImpl module, final Node moduleNode, final Session session, final boolean incremental)
             throws RepositoryException, IOException {
@@ -429,7 +476,7 @@ public class ConfigurationBaselineService {
      * @param source the Source to store
      * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
-     * @see #storeBaseline(ConfigurationModelImpl, Session, String)
+     * @see #storeBaseline(ConfigurationModelImpl, Session)
      */
     protected void storeBaselineConfigSource(final ConfigSourceImpl source, final Node configRootNode, final ResourceInputProvider rip)
             throws RepositoryException, IOException {
@@ -622,15 +669,19 @@ public class ConfigurationBaselineService {
                 final Node baselineNode = hcmRootNode.getNode(HCM_BASELINE);
 
                 // make sure we load core modules, in addition to specified extensions
-                if (extensions == null || extensions.isEmpty()) {
-                    extensions = Collections.singleton(null);
-                }
-                else {
-                    extensions.add(null);
-                }
+                // First phase: load and parse core module descriptors
+                final List<ModuleImpl> modules = parseDescriptors(baselineNode);
 
-                // First phase: load and parse module descriptors
-                final List<ModuleImpl> modules = parseDescriptors(baselineNode, extensions);
+                if (isNotEmpty(extensions)) {
+                    final Node extensionCatalogNode = baselineNode.getNode(HCM_EXTENSIONS);
+                    for (NodeIterator eni = extensionCatalogNode.getNodes(); eni.hasNext();) {
+                        final Node extensionNode = eni.nextNode();
+                        final String extensionName = extensionNode.getName();
+                        final List<ModuleImpl> extensionModules = parseDescriptors(extensionNode);
+                        extensionModules.forEach(module -> module.setExtensionName(extensionName));
+                        modules.addAll(extensionModules);
+                    }
+                }
 
                 // Second phase: load and parse config Sources, load and mockup content Sources
                 parseSources(modules);
@@ -660,7 +711,7 @@ public class ConfigurationBaselineService {
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected List<ModuleImpl> parseDescriptors(final Node baselineNode, final Set<String> extensions)
+    protected List<ModuleImpl> parseDescriptors(final Node baselineNode)
             throws RepositoryException, ParserException {
         // groups accumulator
         final List<ModuleImpl> modules = new ArrayList<>();
@@ -668,10 +719,7 @@ public class ConfigurationBaselineService {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
             final ModuleImpl module = loadModuleDescriptor(moduleNode);
-
-            if (extensions.contains(module.getExtensionName())) {
-                modules.add(module);
-            }
+            modules.add(module);
         }
 
         log.debug("After parsing descriptors, we have {} modules", modules.size());
@@ -680,7 +728,7 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Helper for {@link #parseDescriptors(Node, Set)} -- loads one module descriptor from a given module baseline node.
+     * Helper for {@link #parseDescriptors(Node)} -- loads one module descriptor from a given module baseline node.
      * @param moduleNode the JCR node where the baseline for a module has been previously stored
      * @throws RepositoryException
      * @throws ParserException
