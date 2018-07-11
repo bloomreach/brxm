@@ -24,12 +24,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cms7.services.SingletonService;
 
 /**
  * Service providing access to the current runtime ConfigurationModel and some operations related to configuration.
  */
-@SingletonService
 public interface ConfigurationService {
 
     /**
