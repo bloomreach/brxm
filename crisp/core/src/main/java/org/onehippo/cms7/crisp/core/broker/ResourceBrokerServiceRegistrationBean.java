@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class ResourceBrokerServiceRegistrationBean implements InitializingBean, 
     @Override
     public void afterPropertiesSet() throws Exception {
         if (isEnabled() && resourceServiceBroker != null) {
-            HippoServiceRegistry.registerService(resourceServiceBroker, ResourceServiceBroker.class);
+            HippoServiceRegistry.register(resourceServiceBroker, ResourceServiceBroker.class);
         }
     }
 
@@ -95,7 +95,7 @@ public class ResourceBrokerServiceRegistrationBean implements InitializingBean, 
     @Override
     public void destroy() throws Exception {
         if (isEnabled() && resourceServiceBroker != null) {
-            HippoServiceRegistry.unregisterService(resourceServiceBroker, ResourceServiceBroker.class);
+            HippoServiceRegistry.unregister(resourceServiceBroker, ResourceServiceBroker.class);
         }
     }
 }

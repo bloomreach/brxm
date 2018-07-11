@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +141,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     public void afterPropertiesSet() throws Exception {
         new ResourceResolversInitializingThread().start();
         configurationChangeEventListener = new ConfigurationChangeEventListener();
-        HippoServiceRegistry.registerService(configurationChangeEventListener, HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(configurationChangeEventListener);
     }
 
     /**
@@ -149,7 +149,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      */
     @Override
     public void destroy() {
-        HippoServiceRegistry.unregisterService(configurationChangeEventListener, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(configurationChangeEventListener);
     }
 
     /**

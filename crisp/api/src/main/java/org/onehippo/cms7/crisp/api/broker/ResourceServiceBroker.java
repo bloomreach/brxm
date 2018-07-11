@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.SingletonService;
 
 /**
  * CRISP Resource Service Broker abstraction.
@@ -43,14 +42,13 @@ import org.onehippo.cms7.services.SingletonService;
  * implementation should take care of all the details including caching, cache invalidations, etc.
  * </P>
  * <P>
- * Also, this "Broker" service is normally registered through {@link HippoServiceRegistry} as a {@link SingletonService}.
+ * Also, this "Broker" service is normally registered through {@link HippoServiceRegistry}.
  * So, applications can access this singleton "Broker" service like the following example:
  * </P>
  * <PRE>
  * ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
  * </PRE>
  */
-@SingletonService
 public interface ResourceServiceBroker {
 
     /**
