@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterConfiguratio
 import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterJob;
 import org.onehippo.cms7.essentials.components.cms.handlers.AuthorFieldHandler;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
@@ -142,7 +142,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     private void registerListener(final BlogImporterConfiguration config) {
         if (!Strings.isNullOrEmpty(config.getProjectNamespace())) {
             listener = new AuthorFieldHandler(config.getProjectNamespace(), session);
-            HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+            HippoEventListenerRegistry.get().register(listener);
         } else {
             log.warn("No projectNamespace configured in [org.onehippo.cms7.essentials.components.cms.modules.EventBusListenerModule]");
         }
@@ -150,7 +150,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
 
     private void unregisterListener() {
         if (listener != null) {
-            HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+            HippoEventListenerRegistry.get().unregister(listener);
         }
     }
 }
