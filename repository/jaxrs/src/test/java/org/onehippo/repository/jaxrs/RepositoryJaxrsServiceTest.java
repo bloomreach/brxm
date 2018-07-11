@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.onehippo.repository.jaxrs;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,7 +104,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         tomcat.start();
 
         if (HippoServiceRegistry.getService(RepositoryService.class) == null) {
-            HippoServiceRegistry.registerService(server.getRepository(), RepositoryService.class);
+            HippoServiceRegistry.register((RepositoryService)server.getRepository(), RepositoryService.class);
         }
     }
 

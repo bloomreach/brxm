@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,26 +46,23 @@ public class LocalizationModule implements DaemonModule {
     @Override
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
-        HippoServiceRegistry.registerService(service = new LocalizationService() {
-            @Override
-            public ResourceBundle getResourceBundle(final String name, final Locale locale) {
-                ResourceBundle bundle = null;
-                if (bundles != null) {
-                    bundle = bundles.get(new ResourceBundleKey(name, locale));
-                    // try less specific locales
-                    if (bundle == null && locale.getVariant() != null) {
-                        bundle = bundles.get(new ResourceBundleKey(name, new Locale(locale.getLanguage(), locale.getCountry())));
-                    }
-                    if (bundle == null && locale.getCountry() != null) {
-                        bundle = bundles.get(new ResourceBundleKey(name, new Locale(locale.getLanguage())));
-                    }
-                    // fall back on default locale
-                    if (bundle == null) {
-                        bundle = bundles.get(new ResourceBundleKey(name, DEFAULT_LOCALE));
-                    }
+        HippoServiceRegistry.register(service = (name, locale) -> {
+            ResourceBundle bundle = null;
+            if (bundles != null) {
+                bundle = bundles.get(new ResourceBundleKey(name, locale));
+                // try less specific locales
+                if (bundle == null && locale.getVariant() != null) {
+                    bundle = bundles.get(new ResourceBundleKey(name, new Locale(locale.getLanguage(), locale.getCountry())));
                 }
-                return bundle;
+                if (bundle == null && locale.getCountry() != null) {
+                    bundle = bundles.get(new ResourceBundleKey(name, new Locale(locale.getLanguage())));
+                }
+                // fall back on default locale
+                if (bundle == null) {
+                    bundle = bundles.get(new ResourceBundleKey(name, LocalizationService.DEFAULT_LOCALE));
+                }
             }
+            return bundle;
         }, LocalizationService.class);
         loadBundles();
         listener = new ModuleConfigurationListener();
@@ -79,7 +76,7 @@ public class LocalizationModule implements DaemonModule {
     @Override
     public void shutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, LocalizationService.class);
+            HippoServiceRegistry.unregister(service, LocalizationService.class);
         }
         try {
             if (listener != null) {

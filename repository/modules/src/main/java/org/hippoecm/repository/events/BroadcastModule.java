@@ -29,16 +29,15 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistration;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
 import org.onehippo.repository.events.PersistedHippoEventListener;
-import org.onehippo.repository.events.PersistedHippoEventsService;
+import org.onehippo.repository.events.PersistedHippoEventListenerRegistry;
 import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,21 +162,21 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
 
     @Override
     public BroadcastJob getNextJob() {
-        final List<Triple<PersistedHippoEventListener, Long, ClassLoader>> listenerInfos = new ArrayList<>();
+        final List<Pair<PersistedHippoEventListener, Long>> listenerInfos = new ArrayList<>();
         long globalLastProcessed = Long.MAX_VALUE;
-        for (HippoServiceRegistration registration : getPersistedHippoEventsServiceRegistrations()) {
+        for (ProxiedServiceHolder<PersistedHippoEventListener> serviceHolder : getPersistedHippoEventsServiceRegistrations()) {
             try {
-                PersistedHippoEventListener listener = (PersistedHippoEventListener) registration.getService();
+                PersistedHippoEventListener listener = serviceHolder.getServiceProxy();
                 long lastProcessed = getLastProcessed(listener.getChannelName(), listener.onlyNewEvents());
 
-                final Triple<PersistedHippoEventListener, Long, ClassLoader> listenerInfo =
-                        new ImmutableTriple(listener, lastProcessed, registration.getClassLoader());
+                final Pair<PersistedHippoEventListener, Long> listenerInfo =
+                        new ImmutablePair(listener, lastProcessed);
                 listenerInfos.add(listenerInfo);
                 if (lastProcessed < globalLastProcessed) {
                     globalLastProcessed = lastProcessed;
                 }
             } catch (RepositoryException e) {
-                log.error("Error getting last processed, skipping listener '{}'", registration.getService(), e);
+                log.error("Error getting last processed, skipping listener '{}'", serviceHolder.getServiceObject(), e);
             }
         }
         if (listenerInfos.size() == 0) {
@@ -187,35 +186,29 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         return new BroadcastJobImpl(listenerInfos, globalLastProcessed);
     }
 
-    protected Collection<HippoServiceRegistration> getPersistedHippoEventsServiceRegistrations() {
-        Map<String, HippoServiceRegistration> registrationMap = new HashMap<>();
-        for (HippoServiceRegistration registration : HippoServiceRegistry.getRegistrations(PersistedHippoEventsService.class)) {
-            if (registration.getService() instanceof PersistedHippoEventListener) {
-                PersistedHippoEventListener listener = (PersistedHippoEventListener) registration.getService();
-                HippoServiceRegistration earlierRegistration = registrationMap.get(listener.getChannelName());
-                if (earlierRegistration != null) {
-                    log.error("Invalid PersistedWorkflowEventsService registration: listener " +
-                            listener.getClass().getName() + " subscribes to channel [" + listener.getChannelName() + "] which already" +
-                            "has been subscribed to by: " + earlierRegistration.getService().getClass().getName() + ". Only the first listener will " +
-                            "receive events.");
-                } else {
-                    registrationMap.put(listener.getChannelName(), registration);
-                }
+    protected Collection<ProxiedServiceHolder<PersistedHippoEventListener>> getPersistedHippoEventsServiceRegistrations() {
+        Map<String, ProxiedServiceHolder<PersistedHippoEventListener>> registrationMap = new HashMap<>();
+        PersistedHippoEventListenerRegistry.get().getEntries().forEach(serviceHolder -> {
+            PersistedHippoEventListener listener = serviceHolder.getServiceProxy();
+            ProxiedServiceHolder<PersistedHippoEventListener> earlierRegistration = registrationMap.get(listener.getChannelName());
+            if (earlierRegistration != null) {
+                log.error("Invalid PersistedWorkflowEventListener registration: listener " +
+                        serviceHolder.getServiceObject().getClass().getName() + " subscribes to channel [" + listener.getChannelName() + "] which already" +
+                        "has been subscribed to by: " + earlierRegistration.getServiceObject().getClass().getName() + ". Only the first listener will " +
+                        "receive events.");
             } else {
-                log.error("Invalid PersistedWorflowEventsService registration: " +
-                        registration.getService().getClass().getName() +
-                        " does not implement the PersistedWorkflowEventListener interface");
+                registrationMap.put(listener.getChannelName(), serviceHolder);
             }
-        }
+        });
         return registrationMap.values();
     }
 
     private class BroadcastJobImpl implements BroadcastJob {
 
-        private List<Triple<PersistedHippoEventListener, Long, ClassLoader>> listenerInfos;
+        private List<Pair<PersistedHippoEventListener, Long>> listenerInfos;
         private long globalLastProcessed;
 
-        BroadcastJobImpl(final List<Triple<PersistedHippoEventListener, Long, ClassLoader>> listenerInfos,
+        BroadcastJobImpl(final List<Pair<PersistedHippoEventListener, Long>> listenerInfos,
                          final long globalLastProcessed) {
             this.listenerInfos = listenerInfos;
             this.globalLastProcessed = globalLastProcessed;
@@ -230,7 +223,7 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         public void setLastProcessed(final long time) {
             // since PersistedHippoEventListener.onlyNewEvents exists we need to set the last processed PER
             // listener unfortunately instead of PER cluster node.
-            for (Triple<PersistedHippoEventListener, Long, ClassLoader> listener : listenerInfos) {
+            for (Pair<PersistedHippoEventListener, Long> listener : listenerInfos) {
                 final String channelName = listener.getLeft().getChannelName();
                 try {
                     writeLastProcessed(channelName, time);
@@ -243,26 +236,20 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
 
         @Override
         public void publish(final HippoEvent event) {
-            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-            try {
-                for (Triple<PersistedHippoEventListener, Long, ClassLoader> listenerInfo : listenerInfos) {
-                    final PersistedHippoEventListener listener = listenerInfo.getLeft();
-                    if (shouldListenerProcessEvent(listenerInfo, event)) {
-                        Thread.currentThread().setContextClassLoader(listenerInfo.getRight());
-                        try {
-                            listener.onHippoEvent(event);
-                        } catch (Exception e) {
-                            log.error("Failed to dispatch workflow event", e);
-                        }
+            for (Pair<PersistedHippoEventListener, Long> listenerInfo : listenerInfos) {
+                final PersistedHippoEventListener listener = listenerInfo.getLeft();
+                if (shouldListenerProcessEvent(listenerInfo, event)) {
+                    try {
+                        listener.onHippoEvent(event);
+                    } catch (Exception e) {
+                        log.error("Failed to dispatch workflow event", e);
                     }
                 }
-            } finally {
-                Thread.currentThread().setContextClassLoader(ccl);
             }
         }
 
-        private boolean shouldListenerProcessEvent(final Triple<PersistedHippoEventListener, Long, ClassLoader> listenerInfo, final HippoEvent event) {
-            if (event.timestamp() < listenerInfo.getMiddle().longValue()) {
+        private boolean shouldListenerProcessEvent(final Pair<PersistedHippoEventListener, Long> listenerInfo, final HippoEvent event) {
+            if (event.timestamp() < listenerInfo.getRight().longValue()) {
                 // skip too old event
                 return false;
             }

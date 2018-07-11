@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doInitialize(Session session) throws RepositoryException {
         scxmlRegistry.initialize();
-        HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
+        HippoServiceRegistry.register(scxmlRegistry, SCXMLRegistry.class);
 
         scxmlExecutorFactory.initialize();
-        HippoServiceRegistry.registerService(scxmlExecutorFactory, SCXMLExecutorFactory.class);
+        HippoServiceRegistry.register(scxmlExecutorFactory, SCXMLExecutorFactory.class);
     }
 
     @Override
@@ -60,10 +60,10 @@ public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected void doShutdown() {
-        HippoServiceRegistry.unregisterService(scxmlExecutorFactory, SCXMLExecutorFactory.class);
+        HippoServiceRegistry.unregister(scxmlExecutorFactory, SCXMLExecutorFactory.class);
         scxmlExecutorFactory.destroy();
 
-        HippoServiceRegistry.unregisterService(scxmlRegistry, SCXMLRegistry.class);
+        HippoServiceRegistry.unregister(scxmlRegistry, SCXMLRegistry.class);
         scxmlRegistry.destroy();
     }
 }

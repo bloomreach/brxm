@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.events.HippoWorkflowEvent;
@@ -48,15 +49,15 @@ public class DocumentWorkflowRequestTest extends AbstractDocumentWorkflowIntegra
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        HippoServiceRegistry.registerService(eventBus = new GuavaHippoEventBus(), HippoEventBus.class);
-        HippoServiceRegistry.registerService(listener = new HippoEventListener(), HippoEventBus.class);
+        HippoServiceRegistry.register(eventBus = new GuavaHippoEventBus(), HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(listener = new HippoEventListener());
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        HippoServiceRegistry.unregisterService(eventBus, HippoEventBus.class);
-        HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
+        HippoServiceRegistry.unregister(eventBus, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(listener);
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 package org.onehippo.repository.scxml;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
-import org.onehippo.cms7.services.SingletonService;
 
 
 /**
- * SCXMLExecutorFactory is a {@link SingletonService} responsible for creating Apache Commons {@link SCXMLExecutor}
+ * SCXMLExecutorFactory is a service responsible for creating Apache Commons {@link SCXMLExecutor}
  * instances based on a provided {@link SCXMLDefinition}.
  */
-@SingletonService
 public interface SCXMLExecutorFactory {
 
     public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException;

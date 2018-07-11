@@ -28,11 +28,28 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-import javax.jcr.*;
+import javax.jcr.LoginException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.observation.Event;
-import javax.jcr.query.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -50,6 +67,7 @@ import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
 import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.cluster.RepositoryClusterService;
 import org.slf4j.Logger;
@@ -171,10 +189,10 @@ public class RepositoryServlet extends HttpServlet {
         super.init(config);
 
         hippoEventBus = new GuavaHippoEventBus();
-        HippoServiceRegistry.registerService(hippoEventBus, HippoEventBus.class);
+        HippoServiceRegistry.register(hippoEventBus, HippoEventBus.class);
 
         listener = new AuditLogger();
-        HippoServiceRegistry.registerService(listener, HippoEventBus.class);
+        HippoEventListenerRegistry.get().register(listener);
 
         parseInitParameters(config);
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
@@ -203,9 +221,9 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
 
-            HippoServiceRegistry.registerService(repositoryService =
+            HippoServiceRegistry.register(repositoryService =
                     (RepositoryService) repository.getRepository(), RepositoryService.class);
-            HippoServiceRegistry.registerService(repositoryClusterService = new RepositoryClusterService() {
+            HippoServiceRegistry.register(repositoryClusterService = new RepositoryClusterService() {
                 @Override
                 public boolean isExternalEvent(final Event event) {
                     if (!(event instanceof JackrabbitEvent)) {
@@ -294,13 +312,13 @@ public class RepositoryServlet extends HttpServlet {
         }
 
         if (repositoryService != null) {
-            HippoServiceRegistry.unregisterService(repositoryService, RepositoryService.class);
+            HippoServiceRegistry.unregister(repositoryService, RepositoryService.class);
         }
         if (repositoryClusterService != null) {
-            HippoServiceRegistry.unregisterService(repositoryClusterService, RepositoryClusterService.class);
+            HippoServiceRegistry.unregister(repositoryClusterService, RepositoryClusterService.class);
         }
-        HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
-        HippoServiceRegistry.unregisterService(hippoEventBus, HippoEventBus.class);
+        HippoEventListenerRegistry.get().unregister(listener);
+        HippoServiceRegistry.unregister(hippoEventBus, HippoEventBus.class);
         hippoEventBus.destroy();
     }
 

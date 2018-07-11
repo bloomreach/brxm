@@ -25,16 +25,13 @@ import org.hippoecm.repository.logging.RepositoryLogger;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.events.PersistedHippoEventListener;
-import org.onehippo.repository.events.PersistedHippoEventsService;
+import org.onehippo.repository.events.PersistedHippoEventListenerRegistry;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class BroadcastModuleTest extends RepositoryTestCase {
@@ -136,7 +133,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         in.workflowCategory("haha");
         in.interaction("hehe");
 
-        HippoServiceRegistry.registerService(listener, PersistedHippoEventsService.class);
+        PersistedHippoEventListenerRegistry.get().register(listener);
         try {
             RepositoryLogger logger = new RepositoryLogger();
             logger.initialize(session);
@@ -171,7 +168,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             assertEquals(1, listener.seen);
         } finally {
-            HippoServiceRegistry.unregisterService(listener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().unregister(listener);
         }
 
     }
@@ -181,7 +178,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         final TestEventListener listener = new TestEventListener();
         final RepositoryLogger logger = new RepositoryLogger();
         try {
-            HippoServiceRegistry.registerService(listener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().register(listener);
             logger.initialize(session);
 
             HippoWorkflowEvent outdated = new HippoWorkflowEvent();
@@ -214,7 +211,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
         } finally {
             logger.shutdown();
-            HippoServiceRegistry.unregisterService(listener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().unregister(listener);
         }
     }
 
@@ -224,7 +221,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         final TestEventListener listener = new TestEventListener();
         final RepositoryLogger logger = new RepositoryLogger();
         try {
-            HippoServiceRegistry.registerService(listener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().register(listener);
             logger.initialize(session);
 
             HippoWorkflowEvent event1 = new HippoWorkflowEvent();
@@ -252,7 +249,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
             assertEquals(event3.category(), listener.processed.get(2).category());
         } finally {
             logger.shutdown();
-            HippoServiceRegistry.unregisterService(listener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().unregister(listener);
         }
     }
     
@@ -263,8 +260,8 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         final CategoryEventListener fooCategoryListener = new CategoryEventListener("foo");
         final RepositoryLogger logger = new RepositoryLogger();
         try {
-            HippoServiceRegistry.registerService(nullCategoryListener, PersistedHippoEventsService.class);
-            HippoServiceRegistry.registerService(fooCategoryListener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().register(nullCategoryListener);
+            PersistedHippoEventListenerRegistry.get().register(fooCategoryListener);
             logger.initialize(session);
 
             HippoWorkflowEvent bar = new HippoWorkflowEvent();
@@ -313,8 +310,8 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
         } finally {
             logger.shutdown();
-            HippoServiceRegistry.unregisterService(nullCategoryListener, PersistedHippoEventsService.class);
-            HippoServiceRegistry.unregisterService(fooCategoryListener, PersistedHippoEventsService.class);
+            PersistedHippoEventListenerRegistry.get().unregister(nullCategoryListener);
+            PersistedHippoEventListenerRegistry.get().unregister(fooCategoryListener);
         }
     }
 
