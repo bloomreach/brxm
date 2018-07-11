@@ -62,7 +62,7 @@ class EditContentService {
     if (!this.ConfigService.projectsEnabled) {
       this.editDocument(documentId);
     } else {
-      const selectedProjectId = this.ProjectService.project.id;
+      const selectedProjectId = this.ProjectService.selectedProject.id;
       this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
