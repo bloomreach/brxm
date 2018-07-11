@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package org.hippoecm.hst.demo.events;
 
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.events.PersistedHippoEventListener;
-import org.onehippo.repository.events.PersistedHippoEventsService;
+import org.onehippo.repository.events.PersistedHippoEventListenerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +30,11 @@ public class BasicPersistedWorkflowEventListener implements PersistedHippoEventL
     private static Logger log = LoggerFactory.getLogger(BasicPersistedWorkflowEventListener.class);
 
     public void register() {
-        HippoServiceRegistry.registerService(this, PersistedHippoEventsService.class);
+        PersistedHippoEventListenerRegistry.get().register(this);
     }
 
     public void unregister() {
-        HippoServiceRegistry.unregisterService(this, PersistedHippoEventsService.class);
+        PersistedHippoEventListenerRegistry.get().unregister(this);
     }
 
     @Override
