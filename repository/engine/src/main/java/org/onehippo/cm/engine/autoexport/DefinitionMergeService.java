@@ -49,7 +49,6 @@ import javax.jcr.Session;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.poi.ss.formula.functions.T;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
