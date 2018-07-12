@@ -28,10 +28,12 @@ const testDocument = {
 describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
+  let $scope;
   let CmsService;
   let ContentEditor;
   let CreateContentService;
   let FeedbackService;
+  let RightSidePanelService;
   let Step2Service;
 
   let $ctrl;
@@ -51,13 +53,18 @@ describe('Create content step 2 controller', () => {
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
+      $scope = $rootScope.$new();
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       CreateContentService = _CreateContentService_;
       FeedbackService = _FeedbackService_;
+      RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
       Step2Service = _Step2Service_;
 
-      $ctrl = $controller('step2Ctrl');
+      $ctrl = $controller('step2Ctrl as $ctrl', {
+        $scope,
+        RightSidePanelService,
+      });
     });
 
     spyOn(CmsService, 'reportUsageStatistic');
@@ -72,6 +79,24 @@ describe('Create content step 2 controller', () => {
       $ctrl.documentIsSaved = true;
       $ctrl.$onInit();
       expect($ctrl.documentIsSaved).toBe(false);
+    });
+
+    it('starts loading when "loading" is set to true', () => {
+      $ctrl.$onInit();
+      $scope.$digest();
+      expect(RightSidePanelService.startLoading).not.toHaveBeenCalled();
+      $ctrl.loading = true;
+      $scope.$digest();
+      expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+    });
+
+    it('stops loading when "loading" is set to false', () => {
+      $ctrl.$onInit();
+      $scope.$digest();
+      expect(RightSidePanelService.stopLoading).not.toHaveBeenCalled();
+      $ctrl.loading = false;
+      $scope.$digest();
+      expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     });
   });
 

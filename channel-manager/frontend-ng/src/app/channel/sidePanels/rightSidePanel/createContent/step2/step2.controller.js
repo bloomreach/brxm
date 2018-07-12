@@ -16,6 +16,7 @@
 
 class Step2Controller {
   constructor(
+    $scope,
     $translate,
     ContentEditor,
     ContentService,
@@ -27,6 +28,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$scope = $scope;
     this.$translate = $translate;
     this.ContentEditor = ContentEditor;
     this.ContentService = ContentService;
@@ -40,6 +42,18 @@ class Step2Controller {
   $onInit() {
     this.documentIsSaved = false;
     this.switchingEditor = false;
+
+    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        this.RightSidePanelService.startLoading();
+      } else {
+        this.RightSidePanelService.stopLoading();
+      }
+    });
   }
 
   allMandatoryFieldsShown() {
