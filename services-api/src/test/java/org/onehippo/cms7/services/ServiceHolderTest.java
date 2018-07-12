@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,20 @@
  */
 package org.onehippo.cms7.services;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.Test;
 
-/**
- * Whiteboard annotation for a service interface.  When this annotation is present, a service can be registered and
- * retrieved using the singleton support methods on the {@link org.onehippo.cms7.services.HippoServiceRegistry}.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface WhiteboardService {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class ServiceHolderTest {
+
+    @Test
+    public void testNotNullParameters() {
+        try {
+            new ServiceHolder<>(null);
+            fail();
+        } catch (NullPointerException e) {
+            assertEquals("serviceObject must not be null", e.getMessage());
+        }
+    }
 }

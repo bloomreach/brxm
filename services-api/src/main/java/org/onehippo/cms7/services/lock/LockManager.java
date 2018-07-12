@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package org.onehippo.cms7.services.lock;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.onehippo.cms7.services.SingletonService;
 
 /**
  * <p>
@@ -99,7 +97,6 @@ import org.onehippo.cms7.services.SingletonService;
  * </p>
  *
  */
-@SingletonService
 public interface LockManager {
 
     /**
