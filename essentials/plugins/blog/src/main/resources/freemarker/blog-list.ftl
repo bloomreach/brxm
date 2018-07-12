@@ -13,9 +13,12 @@
         <p><@fmt.formatDate value=item.publicationDate.time type="both" dateStyle="medium" timeStyle="short"/></p>
       </#if>
       <p>${item.introduction?html}</p>
-      <a href="${link}"><@fmt.message key="blog.read.post" var="msg"/>${msg?html}</a>
+      <p><a href="${link}"><@fmt.message key="blog.read.post" var="msg"/>${msg?html}</a></p>
     </article>
   </#list>
+  <div class="has-new-content-button">
+    <@hst.manageContent templateQuery="new-blog-document" rootPath="blog" defaultPath="${currentYear}/${currentMonth}"/>
+  </div>
   <#if cparam.showPagination>
     <#include "../../include/pagination.ftl">
   </#if>
