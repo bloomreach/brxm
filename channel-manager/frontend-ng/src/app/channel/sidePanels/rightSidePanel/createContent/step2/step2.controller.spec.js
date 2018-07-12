@@ -125,14 +125,12 @@ describe('Create content step 2 controller', () => {
     expect(CreateContentService.stop).toHaveBeenCalled();
   });
 
-  it('saves the contentEditor and finishes create-content', () => {
-    spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+  it('discards the editable instance, saves the component parameter and finishes create-content on save', () => {
     spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
     spyOn(CreateContentService, 'finish');
-    $ctrl.save();
+    $ctrl.onSave();
 
-    expect(ContentEditor.save).toHaveBeenCalled();
     $rootScope.$digest();
     expect($ctrl.documentIsSaved).toBe(true);
     expect(ContentEditor.discardChanges).toHaveBeenCalled();

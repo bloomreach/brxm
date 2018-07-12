@@ -67,20 +67,15 @@ class Step2Controller {
     this.close();
   }
 
-  save() {
-    this.RightSidePanelService.startLoading();
-    this.ContentEditor.save()
-      .then(() => {
-        this.documentIsSaved = true;
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-      })
-      .then(() => this.ContentEditor.discardChanges())
+  onSave() {
+    this.documentIsSaved = true;
+    this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+    this.ContentEditor.discardChanges()
       .then(() => this.Step2Service.saveComponentParameter())
       .then(() => {
         this.CreateContentService.finish(this.ContentEditor.getDocumentId());
       })
       .finally(() => {
-        this.RightSidePanelService.stopLoading();
         this.CmsService.reportUsageStatistic('CreateContent2Done');
       });
   }
