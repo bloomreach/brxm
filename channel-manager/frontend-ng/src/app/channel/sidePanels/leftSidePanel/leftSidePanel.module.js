@@ -19,6 +19,7 @@ import leftSidePanelService from './leftSidePanel.service';
 import leftSidePanelToggleComponent from './leftSidePanelToggle/leftSidePanelToggle.component';
 import componentCatalogModule from './componentCatalog/componentCatalog.module';
 import sitemapListingModule from './siteMapListing/siteMapListing.module';
+import startWithSlashFilter from './startWithSlash.filter';
 
 const leftSidePanelModule = angular
   .module('hippo-cm.channel.leftSidePanelModule', [
@@ -27,6 +28,7 @@ const leftSidePanelModule = angular
   ])
   .component('leftSidePanel', leftSidePanelComponent)
   .component('leftSidePanelToggle', leftSidePanelToggleComponent)
+  .filter('startWithSlash', startWithSlashFilter)
   .service('LeftSidePanelService', leftSidePanelService);
 
 export default leftSidePanelModule.name;
