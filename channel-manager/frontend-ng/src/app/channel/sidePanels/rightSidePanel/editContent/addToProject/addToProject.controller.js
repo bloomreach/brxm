@@ -15,11 +15,16 @@
  */
 
 class AddToProjectController {
-  constructor(ProjectService, ContentEditor) {
+  constructor(
+    CmsService,
+    ContentEditor,
+    ProjectService,
+  ) {
     'ngInject';
 
-    this.ProjectService = ProjectService;
+    this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
+    this.ProjectService = ProjectService;
   }
 
   getSelectedProject() {
@@ -28,7 +33,10 @@ class AddToProjectController {
 
   addDocumentToProject() {
     const documentId = this.ContentEditor.getDocumentId();
-    this.ProjectService.associateToProject(documentId);
+    this.CmsService.reportUsageStatistic('AddToProjectVisualEditor');
+
+    this.ProjectService.associateWithProject(documentId)
+      .then(() => this.ContentEditor.open(documentId));
   }
 }
 

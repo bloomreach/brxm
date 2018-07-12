@@ -27,17 +27,17 @@
 
   &.mdi-check-circle {
     // Green indicator for "live" documents
-    color: #3dcc3d;
+    color: $hippo-green;
   }
 
   &.mdi-minus-circle {
     // Red indicator for "offline" documents
-    color: #ff4040;
+    color: $hippo-red;
   }
 
   &.mdi-alert {
     // Yellow indicator for "changed compared to the live version"
-    color: #ffa733;
+    color: $hippo-yellow;
     position: relative;
 
     &::after {

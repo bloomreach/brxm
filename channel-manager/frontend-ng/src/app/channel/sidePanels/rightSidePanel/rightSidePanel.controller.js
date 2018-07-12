@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.right.width';
+
 class RightSidePanelCtrl {
   constructor(
     $element,
@@ -54,7 +56,7 @@ class RightSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
+    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '440px';
 
     this.$transitions.onBefore({ to: 'hippo-cm.channel.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
@@ -62,7 +64,7 @@ class RightSidePanelCtrl {
 
   onResize(newWidth) {
     this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
   }
 
   isLoading() {

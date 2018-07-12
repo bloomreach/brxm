@@ -151,9 +151,16 @@ function mockMdIcon() {
   });
 }
 
+function disableStateTransitionErrors() {
+  angular.mock.module('hippo-cm', ($uiRouterProvider) => {
+    $uiRouterProvider.stateService.defaultErrorHandler(angular.noop);
+  });
+}
+
 beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
 beforeEach(mockMdIcon);
+beforeEach(disableStateTransitionErrors);
 
 const context = require.context('./app', true, /\.js$/);
 context.keys().forEach(context);

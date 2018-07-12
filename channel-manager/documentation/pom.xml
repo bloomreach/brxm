@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.4.1-openui-SNAPSHOT</version>
+    <version>5.5.0-openui-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-documentation</artifactId>
@@ -28,75 +28,38 @@
 
   <name>Addon Channel Manager Documentation</name>
 
-  <dependencies>
-  </dependencies>
-
   <build>
-    <defaultGoal>package</defaultGoal>
+    <defaultGoal>generate-resources</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>com.ruleoftech</groupId>
-        <artifactId>markdown-page-generator-plugin</artifactId>
-        <version>2.1.0</version>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>1.5.6</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-diagram</artifactId>
+            <version>1.5.8</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <inputDirectory>${project.basedir}/src/main/markdown</inputDirectory>
+          <backend>html5</backend>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <requires>
+            <require>asciidoctor-diagram</require>
+          </requires>
+          <sourceHighlighter>coderay</sourceHighlighter>
         </configuration>
         <executions>
           <execution>
             <id>generate-html</id>
-            <phase>process-resources</phase>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>generate</goal>
+              <goal>process-asciidoc</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>generate-plantuml-diagrams</id>
-      <activation>
-        <file>
-          <exists>/usr/bin/dot</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.jeluard</groupId>
-            <artifactId>plantuml-maven-plugin</artifactId>
-            <version>1.2</version>
-            <configuration>
-              <sourceFiles>
-                <directory>${project.basedir}/src/main/plantuml</directory>
-                <includes>
-                  <include>*.txt</include>
-                </includes>
-              </sourceFiles>
-              <format>svg</format>
-            </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>net.sourceforge.plantuml</groupId>
-                <artifactId>plantuml</artifactId>
-                <version>8059</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>generate-diagrams</id>
-                <phase>generate-resources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 </project>

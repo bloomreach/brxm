@@ -18,7 +18,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.4.1-openui-SNAPSHOT</version>
+    <version>5.5.0-openui-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

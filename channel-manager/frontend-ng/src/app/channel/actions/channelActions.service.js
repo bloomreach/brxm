@@ -91,19 +91,19 @@ class ChannelActionsService extends MenuService {
         .addDivider({
           isVisible: () => this._isBranch(),
         })
-        .addAction('reject', {
-          translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
-          iconName: 'mdi-close',
-          isVisible: () => this._isBranch(),
-          isEnabled: () => this.ProjectService.isRejectEnabled(),
-          onClick: () => this._reject(),
-        })
         .addAction('accept', {
           translationKey: 'TOOLBAR_MENU_CHANNEL_ACCEPT',
           iconName: 'mdi-check',
           isVisible: () => this._isBranch(),
           isEnabled: () => this.ProjectService.isAcceptEnabled(),
           onClick: () => this._accept(),
+        })
+        .addAction('reject', {
+          translationKey: 'TOOLBAR_MENU_CHANNEL_REJECT',
+          iconName: 'mdi-close',
+          isVisible: () => this._isBranch(),
+          isEnabled: () => this.ProjectService.isRejectEnabled(),
+          onClick: () => this._reject(),
         })
         .addDivider()
         .addAction('delete', {
@@ -123,7 +123,7 @@ class ChannelActionsService extends MenuService {
   }
 
   _isBranch() {
-    return this.ProjectService.selectedProject && this.ConfigService.projectsEnabled;
+    return this.ProjectService.isBranch();
   }
 
   _hasWriteAccess() {
@@ -186,12 +186,17 @@ class ChannelActionsService extends MenuService {
   _reject() {
     const channel = this.ChannelService.getChannel();
     const channelId = channel.id.replace(/-preview$/, '');
+    this.CmsService.reportUsageStatistic('RejectChannelChannelManager');
 
     this._showRejectPrompt(channel)
-      .then(message => this.ProjectService.reject(channelId, message));
+      .then((message) => {
+        this.CmsService.reportUsageStatistic('RejectChannelCMDialogueOKButton');
+        this.ProjectService.reject(channelId, message);
+      });
   }
 
   _accept() {
+    this.CmsService.reportUsageStatistic('AcceptChannelChannelManager');
     this.ProjectService.accept([this.ChannelService.getId().replace('-preview', '')]);
   }
 
@@ -316,7 +321,10 @@ class ChannelActionsService extends MenuService {
   // Close
   _closeChannel() {
     this.$state.go('hippo-cm')
-      .then(() => this.CmsService.publish('close-channel'));
+      .then(() => {
+        this.ChannelService.clearChannel();
+        this.CmsService.publish('close-channel');
+      });
   }
 }
 

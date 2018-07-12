@@ -16,7 +16,7 @@
 
 <add-to-project ng-if="$ctrl.showAddToProject()" on-close="$ctrl.close()"></add-to-project>
 
-<content-editor ng-show="!$ctrl.showAddToProject()"
+<content-editor ng-if="!$ctrl.showAddToProject()"
                 flex="grow"
                 layout="column"
                 allow-save="true"

@@ -38,6 +38,9 @@ public class FieldsInformation {
     private static final List<String> REPORTABLE_MISSING_FIELD_NAMESPACES = Arrays.asList(
             "hippo:", "hippogallerypicker:", "hippostd:", "hipposys:", "hippotaxonomy:", "poll:", "selection:"
     );
+    private static final List<String> REPORTABLE_MISSING_PLUGIN_CLASS_PACKAGES = Arrays.asList(
+            "org.hippoecm", "org.onehippo", "com.onehippo"
+    );
 
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
@@ -156,7 +159,8 @@ public class FieldsInformation {
 
     private static String reportedFieldTypeName(final String name) {
         if (REPORTABLE_MISSING_FIELD_TYPES.contains(name)
-                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)) {
+                || REPORTABLE_MISSING_FIELD_NAMESPACES.stream().anyMatch(name::startsWith)
+                || REPORTABLE_MISSING_PLUGIN_CLASS_PACKAGES.stream().anyMatch(name::startsWith)) {
             return name;
         } else {
             return "Custom";

@@ -20,7 +20,6 @@ class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
-    $stateParams,
     $translate,
     ChannelActionsService,
     ChannelService,
@@ -53,8 +52,6 @@ class ChannelCtrl {
 
     this.projectsEnabled = ConfigService.projectsEnabled;
 
-    this.HippoIframeService.load($stateParams.initialRenderPath);
-
     this.menus = [
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
       PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
@@ -62,14 +59,14 @@ class ChannelCtrl {
   }
 
   $onInit() {
-    this.CmsService.subscribe('reload-channel', this._reloadChannel, this);
+    this.CmsService.subscribe('reload-page', this._reloadPage, this);
   }
 
   $onDestroy() {
-    this.CmsService.unsubscribe('reload-channel', this._reloadChannel, this);
+    this.CmsService.unsubscribe('reload-page', this._reloadPage, this);
   }
 
-  _reloadChannel(errorResponse) {
+  _reloadPage(errorResponse) {
     let errorKey;
     switch (errorResponse.error) {
       case 'ITEM_ALREADY_LOCKED':

@@ -16,7 +16,7 @@
 <div class="field"
      layout="column"
      ng-class="{'has-invalid-field': !$ctrl.isValid()}">
-  <md-input-container class="qa-field"
+  <md-input-container class="qa-field field-type-{{:: $ctrl.fieldType.type | lowercase }}"
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
@@ -26,9 +26,9 @@
            layout
            layout-align="start center"
            class="field-title"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)"
-           tabindex="-1">
+           ng-click="$ctrl.onLabelClick($event)"
+           tabindex="-1"
+           >
       <span>
         {{ ::$ctrl.fieldType.displayName }}
 
@@ -141,8 +141,22 @@
                 hint="::$ctrl.fieldType.hint"
                 index="::$index"
                 is-required="::$ctrl.fieldType.required"
-                url="::fieldValue.url">
+                url="::fieldValue.metadata.url">
     </image-link>
+
+    <node-link ng-switch-when="NODE_LINK"
+               aria-label="{{::$ctrl.fieldType.displayName}}"
+               config="::$ctrl.fieldType.config"
+               display-name="::fieldValue.metadata.displayName"
+               hint="::$ctrl.fieldType.hint"
+               index="::$index"
+               is-required="::$ctrl.fieldType.required"
+               name="{{::$ctrl.getFieldName($index)}}"
+               ng-model="fieldValue.value"
+               ng-change="$ctrl.valueChanged()"
+               on-focus="$ctrl.focusPrimitive($event)"
+               on-blur="$ctrl.blurPrimitive($event)">
+    </node-link>
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">

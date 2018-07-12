@@ -33,24 +33,21 @@ content-editor {
     min-height: 0;
   }
 
-  .animate-bump.ng-enter {
-    animation-name: bump;
-    animation-duration: .3s;
+  .animate-flash.ng-enter {
+    animation-name: flash;
+    animation-duration: 1s;
   }
 
-  @keyframes bump {
+  @keyframes flash {
+    // don't specify the background color at the start and end: those are set by Angular Material
+    // and depend on the button state (hovered or not)
     0% {
       animation-timing-function: ease-in;
-      transform: scale(1);
     }
 
     50% {
       animation-timing-function: ease-out;
-      transform: scale(1.1);
-    }
-
-    100% {
-      transform: scale(1);
+      background-color: $hippo-yellow;
     }
   }
 

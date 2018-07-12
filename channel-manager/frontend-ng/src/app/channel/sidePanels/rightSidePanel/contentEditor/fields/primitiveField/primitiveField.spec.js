@@ -238,4 +238,12 @@ describe('PrimitiveField', () => {
 
     expect(FieldService.saveField).not.toHaveBeenCalled();
   });
+
+  it('broadcasts event "primitive-field:focus" when clicking on the field label', () => {
+    spyOn($ctrl.$scope, '$broadcast');
+    const $event = { preventDefault: angular.noop };
+    $ctrl.onLabelClick($event);
+
+    expect($ctrl.$scope.$broadcast).toHaveBeenCalledWith('primitive-field:focus', $event);
+  });
 });

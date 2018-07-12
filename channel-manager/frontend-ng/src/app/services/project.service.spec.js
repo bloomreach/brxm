@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,6 @@ describe('ProjectService', () => {
   ];
   const currentProject = projects[0];
 
-  const channels = [
-    {
-      mountId: 'mountId1',
-      id: 'channelId1',
-    },
-    {
-      mountId: 'mountId2',
-      id: 'channelId2',
-    },
-  ];
-
   beforeEach(() => {
     angular.mock.module('hippo-cm', ($provide) => {
       $provide.decorator('$window', ($delegate) => {
@@ -77,8 +66,6 @@ describe('ProjectService', () => {
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
     $httpBackend.expectGET('/test/ws/projects').respond(200, projects);
-    $httpBackend.expectGET('/test/ws/channels/').respond(200, channels);
-
 
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${currentProject.id}`).respond(200, currentProject.id);
 

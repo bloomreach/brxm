@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,25 +14,18 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" fill="currentColor">
-<style type="text/css">
-	.st0{fill:currentColor;}
-	.st1{display:none;}
-	.st2{display:inline;}
-	.st3{fill:currentColor;}
-</style>
-<g id="Layer_1" fill="currentColor">
-	<path class="st0" d="M23.4,2.1H0.6C0.3,2.1,0,2.3,0,2.7v18.7c0,0.3,0.3,0.6,0.6,0.6h22.8c0.3,0,0.6-0.3,0.6-0.6V2.7
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+	   viewBox="0 0 24 24" xml:space="preserve" fill="currentColor">
+<g>
+	<path d="M23.4,2.1H0.6C0.3,2.1,0,2.3,0,2.7v18.7c0,0.3,0.3,0.6,0.6,0.6h22.8c0.3,0,0.6-0.3,0.6-0.6V2.7
 		C24,2.3,23.8,2.1,23.4,2.1z M23.1,21H0.9V2.9h22.1V21z"/>
-	<path class="st0" d="M3.4,9.9C3.7,9.9,4,9.6,4,9.3V5.9h3.4c0.3,0,0.6-0.3,0.6-0.6C7.9,5,7.7,5,7.4,5H3.7C3.4,5,3.1,5.3,3.1,5.6v3.7
+	<path d="M3.4,9.9C3.7,9.9,4,9.6,4,9.3V5.9h3.4c0.3,0,0.6-0.3,0.6-0.6C7.9,5,7.7,5,7.4,5H3.7C3.4,5,3.1,5.3,3.1,5.6v3.7
 		C3.1,9.6,3.1,9.9,3.4,9.9z"/>
-	<path class="st0" d="M3.7,19h3.7c0.3,0,0.6,0.2,0.6-0.2s-0.3-0.7-0.6-0.7H4v-3.4c0-0.3-0.3-0.6-0.6-0.6s-0.3,0.3-0.3,0.6v3.7
+	<path d="M3.7,19h3.7c0.3,0,0.6,0.2,0.6-0.2s-0.3-0.7-0.6-0.7H4v-3.4c0-0.3-0.3-0.6-0.6-0.6s-0.3,0.3-0.3,0.6v3.7
 		C3.1,18.7,3.4,19,3.7,19z"/>
-	<path class="st0" d="M16.7,5.9h3.4l0,3.3c0,0.3,0.4,0.6,0.7,0.6c0.3,0,0.2-0.3,0.2-0.6l-0.1-3.6c0-0.3-0.3-0.6-0.6-0.6h-3.6
+	<path d="M16.7,5.9h3.4l0,3.3c0,0.3,0.4,0.6,0.7,0.6c0.3,0,0.2-0.3,0.2-0.6l-0.1-3.6c0-0.3-0.3-0.6-0.6-0.6h-3.6
 		c-0.3,0-0.6,0-0.6,0.3C16.1,5.7,16.4,5.9,16.7,5.9z"/>
-	<path class="st0" d="M16.7,19h3.8c0.3,0,0.6-0.3,0.6-0.6v-3.7c0-0.3,0.1-0.6-0.2-0.6c-0.3,0-0.7,0.3-0.7,0.6v3.4h-3.4
+	<path d="M16.7,19h3.8c0.3,0,0.6-0.3,0.6-0.6v-3.7c0-0.3,0.1-0.6-0.2-0.6c-0.3,0-0.7,0.3-0.7,0.6v3.4h-3.4
 		c-0.3,0-0.6,0.4-0.6,0.7S16.4,19,16.7,19z"/>
 </g>
 </svg>

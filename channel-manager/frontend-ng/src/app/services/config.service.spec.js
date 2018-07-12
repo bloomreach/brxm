@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ConfigService', () => {
-  let CmsServiceMock;
   let $window;
+  let CmsServiceMock;
   let ConfigService;
 
   beforeEach(() => {
@@ -50,12 +50,6 @@ describe('ConfigService', () => {
   it('allows custom configuration passed in by the CmsService', () => {
     expect(ConfigService.locale).toEqual('nl');
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
-    expect(ConfigService.contextPath).toEqual('/one');
-  });
-
-  it('sets the context path correctly', () => {
-    ConfigService.setContextPathForChannel('testpath');
-    expect(ConfigService.contextPath).toBe('testpath');
   });
 
   it('knows the CMS context path', () => {

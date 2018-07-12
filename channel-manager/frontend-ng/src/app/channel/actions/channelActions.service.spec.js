@@ -115,6 +115,7 @@ describe('ChannelActionsService', () => {
       spyOn(FeedbackService, 'showError');
       spyOn(FeedbackService, 'showErrorResponse');
       spyOn(HippoIframeService, 'reload');
+      spyOn(ProjectService, 'isBranch').and.returnValue(true);
       spyOn(SiteMapService, 'load');
 
       ProjectService.selectedProject = {
@@ -303,6 +304,16 @@ describe('ChannelActionsService', () => {
     });
 
     // close channel
+    it('clears the channel upon closing', () => {
+      spyOn(ChannelService, 'clearChannel');
+      const close = getItem('close');
+
+      close.onClick();
+      $rootScope.$apply();
+
+      expect(ChannelService.clearChannel).toHaveBeenCalled();
+    });
+
     it('closes a channel by publishing a close-channel event', () => {
       const close = getItem('close');
 
@@ -431,13 +442,11 @@ describe('ChannelActionsService', () => {
 
     it('shows an enabled reject menu item if a branch is selected for a project in review', () => {
       ConfigService.projectsEnabled = true;
-      ProjectService.selectedProject.state = 'IN_REVIEW';
       spyOn(ProjectService, 'isRejectEnabled').and.returnValue(true);
       expect(getItem('divider-1').isVisible()).toBe(true);
       expect(getItem('reject').isVisible()).toBeTruthy();
       expect(getItem('reject').isEnabled()).toBe(true);
       delete ConfigService.projectsEnabled;
-      delete ProjectService.selectedProject.state;
     });
 
     it('shows a prompt on rejection of a channel', () => {
@@ -467,13 +476,11 @@ describe('ChannelActionsService', () => {
 
     it('shows an enabled accept menu item if a branch is selected for a project in review', () => {
       ConfigService.projectsEnabled = true;
-      ProjectService.selectedProject.state = 'IN_REVIEW';
       spyOn(ProjectService, 'isAcceptEnabled').and.returnValue(true);
       expect(getItem('divider-1').isVisible()).toBe(true);
       expect(getItem('accept').isVisible()).toBeTruthy();
       expect(getItem('accept').isEnabled()).toBe(true);
       delete ConfigService.projectsEnabled;
-      delete ProjectService.selectedProject.state;
     });
   });
 

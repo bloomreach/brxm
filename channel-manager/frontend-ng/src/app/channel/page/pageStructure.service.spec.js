@@ -383,18 +383,6 @@ describe('PageStructureService', () => {
     });
   });
 
-  it('switches channels when the channel id in the page meta-data is the same as the current channel id', () => {
-    spyOn(ChannelService, 'getId').and.returnValue('testChannelId');
-    spyOn(ChannelService, 'loadChannel');
-
-    PageStructureService.registerParsedElement(null, {
-      'HST-Type': 'PAGE-META-DATA',
-      'HST-Channel-Id': 'testChannelId',
-    });
-
-    expect(ChannelService.loadChannel).not.toHaveBeenCalled();
-  });
-
   it('ignores unknown HST types', () => {
     PageStructureService.registerParsedElement(null, {
       'HST-Type': 'unknown type',
@@ -503,6 +491,11 @@ describe('PageStructureService', () => {
     componentElement.container.isDisabled.and.returnValue(true);
     componentElement.container.isInherited.and.returnValue(false);
 
+    spyOn(ChannelService, 'getChannel').and.returnValue({
+      contextPath: '/testContextPath',
+      mountId: 'testMountId',
+    });
+
     spyOn(PageMetaDataService, 'get').and.returnValue({
       testMetaData: 'foo',
     });
@@ -514,6 +507,10 @@ describe('PageStructureService', () => {
 
     expect(MaskService.mask).toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
+      channel: {
+        contextPath: '/testContextPath',
+        mountId: 'testMountId',
+      },
       component: {
         id: 'testId',
         label: 'testLabel',

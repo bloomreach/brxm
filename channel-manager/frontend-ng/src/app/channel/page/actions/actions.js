@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
+import ngMessages from 'angular-messages';
+import illegalCharactersDirective from './illegalCharacters.directive';
 
 import PageActionsService from './pageActions.service';
-import pageNewDirective from './new/new.directive';
-import PageNewCtrl from './new/new.controller';
-import pagePropertiesDirective from './properties/properties.directive';
-import PagePropertiesCtrl from './properties/properties.controller';
-import pageMoveDirective from './move/move.directive';
-import PageMoveCtrl from './move/move.controller';
-import pageCopyDirective from './copy/copy.directive';
-import PageCopyCtrl from './copy/copy.controller';
+import pageCopyComponent from './copy/pageCopy.component';
+import pageMoveComponent from './move/pageMove.component';
+import pageNewComponent from './new/pageNew.component';
+import pagePropertiesComponent from './properties/pageProperties.component';
 
 const channelPageActionsModule = angular
   .module('hippo-cm.channel.page.actions', [
     ngMessages,
     focusIf,
   ])
-  .service('PageActionsService', PageActionsService)
-  .controller('PageNewCtrl', PageNewCtrl)
-  .directive('pageNew', pageNewDirective)
-  .controller('PagePropertiesCtrl', PagePropertiesCtrl)
-  .directive('pageProperties', pagePropertiesDirective)
-  .controller('PageMoveCtrl', PageMoveCtrl)
-  .directive('pageMove', pageMoveDirective)
-  .controller('PageCopyCtrl', PageCopyCtrl)
-  .directive('pageCopy', pageCopyDirective);
+  .component('pageCopy', pageCopyComponent)
+  .component('pageMove', pageMoveComponent)
+  .component('pageNew', pageNewComponent)
+  .component('pageProperties', pagePropertiesComponent)
+  .directive('illegalCharacters', illegalCharactersDirective)
+  .service('PageActionsService', PageActionsService);
 
 export default channelPageActionsModule;

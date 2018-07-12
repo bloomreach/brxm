@@ -22,6 +22,7 @@ class HippoIframeService {
     CmsService,
     ConfigService,
     PageInfoService,
+    PageMetaDataService,
     ProjectService,
     ScrollService,
   ) {
@@ -34,10 +35,9 @@ class HippoIframeService {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.PageInfoService = PageInfoService;
+    this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
-
-    CmsService.subscribe('reload-page', () => this.reload());
   }
 
   initialize(iframeJQueryElement) {
@@ -45,10 +45,31 @@ class HippoIframeService {
     this.pageLoaded = false;
 
     if (this.ConfigService.projectsEnabled) {
-      this.ProjectService.registerSelectListener(() => {
+      this.ProjectService.registerListener(() => {
+        // Reloads the current page when the project changes so new data will be shown.
+        // When another project became active the page reload will trigger a channel switch.
         this.reload();
       });
     }
+  }
+
+  initializePath(channelRelativePath) {
+    const initialRenderPath = this.ChannelService.makeRenderPath(channelRelativePath);
+
+    if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
+      && this._isDifferentPage(initialRenderPath)) {
+      this.load(initialRenderPath);
+    } else {
+      this.reload();
+    }
+  }
+
+  _isDifferentPage(renderPath) {
+    return this.renderPathInfo !== renderPath || this._isDifferentContextPath();
+  }
+
+  _isDifferentContextPath() {
+    return this.PageMetaDataService.getContextPath() !== this.ChannelService.getChannel().contextPath;
   }
 
   isPageLoaded() {
@@ -113,6 +134,10 @@ class HippoIframeService {
     }
 
     this.CmsService.publish('user-activity');
+
+    if (this.ConfigService.isDevMode()) {
+      sessionStorage.channelPath = this.renderPathInfo;
+    }
   }
 
   _determineRenderPathInfo() {

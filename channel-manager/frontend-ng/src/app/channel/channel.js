@@ -28,9 +28,8 @@ import projectToggleModule from './projectToggle/projectToggle.module';
 import viewportsModule from './viewportToggle/viewportToggle.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
 import config from './channel.config';
-import ChannelCtrl from './channel.controller';
+import ChannelComponent from './channel.component';
 import ChannelService from './channel.service';
-import run from './channel.run';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
@@ -49,8 +48,7 @@ const channelModule = angular
     maskModule.name,
   ])
   .config(config)
-  .controller('ChannelCtrl', ChannelCtrl)
-  .service('ChannelService', ChannelService)
-  .run(run);
+  .component('channel', ChannelComponent)
+  .service('ChannelService', ChannelService);
 
 export default channelModule;

@@ -16,151 +16,197 @@
 
 import angular from 'angular';
 import 'angular-mocks';
-import moment from 'moment-timezone';
 
-describe('The hippo-cm module', () => {
-  let configService;
-  let $http;
-  let $httpBackend;
-  let $injector;
+describe('hippoCm', () => {
+  let $ctrl;
+  let $q;
   let $rootScope;
   let $state;
-  let $translate;
+  let $timeout;
   let $window;
-
-  const MOCK_TRANSLATIONS = {
-    en: {
-      HIPPO: 'Hippo',
-    },
-    nl: {
-      HIPPO: 'Nijlpaard',
-    },
-  };
+  let BrowserService;
+  let ChannelService;
+  let CmsService;
+  let ConfigService;
+  let HippoIframeService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm', ($stateProvider, $translateProvider) => {
-      $stateProvider.state('hippo-cm.dummy-child-state', {});
-      $translateProvider.translations('en', MOCK_TRANSLATIONS.en);
-      $translateProvider.translations('nl', MOCK_TRANSLATIONS.nl);
-    });
+    angular.mock.module('hippo-cm');
 
-    inject((ConfigService, _$http_, _$httpBackend_, _$injector_, _$rootScope_, _$state_, _$translate_, _$window_) => {
-      configService = ConfigService;
-      $http = _$http_;
-      $httpBackend = _$httpBackend_;
-      $injector = _$injector_;
+    inject((
+      $componentController,
+      _$q_,
+      _$rootScope_,
+      _$timeout_,
+      _$window_,
+      _CmsService_,
+    ) => {
+      $q = _$q_;
       $rootScope = _$rootScope_;
-      $state = _$state_;
-      $translate = _$translate_;
+      $timeout = _$timeout_;
       $window = _$window_;
-    });
-  });
+      CmsService = _CmsService_;
 
-  it('uses English translations by default', () => {
-    $state.go('hippo-cm.dummy-child-state');
-    $rootScope.$apply();
+      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'go']);
 
-    expect($translate.instant('HIPPO')).toEqual('Hippo');
-  });
+      BrowserService = jasmine.createSpyObj('$state', ['isChrome', 'isIE']);
 
-  it('uses the locale specified in the config service', () => {
-    configService.locale = 'nl';
+      ChannelService = jasmine.createSpyObj('ChannelService', [
+        'initializeChannel',
+        'makeRenderPath',
+        'matchesChannel',
+        'reload',
+      ]);
 
-    $state.go('hippo-cm.dummy-child-state');
-    $rootScope.$apply();
+      ConfigService = jasmine.createSpyObj('ConfigService', [
+        'isDevMode',
+      ]);
 
-    expect($translate.instant('HIPPO')).toEqual('Nijlpaard');
-  });
+      HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
+        'initializePath',
+        'reload',
+      ]);
 
-  it('falls back to English translations for unknown locales', () => {
-    configService.locale = 'no-such-locale';
-    $httpBackend.whenGET('i18n/no-such-locale.json?antiCache=123').respond(404);
-
-    $state.go('hippo-cm.dummy-child-state');
-    $rootScope.$apply();
-
-    expect($translate.instant('HIPPO')).toEqual('Hippo');
-  });
-
-  it('reports user activity to the CMS when the backend is called', () => {
-    spyOn($window.APP_TO_CMS, 'publish');
-    $httpBackend.expectGET('/some-url', {
-      Accept: 'application/json, text/plain, */*',
-    }).respond(200);
-    $http.get('/some-url');
-    $httpBackend.flush();
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
-  });
-
-  it('uses the user locale for moment.js', () => {
-    configService.locale = 'nl';
-    $state.go('hippo-cm.dummy-child-state');
-    $rootScope.$apply();
-
-    expect(moment.locale()).toEqual('nl');
-  });
-
-  describe('Angular Material Date Locale Provider', () => {
-    it('uses an empty string for invalid dates', () => {
-      const $mdDateLocale = $injector.get('$mdDateLocale');
-      const invalidDate = new Date('2015-13-25T35:78:89.000Z');
-      expect($mdDateLocale.formatDate(invalidDate)).toEqual('');
-    });
-
-    describe('with a Dutch user locale', () => {
-      let $mdDateLocale;
-
-      beforeEach(() => {
-        configService.locale = 'nl';
-        $state.go('hippo-cm.dummy-child-state');
-        $rootScope.$apply();
-
-        // fetch $mdDateLocale after setting the locale so it uses the tweaks in the $mdDateLocaleProvider
-        $mdDateLocale = $injector.get('$mdDateLocale');
-      });
-
-      it('uses locale-specific month names', () => {
-        expect($mdDateLocale.months).toEqual(['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december']);
-      });
-
-      it('uses locale-specific short month names', () => {
-        expect($mdDateLocale.shortMonths).toEqual(['jan.', 'feb.', 'mrt.', 'apr.', 'mei', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']);
-      });
-
-      it('uses locale-specific day names', () => {
-        expect($mdDateLocale.days).toEqual(['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag']);
-      });
-
-      it('uses locale-specific short day names', () => {
-        expect($mdDateLocale.shortDays).toEqual(['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo']);
-      });
-
-      it('formats dates in the user locale', () => {
-        const christmas = new Date('2015-12-25T06:53:00.000Z');
-        expect($mdDateLocale.formatDate(christmas)).toEqual('25-12-2015');
+      $ctrl = $componentController('hippoCm', {
+        $state,
+        BrowserService,
+        ChannelService,
+        ConfigService,
+        HippoIframeService,
       });
     });
 
-    describe('without a locale', () => {
-      let $mdDateLocale;
+    spyOn(CmsService, 'publish');
+  });
 
-      beforeEach(() => {
-        configService.locale = null;
-        $state.go('hippo-cm.dummy-child-state');
-        $rootScope.$apply();
+  afterEach(() => {
+    $('body').removeClass('ie11');
+  });
 
-        // fetch $mdDateLocale after setting the locale so it uses the tweaks in the $mdDateLocaleProvider
-        $mdDateLocale = $injector.get('$mdDateLocale');
-      });
+  it('prevents uiRouter state transition errors from polluting the JavaScript console', () => {
+    $ctrl.$onInit();
+    expect($state.defaultErrorHandler).toHaveBeenCalledWith(angular.noop);
+  });
 
-      it('falls back to English', () => {
-        expect(moment.locale()).toEqual('en');
-      });
+  describe('"ie11" CSS class on the body', () => {
+    it('is added in IE', () => {
+      BrowserService.isIE.and.returnValue(true);
+      $ctrl.$onInit();
+      expect($('body')).toHaveClass('ie11');
+    });
 
-      it('formats dates in the English locale', () => {
-        const christmas = new Date('2015-12-25T06:53:00.000Z');
-        expect($mdDateLocale.formatDate(christmas)).toEqual('12/25/2015');
-      });
+    it('is not added in other browsers', () => {
+      BrowserService.isIE.and.returnValue(false);
+      $ctrl.$onInit();
+      expect($('body')).not.toHaveClass('ie11');
+    });
+  });
+
+  describe('the load-channel event', () => {
+    it('opens a different channel', () => {
+      ChannelService.matchesChannel.and.returnValue(false);
+      ChannelService.initializeChannel.and.returnValue($q.resolve());
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
+      $rootScope.$digest();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    });
+
+    it('changes the page in the current channel', () => {
+      ChannelService.matchesChannel.and.returnValue(true);
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+      expect($state.go).not.toHaveBeenCalledWith('hippo-cm.channel');
+    });
+
+    it('reloads the current page in the current channel', () => {
+      ChannelService.matchesChannel.and.returnValue(true);
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', null);
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith(null);
+      expect($state.go).not.toHaveBeenCalledWith('hippo-cm.channel');
+    });
+  });
+
+  describe('the reload-channel event', () => {
+    it('reloads the current channel and page', () => {
+      ChannelService.reload.and.returnValue($q.resolve());
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('reload-channel');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.reload).toHaveBeenCalled();
+      $rootScope.$digest();
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+  });
+
+  it('reloads the current channel when ExtJs changed it', () => {
+    spyOn($rootScope, '$apply').and.callThrough();
+
+    $ctrl.$onInit();
+    $window.CMS_TO_APP.publish('channel-changed-in-extjs');
+
+    expect($rootScope.$apply).toHaveBeenCalled();
+    expect(ChannelService.reload).toHaveBeenCalled();
+  });
+
+  describe('dev mode', () => {
+    beforeEach(() => {
+      ConfigService.isDevMode.and.returnValue(true);
+
+      ChannelService.matchesChannel.and.returnValue(false);
+      ChannelService.initializeChannel.and.returnValue($q.resolve());
+    });
+
+    afterEach(() => {
+      delete sessionStorage.channelId;
+      delete sessionStorage.channelPath;
+      delete sessionStorage.channelBranch;
+    });
+
+    it('stores the loaded channel, context path, branch and path in sessionStorage', () => {
+      $ctrl.$onInit();
+
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/test/path');
+
+      expect(sessionStorage.channelId).toBe('testChannel');
+      expect(sessionStorage.channelContext).toBe('/site');
+      expect(sessionStorage.channelBranch).toBe('testProject');
+      expect(sessionStorage.channelPath).toBe('/test/path');
+    });
+
+    it('initializes the channel, context path, branch and path from sessionStorage', () => {
+      sessionStorage.channelId = 'testChannel';
+      sessionStorage.channelContext = '/site';
+      sessionStorage.channelBranch = 'testProject';
+      sessionStorage.channelPath = '/test/path';
+
+      $ctrl.$onInit();
+      $timeout.flush();
+
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
+      $rootScope.$digest();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/test/path');
     });
   });
 });
