@@ -101,7 +101,7 @@ describe('ChannelService', () => {
     spyOn(SessionService, 'initialize').and.returnValue($q.when());
     spyOn(SessionService, 'hasWriteAccess').and.returnValue(true);
     spyOn(SiteMapService, 'load');
-    ProjectService.project = projectMock;
+    ProjectService.selectedProject = projectMock;
   });
 
   function loadChannel(id = 'testChannelId', contextPath = 'testContextPath') {
