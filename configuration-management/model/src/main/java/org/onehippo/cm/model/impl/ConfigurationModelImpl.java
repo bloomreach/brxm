@@ -75,6 +75,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
     private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
+    private final Set<String> modifiableHstRoots = new HashSet<>();
+    private final Set<String> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -113,6 +115,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         final Set<String> names = getModulesStream().map(ModuleImpl::getExtensionName).collect(Collectors.toSet());
         names.remove(null);
         return names;
+    }
+
+    public Set<String> getHstRoots() {
+        return hstRoots;
     }
 
     @Override
@@ -255,6 +261,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
         modifiableDeletedConfigProperties.clear();
+        modifiableHstRoots.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
 
@@ -284,6 +291,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
         module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
         configurationTreeBuilder.finishModule();
+        if (module.getExtensionName() != null && module.getHstRoot() != null) {
+            modifiableHstRoots.add(module.getHstRoot());
+        }
     }
 
     /**

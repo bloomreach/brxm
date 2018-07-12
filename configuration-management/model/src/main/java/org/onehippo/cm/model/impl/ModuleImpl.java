@@ -81,6 +81,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private String extensionName = null;
+    private String hstRoot = null;
     private boolean explicitCore = false;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
@@ -144,6 +145,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
         mvnPath = module.getMvnPath();
         extensionName = module.getExtensionName();
+        hstRoot = module.getHstRoot();
         archiveFile = module.getArchiveFile();
         build();
     }
@@ -248,6 +250,14 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     public void setExtensionName(final String extension) {
         this.extensionName = extension;
+    }
+
+    public String getHstRoot() {
+        return hstRoot;
+    }
+
+    public void setHstRoot(final String hstRoot) {
+        this.hstRoot = hstRoot;
     }
 
     /**
@@ -678,6 +688,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
             newModule.setExtensionName(extensionName);
+            newModule.setHstRoot(hstRoot);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 

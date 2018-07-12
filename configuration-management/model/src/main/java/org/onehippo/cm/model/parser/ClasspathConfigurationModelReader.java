@@ -111,7 +111,7 @@ public class ClasspathConfigurationModelReader {
      * @throws ParserException
      */
     // TODO: Why do we need a separate code path for this? Why not just load everything available to the classloader?
-    public ConfigurationModelImpl readExtension(final String extensionName, final ClassLoader classLoader, final ConfigurationModelImpl model)
+    public ConfigurationModelImpl readExtension(final String extensionName, final String hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -119,8 +119,11 @@ public class ClasspathConfigurationModelReader {
         final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
                 readModulesFromClasspath(classLoader, false, true);
 
-        // insert extension name into each module
-        extensionModules.getRight().forEach(module -> module.setExtensionName(extensionName));
+        // insert extension name and hstRoot into each module
+        extensionModules.getRight().forEach(module -> {
+            module.setExtensionName(extensionName);
+            module.setHstRoot(hstRoot);
+        });
 
         // TODO: why use the override addReplacementModule codepath here instead of the normal addModule?
         extensionModules.getRight().forEach(model::addReplacementModule);
@@ -136,13 +139,16 @@ public class ClasspathConfigurationModelReader {
     }
 
     // TODO: this is scary -- almost guaranteed to be a bad resource leak of open FileSystems!
-    public Collection<ModuleImpl> collectExtensionModules(final String extensionName, final ClassLoader classLoader)
+    public Collection<ModuleImpl> collectExtensionModules(final String extensionName, final String hstRoot, final ClassLoader classLoader)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
                 readModulesFromClasspath(classLoader, false, true);
 
         // insert extension name into each module
-        extensionModules.getRight().forEach(module -> module.setExtensionName(extensionName));
+        extensionModules.getRight().forEach(module -> {
+            module.setExtensionName(extensionName);
+            module.setHstRoot(hstRoot);
+        });
 
         return extensionModules.getRight();
     }
