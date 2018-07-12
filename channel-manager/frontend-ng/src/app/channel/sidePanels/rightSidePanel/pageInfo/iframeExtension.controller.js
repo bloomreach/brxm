@@ -15,14 +15,25 @@
  */
 
 class IframeExtensionCtrl {
-  constructor($element, $log, ConfigService, DomService, ExtensionService, PathService) {
+  constructor(
+    $element,
+    $log,
+    ChannelService,
+    ConfigService,
+    DomService,
+    ExtensionService,
+    HippoIframeService,
+    PathService,
+  ) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
+    this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.ExtensionService = ExtensionService;
+    this.HippoIframeService = HippoIframeService;
     this.PathService = PathService;
   }
 
@@ -34,6 +45,7 @@ class IframeExtensionCtrl {
 
     extensionIframe.on('load', () => {
       this.iframeLoaded = true;
+      this._initExtension();
       this._setIframeContext();
     });
   }
@@ -54,6 +66,32 @@ class IframeExtensionCtrl {
       if (!changedContext.isFirstChange() && this.iframeLoaded) {
         this._setIframeContext();
       }
+    }
+  }
+
+  _initExtension() {
+    if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
+      this._warnExtension('does not define a window.BR_EXTENSION object, cannot initialize');
+      return;
+    }
+
+    if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onInit)) {
+      this._warnExtension('does not define a window.BR_EXTENSION.onInit function, cannot initialize');
+      return;
+    }
+
+    try {
+      const publicApi = {
+        refreshChannel: () => {
+          this.ChannelService.reload();
+        },
+        refreshPage: () => {
+          this.HippoIframeService.reload();
+        },
+      };
+      this.iframeWindow.BR_EXTENSION.onInit(publicApi);
+    } catch (e) {
+      this._warnExtension('threw an error in window.BR_EXTENSION.onInit()', e);
     }
   }
 

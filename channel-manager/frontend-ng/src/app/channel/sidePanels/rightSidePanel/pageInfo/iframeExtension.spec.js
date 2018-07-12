@@ -22,9 +22,11 @@ describe('iframeExtension', () => {
   let $rootScope;
   let context;
   let extension;
+  let ChannelService;
   let ConfigService;
   let DomService;
   let ExtensionService;
+  let HippoIframeService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -46,18 +48,22 @@ describe('iframeExtension', () => {
       urlPath: 'testUrlPath',
     };
 
+    ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
     ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     const $scope = $rootScope.$new();
     $element = angular.element('<iframe src="about:blank"></iframe>');
     $ctrl = $componentController('iframeExtension', {
       $element,
       $scope,
+      ChannelService,
       ConfigService,
       DomService,
       ExtensionService,
+      HippoIframeService,
     }, {
       extensionId: extension.id,
       context,
@@ -134,13 +140,21 @@ describe('iframeExtension', () => {
       describe('without a correct API', () => {
         it('logs a warning when the BR_EXTENSION object does not exist', () => {
           triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot initialize');
           expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide context');
         });
 
         it('logs a warning when the BR_EXTENSION object is not an object', () => {
           iframeWindow.BR_EXTENSION = () => true;
           triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot initialize');
           expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION object, cannot provide context');
+        });
+
+        it('logs a warning when the BR_EXTENSION.onInit function does not exist', () => {
+          iframeWindow.BR_EXTENSION = {};
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' does not define a window.BR_EXTENSION.onInit function, cannot initialize');
         });
 
         it('logs a warning when the BR_EXTENSION.onContextChanged function does not exist', () => {
@@ -152,7 +166,26 @@ describe('iframeExtension', () => {
 
       describe('with a correct API', () => {
         beforeEach(() => {
-          iframeWindow.BR_EXTENSION = jasmine.createSpyObj('BR_EXTENSION', ['onContextChanged']);
+          iframeWindow.BR_EXTENSION = jasmine.createSpyObj('BR_EXTENSION', ['onContextChanged', 'onInit']);
+        });
+
+        it('calls the BR_EXTENSION.onInit function', () => {
+          triggerIframeLoad();
+          expect(iframeWindow.BR_EXTENSION.onInit).toHaveBeenCalled();
+        });
+
+        it('provides a public API method to refresh the channel', () => {
+          triggerIframeLoad();
+          const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
+          publicApi.refreshChannel();
+          expect(ChannelService.reload).toHaveBeenCalled();
+        });
+
+        it('provides a public API method to refresh the page', () => {
+          triggerIframeLoad();
+          const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
+          publicApi.refreshPage();
+          expect(HippoIframeService.reload).toHaveBeenCalled();
         });
 
         it('calls the BR_EXTENSION.onContextChanged function', () => {
@@ -163,6 +196,13 @@ describe('iframeExtension', () => {
               foo: 1,
             },
           });
+        });
+
+        it('logs a warning when BR_EXTENSION.onInit throws an error', () => {
+          const error = new Error('EEK');
+          iframeWindow.BR_EXTENSION.onInit.and.throwError(error);
+          triggerIframeLoad();
+          expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' threw an error in window.BR_EXTENSION.onInit()', error);
         });
 
         it('logs a warning when BR_EXTENSION.onContextChanged throws an error', () => {
