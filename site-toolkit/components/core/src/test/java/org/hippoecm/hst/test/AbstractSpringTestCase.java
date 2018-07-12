@@ -192,6 +192,7 @@ public abstract class AbstractSpringTestCase
         HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create();
+        ModifiableRequestContextProvider.set(requestContext);
         requestContext.setServletRequest(request);
         requestContext.setServletResponse(response);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
