@@ -80,7 +80,9 @@ describe('Create content step 2 controller', () => {
       $ctrl.$onInit();
       expect($ctrl.documentIsSaved).toBe(false);
     });
+  });
 
+  describe('loading indicator', () => {
     it('starts loading when "loading" is set to true', () => {
       $ctrl.$onInit();
       $scope.$digest();
