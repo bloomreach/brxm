@@ -623,6 +623,7 @@ public class EventJournalProcessor {
                 // store mvnPath again for later use
                 loadedModule.setMvnPath(module.getMvnPath());
                 loadedModule.setExtensionName(module.getExtensionName());
+                loadedModule.setHstRoot(module.getHstRoot());
 
                 // pass along change indicators for sources and resources, so baseline can perform incremental update
                 // TODO: use this simpler code when we have time to test it thoroughly

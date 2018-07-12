@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -31,11 +32,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -71,19 +74,19 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
-import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
+import org.onehippo.cms7.services.ServiceHolder;
+import org.onehippo.cms7.services.ServiceTracker;
+import org.onehippo.cms7.services.appplicationcontext.ApplicationContext;
+import org.onehippo.cms7.services.appplicationcontext.ApplicationContextRegistry;
 import org.onehippo.repository.util.NodeTypeUtils;
-import org.onehippo.cms7.services.eventbus.Subscribe;
-import org.onehippo.cms7.services.extension.ExtensionEvent;
-import org.onehippo.cms7.services.extension.ExtensionRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
@@ -96,9 +99,21 @@ import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
-public class ConfigurationServiceImpl implements InternalConfigurationService {
+public class ConfigurationServiceImpl implements InternalConfigurationService, ServiceTracker<ApplicationContext> {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
+
+    private static class ExtensionRecord {
+        final String extensionName;
+        final String hstRoot;
+        final ServletContext servletContext;
+
+        public ExtensionRecord(final String extensionName, final String hstRoot, final ServletContext servletContext) {
+            this.extensionName = extensionName;
+            this.hstRoot = hstRoot;
+            this.servletContext = servletContext;
+        }
+    }
 
     private Session session;
     private ConfigurationLockManager lockManager;
@@ -106,6 +121,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private ConfigurationConfigService configService;
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
+    private Map<String, ExtensionRecord> extensionRecords = new ConcurrentHashMap<>();
 
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
@@ -135,18 +151,15 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             throw e;
         }
 
-        HippoEventListenerRegistry.get().register(this);
         return this;
     }
 
-    @Subscribe
-    public void onNewSiteEvent(final ExtensionEvent event) throws ParserException, IOException, URISyntaxException, RepositoryException {
-        final String extensionName = event.getExtensionName();
-        log.info("New site extension detected: {}", extensionName);
+    public void applySiteExtension(final ExtensionRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
+        log.info("New site extension detected: {}", record.extensionName);
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
 
         final Collection<ModuleImpl> extensionModules =
-                modelReader.collectExtensionModules(event.getExtensionName(), event.getClassLoader());
+                modelReader.collectExtensionModules(record.extensionName, record.hstRoot, record.servletContext.getClassLoader());
         extensionModules.forEach(runtimeConfigurationModel::addReplacementModule);
 
         ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
@@ -158,7 +171,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         //TODO SS: Document this
         final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel).stream()
-                .filter(allModules::contains).peek(m -> m.setExtensionName(allModules.get(allModules.indexOf(m)).getExtensionName()))
+                .filter(allModules::contains).peek(m -> {
+                    ModuleImpl source = allModules.get(allModules.indexOf(m));
+                    m.setExtensionName(source.getExtensionName());
+                    m.setHstRoot(source.getHstRoot());
+                })
                 .filter(m -> m.getExtensionName() != null).collect(toList());
 
         if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
@@ -177,21 +194,19 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             runtimeConfigurationModel = newRuntimeConfigModel;
             //store only extension modules
             final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                    .filter(m -> extensionName.equals(m.getExtensionName())).collect(toList());
-            baselineService.storeExtension(extensionName, modulesToSave, session);
+                    .filter(m -> record.extensionName.equals(m.getExtensionName())).collect(toList());
+            baselineService.storeExtension(record.extensionName, modulesToSave, session);
             baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
 
             //process webfilebundle instructions from extensions which are not from the current site
             final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
-                    filter(m -> extensionName.equals(m.getExtensionName())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
+                    filter(m -> record.extensionName.equals(m.getExtensionName())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
             configService.writeWebfiles(webfileBundleDefs, baselineService, session);
 
-            ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
-            log.info("Extension '{}' was successfuly applied", extensionName);
+            log.info("Extension '{}' was successfuly applied", record.extensionName);
         } else {
-            log.error("Extension '{}' failed to be applied", extensionName);
+            log.error("Extension '{}' failed to be applied", record.extensionName);
         }
-
     }
 
 
@@ -205,6 +220,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         // acquire a write lock for the hcm
         lockManager.lock();
         try {
+            ApplicationContextRegistry.get().addTracker(this);
             // Ensure/force cluster synchronization in case another instance just initialized before, which changes
             // then may not yet have been synchronized automatically!
             session.refresh(true);
@@ -212,7 +228,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
-            final Set<String> knownExtensions = ExtensionRegistry.getHstRoots().values().stream().map(ExtensionEvent::getExtensionName).collect(toSet());
+            final Set<String> knownExtensions = extensionRecords.keySet();
             ConfigurationModelImpl baselineModel = loadBaselineModel(knownExtensions);
 
             // check the appropriate params to determine our state and bootstrap mode
@@ -249,7 +265,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                             //TODO SS: Document this and combine with same function at onNewSiteEvent method
                             final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
                                     .filter(allModules::contains)
-                                    .peek(m -> m.setExtensionName(allModules.get(allModules.indexOf(m)).getExtensionName()))
+                                    .peek(m -> {
+                                        ModuleImpl source = allModules.get(allModules.indexOf(m));
+                                        m.setExtensionName(source.getExtensionName());
+                                        m.setHstRoot(source.getHstRoot());
+                                    })
                                     .collect(toList());
 
                             bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
@@ -367,7 +387,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     public void stop() {
         log.info("ConfigurationService: stop");
 
-        HippoEventListenerRegistry.get().unregister(this);
+        ApplicationContextRegistry.get().removeTracker(this);
+
+        extensionRecords.clear();
 
         if (autoExportService != null) {
             autoExportService.close();
@@ -586,9 +608,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
-            final Map<String, ExtensionEvent> contexts = ExtensionRegistry.getHstRoots();
-            for (ExtensionEvent event : contexts.values()) {
-                model = modelReader.readExtension(event.getExtensionName(), event.getClassLoader(), model);
+            for (ExtensionRecord record : extensionRecords.values()) {
+                model = modelReader.readExtension(record.extensionName, record.hstRoot, record.servletContext.getClassLoader(), model);
             }
             return model;
         } catch (Exception e) {
@@ -852,5 +873,68 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             }
         }
         return migrators;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void serviceRegistered(final ServiceHolder<ApplicationContext> serviceHolder) {
+        if (serviceHolder.getServiceObject().getType() == ApplicationContext.Type.HST) {
+            final ServletContext servletContext = serviceHolder.getServiceObject().getServletContext();
+            final Map<String, String> extensionConfig;
+            try (final InputStream extensionIs = servletContext.getResourceAsStream("META-INF/hcm-extension.yaml")) {
+                if (extensionIs == null) {
+                    throw new FileNotFoundException("META-INF/hcm-extension.yaml");
+                }
+                final Yaml yamlReader = new Yaml();
+                extensionConfig = (Map<String, String>) yamlReader.load(extensionIs);
+            } catch (IOException e) {
+                log.error("Failed to read hcm-extension.yaml", e);
+                return;
+            }
+            final String extensionName = extensionConfig.get("name");
+            final String hstRoot = extensionConfig.get("hstRoot");
+            try {
+                lockManager.lock();
+                try {
+                    if (extensionRecords.containsKey(extensionName)) {
+                        log.error("Extension: "+extensionName+" already added");
+                        return;
+                    }
+                    final ExtensionRecord record = new ExtensionRecord(extensionName, hstRoot, servletContext);
+                    if (runtimeConfigurationModel != null) {
+                        // already initialized: apply site extension
+                        applySiteExtension(record);
+                    }
+                    extensionRecords.put(extensionName, record);
+                } finally {
+                    lockManager.unlock();
+                }
+            } catch (IOException|ParserException|URISyntaxException|RepositoryException e) {
+                log.error("Failed to add site extension: "+extensionName+" for context path: "+servletContext.getContextPath(), e);
+            }
+        }
+    }
+
+    @Override
+    public void serviceUnregistered(final ServiceHolder<ApplicationContext> serviceHolder) {
+        if (serviceHolder.getServiceObject().getType() == ApplicationContext.Type.HST) {
+            final String contextPath = serviceHolder.getServiceObject().getServletContext().getContextPath();
+            try {
+                lockManager.lock();
+                try {
+                    for (ExtensionRecord record : extensionRecords.values()) {
+                        if (record.servletContext.getContextPath().equals(contextPath)) {
+                            // TODO: autoexport handling to be adjusted for this?
+                            extensionRecords.remove(record.extensionName);
+                            return;
+                        }
+                    }
+                } finally {
+                    lockManager.unlock();
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to remove site extension for context path: "+contextPath, e);
+            }
+        }
     }
 }

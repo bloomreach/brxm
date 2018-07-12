@@ -15,7 +15,11 @@
  */
 package org.onehippo.cm.engine.extension;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -41,9 +45,9 @@ import org.onehippo.cm.engine.autoexport.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
-import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
-import org.onehippo.cms7.services.extension.ExtensionEvent;
-import org.onehippo.cms7.services.extension.ExtensionRegistry;
+import org.onehippo.cms7.services.appplicationcontext.ApplicationContext;
+import org.onehippo.cms7.services.appplicationcontext.ApplicationContextRegistry;
+import org.springframework.mock.web.MockServletContext;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -58,71 +62,70 @@ public class ExtensionIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    private static final GuavaHippoEventBus eventBus = new GuavaHippoEventBus();
-
     @Test
     public void extensions_before_and_after_cms() throws Exception {
 
         final String fixtureName = "extensions_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
-        final ExtensionEvent event = createExtensionEvent(fixtureName, "/hst:site1", "m1");
+        try {
+            ApplicationContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
 
-        ExtensionRegistry.register(event, ExtensionRegistry.ExtensionType.HST);
+                final IsolatedRepository repository = fixture.getRepository();
 
-        fixture.test(session -> {
+                try {
+                    final Node extNode = session.getNode("/m1-extension");
+                    extNode.getProperty("property").getString();
+                } catch (PathNotFoundException ex) {
+                    fail("Node extension-m1 from extension m1 or its properties are not found");
+                }
 
-            final IsolatedRepository repository = fixture.getRepository();
+                try {
+                    session.getNode("/m2-extension");
+                    fail("Extension node should not exist");
+                } catch (PathNotFoundException e) {
+                    //expected
+                }
 
-            try {
-                final Node extNode = session.getNode("/m1-extension");
-                extNode.getProperty("property").getString();
-            } catch (PathNotFoundException ex) {
-                fail("Node extension-m1 from extension m1 or its properties are not found");
-            }
+                //Validate that baseline contains m1 extension after core bootstrap
+                final ConfigurationModelImpl baselineModel1 = repository.getBaselineConfigurationModel();
+                final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
+                assertNotNull(configurationNode);
 
-            try {
-                session.getNode("/m2-extension");
-                fail("Extension node should not exist");
-            } catch (PathNotFoundException e) {
-                //expected
-            }
+                ApplicationContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m2"));
 
-            //Validate that baseline contains m1 extension after core bootstrap
-            final ConfigurationModelImpl baselineModel1 = repository.getBaselineConfigurationModel();
-            final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
-            assertNotNull(configurationNode);
+                try {
+                    final Node extNode2 = session.getNode("/m2-extension");
+                    extNode2.getProperty("property").getString();
+                } catch (PathNotFoundException ex) {
+                    fail("Node extension-m2 from extension m2 or its properties are not found");
+                }
 
-            final ExtensionEvent afterEvent = createExtensionEvent(fixtureName, "/hst:site2", "m2");
-            eventBus.post(afterEvent);
-            Thread.sleep(1000); //TODO SS: Replace with while loop or replace with direct call to onNewSiteEvent()
+                //Validate that baseline contains m1 & m2 extensions after extension event
+                final ConfigurationModelImpl baselineModel2 = repository.getBaselineConfigurationModel();
+                assertTrue(baselineModel1 != baselineModel2);
 
-            try {
-                final Node extNode2 = session.getNode("/m2-extension");
-                extNode2.getProperty("property").getString();
-            } catch (PathNotFoundException ex) {
-                fail("Node extension-m2 from extension m2 or its properties are not found");
-            }
+                final ConfigurationNodeImpl configurationNode1 = baselineModel2.resolveNode("/m1-extension");
+                assertNotNull(configurationNode1);
 
-            //Validate that baseline contains m1 & m2 extensions after extension event
-            final ConfigurationModelImpl baselineModel2 = repository.getBaselineConfigurationModel();
-            assertTrue(baselineModel1 != baselineModel2);
+                final ConfigurationNodeImpl configurationNode2 = baselineModel2.resolveNode("/m2-extension");
+                assertNotNull(configurationNode2);
 
-            final ConfigurationNodeImpl configurationNode1 = baselineModel2.resolveNode("/m1-extension");
-            assertNotNull(configurationNode1);
+            });
+        } finally {
+            ApplicationContextRegistry.get().getEntries().forEach(e -> ApplicationContextRegistry.get().unregister(e.getServiceObject()));
+        }
 
-            final ConfigurationNodeImpl configurationNode2 = baselineModel2.resolveNode("/m2-extension");
-            assertNotNull(configurationNode2);
-
-        });
     }
 
-    public ExtensionEvent createExtensionEvent(final String fixtureName, String hstRoot, final String extensionName) throws MalformedURLException {
+    public ApplicationContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {
         final Path extensionsBasePath = getExtensionBasePath(fixtureName, getBaseDir());
         final Path extensionPath = extensionsBasePath.resolve(extensionName);
         final URL dirUrl = new URL(extensionPath.toUri().toURL().toString());
         final URLClassLoader extensionClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
-        return new ExtensionEvent(extensionName, hstRoot, extensionClassLoader);
+        return new ApplicationContext(ApplicationContext.Type.HST,
+                new ExtensionServletContext(extensionPath.toString(), "/"+extensionName, extensionClassLoader));
     }
 
     public Path getExtensionBasePath(final String fixtureName, final Path path) {
@@ -198,6 +201,35 @@ public class ExtensionIntegrationTest {
                 session.logout();
                 repository.stop();
             }
+        }
+    }
+
+    private static class ExtensionServletContext extends MockServletContext {
+
+        private final String resourcePath;
+        private final ClassLoader classLoader;
+
+        public ExtensionServletContext(final String resourcePath, final String contextPath, final ClassLoader classLoader) {
+            super(resourcePath);
+            this.resourcePath = resourcePath;
+            this.classLoader = classLoader;
+            setContextPath(contextPath);
+        }
+
+        public ClassLoader getClassLoader() {
+            return classLoader;
+        }
+
+        public InputStream getResourceAsStream(String path) {
+            File file = new File(resourcePath, path);
+            if (file.exists() && file.isFile()) {
+                try {
+                    return new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException("Path "+path+" not found");
+                }
+            }
+            return null;
         }
     }
 }

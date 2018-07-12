@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ public final class Constants {
     public static final String HCM_ROOT = NT_HCM_ROOT;
     public static final String HCM_BASELINE = "hcm:baseline";
     public static final String HCM_EXTENSIONS = "hcm:extensions";
+    public static final String HCM_HSTROOT = "hcm:hstroot";
     public static final String HCM_LAST_UPDATED = "hcm:lastupdated";
     public static final String HCM_MODULE_DESCRIPTOR = HCM_MODULE_YAML;
     public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";

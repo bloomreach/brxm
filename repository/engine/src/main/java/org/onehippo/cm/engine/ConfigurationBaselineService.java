@@ -43,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -80,6 +81,7 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
 import static org.onehippo.cm.engine.Constants.HCM_EXTENSIONS;
+import static org.onehippo.cm.engine.Constants.HCM_HSTROOT;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
@@ -249,7 +251,18 @@ public class ConfigurationBaselineService {
         if (StringUtils.isEmpty(module.getExtensionName())) {
             throw new ConfigurationRuntimeException(String.format("Module %s is not an extension", module));
         }
+        if (StringUtils.isEmpty(module.getHstRoot())) {
+            throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has no hstRoot", module, module.getExtensionName()));
+        }
         final Node extensionNode = createNodeIfNecessary(parentNode, module.getExtensionName(), NT_HCM_EXTENSION, false);
+        final String hstRoot = JcrUtils.getStringProperty(extensionNode, HCM_HSTROOT, null);
+        if (hstRoot != null && !hstRoot.equals(module.getHstRoot())) {
+            throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has different hstRoot %s than in baseline (%s)"
+                    , module, module.getExtensionName(), module.getHstRoot(), hstRoot));
+        }
+        if (hstRoot == null) {
+            extensionNode.setProperty(HCM_HSTROOT, module.getHstRoot());
+        }
         final ProjectImpl project = module.getProject();
         final GroupImpl group = project.getGroup();
 
@@ -306,6 +319,7 @@ public class ConfigurationBaselineService {
 
                 final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
                 reloadedModule.setExtensionName(module.getExtensionName());
+                reloadedModule.setHstRoot(module.getHstRoot());
                 parseSources(singletonList(reloadedModule));
                 newBaselineModules.add(reloadedModule);
             }
@@ -677,8 +691,12 @@ public class ConfigurationBaselineService {
                     for (NodeIterator eni = extensionCatalogNode.getNodes(); eni.hasNext();) {
                         final Node extensionNode = eni.nextNode();
                         final String extensionName = extensionNode.getName();
+                        final String hstRoot = extensionNode.getProperty(HCM_HSTROOT).getString();
                         final List<ModuleImpl> extensionModules = parseDescriptors(extensionNode);
-                        extensionModules.forEach(module -> module.setExtensionName(extensionName));
+                        extensionModules.forEach(module -> {
+                            module.setExtensionName(extensionName);
+                            module.setHstRoot(hstRoot);
+                        });
                         modules.addAll(extensionModules);
                     }
                 }

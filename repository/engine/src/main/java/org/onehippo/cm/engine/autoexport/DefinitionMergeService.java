@@ -88,7 +88,6 @@ import org.onehippo.cm.model.tree.ModelProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.onehippo.cm.model.util.PatternSet;
-import org.onehippo.cms7.services.extension.ExtensionRegistry;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1105,7 +1104,7 @@ public class DefinitionMergeService {
      * @param incomingPath the JCR node path to test
      * @return true iff this path should go in a new file, different than its parent node
      */
-    protected static boolean shouldPathCreateNewSource(JcrPath incomingPath) {
+    protected boolean shouldPathCreateNewSource(JcrPath incomingPath) {
 
         // If we see a node that we want to treat as an HST root, swap it with the default HST root path
         // for purposes of the test in the final line of this method.
@@ -1126,12 +1125,12 @@ public class DefinitionMergeService {
      * @param incomingPath the path to potentially swap for a new root node
      * @return a new path based on the HST default root node
      */
-    private static JcrPath swapHstRootForDefault(JcrPath incomingPath) {
+    private JcrPath swapHstRootForDefault(JcrPath incomingPath) {
         //TODO SS: Enhance location mapper to use nodetype matchers
-        final Set<String> hstRoots = ExtensionRegistry.getHstRoots().keySet();
+
         if (incomingPath.getSegmentCount() > 0) {
             final String rootNode = incomingPath.getSegment(0).toString();
-            if (hstRoots.contains("/" + rootNode)) {
+            if (model.getHstRoots().contains("/" + rootNode)) {
                 incomingPath = JcrPaths.getPath(HST_DEFAULT_ROOT_PATH +
                         incomingPath.subpath(1, incomingPath.getSegmentCount()).toString());
             }

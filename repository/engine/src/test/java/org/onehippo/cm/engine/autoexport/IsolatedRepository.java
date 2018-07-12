@@ -250,7 +250,7 @@ public class IsolatedRepository {
 
         @Override
         public Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
-            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model") ||
+            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model") || name.startsWith("javax.servlet") ||
                     sharedClasses.stream().anyMatch(name::startsWith))
             {
                 return shared.loadClass(name);
