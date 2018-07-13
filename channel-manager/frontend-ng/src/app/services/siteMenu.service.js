@@ -17,6 +17,38 @@
 const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
+function incrementPropertyFilter() {
+  return (collection, propertyName, propertyValue, subCollection) => {
+    const itemsWithProperty = [];
+
+    function findPropertiesAndSubProperties(newCollection) {
+      for (let i = 0; i < newCollection.length; i += 1) {
+        const propName = newCollection[i][propertyName];
+        const match = propName.match(/\((\d+)\)/);
+        if (match) {
+          itemsWithProperty.push(match[1]);
+        } else if (propName.match(propertyValue)) {
+          itemsWithProperty.push('0');
+        }
+        if (subCollection && newCollection[i][subCollection]) {
+          findPropertiesAndSubProperties(newCollection[i][subCollection]);
+        }
+      }
+    }
+    findPropertiesAndSubProperties(collection);
+
+    if (itemsWithProperty.length === 0) {
+      return propertyValue;
+    }
+
+    const maxNum = Math.max.apply(null, itemsWithProperty);
+    if (!propertyValue.match(/\((\d+)\)/)) {
+      propertyValue = `${propertyValue} (${maxNum})`;
+    }
+    return propertyValue.replace(/\((\d+)\)/, () => `(${maxNum + 1})`);
+  };
+}
+
 class SiteMenuService {
   constructor($filter, $translate, HstService) {
     'ngInject';
@@ -115,7 +147,7 @@ class SiteMenuService {
   }
 
   _createBlankMenuItem() {
-    const incFilter = this.$filter('incrementProperty');
+    const incFilter = incrementPropertyFilter();
     const result = {
       linkType: 'NONE',
       title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
