@@ -203,6 +203,7 @@
                 <!-- no license headers needed for these files -->
                 <exclude>**/*.cnd</exclude>
                 <exclude>**/*.json</exclude>
+                <exclude>**/*.yaml</exclude>
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/*.properties</exclude>
