@@ -76,8 +76,8 @@ import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.util.ClasspathResourceAnnotationScanner;
 import org.onehippo.cms7.services.ServiceHolder;
 import org.onehippo.cms7.services.ServiceTracker;
-import org.onehippo.cms7.services.appplicationcontext.ApplicationContext;
-import org.onehippo.cms7.services.appplicationcontext.ApplicationContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
-public class ConfigurationServiceImpl implements InternalConfigurationService, ServiceTracker<ApplicationContext> {
+public class ConfigurationServiceImpl implements InternalConfigurationService, ServiceTracker<HippoWebappContext> {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
@@ -220,7 +220,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         // acquire a write lock for the hcm
         lockManager.lock();
         try {
-            ApplicationContextRegistry.get().addTracker(this);
+            HippoWebappContextRegistry.get().addTracker(this);
             // Ensure/force cluster synchronization in case another instance just initialized before, which changes
             // then may not yet have been synchronized automatically!
             session.refresh(true);
@@ -387,7 +387,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     public void stop() {
         log.info("ConfigurationService: stop");
 
-        ApplicationContextRegistry.get().removeTracker(this);
+        HippoWebappContextRegistry.get().removeTracker(this);
 
         extensionRecords.clear();
 
@@ -877,8 +877,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     @Override
     @SuppressWarnings("unchecked")
-    public void serviceRegistered(final ServiceHolder<ApplicationContext> serviceHolder) {
-        if (serviceHolder.getServiceObject().getType() == ApplicationContext.Type.HST) {
+    public void serviceRegistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.HST) {
             final ServletContext servletContext = serviceHolder.getServiceObject().getServletContext();
             final Map<String, String> extensionConfig;
             try (final InputStream extensionIs = servletContext.getResourceAsStream("META-INF/hcm-extension.yaml")) {
@@ -916,8 +916,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     }
 
     @Override
-    public void serviceUnregistered(final ServiceHolder<ApplicationContext> serviceHolder) {
-        if (serviceHolder.getServiceObject().getType() == ApplicationContext.Type.HST) {
+    public void serviceUnregistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.HST) {
             final String contextPath = serviceHolder.getServiceObject().getServletContext().getContextPath();
             try {
                 lockManager.lock();

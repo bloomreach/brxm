@@ -45,8 +45,8 @@ import org.onehippo.cm.engine.autoexport.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
-import org.onehippo.cms7.services.appplicationcontext.ApplicationContext;
-import org.onehippo.cms7.services.appplicationcontext.ApplicationContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockServletContext;
 
 import com.google.common.collect.ImmutableSet;
@@ -69,7 +69,7 @@ public class ExtensionIntegrationTest {
         final Fixture fixture = new Fixture(fixtureName);
 
         try {
-            ApplicationContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m1"));
+            HippoWebappContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
                 final IsolatedRepository repository = fixture.getRepository();
@@ -93,7 +93,7 @@ public class ExtensionIntegrationTest {
                 final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
                 assertNotNull(configurationNode);
 
-                ApplicationContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m2"));
+                HippoWebappContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m2"));
 
                 try {
                     final Node extNode2 = session.getNode("/m2-extension");
@@ -114,17 +114,17 @@ public class ExtensionIntegrationTest {
 
             });
         } finally {
-            ApplicationContextRegistry.get().getEntries().forEach(e -> ApplicationContextRegistry.get().unregister(e.getServiceObject()));
+            HippoWebappContextRegistry.get().getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
         }
 
     }
 
-    public ApplicationContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {
+    public HippoWebappContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {
         final Path extensionsBasePath = getExtensionBasePath(fixtureName, getBaseDir());
         final Path extensionPath = extensionsBasePath.resolve(extensionName);
         final URL dirUrl = new URL(extensionPath.toUri().toURL().toString());
         final URLClassLoader extensionClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
-        return new ApplicationContext(ApplicationContext.Type.HST,
+        return new HippoWebappContext(HippoWebappContext.Type.HST,
                 new ExtensionServletContext(extensionPath.toString(), "/"+extensionName, extensionClassLoader));
     }
 
