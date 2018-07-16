@@ -18,6 +18,7 @@ class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
+    $window,
     ChannelService,
     ConfigService,
     DomService,
@@ -29,6 +30,7 @@ class IframeExtensionCtrl {
 
     this.$element = $element;
     this.$log = $log;
+    this.$window = $window;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
@@ -51,7 +53,13 @@ class IframeExtensionCtrl {
   }
 
   getExtensionUrl() {
-    return this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.urlPath);
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.urlPath);
+
+    // The current location should be the default value for the second parameter of the URL() constructor,
+    // but Chrome needs it explicitly otherwise it will throw an error.
+    const url = new URL(path, this.$window.location.origin);
+    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    return url.pathname + url.search;
   }
 
   $onChanges(params) {

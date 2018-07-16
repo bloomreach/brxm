@@ -112,17 +112,24 @@ describe('iframeExtension', () => {
 
     describe('getExtensionUrl', () => {
       beforeEach(() => {
+        ConfigService.antiCache = 42;
         $ctrl.$onInit();
       });
 
       it('works when the CMS location has a context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath');
+        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath?antiCache=42');
       });
 
       it('works when the CMS location has no context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/');
-        expect($ctrl.getExtensionUrl()).toEqual('/testUrlPath');
+        expect($ctrl.getExtensionUrl()).toEqual('/testUrlPath?antiCache=42');
+      });
+
+      it('works when the extension URL path contains search parameters', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        extension.urlPath = 'testUrlPath?customParam=X';
+        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath?customParam=X&antiCache=42');
       });
     });
 

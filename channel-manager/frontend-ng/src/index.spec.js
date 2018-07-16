@@ -110,6 +110,7 @@ function mockHost() {
     };
 
     $window.location = {
+      origin: 'http://localhost:8080',
       search: '?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234',
     };
 
