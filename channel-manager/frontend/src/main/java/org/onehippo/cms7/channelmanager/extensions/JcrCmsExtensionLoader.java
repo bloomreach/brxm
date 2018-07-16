@@ -54,6 +54,10 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
     }
 
     private Set<CmsExtension> readExtensions() throws RepositoryException {
+        if (!session.nodeExists(CMS_EXTENSION_CONFIG_PATH)) {
+            return Collections.emptySet();
+        }
+
         final NodeIterator extensionNodes = session.getNode(CMS_EXTENSION_CONFIG_PATH).getNodes();
         final Set<CmsExtension> extensions = new LinkedHashSet<>();
 

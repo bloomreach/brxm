@@ -37,13 +37,16 @@ import static org.junit.Assert.assertTrue;
 public class JcrCmsExtensionLoaderTest {
 
     private JcrCmsExtensionLoader loader;
-    private MockNode configNode;
+    private MockNode root;
 
     @Before
     public void setUp() throws RepositoryException {
-        final MockNode root = MockNode.root();
+        root = MockNode.root();
         loader = new JcrCmsExtensionLoader(root.getSession());
-        configNode = root
+    }
+
+    private MockNode createConfigNode() throws RepositoryException {
+        return root
                 .addNode("hippo:configuration", "hipposys:configuration")
                 .addNode("hippo:frontend", "hipposys:applicationfolder")
                 .addNode("cms", "nt:unstructured")
@@ -51,13 +54,21 @@ public class JcrCmsExtensionLoaderTest {
     }
 
     @Test
-    public void zeroExtensions() {
+    public void noConfigNode() {
+        final Set<CmsExtension> extensions = loader.loadCmsExtensions();
+        assertTrue(extensions.isEmpty());
+    }
+
+    @Test
+    public void zeroExtensions() throws RepositoryException {
+        createConfigNode();
         final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertTrue(extensions.isEmpty());
     }
 
     @Test
     public void singleExtension() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
         final MockNode extensionNode = configNode.addNode("extension1", "nt:unstructured");
         extensionNode.setProperty("context", "page");
         extensionNode.setProperty("displayName", "Extension One");
@@ -75,6 +86,8 @@ public class JcrCmsExtensionLoaderTest {
 
     @Test
     public void multipleExtensions() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
+
         final MockNode extensionNode1 = configNode.addNode("extension1", "nt:unstructured");
         extensionNode1.setProperty("context", "page");
         extensionNode1.setProperty("displayName", "Extension One");
@@ -105,6 +118,8 @@ public class JcrCmsExtensionLoaderTest {
 
     @Test
     public void extensionsMustHaveUniqueID() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
+
         configNode.addNode("extension1", "nt:unstructured");
         configNode.addNode("extension1", "nt:unstructured");
 
@@ -114,6 +129,7 @@ public class JcrCmsExtensionLoaderTest {
 
     @Test
     public void defaultValues() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
         configNode.addNode("extension1", "nt:unstructured");
 
         final CmsExtension extension = loader.loadCmsExtensions().iterator().next();
@@ -125,7 +141,7 @@ public class JcrCmsExtensionLoaderTest {
     @Test
     public void repositoryException() throws RepositoryException {
         final Session brokenSession = createMock(Session.class);
-        expect(brokenSession.getNode(anyString())).andThrow(new RepositoryException());
+        expect(brokenSession.nodeExists(anyString())).andThrow(new RepositoryException());
         replay(brokenSession);
 
         loader = new JcrCmsExtensionLoader(brokenSession);
