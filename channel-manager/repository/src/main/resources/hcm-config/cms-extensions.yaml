@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/extensions:
+      jcr:primaryType: nt:unstructured
