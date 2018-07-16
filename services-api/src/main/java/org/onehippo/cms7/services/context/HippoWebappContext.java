@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.appplicationcontext;
+package org.onehippo.cms7.services.context;
 
 import javax.servlet.ServletContext;
 
-public final class ApplicationContext {
+public final class HippoWebappContext {
 
     public enum Type {
         PLATFORM,
@@ -29,7 +29,7 @@ public final class ApplicationContext {
     private final Type type;
     private final ServletContext servletContext;
 
-    public ApplicationContext(final Type type, final ServletContext servletContext) {
+    public HippoWebappContext(final Type type, final ServletContext servletContext) {
         this.type = type;
         this.servletContext = servletContext;
     }
@@ -47,7 +47,7 @@ public final class ApplicationContext {
     }
 
     public boolean equals(final Object other) {
-        return other instanceof ApplicationContext &&
-                servletContext.getContextPath().equals(((ApplicationContext)other).servletContext.getContextPath());
+        return other instanceof HippoWebappContext &&
+                servletContext.getContextPath().equals(((HippoWebappContext)other).servletContext.getContextPath());
     }
 }

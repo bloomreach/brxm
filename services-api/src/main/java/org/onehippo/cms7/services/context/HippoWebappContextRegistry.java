@@ -13,29 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.appplicationcontext;
+package org.onehippo.cms7.services.context;
 
 import org.onehippo.cms7.services.HippoServiceException;
 import org.onehippo.cms7.services.ServiceHolder;
 import org.onehippo.cms7.services.WhiteboardServiceRegistry;
 
-public class ApplicationContextRegistry extends WhiteboardServiceRegistry<ApplicationContext> {
+public class HippoWebappContextRegistry extends WhiteboardServiceRegistry<HippoWebappContext> {
 
-    private static final ApplicationContextRegistry INSTANCE = new ApplicationContextRegistry();
+    private static final HippoWebappContextRegistry INSTANCE = new HippoWebappContextRegistry();
 
-    private ApplicationContextRegistry() {
+    private HippoWebappContextRegistry() {
     }
 
-    public static ApplicationContextRegistry get() {
+    public static HippoWebappContextRegistry get() {
         return INSTANCE;
     }
 
     @Override
-    public synchronized void register(final ApplicationContext serviceObject) throws HippoServiceException {
+    public synchronized void register(final HippoWebappContext serviceObject) throws HippoServiceException {
         String contextPath = serviceObject.getServletContext().getContextPath();
-        for (ServiceHolder<ApplicationContext> holder: getEntriesList()) {
+        for (ServiceHolder<HippoWebappContext> holder: getEntriesList()) {
             if (contextPath.equals(holder.getServiceObject().getServletContext().getContextPath())) {
-                throw new HippoServiceException("ApplicationContext with context path "+contextPath+" already registered");
+                throw new HippoServiceException(
+                        String.format("HippoWebappContext with context path %s is already registered", contextPath));
             }
         }
         super.register(serviceObject);
