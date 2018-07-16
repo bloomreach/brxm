@@ -26,3 +26,9 @@ definitions:
         operation: add
         type: string
         value: [liveusers]
+# TODO SS: Remove this when hst refactoring (v13) will be over
+    /hippo:configuration/hippo:frontend/cms/cms-services/hstRestProxyService:
+      .meta:delete: true
+    /hst:hst:
+      .meta:delete: true
+

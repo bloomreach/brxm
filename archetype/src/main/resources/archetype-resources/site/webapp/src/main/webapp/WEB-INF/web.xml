@@ -95,6 +95,11 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- HippoWebappListener registers current webapp in HippoWebappRegistry -->
+  <listener>
+    <listener-class>org.onehippo.cms7.services.HippoWebappListener</listener-class>
+  </listener>
+
   <!-- HstContextLoaderListener configuring/initializing/destroying HST Container -->
   <listener>
     <listener-class>org.hippoecm.hst.site.container.HstContextLoaderListener</listener-class>

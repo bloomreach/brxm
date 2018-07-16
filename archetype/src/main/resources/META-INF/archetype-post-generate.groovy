@@ -52,9 +52,11 @@ if (property == null) {
     def cmdDepText = """<dependency>
       <groupId>$parentGroupId</groupId>
       <artifactId>$parentArtifactId-repository-data-application</artifactId>
-      <version>$parentVersion</version>
+      <version>${parent.project.version}</version>
     </dependency>"""
     replacePlaceHolder(cmsDependenciesPomFile, cmsDependenciesMarker, cmdDepText)
+
+//    TODO SS: Remove repository-data/application configuration & security definitions for child project
 }
 
 private static void replacePlaceHolder(File pomFile, String marker, String text) {

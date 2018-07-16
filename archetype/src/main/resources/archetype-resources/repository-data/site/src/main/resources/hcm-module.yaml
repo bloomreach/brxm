@@ -4,4 +4,3 @@ group:
 project: ${artifactId}
 module:
   name: ${artifactId}-repository-data-site
-  scope: extension

@@ -1,4 +1,9 @@
-#set( $dollar = '$' )
+#set($dollar = '$')
+#set($symbol_pound = '#')
+#set($symbol_dollar = '$')
+#set($symbol_escape = '\')
+#set($hyphen = '-')
+#set($empty = '')
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -64,9 +69,14 @@
     <!-- PROPERTIES_MARKER -->
 
     <!--***START temporary override of versions*** -->
+    <hippo.configuration-management.version>13.0.0-msdts-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.repository.version>13.0.0-msdts-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>13.0.0-msdts-SNAPSHOT</hippo.services.version>
+    <essentials.version>13.0.0-msdts-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
-    <essentials.version>13.0.0-SNAPSHOT</essentials.version>
+    <!-- Uncomment line below when temporary overrides will be removed -->
+    <!--<essentials.version>13.0.0-SNAPSHOT</essentials.version>-->
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
     <xalan.version>2.7.2</xalan.version>
@@ -268,7 +278,7 @@
                   <location>${dollar}{project.basedir}/site/webapp/target/site.war</location>
                   <type>war</type>
                   <properties>
-                    <context>/site</context>
+                    <context>/${rootArtifactId.replace($hyphen,$empty)}</context>
                   </properties>
                 </deployable>
                 <deployable>

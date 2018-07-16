@@ -240,6 +240,7 @@
         <include>**/*.jspf</include>
         <include>**/*.tag</include>
         <include>**/*.xml</include>
+        <include>**/*.yaml</include>
         <include>**/*.properties</include>
         <include>**/*.psml</include>
       </includes>
