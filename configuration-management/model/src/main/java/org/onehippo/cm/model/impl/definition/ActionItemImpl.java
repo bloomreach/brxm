@@ -32,6 +32,11 @@ public class ActionItemImpl implements ActionItem {
         this.type = type;
     }
 
+    public ActionItemImpl(final JcrPath path, final ActionType type) {
+        this.path = path;
+        this.type = type;
+    }
+
     @Override public JcrPath getPath() {
         return path;
     }

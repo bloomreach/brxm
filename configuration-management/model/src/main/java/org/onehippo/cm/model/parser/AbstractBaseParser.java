@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
@@ -45,6 +46,9 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+/**
+ * Base class for various custom SnakeYAML-driven parsers for HCM config, content, and metadata files.
+ */
 public abstract class AbstractBaseParser {
 
     static final Logger log = LoggerFactory.getLogger(AbstractBaseParser.class);
@@ -55,6 +59,9 @@ public abstract class AbstractBaseParser {
         this.explicitSequencing = explicitSequencing;
     }
 
+    /**
+     * @return Does this parser use explicit '-' style YAML sequences or implicit whitespace-based sequences?
+     */
     protected boolean isExplicitSequencing() {
         return explicitSequencing;
     }
@@ -162,12 +169,10 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    // TODO: convert to use JcrPath API
-    protected String asPathScalar(final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
+    protected JcrPath asPathScalar(final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
         return asPathScalar(asStringScalar(node), node, requireAbsolutePath, allowSnsIndices);
     }
-    // TODO: convert to use JcrPath API
-    protected String asPathScalar(final String path, final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
+    protected JcrPath asPathScalar(final String path, final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
 
         if (requireAbsolutePath && !path.startsWith("/")) {
             throw new ParserException("Path must start with a slash", node);
@@ -182,7 +187,7 @@ public abstract class AbstractBaseParser {
         }
 
         if (path.equals("/") || path.equals("")) {
-            return path;
+            return JcrPaths.ROOT;
         }
 
         final String[] pathSegments;
@@ -192,6 +197,7 @@ public abstract class AbstractBaseParser {
             pathSegments = path.split("/");
         }
 
+        // somewhat excessive specificity in error checking...
         for (String segment: pathSegments) {
             try {
                 final JcrPathSegment parsedName = JcrPaths.getSegment(segment);
@@ -203,7 +209,7 @@ public abstract class AbstractBaseParser {
             }
         }
 
-        return path;
+        return JcrPaths.getPath(path);
     }
 
     protected boolean isRootNodePath(final String nodePath) {

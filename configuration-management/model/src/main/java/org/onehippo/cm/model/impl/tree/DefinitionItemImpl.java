@@ -31,12 +31,13 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final TreeDefinitionImpl definition) {
+    // path includes name
+    public DefinitionItemImpl(final JcrPath path, final TreeDefinitionImpl definition) {
         if (path == null) {
             throw new IllegalArgumentException("Item path must not be null!");
         }
 
-        setName(name);
+        setName(path.getLastSegment());
         this.path = path;
         this.parent = null;
         this.definition = definition;
