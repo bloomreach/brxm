@@ -256,8 +256,7 @@ public class ConfigurationContentService {
                 if (ConfigurationModelUtils.getCategoryForNode(baseNodePath.suppressIndices().toString(), model) == ConfigurationItemCategory.CONTENT) {
                     log.debug("Processing delete action for node: {}", baseNodePath);
 
-                    final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath,
-                            baseNodePath.getLastSegment(), null);
+                    final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath, null);
                     contentProcessingService.apply(deleteNode, ActionType.DELETE, session, isUpgradeTo12);
                 } else {
                     log.warn(String.format("Base node '%s' is not categorized as content, skipping delete action.",
