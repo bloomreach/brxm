@@ -85,9 +85,7 @@ public class BranchHandleImpl implements BranchHandle {
 
     @Override
     public boolean isMaster() {
-        return getVariant(UNPUBLISHED)
-                .map(this::isMaster)
-                .orElse(false);
+        return this.branchId.equals("master");
     }
 
     @Override
