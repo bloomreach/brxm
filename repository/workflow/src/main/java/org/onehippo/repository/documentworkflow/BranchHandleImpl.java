@@ -124,6 +124,8 @@ public class BranchHandleImpl implements BranchHandle {
             final Version versionByLabel = versionHistory.getVersionByLabel(branchId);
             return versionByLabel.getFrozenNode();
         } catch (RepositoryException e) {
+            log.error("Cannot get frozen node of document {} for branch {}, returning null",
+                    unpublished.getIdentity(), branchId, e);
             return null;
         }
     }
@@ -143,6 +145,7 @@ public class BranchHandleImpl implements BranchHandle {
                     .of(published.getAvailability())
                     .anyMatch(a -> a.equals("live"));
         } catch (RepositoryException e) {
+            log.error("Cannot determine if document {} is live, returning false", published.getIdentity(), e);
             return false;
         }
     }
@@ -151,6 +154,7 @@ public class BranchHandleImpl implements BranchHandle {
         try {
             return unpublished.isMaster();
         } catch (RepositoryException e) {
+            log.error("Cannot determine if document {} is master, returning false", unpublished.getIdentity(), e);
             return false;
         }
     }
@@ -159,6 +163,7 @@ public class BranchHandleImpl implements BranchHandle {
         try {
             return unpublished.isBranch(branchId);
         } catch (RepositoryException e) {
+            log.error("Cannot determine if document {} is branch {}, returning false", unpublished.getIdentity(), branchId, e);
             return false;
         }
     }
