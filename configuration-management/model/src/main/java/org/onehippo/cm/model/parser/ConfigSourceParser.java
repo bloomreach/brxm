@@ -28,6 +28,7 @@ import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
@@ -103,7 +104,7 @@ public class ConfigSourceParser extends SourceParser {
     protected void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true, true);
+            final JcrPath key = asPathScalar(nodeTuple.getKeyNode(), true, true);
             constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }

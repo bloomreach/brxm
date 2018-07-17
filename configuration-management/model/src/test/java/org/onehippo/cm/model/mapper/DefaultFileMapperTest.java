@@ -39,8 +39,8 @@ public class DefaultFileMapperTest {
         final ConfigSourceImpl source = new ConfigSourceImpl("path/to/content.yaml", module);
         final ConfigDefinitionImpl configDefinition = new ConfigDefinitionImpl(source);
 
-        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(JcrPaths.getPath("/path/to"),
-                JcrPaths.getSegment("node"), configDefinition);
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(JcrPaths.getPath("/path/to/node"),
+                configDefinition);
 
         final ValueImpl valueImpl = new ValueImpl("SomeStringValue");
         valueImpl.makeStringResourceValue("/path/to/resource.yaml");
@@ -48,6 +48,6 @@ public class DefaultFileMapperTest {
         new DefinitionPropertyImpl("propertyName", valueImpl, definitionNode);
 
         final String fileName = defaultFileMapper.apply(valueImpl);
-        assertEquals("/path/to/propertyName.yaml", fileName);
+        assertEquals("/path/to/node/propertyName.yaml", fileName);
     }
 }

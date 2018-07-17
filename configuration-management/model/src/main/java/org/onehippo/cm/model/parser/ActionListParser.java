@@ -71,7 +71,7 @@ public class ActionListParser extends AbstractBaseParser {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
         final Set<JcrPath> paths = new HashSet<>();
         for (NodeTuple tuple : asTuples(node)) {
-            final String path = asPathScalar(tuple.getKeyNode(), true, false);
+            final JcrPath path = asPathScalar(tuple.getKeyNode(), true, false);
             final ActionItem actionItem = asActionItem(tuple.getValueNode(), path);
             if (!paths.add(actionItem.getPath())) {
                 throw new ParserException(String.format("Duplicate paths are not allowed in the same version: %s", actionItem.getPath()));
@@ -81,7 +81,7 @@ public class ActionListParser extends AbstractBaseParser {
         return actionItems;
     }
 
-    protected ActionItem asActionItem(final Node node, final String path) throws ParserException {
+    protected ActionItem asActionItem(final Node node, final JcrPath path) throws ParserException {
         String action = asStringScalar(node);
         ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
         if (type == ActionType.APPEND) {

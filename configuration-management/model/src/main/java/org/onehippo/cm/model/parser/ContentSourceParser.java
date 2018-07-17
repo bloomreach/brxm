@@ -23,6 +23,7 @@ import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.tree.ValueType;
 import org.yaml.snakeyaml.nodes.Node;
@@ -59,7 +60,7 @@ public class ContentSourceParser extends SourceParser {
 
         final ContentSourceImpl source = parent.addContentSource(path);
         final ContentDefinitionImpl definition = source.addContentDefinition();
-        final String key = asPathScalar(tuples.get(0).getKeyNode(), true, true);
+        final JcrPath key = asPathScalar(tuples.get(0).getKeyNode(), true, true);
         constructDefinitionNode(key, tuples.get(0).getValueNode(), definition);
 
         source.markUnchanged();

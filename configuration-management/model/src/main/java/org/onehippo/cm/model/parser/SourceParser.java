@@ -29,6 +29,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
@@ -122,9 +123,8 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     protected abstract void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException;
 
-    protected void constructDefinitionNode(final String path, final Node value, final TreeDefinitionImpl definition) throws ParserException {
-        final String name = StringUtils.substringAfterLast(path, "/");
-        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
+    protected void constructDefinitionNode(final JcrPath path, final Node value, final TreeDefinitionImpl definition) throws ParserException {
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, definition);
         definition.setNode(definitionNode);
         populateDefinitionNode(definitionNode, value);
     }
@@ -551,7 +551,10 @@ public abstract class SourceParser extends AbstractBaseParser {
     }
 
     protected ValueImpl constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
-        final String path = asPathScalar(node, false, true);
+        // use asPathScalar to do proper validation, but only use the string for the actual model
+        asPathScalar(node, false, true);
+        final String path = asStringScalar(node);
+
         return new ValueImpl(path, valueType, false, true);
     }
 

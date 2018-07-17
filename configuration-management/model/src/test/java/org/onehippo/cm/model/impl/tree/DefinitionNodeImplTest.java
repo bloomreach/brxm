@@ -54,7 +54,7 @@ public class DefinitionNodeImplTest {
     }
 
     private DefinitionNodeImpl createDefinitionNode(final String... childNodeNames) {
-        final DefinitionNodeImpl result = new DefinitionNodeImpl(JcrPaths.ROOT, JcrPaths.getSegment("test"), null);
+        final DefinitionNodeImpl result = new DefinitionNodeImpl(JcrPaths.getPath("/test"), null);
         for (final String childName : childNodeNames) {
             result.addNode(childName);
         }

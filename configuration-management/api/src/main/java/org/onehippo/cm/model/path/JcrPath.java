@@ -44,7 +44,8 @@ public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
     boolean isAbsolute();
 
     /**
-     * @return the final segment of this {@link JcrPath}, which may represent a JCR Node or Property
+     * @return the final segment of this {@link JcrPath}, which may represent a JCR Node or Property;
+     *      for root path, return JcrPaths.ROOT_NAME
      */
     JcrPathSegment getLastSegment();
 

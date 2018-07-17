@@ -62,7 +62,7 @@ public class ContentSourceImpl extends SourceImpl implements ContentSource {
     public ContentDefinitionImpl addContentDefinition(final JcrPath contentPath, final String orderBefore) {
         final ContentDefinitionImpl cd = addContentDefinition();
 
-        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, contentPath.getLastSegment(), cd);
+        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, cd);
         defNode.setOrderBefore(orderBefore);
         cd.setNode(defNode);
 

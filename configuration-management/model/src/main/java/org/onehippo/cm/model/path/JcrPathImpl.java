@@ -72,8 +72,8 @@ class JcrPathImpl implements JcrPath {
     @Override
     public org.onehippo.cm.model.path.JcrPathSegment getLastSegment() {
         if (isRoot()) {
-            // todo: should this return a constant NodePathSegment instead?
-            throw new IllegalStateException("Root path has no path segments!");
+            // return a constant NodePathSegment for the root path name
+            return JcrPaths.ROOT_NAME;
         }
 
         return segments.get(segments.size()-1);
