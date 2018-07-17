@@ -48,7 +48,7 @@
     "open-sans-fontface": "github:FontFaceKit/open-sans#91b197ff77e8d6717ccf3a9872f4ebb2a547560f"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "8.0.1",
+    "@bloomreach/frontend-build": "8.0.2",
     "angular-mocks": "1.6.9"
   }
 }

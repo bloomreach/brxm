@@ -23,9 +23,16 @@
 
 @import '../variables';
 @import '~open-sans-fontface/sass/variables';
-@import '~open-sans-fontface/sass/mixins';
-@import '~open-sans-fontface/sass/Regular';
 @import '~@bloomreach/dragula/dist/dragula.css';
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~open-sans-fontface/fonts/Regular/OpenSans-Regular.woff2?v=#{$OpenSansVersion}&inline') format('woff2'),
+    url('~open-sans-fontface/fonts/Regular/OpenSans-Regular.woff?v=#{$OpenSansVersion}&inline') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
 .hst-cmseditlink {
   display: block;
