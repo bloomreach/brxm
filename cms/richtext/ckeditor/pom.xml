@@ -29,6 +29,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>config</module>
     <module>resources</module>
     <module>plugins</module>
     <module>frontend</module>
