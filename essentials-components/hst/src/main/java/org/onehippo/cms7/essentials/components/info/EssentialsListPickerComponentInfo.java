@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
-/**
- * @version "$Id$"
- */
 
 @FieldGroupList({
         @FieldGroup(
@@ -44,53 +41,50 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
 
 
-    String DEFAULT_PICKER_PATH = "/content/documents";
     String HIPPO_DOCUMENT = "hippo:document";
-    String CMS_PICKERS_DOCUMENTS = "cms-pickers/documents";
 
-    @Parameter(name = "document1", required = false)
+
+    @Parameter(name = "document1")
     @JcrPath(
             isRelative = true,
-            pickerConfiguration = CMS_PICKERS_DOCUMENTS,
-            pickerSelectableNodeTypes = {HIPPO_DOCUMENT},
-            pickerInitialPath = DEFAULT_PICKER_PATH
+            pickerSelectableNodeTypes = {HIPPO_DOCUMENT}
     )
     String getDocumentItem1();
 
-    @Parameter(name = "document2", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document2")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem2();
 
-    @Parameter(name = "document3", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document3")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem3();
 
-    @Parameter(name = "document4", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document4")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem4();
 
-    @Parameter(name = "document5", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document5")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem5();
 
-    @Parameter(name = "document6", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document6")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem6();
 
-    @Parameter(name = "document7", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document7")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem7();
 
-    @Parameter(name = "document8", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document8")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem8();
 
-    @Parameter(name = "document9", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document9")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem9();
 
-    @Parameter(name = "document10", required = false)
-    @JcrPath(isRelative = true, pickerConfiguration = CMS_PICKERS_DOCUMENTS, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerInitialPath = DEFAULT_PICKER_PATH)
+    @Parameter(name = "document10")
+    @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem10();
 
 
