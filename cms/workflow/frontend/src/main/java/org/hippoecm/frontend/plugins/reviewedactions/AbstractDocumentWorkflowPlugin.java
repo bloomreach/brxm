@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -40,7 +39,6 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -50,9 +48,28 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(AbstractDocumentWorkflowPlugin.class);
+    private BranchIdModel branchIdModel;
+
+    /**
+     * Detaches all models
+     */
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        branchIdModel.detach();
+    }
 
     public AbstractDocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+        try {
+            branchIdModel = new BranchIdModel(context, getWorkflow().getNode().getIdentifier());
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    protected BranchIdModel getBranchIdModel() {
+        return branchIdModel;
     }
 
     public WorkflowDescriptorModel getModel() {

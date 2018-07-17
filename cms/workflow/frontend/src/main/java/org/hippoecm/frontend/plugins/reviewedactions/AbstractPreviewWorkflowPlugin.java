@@ -31,7 +31,6 @@ import org.hippoecm.addon.workflow.BranchWorkflowUtils;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -57,16 +56,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private final StdWorkflow infoAction;
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
-    private BranchIdModel branchIdModel;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        try {
-            branchIdModel = new BranchIdModel(context, getWorkflow().getNode().getIdentifier());
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
+
 
 
 
@@ -118,7 +112,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                String branchId = branchIdModel.getBranchId();
+                String branchId = getBranchIdModel().getBranchId();
                 if (isModelBasedOnVersionHistory(branchId)) {
                     workflow.checkoutBranch(branchId);
                 }
@@ -151,6 +145,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     private String getInitialBranchId() {
         return BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
     }
+
 
 
     @SuppressWarnings("unused")  // used by a PropertyModel
