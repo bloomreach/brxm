@@ -35,11 +35,11 @@
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.0.0-wicket7-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.ckeditor.version>4.7.1-h12.3.0</hippo.ckeditor.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.plugin.gallerypicker.version>13.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>13.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
 
