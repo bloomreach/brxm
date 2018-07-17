@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,7 +63,6 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
                 loginTask = HDC.getCurrentTask().startSubtask("login");
             }
 
-
             if (credentials instanceof JvmCredentials) {
                 JvmCredentials jvmCredentials = (JvmCredentials)credentials;
                 credentials = new SimpleCredentials(jvmCredentials.getUserID(), jvmCredentials.getPassword());
@@ -82,9 +81,9 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
         if(REP_NAME_DESC.equals(key)) {
             return "Hippo Repository";
         } else if(REP_VENDOR_DESC.equals(key)) {
-            return "Hippo B.V.";
+            return "BloomReach, Inc., BloomReach B.V.";
         } else if(REP_VENDOR_URL_DESC.equals(key)) {
-            return "http://www.onehippo.org/";
+            return "https://www.onehippo.org/";
         } else if(REP_VERSION_DESC.equals(key)) {
             return getClass().getPackage().getImplementationVersion();
         } else {
