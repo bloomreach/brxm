@@ -1,6 +1,6 @@
 group: 
   name: ${artifactId}
-  after: hippo-cms
+  <!-- GROUP_AFTER -->
 project: ${artifactId}
 module:
   name: ${artifactId}-repository-data-application

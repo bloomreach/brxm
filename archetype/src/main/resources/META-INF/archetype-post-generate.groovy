@@ -1,6 +1,10 @@
+import java.nio.file.Paths
+
 final String propertiesMarker = '<!-- PROPERTIES_MARKER -->'
+final String groupAfterMarker = '<!-- GROUP_AFTER -->'
 final String cmsDependenciesMarker = '<!-- PARENT_PROJECT_DEPENDENCIES -->'
 final String pomFile = 'pom.xml'
+final String hcmModuleFilename = "hcm-module.yaml"
 
 def projectLocation = request.getOutputDirectory() + "/" + request.getArtifactId()
 
@@ -15,6 +19,18 @@ def rootPomFile = new File(rootModuleDir, pomFile)
 def cmsDependenciesModuleDir = new File(rootModuleDir, "cms-dependencies")
 def cmsDependenciesPomFile = new File(cmsDependenciesModuleDir, pomFile)
 
+def repositoryDataDir = Paths.get(projectLocation).resolve("repository-data")
+
+def appModuleDescriptorFile = repositoryDataDir.resolve("application")
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+def devModuleDescriptorFile = repositoryDataDir.resolve("development")
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+def siteModuleDescriptorFile = repositoryDataDir.resolve("site")
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+def webfilesModuleDescriptorFile = repositoryDataDir.resolve("webfiles")
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+
+def afterGroup = 'after: hippo-cms'
 if (property == null) {
 //    Main project creation. No need to do anything extra here, just clear markers
     println "Creating main project"
@@ -52,17 +68,28 @@ if (property == null) {
     def cmdDepText = """<dependency>
       <groupId>$parentGroupId</groupId>
       <artifactId>$parentArtifactId-repository-data-application</artifactId>
-      <version>${parent.project.version}</version>
+      <version>\${parent.project.version}</version>
     </dependency>"""
     replacePlaceHolder(cmsDependenciesPomFile, cmsDependenciesMarker, cmdDepText)
 
-//    TODO SS: Remove repository-data/application configuration & security definitions for child project
+    afterGroup = "after: $parentArtifactId"
+
+    //remove repository-data/application configuration & security yaml definitions as they've been already defined at
+    //parent module
+    def appModuleConfigDir = repositoryDataDir.resolve("application")
+            .resolve("src").resolve("main").resolve("resources").resolve("hcm-config")
+    appModuleConfigDir.resolve("configuration").toFile().deleteDir()
+    appModuleConfigDir.resolve("security").toFile().deleteDir()
 }
 
-private static void replacePlaceHolder(File pomFile, String marker, String text) {
-    def pomContent = pomFile.getText('UTF-8').replace(marker, text)
-// rewrite pom.xml
-    pomFile.newWriter().withWriter { w ->
-        w << pomContent
+replacePlaceHolder(appModuleDescriptorFile, groupAfterMarker, afterGroup)
+replacePlaceHolder(devModuleDescriptorFile, groupAfterMarker, afterGroup)
+replacePlaceHolder(siteModuleDescriptorFile, groupAfterMarker, afterGroup)
+replacePlaceHolder(webfilesModuleDescriptorFile, groupAfterMarker, afterGroup)
+
+private static void replacePlaceHolder(File file, String marker, String text) {
+    def fileContent = file.getText('UTF-8').replace(marker, text)
+    file.newWriter().withWriter { w ->
+        w << fileContent
     }
 }
