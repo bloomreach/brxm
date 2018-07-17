@@ -115,15 +115,42 @@ class SiteMenuService {
   }
 
   _createBlankMenuItem() {
-    const incFilter = this.$filter('incrementProperty');
     const result = {
       linkType: 'NONE',
-      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
+      title: this._getNewMenuItemTitle(),
     };
     if (angular.isObject(this.menu.prototypeItem)) {
       result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
     }
     return result;
+  }
+
+  _getNewMenuItemTitle() {
+    const numberedSuffixes = [];
+    const newMenuItemTitle = this.$translate.instant('NEW_MENU_ITEM_TITLE');
+
+    function findNumberedSuffixes(collection) {
+      for (let i = 0; i < collection.length; i += 1) {
+        const title = collection[i].title;
+        const match = title.match(/\((\d+)\)/);
+        if (match) {
+          numberedSuffixes.push(match[1]);
+        } else if (title.match(newMenuItemTitle)) {
+          numberedSuffixes.push('0');
+        }
+        if (collection[i].items) {
+          findNumberedSuffixes(collection[i].items);
+        }
+      }
+    }
+    findNumberedSuffixes(this.menu.items);
+
+    if (numberedSuffixes.length === 0) {
+      return newMenuItemTitle;
+    }
+
+    const maxNum = Math.max(...numberedSuffixes);
+    return `${newMenuItemTitle} (${maxNum + 1})`;
   }
 
   _makeEditableItem(id) {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import getByPropertyFilter from './tree/getByProperty.filter';
 import pickerModule from './picker/picker';
 import scrollToIfDirective from './scrollToIf.directive';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
@@ -30,6 +31,7 @@ const siteMenuEditorModule = angular
   .component('siteMenuEditor', siteMenuEditorComponent)
   .directive('scrollToIf', scrollToIfDirective)
   .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .directive('stopPropagation', stopPropagationDirective);
+  .directive('stopPropagation', stopPropagationDirective)
+  .filter('getByProperty', getByPropertyFilter);
 
 export default siteMenuEditorModule;
