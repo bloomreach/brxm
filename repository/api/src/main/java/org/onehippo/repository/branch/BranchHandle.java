@@ -33,4 +33,6 @@ public interface BranchHandle {
     boolean isModified();
 
     boolean isMaster();
+
+    boolean isLive();
 }
