@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,11 +143,47 @@ public class LocalizationUtilsTest {
                 Optional.of(editorFieldNode)).get(), equalTo(displayName));
     }
 
+    @Test
+    public void getFieldNameAsDisplayNameForEmptyCaption() throws Exception {
+        final Node editorFieldNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
+
+        expect(resourceBundle.getString("ns:title")).andReturn(null);
+        expect(editorFieldNode.hasProperty("caption")).andReturn(true);
+        expect(editorFieldNode.getProperty("caption")).andReturn(property);
+        expect(property.getString()).andReturn(" ");
+        expect(editorFieldNode.getName()).andReturn("title");
+
+        replay(resourceBundle, editorFieldNode, property);
+
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
+                Optional.of(editorFieldNode)).get(), equalTo("Title"));
+    }
+    
+    @Test
+    public void getFieldNameAsDisplayNameForMissingCaption() throws Exception {
+        final Node editorFieldNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
+
+        expect(resourceBundle.getString("ns:title")).andReturn(null);
+        expect(editorFieldNode.hasProperty("caption")).andReturn(false);
+        expect(editorFieldNode.getName()).andReturn("title");
+        expect(property.getString()).andReturn(" ");
+
+        replay(resourceBundle, editorFieldNode, property);
+
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
+                Optional.of(editorFieldNode)).get(), equalTo("Title"));
+    }
+    
     @Test(expected = NoSuchElementException.class)
     public void getConfigBasedFieldDisplayNameWithRepositoryException() throws Exception {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("caption")).andThrow(new RepositoryException());
+        expect(editorFieldNode.getName()).andThrow(new RepositoryException());
         replay(editorFieldNode);
 
         LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), Optional.of(editorFieldNode)).get();
