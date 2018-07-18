@@ -24,22 +24,22 @@ class CreateContentService {
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    RightSidePanelService,
     Step1Service,
     Step2Service,
-    RightSidePanelService,
   ) {
     'ngInject';
 
     this.$state = $state;
     this.$translate = $translate;
+    this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.RightSidePanelService = RightSidePanelService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
-    this.RightSidePanelService = RightSidePanelService;
-    this.CmsService = CmsService;
 
     $transitions.onBefore(
       { to: '**.create-content-step-1' },
