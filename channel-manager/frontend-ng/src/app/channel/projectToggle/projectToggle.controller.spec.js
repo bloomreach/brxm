@@ -19,6 +19,7 @@ import 'angular-mocks';
 
 describe('projectToggle component', () => {
   let $ctrl;
+  let $q;
   let $rootScope;
   let ProjectService;
   let CmsService;
@@ -33,12 +34,14 @@ describe('projectToggle component', () => {
 
     inject((
       $componentController,
+      _$q_,
       _$rootScope_,
       _HippoIframeService_,
       _ProjectService_,
       _CmsService_,
     ) => {
       $ctrl = $componentController('projectToggle', {});
+      $q = _$q_;
       $rootScope = _$rootScope_;
       ProjectService = _ProjectService_;
       CmsService = _CmsService_;
@@ -80,6 +83,7 @@ describe('projectToggle component', () => {
 
     it('should update selected project on project service with the selected project id', () => {
       const projectMock2 = { id: 'test' };
+      ProjectService.updateSelectedProject.and.returnValue($q.resolve());
       $ctrl.selectedProject = projectMock2;
       $rootScope.$digest();
 
@@ -87,12 +91,13 @@ describe('projectToggle component', () => {
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
     });
 
-    it('should not update selected project when it did not change', () => {
+    it('should not publish a usage statistic event when updating the selected project failed', () => {
       ProjectService.selectedProject = projectMock;
+      ProjectService.updateSelectedProject.and.returnValue($q.reject());
       $ctrl.selectedProject = projectMock;
       $rootScope.$digest();
 
-      expect(ProjectService.updateSelectedProject).not.toHaveBeenCalled();
+      expect(ProjectService.updateSelectedProject).toHaveBeenCalled();
       expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
     });
   });

@@ -16,6 +16,7 @@
 
 class CreateContentService {
   constructor(
+    $q,
     $state,
     $transitions,
     $translate,
@@ -24,12 +25,14 @@ class CreateContentService {
     EditContentService,
     FeedbackService,
     HippoIframeService,
+    ProjectService,
     RightSidePanelService,
     Step1Service,
     Step2Service,
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
     this.CmsService = CmsService;
@@ -37,6 +40,7 @@ class CreateContentService {
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
     this.Step1Service = Step1Service;
     this.Step2Service = Step2Service;
@@ -60,6 +64,8 @@ class CreateContentService {
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopStep2(documentId);
     });
+
+    ProjectService.beforeChange(() => this._beforeSwitchProject());
   }
 
   start(config) {
@@ -77,7 +83,7 @@ class CreateContentService {
   }
 
   stop() {
-    this.$state.go('^');
+    return this.$state.go('hippo-cm.channel');
   }
 
   _validateStep1(config) {
@@ -139,11 +145,23 @@ class CreateContentService {
     return this.ContentService._send('POST', ['slugs'], name, true, { locale });
   }
 
+  _isStep2() {
+    return this.$state.$current.name === 'hippo-cm.channel.create-content-step-2';
+  }
+
   _stopStep2(documentId) {
-    if (this.$state.$current.name === 'hippo-cm.channel.create-content-step-2'
-      && this.Step2Service.killEditor(documentId)) {
+    if (this._isStep2() && this.Step2Service.killEditor(documentId)) {
       this.stop();
     }
+  }
+
+  _beforeSwitchProject() {
+    if (this._isStep2()) {
+      const projectName = this.ProjectService.selectedProject.name;
+      return this.Step2Service.closeEditor('SAVE_CHANGES_ON_PROJECT_SWITCH', { projectName })
+        .then(() => this.stop());
+    }
+    return this.$q.resolve();
   }
 }
 

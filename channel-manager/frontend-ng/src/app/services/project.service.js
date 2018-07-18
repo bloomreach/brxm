@@ -31,7 +31,8 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
 
-    this.listeners = [];
+    this.beforeChangeListeners = [];
+    this.afterChangeListeners = [];
     this.core = {
       id: 'master',
       name: $translate.instant('CORE'),
@@ -50,12 +51,20 @@ class ProjectService {
   }
 
   updateSelectedProject(projectId) {
-    return this._selectProject(projectId)
-      .then(() => this._callListeners(projectId));
+    if (projectId !== this.selectedProject.id) {
+      return this._callListeners(this.beforeChangeListeners)
+        .then(() => this._selectProject(projectId))
+        .then(() => this._callListeners(this.afterChangeListeners));
+    }
+    return this.$q.resolve();
   }
 
-  registerListener(cb) {
-    this.listeners.push(cb);
+  beforeChange(cb) {
+    this.beforeChangeListeners.push(cb);
+  }
+
+  afterChange(cb) {
+    this.afterChangeListeners.push(cb);
   }
 
   associateWithProject(documentId) {
@@ -87,8 +96,9 @@ class ProjectService {
     return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
   }
 
-  _callListeners(...args) {
-    this.listeners.forEach(listener => listener(...args));
+  _callListeners(listeners) {
+    const promises = listeners.map(listener => listener());
+    return this.$q.all(promises);
   }
 
   _setupProjects(projectId) {
@@ -97,7 +107,7 @@ class ProjectService {
         this._getProjects(),
         this._getAllProjects(),
       ])
-      .finally(() => this._selectProject(projectId));
+      .finally(() => this.updateSelectedProject(projectId));
   }
 
   _selectProject(projectId) {

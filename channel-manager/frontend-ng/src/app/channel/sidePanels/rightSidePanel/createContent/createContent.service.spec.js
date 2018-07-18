@@ -154,7 +154,7 @@ describe('CreateContentService', () => {
   it('cancels creating a new document', () => {
     spyOn($state, 'go');
     CreateContentService.stop();
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
   });
 
   describe('validate config data for transition to step1', () => {

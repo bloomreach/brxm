@@ -16,6 +16,7 @@
 
 class EditContentService {
   constructor(
+    $q,
     $state,
     $transitions,
     $translate,
@@ -28,6 +29,7 @@ class EditContentService {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
     this.ConfigService = ConfigService;
@@ -48,14 +50,28 @@ class EditContentService {
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingDocument(documentId);
     });
+
+    ProjectService.beforeChange(() => this._beforeSwitchProject());
+  }
+
+  _isEditingDocument() {
+    return this.$state.$current.name === 'hippo-cm.channel.edit-content';
   }
 
   _stopEditingDocument(documentId) {
-    if (this.$state.$current.name === 'hippo-cm.channel.edit-content'
-      && this.ContentEditor.getDocumentId() === documentId) {
+    if (this._isEditingDocument() && this.ContentEditor.getDocumentId() === documentId) {
       this.ContentEditor.kill();
       this.stopEditing();
     }
+  }
+
+  _beforeSwitchProject() {
+    if (this._isEditingDocument()) {
+      const projectName = this.ProjectService.selectedProject.name;
+      return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_PROJECT_SWITCH', { projectName })
+        .then(() => this.stopEditing());
+    }
+    return this.$q.resolve();
   }
 
   startEditing(documentId) {
@@ -83,7 +99,7 @@ class EditContentService {
   }
 
   stopEditing() {
-    this.$state.go('^');
+    this.$state.go('hippo-cm.channel');
   }
 
   _loadDocument(documentId) {
@@ -110,9 +126,7 @@ class EditContentService {
   }
 
   _onCloseChannel() {
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
-      .then(() => this.ContentEditor.discardChanges())
-      .then(() => this.ContentEditor.close());
+    return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_CLOSE_CHANNEL');
   }
 }
 
