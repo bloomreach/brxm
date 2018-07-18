@@ -37,7 +37,6 @@ import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
@@ -252,10 +251,7 @@ public class DefinitionMergeTest {
          * Load a module given a root path in the resources for this test class.
          */
         protected ModuleImpl loadModule(String modulePath) throws Exception {
-            final PathConfigurationReader.ReadResult result =
-                    readFromResource(modulePath + "/" + Constants.HCM_MODULE_YAML);
-
-            return result.getModuleContext().getModule();
+            return readFromResource(modulePath + "/" + Constants.HCM_MODULE_YAML).getModule();
         }
 
         protected void writeAndCompare(String testName, ModuleImpl module) throws Exception {

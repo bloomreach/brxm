@@ -67,7 +67,7 @@ import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
@@ -85,17 +85,17 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.io.Files;
 
-import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static java.util.stream.Collectors.toList;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
@@ -170,13 +170,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         final List<ModuleImpl> allModules = newRuntimeConfigModel.getModulesStream().collect(toList());
 
         //TODO SS: Document this
-        final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel).stream()
-                .filter(allModules::contains).peek(m -> {
-                    ModuleImpl source = allModules.get(allModules.indexOf(m));
-                    m.setExtensionName(source.getExtensionName());
-                    m.setHstRoot(source.getHstRoot());
-                })
-                .filter(m -> m.getExtensionName() != null).collect(toList());
+        final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
+                .stream().filter(ModuleImpl::isExtension).collect(toList());
 
         if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
             newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
@@ -258,21 +253,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         try {
                             // load modules that are specified via auto-export config
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
+
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
-
-                            final List<ModuleImpl> allModules = bootstrapModel.getModulesStream().collect(toList());
-
-                            //TODO SS: Document this and combine with same function at onNewSiteEvent method
-                            final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
-                                    .filter(allModules::contains)
-                                    .peek(m -> {
-                                        ModuleImpl source = allModules.get(allModules.indexOf(m));
-                                        m.setExtensionName(source.getExtensionName());
-                                        m.setHstRoot(source.getHstRoot());
-                                    })
-                                    .collect(toList());
-
-                            bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
+                            bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
                         } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
                             if (e instanceof ConfigurationRuntimeException) {
@@ -512,7 +495,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
         final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
         try {
-            new PathConfigurationReader().readModule(module, moduleContext, false);
+            new ModuleReader().readModule(module, moduleContext, false);
 
             // todo: check for missing content source
             final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
@@ -665,11 +648,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
             log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
 
-            final PathConfigurationReader.ReadResult result =
-                    new PathConfigurationReader().read(moduleDescriptorPath, true);
+            // When loading module from disk, use extension info from matching module previously-loaded from jars
+            final ModuleImpl module =
+                    new ModuleReader().readReplacement(moduleDescriptorPath, bootstrapModel).getModule();
 
             // store mvnSourcePath on each module for later use by auto-export
-            final ModuleImpl module = result.getModuleContext().getModule();
             module.setMvnPath(mvnModulePath);
             modulesFromSourceFiles.add(module);
         }

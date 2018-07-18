@@ -64,7 +64,7 @@ import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -616,14 +616,11 @@ public class EventJournalProcessor {
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader(false, true).read(moduleDescriptorPath);
-
-                final ModuleImpl loadedModule = result.getModuleContext().getModule();
+                final ModuleImpl loadedModule = new ModuleReader(false, true)
+                        .read(moduleDescriptorPath, false, module.getExtensionName(), module.getHstRoot())
+                        .getModule();
                 // store mvnPath again for later use
                 loadedModule.setMvnPath(module.getMvnPath());
-                loadedModule.setExtensionName(module.getExtensionName());
-                loadedModule.setHstRoot(module.getHstRoot());
 
                 // pass along change indicators for sources and resources, so baseline can perform incremental update
                 // TODO: use this simpler code when we have time to test it thoroughly

@@ -47,7 +47,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
@@ -102,9 +101,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.HST_DEFAULT_ROOT_PATH;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
-import static org.onehippo.cm.model.Constants.YAML_EXT;
+import static org.onehippo.cm.model.Constants.HST_HST_PATH;
 import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
@@ -1125,14 +1123,18 @@ public class DefinitionMergeService {
      * @param incomingPath the path to potentially swap for a new root node
      * @return a new path based on the HST default root node
      */
-    private JcrPath swapHstRootForDefault(JcrPath incomingPath) {
+    private JcrPath swapHstRootForDefault(final JcrPath incomingPath) {
         //TODO SS: Enhance location mapper to use nodetype matchers
 
-        if (incomingPath.getSegmentCount() > 0) {
+        if (!incomingPath.isRoot()) {
             final String rootNode = incomingPath.getSegment(0).toString();
             if (model.getHstRoots().contains("/" + rootNode)) {
-                incomingPath = JcrPaths.getPath(HST_DEFAULT_ROOT_PATH +
-                        incomingPath.subpath(1, incomingPath.getSegmentCount()).toString());
+                if (incomingPath.getSegmentCount() == 1) {
+                    return HST_HST_PATH;
+                }
+                else {
+                    return HST_HST_PATH.resolve(incomingPath.subpath(1));
+                }
             }
         }
         return incomingPath;
@@ -1144,16 +1146,16 @@ public class DefinitionMergeService {
      * @param path the JCR path for which we want to generate a new source file
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
-    protected String getFilePathByLocationMapper(JcrPath path) {
+    protected String getFilePathByLocationMapper(final JcrPath path) {
         // If we see a node that we want to treat as an HST root, swap it with the default HST root path
         // so that the location mapper rules will match with it.
         final String normalizedPath = swapHstRootForDefault(path).suppressIndices().toString();
 
-        String xmlFile = LocationMapper.fileForPath(normalizedPath, true);
-        if (xmlFile == null) {
+        String yamlFile = LocationMapper.fileForPath(normalizedPath, true);
+        if (yamlFile == null) {
             return "main.yaml";
         }
-        return cleanFilePath(StringUtils.removeEnd(xmlFile, ".xml")) + YAML_EXT;
+        return cleanFilePath(yamlFile);
     }
 
     /**

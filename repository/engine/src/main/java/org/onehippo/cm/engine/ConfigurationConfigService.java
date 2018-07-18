@@ -59,7 +59,7 @@ import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -122,7 +122,7 @@ public class ConfigurationConfigService {
         if (!webfileBundles.isEmpty()) {
 
             final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
-            final List<Module> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
+            final List<String> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
 
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
@@ -139,7 +139,7 @@ public class ConfigurationConfigService {
                 if (module.isArchive()) {
 
                     //check if webfile service already loaded this module
-                    if (watchedModules.contains(module)) {
+                    if (watchedModules.contains(module.getFullName())) {
                         //Module was already loaded by WebFileService
                         continue;
                     }
@@ -169,17 +169,17 @@ public class ConfigurationConfigService {
     /**
      * Collect all webfilebundle modules watched by WebFileWatcherService
      */
-    private static List<Module> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
+    private static List<String> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
 
-        final List<Module> webfileModules = new ArrayList<>();
+        final List<String> webfileModules = new ArrayList<>();
         if (webFilesWatcherService != null) {
             final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
             for (final Path webFilesDirectory : webFilesDirectories) {
                 final Path moduleDescriptorPath = webFilesDirectory.resolveSibling(Constants.HCM_MODULE_YAML);
                 try {
-                    final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, false);
-                    final ModuleImpl moduleImpl = result.getModuleContext().getModule();
-                    webfileModules.add(moduleImpl);
+                    // TODO: this is somewhat excessive -- we could load just the module descriptor instead of all the sources
+                    final ModuleImpl moduleImpl = new ModuleReader().read(moduleDescriptorPath, false).getModule();
+                    webfileModules.add(moduleImpl.getFullName());
                 } catch (Exception e) {
                     throw new RuntimeException(String.format("Failed to read webfile bundle module: %s", moduleDescriptorPath), e);
                 }

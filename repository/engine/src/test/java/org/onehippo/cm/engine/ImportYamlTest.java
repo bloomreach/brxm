@@ -25,7 +25,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.serializer.ModuleContext;
 
 import static org.junit.Assert.assertTrue;
@@ -39,7 +39,7 @@ public class ImportYamlTest {
         final File file = new File(this.getClass().getClassLoader().getResource("yaml-import").getFile());
         final ModuleContext moduleContext = new ImportModuleContext(module, Paths.get(file.getAbsolutePath()));
         try {
-            new PathConfigurationReader().readModule(module, moduleContext, false);
+            new ModuleReader().readModule(module, moduleContext, false);
             final Optional<SourceImpl> source = module.getSources().stream()
                     .filter(s -> s.getPath().equals("yaml-import-test.yaml")).findFirst();
             assertTrue(source.isPresent());
