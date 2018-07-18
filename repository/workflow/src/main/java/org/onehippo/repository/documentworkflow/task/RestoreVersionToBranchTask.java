@@ -55,7 +55,7 @@ public class RestoreVersionToBranchTask extends AbstractDocumentTask {
         if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
             final String branchId = targetNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
             final String branchName = targetNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();
-            workflowSession.getWorkspace().getVersionManager().restore(version, false);
+            doRestore(workflowSession, targetNode);
             JcrUtils.ensureIsCheckedOut(targetNode);
             // branch info can have been removed as a result of the version restore, or can be of a different
             // branch, hence reset the right branch info
@@ -64,7 +64,7 @@ public class RestoreVersionToBranchTask extends AbstractDocumentTask {
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
         } else {
 
-            workflowSession.getWorkspace().getVersionManager().restore(version, false);
+            doRestore(workflowSession, targetNode);
             JcrUtils.ensureIsCheckedOut(targetNode);
 
             if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
@@ -77,5 +77,12 @@ public class RestoreVersionToBranchTask extends AbstractDocumentTask {
         }
 
         return new Document(targetNode);
+    }
+
+    // note that workflowSession.getWorkspace().getVersionManager().restore(version, false); fails with
+    // java.lang.ClassCastException: org.hippoecm.repository.impl.VersionDecorator cannot be cast to
+    // org.apache.jackrabbit.core.version.VersionImpl hence we need to use it as below
+    private void doRestore(final Session workflowSession, final Node targetNode) throws RepositoryException {
+        workflowSession.getWorkspace().getVersionManager().restore(targetNode.getPath(), version.getName(), false);
     }
 }
