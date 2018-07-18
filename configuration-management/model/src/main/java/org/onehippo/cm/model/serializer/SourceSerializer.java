@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onehippo.cm.model.definition.DefinitionType;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
@@ -28,6 +29,8 @@ import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyKind;
@@ -44,6 +47,8 @@ import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.model.Constants.CND_KEY;
 import static org.onehippo.cm.model.Constants.DEFINITIONS;
+import static org.onehippo.cm.model.Constants.HST_HST_PATH;
+import static org.onehippo.cm.model.Constants.HST_HST_SEGMENT;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
@@ -150,9 +155,41 @@ public class SourceSerializer extends AbstractBaseSerializer {
             }
         }
 
+        return createStrOptionalSequenceTuple(getName(node), children);
+    }
+
+    protected String getName(DefinitionNodeImpl node) {
         // root defs get a full path, but nested defs just get one relative path segment
-        final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
-        return createStrOptionalSequenceTuple(name, children);
+        if (!node.isRoot()) {
+            return "/" + node.getName();
+        }
+        else {
+            // Adjust HST root for output
+            final JcrPath inPath = node.getJcrPath();
+            final String hstRoot = node.getDefinition().getSource().getModule().getHstRoot();
+            return getStandardizedHstPath(inPath, hstRoot).toString();
+        }
+    }
+
+    /**
+     * If a path has a root node that matches a known HST root node, swap it for the default HST root for
+     * purposes of pattern-matching.
+     * @param inPath the path to potentially swap for a new root node
+     * @return a new path based on the HST default root node
+     */
+    protected JcrPath getStandardizedHstPath(final JcrPath inPath, final String hstRoot) {
+        if (!inPath.isRoot()
+                && hstRoot != null
+                && inPath.subpath(0, 1).equals(hstRoot)) {
+            if (inPath.getSegmentCount() == 1) {
+                return HST_HST_PATH;
+            }
+            else {
+                return HST_HST_PATH.resolve(inPath.subpath(1));
+            }
+        } else {
+            return inPath;
+        }
     }
 
     protected NodeTuple representNodeDelete() {

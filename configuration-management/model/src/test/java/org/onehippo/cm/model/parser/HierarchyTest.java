@@ -16,8 +16,14 @@
 package org.onehippo.cm.model.parser;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -26,8 +32,12 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.serializer.ModuleContext;
+import org.onehippo.cm.model.serializer.SerializerTest;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
 
@@ -36,21 +46,54 @@ import com.google.common.collect.ImmutableMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class HierarchyTest extends AbstractBaseTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    @Test
+    public void test_hst_root_node_mapping() throws IOException, ParserException {
+        final Path jarPath = Paths.get("target/test-classes.jar");
+        try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
+            final Path moduleConfig = fs.getPath("/parser/hierarchy_test/" + Constants.HCM_MODULE_YAML);
+            final ModuleContext moduleContext =
+                    new ModuleReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig, false,
+                            "test", "/hst:test");
+            ModuleImpl module = moduleContext.getModule();
+
+            final ConfigSourceImpl configSource =
+                    (ConfigSourceImpl) assertSource(module, "config.yaml", 8);
+            ConfigDefinitionImpl configDef1 = (ConfigDefinitionImpl) configSource.getDefinitions().get(5);
+            ConfigDefinitionImpl configDef2 = (ConfigDefinitionImpl) configSource.getDefinitions().get(6);
+
+            final ContentSourceImpl contentSource =
+                    (ContentSourceImpl) assertSource(module, "hst-content.yaml", 1);
+            final ContentDefinitionImpl contentDef = contentSource.getContentDefinition();
+
+            // /hst:hst should be remapped to /hst:test in config and content
+            assertEquals("/hst:test", configDef1.getRootPath().toString());
+            assertEquals("/hst:test/hst:hst", configDef2.getRootPath().toString());
+            assertEquals("/hst:test/hst:hst/hst:hst", contentDef.getRootPath().toString());
+
+            // /hst:test should be remapped back to /hst:hst on write
+            SerializerTest.write(moduleContext, "/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML, folder);
+        }
+    }
+
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML);
-        ModuleImpl module = result.getModuleContext().getModule();
+        ModuleImpl module =
+                readFromTestJar("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML).getModule();
 
         GroupImpl group = module.getProject().getGroup();
         ImmutableMap<String, GroupImpl> groups = ImmutableMap.of(group.getName(), group);
 
         final GroupImpl base = assertGroup(groups, "base", new String[0], 1);
         final ProjectImpl project1 = assertProject(base, "project1", new String[0], 1);
-        final ModuleImpl module1 = assertModule(project1, "module1", new String[0], 3);
-        final SourceImpl source1 = assertSource(module1, "config.yaml", 6);
+        final ModuleImpl module1 = assertModule(project1, "module1", new String[0], 4);
+        final SourceImpl source1 = assertSource(module1, "config.yaml", 8);
         final SourceImpl contentSource1 = assertSource(module1, "content.yaml", 1);
 
         final NamespaceDefinitionImpl namespace = assertDefinition(source1, 0, NamespaceDefinitionImpl.class);

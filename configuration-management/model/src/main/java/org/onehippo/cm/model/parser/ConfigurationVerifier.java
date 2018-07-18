@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.serializer.ModuleContext;
 
 public class ConfigurationVerifier {
 
@@ -30,10 +31,10 @@ public class ConfigurationVerifier {
             return;
         }
         final Path moduleDescriptorPath = Paths.get(args[0]);
-        final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
+        final ModuleContext result = new ModuleReader().read(moduleDescriptorPath, true);
 
         new ConfigurationModelImpl()
-            .addModule(result.getModuleContext().getModule())
+            .addModule(result.getModule())
             .build();
     }
 }

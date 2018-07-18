@@ -16,6 +16,10 @@
 
 package org.onehippo.cm.model;
 
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
+
 public final class Constants {
 
     public static final boolean DEFAULT_EXPLICIT_SEQUENCING = false;
@@ -61,4 +65,8 @@ public final class Constants {
 
     // Used to compute file fingerprints
     public static final String DEFAULT_DIGEST = "MD5";
+
+    // Used for special-case handling of HST root nodes
+    public static final JcrPathSegment HST_HST_SEGMENT = JcrPaths.getSegment("hst:hst", 0);
+    public static final JcrPath HST_HST_PATH = JcrPaths.ROOT.resolve(HST_HST_SEGMENT);
 }

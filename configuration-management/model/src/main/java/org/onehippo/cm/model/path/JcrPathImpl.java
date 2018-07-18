@@ -104,12 +104,26 @@ class JcrPathImpl implements JcrPath {
     }
 
     @Override
+    public org.onehippo.cm.model.path.JcrPath subpath(final int beginIndex) {
+        if (beginIndex == 0) {
+            return this;
+        }
+
+        if (beginIndex > getSegmentCount()) {
+            throw new IllegalArgumentException("beginIndex must be less than getSegmentCount()!");
+        }
+
+        return new JcrPathImpl(segments.subList(beginIndex, getSegmentCount()), false);
+    }
+
+
+    @Override
     public org.onehippo.cm.model.path.JcrPath subpath(final int beginIndex, final int endIndex) {
         if (beginIndex == 0 && endIndex == 0) {
             return getRoot();
         }
 
-        return new JcrPathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0);
+        return new JcrPathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0 && absolute);
     }
 
     @Override

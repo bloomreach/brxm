@@ -51,10 +51,8 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+ Constants.HCM_MODULE_YAML);
-
-        final ModuleContext moduleContext = result.getModuleContext();
-        final GroupImpl group = moduleContext.getModule().getProject().getGroup();
+        final GroupImpl group = readFromTestJar("/parser/value_test/"+ Constants.HCM_MODULE_YAML)
+                .getModule().getProject().getGroup();
 
         final GroupImpl base = assertGroup(ImmutableMap.of(group.getName(), group), "base", new String[0], 1);
         final ProjectImpl project = assertProject(base, "project1", new String[0], 1);

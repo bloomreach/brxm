@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
@@ -54,6 +55,7 @@ import static java.util.Collections.emptyList;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.HST_HST_SEGMENT;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.OPERATION_KEY;
 import static org.onehippo.cm.model.Constants.PATH_KEY;
@@ -620,6 +622,23 @@ public abstract class SourceParser extends AbstractBaseParser {
             return ValueType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new ParserException("Unrecognized value type: '" + type + "'", node);
+        }
+    }
+
+    protected JcrPath adjustHstRoot(JcrPath inPath, ModuleImpl module) {
+        if (!inPath.isRoot()
+                && module.getHstRoot() != null
+                && inPath.getSegment(0).equals(HST_HST_SEGMENT)) {
+            final JcrPath hstRoot = JcrPaths.getPath(module.getHstRoot());
+            if (inPath.getSegmentCount() == 1) {
+                return hstRoot;
+            }
+            else {
+                return hstRoot.resolve(inPath.subpath(1));
+            }
+        }
+        else {
+            return inPath;
         }
     }
 

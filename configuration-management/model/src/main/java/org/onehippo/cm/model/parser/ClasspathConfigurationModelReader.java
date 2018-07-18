@@ -36,12 +36,9 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.stream.Collectors.toList;
 
 public class ClasspathConfigurationModelReader {
 
@@ -82,7 +79,7 @@ public class ClasspathConfigurationModelReader {
 
         // load modules that are packaged on the classpath
         final Pair<Set<FileSystem>, List<ModuleImpl>> coreModules =
-                readModulesFromClasspath(classLoader, verifyOnly, false);
+                readModulesFromClasspath(classLoader, verifyOnly, null, null);
 
         // TODO: filter out isExtension() modules
 
@@ -117,7 +114,7 @@ public class ClasspathConfigurationModelReader {
         stopWatch.start();
 
         final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
-                readModulesFromClasspath(classLoader, false, true);
+                readModulesFromClasspath(classLoader, false, extensionName, hstRoot);
 
         // insert extension name and hstRoot into each module
         extensionModules.getRight().forEach(module -> {
@@ -142,7 +139,7 @@ public class ClasspathConfigurationModelReader {
     public Collection<ModuleImpl> collectExtensionModules(final String extensionName, final String hstRoot, final ClassLoader classLoader)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
-                readModulesFromClasspath(classLoader, false, true);
+                readModulesFromClasspath(classLoader, false, extensionName, hstRoot);
 
         // insert extension name into each module
         extensionModules.getRight().forEach(module -> {
@@ -157,12 +154,15 @@ public class ClasspathConfigurationModelReader {
      * Read modules that are packaged on the classpath for the given ClassLoader.
      * @param classLoader the classloader to search for packaged config modules
      * @param verifyOnly TODO describe
-     * @param extensions if true, load extension modules; if false, load core modules
+     * @param extensionName if not null, load extension modules and set this name on the resulting modules;
+     *                     if null, load core modules
+     * @param hstRoot set this value on modules loaded here -- null is a valid argument
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    protected Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
-                                                                              final boolean verifyOnly,
-                                                                              final boolean extensions)
+    private Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
+                                                                             final boolean verifyOnly,
+                                                                             final String extensionName,
+                                                                             final String hstRoot)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<ModuleImpl>> modules = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 
@@ -177,7 +177,7 @@ public class ClasspathConfigurationModelReader {
 
             // Skip modules in the parent (shared in web container) classloader during extension loading.
             // These should be considered part of the core HCM model.
-            if (extensions && parentResources.contains(resource)) {
+            if (extensionName != null && parentResources.contains(resource)) {
                 continue;
             }
 
@@ -205,11 +205,10 @@ public class ClasspathConfigurationModelReader {
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
+                final ModuleImpl moduleImpl =
+                        new ModuleReader().read(moduleDescriptorPath, verifyOnly, extensionName, hstRoot)
+                                .getModule();
                 moduleImpl.setArchiveFile(archiveFile);
-
 
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                 modules.getLeft().add(fs);
@@ -221,10 +220,9 @@ public class ClasspathConfigurationModelReader {
                 // this is useful for loading a module for testing purposes without packaging it into a jar
                 // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
                 final Path moduleDescriptorPath = Paths.get(resource.toURI());
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-
-                modules.getRight().add(result.getModuleContext().getModule());
+                modules.getRight()
+                        .add(new ModuleReader().read(moduleDescriptorPath, verifyOnly, extensionName, hstRoot)
+                                .getModule());
             }
         }
         return modules;

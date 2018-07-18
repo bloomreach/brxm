@@ -68,6 +68,13 @@ public interface JcrPath extends Comparable<JcrPath>, Iterable<JcrPathSegment> {
 
     /**
      * @param beginIndex the zero-based index (inclusive) of the starting segment of the desired subpath
+     * @return a path representing a specific portion of this path, starting with beginIndex and including
+     *      all following segments
+     */
+    JcrPath subpath(final int beginIndex);
+
+    /**
+     * @param beginIndex the zero-based index (inclusive) of the starting segment of the desired subpath
      * @param endIndex the zero-based index (exclusive) of the ending segment of the desired subpath
      * @return a path representing a specific portion of this path
      */

@@ -74,7 +74,8 @@ public class ContentSourceHeadParser extends ContentSourceParser {
         final Pair<Node, List<NodeTuple>> head = composeYamlHead(inputStream, location);
         final ContentSourceImpl source = parent.addContentSource(relativePath);
         final ContentDefinitionImpl definition = source.addContentDefinition();
-        final JcrPath key = asPathScalar(head.getKey(), true, true);
+        final JcrPath rawPath = asPathScalar(head.getKey(), true, true);
+        final JcrPath key = adjustHstRoot(rawPath, parent);
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(key, definition);
         definition.setNode(definitionNode);
         populateDefinitionNode(definitionNode, head.getKey(), head.getValue());
