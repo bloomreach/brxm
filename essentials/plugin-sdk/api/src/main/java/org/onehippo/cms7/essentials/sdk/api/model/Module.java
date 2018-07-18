@@ -22,8 +22,8 @@ public enum Module {
 
     INVALID(null),
     SITE("site"),
-    SITE_COMPONENTS("components"),
-    SITE_WEBAPP("webapp"),
+    SITE_COMPONENTS("site-components"),
+    SITE_WEBAPP("site-webapp"),
     CMS("cms"),
     CMS_DEPENDENCIES("cms-dependencies"),
     REPOSITORY_DATA("repository-data"),

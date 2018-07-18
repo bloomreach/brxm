@@ -161,7 +161,7 @@ public class WebXmlServiceImplTest extends ResourceModifyingTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(Dom4JUtils.class).build()) {
             assertFalse(service.addDispatchersToFilterMapping(Module.SITE_WEBAPP, "non-existent-filter", null));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Failed to find filter-mapping for filter 'non-existent-filter' in web.xml file of module 'webapp'.")));
+                    "Failed to find filter-mapping for filter 'non-existent-filter' in web.xml file of module 'site-webapp'.")));
         }
     }
 

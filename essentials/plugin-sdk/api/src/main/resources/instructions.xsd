@@ -46,8 +46,8 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="project"/>
       <xs:enumeration value="site"/>
-      <xs:enumeration value="components"/>
-      <xs:enumeration value="webapp"/>
+      <xs:enumeration value="site-components"/>
+      <xs:enumeration value="site-webapp"/>
       <xs:enumeration value="cms"/>
       <xs:enumeration value="cms-dependencies"/>
       <xs:enumeration value="essentials"/>

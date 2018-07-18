@@ -21,6 +21,6 @@
     <execute class="org.onehippo.cms7.essentials.plugins.enterprise.EnterpriseInstruction" />
     <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-addon-edition-indicator"/>
     <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-enterprise-package-app-dependencies" type="pom"/>
-    <mavenDependency targetPom="components" groupId="com.onehippo.cms7" artifactId="hippo-addon-enterprise-site-toolkit-dependencies-server" type="pom"/>
+    <mavenDependency targetPom="site-components" groupId="com.onehippo.cms7" artifactId="hippo-addon-enterprise-site-toolkit-dependencies-server" type="pom"/>
   </instructionSet>
 </instructions>

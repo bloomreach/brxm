@@ -20,7 +20,7 @@
   
   <instructionSet>
     <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-sitemap-content" targetPom="cms-dependencies"/>
-    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-sitemap-component" targetPom="components"/>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-sitemap-component" targetPom="site-components"/>
   </instructionSet>
 
 </instructions>

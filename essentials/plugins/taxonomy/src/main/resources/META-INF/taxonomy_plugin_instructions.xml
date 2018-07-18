@@ -23,9 +23,9 @@
     <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-api"/>
     <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-addon-frontend"/>
     <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-addon-repository"/>
-    <mavenDependency targetPom="components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-api"/>
-    <mavenDependency targetPom="components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-hst-api"/>
-    <mavenDependency targetPom="components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-hstclient"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-api"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-hst-api"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-taxonomy-hstclient"/>
   </instructionSet>
 
 </instructions>

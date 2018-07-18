@@ -44,7 +44,7 @@
       "groupId": "org.onehippo.cms7",
       "artifactId": "hippo-plugin-poll-hst-client",
       "scope": "compile",
-      "targetPom": "components"
+      "targetPom": "site-components"
     }
   ]
 }

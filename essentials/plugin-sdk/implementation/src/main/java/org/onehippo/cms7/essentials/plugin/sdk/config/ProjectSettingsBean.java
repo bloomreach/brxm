@@ -84,8 +84,7 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     @Override
     public String getSiteComponentsSubModule() {
-        return Strings.isNullOrEmpty(siteComponentsSubModule) ?
-                Module.SITE_COMPONENTS.getName() : siteComponentsSubModule;
+        return siteComponentsSubModule;
     }
 
     public void setSiteComponentsSubModule(final String siteComponentsSubModule) {
@@ -94,8 +93,7 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     @Override
     public String getSiteWebappSubModule() {
-        return Strings.isNullOrEmpty(siteWebappSubModule) ?
-                Module.SITE_WEBAPP.getName() : siteWebappSubModule;
+        return siteWebappSubModule;
     }
 
     public void setSiteWebappSubModule(final String siteWebappSubModule) {

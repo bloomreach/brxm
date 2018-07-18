@@ -20,7 +20,7 @@
 
   <instructionSet>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-dependencies-cms" targetPom="cms-dependencies" type="pom"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-dependencies-site" targetPom="components" type="pom"/>
+    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-dependencies-site" targetPom="site-components" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-enterprise-services" targetPom="project" scope="provided"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-wpm-camunda" targetPom="project" type="war" scope="provided"/>
   
