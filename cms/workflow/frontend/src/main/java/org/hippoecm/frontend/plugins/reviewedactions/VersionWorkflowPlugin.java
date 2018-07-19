@@ -28,9 +28,11 @@ import javax.jcr.version.Version;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.addon.workflow.FeedbackStdWorkflow;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -67,53 +69,40 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
         final String revisionBranchName = getRevisionBranchName();
 
-        // TODO should be multi line info message instead of one line
-        add(new StdWorkflow("info", "info") {
-
-            @Override
-            public String getSubMenu() {
-                return "info";
-            }
-
-            @Override
-            protected IModel getTitle() {
-                return new StringResourceModel("created-for-project-restore-to-document", this, null,
-                        new LoadableDetachableModel<String>(revisionBranchName) {
-                            @Override
-                            protected String load() {
-                                return revisionBranchName;
-                            }
-                        },
-                        new LoadableDetachableModel<String>() {
-                            @Override
-                            protected String load() {
-                                try {
-                                    Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
-                                    Node versionNode = frozenNode.getParent();
-                                    Calendar calendar = versionNode.getProperty("jcr:created").getDate();
-                                    return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
-                                } catch (ValueFormatException e) {
-                                    log.error("Value is not a date", e);
-                                } catch (PathNotFoundException e) {
-                                    log.error("Could not find node", e);
-                                } catch (RepositoryException e) {
-                                    log.error("Repository error", e);
-                                }
-                                return null;
-                            }
-                        }, new LoadableDetachableModel<String>(restoreToBranchName) {
-                            @Override
-                            protected String load() {
-                                return restoreToBranchName;
-                            }
+        add(new FeedbackStdWorkflow("created-for", new StringResourceModel("created-for-project", this, null,
+                new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return revisionBranchName;
+                    }
+                },
+                new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        try {
+                            Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
+                            Node versionNode = frozenNode.getParent();
+                            Calendar calendar = versionNode.getProperty("jcr:created").getDate();
+                            return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+                        } catch (ValueFormatException e) {
+                            log.error("Value is not a date", e);
+                        } catch (PathNotFoundException e) {
+                            log.error("Could not find node", e);
+                        } catch (RepositoryException e) {
+                            log.error("Repository error", e);
                         }
-                );
-            }
+                        return null;
+                    }
+                }), new Model<>(Boolean.TRUE)
+        ));
 
-            @Override
-            protected void invoke() {
-            }
-        });
+        add(new FeedbackStdWorkflow("restoreto", new StringResourceModel("restore-to", this, null,
+                new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return restoreToBranchName;
+                    }
+                }), new Model<>(Boolean.TRUE)));
 
         add(new StdWorkflow("restore", new StringResourceModel("restore", this, null), getModel()) {
 
