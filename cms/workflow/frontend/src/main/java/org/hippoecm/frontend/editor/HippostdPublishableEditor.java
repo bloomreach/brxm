@@ -52,10 +52,10 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -87,6 +87,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
+
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
         super(manager, context, config, model, getMode(model));
@@ -147,10 +148,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         if (wfState.published != null) {
             wfState.published.detach();
         }
-        if (wfState.unpublished!=null){
+        if (wfState.unpublished != null) {
             wfState.unpublished.detach();
         }
-        if (wfState.draft !=null){
+        if (wfState.draft != null) {
             wfState.draft.detach();
         }
         return Mode.VIEW;
@@ -226,10 +227,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 if (state.draft == null || !state.isHolder) {
                     throw new EditorException("No draft present for editing");
                 }
-                if (state.published!=null){
+                if (state.published != null) {
                     state.published.detach();
                 }
-                if (state.unpublished!=null){
+                if (state.unpublished != null) {
                     state.unpublished.detach();
                 }
                 return state.draft;
@@ -244,7 +245,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                     return state.unpublished;
                 }
                 if (state.published != null) {
-                    if (state.unpublished!=null){
+                    if (state.unpublished != null) {
                         state.unpublished.detach();
                     }
                     if (state.draft != null) {
@@ -690,22 +691,29 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     // CMS-10723 Made WorkflowState package-private to be able to unit test
     static class WorkflowState {
-        private final Optional<DocumentWorkflow> optionalDocumentWorkflow;
-        private final String branchId;
         private IModel<Node> draft;
         private IModel<Node> unpublished;
         private IModel<Node> published;
         private boolean isHolder;
         private String user;
+        private Optional<BranchHandle> branchHandle = Optional.empty();
 
         public WorkflowState() {
-            this.optionalDocumentWorkflow = Optional.empty();
-            this.branchId = null;
         }
 
         public WorkflowState(final Optional<DocumentWorkflow> optionalDocumentWorkflow, final String branchId) {
-            this.optionalDocumentWorkflow = optionalDocumentWorkflow;
-            this.branchId = branchId;
+            branchHandle = optionalDocumentWorkflow.map(wf -> getBranchHandle(branchId, wf));
+        }
+
+        private BranchHandle getBranchHandle(final String branchId, final DocumentWorkflow wf) {
+            try {
+                if (branchId != null) {
+                    return new BranchHandleImpl(branchId, wf.getNode());
+                }
+            } catch (WorkflowException e) {
+                log.warn(e.getMessage(), e);
+            }
+            return null;
         }
 
         void process(final Node child) throws RepositoryException {
@@ -716,19 +724,19 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         if (unpublished != null) {
                             this.unpublished.detach();
                         }
-                        this.unpublished = getVariantNodeModel(child, WorkflowUtils.Variant.UNPUBLISHED);
+                        this.unpublished = new JcrNodeModel(branchHandle.map(b -> b.getUnpublished()).orElse(child));
                         break;
                     case HippoStdNodeType.PUBLISHED:
                         if (published != null) {
                             this.published.detach();
                         }
-                        this.published = getVariantNodeModel(child, WorkflowUtils.Variant.PUBLISHED);
+                        this.published = new JcrNodeModel(branchHandle.map(b -> b.getPublished()).orElse(child));
                         break;
                     case HippoStdNodeType.DRAFT:
                         if (this.draft != null) {
                             this.draft.detach();
                         }
-                        draft = new JcrNodeModel(child);
+                        draft = new JcrNodeModel(branchHandle.map(b -> b.getDraft()).orElse(child));
                         if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
                                 && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                             isHolder = true;
@@ -736,32 +744,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         break;
                 }
             }
-        }
-
-        private JcrNodeModel getVariantNodeModel(final Node child, final WorkflowUtils.Variant variant) {
-            JcrNodeModel result = new JcrNodeModel(child);
-            if (optionalDocumentWorkflow.isPresent() && branchId != null) {
-                try {
-                    Optional<Document> variantWithBranchId = Optional.ofNullable(optionalDocumentWorkflow.get().getBranch(branchId, variant));
-                    if (variantWithBranchId.isPresent()) {
-                        result = new JcrNodeModel(variantWithBranchId.get().getNode(UserSession.get().getJcrSession()));
-                    } else if (variant.equals(WorkflowUtils.Variant.PUBLISHED)) {
-                        log.info("Find 'master' version for published variant if there is no published version for branch:{} for node:{} to determine correct diff", branchId, child.getPath());
-                        Optional<Document> publishedMasterVersion = Optional.ofNullable(optionalDocumentWorkflow.get().getBranch(DocumentVariant.MASTER_BRANCH_ID, WorkflowUtils.Variant.PUBLISHED));
-                        if (publishedMasterVersion.isPresent()) {
-                            result = new JcrNodeModel(publishedMasterVersion.get().getNode(UserSession.get().getJcrSession()));
-                        } else {
-                            log.warn("Could not find published 'master' variant in version history for node:{}, using published variant under handle", child);
-                        }
-                    }
-                } catch (WorkflowException e) {
-                    log.debug("No {} variant found", variant.getState());
-                } catch (RepositoryException e) {
-                    log.warn(e.getMessage(), e);
-                }
-            }
-            return result;
-
         }
 
         void setUser(final String user) {
