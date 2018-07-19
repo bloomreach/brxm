@@ -28,6 +28,7 @@ describe('RightSidePanel', () => {
   let $ctrl;
   let $scope;
   let $element;
+  let sideNavElement;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -43,10 +44,13 @@ describe('RightSidePanel', () => {
     });
 
     CmsService = jasmine.createSpyObj('CmsService', ['reportUsageStatistic']);
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open', 'setFullScreen']);
+
+    $element = angular.element('<div></div>');
+    sideNavElement = angular.element('<div class="right-side-panel"></div>');
+    $element.append(sideNavElement);
 
     $scope = $rootScope.$new();
-    $element = angular.element('<div></div>');
     $ctrl = $componentController('rightSidePanel', {
       $element,
       $scope,
@@ -54,6 +58,13 @@ describe('RightSidePanel', () => {
       SidePanelService,
     });
     $rootScope.$digest();
+  });
+
+  it('initializes the right side panel with the side panel service upon $postLink', () => {
+    $ctrl.$onInit();
+    $ctrl.$postLink();
+
+    expect(SidePanelService.initialize).toHaveBeenCalledWith('right', $element, sideNavElement);
   });
 
   it('knows the loading state', () => {
@@ -73,17 +84,23 @@ describe('RightSidePanel', () => {
     expect($ctrl.getTitle()).toEqual('');
   });
 
-  it('sets full width mode on and off', () => {
-    $ctrl.setFullWidth(true);
-    expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
-    expect($ctrl.isFullWidth).toBe(true);
+  it('sets full screen mode on and off', () => {
+    spyOn(ChannelService, 'setToolbarDisplayed');
+
+    $ctrl.setFullScreen(true);
+
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', true);
+    expect($ctrl.isFullScreen).toBe(true);
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
 
     CmsService.reportUsageStatistic.calls.reset();
 
-    $ctrl.setFullWidth(false);
-    expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
-    expect($ctrl.isFullWidth).toBe(false);
+    $ctrl.setFullScreen(false);
+
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
+    expect($ctrl.isFullScreen).toBe(false);
     expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
@@ -128,6 +145,14 @@ describe('RightSidePanel', () => {
     expect($ctrl.lastSavedWidth).toBe('440px');
   });
 
+  it('sets the last saved width on the sideNavElement', () => {
+    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
+
+    $ctrl.$onInit();
+
+    expect(sideNavElement.css('width')).toBe('800px');
+  });
+
   it('knows when it is locked open', () => {
     SidePanelService.isOpen.and.returnValue(true);
     expect($ctrl.isLockedOpen()).toBe(true);
@@ -139,16 +164,12 @@ describe('RightSidePanel', () => {
   });
 
   it('opens the panel when transitioning to state "hippo-cm.channel.*"', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
     $ctrl.$onInit();
-    SidePanelService.open.and.returnValue($q.resolve());
 
     $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
-    expect($element.hasClass('sidepanel-open')).toBe(true);
-    expect($element.css('width')).toBe('800px');
-    expect($element.css('max-width')).toBe('800px');
+    expect(SidePanelService.open).toHaveBeenCalledWith('right');
   });
 
   it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
@@ -166,8 +187,7 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
 
     expect($element.hasClass('sidepanel-open')).toBe(false);
-    expect($element.css('max-width')).toBe('0px');
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
-    expect($element.hasClass('fullwidth')).toBe(false);
+    expect($element.hasClass('full-screen')).toBe(false);
   });
 });

@@ -61,6 +61,7 @@ describe('ChannelController', () => {
 
       SidePanelService = jasmine.createSpyObj('SidePanelService', [
         'open',
+        'isFullScreen',
       ]);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
@@ -203,6 +204,14 @@ describe('ChannelController', () => {
     expect($ctrl.isToolbarDisplayed()).toBe(true);
     ChannelService.setToolbarDisplayed(false);
     expect($ctrl.isToolbarDisplayed()).toBe(false);
+  });
+
+  it('delegates the side-panel full-screen check to the SidePanelService', () => {
+    $ctrl.isSidePanelFullScreen('right');
+    expect(SidePanelService.isFullScreen).toHaveBeenCalledWith('right');
+
+    $ctrl.isSidePanelFullScreen('left');
+    expect(SidePanelService.isFullScreen).toHaveBeenCalledWith('left');
   });
 
   it('should delegate isContentOverlayEnabled to ProjectService', () => {

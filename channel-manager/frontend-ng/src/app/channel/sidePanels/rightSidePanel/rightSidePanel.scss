@@ -14,27 +14,24 @@
 @import 'variables';
 
 right-side-panel {
-  max-width: 0;
-  transition: max-width $swift-ease-out;
-
-  &.sidepanel-open {
-    max-width: 50% !important;
-    transition: max-width $swift-ease-in;
-
+  &.side-panel-open {
     md-sidenav {
       border-left: 1px solid $grey-200;
       margin-left: auto;
-      width: 100%;
     }
 
-    &.fullwidth {
-      max-width: 100% !important;
-      width: 100% !important;
+    &.side-panel-full-screen md-sidenav {
+      border-left: 0;
+    }
+
+    &.side-panel-full-screen-add-active md-sidenav,
+    &.side-panel-full-screen-remove-active md-sidenav {
+      border-left: 1px solid $grey-200;
     }
   }
 
-  .btn-fullwidth,
-  .btn-normalwidth {
+  .btn-full-screen,
+  .btn-normal-screen {
     margin: 0 !important;
   }
 
@@ -59,8 +56,6 @@ right-side-panel {
 }
 
 .right-side-panel {
-  max-width: 100%;
-
   mat-toolbar,
   md-toolbar {
     background: $grey-50;

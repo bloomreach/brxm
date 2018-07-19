@@ -14,11 +14,17 @@
 @import 'variables';
 
 left-side-panel {
-  border-right: 1px solid $grey-200;
+  &.side-panel-open {
+    border-right: 1px solid $grey-200;
 
-  md-sidenav {
-    max-width: 100%;
-    width: 100%;
+    &.ng-hide {
+      border-right: 0 !important;
+    }
+
+    &.ng-hide-add-active,
+    &.ng-hide-remove-active {
+      border-right: 1px solid $grey-200;
+    }
   }
 
   md-list {

@@ -39,9 +39,7 @@ class RightSidePanelCtrl {
     this.localStorageService = localStorageService;
     this.RightSidePanelService = RightSidePanelService;
 
-    this.isFullWidth = false;
-
-    SidePanelService.initialize('right', $element.find('.right-side-panel'));
+    this.isFullScreen = false;
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
@@ -55,9 +53,15 @@ class RightSidePanelCtrl {
 
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '440px';
+    this.sideNavElement = this.$element.find('.right-side-panel');
+    this.sideNavElement.css('width', this.lastSavedWidth);
 
     this.$transitions.onBefore({ to: 'hippo-cm.channel.*' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel' }, () => this._closePanel());
+  }
+
+  $postLink() {
+    this.SidePanelService.initialize('right', this.$element, this.sideNavElement);
   }
 
   onResize(newWidth) {
@@ -78,34 +82,22 @@ class RightSidePanelCtrl {
   }
 
   _openPanel() {
-    this.SidePanelService.open('right')
-      .then(() => {
-        this.$element.addClass('sidepanel-open');
-        this.$element.css('width', this.lastSavedWidth);
-        this.$element.css('max-width', this.lastSavedWidth);
-      });
+    this.SidePanelService.open('right');
   }
 
   _closePanel() {
-    this.$element.removeClass('sidepanel-open');
-    this.$element.css('max-width', '0px');
-
-    this.SidePanelService.close('right')
-      .finally(() => {
-        this.setFullWidth(false);
-      });
+    this.setFullScreen(false);
+    this.SidePanelService.close('right');
   }
 
-  setFullWidth(state) {
-    if (state === true) {
-      this.$element.addClass('fullwidth');
-      this.ChannelService.setToolbarDisplayed(false);
+  setFullScreen(fullScreen) {
+    if (fullScreen) {
       this.CmsService.reportUsageStatistic('CMSChannelsFullScreen');
-    } else {
-      this.$element.removeClass('fullwidth');
-      this.ChannelService.setToolbarDisplayed(true);
     }
-    this.isFullWidth = state;
+
+    this.ChannelService.setToolbarDisplayed(!fullScreen);
+    this.SidePanelService.setFullScreen('right', fullScreen);
+    this.isFullScreen = fullScreen;
   }
 }
 

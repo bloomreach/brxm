@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
+import './sidePanel.scss';
+
 class SidePanelService {
   constructor($mdSidenav, $q) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
-    this.panels = { };
+    this.panels = {};
   }
 
-  initialize(side, jQueryElement) {
-    const panel = {
-      jQueryElement,
-      sideNavComponentId: jQueryElement.attr('md-component-id'),
-    };
+  initialize(side, sidePanelElement, sideNavElement) {
+    const sideNavComponentId = sideNavElement.attr('md-component-id');
+    const sideNav = this.$mdSidenav(sideNavComponentId);
+    const sideNavClass = sideNav.isOpen()
+      ? 'side-panel-open'
+      : 'side-panel-closed';
 
-    this.panels[side] = panel;
+    sidePanelElement.addClass(sideNavClass);
+
+    this.panels[side] = {
+      sideNav,
+      sidePanelElement,
+      fullScreen: false,
+    };
   }
 
   toggle(side) {
@@ -42,23 +51,29 @@ class SidePanelService {
 
   open(side) {
     const panel = this.panels[side];
-    if (panel) {
-      if (!this.isOpen(side)) {
-        return this.$mdSidenav(panel.sideNavComponentId).open();
-      }
+    if (panel && !panel.sideNav.isOpen()) {
+      panel.sidePanelElement
+        .removeClass('side-panel-closed')
+        .addClass('side-panel-open');
+      return panel.sideNav.open();
     }
     return this.$q.resolve();
   }
 
   isOpen(side) {
     const panel = this.panels[side];
-    return panel && this.$mdSidenav(panel.sideNavComponentId).isOpen();
+    return panel && panel.sideNav.isOpen();
   }
 
   close(side) {
-    if (this.isOpen(side)) {
-      const panel = this.panels[side];
-      return this.$mdSidenav(panel.sideNavComponentId).close();
+    const panel = this.panels[side];
+    if (panel && panel.sideNav.isOpen()) {
+      return panel.sideNav.close()
+        .then(() => {
+          panel.sidePanelElement
+            .removeClass('side-panel-open')
+            .addClass('side-panel-closed');
+        });
     }
     return this.$q.resolve();
   }
@@ -69,6 +84,18 @@ class SidePanelService {
 
   lowerSidePanelBeneathMask() {
     this.isSidePanelLifted = false;
+  }
+
+  isFullScreen(side) {
+    const panel = this.panels[side];
+    return panel && panel.fullScreen;
+  }
+
+  setFullScreen(side, fullScreen) {
+    const panel = this.panels[side];
+    if (panel) {
+      panel.fullScreen = fullScreen;
+    }
   }
 }
 
