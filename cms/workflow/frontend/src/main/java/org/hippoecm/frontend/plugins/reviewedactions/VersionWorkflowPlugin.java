@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.time.format.FormatStyle;
 import java.util.Calendar;
+import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -33,6 +34,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,7 +45,9 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -58,6 +62,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
     public VersionWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        final String restoreToBranchId = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchId());
+        final String restoreToBranchName = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchName());
+
+        final String revisionBranchName = getRevisionBranchName();
+
+        // TODO should be multi line info message instead of one line
         add(new StdWorkflow("info", "info") {
 
             @Override
@@ -67,25 +77,37 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("created", this, null, new LoadableDetachableModel<String>() {
-
-                    protected String load() {
-                        try {
-                            Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
-                            Node versionNode = frozenNode.getParent();
-                            Calendar calendar = versionNode.getProperty("jcr:created").getDate();
-                            return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
-                        } catch (ValueFormatException e) {
-                            log.error("Value is not a date", e);
-                        } catch (PathNotFoundException e) {
-                            log.error("Could not find node", e);
-                        } catch (RepositoryException e) {
-                            log.error("Repository error", e);
+                return new StringResourceModel("created-for-project-restore-to-document", this, null,
+                        new LoadableDetachableModel<String>(revisionBranchName) {
+                            @Override
+                            protected String load() {
+                                return revisionBranchName;
+                            }
+                        },
+                        new LoadableDetachableModel<String>() {
+                            @Override
+                            protected String load() {
+                                try {
+                                    Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
+                                    Node versionNode = frozenNode.getParent();
+                                    Calendar calendar = versionNode.getProperty("jcr:created").getDate();
+                                    return DateTimePrinter.of(calendar).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+                                } catch (ValueFormatException e) {
+                                    log.error("Value is not a date", e);
+                                } catch (PathNotFoundException e) {
+                                    log.error("Could not find node", e);
+                                } catch (RepositoryException e) {
+                                    log.error("Repository error", e);
+                                }
+                                return null;
+                            }
+                        }, new LoadableDetachableModel<String>(restoreToBranchName) {
+                            @Override
+                            protected String load() {
+                                return restoreToBranchName;
+                            }
                         }
-                        return null;
-                    }
-
-                });
+                );
             }
 
             @Override
@@ -145,6 +167,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                     doc = documentWorkflow.commitEditableInstance();
                 }
 
+                documentWorkflow.restoreVersionToBranch(versionNode, restoreToBranchId);
+
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
                 IEditorManager editorMgr = getEditorManager();
                 IEditor editor = editorMgr.getEditor(previewModel);
@@ -190,6 +214,35 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 return null;
             }
         });
+    }
+
+    private String getRevisionBranchName() {
+        try {
+            return JcrUtils.getStringProperty(getModel().getNode(), HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "Core");
+        } catch (RepositoryException e) {
+            log.error("Exception while trying to get property", e);
+            return "Core";
+        }
+    }
+
+
+    private String getBranchInfo(final IPluginContext context, final Function<BranchIdModel, String> function) {
+
+        try {
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow();
+            final BranchIdModel branchIdModel = new BranchIdModel(context, documentWorkflow.getNode().getIdentifier());
+            if (branchIdModel == null) {
+                throw new IllegalStateException("Expected a branchIdModel");
+            }
+            return function.apply(branchIdModel);
+        } catch (RepositoryException e) {
+            log.error("Could not get branch id or name", e);
+            throw new RuntimeException("Repository Exception happened", e);
+        }
+    }
+
+    private DocumentWorkflow getDocumentWorkflow() {
+        return getModel().getWorkflow();
     }
 
     @Override

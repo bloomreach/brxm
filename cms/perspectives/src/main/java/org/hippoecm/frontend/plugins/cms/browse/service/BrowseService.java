@@ -19,7 +19,6 @@ import java.util.Iterator;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -45,6 +44,9 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 
 /**
  * An implementation of IBrowseService that also exposes the document model service.
@@ -148,14 +150,10 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             log.warn(e.getMessage(), e);
         }
         BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
-        final Property propertyIfExists;
         try {
-            String initialBranchId = "master";
-            propertyIfExists = JcrUtils.getPropertyIfExists(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID);
-            if (propertyIfExists != null) {
-                initialBranchId = propertyIfExists.getString();
-            }
-            branchIdModel.setInitialBranchId(initialBranchId);
+            String initialBranchId = JcrUtils.getStringProperty(node, HIPPO_PROPERTY_BRANCH_ID, "master");
+            String initialBranchName = JcrUtils.getStringProperty(node, HIPPO_PROPERTY_BRANCH_NAME, "Core");
+            branchIdModel.setInitialBranchInfo(initialBranchId, initialBranchName);
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }

@@ -52,6 +52,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -746,7 +747,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         result = new JcrNodeModel(variantWithBranchId.get().getNode(UserSession.get().getJcrSession()));
                     } else if (variant.equals(WorkflowUtils.Variant.PUBLISHED)) {
                         log.info("Find 'master' version for published variant if there is no published version for branch:{} for node:{} to determine correct diff", branchId, child.getPath());
-                        Optional<Document> publishedMasterVersion = Optional.ofNullable(optionalDocumentWorkflow.get().getBranch("master", WorkflowUtils.Variant.PUBLISHED));
+                        Optional<Document> publishedMasterVersion = Optional.ofNullable(optionalDocumentWorkflow.get().getBranch(DocumentVariant.MASTER_BRANCH_ID, WorkflowUtils.Variant.PUBLISHED));
                         if (publishedMasterVersion.isPresent()) {
                             result = new JcrNodeModel(publishedMasterVersion.get().getNode(UserSession.get().getJcrSession()));
                         } else {
