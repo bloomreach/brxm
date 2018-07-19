@@ -217,6 +217,17 @@ describe('ChannelService', () => {
     expect(ChannelService.getChannel()).toEqual({});
   });
 
+  it('should restore the session of the old channel when initialization of the new channel fails', () => {
+    loadChannel('testChannelId', 'testContextPath');
+
+    SessionService.initialize.calls.reset();
+    HstService.getChannel.and.returnValue($q.reject());
+
+    loadChannel('anotherChannel', 'anotherContextPath');
+
+    expect(SessionService.initialize).toHaveBeenCalledWith(channelMock);
+  });
+
   it('should not fetch pagemodel when session does not have write permission', () => {
     SessionService.hasWriteAccess.and.returnValue(false);
     loadChannel();

@@ -68,8 +68,12 @@ class ChannelService {
             .then(() => this._setChannel(previewChannel)),
           ),
         )
-        .catch((error) => {
-          this.$log.error(`Failed to load channel '${channelId}'.`, error);
+        .catch(() => {
+          if (this.hasChannel()) {
+            // restore the session for the previous channel, but still reject the promise chain
+            this.SessionService.initialize(this.channel)
+              .then(() => this.$q.reject());
+          }
           return this.$q.reject();
         }),
       );
