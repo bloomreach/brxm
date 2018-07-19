@@ -18,7 +18,6 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
