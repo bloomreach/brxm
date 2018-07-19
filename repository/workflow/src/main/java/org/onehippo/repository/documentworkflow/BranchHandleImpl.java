@@ -32,6 +32,7 @@ import org.onehippo.repository.branch.BranchHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.DRAFT;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -43,14 +44,13 @@ public class BranchHandleImpl implements BranchHandle {
     private final String branchId;
     private final DocumentHandle documentHandle;
 
-    private BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) throws WorkflowException {
+    private BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) {
         this.branchId = branchId;
         this.documentHandle = documentHandle;
-        this.documentHandle.initialize();
     }
 
     public BranchHandleImpl(final String branchId, final Node handle) throws WorkflowException {
-        this(branchId, new DocumentHandle(handle));
+        this(branchId, newDocumentHandle(handle));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BranchHandleImpl implements BranchHandle {
     public Node getPublished() {
         return getVariant(PUBLISHED)
                 .map(DocumentVariant::getNode)
-                .orElse(null);
+                .orElseGet(this::getPublishedMaster);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BranchHandleImpl implements BranchHandle {
 
     @Override
     public Node getDraft() {
-        return getVariant(DRAFT)
+        return Optional.of(getDocumentVariant(DRAFT))
                 .map(DocumentVariant::getNode)
                 .orElse(null);
     }
@@ -160,5 +160,18 @@ public class BranchHandleImpl implements BranchHandle {
 
     private DocumentVariant getDocumentVariant(WorkflowUtils.Variant variant) {
         return documentHandle.getDocuments().get(variant.getState());
+    }
+
+    private Node getPublishedMaster() {
+        return new BranchHandleImpl(MASTER_BRANCH_ID, documentHandle)
+                .getVariant(PUBLISHED)
+                .map(DocumentVariant::getNode)
+                .orElse(null);
+    }
+
+    private static DocumentHandle newDocumentHandle(Node handleNode) throws WorkflowException {
+        final DocumentHandle documentHandle = new DocumentHandle(handleNode);
+        documentHandle.initialize();
+        return documentHandle;
     }
 }

@@ -34,7 +34,7 @@ public interface BranchHandle {
 
     /**
      * Returns the published variant for the branch returned by {@link #getBranchId()}
-     * or null if there is none.
+     * or the published variant of master if there is one or else {@code null}.
      *
      * @return published variant
      */

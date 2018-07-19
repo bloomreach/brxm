@@ -32,6 +32,7 @@ import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertThat;
@@ -53,6 +54,7 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
             final Node published = branchHandle.getPublished();
             assertThat(getParentNodeType(published), is(NT_HANDLE));
             assertThat(branchHandle.isLive(), is(true));
+            assertThat(published.hasProperty(HIPPO_PROPERTY_BRANCH_ID), is(false));
         }
 
         final String branchId = "xyz";
@@ -61,6 +63,14 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
         {
             final Node published = new BranchHandleImpl(branchId, handle).getPublished();
             assertThat(getParentNodeType(published), is(NT_VERSION));
+            assertThat(published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString(), is(branchId));
+        }
+
+        {
+            final BranchHandleImpl branchHandle = new BranchHandleImpl("pqr", handle);
+            final Node published = branchHandle.getPublished();
+            assertThat(getParentNodeType(published), is(NT_HANDLE));
+            assertThat(published.hasProperty(HIPPO_PROPERTY_BRANCH_ID), is(false));
         }
     }
 
