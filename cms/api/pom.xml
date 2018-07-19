@@ -98,6 +98,11 @@
     </dependency>
     <dependency>
       <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket15-tree</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
       <artifactId>wicketstuff-input-events</artifactId>
       <version>${wicket.version}</version>
     </dependency>
