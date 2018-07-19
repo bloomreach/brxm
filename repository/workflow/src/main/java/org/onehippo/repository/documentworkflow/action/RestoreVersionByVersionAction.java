@@ -16,16 +16,11 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Calendar;
-
-import javax.jcr.version.Version;
-
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.task.RestoreVersionToBranchTask;
+import org.onehippo.repository.documentworkflow.task.RestoreVersionByVersionTask;
 
-public class RestoreVersionToBranchAction extends AbstractDocumentTaskAction<RestoreVersionToBranchTask> {
+public class RestoreVersionByVersionAction extends AbstractDocumentTaskAction<RestoreVersionByVersionTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,12 +44,12 @@ public class RestoreVersionToBranchAction extends AbstractDocumentTaskAction<Res
 
 
     @Override
-    protected RestoreVersionToBranchTask createWorkflowTask() {
-        return new RestoreVersionToBranchTask();
+    protected RestoreVersionByVersionTask createWorkflowTask() {
+        return new RestoreVersionByVersionTask();
     }
 
     @Override
-    protected void initTask(RestoreVersionToBranchTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(RestoreVersionByVersionTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setVersion(eval(getVersion()));
         task.setTarget(eval(getTarget()));

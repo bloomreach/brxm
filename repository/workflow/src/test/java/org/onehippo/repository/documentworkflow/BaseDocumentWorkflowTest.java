@@ -37,7 +37,7 @@ import org.onehippo.repository.documentworkflow.action.LabelAction;
 import org.onehippo.repository.documentworkflow.action.ListBranchesAction;
 import org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction;
 import org.onehippo.repository.documentworkflow.action.RemoveBranchAction;
-import org.onehippo.repository.documentworkflow.action.RestoreVersionToBranchAction;
+import org.onehippo.repository.documentworkflow.action.RestoreVersionByVersionAction;
 import org.onehippo.repository.documentworkflow.action.SetPreReintegrationLabelsAction;
 import org.onehippo.repository.scxml.BranchFeedbackAction;
 import org.onehippo.repository.scxml.LogEventAction;
@@ -96,7 +96,7 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersionToBranch", RestoreVersionToBranchAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersionToBranch", RestoreVersionByVersionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());

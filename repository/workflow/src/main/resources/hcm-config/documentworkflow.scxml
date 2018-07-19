@@ -500,7 +500,7 @@
             <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
           </if>
           <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
-          <hippo:restoreVersionToBranch version="_event.data?.version" target="unpublished" />
+          <hippo:restoreVersionByVersion version="_event.data?.version" target="unpublished" />
         </transition>
       </state>
 

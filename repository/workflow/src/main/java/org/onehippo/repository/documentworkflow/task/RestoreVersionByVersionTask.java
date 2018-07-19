@@ -32,7 +32,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 
-public class RestoreVersionToBranchTask extends AbstractDocumentTask {
+public class RestoreVersionByVersionTask extends AbstractDocumentTask {
 
     private Version version;
     private DocumentVariant target;
