@@ -43,7 +43,7 @@ public class BranchHandleImpl implements BranchHandle {
     private final String branchId;
     private final DocumentHandle documentHandle;
 
-    BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) throws WorkflowException {
+    private BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) throws WorkflowException {
         this.branchId = branchId;
         this.documentHandle = documentHandle;
         this.documentHandle.initialize();
@@ -54,15 +54,22 @@ public class BranchHandleImpl implements BranchHandle {
     }
 
     @Override
+    public String getBranchId() {
+        return branchId;
+    }
+
+    @Override
     public Node getPublished() {
-        return getNode(getVariant(PUBLISHED)
-                .orElse(null));
+        return getVariant(PUBLISHED)
+                .map(DocumentVariant::getNode)
+                .orElse(null);
     }
 
     @Override
     public Node getUnpublished() {
-        return getNode(getVariant(UNPUBLISHED)
-                .orElse(null));
+        return getVariant(UNPUBLISHED)
+                .map(DocumentVariant::getNode)
+                .orElse(null);
     }
 
     @Override
@@ -77,8 +84,8 @@ public class BranchHandleImpl implements BranchHandle {
         return getVariant(UNPUBLISHED)
                 .map(unpublished ->
                         getVariant(PUBLISHED)
-                                .map(published -> isModified(unpublished, published))
-                                .orElse(false))
+                                .map(published -> !isLive(published) || isModified(unpublished, published))
+                                .orElse(true))
                 .orElse(false);
     }
 
@@ -95,36 +102,33 @@ public class BranchHandleImpl implements BranchHandle {
     }
 
     private Optional<DocumentVariant> getVariant(WorkflowUtils.Variant variant) {
-        return Optional.ofNullable(documentHandle.getDocuments().get(variant.getState()));
+        final DocumentVariant documentVariant = getDocumentVariant(variant);
+        if (documentVariant == null || !isBranch(documentVariant)) {
+            return getFrozenVariant(variant, getDocumentVariant(UNPUBLISHED));
+        }
+        if (isBranch(documentVariant)) {
+            return Optional.of(documentVariant);
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private Node getNode(DocumentVariant variant) {
-
-        if (variant == null) {
-            return null;
+    private Optional<DocumentVariant> getFrozenVariant(final WorkflowUtils.Variant variant, final DocumentVariant unpublished) {
+        if (unpublished != null) {
+            try {
+                final VersionManager versionManager = unpublished.getNode().getSession().getWorkspace().getVersionManager();
+                final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getNode().getPath());
+                final String versionLabel = branchId + "-" + variant.getState();
+                if (versionHistory.hasVersionLabel(versionLabel)) {
+                    final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
+                    return Optional.of(new DocumentVariant(versionByLabel.getFrozenNode()));
+                }
+            } catch (RepositoryException e) {
+                log.error("Cannot get frozen node of document {} for branch {}, returning null",
+                        unpublished.getIdentity(), branchId, e);
+            }
         }
-
-        if (isMaster(variant) || isBranch(variant)) {
-            return variant.getNode();
-        }
-
-        return getVariant(UNPUBLISHED)
-                .map(unpublished -> getFrozenNode(variant, unpublished))
-                .orElse(null);
-
-    }
-
-    private Node getFrozenNode(final DocumentVariant variant, final DocumentVariant unpublished) {
-        try {
-            final VersionManager versionManager = variant.getNode().getSession().getWorkspace().getVersionManager();
-            final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getNode().getPath());
-            final Version versionByLabel = versionHistory.getVersionByLabel(branchId);
-            return versionByLabel.getFrozenNode();
-        } catch (RepositoryException e) {
-            log.error("Cannot get frozen node of document {} for branch {}, returning null",
-                    unpublished.getIdentity(), branchId, e);
-            return null;
-        }
+        return Optional.empty();
     }
 
     private boolean isModified(final DocumentVariant unpublished, final DocumentVariant published) {
@@ -136,32 +140,25 @@ public class BranchHandleImpl implements BranchHandle {
         }
     }
 
-    private boolean isLive(final DocumentVariant published) {
+    private boolean isLive(final DocumentVariant variant) {
         try {
-            return Stream
-                    .of(published.getAvailability())
-                    .anyMatch(a -> a.equals("live"));
+            return WorkflowUtils.hasAvailability(variant.getNode(), "live");
         } catch (RepositoryException e) {
-            log.error("Cannot determine if document {} is live, returning false", published.getIdentity(), e);
+            log.error("Cannot determine if document {} is live, returning false", variant.getIdentity(), e);
             return false;
         }
     }
 
-    private boolean isMaster(final DocumentVariant unpublished) {
+    private boolean isBranch(final DocumentVariant variant) {
         try {
-            return unpublished.isMaster();
+            return variant.isBranch(branchId);
         } catch (RepositoryException e) {
-            log.error("Cannot determine if document {} is master, returning false", unpublished.getIdentity(), e);
+            log.error("Cannot determine if document {} is branch {}, returning false", variant.getIdentity(), branchId, e);
             return false;
         }
     }
 
-    private boolean isBranch(final DocumentVariant unpublished) {
-        try {
-            return unpublished.isBranch(branchId);
-        } catch (RepositoryException e) {
-            log.error("Cannot determine if document {} is branch {}, returning false", unpublished.getIdentity(), branchId, e);
-            return false;
-        }
+    private DocumentVariant getDocumentVariant(WorkflowUtils.Variant variant) {
+        return documentHandle.getDocuments().get(variant.getState());
     }
 }

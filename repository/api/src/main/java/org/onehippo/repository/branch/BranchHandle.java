@@ -20,19 +20,66 @@ import javax.jcr.Node;
 
 /**
  * Contains nodes of document variants from either nodes under handle or from version history
- * based on the branchId and the document handle
+ * based on the branchId and the document handle.
  */
 public interface BranchHandle {
 
+    /**
+     * Returns the branch id for which this handle should return variants.
+     * Note that if it is a non-existent branchId the variant getter methods will all return null.
+     *
+     * @return branch id of this handle.
+     */
+    String getBranchId();
+
+    /**
+     * Returns the published variant for the branch returned by {@link #getBranchId()}
+     * or null if there is none.
+     *
+     * @return published variant
+     */
     Node getPublished();
 
+    /**
+     * Returns the unpublished variant for the branch returned by {@link #getBranchId()}
+     * or null if there is none.
+     *
+     * @return unpublished variant
+     */
     Node getUnpublished();
 
+    /**
+     * Returns the draft variant for the branch returned by {@link #getBranchId()}
+     * or null if there is none.
+     *
+     * @return draft variant
+     */
     Node getDraft();
 
+    /**
+     * Returns {@code true} if
+     * <ul>
+     * <li>the lastModifiedDate of {@link #getPublished()} is not equal that of {@link #getUnpublished()}</li>
+     * <li>{@link #getPublished()} availability is not live or null and {@link #getUnpublished()} is not null</li>
+     * </ul>
+     * and {@code false} otherwise.
+     *
+     * @return whether the document is modified or not
+     */
     boolean isModified();
 
+    /**
+     * Returns true if this branch handle's branchId is master
+     *
+     * @return if the handle is for master
+     */
     boolean isMaster();
 
+    /**
+     * Returns {@code true} if the published variant for {@link #getBranchId()} exists and is live, {@code false}
+     * otherwise.
+     *
+     * @return if the published variant exists and is live
+     */
     boolean isLive();
 }
