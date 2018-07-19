@@ -22,9 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -65,6 +63,8 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.error.ResetContentException;
+import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,18 +105,28 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Stream<Document> getVariants(final String uuid, final Session session, final Locale locale, Stream<Variant> variants) throws ErrorWithPayloadException {
+    public Document getDocument(final String uuid, final String branchId, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentType docType = getDocumentType(handle, locale);
-        return variants
-                .map(variant -> WorkflowUtils.getDocumentVariantNode(handle, variant)
-                        .map(variantNode -> {
-                            final Document document = assembleDocument(uuid, handle, variantNode, docType);
-                            FieldTypeUtils.readFieldValues(variantNode, docType.getFields(), document.getFields());
-                            return document;
-                        })
-                        .orElse(null))
-                .filter(Objects::nonNull);
+
+        try {
+            final BranchHandle branchHandle = new BranchHandleImpl(branchId, handle);
+
+            final Node unpublished = branchHandle.getUnpublished();
+            if (unpublished != null) {
+                return createDocument(uuid, handle, docType, unpublished);
+            }
+
+            final Node published = branchHandle.getPublished();
+            if (published != null) {
+                return createDocument(uuid, handle, docType, published);
+            }
+
+            throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
+
+        } catch (WorkflowException e) {
+            throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR, "error", e.getMessage()));
+        }
     }
 
     @Override
@@ -267,15 +277,6 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getPublished(final String uuid, final Session session, final Locale locale)
-            throws ErrorWithPayloadException {
-
-        return getVariants(uuid, session, locale, Stream.of(PUBLISHED))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
-    }
-
-    @Override
     public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final String name = checkNotEmpty("name", newDocumentInfo.getName());
         final String slug = checkNotEmpty("slug", newDocumentInfo.getSlug());
@@ -328,8 +329,12 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
-        final Document document = assembleDocument(handle.getIdentifier(), handle, draftNode, docType);
-        FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
+        return createDocument(handle.getIdentifier(), handle, docType, draftNode);
+    }
+
+    private static Document createDocument(final String uuid, final Node handle, final DocumentType docType, final Node unpublished) {
+        final Document document = assembleDocument(uuid, handle, unpublished, docType);
+        FieldTypeUtils.readFieldValues(unpublished, docType.getFields(), document.getFields());
         return document;
     }
 

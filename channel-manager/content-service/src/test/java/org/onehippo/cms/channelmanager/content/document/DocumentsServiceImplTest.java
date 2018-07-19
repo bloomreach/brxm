@@ -1432,40 +1432,6 @@ public class DocumentsServiceImplTest {
     }
 
 
-    @Test
-    public void getPublished() throws Exception {
-        final String uuid = "uuid";
-        final Node handle = createMock(Node.class);
-        final Node published = createMock(Node.class);
-        final DocumentType docType = provideDocumentType(handle);
-
-        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Document Display Name"));
-        expect(JcrUtils.getNodeNameQuietly(eq(handle))).andReturn("document-url-name");
-        expect(JcrUtils.getNodePathQuietly(eq(handle))).andReturn("/content/documents/test/url-name");
-        expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.PUBLISHED)).andReturn(Optional.of(published));
-        expect(PublicationStateUtils.getPublicationStateFromVariant(published)).andReturn(PublicationState.LIVE);
-        FieldTypeUtils.readFieldValues(eq(published), eq(Collections.emptyList()), isA(Map.class));
-        expectLastCall();
-
-        expect(docType.getId()).andReturn("document:type");
-        expect(docType.getFields()).andReturn(Collections.emptyList());
-
-        expect(published.getIdentifier()).andReturn(uuid);
-        expect(published.isNodeType(anyString())).andReturn(false);
-        expect(JcrUtils.getStringProperty(eq(published), anyString(), eq(null))).andReturn("published");
-        replayAll(published);
-
-        final Document document = documentsService.getPublished(uuid, session, locale);
-
-        assertThat(document.getUrlName(), equalTo("document-url-name"));
-        assertThat(document.getDisplayName(), equalTo("Document Display Name"));
-        assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
-        assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.LIVE));
-
-        verifyAll();
-    }
-
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutName() throws Exception {
         info.setName("");

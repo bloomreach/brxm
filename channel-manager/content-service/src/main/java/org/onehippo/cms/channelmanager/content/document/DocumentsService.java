@@ -20,11 +20,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.jcr.Session;
 
-import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
@@ -41,13 +39,13 @@ public interface DocumentsService {
      * <p>
      *
      * @param uuid     UUID of the requested document (handle)
+     * @param branchId id of the requested document branch
      * @param session  user-authenticated, invocation-scoped JCR session
      * @param locale   Locale of the CMS user
-     * @param variants the variants for which to get a document
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If reading the document failed
      */
-    Stream<Document> getVariants(String uuid, Session session, Locale locale, Stream<WorkflowUtils.Variant> variants) throws ErrorWithPayloadException;
+    Document getDocument(String uuid, String branchId, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Retrieves an editable version of a document and locks it for editing by the current CMS user.
@@ -108,17 +106,6 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException If releasing the editable instance failed
      */
     void discardEditableDocument(String uuid, Session session, Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
-
-    /**
-     * Read the published variant of a document
-     *
-     * @param uuid    UUID of the requested document (handle)
-     * @param session user-authenticated, invocation-scoped JCR session
-     * @param locale  Locale of the CMS user
-     * @return JSON-serializable representation of the parts supported for exposing
-     * @throws ErrorWithPayloadException If retrieval of the live document failed
-     */
-    Document getPublished(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Creates a new document

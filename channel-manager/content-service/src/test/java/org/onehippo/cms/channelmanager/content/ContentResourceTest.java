@@ -24,13 +24,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.Matchers;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,8 +111,8 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
-                .andReturn(Stream.of(testDocument));
+        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale)))
+                .andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -134,11 +132,8 @@ public class ContentResourceTest extends CXFTest {
         final String branchId = "branchId";
         branchDocument.setBranchId(branchId);
 
-        final Document masterDocument = createDocument(uuid);
-        masterDocument.setBranchId(DocumentVariant.MASTER_BRANCH_ID);
-
-        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
-                .andReturn(Stream.of(masterDocument, branchDocument));
+        expect(documentsService.getDocument(eq(requestedUuid), eq(branchId), eq(userSession), eq(locale)))
+                .andReturn(branchDocument);
         replay(documentsService);
 
         final Document expected =
@@ -158,8 +153,8 @@ public class ContentResourceTest extends CXFTest {
     public void getPublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getVariants(eq(requestedUuid), eq(userSession), eq(locale), anyObject()))
-                .andReturn(Stream.empty());
+        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale)))
+                .andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
