@@ -44,32 +44,38 @@ import org.onehippo.cm.engine.autoexport.Run;
 import org.onehippo.cm.engine.autoexport.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockServletContext;
 
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
 public class ExtensionIntegrationTest {
 
-    public static final String EXTENSIONS_INTEGRATION_TEST = "ExtensionsIntegrationTest";
+    static final String EXTENSIONS_INTEGRATION_TEST = "ExtensionsIntegrationTest";
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void extensions_before_and_after_cms() throws Exception {
+    public void extensions_before_and_after_cms_init() throws Exception {
 
         final String fixtureName = "extensions_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            HippoWebappContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
                 final IsolatedRepository repository = fixture.getRepository();
@@ -93,7 +99,7 @@ public class ExtensionIntegrationTest {
                 final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
                 assertNotNull(configurationNode);
 
-                HippoWebappContextRegistry.get().register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
 
                 try {
                     final Node extNode2 = session.getNode("/m2-extension");
@@ -104,7 +110,7 @@ public class ExtensionIntegrationTest {
 
                 //Validate that baseline contains m1 & m2 extensions after extension event
                 final ConfigurationModelImpl baselineModel2 = repository.getBaselineConfigurationModel();
-                assertTrue(baselineModel1 != baselineModel2);
+                assertNotSame(baselineModel1, baselineModel2);
 
                 final ConfigurationNodeImpl configurationNode1 = baselineModel2.resolveNode("/m1-extension");
                 assertNotNull(configurationNode1);
@@ -114,9 +120,93 @@ public class ExtensionIntegrationTest {
 
             });
         } finally {
-            HippoWebappContextRegistry.get().getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
         }
 
+    }
+
+    @Test
+    public void extensions_test_incompatible_nodeoverride() throws Exception {
+
+        final String fixtureName = "extensions_before_cms";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+        try {
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
+
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+                    try {
+                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m3"));
+                        fail("Failure is expected since node from extension 'A' cannot override node from extension 'B'");
+                    } catch (Exception ignore) {
+                        assertTrue(interceptor.messages()
+                                .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/m2-extension' " +
+                                        "defined in different extensions or in both core and an extension")));
+                    }
+                }
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
+    @Test
+    public void extensions_test_incompatible_subnode() throws Exception {
+
+        final String fixtureName = "extensions_before_cms";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+        try {
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
+
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+                    try {
+                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m4"));
+                        fail("Failure is expected since extension's node cannot belong to node from different extension");
+                    } catch (Exception ignore) {
+                        assertTrue(interceptor.messages()
+                                .anyMatch(m->m.startsWith("Cannot add child config definition '/m2-extension/extension4node' to parent node definition")));
+                    }
+                }
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
+    @Test
+    public void extensions_test_delete() throws Exception {
+
+        //Delete node which is part of another extension
+        final String fixtureName = "extensions_before_cms";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+        try {
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
+
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+                    try {
+                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m5"));
+                        fail("Failure is expected since extension cannot delete node which belongs to another extension or core");
+                    } catch (Exception ignore) {
+                        assertTrue(interceptor.messages()
+                                .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/corenode/subcorenode' " +
+                                        "defined in different extensions or in both core and an extension")));
+                    }
+                }
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
     }
 
     public HippoWebappContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {

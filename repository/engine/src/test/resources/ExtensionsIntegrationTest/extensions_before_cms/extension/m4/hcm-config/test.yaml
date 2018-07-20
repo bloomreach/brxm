@@ -1,8 +1,8 @@
 definitions:
   config:
-    /m2-extension:
+    /m4-extension:
       jcr:primaryType: nt:unstructured
       property: value1
-    /corenode/subcorenode:
+    /m2-extension/extension4node:
       jcr:primaryType: nt:unstructured
       property: value1

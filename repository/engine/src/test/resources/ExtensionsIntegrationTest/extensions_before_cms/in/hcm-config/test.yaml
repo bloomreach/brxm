@@ -12,3 +12,6 @@ definitions:
           operation: add
           type: string
           value: ['/content/excluded','/content/excluded/**']
+    /corenode:
+      jcr:primaryType: nt:unstructured
+      property: coreproperty
