@@ -37,6 +37,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
+import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -544,7 +545,16 @@ public class Main extends PluginApplication {
     }
 
     protected void registerSessionListeners() {
-        getSessionListeners().add(session -> ((PluginUserSession) session).login());
+        getSessionListeners().add(new ISessionListener() {
+            @Override
+            public void onCreated(final Session session) {
+                ((PluginUserSession) session).login();
+            }
+
+            @Override
+            public void onUnbound(final String sessionId) {
+            }
+        });
     }
 
     @Override
