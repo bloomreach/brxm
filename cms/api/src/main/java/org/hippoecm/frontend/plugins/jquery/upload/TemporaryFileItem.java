@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.util.upload.FileItem;
+import org.apache.commons.fileupload.FileItem;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

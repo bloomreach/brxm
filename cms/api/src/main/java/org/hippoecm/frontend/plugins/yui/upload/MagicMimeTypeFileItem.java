@@ -21,10 +21,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
-import org.apache.wicket.util.upload.FileItem;
+import org.apache.commons.fileupload.FileItem;
 import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,11 @@ public class MagicMimeTypeFileItem implements FileItem {
 
     private FileItem delegate;
     private String contentType;
+
+    /**
+     * The file items headers.
+     */
+    private FileItemHeaders headers;
 
     public MagicMimeTypeFileItem(FileItem delegate) {
         this.delegate = delegate;
@@ -99,7 +105,7 @@ public class MagicMimeTypeFileItem implements FileItem {
         return delegate.getString();
     }
 
-    public void write(File file) throws IOException {
+    public void write(File file) throws Exception {
         delegate.write(file);
     }
 
@@ -125,5 +131,21 @@ public class MagicMimeTypeFileItem implements FileItem {
 
     public OutputStream getOutputStream() throws IOException {
         return delegate.getOutputStream();
+    }
+
+    /**
+     * Returns the file item headers.
+     * @return The file items headers.
+     */
+    public FileItemHeaders getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Sets the file item headers.
+     * @param pHeaders The file items headers.
+     */
+    public void setHeaders(FileItemHeaders pHeaders) {
+        headers = pHeaders;
     }
 }

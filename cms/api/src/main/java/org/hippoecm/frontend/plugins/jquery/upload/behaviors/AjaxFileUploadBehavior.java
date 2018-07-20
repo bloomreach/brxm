@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,12 @@ import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.TextRequestHandler;
+import org.apache.wicket.util.file.FileCleanerTrackerAdapter;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.upload.DiskFileItemFactory;
-import org.apache.wicket.util.upload.FileItem;
-import org.apache.wicket.util.upload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
 import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
 import org.slf4j.Logger;
@@ -132,14 +133,15 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
      * @throws FileUploadException
      */
     private MultipartServletWebRequest createMultipartWebRequest(final ServletWebRequest request) throws FileUploadException {
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory(Application.get().getResourceSettings().getFileCleaner()) {
+        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory() {
             @Override
             public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
                 FileItem item = super.createItem(fieldName, contentType, isFormField, fileName);
                 return new TemporaryFileItem(item);
             }
         };
-
+        diskFileItemFactory.setFileCleaningTracker(new FileCleanerTrackerAdapter(Application.get().getResourceSettings().getFileCleaner()));
+        
         try {
             long contentLength = Long.valueOf(request.getHeader("Content-Length"));
             if (contentLength > 0) {
