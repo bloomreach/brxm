@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,10 +57,5 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
             _helper.addOnDomLoad("new Hippo.EnterHandler('" + component.getMarkupId() + "')");
         }
         _helper.renderHead(response);
-    }
-
-    @Override
-    protected CharSequence getPreconditionScript() {
-        return "return Wicket.$$('" + getComponent().getMarkupId() + "') && Wicket.$$('" + getForm().getMarkupId() + "')";
     }
 }
