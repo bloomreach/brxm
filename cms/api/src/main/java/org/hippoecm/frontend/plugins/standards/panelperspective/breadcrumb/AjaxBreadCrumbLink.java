@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 // add the onclick handler only if link is enabled
-                if (isLinkEnabled()) {
+                if (isEnabledInHierarchy()) {
                     super.onComponentTag(tag);
                 }
             }
@@ -62,7 +62,7 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
 
-        if (isLinkEnabled()) {
+        if (isEnabledInHierarchy()) {
             // disable any href attr in markup
             if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase(
                     "link") || tag.getName().equalsIgnoreCase("area")) {

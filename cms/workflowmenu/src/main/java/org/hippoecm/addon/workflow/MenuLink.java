@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,14 +56,9 @@ abstract class MenuLink extends Link {
                     }
 
                     @Override
-                    protected CharSequence getPreconditionScript() {
-                        return "return true;";
-                    }
-
-                    @Override
                     protected void onComponentTag(ComponentTag tag) {
                         // add the onclick handler only if link is enabled
-                        if (isLinkEnabled()) {
+                        if (isEnabledInHierarchy()) {
                             super.onComponentTag(tag);
                         }
                     }
@@ -87,14 +82,9 @@ abstract class MenuLink extends Link {
                     }
 
                     @Override
-                    protected CharSequence getPreconditionScript() {
-                        return "return true;";
-                    }
-
-                    @Override
                     protected void onComponentTag(ComponentTag tag) {
                         // add the onclick handler only if link is enabled
-                        if (isLinkEnabled()) {
+                        if (isEnabledInHierarchy()) {
                             super.onComponentTag(tag);
                         }
                     }
@@ -113,7 +103,7 @@ abstract class MenuLink extends Link {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
 
-        if (isLinkEnabled()) {
+        if (isEnabledInHierarchy()) {
             // disable any href attr in markup
             if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("link")
                     || tag.getName().equalsIgnoreCase("area")) {
