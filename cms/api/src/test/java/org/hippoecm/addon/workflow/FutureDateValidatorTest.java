@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,10 @@ package org.hippoecm.addon.workflow;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
-import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.Validatable;
+import org.apache.wicket.validation.ValidationError;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,13 +52,7 @@ public class FutureDateValidatorTest {
         EasyMock.expect(Instant.now()).andReturn(fixedTimeValue);
         PowerMock.replayAll();
 
-        validator = new FutureDateValidator() {
-            @Override
-            protected Map<String, Object> variablesMap(final IValidatable<Date> validatable) {
-                // Mock this method
-                return Collections.emptyMap();
-            }
-        };
+        validator = new FutureDateValidator();
     }
 
     @Test
@@ -72,8 +64,8 @@ public class FutureDateValidatorTest {
 
     @Test
     public void valid_if_value_is_in_the_future() {
-        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 51));
-        validator.onValidate(validatable);
+        final Validatable<Date> validatable = new Validatable<>(createDate(2016, 8, 4, 11, 51));
+        validator.validate(validatable);
 
         PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(true));
@@ -81,32 +73,36 @@ public class FutureDateValidatorTest {
 
     @Test
     public void invalid_if_value_is_null() {
-        final Validatable validatable = new Validatable(null);
-        validator.onValidate(validatable);
+        final Validatable<Date> validatable = new Validatable<>(null);
+        validator.validate(validatable);
 
         assertThat(validatable.isValid(), is(false));
-        assertThat(validator.resourceKey(), is(FutureDateValidator.EMPTY_DATE));
+        assertThat(firstErrorKey(validatable), is(FutureDateValidator.EMPTY_DATE));
     }
 
     @Test
     public void invalid_if_date_value_is_in_the_past_with_one_second_less() {
         // 2016-08-04T11:49:00Z
-        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 49));
-        validator.onValidate(validatable);
+        final Validatable<Date> validatable = new Validatable<>(createDate(2016, 8, 4, 11, 49));
+        validator.validate(validatable);
 
         PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(false));
-        assertThat(validator.resourceKey(), is(FutureDateValidator.DATE_IN_THE_PAST));
+        assertThat(firstErrorKey(validatable), is(FutureDateValidator.DATE_IN_THE_PAST));
     }
 
     @Test
     public void invalid_if_date_value_is_current_time_without_second_fraction() {
         // 2016-08-04T11:50:00Z
-        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 50));
-        validator.onValidate(validatable);
+        final Validatable<Date> validatable = new Validatable<>(createDate(2016, 8, 4, 11, 50));
+        validator.validate(validatable);
 
         PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(true));
+    }
+
+    private static String firstErrorKey(final Validatable validatable) {
+        return ((ValidationError) validatable.getErrors().get(0)).getKeys().get(0);
     }
 
     private static Date createDate(final int year, final int month, final int day, final int hour, final int min) {
