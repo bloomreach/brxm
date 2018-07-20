@@ -156,20 +156,6 @@ public class ConfigurationTreeBuilder {
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
 
-        //TODO SS: validate if deleted nodes should be also handled
-        if (!CollectionUtils.isEmpty(definitionNode.getProperties())) {
-            final TreeDefinitionImpl<?> definition = definitionNode.getDefinition();
-            final TreeDefinitionImpl<?> bucketDefinition = node.getDefinitions().get(0).getDefinition();
-            if (!Objects.equals(definition.getSource().getModule().getExtensionName(),
-                    bucketDefinition.getSource().getModule().getExtensionName())) {
-                final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
-                        "extensions or in both core and an extension: %s -> %s",
-                        definition.getNode().getPath(), bucketDefinition.getSource(), definition.getSource());
-                logger.error(errMessage);
-                throw new IllegalArgumentException(errMessage);
-            }
-        }
-
         if (definitionNode.isDeletedAndEmpty()) {
 
             if (node.getParent() == null || !node.getParent().isDeleted()) {
@@ -406,11 +392,39 @@ public class ConfigurationTreeBuilder {
                         definition.getOrigin(), definitionRootPath);
                 return null;
             }
+
+            if (!CollectionUtils.isEmpty(definitionNode.getProperties()) && !rootForDefinition.isRoot()) {
+                //two cases: if same node already exists and belongs to not same extension or core
+                //and if parent node belongs to different extension
+                //Check for parent definition extension, or if parent defs are empty
+                //Consider root '/' does not have definitions
+                final TreeDefinitionImpl<?> bucketDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
+                final String parentNodeExtensionName = bucketDefinition.getSource().getModule().getExtensionName();
+                final String childDefinitionExtensionName = definition.getSource().getModule().getExtensionName();
+                if (parentNodeExtensionName != null && !Objects.equals(childDefinitionExtensionName, parentNodeExtensionName)) {
+                    final String errMessage = String.format("Cannot add child config definition '%s' to parent node definition, " +
+                                    "as it is defined in different extension: %s -> %s",
+                            definition.getNode().getPath(), definition.getSource(), bucketDefinition.getSource());
+                    logger.error(errMessage);
+                    throw new IllegalArgumentException(errMessage);
+                }
+            }
+
             rootForDefinition =
                     createChildNode(rootForDefinition, nodeName.toString(), definition.getNode());
-        } else {
-            if (rootForDefinition == root && definitionNode.isDelete()) {
-                throw new IllegalArgumentException("Deleting the root node is not supported.");
+        } else if (rootForDefinition == root && definitionNode.isDelete()) {
+            throw new IllegalArgumentException("Deleting the root node is not supported.");
+        } else  if (!rootForDefinition.isRoot()) {
+            //Config node already exists so
+            //validate if existing config node belongs to the same extension group
+            final TreeDefinitionImpl<?> bucketDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
+            if (!Objects.equals(definition.getSource().getModule().getExtensionName(),
+                    bucketDefinition.getSource().getModule().getExtensionName())) {
+                final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
+                                "extensions or in both core and an extension: %s -> %s",
+                        definition.getNode().getPath(), bucketDefinition.getSource(), definition.getSource());
+                logger.error(errMessage);
+                throw new IllegalArgumentException(errMessage);
             }
         }
 
