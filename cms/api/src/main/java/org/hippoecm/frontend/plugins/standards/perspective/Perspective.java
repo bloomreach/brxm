@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -260,8 +261,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         }
 
         @Override
-        public Iterable<? extends HeaderItem> getDependencies() {
-            return Collections.singleton(UsageStatisticsHeaderItem.get());
+        public List<HeaderItem> getDependencies() {
+            return Collections.singletonList(UsageStatisticsHeaderItem.get());
         }
 
         @Override

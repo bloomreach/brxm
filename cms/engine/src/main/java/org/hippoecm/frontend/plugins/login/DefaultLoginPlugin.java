@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -110,8 +110,8 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         }
 
         @Override
-        public void renderHead(HtmlHeaderContainer container) {
-            super.renderHead(container);
+        public void internalRenderHead(HtmlHeaderContainer container) {
+            super.internalRenderHead(container);
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM) && useBrowserTimeZoneIfAvailable) {
                 container.getHeaderResponse().render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
                 container.getHeaderResponse().render(OnLoadHeaderItem.forScript(INIT_JS.asString()));

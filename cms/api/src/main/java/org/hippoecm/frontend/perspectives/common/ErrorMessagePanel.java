@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class ErrorMessagePanel extends Panel {
     }
 
     @Override
-    public void renderHead(final HtmlHeaderContainer container) {
+    public void internalRenderHead(final HtmlHeaderContainer container) {
         container.getHeaderResponse().render(CssHeaderItem.forReference(ERROR_MESSAGE_STYLESHEET));
     }
 

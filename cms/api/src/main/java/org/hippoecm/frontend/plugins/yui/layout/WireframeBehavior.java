@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -250,7 +251,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
             }
 
             @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
+            public List<HeaderItem> getDependencies() {
                 IWireframe wireframe = getParentWireframe();
                 if (wireframe != null && !wireframe.isRendered()) {
                     return Collections.singletonList(wireframe.getHeaderItem());

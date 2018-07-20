@@ -171,8 +171,8 @@ public class SectionViewer extends Panel implements ICardView {
     }
 
     @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        super.renderHead(container);
+    public void internalRenderHead(final HtmlHeaderContainer container) {
+        super.internalRenderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
         final String selectricOptions =

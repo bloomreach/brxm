@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.editor;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.markup.head.HeaderItem;
@@ -463,8 +465,8 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
 
         @Override
-        public Iterable<? extends HeaderItem> getDependencies() {
-            return Collections.singleton(UsageStatisticsHeaderItem.get());
+        public List<HeaderItem> getDependencies() {
+            return Collections.singletonList(UsageStatisticsHeaderItem.get());
         }
 
         @Override
