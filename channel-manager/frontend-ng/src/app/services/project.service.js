@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-
+var masterId = 'master';
 class ProjectService {
   constructor(
     $http,
@@ -33,12 +33,14 @@ class ProjectService {
 
     this.beforeChangeListeners = [];
     this.afterChangeListeners = [];
-    this.core = {
-      id: 'master',
-      name: $translate.instant('CORE'),
-    };
-    this.selectedProject = this.core;
     this.allProjects = [];
+    this.selectedProject = {
+      id: masterId;
+    }
+  }
+
+  static get masterId() {
+    return masterId;
   }
 
   load(mountId, projectId) {
@@ -47,7 +49,7 @@ class ProjectService {
   }
 
   isBranch() {
-    return this.selectedProject !== this.core;
+    return this.selectedProject.id !== masterId;
   }
 
   updateSelectedProject(projectId) {
@@ -91,8 +93,6 @@ class ProjectService {
   }
 
   _getProjectByDocumentId(documentId) {
-    // returns undefined if document is not part of any project
-    // and therefore is part of core
     return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
   }
 
@@ -111,12 +111,12 @@ class ProjectService {
   }
 
   _selectProject(projectId) {
-    this.selectedProject = this.allProjects.find(project => project.id === projectId) || this.core;
+    this.selectedProject = this.allProjects.find(project => project.id === projectId);
     return this._setProjectInHST();
   }
 
   _setProjectInHST() {
-    return this.selectedProject === this.core ? this._activateCore() : this._activateProject(this.selectedProject.id);
+    return this._activateProject(this.selectedProject.id);
   }
 
   isContentOverlayEnabled() {
@@ -206,9 +206,15 @@ class ProjectService {
   }
 
   _activateProject(projectId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
-    return this.$http
-      .put(url);
+    if (projectId === masterId){
+      this._activateCore();
+    }
+    else{
+      const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
+      return this.$http
+        .put(url);
+    }
+
   }
 
   _activateCore() {

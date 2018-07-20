@@ -25,13 +25,6 @@
              ng-model-options="{ trackBy: '$value.id' }"
              md-on-open="$ctrl.getProjects()"
              ng-model="$ctrl.selectedProject">
-    <md-option class="qa-project-toggle-core"
-             ng-value="$ctrl.core">
-      {{ $ctrl.core.name }}
-    </md-option>
-
-    <md-divider ng-if="$ctrl.projects"></md-divider>
-
     <md-option class="qa-project-toggle-option"
                ng-repeat="project in $ctrl.projects | orderBy: 'name' track by project.id"
                ng-value="project"

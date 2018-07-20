@@ -27,7 +27,6 @@ class ProjectToggleController {
   }
 
   $onInit() {
-    this.core = this.ProjectService.core;
     this.getProjects();
   }
 
