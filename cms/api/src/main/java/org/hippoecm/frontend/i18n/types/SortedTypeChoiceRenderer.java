@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.StringResourceModel;
@@ -107,6 +108,12 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
 
     public String getIdValue(String type, int index) {
         return type;
+    }
+
+    @Override
+    public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+        final List<? extends String> choices = choicesModel.getObject();
+        return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
     }
 
     public Object getDisplayValue(String type) {

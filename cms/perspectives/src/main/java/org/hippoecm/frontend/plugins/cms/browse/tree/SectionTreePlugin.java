@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -163,6 +163,18 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     @Override
                     public String getIdValue(final Section section, final int index) {
                         return section.extension;
+                    }
+
+                    @Override
+                    public Section getObject(final String id, final IModel<? extends List<? extends Section>> choicesModel) {
+                        final List<? extends Section> choices = choicesModel.getObject();
+                        for (int index = 0; index < choices.size(); index++) {
+                            final Section choice = choices.get(index);
+                            if (getIdValue(choice, index).equals(id)) {
+                                return choice;
+                            }
+                        }
+                        return null;
                     }
                 }
         ) {

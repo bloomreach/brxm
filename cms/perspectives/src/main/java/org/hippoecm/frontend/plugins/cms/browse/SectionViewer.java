@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -138,6 +138,12 @@ public class SectionViewer extends Panel implements ICardView {
                 @Override
                 public String getIdValue(final String sectionId, final int index) {
                     return sectionId;
+                }
+
+                @Override
+                public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                    final List<? extends String> choices = choicesModel.getObject();
+                    return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
                 }
             }
         );

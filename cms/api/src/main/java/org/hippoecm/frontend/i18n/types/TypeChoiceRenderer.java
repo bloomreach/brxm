@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.i18n.types;
 
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 
@@ -43,5 +46,11 @@ public class TypeChoiceRenderer implements IChoiceRenderer<String> {
     @Override
     public String getIdValue(final String type, final int index) {
         return type;
+    }
+
+    @Override
+    public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+        final List<? extends String> choices = choicesModel.getObject();
+        return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
     }
 }
