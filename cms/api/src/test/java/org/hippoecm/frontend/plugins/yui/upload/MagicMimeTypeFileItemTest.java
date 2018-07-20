@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.yui.upload;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.junit.Test;
 
 import java.io.*;
@@ -145,6 +146,15 @@ public class MagicMimeTypeFileItemTest {
         @Override
         public OutputStream getOutputStream() throws IOException {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public FileItemHeaders getHeaders() {
+            return null;
+        }
+
+        @Override
+        public void setHeaders(final FileItemHeaders headers) {
         }
     }
 
