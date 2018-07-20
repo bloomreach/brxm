@@ -216,6 +216,11 @@
   min-height: $overlay-box-minheight;
 }
 
+.hippo-show-components .hst-container-item iframe,
+.hippo-dragging iframe {
+  pointer-events: none;
+}
+
 .hippo-overlay-icon {
   display: none;
   fill: $overlay-icon-fill;
