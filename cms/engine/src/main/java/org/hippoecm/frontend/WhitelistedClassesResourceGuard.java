@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.frontend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,23 +36,21 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
-    private final List<String> pathPrefixes;
+    private final List<String> classNamePrefixes;
     private volatile boolean initialized;
 
     public WhitelistedClassesResourceGuard() {
-        pathPrefixes = new ArrayList<>();
+        classNamePrefixes = new ArrayList<>();
     }
 
-    public void addClassNamePrefixes(final String... classNamePrefixes) {
-        if (classNamePrefixes != null) {
-            pathPrefixes.addAll(Arrays.stream(classNamePrefixes)
-                    .map(prefix -> prefix.replace('.', '/'))
-                    .collect(Collectors.toList()));
+    public void addClassNamePrefixes(final String... prefixes) {
+        if (prefixes != null) {
+            classNamePrefixes.addAll(Arrays.asList(prefixes));
         }
     }
 
     @Override
-    public boolean accept(final String absolutePath) {
+    public boolean accept(final Class<?> scope, final String absolutePath) {
         // use double checked locking pattern to reduce overhead
         if (!initialized) {
             synchronized (this) {
@@ -64,8 +61,8 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
             }
         }
 
-        if (isUserLoggedIn() || isWhitelisted(absolutePath)) {
-            return super.accept(absolutePath);
+        if (isUserLoggedIn() || isWhitelisted(scope)) {
+            return super.accept(scope, absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
         return false;
@@ -74,9 +71,13 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     protected void onInit() {
     }
 
-    private boolean isWhitelisted(final String absolutePath) {
-        for (final String prefix : pathPrefixes) {
-            if (absolutePath.startsWith(prefix)) {
+    private boolean isWhitelisted(final Class<?> scope) {
+        String scopeClassName = scope.getCanonicalName();
+        if (scopeClassName == null) {
+            scopeClassName = scope.getName();
+        }
+        for (final String prefix : classNamePrefixes) {
+            if (scopeClassName.startsWith(prefix)) {
                 return true;
             }
         }
