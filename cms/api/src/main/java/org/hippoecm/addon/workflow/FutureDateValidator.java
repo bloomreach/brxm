@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,31 +19,37 @@ import java.time.Instant;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.IValidator;
-import org.apache.wicket.validation.ValidationError;
+import org.apache.wicket.validation.validator.AbstractValidator;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 
 /**
  * Validate if the date value is in the future. The fraction time after minute is not counted.
  *
  */
-public class FutureDateValidator implements IValidator<Date> {
+public class FutureDateValidator extends AbstractValidator<Date> {
 
     public static final String EMPTY_DATE = "date.empty";
     public static final String DATE_IN_THE_PAST = "date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
 
+    private String resourceKey;
+
     public FutureDateValidator() {
     }
 
+    public boolean validateOnNullValue() {
+        return true;
+    }
+
     @Override
-    public void validate(final IValidatable<Date> validatable) {
-        final Date date = validatable.getValue();
+    protected void onValidate(final IValidatable<Date> dateIValidatable) {
+        final Date date = dateIValidatable.getValue();
         if (date == null) {
-            final ValidationError emptyDate = new ValidationError(this).addKey(EMPTY_DATE);
-            validatable.error(emptyDate);
+            resourceKey = EMPTY_DATE;
+            error(dateIValidatable);
             return;
         }
 
@@ -51,12 +57,28 @@ public class FutureDateValidator implements IValidator<Date> {
                 .plus(1, ChronoUnit.MINUTES); // 1 minute up to round up second fraction.
 
         final Instant now = Instant.now();
-
         if (publicationDateTime.isBefore(now)) {
-            final ValidationError dateInPast = new ValidationError(this).addKey(DATE_IN_THE_PAST);
-            final String dateLabel = DateTimePrinter.of(date).print(FormatStyle.LONG, FormatStyle.MEDIUM);
-            dateInPast.setVariable(INPUTDATE_LABEL, dateLabel);
-            validatable.error(dateInPast);
+            resourceKey = DATE_IN_THE_PAST;
+            error(dateIValidatable);
         }
+    }
+
+    @Override
+    protected Map<String, Object> variablesMap(IValidatable<Date> validatable) {
+        final Map<String, Object> map = super.variablesMap(validatable);
+        final Date date = validatable.getValue();
+        if (date == null) {
+            return map;
+        }
+
+        final String dateLabel = DateTimePrinter.of(date).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+        map.put(INPUTDATE_LABEL, dateLabel);
+
+        return map;
+    }
+
+    @Override
+    protected String resourceKey() {
+        return resourceKey;
     }
 }
