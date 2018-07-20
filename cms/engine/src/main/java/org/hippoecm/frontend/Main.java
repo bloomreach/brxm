@@ -45,6 +45,7 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
+import org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
@@ -68,10 +69,7 @@ import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
-import org.apache.wicket.request.mapper.mount.IMountedRequestMapper;
-import org.apache.wicket.request.mapper.mount.Mount;
-import org.apache.wicket.request.mapper.mount.MountMapper;
-import org.apache.wicket.request.mapper.mount.MountParameters;
+import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
@@ -277,10 +275,10 @@ public class Main extends PluginApplication {
             resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
         }
 
-        mount(new MountMapper("binaries", new IMountedRequestMapper() {
+        mount(new AbstractBookmarkableMapper("binaries", new PageParametersEncoder()) {
 
             @Override
-            public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
+            public IRequestHandler mapRequest(final Request request) {
                 String path = Strings.join("/", request.getUrl().getSegments());
                 try {
                     javax.jcr.Session subSession = UserSession.get().getJcrSession();
@@ -306,15 +304,20 @@ public class Main extends PluginApplication {
             }
 
             @Override
-            public int getCompatibilityScore(final Request request) {
-                return 1;
+            protected UrlInfo parseRequest(final Request request) {
+                throw new UnsupportedOperationException();
             }
 
             @Override
-            public Mount mapHandler(final IRequestHandler requestHandler) {
-                return null;
+            protected Url buildUrl(final UrlInfo info) {
+                throw new UnsupportedOperationException();
             }
-        }));
+
+            @Override
+            protected boolean pageMustHaveBeenCreatedBookmarkable() {
+                return false;
+            }
+        });
 
         String applicationName = getPluginApplicationName();
 
@@ -338,10 +341,10 @@ public class Main extends PluginApplication {
                 cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
                 HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
             }
-            mount(new MountMapper("auth", new IMountedRequestMapper() {
+            mount(new AbstractBookmarkableMapper("auth", new PageParametersEncoder()) {
 
                 @Override
-                public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
+                public IRequestHandler mapRequest(final Request request) {
 
                     IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
@@ -354,7 +357,7 @@ public class Main extends PluginApplication {
                     PluginUserSession userSession = (PluginUserSession) Session.get();
                     final UserCredentials userCredentials = userSession.getUserCredentials();
 
-                    HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
+                    HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
                     final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
                     if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
@@ -385,9 +388,9 @@ public class Main extends PluginApplication {
 
                                 }
                                 if (destinationUrl.contains("?")) {
-                                    response.sendRedirect(destinationUrl + "&cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
+                                    response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
                                 } else {
-                                    response.sendRedirect(destinationUrl + "?cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
+                                    response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
                                 }
                             }
 
@@ -399,17 +402,22 @@ public class Main extends PluginApplication {
                     }
                     return requestTarget;
                 }
-
+                
                 @Override
-                public int getCompatibilityScore(final Request request) {
-                    return 0;
+                protected UrlInfo parseRequest(final Request request) {
+                    throw new UnsupportedOperationException();
                 }
 
                 @Override
-                public Mount mapHandler(final IRequestHandler requestHandler) {
-                    return null;
+                protected Url buildUrl(final UrlInfo info) {
+                    throw new UnsupportedOperationException();
                 }
-            }));
+
+                @Override
+                protected boolean pageMustHaveBeenCreatedBookmarkable() {
+                    return false;
+                }
+            });
         }
 
         // caching resource stream locator implementation that allows the class argument to be null.
