@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.settings.ApplicationSettings;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
@@ -207,14 +207,14 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     /**
-     * Check if the defaultMaximumUploadSize stored in the IApplicationSettings is set explicitly and only
+     * Check if the defaultMaximumUploadSize stored in the ApplicationSettings is set explicitly and only
      * then used it, otherwise use DEFAULT_MAX_FILE_SIZE. This is because it is set to Bytes.MAX
      * by default which is a bit overkill (8388608T).
      *
      * @return The String value of the default maximum file size for an upload
      */
     protected String getDefaultMaxFileSize() {
-        IApplicationSettings settings = Application.get().getApplicationSettings();
+        ApplicationSettings settings = Application.get().getApplicationSettings();
         Bytes defaultSize = settings.getDefaultMaximumUploadSize();
         return Bytes.MAX.equals(defaultSize) ? DEFAULT_MAX_FILE_SIZE : defaultSize.toString();
     }

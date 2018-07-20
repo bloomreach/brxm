@@ -78,8 +78,8 @@ import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCac
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
-import org.apache.wicket.settings.IExceptionSettings;
-import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.settings.ExceptionSettings;
+import org.apache.wicket.settings.ResourceSettings;
 import org.apache.wicket.util.IContextProvider;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
@@ -249,7 +249,7 @@ public class Main extends PluginApplication {
             }
         });
 
-        final IResourceSettings resourceSettings = getResourceSettings();
+        final ResourceSettings resourceSettings = getResourceSettings();
 
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = resourceSettings.getStringResourceLoaders();
@@ -467,7 +467,7 @@ public class Main extends PluginApplication {
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
             // don't show exception page
-            getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+            getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
 
             final long timeout = NumberUtils.toLong(getConfigurationParameter(DEPLOYMENT_REQUEST_TIMEOUT_PARAM, null));
 
