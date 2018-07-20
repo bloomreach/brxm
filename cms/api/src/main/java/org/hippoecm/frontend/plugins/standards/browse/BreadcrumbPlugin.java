@@ -218,7 +218,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
                     }
 
                 }));
-                link.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
+                link.add(new AttributeAppender("title", true, new LoadableDetachableModel<String>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
