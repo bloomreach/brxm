@@ -39,7 +39,9 @@ public class TypeChoiceRenderer implements IChoiceRenderer<String> {
         if (nodeTypeModel.getObject() != null) {
             return new TypeTranslator(nodeTypeModel).getTypeName().getObject();
         } else {
-            return new StringResourceModel(type, component, null, type).getString();
+            return new StringResourceModel(type, component)
+                    .setDefaultValue(type)
+                    .getString();
         }
     }
 

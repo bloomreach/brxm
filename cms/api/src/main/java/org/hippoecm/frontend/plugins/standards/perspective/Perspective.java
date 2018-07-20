@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         } else {
             titleKey = TITLE_KEY;
         }
-        this.title = new StringResourceModel(titleKey, this, null);
+        this.title = new StringResourceModel(titleKey, this);
 
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);

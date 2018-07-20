@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -111,7 +111,9 @@ public class RequestsView extends RepeatingView {
 
                 final String parameter = schedule != null ?
                         DateTimePrinter.of(schedule).appendDST().print(FormatStyle.FULL) : "??";
-                return new StringResourceModel("state-" + state, this, null, "unknown", parameter);
+                return new StringResourceModel("state-" + state, this)
+                    .setDefaultValue("unknown")
+                    .setParameters(parameter);
             }
 
             @Override
@@ -119,7 +121,7 @@ public class RequestsView extends RepeatingView {
             }
         });
 
-        item.add(new StdWorkflow("accept", new StringResourceModel("accept-request", this, null), getModel()) {
+        item.add(new StdWorkflow("accept", new StringResourceModel("accept-request", this), getModel()) {
 
             @Override
             public boolean isVisible() {
@@ -145,7 +147,7 @@ public class RequestsView extends RepeatingView {
             }
         });
 
-        item.add(new StdWorkflow("reject", new StringResourceModel("reject-request", this, null), context, getModel()) {
+        item.add(new StdWorkflow("reject", new StringResourceModel("reject-request", this), context, getModel()) {
             @SuppressWarnings("unused") // reason is used in PropertyModel
             public String reason;
 
@@ -169,8 +171,8 @@ public class RequestsView extends RepeatingView {
             protected Dialog createRequestDialog() {
                 final StdWorkflow stdWorkflow = this;
                 return new TextDialog(
-                        new StringResourceModel("reject-request-title", RequestsView.this, null),
-                        new StringResourceModel("reject-request-text", RequestsView.this, null),
+                        new StringResourceModel("reject-request-title", RequestsView.this),
+                        new StringResourceModel("reject-request-text", RequestsView.this),
                         new PropertyModel<>(this, "reason")) {
                     @Override
                     public void invokeWorkflow() throws Exception {
@@ -187,7 +189,7 @@ public class RequestsView extends RepeatingView {
             }
         });
 
-        item.add(new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), context, getModel()) {
+        item.add(new StdWorkflow("cancel", new StringResourceModel("cancel-request", this), context, getModel()) {
 
             @Override
             public boolean isVisible() {
@@ -209,7 +211,7 @@ public class RequestsView extends RepeatingView {
             @Override
             protected IModel getTitle() {
                 final String translationKey = isRequestRejected() ? "drop-request" : "cancel-request";
-                return new StringResourceModel(translationKey, RequestsView.this, null);
+                return new StringResourceModel(translationKey, RequestsView.this);
             }
 
             private boolean isRequestRejected() {
@@ -232,14 +234,14 @@ public class RequestsView extends RepeatingView {
                         log.warn(ex.getMessage(), ex);
                     }
                     if (reason == null) {
-                        reason = new StringResourceModel("rejected-request-unavailable", RequestsView.this, null);
+                        reason = new StringResourceModel("rejected-request-unavailable", RequestsView.this);
                     }
                     final StdWorkflow cancelAction = this;
                     return new ConfirmDialog(
-                            new StringResourceModel("rejected-request-title", RequestsView.this, null),
-                            new StringResourceModel("rejected-request-text", RequestsView.this, null),
+                            new StringResourceModel("rejected-request-title", RequestsView.this),
+                            new StringResourceModel("rejected-request-text", RequestsView.this),
                             reason,
-                            new StringResourceModel("rejected-request-question", RequestsView.this, null)) {
+                            new StringResourceModel("rejected-request-question", RequestsView.this)) {
 
                         @Override
                         public void invokeWorkflow() throws Exception {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
     public PermissionsFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("queryModifier", new StringResourceModel("query-label", this, null), context, getModel()) {
+        add(new StdWorkflow("queryModifier", new StringResourceModel("query-label", this), context, getModel()) {
 
             @Override
             protected Component getIcon(final String id) {
@@ -167,7 +167,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         public PermissionsConfirmDialog(WorkflowDescriptorModel model, IWorkflowInvoker invoker, IModel folderName, Query query) {
             super(invoker, model);
 
-            setTitle(new StringResourceModel("title", this, null, folderName.getObject()));
+            setTitle(new StringResourceModel("title", this).setParameters(folderName.getObject()));
             setSize(DIALOG_SIZE);
 
             final IPluginConfig pluginConfig = getPluginConfig();
@@ -271,18 +271,17 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
             add(view);
 
-            final StringResourceModel addTitleModel = new StringResourceModel("title-query-add",
-                                                                              PermissionsConfirmDialog.this,
-                                                                              null,
-                                                                              folderName.getObject());
+            final StringResourceModel addTitleModel = new StringResourceModel("title-query-add", this)
+                    .setParameters(folderName.getObject());
             Label addTitle = new Label("title-query-add", addTitleModel);
             add(addTitle);
 
             IChoiceRenderer<String> folderTypeRenderer = new IChoiceRenderer<String>() {
                 public String getDisplayValue(final String object) {
-                    String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                            new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, object)).getString();
-                    return String.format("%s (%s)", categoryLabel, object);//categoryLabel;
+                    final String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this)
+                            .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, object))
+                            .getString();
+                    return String.format("%s (%s)", categoryLabel, object);
                 }
 
                 public String getIdValue(String object, int index) {
@@ -321,8 +320,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         }
 
         public String getDisplayObject() {
-            String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                    new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, this.getObject())).getString();
+            final String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this)
+                    .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, this.getObject()))
+                    .getString();
             return String.format("%s (%s)", categoryLabel, this.getObject()); //categoryLabel;//
         }
 

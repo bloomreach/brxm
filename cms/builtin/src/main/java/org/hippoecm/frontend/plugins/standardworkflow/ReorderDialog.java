@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -400,7 +400,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             log.error(e.getMessage(), e);
             name = "";
         }
-        add(new Label("message", new StringResourceModel("reorder-message", this, null, null, name)));
+        add(new Label("message", new StringResourceModel("reorder-message", this).setParameters(name)));
     }
 
     @Override

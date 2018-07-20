@@ -90,7 +90,9 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
         if (nodeTypeModel.getObject() != null) {
             return new TypeTranslator(nodeTypeModel).getTypeName().getObject();
         } else if (component != null) {
-            return new StringResourceModel(type, component, null, type).getString();
+            return new StringResourceModel(type, component)
+                    .setDefaultValue(type)
+                    .getString();
         } else {
             return type;
         }

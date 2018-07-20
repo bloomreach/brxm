@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -483,8 +483,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
      */
     private String buildErrorMessage(String field, List<String> subTypeNames) {
         final String[] types = subTypeNames.toArray(new String[subTypeNames.size()]);
-        StringResourceModel srm = new StringResourceModel("field-is-inherited", this, null,
-                new String[]{field, Strings.join(", ", types)});
+        StringResourceModel srm = new StringResourceModel("field-is-inherited", this)
+                .setParameters(field, Strings.join(", ", types));
 
         return srm.getObject();
     }

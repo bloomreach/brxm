@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 }
 
                 return new org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog(renameDocumentArguments,
-                        new StringResourceModel("rename-title", DefaultWorkflowPlugin.this, null),
+                        new StringResourceModel("rename-title", DefaultWorkflowPlugin.this),
                         this,
                         getStringCodecModel(),
                         this.getModel()
@@ -206,7 +206,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     } else {
                         String locale = CodecUtils.getLocaleFromNode(getFolder().getNode());
                         IModel<StringCodec> codec = CodecUtils.getNodeNameCodecModel(context, locale);
-                        String copyof = new StringResourceModel("copyof", DefaultWorkflowPlugin.this, null).getString();
+                        String copyof = new StringResourceModel("copyof", DefaultWorkflowPlugin.this).getString();
                         CopyNameHelper copyNameHelper = new CopyNameHelper(codec, copyof);
 
                         name = copyNameHelper.getCopyName(nodeName, destination.getChainedModel().getObject());
@@ -377,8 +377,10 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDisplayName();
-                final IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null, docName);
-                final IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null, docName);
+                final IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this)
+                        .setParameters(docName);
+                final IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this)
+                        .setParameters(docName);
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -321,7 +321,10 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     }
 
     private String getTranslation(String key, Model<String[]> model) {
-        return new StringResourceModel(key, this, model, "").getObject();
+        return new StringResourceModel(key, this)
+                .setModel(model)
+                .setDefaultValue("")
+                .getObject();
     }
 
     private class ExternalImage extends WebComponent {

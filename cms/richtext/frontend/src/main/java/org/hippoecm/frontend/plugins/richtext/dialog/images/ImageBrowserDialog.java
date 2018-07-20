@@ -134,7 +134,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
             @Override
             public Object getDisplayValue(final String object) {
-                return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
+                return new StringResourceModel(object, ImageBrowserDialog.this).getString();
             }
 
             @Override

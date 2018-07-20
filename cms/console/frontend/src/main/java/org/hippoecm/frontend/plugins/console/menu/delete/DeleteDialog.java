@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class DeleteDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        add(new Label("message", new StringResourceModel("delete.message", this, null, null, path)));
+        add(new Label("message", new StringResourceModel("delete.message", this).setParameters(path)));
 
         add(new CheckBox("immediateSave", new PropertyModel<Boolean>(this, "immediateSave")));
 

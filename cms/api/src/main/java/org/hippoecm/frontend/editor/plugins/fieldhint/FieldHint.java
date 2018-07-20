@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,8 @@ public class FieldHint extends Panel {
             hintContainer.setVisible(false);
         } else {
             // Check if there's a translation of the hint, use the untranslated hint as default
-            IModel<String> translatedHintModel = new StringResourceModel(hint, this, null, hint);
+            IModel<String> translatedHintModel = new StringResourceModel(hint, this)
+                    .setDefaultValue(hint);
             hintContainer.add(new Label("hint-text", translatedHintModel));
             hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
         }

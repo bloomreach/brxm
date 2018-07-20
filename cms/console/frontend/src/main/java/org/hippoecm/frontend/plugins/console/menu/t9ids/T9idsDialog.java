@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class T9idsDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             log.error("Failed to get path from model node", e);
         }
-        add(new Label("message", new StringResourceModel("t9ids.message", this, null, null, path)));
+        add(new Label("message", new StringResourceModel("t9ids.message", this).setParameters(path)));
         setFocusOnOk();
     }
 
@@ -56,7 +56,7 @@ public class T9idsDialog extends AbstractDialog<Node> {
     
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("t9ids.title", this, null);
+        return new StringResourceModel("t9ids.title", this);
     }
 
     @Override

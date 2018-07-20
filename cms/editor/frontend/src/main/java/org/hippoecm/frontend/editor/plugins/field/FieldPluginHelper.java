@@ -202,7 +202,7 @@ public class FieldPluginHelper implements IDetachable {
         // return caption
         // after deprecation period of translator method
         // (deprecation started with CMS-9552)
-        return new StringResourceModel(captionKey, component, null, caption);
+        return new StringResourceModel(captionKey, component).setDefaultValue(caption);
     }
 
     public IModel<String> getHintModel(final Component component) {
@@ -220,7 +220,7 @@ public class FieldPluginHelper implements IDetachable {
             // return hint
             // after deprecation period of translator method
             // (deprecation started with CMS-9552)
-            return new StringResourceModel(hint, component, null, hint);
+            return new StringResourceModel(hint, component).setDefaultValue(hint);
         }
         return null;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -62,7 +62,8 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         final Group group = model.getObject();
 
         // members
-        final Label localLabel = new Label("group-members-label", new StringResourceModel("group-members-label", this, model));
+        final StringResourceModel localLabelModel = new StringResourceModel("group-members-label", this).setModel(model);
+        final Label localLabel = new Label("group-members-label", localLabelModel);
         localList = new MembershipsListEditView("group-members", "group-member", group);
         add(localLabel);
         add(localList);
@@ -170,7 +171,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
     @Override
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("group-edit-title", component, model);
+        return new StringResourceModel("group-edit-title", component).setModel(model);
     }
 
 }

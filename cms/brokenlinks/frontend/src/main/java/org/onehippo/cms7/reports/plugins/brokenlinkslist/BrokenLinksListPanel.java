@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -44,7 +43,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.reports.plugins.ReportPanel;
-import org.onehippo.cms7.reports.plugins.ReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
@@ -102,7 +100,7 @@ public class BrokenLinksListPanel extends ReportPanel {
                         } else {
                             updateText += "\n";
                         }
-                        updateText += new StringResourceModel("update-known", this, null, null, schedule.getTime()).getObject();
+                        updateText += new StringResourceModel("update-known", this).setParameters(schedule.getTime()).getObject();
                     }
                 }
             }
@@ -110,7 +108,7 @@ public class BrokenLinksListPanel extends ReportPanel {
             log.warn("Unable to load next fire time from the repository, the status message in the CMS UI will not contain the next fire time", ex);
         }
         if (updateText == null) {
-            updateText = new StringResourceModel("update-unknown", this, null, "").getObject();
+            updateText = new StringResourceModel("update-unknown", this).setDefaultValue("").getObject();
         }
        
         

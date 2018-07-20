@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -569,7 +569,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected Component createNrItemsLabel() {
         if ((IEditor.Mode.EDIT == mode) && (getMaxItems() > 0)) {
-            final IModel propertyModel = new StringResourceModel("nrItemsLabel", this, new Model<AbstractFieldPlugin>(this));
+            final IModel propertyModel = new StringResourceModel("nrItemsLabel", this)
+                    .setModel(new Model<AbstractFieldPlugin>(this));
             return new Label("nrItemsLabel", propertyModel).setOutputMarkupId(true);
         }
         return new Label("nrItemsLabel").setVisible(false);

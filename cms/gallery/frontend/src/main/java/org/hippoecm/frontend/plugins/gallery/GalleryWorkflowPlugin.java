@@ -92,8 +92,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
         @Override
         public IModel<String> getTitle() {
-            return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
-                    GalleryWorkflowPlugin.this, null);
+            return new StringResourceModel(
+                    GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
+                    GalleryWorkflowPlugin.this);
         }
 
         @Override
@@ -179,13 +180,13 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 newItems.add(node.getPath());
             } catch (Exception ex) {
                 remove(manager, node);
-                final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label",
-                        GalleryWorkflowPlugin.this, null, null, fileName);
+                final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label", this)
+                        .setParameters(fileName);
                 throw new GalleryException(messageModel.getString(), ex);
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
-            throw new GalleryException(new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString());
+            throw new GalleryException(new StringResourceModel("upload-failed-label", this).getString());
         }
     }
 

@@ -18,7 +18,6 @@ package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +120,7 @@ public abstract class GalleryUploadPanel extends Panel {
         uploadForm.setOutputMarkupId(true);
         uploadForm.add(new WebMarkupContainer("uploadTypeSelector").add(createTypeSelector()));
 
-        uploadButton = new AjaxButton("uploadButton", new StringResourceModel("button-upload-label", this, null)){
+        uploadButton = new AjaxButton("uploadButton", new StringResourceModel("button-upload-label", this)) {
             @Override
             protected String getOnClickScript(){
                 return fileUploadWidget.getUploadScript();

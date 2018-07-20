@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,9 @@ public final class ReportUtil {
         if (StringUtils.isEmpty(key)) {
             return defaultValue;
         }
-        return new StringResourceModel(key, component, null, defaultValue).getObject();
+        return new StringResourceModel(key, component)
+                .setDefaultValue(defaultValue)
+                .getObject();
     }
 
     /**

@@ -813,8 +813,9 @@ public class TabsPlugin extends RenderPlugin {
 
         @Override
         public IModel<String> getTitle() {
-            return new StringResourceModel("close-document", this, null, "Close {0}",
-                        new PropertyModel(getModel(), "displayName"));
+            return new StringResourceModel("close-document", this)
+                .setDefaultValue("Close {0}")
+                .setParameters(new PropertyModel(getModel(), "displayName"));
         }
     }
 }

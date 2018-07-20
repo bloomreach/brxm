@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,9 +61,9 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
-            private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this, null).getObject();
-            private final String on = new StringResourceModel("on", AutoExportPlugin.this, null).getObject();
-            private final String off = new StringResourceModel("off", AutoExportPlugin.this, null).getObject();
+            private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this).getObject();
+            private final String on = new StringResourceModel("on", AutoExportPlugin.this).getObject();
+            private final String off = new StringResourceModel("off", AutoExportPlugin.this).getObject();
 
             @Override
             public String getObject() {

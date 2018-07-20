@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
     public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("publishAll", new StringResourceModel("publish-all-label", this, null), context, getModel()) {
+        add(new StdWorkflow("publishAll", new StringResourceModel("publish-all-label", this), context, getModel()) {
 
             @Override
             protected Component getIcon(final String id) {
@@ -103,9 +103,9 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 }
                 documents = new HashSet<>();
                 return new ConfirmBulkWorkflowDialog(this,
-                        new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
-                        new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
-                        new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this),
+                        new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this),
+                        new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
                         documents, "publish");
             }
@@ -116,7 +116,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("depublishAll", new StringResourceModel("depublish-all-label", this, null), context, getModel()) {
+        add(new StdWorkflow("depublishAll", new StringResourceModel("depublish-all-label", this), context, getModel()) {
 
             @Override
             protected Component getIcon(final String id) {
@@ -132,9 +132,9 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
                 }
                 documents = new HashSet<>();
                 return new ConfirmBulkWorkflowDialog(this,
-                        new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
-                        new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
-                        new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this),
+                        new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this),
+                        new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
                         documents, "depublish");
             }
@@ -246,7 +246,7 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         @Override
         protected void handleSubmit() {
             setOkVisible(false);
-            setCancelLabel(new StringResourceModel("done-label", ConfirmBulkWorkflowDialog.this, null));
+            setCancelLabel(new StringResourceModel("done-label", this));
             onOk();
             affectedComponent.setDefaultModel(new Model<>(Integer.toString(processed)));
             affectedComponent.setVisible(true);

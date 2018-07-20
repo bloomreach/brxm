@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ public class LogoutDialog extends AbstractDialog {
 
         this.logoutService = logoutService;
 
-        Label messageLabel = new Label("message", new StringResourceModel("message", this, null));
+        Label messageLabel = new Label("message", new StringResourceModel("message", this));
         add(messageLabel);
     }
 
     public IModel<String> getTitle() {
-        return new StringResourceModel("title", this, null);
+        return new StringResourceModel("title", this);
     }
 
     @Override

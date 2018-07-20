@@ -367,7 +367,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             templateChoice.setNullValid(false);
             templateChoice.setRequired(true);
             templateContainer.setOutputMarkupPlaceholderTag(true);
-            templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this, null)));
+            templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this)));
             add(templateContainer);
 
             languageContainer = new LanguageField("language", new PropertyModel<>(this, "language"), getLocaleProvider()) {
@@ -464,7 +464,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
 
         public IModel<String> getTitle() {
-            return new StringResourceModel("new-document-label", this, null);
+            return new StringResourceModel("new-document-label", this);
         }
 
         @Override

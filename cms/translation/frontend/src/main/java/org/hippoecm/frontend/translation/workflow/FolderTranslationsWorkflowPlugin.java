@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public final class FolderTranslationsWorkflowPlugin extends RenderPlugin {
     public FolderTranslationsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("folder-translations", new StringResourceModel("folder-translations", this, null),
+        add(new StdWorkflow("folder-translations", new StringResourceModel("folder-translations", this),
                 context, (WorkflowDescriptorModel) getDefaultModel()) {
             private static final long serialVersionUID = 1L;
 
@@ -57,8 +57,8 @@ public final class FolderTranslationsWorkflowPlugin extends RenderPlugin {
                 WorkflowDescriptorModel workflowModel = getModel();
                 try {
                     JcrNodeModel nodeModel = new JcrNodeModel(workflowModel.getNode());
-                    return new FolderTranslationsDialog(this, new StringResourceModel("folder-translations-title",
-                            FolderTranslationsWorkflowPlugin.this, null), nodeModel, getLocaleProvider());
+                    StringResourceModel title = new StringResourceModel("folder-translations-title", FolderTranslationsWorkflowPlugin.this);
+                    return new FolderTranslationsDialog(this, title, nodeModel, getLocaleProvider());
                 } catch (RepositoryException e) {
                     throw new RuntimeException("Could not retrieve node for workflow", e);
                 }

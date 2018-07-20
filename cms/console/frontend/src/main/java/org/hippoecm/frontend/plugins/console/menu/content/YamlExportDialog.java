@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class YamlExportDialog extends AbstractDialog<Node> {
 
         try {
             String path = nodeModel.getObject().getPath();
-            add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
+            add(new Label("message", new StringResourceModel("dialog.message", this).setParameters(path)));
             //info("Export content from : " + );
         } catch (RepositoryException e) {
             log.error("Error getting node from model for content export",e);

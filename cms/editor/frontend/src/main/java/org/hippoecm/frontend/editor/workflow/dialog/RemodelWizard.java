@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,9 +80,9 @@ public class RemodelWizard extends Wizard {
                     try {
                         RemodelDialog dialog = (RemodelDialog) findParent(RemodelDialog.class);
                         dialog.remodel();
-                        result = new Label(id, new StringResourceModel("success", this, null));
+                        result = new Label(id, new StringResourceModel("success", this));
                     } catch (Exception e) {
-                        result = new Label(id, new StringResourceModel("failed", this, null));
+                        result = new Label(id, new StringResourceModel("failed", this));
                         log.error("Error during workflow execution", e);
                         error(e);
                     }

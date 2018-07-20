@@ -210,13 +210,13 @@ public class EventModel implements IComponentAssignedModel<String> {
                     String name = nameModel.getObject();
                     if(name != null && name.startsWith("org.hippoecm.repository.api.Document[uuid=")) {
                         final String resourceKey = StringUtils.replaceOnce(method, "delete", "delete-unknown");
-                        operationModel = new StringResourceModel(resourceKey, component, null, null, user);
+                        operationModel = new StringResourceModel(resourceKey, component).setParameters(user);
                     } else {
                         name = StringEscapeUtils.escapeHtml(name);
-                        operationModel = new StringResourceModel(method, component, null, null, user, name);
+                        operationModel = new StringResourceModel(method, component).setParameters(user, name);
                     }
                 } else {
-                    operationModel = new StringResourceModel(method, component, null, null, user);
+                    operationModel = new StringResourceModel(method, component).setParameters(user);
                 }
                 return getTimeString() + operationModel.getString();
             } catch (MissingResourceException mre) {
@@ -226,9 +226,11 @@ public class EventModel implements IComponentAssignedModel<String> {
 
         private String getTimeString() {
             if (timeKey != null) {
-                return new StringResourceModel(timeKey, component, null).getString();
+                return new StringResourceModel(timeKey, component).getString();
             }
-            return new StringResourceModel("on", component, null, null, dateFormat.format(new Date(time))).getString();
+            return new StringResourceModel("on", component)
+                    .setParameters(dateFormat.format(new Date(time)))
+                    .getString();
         }
 
         @Override

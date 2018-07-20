@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -277,7 +277,7 @@ public class SetMembershipsPanel extends Panel {
      * @return The model containing the title extracted from the resource.
      */
     public IModel<String> getTitle(final Component component) {
-        return new StringResourceModel("user-set-memberships-title", component, userModel);
+        return new StringResourceModel("user-set-memberships-title", component).setModel(userModel);
     }
 
 }

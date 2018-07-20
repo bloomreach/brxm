@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -897,6 +897,9 @@ public class UpdaterEditor extends Panel {
         HashMap<String, String> details = new HashMap<>();
         details.put("type", t.getClass().getName());
         details.put("message", t.getMessage());
-        return new StringResourceModel(key, UpdaterEditor.this, new Model<>(details), t.getLocalizedMessage(), parameters);
+        return new StringResourceModel(key, this)
+                .setModel(new Model<>(details))
+                .setDefaultValue(t.getLocalizedMessage())
+                .setParameters(parameters);
     }
 }
