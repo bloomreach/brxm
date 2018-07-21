@@ -102,15 +102,6 @@ class EditContentMainCtrl {
         }
       });
   }
-
-  showAddToProject() {
-    if (!this.ConfigService.projectsEnabled) {
-      return false;
-    }
-
-    const id = this.EditContentService.documentId;
-    return this.ProjectService.showAddToProjectForDocument(id);
-  }
 }
 
 export default EditContentMainCtrl;

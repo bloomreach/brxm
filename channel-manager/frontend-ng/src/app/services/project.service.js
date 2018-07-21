@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-var masterId = 'master';
+const masterId = 'master';
 class ProjectService {
   constructor(
     $http,
@@ -33,10 +33,10 @@ class ProjectService {
 
     this.beforeChangeListeners = [];
     this.afterChangeListeners = [];
-    this.allProjects = [];
+    this.projects = [];
     this.selectedProject = {
-      id: masterId;
-    }
+      id: masterId,
+    };
   }
 
   static get masterId() {
@@ -74,7 +74,7 @@ class ProjectService {
     return this.$http
       .post(url)
       .then(() => {
-        this._getAllProjects();
+        this._getProjects();
         this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
           name: this.selectedProject.name,
         });
@@ -87,31 +87,18 @@ class ProjectService {
     return channels && !!channels.find(c => c.id === baseChannelId);
   }
 
-  showAddToProjectForDocument(documentId) {
-    const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.isBranch() && !associatedProject;
-  }
-
-  _getProjectByDocumentId(documentId) {
-    return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
-  }
-
   _callListeners(listeners) {
     const promises = listeners.map(listener => listener());
     return this.$q.all(promises);
   }
 
   _setupProjects(projectId) {
-    return this.$q
-      .all([
-        this._getProjects(),
-        this._getAllProjects(),
-      ])
+    return this._getProjects()
       .finally(() => this.updateSelectedProject(projectId));
   }
 
   _selectProject(projectId) {
-    this.selectedProject = this.allProjects.find(project => project.id === projectId);
+    this.selectedProject = this.projects.find(project => project.id === projectId);
     return this._setProjectInHST();
   }
 
@@ -190,31 +177,25 @@ class ProjectService {
       .get(url)
       .then(result => result.data)
       .then((projects) => {
-        this.projects = projects;
-      });
-  }
-
-  _getAllProjects() {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects`;
-
-    return this.$http
-      .get(url)
-      .then(result => result.data)
-      .then((projects) => {
-        this.allProjects = projects;
+        this.projects = projects.sort((p1, p2) => {
+          if (p1.id === masterId) {
+            return -1;
+          }
+          if (p2.id === masterId) {
+            return 1;
+          }
+          return p1.name.toLowerCase() <= p2.name.toLowerCase() ? -1 : 1;
+        });
       });
   }
 
   _activateProject(projectId) {
-    if (projectId === masterId){
-      this._activateCore();
+    if (projectId === masterId) {
+      return this._activateCore();
     }
-    else{
-      const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
-      return this.$http
-        .put(url);
-    }
-
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
+    return this.$http
+      .put(url);
   }
 
   _activateCore() {

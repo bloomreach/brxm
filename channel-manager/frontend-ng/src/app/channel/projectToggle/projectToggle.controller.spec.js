@@ -50,14 +50,6 @@ describe('projectToggle component', () => {
     ProjectService.selectedProject = projectMock;
   });
 
-  describe('onInit', () => {
-    it('should define $ctrl.core with the name', () => {
-      $ctrl.$onInit();
-      expect($ctrl.core).toBeDefined();
-      expect($ctrl.core.name).toEqual('CORE');
-    });
-  });
-
   describe('getProjects', () => {
     it('return projects list from projectService', () => {
       ProjectService.projects = [];

@@ -26,10 +26,10 @@
              md-on-open="$ctrl.getProjects()"
              ng-model="$ctrl.selectedProject">
     <md-option class="qa-project-toggle-option"
-               ng-repeat="project in $ctrl.projects | orderBy: 'name' track by project.id"
+               ng-repeat="project in $ctrl.projects track by project.id"
                ng-value="project"
                md-truncate>
-      <span>{{ project.name }}</span> <span class="normal-font-weight">({{ project.localizedState }})</span>
+      <span>{{ project.name }}</span> <span ng-if="project.state" class="normal-font-weight">({{ project.localizedState }})</span>
     </md-option>
   </md-select>
 </div>
