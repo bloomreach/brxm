@@ -46,7 +46,6 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
-import org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
@@ -70,7 +69,7 @@ import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
-import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
+import org.apache.wicket.request.mapper.AbstractMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
@@ -92,9 +91,9 @@ import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
 import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.observation.JcrObservationManager;
-import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -276,47 +275,44 @@ public class Main extends PluginApplication {
             resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
         }
 
-        mount(new AbstractBookmarkableMapper("binaries", new PageParametersEncoder()) {
+        mount(new AbstractMapper() {
 
             @Override
             public IRequestHandler mapRequest(final Request request) {
-                String path = Strings.join("/", request.getUrl().getSegments());
-                try {
-                    javax.jcr.Session subSession = UserSession.get().getJcrSession();
-                    Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
-                            subSession.getRootNode(), path);
-                    // YUCK: no exception!
-                    if (node == null) {
-                        log.info("no binary found at " + path);
-                    } else {
-                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            node = (Node) JcrHelper.getPrimaryItem(node);
+                if (urlStartsWith(request.getUrl(), "binaries")) {
+                    String path = Strings.join("/", request.getUrl().getSegments());
+                    try {
+                        javax.jcr.Session subSession = UserSession.get().getJcrSession();
+                        Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
+                                subSession.getRootNode(), path);
+                        // YUCK: no exception!
+                        if (node == null) {
+                            log.info("no binary found at " + path);
+                        } else {
+                            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                node = (Node) JcrHelper.getPrimaryItem(node);
+                            }
+                            return new JcrResourceRequestHandler(node);
                         }
-                        return new JcrResourceRequestHandler(node);
+                    } catch (PathNotFoundException e) {
+                        log.info("binary not found " + e.getMessage());
+                    } catch (javax.jcr.LoginException ex) {
+                        log.warn(ex.getMessage());
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
                     }
-                } catch (PathNotFoundException e) {
-                    log.info("binary not found " + e.getMessage());
-                } catch (javax.jcr.LoginException ex) {
-                    log.warn(ex.getMessage());
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
                 return null;
             }
 
             @Override
-            protected UrlInfo parseRequest(final Request request) {
-                throw new UnsupportedOperationException();
+            public int getCompatibilityScore(final Request request) {
+                return 0;
             }
 
             @Override
-            protected Url buildUrl(final UrlInfo info) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            protected boolean pageMustHaveBeenCreatedBookmarkable() {
-                return false;
+            public Url mapHandler(final IRequestHandler requestHandler) {
+                return null;
             }
         });
 
@@ -342,81 +338,78 @@ public class Main extends PluginApplication {
                 cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
                 HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
             }
-            mount(new AbstractBookmarkableMapper("auth", new PageParametersEncoder()) {
+            mount(new AbstractMapper() {
 
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
+                    if (urlStartsWith(request.getUrl(), "auth")) {
+                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
-                    IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
+                        IRequestParameters requestParameters = request.getRequestParameters();
+                        final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
+                        final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
+                        final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
+                                ? destinationPathParams.get(0).toString() : null;
 
-                    IRequestParameters requestParameters = request.getRequestParameters();
-                    final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
-                    final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
-                    final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
-                            ? destinationPathParams.get(0).toString() : null;
+                        PluginUserSession userSession = (PluginUserSession) Session.get();
+                        final UserCredentials userCredentials = userSession.getUserCredentials();
 
-                    PluginUserSession userSession = (PluginUserSession) Session.get();
-                    final UserCredentials userCredentials = userSession.getUserCredentials();
+                        HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
+                        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-                    HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
-                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+                        if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
 
-                    if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
+                            requestTarget = new IRequestHandler() {
 
-                        requestTarget = new IRequestHandler() {
-
-                            @Override
-                            public void respond(IRequestCycle requestCycle) {
-                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
-                                WebResponse response = (WebResponse) RequestCycle.get().getResponse();
-                                String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
-                                if (!cmsContextService.getId().equals(cmsCSID)) {
-                                    // redirect to destinationURL and include marker that it is a retry. This way
-                                    // the destination can choose to not redirect for SSO handshake again if it still does not
-                                    // have a key
-                                    if (destinationUrl.contains("?")) {
-                                        response.sendRedirect(destinationUrl + "&retry");
-                                    } else {
-                                        response.sendRedirect(destinationUrl + "?retry");
+                                @Override
+                                public void respond(IRequestCycle requestCycle) {
+                                    String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
+                                    WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+                                    String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
+                                    if (!cmsContextService.getId().equals(cmsCSID)) {
+                                        // redirect to destinationURL and include marker that it is a retry. This way
+                                        // the destination can choose to not redirect for SSO handshake again if it still does not
+                                        // have a key
+                                        if (destinationUrl.contains("?")) {
+                                            response.sendRedirect(destinationUrl + "&retry");
+                                        } else {
+                                            response.sendRedirect(destinationUrl + "?retry");
+                                        }
+                                        return;
                                     }
-                                    return;
-                                }
-                                String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
-                                if (cmsSessionContextId == null) {
-                                    CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
-                                    CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
-                                    cmsSessionContextId = newCmsSessionContext.getId();
+                                    String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
+                                    if (cmsSessionContextId == null) {
+                                        CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
+                                        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
+                                        cmsSessionContextId = newCmsSessionContext.getId();
 
+                                    }
+                                    if (destinationUrl.contains("?")) {
+                                        response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                    } else {
+                                        response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                    }
                                 }
-                                if (destinationUrl.contains("?")) {
-                                    response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
-                                } else {
-                                    response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
-                                }
-                            }
 
-                            @Override
-                            public void detach(IRequestCycle requestCycle) {
-                                //Nothing to detach.
-                            }
-                        };
-                    }
-                    return requestTarget;
-                }
-                
-                @Override
-                protected UrlInfo parseRequest(final Request request) {
-                    throw new UnsupportedOperationException();
+                                @Override
+                                public void detach(IRequestCycle requestCycle) {
+                                    //Nothing to detach.
+                                }
+                            };
+                        }
+                        return requestTarget;
+                    } 
+                    return null;
                 }
 
                 @Override
-                protected Url buildUrl(final UrlInfo info) {
-                    throw new UnsupportedOperationException();
+                public int getCompatibilityScore(final Request request) {
+                    return 0;
                 }
 
                 @Override
-                protected boolean pageMustHaveBeenCreatedBookmarkable() {
-                    return false;
+                public Url mapHandler(final IRequestHandler requestHandler) {
+                    return null;
                 }
             });
         }
