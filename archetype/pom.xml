@@ -33,6 +33,7 @@
   <packaging>maven-archetype</packaging>
 
   <properties>
+    <release.essentials.version>${project.version}</release.essentials.version>
     <notice.project.name>Hippo CMS7 Project Archetype</notice.project.name>
     <gettingstarted.app.groupId>org.onehippo.cms7.hst</gettingstarted.app.groupId>
     <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
@@ -80,6 +81,28 @@
     </testResources>
 
     <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml"/>
+                </replace>
+                <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml"/>
+                </replace>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>
