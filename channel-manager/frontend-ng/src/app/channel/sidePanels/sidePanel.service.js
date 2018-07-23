@@ -17,11 +17,14 @@
 import './sidePanel.scss';
 
 class SidePanelService {
-  constructor($mdSidenav, $q) {
+  constructor($mdSidenav, $q, ChannelService, CmsService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
+    this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+
     this.panels = {};
   }
 
@@ -94,6 +97,10 @@ class SidePanelService {
   setFullScreen(side, fullScreen) {
     const panel = this.panels[side];
     if (panel) {
+      if (fullScreen) {
+        this.CmsService.reportUsageStatistic('CMSChannelsFullScreen', { side });
+      }
+      this.ChannelService.setToolbarDisplayed(!fullScreen);
       panel.fullScreen = fullScreen;
     }
   }

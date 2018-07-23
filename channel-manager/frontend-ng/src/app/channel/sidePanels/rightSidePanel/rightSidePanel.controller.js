@@ -23,8 +23,6 @@ class RightSidePanelCtrl {
     $state,
     $transitions,
     SidePanelService,
-    ChannelService,
-    CmsService,
     localStorageService,
     RightSidePanelService,
   ) {
@@ -34,12 +32,8 @@ class RightSidePanelCtrl {
     this.$transitions = $transitions;
 
     this.SidePanelService = SidePanelService;
-    this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.localStorageService = localStorageService;
     this.RightSidePanelService = RightSidePanelService;
-
-    this.isFullScreen = false;
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
@@ -90,14 +84,12 @@ class RightSidePanelCtrl {
     this.SidePanelService.close('right');
   }
 
-  setFullScreen(fullScreen) {
-    if (fullScreen) {
-      this.CmsService.reportUsageStatistic('CMSChannelsFullScreen');
-    }
+  isFullScreen() {
+    return this.SidePanelService.isFullScreen('right');
+  }
 
-    this.ChannelService.setToolbarDisplayed(!fullScreen);
+  setFullScreen(fullScreen) {
     this.SidePanelService.setFullScreen('right', fullScreen);
-    this.isFullScreen = fullScreen;
   }
 }
 

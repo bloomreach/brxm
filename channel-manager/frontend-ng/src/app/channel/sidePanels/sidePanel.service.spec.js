@@ -18,6 +18,8 @@ describe('SidePanelService', () => {
   let $mdSidenav;
   let $q;
   let $rootScope;
+  let ChannelService;
+  let CmsService;
   let mockSideNav;
   let sideNavElement;
   let sidePanelElement;
@@ -37,9 +39,11 @@ describe('SidePanelService', () => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 
-    inject((_$q_, _$rootScope_, _SidePanelService_) => {
+    inject((_$q_, _$rootScope_, _ChannelService_, _CmsService_, _SidePanelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
       SidePanelService = _SidePanelService_;
     });
 
@@ -164,7 +168,7 @@ describe('SidePanelService', () => {
     expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
   });
 
-  describe('full-screen state management', () => {
+  describe('side-panel full-screen behavior', () => {
     it('does not throw an error and returns falsy if side-panel has not been initialized yet', () => {
       try {
         expect(SidePanelService.isFullScreen('left')).toBeFalsy();
@@ -183,6 +187,33 @@ describe('SidePanelService', () => {
 
       SidePanelService.setFullScreen('left', false);
       expect(SidePanelService.isFullScreen('left')).toBe(false);
+    });
+
+    it('reports usage statistics when a side-panel goes fullscreen', () => {
+      spyOn(CmsService, 'reportUsageStatistic');
+
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      SidePanelService.setFullScreen('left', true);
+
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen', { side: 'left' });
+
+      CmsService.reportUsageStatistic.calls.reset();
+      SidePanelService.setFullScreen('left', false);
+
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
+    });
+
+    it('hides the toolbar when going fullscreen', () => {
+      spyOn(ChannelService, 'setToolbarDisplayed');
+
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      SidePanelService.setFullScreen('left', true);
+
+      expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
+
+      SidePanelService.setFullScreen('left', false);
+
+      expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     });
   });
 });

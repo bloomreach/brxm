@@ -20,8 +20,6 @@ describe('RightSidePanel', () => {
   let $rootScope;
   let $state;
   let $timeout;
-  let ChannelService;
-  let CmsService;
   let RightSidePanelService;
   let SidePanelService;
 
@@ -39,12 +37,10 @@ describe('RightSidePanel', () => {
       $rootScope = _$rootScope_;
       $state = _$state_;
       $timeout = _$timeout_;
-      ChannelService = _ChannelService_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
-    CmsService = jasmine.createSpyObj('CmsService', ['reportUsageStatistic']);
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open', 'setFullScreen']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen']);
 
     $element = angular.element('<div></div>');
     sideNavElement = angular.element('<div class="right-side-panel"></div>');
@@ -54,7 +50,6 @@ describe('RightSidePanel', () => {
     $ctrl = $componentController('rightSidePanel', {
       $element,
       $scope,
-      CmsService,
       SidePanelService,
     });
     $rootScope.$digest();
@@ -85,23 +80,11 @@ describe('RightSidePanel', () => {
   });
 
   it('sets full screen mode on and off', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed');
-
     $ctrl.setFullScreen(true);
-
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
     expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', true);
-    expect($ctrl.isFullScreen).toBe(true);
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
-
-    CmsService.reportUsageStatistic.calls.reset();
 
     $ctrl.setFullScreen(false);
-
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
-    expect($ctrl.isFullScreen).toBe(false);
-    expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
   it('updates local storage on resize', () => {
@@ -173,10 +156,8 @@ describe('RightSidePanel', () => {
   });
 
   it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed');
     SidePanelService.open.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
-    ChannelService.isToolbarDisplayed = false;
 
     $ctrl.$onInit();
 
@@ -186,8 +167,9 @@ describe('RightSidePanel', () => {
     $state.go('hippo-cm.channel');
     $rootScope.$digest();
 
-    expect($element.hasClass('sidepanel-open')).toBe(false);
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($element.hasClass('side-panel-open')).toBe(false);
     expect($element.hasClass('full-screen')).toBe(false);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
   });
 });
