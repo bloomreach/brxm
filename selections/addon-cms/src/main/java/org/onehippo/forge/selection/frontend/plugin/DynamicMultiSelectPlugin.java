@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -499,12 +499,20 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             this.valueList = valueList;
         }
 
+        @Override
         public String getDisplayValue(String object) {
             return valueList.getLabel(object);
         }
 
+        @Override
         public String getIdValue(String object, int index) {
-            return valueList.getKey(object);
+            return object;
+        }
+
+        @Override
+        public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+            final List<? extends String> choices = choicesModel.getObject();
+            return choices.contains(id) ? id : null;
         }
     }
 
