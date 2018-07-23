@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,16 +29,23 @@ import wicket.contrib.input.events.key.KeyType;
 
 public class AjaxWizardButtonBar extends WizardButtonBar {
 
+    private final Wizard wizard;
+
     public AjaxWizardButtonBar(String id, final Wizard wizard) {
         super(id, wizard);
+        this.wizard = wizard;
 
         setOutputMarkupId(true);
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
 
         addOrReplace(new CancelButton(wizard));
         addOrReplace(new NextButton(wizard));
         addOrReplace(new PreviousButton(wizard));
         addOrReplace(new FinishButton(wizard));
-
     }
 
     private class CancelButton extends AjaxWizardButton {
