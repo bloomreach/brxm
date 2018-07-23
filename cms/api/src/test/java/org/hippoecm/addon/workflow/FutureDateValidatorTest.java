@@ -20,7 +20,9 @@ package org.hippoecm.addon.workflow;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.wicket.validation.Validatable;
 import org.apache.wicket.validation.ValidationError;
@@ -40,6 +42,8 @@ import static org.junit.Assert.assertThat;
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @PrepareForTest(FutureDateValidator.class)
 public class FutureDateValidatorTest {
+
+    private static final String FUTURE_DATE_VALIDATOR_CLASS_NAME = FutureDateValidator.class.getSimpleName();
 
     private FutureDateValidator validator;
     private Instant fixedTimeValue;
@@ -77,7 +81,8 @@ public class FutureDateValidatorTest {
         validator.validate(validatable);
 
         assertThat(validatable.isValid(), is(false));
-        assertThat(firstErrorKey(validatable), is(FutureDateValidator.EMPTY_DATE));
+        assertThat(firstErrorKeys(validatable),
+                is(Arrays.asList(FUTURE_DATE_VALIDATOR_CLASS_NAME, FutureDateValidator.EMPTY_DATE)));
     }
 
     @Test
@@ -88,7 +93,8 @@ public class FutureDateValidatorTest {
 
         PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(false));
-        assertThat(firstErrorKey(validatable), is(FutureDateValidator.DATE_IN_THE_PAST));
+        assertThat(firstErrorKeys(validatable),
+                is(Arrays.asList(FUTURE_DATE_VALIDATOR_CLASS_NAME, FutureDateValidator.DATE_IN_THE_PAST)));
     }
 
     @Test
@@ -101,8 +107,9 @@ public class FutureDateValidatorTest {
         assertThat(validatable.isValid(), is(true));
     }
 
-    private static String firstErrorKey(final Validatable validatable) {
-        return ((ValidationError) validatable.getErrors().get(0)).getKeys().get(0);
+    private static List<String> firstErrorKeys(final Validatable validatable) {
+        final ValidationError firstError = (ValidationError) validatable.getErrors().get(0);
+        return firstError.getKeys();
     }
 
     private static Date createDate(final int year, final int month, final int day, final int hour, final int min) {
