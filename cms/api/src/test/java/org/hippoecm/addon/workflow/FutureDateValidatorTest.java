@@ -20,13 +20,13 @@ package org.hippoecm.addon.workflow;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.wicket.validation.Validatable;
 import org.apache.wicket.validation.ValidationError;
-import org.easymock.EasyMock;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,12 +35,18 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-@PrepareForTest(FutureDateValidator.class)
+@PrepareForTest({DateTimePrinter.class, FutureDateValidator.class, Instant.class})
 public class FutureDateValidatorTest {
 
     private static final String FUTURE_DATE_VALIDATOR_CLASS_NAME = FutureDateValidator.class.getSimpleName();
@@ -52,9 +58,16 @@ public class FutureDateValidatorTest {
     public void setUp() {
         // A fixed time value 2016-08-04T11:50:20.100Z is used to mock Instant#now() method
         fixedTimeValue = ZonedDateTime.of(2016, 8, 4, 11, 50, 20, 100, ZoneId.of("Z")).toInstant();
-        PowerMock.mockStatic(Instant.class);
-        EasyMock.expect(Instant.now()).andReturn(fixedTimeValue);
-        PowerMock.replayAll();
+        mockStatic(Instant.class);
+        expect(Instant.now()).andReturn(fixedTimeValue);
+
+        // Mock DateTimePrinter.print()
+        mockStatic(DateTimePrinter.class);
+        final DateTimePrinter mockPrinter = createMock(DateTimePrinter.class);
+        expect(DateTimePrinter.of(anyObject(Date.class))).andReturn(mockPrinter);
+        expect(mockPrinter.print(eq(FormatStyle.LONG), eq(FormatStyle.MEDIUM))).andReturn("2016-8-4 11:49");
+
+        replayAll();
 
         validator = new FutureDateValidator();
     }
@@ -81,7 +94,7 @@ public class FutureDateValidatorTest {
         validator.validate(validatable);
 
         assertThat(validatable.isValid(), is(false));
-        assertThat(firstErrorKeys(validatable),
+        assertThat(firstError(validatable).getKeys(),
                 is(Arrays.asList(FUTURE_DATE_VALIDATOR_CLASS_NAME, FutureDateValidator.EMPTY_DATE)));
     }
 
@@ -93,7 +106,9 @@ public class FutureDateValidatorTest {
 
         PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(false));
-        assertThat(firstErrorKeys(validatable),
+        assertThat(firstError(validatable).getVariables().get(FutureDateValidator.INPUTDATE_LABEL),
+                is("2016-8-4 11:49"));
+        assertThat(firstError(validatable).getKeys(),
                 is(Arrays.asList(FUTURE_DATE_VALIDATOR_CLASS_NAME, FutureDateValidator.DATE_IN_THE_PAST)));
     }
 
@@ -107,9 +122,8 @@ public class FutureDateValidatorTest {
         assertThat(validatable.isValid(), is(true));
     }
 
-    private static List<String> firstErrorKeys(final Validatable validatable) {
-        final ValidationError firstError = (ValidationError) validatable.getErrors().get(0);
-        return firstError.getKeys();
+    private static ValidationError firstError(final Validatable validatable) {
+        return (ValidationError) validatable.getErrors().get(0);
     }
 
     private static Date createDate(final int year, final int month, final int day, final int hour, final int min) {
