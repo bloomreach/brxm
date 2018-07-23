@@ -71,7 +71,7 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
             final IChoiceRenderer<Object> choiceRenderer = new ListChoiceRenderer(documentRootFolderNames);
             DropDownChoice<Object> rootFoldersField = new DropDownChoice<>("rootFolders", propModel, documentRootFolderNames, choiceRenderer);
             rootFoldersField.setRequired(true);
-            rootFoldersField.setLabel(new StringResourceModel("channel-dropdown-label", this, null));
+            rootFoldersField.setLabel(new StringResourceModel("channel-dropdown-label", this));
             add(rootFoldersField);
         }
 

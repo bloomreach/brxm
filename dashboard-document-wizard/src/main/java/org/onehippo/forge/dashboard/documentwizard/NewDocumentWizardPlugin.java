@@ -123,7 +123,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, Model.of(labelText));
         } else {
             labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL,
-                                       new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null));
+                    new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this));
         }
 
         link.add(labelComponent);
@@ -279,10 +279,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 String value = strValue.getValue();
                 //noinspection ConstantConditions
                 if (!isValidName(value)) {
-                    strValue.error(messageSource -> new StringResourceModel("invalid.name", this, null).getString());
+                    strValue.error(messageSource -> new StringResourceModel("invalid.name", this).getString());
                 }
             });
-            nameField.setLabel(new StringResourceModel(DIALOG_NAME_LABEL, this, null));
+            nameField.setLabel(new StringResourceModel(DIALOG_NAME_LABEL, this));
             add(nameField);
 
             // add list dropdown field
@@ -293,7 +293,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final IChoiceRenderer<Object> choiceRenderer = new ListChoiceRenderer(categories);
             DropDownChoice<Object> listField = new DropDownChoice<>("list", propModel, categories, choiceRenderer);
             listField.setRequired(true);
-            listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this, null));
+            listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this));
             add(listField);
 
             if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(ClassificationType.LISTDATE)) {
@@ -329,7 +329,8 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     return new Label(labelKey, label);
                 }
             }
-            return new Label(labelKey, new StringResourceModel(labelKey, this, null));
+            return new Label(labelKey, new StringResourceModel(labelKey, this).setModel(null).setParameters(
+            ));
         }
 
         /**
@@ -346,7 +347,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     return Model.of(label);
                 }
             }
-            return new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null);
+            return new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this);
         }
 
         @Override
@@ -423,9 +424,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final String newDisplayName = documentName;
 
             if (existsDisplayName(folderNode, newDisplayName)) {
-                return new StringResourceModel(ERROR_DISPLAY_NAME_EXISTS, this, null, Model.of(newDisplayName)).getObject();
+                return new StringResourceModel(ERROR_DISPLAY_NAME_EXISTS, this)
+                        .setParameters(Model.of(newDisplayName))
+                        .getObject();
             } else if (existsNodeName(folderNode, newNodeName)) {
-                return new StringResourceModel(ERROR_SNS_NODE_EXISTS, this, null, Model.of(newNodeName)).getObject();
+                return new StringResourceModel(ERROR_SNS_NODE_EXISTS, this)
+                        .setParameters(Model.of(newNodeName))
+                        .getObject();
             }
             return null;
         }
