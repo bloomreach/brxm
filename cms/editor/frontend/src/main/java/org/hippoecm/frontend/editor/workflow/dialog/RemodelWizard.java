@@ -35,7 +35,7 @@ public class RemodelWizard extends Wizard {
     private IDialogService dialogService;
 
     public RemodelWizard(String id) {
-        super(id, false);
+        super(id);
         setOutputMarkupId(true);
         WizardModel model = new WizardModel();
         model.add(new Step1());
