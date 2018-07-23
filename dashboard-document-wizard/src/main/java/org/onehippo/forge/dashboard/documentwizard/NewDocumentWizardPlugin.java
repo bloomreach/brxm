@@ -139,8 +139,8 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     public void renderHead(final IHeaderResponse response) {
         response.render(new CssReferenceHeaderItem(WIZARD_CSS, null, null, null) {
             @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return Collections.singleton(CmsHeaderItem.get());
+            public List<HeaderItem> getDependencies() {
+                return Collections.singletonList(CmsHeaderItem.get());
             }
         });
     }
