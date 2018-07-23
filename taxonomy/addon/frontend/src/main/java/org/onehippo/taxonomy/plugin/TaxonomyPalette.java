@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,13 +82,21 @@ public class TaxonomyPalette extends Panel {
         add(new Palette<String>("palette", choices, new Model<>(options),
                 new IChoiceRenderer<String>() {
 
+                    @Override
                     public Object getDisplayValue(String object) {
                         final Category cat = taxonomyModel.getObject().getCategoryByKey(object);
                         return TaxonomyHelper.getCategoryName(cat, TaxonomyPalette.this.preferredLocale);
                     }
 
+                    @Override
                     public String getIdValue(String object, int index) {
                         return object;
+                    }
+
+                    @Override
+                    public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                        final List<? extends String> choices = choicesModel.getObject();
+                        return choices.contains(id) ? id : null;
                     }
 
                 }, 20/*rows*/, false/*allowOrder*/) {
