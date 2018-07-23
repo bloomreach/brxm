@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -333,10 +333,6 @@ public class PluginUserSession extends UserSession {
         }
     }
 
-    private HttpSession getHttpSession() {
-        return ((ServletWebRequest)RequestCycle.get().getRequest()).getContainerRequest().getSession();
-    }
-
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
         final String applicationName = getApplicationName(jcrSession);
         final IPluginConfigService application = getApplicationFactory(jcrSession).getApplication(applicationName);
@@ -534,7 +530,7 @@ public class PluginUserSession extends UserSession {
     }
 
     private int increaseAppCount() {
-        final Integer appCount = (Integer)getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
+        final Integer appCount = (Integer) getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
         if (appCount == null) {
             getHttpSession().setAttribute(SESSION_CMS_APP_COUNT, new Integer(1));
             return 1;
@@ -546,7 +542,7 @@ public class PluginUserSession extends UserSession {
     }
 
     private int decreaseAppCount() {
-        final Integer appCounter = (Integer)getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
+        final Integer appCounter = (Integer) getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
         if (appCounter == null || appCounter.intValue() <= 1) {
             getHttpSession().removeAttribute(SESSION_CMS_APP_COUNT);
             return 0;
@@ -555,6 +551,10 @@ public class PluginUserSession extends UserSession {
             getHttpSession().setAttribute(SESSION_CMS_APP_COUNT, new Integer(newValue));
             return newValue;
         }
+    }
+
+    private HttpSession getHttpSession() {
+        return ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getSession();
     }
 
     private void resetFallbackSession() {
@@ -566,4 +566,15 @@ public class PluginUserSession extends UserSession {
         }
     }
 
+    public int getAuthorizedAppCounter() {
+        final Integer appCount = (Integer)getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
+        if (appCount == null) {
+            return 0;
+        }
+        return appCount.intValue();
+    }
+
+    public String getUserName() {
+        return (String)getHttpSession().getAttribute("hippo:username");
+    }
 }
