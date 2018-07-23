@@ -684,14 +684,24 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             this.list = list;
         }
 
+        @Override
         public Object getDisplayValue(Object object) {
             return list.getLabel(object);
         }
 
+        @Override
         public String getIdValue(Object object, int index) {
             return list.getKey(object);
         }
 
+        @Override
+        public Object getObject(final String id, final IModel<? extends List<?>> choices) {
+            final int index = list.indexOf(id);
+            if (index >= 0) {
+                return list.get(index);
+            }
+            return null;
+        }
     }
 
 
