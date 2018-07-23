@@ -17,13 +17,16 @@
 import './sidePanel.scss';
 
 class SidePanelService {
-  constructor($mdSidenav, $q, ChannelService, CmsService) {
+  constructor($document, $mdSidenav, $q, $timeout, ChannelService, CmsService, HippoIframeService) {
     'ngInject';
 
+    this.$document = $document;
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
+    this.$timeout = $timeout;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.HippoIframeService = HippoIframeService;
 
     this.panels = {};
   }
@@ -99,6 +102,9 @@ class SidePanelService {
     if (panel) {
       if (fullScreen) {
         this.CmsService.reportUsageStatistic('CMSChannelsFullScreen', { side });
+
+        const hippoIframeWidth = this.HippoIframeService.getHippoIframeWidth();
+        this.$document[0].documentElement.style.setProperty('--full-screen-locked-width', `${hippoIframeWidth}px`);
       }
       this.ChannelService.setToolbarDisplayed(!fullScreen);
       panel.fullScreen = fullScreen;
