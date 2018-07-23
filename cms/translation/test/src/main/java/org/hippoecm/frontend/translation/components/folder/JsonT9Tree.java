@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.translation.components.folder;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -38,13 +37,14 @@ public final class JsonT9Tree extends T9Tree {
     private Map<String, List<T9Node>> translations = new HashMap<String, List<T9Node>>();
 
     public JsonT9Tree() {
-        try (InputStream is = getClass().getResourceAsStream("folder-translation-nodes.json")) {
-            JSONTokener tokener = new JSONTokener(new InputStreamReader(is));
+        InputStream is = getClass().getResourceAsStream("folder-translation-nodes.json");
+        JSONTokener tokener = new JSONTokener(new InputStreamReader(is));
+        try {
             JSONArray data = new JSONArray(tokener);
             this.root = new T9Node("root");
             this.nodes.put(root.getId(), root);
             process(getRoot(), data);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException("Could not read repository data.", e);
         }
     }
