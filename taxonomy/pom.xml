@@ -27,7 +27,7 @@
   <description>Hippo Plugin Taxonomy</description>
 
   <artifactId>hippo-plugin-taxonomy</artifactId>
-  <version>13.0.0-SNAPSHOT</version>
+  <version>13.0.0-wicket7-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -43,7 +43,7 @@
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.0.0-wicket7-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
 
