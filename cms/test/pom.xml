@@ -64,6 +64,10 @@
       <artifactId>hippo-services</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket15-tree</artifactId>
+    </dependency>
 
     <!-- embedded repository  -->
     <dependency>
