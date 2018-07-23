@@ -585,7 +585,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     public void close() throws EditorException {
         super.close();
-        branchIdModel.destroy();
+        if (branchIdModel != null) {
+            branchIdModel.destroy();
+        }
     }
 
     @Override
