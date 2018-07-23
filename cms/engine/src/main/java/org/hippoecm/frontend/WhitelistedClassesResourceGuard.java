@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -75,12 +76,20 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     }
 
     private boolean isWhitelisted(final String absolutePath) {
+        final String strippedPath = stripFilePrexix(absolutePath);
         for (final String prefix : pathPrefixes) {
-            if (absolutePath.startsWith(prefix)) {
+            if (strippedPath.startsWith(prefix)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private String stripFilePrexix(final String absolutePath) {
+        if (absolutePath.startsWith("jar:")) {
+            return StringUtils.substringAfterLast(absolutePath, "!/");
+        }
+        return absolutePath;
     }
 
     private static boolean isUserLoggedIn() {

@@ -58,6 +58,14 @@ public class WhitelistedClassesResourceGuardTest {
         assertTrue(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
+    @Test
+    public void allowWhitelistedResourceInJar() {
+        String jarPath = "jar:file:/my/file/system/folder/org/apache/wicket/wicket-core/7.10.0/wicket-core-7.10.0.jar!/org/hippoecm/frontend/resource/jquery/jquery-1.12.4.min.js";
+        Class whitelisted = getClass();
+        guard.addClassNamePrefixes(whitelisted.getPackage().getName());
+        assertTrue(guard.accept(jarPath));
+    }
+    
     private void login() {
         final MockHttpSession httpSession = tester.getHttpSession();
         httpSession.setTemporary(false);
