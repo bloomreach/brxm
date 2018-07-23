@@ -29,8 +29,6 @@ import factoriesModule from './factories/factories.module';
 import filtersModule from './filters/filters.module';
 import servicesModule from './services/services.module';
 
-import HstConstants from './constants/hst.constants';
-
 import config from './hippo-cm.config';
 import hippoCmComponent from './hippo-cm.component';
 
@@ -49,7 +47,6 @@ const hippoCmModule = angular
     servicesModule,
   ])
   .component('hippoCm', hippoCmComponent)
-  .config(config)
-  .constant('HstConstants', HstConstants);
+  .config(config);
 
 export default hippoCmModule;

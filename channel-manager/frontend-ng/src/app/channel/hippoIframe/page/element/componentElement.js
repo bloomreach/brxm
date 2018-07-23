@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import HstConstants from '../../../../constants/hst.constants';
+import HstConstants from '../../hst.constants';
 import PageStructureElement from './pageStructureElement';
 
 class ComponentElement extends PageStructureElement {

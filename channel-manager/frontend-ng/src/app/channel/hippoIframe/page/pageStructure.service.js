@@ -17,6 +17,7 @@
 import ComponentElement from './element/componentElement';
 import ContainerElement from './element/containerElement';
 import ContentLink from './element/contentLink';
+import HstConstants from '../hst.constants';
 import ManageContentLink from './element/manageContentLink';
 import MenuLink from './element/menuLink';
 
@@ -29,7 +30,6 @@ class PageStructureService {
     FeedbackService,
     HippoIframeService,
     HstCommentsProcessorService,
-    HstConstants,
     HstService,
     MarkupService,
     MaskService,
@@ -45,7 +45,6 @@ class PageStructureService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
-    this.HST = HstConstants;
     this.HstService = HstService;
     this.MarkupService = MarkupService;
     this.MaskService = MaskService;
@@ -65,28 +64,28 @@ class PageStructureService {
   }
 
   registerParsedElement(commentDomElement, metaData) {
-    const type = metaData[this.HST.TYPE];
+    const type = metaData[HstConstants.TYPE];
     switch (type) {
-      case this.HST.TYPE_CONTAINER:
+      case HstConstants.TYPE_CONTAINER:
         this._registerContainer(commentDomElement, metaData);
         break;
-      case this.HST.TYPE_COMPONENT:
+      case HstConstants.TYPE_COMPONENT:
         this._registerComponent(commentDomElement, metaData);
         break;
-      case this.HST.TYPE_PAGE:
+      case HstConstants.TYPE_PAGE:
         this._registerPageMetaData(metaData);
         break;
-      case this.HST.TYPE_PROCESSED_HEAD_CONTRIBUTIONS:
-      case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+      case HstConstants.TYPE_PROCESSED_HEAD_CONTRIBUTIONS:
+      case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
         this._registerHeadContributions(metaData);
         break;
-      case this.HST.TYPE_CONTENT_LINK:
+      case HstConstants.TYPE_CONTENT_LINK:
         this._registerContentLink(commentDomElement, metaData);
         break;
-      case this.HST.TYPE_MANAGE_CONTENT_LINK:
+      case HstConstants.TYPE_MANAGE_CONTENT_LINK:
         this._registerManageContentLink(commentDomElement, metaData);
         break;
-      case this.HST.TYPE_EDIT_MENU_LINK:
+      case HstConstants.TYPE_EDIT_MENU_LINK:
         this._registerMenuLink(commentDomElement, metaData);
         break;
       default:
@@ -115,12 +114,12 @@ class PageStructureService {
   }
 
   _registerPageMetaData(metaData) {
-    delete metaData[this.HST.TYPE];
+    delete metaData[HstConstants.TYPE];
     this.PageMetaDataService.add(metaData);
   }
 
   _registerHeadContributions(metaData) {
-    this.headContributions = this.headContributions.concat(metaData[this.HST.HEAD_ELEMENTS]);
+    this.headContributions = this.headContributions.concat(metaData[HstConstants.HEAD_ELEMENTS]);
   }
 
   _registerContentLink(commentDomElement, metaData) {
@@ -478,10 +477,10 @@ class PageStructureService {
     let container = null;
 
     this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      const type = metaData[this.HST.TYPE];
+      const type = metaData[HstConstants.TYPE];
       try {
         switch (type) {
-          case this.HST.TYPE_CONTAINER:
+          case HstConstants.TYPE_CONTAINER:
             if (!container) {
               container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
             } else {
@@ -490,7 +489,7 @@ class PageStructureService {
             }
             break;
 
-          case this.HST.TYPE_COMPONENT:
+          case HstConstants.TYPE_COMPONENT:
             if (!container) {
               this.$log.warn('Unable to register component outside of a container context.');
               return;
@@ -504,22 +503,22 @@ class PageStructureService {
             }
             break;
 
-          case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+          case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
             if (container) {
-              const unprocessedElements = metaData[this.HST.HEAD_ELEMENTS];
+              const unprocessedElements = metaData[HstConstants.HEAD_ELEMENTS];
               container.setHeadContributions(unprocessedElements);
             }
             break;
 
-          case this.HST.TYPE_CONTENT_LINK:
+          case HstConstants.TYPE_CONTENT_LINK:
             this._registerContentLink(commentDomElement, metaData);
             break;
 
-          case this.HST.TYPE_MANAGE_CONTENT_LINK:
+          case HstConstants.TYPE_MANAGE_CONTENT_LINK:
             this._registerManageContentLink(commentDomElement, metaData);
             break;
 
-          case this.HST.TYPE_EDIT_MENU_LINK:
+          case HstConstants.TYPE_EDIT_MENU_LINK:
             this._registerMenuLink(commentDomElement, metaData);
             break;
 
@@ -546,9 +545,9 @@ class PageStructureService {
     let component = null;
 
     this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      const type = metaData[this.HST.TYPE];
+      const type = metaData[HstConstants.TYPE];
       switch (type) {
-        case this.HST.TYPE_COMPONENT:
+        case HstConstants.TYPE_COMPONENT:
           try {
             component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
           } catch (exception) {
@@ -556,22 +555,22 @@ class PageStructureService {
           }
           break;
 
-        case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+        case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
           if (component) {
-            const unprocessedElements = metaData[this.HST.HEAD_ELEMENTS];
+            const unprocessedElements = metaData[HstConstants.HEAD_ELEMENTS];
             component.setHeadContributions(unprocessedElements);
           }
           break;
 
-        case this.HST.TYPE_CONTENT_LINK:
+        case HstConstants.TYPE_CONTENT_LINK:
           this._registerContentLink(commentDomElement, metaData);
           break;
 
-        case this.HST.TYPE_MANAGE_CONTENT_LINK:
+        case HstConstants.TYPE_MANAGE_CONTENT_LINK:
           this._registerManageContentLink(commentDomElement, metaData);
           break;
 
-        case this.HST.TYPE_EDIT_MENU_LINK:
+        case HstConstants.TYPE_EDIT_MENU_LINK:
           this._registerMenuLink(commentDomElement, metaData);
           break;
 

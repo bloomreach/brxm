@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+import HstConstants from '../hst.constants';
+
 class PageMetaDataService {
-  constructor(HstConstants) {
+  constructor() {
     'ngInject';
 
-    this.HST = HstConstants;
     this.clear();
   }
 
@@ -36,23 +37,23 @@ class PageMetaDataService {
   }
 
   getPathInfo() {
-    return this.data[this.HST.PATH_INFO];
+    return this.data[HstConstants.PATH_INFO];
   }
 
   getChannelId() {
-    return this.data[this.HST.CHANNEL_ID];
+    return this.data[HstConstants.CHANNEL_ID];
   }
 
   getContextPath() {
-    return this.data[this.HST.CONTEXT_PATH];
+    return this.data[HstConstants.CONTEXT_PATH];
   }
 
   getRenderVariant() {
-    return this.data[this.HST.RENDER_VARIANT];
+    return this.data[HstConstants.RENDER_VARIANT];
   }
 
   getSiteMapItemId() {
-    return this.data[this.HST.SITEMAPITEM_ID];
+    return this.data[HstConstants.SITEMAPITEM_ID];
   }
 }
 
