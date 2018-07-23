@@ -22,7 +22,7 @@ describe('MarkupService', () => {
   let $httpBackend;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.page');
+    angular.mock.module('hippo-cm.channel.hippoIframe.page');
 
     inject((_MarkupService_, _$httpBackend_) => {
       $httpBackend = _$httpBackend_;

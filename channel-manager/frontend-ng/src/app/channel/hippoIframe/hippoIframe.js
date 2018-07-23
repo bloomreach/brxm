@@ -22,13 +22,16 @@ import HippoIframeService from './hippoIframe.service';
 import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
 import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
+import PageModule from './page/page.module';
 import RenderingService from './rendering/rendering.service';
 import ScrollService from './scrolling/scroll.service';
 import SpaService from './spa/spa.service';
 import ViewportService from './viewport/viewport.service';
 
 const channelHippoIframeModule = angular
-  .module('hippo-cm.channel.hippoIframe', [])
+  .module('hippo-cm.channel.hippoIframe', [
+    PageModule.name,
+  ])
   .controller('hippoIframeCtrl', HippoIframeCtrl)
   .directive('hippoIframe', hippoIframe)
   .service('ContainerService', ContainerService)

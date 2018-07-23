@@ -18,10 +18,10 @@ import MarkupService from './markup.service';
 import PageMetaDataService from './pageMetaData.service';
 import PageStructureService from './pageStructure.service';
 
-const channelPageModule = angular
-  .module('hippo-cm.channel.page', [])
+const pageModule = angular
+  .module('hippo-cm.channel.hippoIframe.page', [])
   .service('MarkupService', MarkupService)
   .service('PageMetaDataService', PageMetaDataService)
   .service('PageStructureService', PageStructureService);
 
-export default channelPageModule;
+export default pageModule;
