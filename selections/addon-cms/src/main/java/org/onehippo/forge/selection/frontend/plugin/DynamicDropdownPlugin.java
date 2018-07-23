@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -383,8 +383,7 @@ public class DynamicDropdownPlugin extends RenderPlugin<String> {
 
         final Boolean showDefault = getPluginConfig().getAsBoolean(Config.SHOW_DEFAULT, true);
         if (showDefault) {
-            selectItems.add(new InternalSelectOption("",
-                    new StringResourceModel("choose.one", DynamicDropdownPlugin.this, null).getString()));
+            selectItems.add(new InternalSelectOption("", new StringResourceModel("choose.one", this).getString()));
         }
 
         final Map<String, InternalSelectOptionGroup> groupsSoFar = new HashMap<>();
@@ -467,12 +466,16 @@ public class DynamicDropdownPlugin extends RenderPlugin<String> {
             super(id, markupId, DynamicDropdownPlugin.this);
             // a container is bound to the optgroup element, so we can set  the label on the optgroup element
             MarkupContainer container = new WebMarkupContainer("optionGroup");
-            container.add(new AttributeModifier("label", new StringResourceModel(optionGroup.getLabel(), this, null,
-                    optionGroup.getLabel())));
+
+            final StringResourceModel labelModel = new StringResourceModel(optionGroup.getLabel(), this)
+                    .setDefaultValue(optionGroup.getLabel());
+            container.add(new AttributeModifier("label", labelModel));
+
             // the SelectOptions widget is a repeating view. This widget will thus replace the tag to which it is bound
             SelectOptions<String> optionGroupCmpt = new SelectOptions<>("optionGroupItems", optionGroup
                     .getOptions(), optionRenderer);
             container.add(optionGroupCmpt);
+
             add(container);
         }
 
