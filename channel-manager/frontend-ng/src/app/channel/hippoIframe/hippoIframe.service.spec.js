@@ -18,9 +18,10 @@ describe('HippoIframeService', () => {
   let $log;
   let $rootScope;
   let $window;
+  let hippoIframe;
   let iframe;
-  let HippoIframeService;
   let ChannelService;
+  let HippoIframeService;
   let ScrollService;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
@@ -31,8 +32,8 @@ describe('HippoIframeService', () => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       $window = _$window_;
-      HippoIframeService = _HippoIframeService_;
       ChannelService = _ChannelService_;
+      HippoIframeService = _HippoIframeService_;
       ScrollService = _ScrollService_;
     });
 
@@ -43,8 +44,9 @@ describe('HippoIframeService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
+    hippoIframe = $j('hippo-iframe');
     iframe = $j('#testIframe');
-    HippoIframeService.initialize(iframe);
+    HippoIframeService.initialize(hippoIframe, iframe);
   });
 
   function loadIframeFixture(callback) {
@@ -207,5 +209,12 @@ describe('HippoIframeService', () => {
     spyOn(iframe, 'attr');
     HippoIframeService.load('/not/target');
     expect(iframe.attr).toHaveBeenCalledWith('src', '/test/url');
+  });
+
+  it('uses jQuery to calculate the width of the hippo-iframe element', () => {
+    spyOn(hippoIframe, 'outerWidth');
+
+    HippoIframeService.getHippoIframeWidth();
+    expect(hippoIframe.outerWidth).toHaveBeenCalled();
   });
 });

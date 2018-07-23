@@ -55,7 +55,7 @@ class HippoIframeCtrl {
 
     this.iframeJQueryElement.on('load', () => this.onLoad());
 
-    this.HippoIframeService.initialize(this.iframeJQueryElement);
+    this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
 
     this.OverlayService.init(this.iframeJQueryElement);
 

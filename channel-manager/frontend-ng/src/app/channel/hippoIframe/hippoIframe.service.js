@@ -36,7 +36,8 @@ class HippoIframeService {
     this.ScrollService = ScrollService;
   }
 
-  initialize(iframeJQueryElement) {
+  initialize(hippoIframeJQueryElement, iframeJQueryElement) {
+    this.hippoIframeJQueryElement = hippoIframeJQueryElement;
     this.iframeJQueryElement = iframeJQueryElement;
     this.pageLoaded = false;
 
@@ -143,6 +144,10 @@ class HippoIframeService {
 
   lowerIframeBeneathMask() {
     this.isIframeLifted = false;
+  }
+
+  getHippoIframeWidth() {
+    return this.hippoIframeJQueryElement.outerWidth();
   }
 }
 
