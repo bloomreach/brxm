@@ -111,7 +111,7 @@ public class TaxonomyPalette extends Panel {
             @Override
             protected Recorder newRecorderComponent() {
                 Recorder recorder = super.newRecorderComponent();
-                recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                recorder.add(new AjaxFormComponentUpdatingBehavior("change") {
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
                     }

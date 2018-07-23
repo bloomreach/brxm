@@ -56,7 +56,7 @@ public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
             public void detach() {
             }
         });
-        keyField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        keyField.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
