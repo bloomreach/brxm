@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>13.0.0-SNAPSHOT</version>
+  <version>13.0.0-wicket7-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -39,16 +39,16 @@
   </scm>
 
   <properties>
-    <hippo.release.version>13.0.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>13.0.0-wicket7-SNAPSHOT</hippo.release.version>
 
     <hippo.jackrabbit.version>2.16.2-h1</hippo.jackrabbit.version>
 
     <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>13.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-channel-manager.version>13.0.0-wicket7-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>13.0.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.ckeditor.version>4.7.1-h13.0.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.0.0-wicket7-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>13.0.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
@@ -64,18 +64,18 @@
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>13.0.0-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>13.0.0-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>13.0.0-SNAPSHOT</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>13.0.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>13.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>13.0.0-SNAPSHOT</hippo.plugin.poll.version>
-    <hippo.plugin.relateddocs.version>13.0.0-SNAPSHOT</hippo.plugin.relateddocs.version>
-    <hippo.plugin.resourcebundle-editor.version>13.0.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
+    <hippo.plugin.content-blocks.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.content-tagging.version>
+    <hippo.plugin.dashboard-document-wizard.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.gallerypicker.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.poll.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.poll.version>
+    <hippo.plugin.relateddocs.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.robotstxt.version>13.0.0-SNAPSHOT</hippo.plugin.robotstxt.version>
-    <hippo.plugin.selections.version>13.0.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.selections.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>13.0.0-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>13.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>13.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>13.0.0-wicket7-SNAPSHOT</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>13.0.0-SNAPSHOT</hippo.addon-crisp.version>
 
     <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
