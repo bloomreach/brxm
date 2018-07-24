@@ -103,6 +103,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.HST_HST_PATH;
+import static org.onehippo.cm.model.Constants.HST_PREFIX;
 import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
@@ -1118,7 +1119,7 @@ public class DefinitionMergeService {
     }
 
     /**
-     * If a path has a root node that matches a known HST root node, swap it for the default HST root for
+     * If a path has a root node that matches the "hst:" prefix, swap it for the default HST root for
      * purposes of pattern-matching.
      * @param incomingPath the path to potentially swap for a new root node
      * @return a new path based on the HST default root node
@@ -1128,7 +1129,7 @@ public class DefinitionMergeService {
 
         if (!incomingPath.isRoot()) {
             final String rootNode = incomingPath.getSegment(0).toString();
-            if (model.getHstRoots().contains("/" + rootNode)) {
+            if (rootNode.startsWith(HST_PREFIX)) {
                 if (incomingPath.getSegmentCount() == 1) {
                     return HST_HST_PATH;
                 }

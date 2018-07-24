@@ -151,8 +151,11 @@ public class AutoExportIntegrationTest {
     public void autoexport_config_inject_residual() throws Exception {
         new Fixture("autoexport_config_inject_residual").test(session -> {
             // this fixture uses the following configuration:
-            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content', '/base/*: system']
-            final Node containers = session.getNode("/hst:hst/hst:configurations/hippogogreen/hst:workspace/hst:containers");
+            // autoexport:injectresidualchildnodecategory: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content', '/base/*: system']
+            // Note that this fixture doesn't attempt to simulate a full extension setup, since that would be too complex,
+            // so config and content yaml files still contain the literal "hst:test" root node.
+
+            final Node containers = session.getNode("/hst:test/hst:configurations/hippogogreen/hst:workspace/hst:containers");
 
             // add a new container matching the pattern, its nodes should go into content, the property to config
             final Node container = containers.addNode("container", "hst:containercomponent");
@@ -179,9 +182,9 @@ public class AutoExportIntegrationTest {
     public void autoexport_config_override_residual() throws Exception {
         new Fixture("autoexport_config_override_residual").test(session -> {
             // this fixture uses the following configuration:
-            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content']
-            // autoexport:overrideresidualchildnodecategory: ['/hst:hst/hst:configurations: config', '**/children-ignored-by-config: system']
-            final Node configurations = session.getNode("/hst:hst/hst:configurations");
+            // autoexport:injectresidualchildnodecategory: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content']
+            // autoexport:overrideresidualchildnodecategory: ['/hst:*/hst:configurations: config', '**/children-ignored-by-config: system']
+            final Node configurations = session.getNode("/hst:test/hst:configurations");
 
             // add a new channel, the channel should be exported to config, the nodes within "container" to content
             // due to the injectresidual setting
