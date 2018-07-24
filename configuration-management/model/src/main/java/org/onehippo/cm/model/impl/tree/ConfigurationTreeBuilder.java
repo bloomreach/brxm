@@ -393,7 +393,7 @@ public class ConfigurationTreeBuilder {
                 return null;
             }
 
-            if (!definitionNode.isEmpty() && !rootForDefinition.isRoot()) {
+            if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
                 //Compare with parent definition extension. It should be core or have the same extension
                 final TreeDefinitionImpl<?> parentDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
                 final String parentNodeExtensionName = parentDefinition.getSource().getModule().getExtensionName();
@@ -411,7 +411,7 @@ public class ConfigurationTreeBuilder {
                     createChildNode(rootForDefinition, nodeName.toString(), definition.getNode());
         } else if (rootForDefinition == root && definitionNode.isDelete()) {
             throw new IllegalArgumentException("Deleting the root node is not supported.");
-        } else  if (!rootForDefinition.isRoot() && !definitionNode.isEmpty()) {
+        } else  if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
             //Config node already exists, validate if existing config node belongs to the same extension
             final TreeDefinitionImpl<?> existingDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
             if (!Objects.equals(definition.getSource().getModule().getExtensionName(),

@@ -328,6 +328,14 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     /**
+     * @return true if node has no properties or .meta properties
+     */
+    public boolean hasPropertiesOrMeta() {
+        return !modifiableProperties.isEmpty() || orderBefore != null
+                || ignoreReorderedChildren != null || residualChildNodeCategory != null || isDelete();
+    }
+
+    /**
      * @return true iff no nodes, properties, or .meta properties are defined here -- OTHER THAN .meta:delete!
      */
     private boolean isEmptyExceptDelete() {
