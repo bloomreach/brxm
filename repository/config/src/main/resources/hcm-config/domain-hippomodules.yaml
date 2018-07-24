@@ -24,3 +24,12 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hipposys:module
+      /moduleconfig:
+        jcr:primaryType: hipposys:domainrule
+        /type-moduleconfig:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:moduleconfig
