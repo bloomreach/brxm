@@ -62,6 +62,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         pending = new LinkedList<>();
 
         add(new EventStoppingBehavior("click"));
+
+        // Simply refresh if the user wants to
+        showUnloadConfirmation(false);
     }
 
     private void closeDialog(Dialog dialog) {

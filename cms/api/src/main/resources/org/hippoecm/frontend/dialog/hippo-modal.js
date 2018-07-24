@@ -37,9 +37,6 @@
             afterInitScreen: new YAHOO.util.CustomEvent('afterInitScreen'),
             resizeFullScreen: new YAHOO.util.CustomEvent('resizeFullScreen')
         };
-
-      // Simply refresh if the user wants to
-      this.settings.unloadConfirmation = false;
     };
 
     Wicket.Window.prototype.onWindowResize = function(e) {
