@@ -66,8 +66,8 @@ import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.parser.ContentSourceParser;
-import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.ModuleReader;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
@@ -124,6 +124,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
     private Map<String, ExtensionRecord> extensionRecords = new ConcurrentHashMap<>();
+    private boolean startAutoExportService;
 
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
@@ -164,12 +165,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         ConfigurationModelImpl newRuntimeConfigModel = modelReader.readExtension(record.extensionName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
-        //TODO SS: Document this
-        final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
-                .stream().filter(ModuleImpl::isExtension).collect(toList());
-
-        if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
-            newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
+        if (startAutoExportService) {
+            final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
+                    .stream().filter(m -> record.extensionName.equals(m.getExtensionName())).collect(toList());
+            if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
+                newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
+            }
         }
 
         //Reload baseline for bootstrap 2+
@@ -186,7 +187,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
                     .filter(m -> record.extensionName.equals(m.getExtensionName())).collect(toList());
             baselineService.storeExtension(record.extensionName, modulesToSave, session);
-            baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
+            if (startAutoExportService)
+            {
+                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
+            }
 
             //process webfilebundle instructions from extensions which are not from the current site
             final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
@@ -233,7 +237,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
             // also, check params for auto-export state
             final boolean isProjectBaseDirSet = StringUtils.isNotBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
-            boolean startAutoExportService = configure && isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
+            startAutoExportService = configure && isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -249,8 +253,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                             // load modules that are specified via auto-export config
                             final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
 
+                            final List<ModuleImpl> bootstrapModules = bootstrapModel.getModulesStream().collect(toList());
+
+                            //Collect only modules which exist at boostrap model
+                            final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
+                                    .filter(bootstrapModules::contains)
+                                    .peek(m -> {
+                                        //Copy the module's extension name and hstRoot (if exist) from bootstrap module
+                                        ModuleImpl source = bootstrapModules.get(bootstrapModules.indexOf(m));
+                                        m.setExtensionName(source.getExtensionName());
+                                        m.setHstRoot(source.getHstRoot());
+                                    })
+                                    .collect(toList());
+
                             // add all of the filesystem modules to a new model as "replacements" that override later additions
-                            bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
+                            bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
                         } catch (Exception e) {
                             final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
                             if (e instanceof ConfigurationRuntimeException) {
