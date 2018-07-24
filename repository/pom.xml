@@ -109,6 +109,7 @@
     <postgresql.version>42.1.4</postgresql.version>
     <oracle.version>12.2.0.1</oracle.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+    <assertj.version>3.8.0</assertj.version>
   </properties>
 
   <scm>
@@ -461,6 +462,12 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

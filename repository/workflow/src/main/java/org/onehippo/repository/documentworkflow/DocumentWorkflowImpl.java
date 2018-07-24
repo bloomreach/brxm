@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
@@ -194,6 +195,47 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             }
         }
         return Collections.unmodifiableMap(hints);
+    }
+
+    /**
+     * <p>
+     * The DocumentWorkflow hints method provides all the operational hints corresponding with the DocumentWorkflow
+     * operational method names which are available to the current user to be invoked. However, only when the returned
+     * value is Boolean.TRUE are they <em>allowed</em> to be invoked. They might have a value of Boolean.FALSE though
+     * when the current document <em>state</em> does not allow executing the specific operation.
+     * </p>
+     * <p>
+     * The returned hints map may also provide additional information, like the current editable "status", if the
+     * document "isLive", or if currently there is a "previewAvailable".
+     * </p>
+     * <p>
+     * Separately, the hints map also returns status information about existing workflow or scheduled requests.
+     * This request status data is returned under key "requests" with as value a nested 'hints'
+     * Map&lt;String,Map&lt;String, Boolean&gt;&gt; per request node identifier,
+     * defining the allowable request operations ({@link #acceptRequest(String)}, {@link #cancelRequest(String)},
+     * {@link #rejectRequest(String, String)}) for each request node.
+     * </p>
+     *
+     * @param branchId a {@link String} with a branchId.
+     * @return a map containing hints given by the workflow, the data in this map may be considered valid until the
+     * document itself of the branchId changes.
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
+     */
+    @Override
+    public Map<String, Serializable> hints(final String branchId) throws WorkflowException, RepositoryException {
+        BranchHandle branchHandle = new BranchHandleImpl(branchId, getNode());
+        DocumentHandle documentHandle = workflowExecutor.getData();
+        BranchHints branchHints =  new BranchHints.Builder()
+                .branchHandle(branchHandle)
+                .documentHandle(documentHandle)
+                .hints(hints())
+                .build();
+        return branchHints.getHints();
+
     }
 
     // EditableWorkflow implementation

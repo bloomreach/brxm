@@ -74,7 +74,7 @@ public class BranchHandleImpl implements BranchHandle {
 
     @Override
     public Node getDraft() {
-        return Optional.of(getDocumentVariant(DRAFT))
+        return Optional.ofNullable(getDocumentVariant(DRAFT))
                 .map(DocumentVariant::getNode)
                 .orElse(null);
     }
