@@ -60,6 +60,7 @@ import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -251,17 +252,17 @@ public class ConfigurationBaselineService {
         if (StringUtils.isEmpty(module.getExtensionName())) {
             throw new ConfigurationRuntimeException(String.format("Module %s is not an extension", module));
         }
-        if (StringUtils.isEmpty(module.getHstRoot())) {
+        if (module.getHstRoot() == null) {
             throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has no hstRoot", module, module.getExtensionName()));
         }
         final Node extensionNode = createNodeIfNecessary(parentNode, module.getExtensionName(), NT_HCM_EXTENSION, false);
         final String hstRoot = JcrUtils.getStringProperty(extensionNode, HCM_HSTROOT, null);
-        if (hstRoot != null && !hstRoot.equals(module.getHstRoot())) {
+        if (hstRoot != null && !module.getHstRoot().equals(hstRoot)) {
             throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has different hstRoot %s than in baseline (%s)"
                     , module, module.getExtensionName(), module.getHstRoot(), hstRoot));
         }
         if (hstRoot == null) {
-            extensionNode.setProperty(HCM_HSTROOT, module.getHstRoot());
+            extensionNode.setProperty(HCM_HSTROOT, module.getHstRoot().toString());
         }
         final ProjectImpl project = module.getProject();
         final GroupImpl group = project.getGroup();
@@ -695,7 +696,7 @@ public class ConfigurationBaselineService {
                         final List<ModuleImpl> extensionModules = parseDescriptors(extensionNode);
                         extensionModules.forEach(module -> {
                             module.setExtensionName(extensionName);
-                            module.setHstRoot(hstRoot);
+                            module.setHstRoot(JcrPaths.getPath(hstRoot));
                         });
                         modules.addAll(extensionModules);
                     }

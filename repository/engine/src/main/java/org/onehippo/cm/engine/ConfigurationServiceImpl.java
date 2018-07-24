@@ -68,6 +68,8 @@ import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.ModuleReader;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
@@ -105,10 +107,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     private static class ExtensionRecord {
         final String extensionName;
-        final String hstRoot;
+        final JcrPath hstRoot;
         final ServletContext servletContext;
 
-        public ExtensionRecord(final String extensionName, final String hstRoot, final ServletContext servletContext) {
+        public ExtensionRecord(final String extensionName, final JcrPath hstRoot, final ServletContext servletContext) {
             this.extensionName = extensionName;
             this.hstRoot = hstRoot;
             this.servletContext = servletContext;
@@ -156,18 +158,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     public void applySiteExtension(final ExtensionRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
         log.info("New site extension detected: {}", record.extensionName);
+
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
-
-        final Collection<ModuleImpl> extensionModules =
-                modelReader.collectExtensionModules(record.extensionName, record.hstRoot, record.servletContext.getClassLoader());
-        extensionModules.forEach(runtimeConfigurationModel::addReplacementModule);
-
-        ConfigurationModelImpl newRuntimeConfigModel = runtimeConfigurationModel.build();
-
-        // TODO: find source modules that match modules loaded from extension classloader
-        // TODO: check all other usages of module.getExtensionName() to make sure it is initialized when used
-
-        final List<ModuleImpl> allModules = newRuntimeConfigModel.getModulesStream().collect(toList());
+        // TODO: this is not actually a new model, so code below that assumes it is must be reworked
+        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readExtension(record.extensionName, record.hstRoot,
+                record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
         //TODO SS: Document this
         final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
@@ -875,7 +870,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 return;
             }
             final String extensionName = extensionConfig.get("name");
-            final String hstRoot = extensionConfig.get("hstRoot");
+            final JcrPath hstRoot = JcrPaths.getPath(extensionConfig.get("hstRoot"));
             try {
                 lockManager.lock();
                 try {
