@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +46,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
@@ -53,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 
@@ -82,9 +85,16 @@ public class ConfigurationContentService {
         final boolean isUpgradeTo12 = checkUpgradeTo12(session);
         boolean allModulesHaveSucceeded = true;
 
+        //Collect all model content definitions, sort them in natural order, and transform to map where key is
+        //Content Definition root path, and value is module which contains that definition
+        final Map<JcrPath, Module> allSortedContentDefs = getSortedDefinitions(model.getContentDefinitions(), false).stream()
+                .collect(Collectors.toMap(ContentDefinitionImpl::getRootPath, m -> m.getSource().getModule(),
+                        (u,v) -> { throw new IllegalStateException(String.format("Duplicate definition key %s", u));},
+                        LinkedHashMap::new));
+
         for (ModuleImpl module : model.getModules()) {
             if (isNotEmpty(module.getActionsMap()) || isNotEmpty(module.getContentDefinitions())) {
-                final boolean success = apply(module, model, session, isUpgradeTo12);
+                final boolean success = apply(module, model, allSortedContentDefs, session, isUpgradeTo12);
                 if (!success) {
                     allModulesHaveSucceeded = false;
                 }
@@ -124,7 +134,7 @@ public class ConfigurationContentService {
      * @param module target {@link Module}
      * @param session active {@link Session}
      */
-    private boolean apply(final ModuleImpl module, final ConfigurationModel model,
+    private boolean apply(final ModuleImpl module, final ConfigurationModel model, Map<JcrPath, Module> contentDefinitions,
                           final Session session, final boolean isUpgradeTo12) throws RepositoryException {
 
         // TODO: below processing contains a small bug, see REPO-1833
@@ -137,6 +147,7 @@ public class ConfigurationContentService {
         final Collection<String> failedPaths = new ArrayList<>();
         List<ContentDefinitionImpl> sortedDefinitions = getSortedDefinitions(module.getContentDefinitions(), true);
         for (final ContentDefinitionImpl contentDefinition : sortedDefinitions) {
+            //Find parent content definition, if it belongs to different extension, fail
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
@@ -145,6 +156,15 @@ public class ConfigurationContentService {
             if (failedPaths.stream().anyMatch(baseNodePath::startsWith)) {
                 log.info(String.format("Skipping the (re-)loading of content based at '%s', " +
                         "because the processing of an ancestor node has failed.", baseNodePath));
+                continue;
+            }
+
+            // Check if there is root content definition belonging to different extension
+            if (contentDefinitions.entrySet().stream().anyMatch(e -> JcrPaths.getPath(baseNodePath).startsWith(e.getKey()) &&
+                    e.getValue().getExtensionName() != null && !Objects.equals(module.getExtensionName(), e.getValue().getExtensionName()))) {
+                log.error("Incompatible content definition: {}. Content definition can be applied only if it's parent " +
+                        "belongs to core or same extension", baseNodePath);
+                failedPaths.add(baseNodePath);
                 continue;
             }
 
@@ -213,7 +233,7 @@ public class ConfigurationContentService {
 
         final Function<ContentDefinitionImpl, JcrPath> getParentPath = (cdi) -> cdi.getNode().getJcrPath().getParent();
 
-        final Map<JcrPath, List<ContentDefinitionSorter.Item>> itemsPerPath = contentDefinitions.stream()
+        final Map<JcrPath, List<ContentDefinitionSorter.Item>> itemsPerPath = emptyIfNull(contentDefinitions).stream()
                 .collect(Collectors.groupingBy(getParentPath, TreeMap::new,
                         mapping(ContentDefinitionSorter.Item::new, toList())));
 
