@@ -661,10 +661,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FULL_WIDTH" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "SHOW_CONTENT" : {
       "status" : "CLEAN",
       "locales" : null
@@ -722,10 +718,6 @@
       "locales" : null
     },
     "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "RESTORE_WIDTH" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -1106,6 +1098,26 @@
     "NOTIFICATION_PUBLICATION_REQUESTED" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "FULL_SIZE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "NORMAL_SIZE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
