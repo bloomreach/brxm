@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,9 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
+import com.google.common.base.Strings;
+
 import org.apache.commons.collections.CollectionUtils;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
@@ -60,6 +61,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
+
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -78,11 +80,12 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
+
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.api.EditableCategory;
 import org.onehippo.taxonomy.plugin.api.EditableCategoryInfo;
-import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.JcrTaxonomy;
@@ -93,10 +96,10 @@ import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * TaxonomyEditorPlugin used when editing taxonomy documents.
@@ -558,13 +561,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
-
-
-
-
-
     /**
-     * @deprecated use {@link java.util.Locale} instead.
+     * @deprecated use {@link Locale} instead.
      */
     @Deprecated
     protected final class LanguageSelection implements Serializable {
@@ -809,8 +807,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 return;
             }
 
-            dialogService.show(new TaxonomyPickerDialog(context, config, classificationModel, currentLocaleSelection,
-                    taxonomyModel, true) {
+            dialogService.show(new TaxonomyMoveDialog(context, config, classificationModel, currentLocaleSelection, taxonomyModel) {
 
                 @Override
                 protected void onOk() {
@@ -953,7 +950,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 }
             }
         }
-
     }
 
     private class MoveUpButton extends AjaxLink<Void> {
@@ -989,7 +985,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 error(e.getMessage());
             }
         }
-
     }
 
     private class MoveDownButton extends AjaxLink<Void> {
@@ -1026,5 +1021,16 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         }
 
+    }
+
+    private class TaxonomyMoveDialog extends TaxonomyPickerDialog {
+
+        TaxonomyMoveDialog(final IPluginContext context, final IPluginConfig config, final IModel<Classification> classificationModel,
+                           final Locale currentLocaleSelection, final TaxonomyModel taxonomyModel) {
+            super(context, config, classificationModel, currentLocaleSelection, taxonomyModel, true);
+
+            // the super checks for model changes, but that won't happen for 'select' function
+            setOkEnabled(true);
+        }
     }
 }
