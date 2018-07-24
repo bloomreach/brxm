@@ -39,7 +39,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
     public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
         final Map<String, Node> rootNodeMap =
-                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, new String[]{});
+                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
 
         final Node groupNode = rootNodeMap.get(GROUP_KEY);
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
