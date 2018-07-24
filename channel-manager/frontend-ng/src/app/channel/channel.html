@@ -78,7 +78,7 @@
     </left-side-panel>
 
     <hippo-iframe flex
-                  ng-class="{ 'side-panel-full-screen': $ctrl.isSidePanelFullScreen('right') }"
+                  ng-class="{ 'locked-width': $ctrl.isSidePanelFullScreen('right') }"
                   ng-show="$ctrl.isChannelLoaded()"
                   show-components-overlay="$ctrl.isComponentsOverlayDisplayed"
                   show-content-overlay="$ctrl.isContentOverlayDisplayed"

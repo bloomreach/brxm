@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import './hippoIframe.scss';
+
 class HippoIframeCtrl {
   constructor(
     $element,

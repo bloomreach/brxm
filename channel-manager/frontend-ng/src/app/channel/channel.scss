@@ -17,28 +17,4 @@
 .channel-content {
   // hide horizontal scrollbar that appears during the close animation of the right sidepanel
   overflow-x: hidden;
-
-  hippo-iframe {
-    &.side-panel-full-screen {
-      opacity: 0;
-    }
-
-    &.side-panel-full-screen-add {
-      transition: all $full-screen-ease-in;
-    }
-
-    &.side-panel-full-screen-remove {
-      transition: all $full-screen-ease-out;
-    }
-
-    &.side-panel-full-screen-add-active .channel-iframe-canvas {
-      width: var(--full-screen-locked-width);
-      min-width: var(--full-screen-locked-width);
-    }
-
-    &.side-panel-full-screen-remove-active .channel-iframe-canvas {
-      width: 100%;
-      min-width: var(--full-screen-locked-width);
-    }
-  }
 }

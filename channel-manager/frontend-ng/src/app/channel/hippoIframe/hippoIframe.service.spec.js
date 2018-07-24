@@ -239,11 +239,12 @@ describe('HippoIframeService', () => {
     expect(iframe.attr).toHaveBeenCalledWith('src', '/test/url');
   });
 
-  it('uses jQuery to calculate the width of the hippo-iframe element', () => {
-    spyOn(hippoIframe, 'outerWidth');
+  it('set the CSS variable --locked-width when invoking lockWidth()', () => {
+    spyOn(hippoIframe, 'outerWidth').and.returnValue(250);
 
-    HippoIframeService.getHippoIframeWidth();
-    expect(hippoIframe.outerWidth).toHaveBeenCalled();
+    HippoIframeService.lockWidth();
+
+    expect(hippoIframe[0].style.getPropertyValue('--locked-width')).toBe('250px');
   });
 
   describe('dev mode', () => {

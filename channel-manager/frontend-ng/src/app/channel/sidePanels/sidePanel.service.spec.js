@@ -15,7 +15,6 @@
  */
 
 describe('SidePanelService', () => {
-  let $document;
   let $mdSidenav;
   let $q;
   let $rootScope;
@@ -34,7 +33,7 @@ describe('SidePanelService', () => {
     sidePanelElement = angular.element('<div></div>');
     sidePanelElement.append(sideNavElement);
 
-    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['getHippoIframeWidth']);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['lockWidth']);
     mockSideNav = jasmine.createSpyObj('sideNav', ['isOpen', 'toggle', 'open', 'close']);
     $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(mockSideNav);
 
@@ -43,8 +42,7 @@ describe('SidePanelService', () => {
       $provide.value('HippoIframeService', HippoIframeService);
     });
 
-    inject((_$document_, _$q_, _$rootScope_, _ChannelService_, _CmsService_, _SidePanelService_) => {
-      $document = _$document_;
+    inject((_$q_, _$rootScope_, _ChannelService_, _CmsService_, _SidePanelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
@@ -221,13 +219,11 @@ describe('SidePanelService', () => {
       expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
     });
 
-    it('set the CSS variable --full-screen-locked-width when going fullscreen', () => {
-      HippoIframeService.getHippoIframeWidth.and.returnValue(250);
-
+    it('locks the hippo-iframe width when going fullscreen', () => {
       SidePanelService.initialize('left', sidePanelElement, sideNavElement);
       SidePanelService.setFullScreen('left', true);
 
-      expect($document[0].documentElement.style.getPropertyValue('--full-screen-locked-width')).toBe('250px');
+      expect(HippoIframeService.lockWidth).toHaveBeenCalled();
     });
   });
 });

@@ -156,8 +156,9 @@ class HippoIframeService {
     this.isIframeLifted = false;
   }
 
-  getHippoIframeWidth() {
-    return this.hippoIframeJQueryElement.outerWidth();
+  lockWidth() {
+    const hippoIframeWidth = this.hippoIframeJQueryElement.outerWidth();
+    this.hippoIframeJQueryElement[0].style.setProperty('--locked-width', `${hippoIframeWidth}px`);
   }
 }
 

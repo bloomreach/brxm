@@ -102,9 +102,7 @@ class SidePanelService {
     if (panel) {
       if (fullScreen) {
         this.CmsService.reportUsageStatistic('CMSChannelsFullScreen', { side });
-
-        const hippoIframeWidth = this.HippoIframeService.getHippoIframeWidth();
-        this.$document[0].documentElement.style.setProperty('--full-screen-locked-width', `${hippoIframeWidth}px`);
+        this.HippoIframeService.lockWidth();
       }
       this.ChannelService.setToolbarDisplayed(!fullScreen);
       panel.fullScreen = fullScreen;
