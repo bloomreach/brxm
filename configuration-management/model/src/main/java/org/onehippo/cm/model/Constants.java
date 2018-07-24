@@ -67,6 +67,7 @@ public final class Constants {
     public static final String DEFAULT_DIGEST = "MD5";
 
     // Used for special-case handling of HST root nodes
+    public static final String HST_PREFIX = "hst:";
     public static final JcrPathSegment HST_HST_SEGMENT = JcrPaths.getSegment("hst:hst", 0);
     public static final JcrPath HST_HST_PATH = JcrPaths.ROOT.resolve(HST_HST_SEGMENT);
 }
