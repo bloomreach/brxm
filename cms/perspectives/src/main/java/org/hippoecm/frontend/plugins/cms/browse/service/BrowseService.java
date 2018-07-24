@@ -47,6 +47,10 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 
 /**
  * An implementation of IBrowseService that also exposes the document model service.
@@ -67,6 +71,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     private final BrowserSections sections;
     private final IPluginContext context;
     private FolderModelService folderService;
+
     public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
         documentService = new DocumentModelService(config);
         documentService.init(context);
@@ -149,11 +154,23 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
-        BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
+
         try {
-            String initialBranchId = JcrUtils.getStringProperty(node, HIPPO_PROPERTY_BRANCH_ID, "master");
-            String initialBranchName = JcrUtils.getStringProperty(node, HIPPO_PROPERTY_BRANCH_NAME, "Core");
-            branchIdModel.setInitialBranchInfo(initialBranchId, initialBranchName);
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
+                final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
+                        .orElseGet(() ->
+                                getDocumentVariantNode(node, PUBLISHED)
+                                        .orElse(null));
+                if (variant == null) {
+                    // A handle without variants should never exist, but just in case ...
+                    branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
+                } else {
+                    final String initialBranchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                    final String initialBranchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
+                    branchIdModel.setInitialBranchInfo(initialBranchId, initialBranchName);
+                }
+            }
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
