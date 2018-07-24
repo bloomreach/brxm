@@ -17,6 +17,11 @@
 .side-panel-open {
   max-width: 50% !important;
 
+  md-sidenav {
+    max-width: 100%;
+    width: 100%;
+  }
+
   &.side-panel-full-screen {
     max-width: initial !important;
 
@@ -55,10 +60,5 @@
 
   &.ng-hide-remove {
     transition: all $full-screen-ease-out;
-  }
-
-  md-sidenav {
-    max-width: 100%;
-    width: 100%;
   }
 }
