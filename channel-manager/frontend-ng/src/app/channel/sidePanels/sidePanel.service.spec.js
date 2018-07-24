@@ -15,105 +15,215 @@
  */
 
 describe('SidePanelService', () => {
-  let SidePanelService;
+  let $mdSidenav;
   let $q;
   let $rootScope;
-  let leftSidePanel;
+  let ChannelService;
+  let CmsService;
+  let HippoIframeService;
+  let mockSideNav;
+  let sideNavElement;
+  let sidePanelElement;
+  let SidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
+    sideNavElement = angular.element('<md-sidenav md-component-id="side-panel-id"></md-sidenav>');
+    sidePanelElement = angular.element('<div></div>');
+    sidePanelElement.append(sideNavElement);
 
-    const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(leftSidePanel);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['lockWidth']);
+    mockSideNav = jasmine.createSpyObj('sideNav', ['isOpen', 'toggle', 'open', 'close']);
+    $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(mockSideNav);
 
     angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
+      $provide.value('HippoIframeService', HippoIframeService);
     });
 
-    inject((_SidePanelService_, _$q_, _$rootScope_) => {
-      SidePanelService = _SidePanelService_;
+    inject((_$q_, _$rootScope_, _ChannelService_, _CmsService_, _SidePanelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
+      SidePanelService = _SidePanelService_;
     });
 
-    leftSidePanel.open.and.returnValue($q.resolve());
-    leftSidePanel.close.and.returnValue($q.resolve());
+    mockSideNav.open.and.returnValue($q.resolve());
+    mockSideNav.close.and.returnValue($q.resolve());
+  });
+
+  describe('initialize', () => {
+    it('looks up a sideNav instance by "md-component-id" attribute value', () => {
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+      expect($mdSidenav).toHaveBeenCalledWith('side-panel-id');
+    });
+
+    it('adds className "side-panel-closed" to the sidePanelElement if it is closed on init', () => {
+      mockSideNav.isOpen.and.returnValue(false);
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+      expect(sidePanelElement.hasClass('side-panel-closed')).toBe(true);
+      expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
+    });
+
+    it('adds className "side-panel-open" to the sidePanelElement if it is open on init', () => {
+      mockSideNav.isOpen.and.returnValue(true);
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+      expect(sidePanelElement.hasClass('side-panel-closed')).toBe(false);
+      expect(sidePanelElement.hasClass('side-panel-open')).toBe(true);
+    });
+
+    it('stores a new panel object with a reference to the sideNav instance and the sidePanelElement', () => {
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+      expect(SidePanelService.panels.left).not.toBeUndefined();
+      expect(SidePanelService.panels.left.sideNav).toEqual(mockSideNav);
+      expect(SidePanelService.panels.left.sidePanelElement).toEqual(sidePanelElement);
+      expect(SidePanelService.panels.left.fullScreen).toBe(false);
+    });
   });
 
   it('toggles a named side-panel', () => {
-    const element = angular.element('<div></div>');
-    element.width(250);
-    SidePanelService.initialize('left', element);
-
-    leftSidePanel.isOpen.and.returnValue(false);
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    mockSideNav.isOpen.and.returnValue(false);
 
     SidePanelService.toggle('left');
 
-    expect(leftSidePanel.open).toHaveBeenCalled();
+    expect(mockSideNav.open).toHaveBeenCalled();
 
-    leftSidePanel.toggle.calls.reset();
-    leftSidePanel.isOpen.and.returnValue(true);
+    mockSideNav.toggle.calls.reset();
+    mockSideNav.isOpen.and.returnValue(true);
 
     SidePanelService.toggle('left');
     $rootScope.$digest();
 
-    expect(leftSidePanel.close).toHaveBeenCalled();
+    expect(mockSideNav.close).toHaveBeenCalled();
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
 
-    leftSidePanel.isOpen.and.returnValue(true);
+    mockSideNav.isOpen.and.returnValue(true);
     expect(SidePanelService.isOpen('left')).toBe(true);
 
-    leftSidePanel.isOpen.and.returnValue(false);
+    mockSideNav.isOpen.and.returnValue(false);
     expect(SidePanelService.isOpen('left')).toBe(false);
   });
 
   it('the is-open check works when the left side panel has not been rendered yet', () => {
-    leftSidePanel.isOpen.and.throwError('left side panel cannot be found');
+    mockSideNav.isOpen.and.throwError('left side panel cannot be found');
     expect(SidePanelService.isOpen('left')).toBeFalsy();
   });
 
   it('closes a side panel if it is open', (done) => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
-
-    leftSidePanel.isOpen.and.returnValue(true);
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    mockSideNav.isOpen.and.returnValue(true);
 
     SidePanelService.close('left').then(() => {
-      expect(leftSidePanel.close).toHaveBeenCalled();
+      expect(mockSideNav.close).toHaveBeenCalled();
       done();
     });
     $rootScope.$digest();
   });
 
   it('skips closing a side panel if it is was already closed', (done) => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
-
-    leftSidePanel.isOpen.and.returnValue(false);
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    mockSideNav.isOpen.and.returnValue(false);
 
     SidePanelService.close('left').then(() => {
-      expect(leftSidePanel.close).not.toHaveBeenCalled();
+      expect(mockSideNav.close).not.toHaveBeenCalled();
       done();
     });
     $rootScope.$digest();
   });
 
   it('forwards the open call to the mdSidenav service', () => {
-    const element = angular.element('<div></div>');
-    SidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
 
     SidePanelService.open('left');
-    expect(leftSidePanel.open).toHaveBeenCalled();
+    expect(mockSideNav.open).toHaveBeenCalled();
   });
 
   it('ignores the open call when the a side panel has not been rendered yet', () => {
     expect(() => {
       SidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
+  });
+
+  it('adds classNames "side-panel-open" and "side-panel-closed" to the sidePanelElement', () => {
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+    SidePanelService.open('left');
+
+    expect(sidePanelElement.hasClass('side-panel-closed')).toBe(false);
+    expect(sidePanelElement.hasClass('side-panel-open')).toBe(true);
+
+    mockSideNav.isOpen.and.returnValue(true);
+
+    SidePanelService.close('left');
+    $rootScope.$digest();
+
+    expect(sidePanelElement.hasClass('side-panel-closed')).toBe(true);
+    expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
+  });
+
+  describe('side-panel full-screen behavior', () => {
+    it('does not throw an error and returns falsy if side-panel has not been initialized yet', () => {
+      try {
+        expect(SidePanelService.isFullScreen('left')).toBeFalsy();
+        SidePanelService.setFullScreen('left', true);
+        expect(SidePanelService.isFullScreen('left')).toBeFalsy();
+      } catch (e) {
+        fail(e);
+      }
+    });
+
+    it('stores the full-screen state of the side-panels', () => {
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+
+      SidePanelService.setFullScreen('left', true);
+      expect(SidePanelService.isFullScreen('left')).toBe(true);
+
+      SidePanelService.setFullScreen('left', false);
+      expect(SidePanelService.isFullScreen('left')).toBe(false);
+    });
+
+    it('reports usage statistics when a side-panel goes fullscreen', () => {
+      spyOn(CmsService, 'reportUsageStatistic');
+
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      SidePanelService.setFullScreen('left', true);
+
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen', { side: 'left' });
+
+      CmsService.reportUsageStatistic.calls.reset();
+      SidePanelService.setFullScreen('left', false);
+
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
+    });
+
+    it('hides the toolbar when going fullscreen', () => {
+      spyOn(ChannelService, 'setToolbarDisplayed');
+
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      SidePanelService.setFullScreen('left', true);
+
+      expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
+
+      SidePanelService.setFullScreen('left', false);
+
+      expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
+    });
+
+    it('locks the hippo-iframe width when going fullscreen', () => {
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      SidePanelService.setFullScreen('left', true);
+
+      expect(HippoIframeService.lockWidth).toHaveBeenCalled();
+    });
   });
 });

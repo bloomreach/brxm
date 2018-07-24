@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import './channel.scss';
-
 class ChannelCtrl {
   constructor(
     $log,
@@ -172,6 +170,10 @@ class ChannelCtrl {
 
   isToolbarDisplayed() {
     return this.ChannelService.isToolbarDisplayed;
+  }
+
+  isSidePanelFullScreen(side) {
+    return this.SidePanelService.isFullScreen(side);
   }
 }
 

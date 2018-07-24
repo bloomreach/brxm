@@ -216,6 +216,9 @@ $layout-breakpoint-lg: 1920px !default;
 $swift-ease-in: .3s cubic-bezier(.55, 0, .55, .2);
 $swift-ease-out: .2s cubic-bezier(.25, .8, .25, 1);
 
+$full-screen-ease-in: .6s cubic-bezier(.55, 0, .55, .2);
+$full-screen-ease-out: .6s cubic-bezier(.25, .8, .25, 1);
+
 // Z-indexes
 $z-index-sidepanel: 60;
 $z-index-mask: $z-index-sidepanel + 1;
