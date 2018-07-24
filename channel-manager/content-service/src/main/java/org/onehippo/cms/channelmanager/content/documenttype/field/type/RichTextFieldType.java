@@ -30,7 +30,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
-import org.onehippo.ckeditor.HippoPicker;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;

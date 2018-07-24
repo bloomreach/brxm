@@ -16,8 +16,10 @@
 
 class HippoCmCtrl {
   constructor(
+    $q,
     $rootScope,
     $state,
+    $timeout,
     BrowserService,
     ChannelService,
     CmsService,
@@ -26,8 +28,10 @@ class HippoCmCtrl {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.$state = $state;
+    this.$timeout = $timeout;
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -44,8 +48,8 @@ class HippoCmCtrl {
       $('body').addClass('ie11');
     }
 
-    this.CmsService.subscribe('load-channel', (channelId, initialPath, branchId) => {
-      this.$rootScope.$apply(() => this._loadChannel(channelId, initialPath, branchId));
+    this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
+      this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, branchId, initialPath));
     });
     this.CmsService.subscribe('reload-channel', () => {
       this.$rootScope.$apply(() => this._reloadChannel());
@@ -57,24 +61,29 @@ class HippoCmCtrl {
     });
 
     if (this.ConfigService.isDevMode()) {
-      this.CmsService.subscribe('load-channel', (channelId, initialPath, branchId) => {
-        this.$rootScope.$apply(() => this._storeAppState(channelId, initialPath, branchId));
+      this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
+        this.$rootScope.$apply(() => this._storeAppState(channelId, contextPath, branchId, initialPath));
       });
       this._restoreAppState();
     }
   }
 
-  _loadChannel(channelId, initialPath, branchId) {
+  _loadChannel(channelId, contextPath, branchId, initialPath) {
     if (!this.ChannelService.matchesChannel(channelId)) {
-      this._initializeChannel(channelId, initialPath, branchId);
+      this._initializeChannel(channelId, contextPath, branchId, initialPath);
     } else {
       this.HippoIframeService.initializePath(initialPath);
     }
   }
 
-  _initializeChannel(channelId, initialPath, branchId) {
-    this.ChannelService.initializeChannel(channelId, branchId)
-      .then(() => this.$state.go('hippo-cm.channel'))
+  _initializeChannel(channelId, contextPath, branchId, initialPath) {
+    this.ChannelService.initializeChannel(channelId, contextPath, branchId)
+      .then(() => {
+        if (!this.$state.includes('hippo-cm.channel')) {
+          return this.$state.go('hippo-cm.channel');
+        }
+        return this.$q.resolve();
+      })
       .then(() => this.HippoIframeService.initializePath(initialPath));
   }
 
@@ -83,19 +92,24 @@ class HippoCmCtrl {
       .then(() => this.HippoIframeService.reload());
   }
 
-  _storeAppState(channelId, initialPath, branchId) {
+  _storeAppState(channelId, contextPath, branchId, initialPath) {
     sessionStorage.channelId = channelId;
-    sessionStorage.channelPath = initialPath;
+    sessionStorage.channelContext = contextPath;
     sessionStorage.channelBranch = branchId;
+    sessionStorage.channelPath = initialPath;
   }
 
   _restoreAppState() {
     if (sessionStorage.channelId) {
-      this._initializeChannel(
-        sessionStorage.channelId,
-        sessionStorage.channelPath,
-        sessionStorage.channelBranch,
-      );
+      // wait 100 ms to give Chrome enough time to fetch styles, otherwise it'll display huge SVG icons
+      this.$timeout(() => {
+        this._initializeChannel(
+          sessionStorage.channelId,
+          sessionStorage.channelContext,
+          sessionStorage.channelBranch,
+          sessionStorage.channelPath,
+        );
+      }, 100);
     }
   }
 }

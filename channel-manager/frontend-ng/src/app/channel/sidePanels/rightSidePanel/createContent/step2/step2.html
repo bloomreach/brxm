@@ -34,7 +34,8 @@
                   allow-save="$ctrl.allMandatoryFieldsShown()"
                   enable-publish="false"
                   on-switch-editor="$ctrl.switchEditor()"
-                  on-save="$ctrl.save()"
+                  loading="$ctrl.loading"
+                  on-save="$ctrl.onSave()"
                   on-close="$ctrl.close()">
 
     <content-editor-message>

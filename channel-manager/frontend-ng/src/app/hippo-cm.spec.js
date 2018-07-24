@@ -22,6 +22,7 @@ describe('hippoCm', () => {
   let $q;
   let $rootScope;
   let $state;
+  let $timeout;
   let $window;
   let BrowserService;
   let ChannelService;
@@ -36,15 +37,17 @@ describe('hippoCm', () => {
       $componentController,
       _$q_,
       _$rootScope_,
+      _$timeout_,
       _$window_,
       _CmsService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       $window = _$window_;
       CmsService = _CmsService_;
 
-      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'go']);
+      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'includes', 'go']);
 
       BrowserService = jasmine.createSpyObj('$state', ['isIE']);
 
@@ -100,19 +103,36 @@ describe('hippoCm', () => {
   });
 
   describe('the load-channel event', () => {
-    it('opens a different channel', () => {
+    it('opens a channel when there was no channel yet', () => {
       ChannelService.matchesChannel.and.returnValue(false);
       ChannelService.initializeChannel.and.returnValue($q.resolve());
+      $state.includes.and.returnValue(false);
       spyOn($rootScope, '$apply').and.callThrough();
 
       $ctrl.$onInit();
-      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/some/path', 'testProject');
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
 
       expect($rootScope.$apply).toHaveBeenCalled();
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', 'testProject');
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
       $rootScope.$digest();
-      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
       expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+    });
+
+    it('opens a different channel', () => {
+      ChannelService.matchesChannel.and.returnValue(false);
+      ChannelService.initializeChannel.and.returnValue($q.resolve());
+      $state.includes.and.returnValue(true);
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
+      $rootScope.$digest();
+      expect($state.go).not.toHaveBeenCalled();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
     });
 
     it('changes the page in the current channel', () => {
@@ -120,7 +140,7 @@ describe('hippoCm', () => {
       spyOn($rootScope, '$apply').and.callThrough();
 
       $ctrl.$onInit();
-      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/some/path', 'testProject');
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
 
       expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
@@ -133,7 +153,7 @@ describe('hippoCm', () => {
       spyOn($rootScope, '$apply').and.callThrough();
 
       $ctrl.$onInit();
-      $window.CMS_TO_APP.publish('load-channel', 'testChannel', null, 'testProject');
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', null);
 
       expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
@@ -181,24 +201,27 @@ describe('hippoCm', () => {
       delete sessionStorage.channelBranch;
     });
 
-    it('stores the loaded channel, path and branch in sessionStorage', () => {
+    it('stores the loaded channel, context path, branch and path in sessionStorage', () => {
       $ctrl.$onInit();
 
-      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/test/path', 'testProject');
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/test/path');
 
       expect(sessionStorage.channelId).toBe('testChannel');
-      expect(sessionStorage.channelPath).toBe('/test/path');
+      expect(sessionStorage.channelContext).toBe('/site');
       expect(sessionStorage.channelBranch).toBe('testProject');
+      expect(sessionStorage.channelPath).toBe('/test/path');
     });
 
-    it('initializes the channel, path and branch from sessionStorage', () => {
+    it('initializes the channel, context path, branch and path from sessionStorage', () => {
       sessionStorage.channelId = 'testChannel';
-      sessionStorage.channelPath = '/test/path';
+      sessionStorage.channelContext = '/site';
       sessionStorage.channelBranch = 'testProject';
+      sessionStorage.channelPath = '/test/path';
 
       $ctrl.$onInit();
+      $timeout.flush();
 
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', 'testProject');
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
       $rootScope.$digest();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/test/path');
     });

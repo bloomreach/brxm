@@ -21,19 +21,32 @@ describe('HippoIframeService', () => {
   let hippoIframe;
   let iframe;
   let ChannelService;
+  let ConfigService;
   let HippoIframeService;
+  let PageMetaDataService;
   let ScrollService;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$log_, _$rootScope_, _$window_, _HippoIframeService_, _ChannelService_, _ScrollService_) => {
+    inject((
+      _$log_,
+      _$rootScope_,
+      _$window_,
+      _HippoIframeService_,
+      _ChannelService_,
+      _ConfigService_,
+      _PageMetaDataService_,
+      _ScrollService_,
+    ) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
       HippoIframeService = _HippoIframeService_;
+      PageMetaDataService = _PageMetaDataService_;
       ScrollService = _ScrollService_;
     });
 
@@ -63,7 +76,9 @@ describe('HippoIframeService', () => {
   describe('initializePath', () => {
     beforeEach(() => {
       HippoIframeService.renderPathInfo = '/path';
+      spyOn(ChannelService, 'getChannel');
       spyOn(ChannelService, 'makeRenderPath');
+      spyOn(PageMetaDataService, 'getContextPath');
       spyOn(HippoIframeService, 'load');
       spyOn(HippoIframeService, 'reload');
     });
@@ -80,8 +95,10 @@ describe('HippoIframeService', () => {
       expect(HippoIframeService.load).toHaveBeenCalledWith('');
     });
 
-    it('reloads a page in the current channel', () => {
+    it('reloads the same render path in the same context', () => {
       ChannelService.makeRenderPath.and.returnValue('/path');
+      ChannelService.getChannel.and.returnValue({ contextPath: '/site' });
+      PageMetaDataService.getContextPath.and.returnValue('/site');
       HippoIframeService.initializePath('/path');
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
@@ -99,6 +116,17 @@ describe('HippoIframeService', () => {
       HippoIframeService.initializePath('/path');
 
       expect(HippoIframeService.load).toHaveBeenCalledWith('/mount-of-channel2/path');
+    });
+
+    it('changes to the same channel-relative path in a different context', () => {
+      HippoIframeService.renderPathInfo = '/path';
+      ChannelService.makeRenderPath.and.returnValue('/path');
+      ChannelService.getChannel.and.returnValue({ contextPath: '/site' });
+      PageMetaDataService.getContextPath.and.returnValue('/differentContextPath');
+
+      HippoIframeService.initializePath('/path');
+
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/path');
     });
   });
 
@@ -216,5 +244,21 @@ describe('HippoIframeService', () => {
 
     HippoIframeService.getHippoIframeWidth();
     expect(hippoIframe.outerWidth).toHaveBeenCalled();
+  });
+
+  describe('dev mode', () => {
+    beforeEach(() => {
+      spyOn(ConfigService, 'isDevMode').and.returnValue(true);
+    });
+
+    it('stores the current renderPath in sessionStorage', () => {
+      ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+      HippoIframeService.signalPageLoadCompleted();
+      expect(sessionStorage.channelPath).toBe('dummy');
+    });
+
+    afterEach(() => {
+      delete sessionStorage.channelPath;
+    });
   });
 });
