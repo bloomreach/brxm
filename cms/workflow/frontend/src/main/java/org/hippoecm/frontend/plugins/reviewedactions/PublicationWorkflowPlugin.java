@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -43,11 +44,14 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDial
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -99,6 +103,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 workflow.depublish();
                 return null;
             }
@@ -118,6 +125,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 workflow.requestDepublication();
                 return null;
             }
@@ -146,6 +156,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 if (date != null) {
                     workflow.depublish(date);
                 } else {
@@ -177,6 +190,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 if (date != null) {
                     workflow.requestDepublication(date);
                 } else {
@@ -212,6 +228,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                   workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 workflow.publish();
                 return null;
             }
@@ -241,6 +260,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 workflow.requestPublication();
                 return null;
             }
@@ -270,6 +292,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 if (date != null) {
                     workflow.publish(date);
                 } else {
@@ -303,6 +328,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(final DocumentWorkflow workflow) throws Exception {
+                if (isFrozenNodeAssociatedWithMaster()) {
+                    workflow.checkoutBranch(DocumentVariant.MASTER_BRANCH_ID);
+                }
                 if (date != null) {
                     workflow.requestPublication(date);
                 } else {
@@ -313,6 +341,29 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
         return workflows;
     }
+
+    private boolean isFrozenNodeAssociatedWithMaster() {
+        String userSessionBranchId = getBranchId();
+        return DocumentVariant.MASTER_BRANCH_ID.equals(userSessionBranchId) && getVariantBranchId().equals(userSessionBranchId);
+    }
+
+    private String getVariantBranchId() {
+        String result = DocumentVariant.MASTER_BRANCH_ID;
+        try {
+            result = getStringProperty(getWorkflow().getNode(), HIPPO_PROPERTY_BRANCH_ID, DocumentVariant.MASTER_BRANCH_ID);
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    private String getBranchId() {
+        return Optional.ofNullable(getBranchIdModel())
+                .map(branchIdModel -> Optional.ofNullable(branchIdModel.getBranchId())
+                        .orElse(DocumentVariant.MASTER_BRANCH_ID))
+                .get();
+    }
+
 
     protected Stream<String> getActionKeys() {
         return Stream.of(PUBLISH, DEPUBLISH, REQUEST_PUBLICATION, REQUEST_DEPUBLICATION);

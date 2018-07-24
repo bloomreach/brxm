@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ package org.hippoecm.addon.workflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -33,6 +37,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -45,7 +50,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     private String id;
     private String category;
     private transient Workflow workflow;
-    private transient Map<String, Serializable> hints;
+    private transient Map<String, Map<String, Serializable>> hints;
 
     /**
      * deprecated: use the alternative constructor instead
@@ -127,19 +132,31 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     }
 
     public Map<String, Serializable> getHints() {
-        if (hints != null) {
-            return hints;
+        return getHints(DocumentVariant.MASTER_BRANCH_ID);
+    }
+
+    public Map<String, Serializable> getHints(String branchId) {
+        if (hints == null){
+            hints = new HashMap<>();
         }
-        DocumentWorkflow workflow = getWorkflow();
-        if (workflow != null) {
-            try {
-                hints = workflow.hints();
-                return hints;
-            } catch (WorkflowException | RemoteException | RepositoryException e) {
-                log.error("Unable to retrieve workflow hints", e);
+        if (hints.get(branchId) == null) {
+            DocumentWorkflow workflow = getWorkflow();
+            if (workflow != null) {
+                try {
+                    if (workflow instanceof DocumentWorkflow) {
+                        DocumentWorkflow documentWorkflow = workflow;
+                        hints.put(branchId, documentWorkflow.hints(branchId));
+                    } else {
+                        hints.put(branchId, workflow.hints());
+                    }
+                } catch (WorkflowException | RemoteException | RepositoryException e) {
+                    log.error("Unable to retrieve workflow hints", e);
+                }
+            }
+            else{
+                hints.put(branchId, Collections.emptyMap());
             }
         }
-        hints = Collections.emptyMap();
-        return hints;
+        return hints.get(branchId);
     }
 }

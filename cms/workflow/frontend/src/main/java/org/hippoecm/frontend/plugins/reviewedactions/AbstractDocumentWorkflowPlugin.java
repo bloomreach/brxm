@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,8 +39,11 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,6 +185,12 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected Map<String, Serializable> getHints() {
-        return getModel().getHints();
+        String branchId = DocumentVariant.MASTER_BRANCH_ID;
+        if (branchIdModel != null){
+            branchId = branchIdModel.getBranchId();
+        }
+        log.debug("Get hints for branchId:{}", branchId);
+        return getModel().getHints(branchId);
+
     }
 }
