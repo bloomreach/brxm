@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
-import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 
 /**
  * Create a LocalHippoRepository running in its own isolated classloader. Running the repository in its own classloader
@@ -97,8 +97,24 @@ public class IsolatedRepository {
         this.autoExportEnabled = true;
     }
 
+    public IsolatedRepository(final File folder, final File projectFolder, final List<URL> additionalClasspathURLs, boolean autoExportEnabled) {
+        this.folder = folder;
+        this.projectFolder = projectFolder;
+        this.additionalClasspathURLs = additionalClasspathURLs.toArray(new URL[additionalClasspathURLs.size()]);
+        this.autoExportEnabled = autoExportEnabled;
+    }
+
     public IsolatedRepository(final File folder, final File projectFolder, final List<URL> additionalClasspathURLs, final Set<String> sharedClasses) {
         this(folder, projectFolder, additionalClasspathURLs);
+        this.sharedClasses.addAll(sharedClasses);
+    }
+
+    public IsolatedRepository(final File folder,
+                              final File projectFolder,
+                              final List<URL> additionalClasspathURLs,
+                              final Set<String> sharedClasses,
+                              boolean autoExportEnabled) {
+        this(folder, projectFolder, additionalClasspathURLs, autoExportEnabled);
         this.sharedClasses.addAll(sharedClasses);
     }
 
@@ -120,6 +136,7 @@ public class IsolatedRepository {
             System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "true");
         } else {
+            System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         }
 

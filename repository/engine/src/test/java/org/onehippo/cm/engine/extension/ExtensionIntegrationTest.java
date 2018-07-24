@@ -44,7 +44,6 @@ import org.onehippo.cm.engine.autoexport.Run;
 import org.onehippo.cm.engine.autoexport.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -55,9 +54,9 @@ import org.springframework.mock.web.MockServletContext;
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
 public class ExtensionIntegrationTest {
@@ -95,8 +94,8 @@ public class ExtensionIntegrationTest {
                 }
 
                 //Validate that baseline contains m1 extension after core bootstrap
-                final ConfigurationModelImpl baselineModel1 = repository.getBaselineConfigurationModel();
-                final ConfigurationNodeImpl configurationNode = baselineModel1.resolveNode("/m1-extension");
+                final ConfigurationModelImpl runtimeModel1 = repository.getRuntimeConfigurationModel();
+                final ConfigurationNodeImpl configurationNode = runtimeModel1.resolveNode("/m1-extension");
                 assertNotNull(configurationNode);
 
                 hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
@@ -109,13 +108,12 @@ public class ExtensionIntegrationTest {
                 }
 
                 //Validate that baseline contains m1 & m2 extensions after extension event
-                final ConfigurationModelImpl baselineModel2 = repository.getBaselineConfigurationModel();
-                assertNotSame(baselineModel1, baselineModel2);
+                final ConfigurationModelImpl runtimeModel2 = repository.getRuntimeConfigurationModel();
 
-                final ConfigurationNodeImpl configurationNode1 = baselineModel2.resolveNode("/m1-extension");
+                final ConfigurationNodeImpl configurationNode1 = runtimeModel2.resolveNode("/m1-extension");
                 assertNotNull(configurationNode1);
 
-                final ConfigurationNodeImpl configurationNode2 = baselineModel2.resolveNode("/m2-extension");
+                final ConfigurationNodeImpl configurationNode2 = runtimeModel2.resolveNode("/m2-extension");
                 assertNotNull(configurationNode2);
 
             });
@@ -209,6 +207,63 @@ public class ExtensionIntegrationTest {
         }
     }
 
+    /**
+     * Apply content definition '/content/m2contentnode/m6node' from m6 extension
+     * on top of m2 extension '/content/m2contentnode'.
+     */
+    @Test
+    public void extensions_test_incompatible_content_defs() throws Exception {
+
+        System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
+        final String fixtureName = "extensions_before_cms";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+        try {
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
+
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m6"));
+                try {
+                    final Node m2node = session.getNode("/content/m2contentnode");
+                    if (m2node.hasNode("m6node")) {
+                        fail("Node '/content/m2contentnode/m6node' should not exist");
+                    }
+                } catch(PathNotFoundException ignore) {
+                    //Expected
+                }
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
+    @Test
+    public void extensions_test_namespace_defs() throws Exception {
+
+        System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
+        final String fixtureName = "extensions_before_cms";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+        try {
+            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            fixture.test(session -> {
+
+                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                try {
+                    hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "namespace"));
+                    fail("Namespace definitions from extension modules are not supported");
+                } catch(Exception ex) {
+                    assertTrue(ex.getMessage().contains("Namespace definition can not be a part of extension module"));
+                }
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
     public HippoWebappContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {
         final Path extensionsBasePath = getExtensionBasePath(fixtureName, getBaseDir());
         final Path extensionPath = extensionsBasePath.resolve(extensionName);
@@ -279,7 +334,7 @@ public class ExtensionIntegrationTest {
 
                 repository =
                         new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs,
-                                ImmutableSet.of("org.onehippo.cms7.services."));
+                                ImmutableSet.of("org.onehippo.cms7.services."), false);
 
                 repository.startRepository();
                 final Session session = repository.login(IsolatedRepository.CREDENTIALS);

@@ -72,9 +72,9 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.repository.util.PartialZipFile;
-import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,6 +295,16 @@ public class ConfigurationConfigService {
 
     private void applyNamespaces(final Collection<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
             throws RepositoryException {
+
+        final Optional<? extends NamespaceDefinition> cndExtension =
+                namespaceDefinitions.stream().filter(ns -> (ns.getSource().getModule().isExtension())).findFirst();
+        cndExtension.ifPresent(def -> {
+            final String msg = String.format("Failed to process namespace definition defined in %s: " +
+                    "namespace with prefix '%s'. Namespace definition can not be a part of extension module: '%s'",
+                    def.getOrigin(), def.getPrefix(), def.getSource().getModule());
+            throw new ConfigurationRuntimeException(msg);
+        });
+
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
 
         for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {

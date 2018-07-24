@@ -1,0 +1,25 @@
+<hipposearch='http://www.onehippo.org/jcr/hipposearch/nt/1.0'>
+
+[hipposearch:constraint] abstract
+- hipposearch:negate (boolean) 
+
+[hipposearch:compoundconstraint] > hipposearch:constraint
+- hipposearch:type (string) < 'and', 'or'
++ hipposearch:constraint (hipposearch:constraint) multiple
+
+[hipposearch:primitiveconstraint] > hipposearch:constraint
+- hipposearch:relation (string) < 'nonnull','equal','contains','lessorequal','greaterorequal','between'
+- hipposearch:property (string)
+- hipposearch:value (undefined)
+- hipposearch:upper (undefined)
+- hipposearch:resolution (string) < 'year', 'month', 'day', 'hour', 'exact'
+
+[hipposearch:query] > hipposearch:compoundconstraint
+- hipposearch:returnparentnode (boolean)
+- hipposearch:limit (long)
+- hipposearch:offset (long)
+- hipposearch:nodetype (string)
+- hipposearch:includes (string) multiple
+- hipposearch:excludes (string) multiple
+- hipposearch:orderBy (string) multiple
+- hipposearch:ascDesc (string) multiple < 'ascending', 'descending'
