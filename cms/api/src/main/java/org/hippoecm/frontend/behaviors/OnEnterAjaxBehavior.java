@@ -64,6 +64,7 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
 
     @Override
     protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
         final AjaxCallListener ajaxCallListener = new AjaxCallListener();
         ajaxCallListener.onPrecondition("return Wicket.$$('" + getComponent().getMarkupId() + "') && Wicket.$$('" + getForm().getMarkupId() + "')");
         attributes.getAjaxCallListeners().add(ajaxCallListener);
