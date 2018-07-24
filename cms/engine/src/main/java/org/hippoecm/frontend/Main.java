@@ -166,6 +166,10 @@ public class Main extends PluginApplication {
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
     private static final Class<?> CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
+    
+    private static final String BINARIES_MOUNT = "binaries";
+    private static final String AUTH_MOUNT = "auth";
+
     static {
         try {
             CACHING_RESOURCE_STREAM_LOCATOR_CLASS = Class.forName("CachingResourceStreamLocatorBaseKey");
@@ -279,8 +283,9 @@ public class Main extends PluginApplication {
 
             @Override
             public IRequestHandler mapRequest(final Request request) {
-                if (urlStartsWith(request.getUrl(), "binaries")) {
-                    String path = Strings.join("/", request.getUrl().getSegments());
+                if (urlStartsWith(request.getUrl(), BINARIES_MOUNT)) {
+                    final String fullPath = Strings.join("/", request.getUrl().getSegments());
+                    final String path = StringUtils.substring(fullPath, BINARIES_MOUNT.length());
                     try {
                         javax.jcr.Session subSession = UserSession.get().getJcrSession();
                         Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
@@ -342,7 +347,7 @@ public class Main extends PluginApplication {
 
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
-                    if (urlStartsWith(request.getUrl(), "auth")) {
+                    if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
                         IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
                         IRequestParameters requestParameters = request.getRequestParameters();
