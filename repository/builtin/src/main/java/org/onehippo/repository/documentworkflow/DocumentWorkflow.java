@@ -605,16 +605,22 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     Removes the branch for {@code branchId} if it exists and throws a {@link WorkflowException} if it doesn't exist.
      * </p>
      * <p>
-     *     Removing a branch which is stored in version history will result in only the JCR version labels for that
-     *     branch to be removed. If the current <em>preview</em> variant is for the current branch <em>or</em> the
-     *     current <em>live</em> variant is for the current branch, only the branch info will be removed from those
-     *     variants. This method will not restore a different branch from version history.
-     *     // TODO does this make sense? Should we include a second argument, something like that it can replace the
-     *     // TODO existing branch which is dissociated with 'core' or other version from version history?
+     *     Removing a branch is possible even when another branch is being edited, unless the branch for {@core branchId}
+     *     is being edited.
+     * </p>
+     * <p>
+     *     If the current <em>unpublished</em> variant is for the branch to be removed, then first the unpublished will
+     *     be versioned, then from the unpublished the branch info will be removed and version history the labels for
+     *     the branch will be removed, and then the core branch or any other branch if core does not exist is checked
+     *     out, see {@link #checkoutBranch(String)}.
+     * </p>
+     * <p>
+     *     If {@code branchId} is published (either as variant or in version history), this method will throw a
+     *     WorkflowException.
      * </p>
      * @param branchId the {@code branchId} to remove
      * @return {@link Document} wrapping the workspace preview node variant
-     * @throws WorkflowException in case {@code branchId} does not exist or when checkoutBranch
+     * @throws WorkflowException in case {@code branchId} does not exist or when removeBranch
      *                            is not allowed in the current document state
      */
     void removeBranch(String branchId) throws WorkflowException;

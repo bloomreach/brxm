@@ -139,7 +139,7 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
             return null;
         }
 
-        // restore any branch that is published
+        // restore any branch for stateLabel
         final Version version = findOldestVersion(versionHistory, labels);
 
         versionManager.restore(version, false);
