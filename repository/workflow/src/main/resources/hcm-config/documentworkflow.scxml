@@ -600,23 +600,43 @@
     </state>
     <state id="remove-branch">
       <onentry>
-        <hippo:action action="removeBranch" enabledExpr="!editing and !!unpublished"/>
+        <hippo:action action="removeBranch" enabledExpr="!!unpublished"/>
       </onentry>
       <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
            allowed or possible because there is no unpublished document variant yet -->
       <state id="no-remove-branch">
-        <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists
-             and not being edited -->
-        <transition target="can-remove-branch" cond="!editing and !!unpublished"/>
+        <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists -->
+        <transition target="can-remove-branch" cond="!!unpublished"/>
       </state>
       <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
       <state id="can-remove-branch">
         <transition event="removeBranch">
+
+          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be removed.'"/>
+
           <!-- on the workflowContext.result put the list of branches that exist -->
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 
+          <!-- branch must exist -->
           <hippo:workflowException cond="!workflowContext.result.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it doesn\'t exist'"/>
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it doesn\'t exist.'"/>
+
+          <!-- if the draft is for the branch to be removed AND it is being edited, the branch removal is not allowed -->
+          <hippo:workflowException cond="editing and draft.isBranch(_event.data?.branchId)"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because being edited.'"/>
+
+          <hippo:getBranch branchId="_event.data?.branchId" state="'published'"
+                           unpublished="unpublished" published="published" draft="draft"/>
+
+          <!-- if the to be removed branch is still published, it is not allowed to be removed -->
+          <hippo:workflowException cond="!!workflowContext.result"
+                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because it is published.'"/>
+
+          <if cond="unpublished.isBranch(_event.data?.branchId)">
+            <!-- first checkout any other branch because the unpublished is for branch to be removed -->
+            <hippo:version variant="unpublished"/>
+            <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'unpublished'"/>
+          </if>
 
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
                               branchId="_event.data?.branchId"/>
