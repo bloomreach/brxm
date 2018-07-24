@@ -31,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public class ModuleReader {
     }
 
     public ModuleContext read(final Path moduleDescriptorPath, final boolean verifyOnly,
-                           final String extensionName, final String hstRoot) throws IOException, ParserException {
+                           final String extensionName, final JcrPath hstRoot) throws IOException, ParserException {
         final ModuleImpl module = readDescriptor(moduleDescriptorPath);
 
         module.setExtensionName(extensionName);

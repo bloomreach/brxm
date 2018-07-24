@@ -55,9 +55,16 @@ public interface ConfigurationModel extends Closeable {
      * The set of all names of extensions present in this model. The "core" is always assumed to be present and
      * does not have an explicit representation. Thus, a core-only model will return an empty Set.
      * @return a Set of names for extensions present in this model; does not contain null
-     * @since 2.0
+     * @since 13.0
      */
     Set<String> getExtensionNames();
+
+    /**
+     * The set of all HST root configuration nodes registered by extensions present in this model.
+     * @return a Set of JcrPaths representing valid HST root configuration nodes
+     * @since 13.0
+     */
+    Set<JcrPath> getHstRoots();
 
     /**
      * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
@@ -91,7 +98,7 @@ public interface ConfigurationModel extends Closeable {
      * actions, or the root definition paths for content definitions, at minimum.
      * @param extension the name of an extension whose digest is desired, or null for the core digest
      * @return a String containing a digest of model contents, in a format determined by the implementation
-     * @since 2.0
+     * @since 13.0
      */
     String getDigest(final String extension);
 

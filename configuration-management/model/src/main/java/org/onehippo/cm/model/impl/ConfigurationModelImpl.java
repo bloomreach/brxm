@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,11 +38,11 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
@@ -75,8 +74,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
     private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
-    private final Set<String> modifiableHstRoots = new HashSet<>();
-    private final Set<String> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
+    private final Set<String> modifiableExtensionNames = new HashSet<>();
+    private final Set<String> extensionNames = Collections.unmodifiableSet(modifiableExtensionNames);
+    private final Set<JcrPath> modifiableHstRoots = new HashSet<>();
+    private final Set<JcrPath> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -111,13 +112,13 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return a Set of names for extensions present in this model; does not contain null
      * @since 2.0
      */
+    @Override
     public Set<String> getExtensionNames() {
-        final Set<String> names = getModulesStream().map(ModuleImpl::getExtensionName).collect(Collectors.toSet());
-        names.remove(null);
-        return names;
+        return extensionNames;
     }
 
-    public Set<String> getHstRoots() {
+    @Override
+    public Set<JcrPath> getHstRoots() {
         return hstRoots;
     }
 
@@ -261,6 +262,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
         modifiableDeletedConfigProperties.clear();
+        modifiableExtensionNames.clear();
         modifiableHstRoots.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
@@ -291,7 +293,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
         module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
         configurationTreeBuilder.finishModule();
-        if (module.getExtensionName() != null && module.getHstRoot() != null) {
+        if (module.getExtensionName() != null) {
+            modifiableExtensionNames.add(module.getExtensionName());
+        }
+        if (module.getHstRoot() != null) {
             modifiableHstRoots.add(module.getHstRoot());
         }
     }

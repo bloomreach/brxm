@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.ContentSource;
 import org.onehippo.cm.model.source.ResourceInputProvider;
@@ -62,6 +63,12 @@ public interface Module extends OrderableByName {
      * @since 13.0
      */
     String getExtensionName();
+
+    /**
+     * @return JcrPath of HST root configuration node for the corresponding extension or null if it is a core Module
+     * @since 13.0
+     */
+    JcrPath getHstRoot();
 
     /**
      * @return The immutable set of all {@link Source}s of this module, in undefined order.

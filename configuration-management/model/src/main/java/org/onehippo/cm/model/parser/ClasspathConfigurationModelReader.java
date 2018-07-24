@@ -24,7 +24,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -37,6 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,8 +107,7 @@ public class ClasspathConfigurationModelReader {
      * @throws IOException
      * @throws ParserException
      */
-    // TODO: Why do we need a separate code path for this? Why not just load everything available to the classloader?
-    public ConfigurationModelImpl readExtension(final String extensionName, final String hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
+    public ConfigurationModelImpl readExtension(final String extensionName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -135,21 +134,6 @@ public class ClasspathConfigurationModelReader {
         return build;
     }
 
-    // TODO: this is scary -- almost guaranteed to be a bad resource leak of open FileSystems!
-    public Collection<ModuleImpl> collectExtensionModules(final String extensionName, final String hstRoot, final ClassLoader classLoader)
-            throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
-                readModulesFromClasspath(classLoader, false, extensionName, hstRoot);
-
-        // insert extension name into each module
-        extensionModules.getRight().forEach(module -> {
-            module.setExtensionName(extensionName);
-            module.setHstRoot(hstRoot);
-        });
-
-        return extensionModules.getRight();
-    }
-
     /**
      * Read modules that are packaged on the classpath for the given ClassLoader.
      * @param classLoader the classloader to search for packaged config modules
@@ -162,7 +146,7 @@ public class ClasspathConfigurationModelReader {
     private Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
                                                                              final boolean verifyOnly,
                                                                              final String extensionName,
-                                                                             final String hstRoot)
+                                                                             final JcrPath hstRoot)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<ModuleImpl>> modules = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 

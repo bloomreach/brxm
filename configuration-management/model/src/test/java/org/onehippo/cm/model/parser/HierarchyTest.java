@@ -36,6 +36,7 @@ import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SerializerTest;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -60,7 +61,7 @@ public class HierarchyTest extends AbstractBaseTest {
             final Path moduleConfig = fs.getPath("/parser/hierarchy_test/" + Constants.HCM_MODULE_YAML);
             final ModuleContext moduleContext =
                     new ModuleReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig, false,
-                            "test", "/hst:test");
+                            "test", JcrPaths.getPath("/hst:test"));
             ModuleImpl module = moduleContext.getModule();
 
             final ConfigSourceImpl configSource =

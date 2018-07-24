@@ -163,7 +163,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         else {
             // Adjust HST root for output
             final JcrPath inPath = node.getJcrPath();
-            final String hstRoot = node.getDefinition().getSource().getModule().getHstRoot();
+            final JcrPath hstRoot = node.getDefinition().getSource().getModule().getHstRoot();
             return getStandardizedHstPath(inPath, hstRoot).toString();
         }
     }
@@ -174,7 +174,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
      * @param inPath the path to potentially swap for a new root node
      * @return a new path based on the HST default root node
      */
-    protected JcrPath getStandardizedHstPath(final JcrPath inPath, final String hstRoot) {
+    protected JcrPath getStandardizedHstPath(final JcrPath inPath, final JcrPath hstRoot) {
         if (!inPath.isRoot()
                 && hstRoot != null
                 && inPath.subpath(0, 1).equals(hstRoot)) {

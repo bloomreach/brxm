@@ -628,7 +628,7 @@ public abstract class SourceParser extends AbstractBaseParser {
         if (!inPath.isRoot()
                 && module.getHstRoot() != null
                 && inPath.getSegment(0).equals(HST_HST_SEGMENT)) {
-            final JcrPath hstRoot = JcrPaths.getPath(module.getHstRoot());
+            final JcrPath hstRoot = module.getHstRoot();
             if (inPath.getSegmentCount() == 1) {
                 return hstRoot;
             }

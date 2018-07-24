@@ -81,8 +81,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private String extensionName = null;
-    private String hstRoot = null;
-    private boolean explicitCore = false;
+    private JcrPath hstRoot = null;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
             .comparing(SourceImpl::getPath)
@@ -252,11 +251,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         this.extensionName = extension;
     }
 
-    public String getHstRoot() {
+    @Override
+    public JcrPath getHstRoot() {
         return hstRoot;
     }
 
-    public void setHstRoot(final String hstRoot) {
+    public void setHstRoot(final JcrPath hstRoot) {
         this.hstRoot = hstRoot;
     }
 
