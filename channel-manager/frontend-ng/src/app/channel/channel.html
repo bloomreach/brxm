@@ -73,17 +73,20 @@
               layout="row"
               flex>
     <left-side-panel is-configuration-locked="$ctrl.isConfigurationLocked()"
+                     ng-hide="$ctrl.isSidePanelFullScreen('right')"
                      components-visible="$ctrl.isComponentsOverlayDisplayed">
     </left-side-panel>
 
     <hippo-iframe flex
+                  ng-class="{ 'locked-width': $ctrl.isSidePanelFullScreen('right') }"
                   ng-show="$ctrl.isChannelLoaded()"
                   show-components-overlay="$ctrl.isComponentsOverlayDisplayed"
                   show-content-overlay="$ctrl.isContentOverlayDisplayed"
                   on-edit-menu="$ctrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel ng-show="$ctrl.isChannelLoaded()">
+    <right-side-panel ng-class="{ 'side-panel-full-screen': $ctrl.isSidePanelFullScreen('right') }"
+                      ng-show="$ctrl.isChannelLoaded()">
     </right-side-panel>
   </md-content>
 </div>
