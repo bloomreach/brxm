@@ -21,14 +21,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.yaml.snakeyaml.events.AliasEvent;
 import org.yaml.snakeyaml.events.Event;
