@@ -17,6 +17,9 @@ package org.hippoecm.frontend.behaviors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxChannel;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -57,5 +60,16 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
             _helper.addOnDomLoad("new Hippo.EnterHandler('" + component.getMarkupId() + "')");
         }
         _helper.renderHead(response);
+    }
+
+    @Override
+    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        final AjaxCallListener ajaxCallListener = new AjaxCallListener();
+        ajaxCallListener.onPrecondition("return Wicket.$$('" + getComponent().getMarkupId() + "') && Wicket.$$('" + getForm().getMarkupId() + "')");
+        attributes.getAjaxCallListeners().add(ajaxCallListener);
+        final AjaxChannel channel = attributes.getChannel();
+        if (channel != null) {
+            attributes.setChannel(channel);
+        }
     }
 }

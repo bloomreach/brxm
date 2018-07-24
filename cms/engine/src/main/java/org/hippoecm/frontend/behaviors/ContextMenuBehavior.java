@@ -22,7 +22,10 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -103,6 +106,17 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
             menu.collapse(target);
         }
         hide(target);
+    }
+
+    @Override
+    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        final AjaxCallListener ajaxCallListener = new AjaxCallListener();
+        ajaxCallListener.onPrecondition("return Hippo.ContextMenu.isShown('" + getMarkupId() + "');");
+        attributes.getAjaxCallListeners().add(ajaxCallListener);
+        final AjaxChannel channel = attributes.getChannel();
+        if (channel != null) {
+            attributes.setChannel(channel);
+        }
     }
 
     private void show(AjaxRequestTarget target) {
