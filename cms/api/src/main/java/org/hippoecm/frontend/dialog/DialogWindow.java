@@ -61,7 +61,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
         pending = new LinkedList<>();
 
-        add(new EventStoppingBehavior("onclick"));
+        add(new EventStoppingBehavior("click"));
     }
 
     private void closeDialog(Dialog dialog) {

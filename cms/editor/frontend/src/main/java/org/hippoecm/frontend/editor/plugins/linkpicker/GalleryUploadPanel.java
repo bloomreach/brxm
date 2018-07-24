@@ -284,7 +284,7 @@ public abstract class GalleryUploadPanel extends Panel {
             }
         }
                 .setNullValid(false)
-                .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                .add(new AjaxFormComponentUpdatingBehavior("change") {
                     @Override
                     protected void onUpdate(AjaxRequestTarget target) {
                         // required because abstract, but all we need is to have galleryType set, which happens underwater.

@@ -106,7 +106,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         if (mode == IEditor.Mode.EDIT) {
             if (!isUpdateDisabled) {
 
-                cropButton.add(new AjaxEventBehavior("onclick") {
+                cropButton.add(new AjaxEventBehavior("click") {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);

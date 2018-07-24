@@ -118,7 +118,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         final DropDownChoice<String> roleChoice = new DropDownChoice<>("roles-select",
                 new PropertyModel<>(this, "selectedRole"), allRoles);
         roleChoice.setNullValid(false);
-        roleChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        roleChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 target.add(submit);
@@ -130,7 +130,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         final DropDownChoice<Group> groupChoice = new DropDownChoice<>("groups-select",
                 new PropertyModel<>(this, "selectedGroup"), allGroups, new ChoiceRenderer<>("groupname"));
         groupChoice.setNullValid(false);
-        groupChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        groupChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 target.add(submit);

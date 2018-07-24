@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -352,7 +352,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     protected Behavior newBehavior(final int tabIndex) {
-        return new AjaxEventBehavior("onclick") {
+        return new AjaxEventBehavior("click") {
             private static final long serialVersionUID = 1L;
 
             @Override

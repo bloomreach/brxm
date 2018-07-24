@@ -147,7 +147,7 @@ public class SectionViewer extends Panel implements ICardView {
                 }
             }
         );
-        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        select.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 onSelect(selectModel.getObject());

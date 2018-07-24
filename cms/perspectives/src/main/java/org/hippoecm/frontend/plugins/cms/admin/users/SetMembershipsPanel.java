@@ -123,7 +123,7 @@ public class SetMembershipsPanel extends Panel {
         final DropDownChoice<Group> ddc = new DropDownChoice<>("local-groups", PropertyModel.of(this, "selectedGroup"),
                 localGroups, new ChoiceRenderer<>("groupname"));
         ddc.setNullValid(false);
-        ddc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        ddc.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 target.add(submit);

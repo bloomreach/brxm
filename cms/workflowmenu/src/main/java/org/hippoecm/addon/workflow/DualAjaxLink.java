@@ -35,7 +35,7 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
     public DualAjaxLink(final String id, final IModel model) {
         super(id, model);
 
-        add(new AjaxEventBehavior("onclick") {
+        add(new AjaxEventBehavior("click") {
             private static final long serialVersionUID = 1L;
 
             protected void onEvent(AjaxRequestTarget target) {
@@ -56,7 +56,7 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
             }
         });
 
-        add(new AjaxEventBehavior("oncontextmenu") {
+        add(new AjaxEventBehavior("contextmenu") {
             private static final long serialVersionUID = 1L;
 
             protected void onEvent(AjaxRequestTarget target) {

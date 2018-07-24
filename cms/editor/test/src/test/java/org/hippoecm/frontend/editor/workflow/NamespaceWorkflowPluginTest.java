@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,12 +123,12 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
         formTest.setValue("view:name:widget", "testtype");
 
         // "next"
-        tester.executeAjaxEvent("dialog:content:form:buttons:next", "onclick");
+        tester.executeAjaxEvent("dialog:content:form:buttons:next", "click");
 
         // "select layout"
         tester.clickLink("dialog:content:form:view:layouts:0:link");
 
-        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "onclick");
+        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "click");
 
         JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());
@@ -151,11 +151,11 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
         formTest.setValue("view:name:widget", "testtype");
 
         // "next"
-        tester.executeAjaxEvent("dialog:content:form:buttons:next", "onclick");
+        tester.executeAjaxEvent("dialog:content:form:buttons:next", "click");
 
         // "select layout"
         tester.clickLink("dialog:content:form:view:layouts:0:link");
-        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "onclick");
+        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "click");
 
         JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());

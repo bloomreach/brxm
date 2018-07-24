@@ -261,7 +261,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new DropDownChoice<>("type", new PropertyModel<>(this, "type"), galleryTypes,
                     new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
             // needed to keep dropdown selection:
-            typeComponent.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            typeComponent.add(new AjaxFormComponentUpdatingBehavior("change") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget art) {
                 }

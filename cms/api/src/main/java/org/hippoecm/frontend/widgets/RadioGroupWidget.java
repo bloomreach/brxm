@@ -57,7 +57,7 @@ public class RadioGroupWidget<T> extends Panel {
             protected void populateItem(ListItem<T> item) {
 
                 final Radio<T> radio = new Radio<T>("radio", item.getModel());
-                radio.add(new AjaxEventBehavior("onchange") {
+                radio.add(new AjaxEventBehavior("change") {
                     private static final long serialVersionUID = 1L;
 
                     @Override

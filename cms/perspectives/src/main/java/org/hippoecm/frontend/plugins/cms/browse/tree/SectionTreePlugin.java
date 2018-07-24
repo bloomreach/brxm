@@ -187,7 +187,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 return false;
             }
         };
-        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        select.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 Section section = selectModel.getObject();

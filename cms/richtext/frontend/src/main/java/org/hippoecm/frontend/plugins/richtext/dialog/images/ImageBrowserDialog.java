@@ -105,7 +105,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
             }
         });
-        type.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        type.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
@@ -148,7 +148,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
             }
         });
-        align.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        align.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 checkState();

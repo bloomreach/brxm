@@ -35,7 +35,7 @@ abstract class MenuLink extends Link {
         if(isEnabled()) {
             Form form = getForm();
             if (form != null) {
-                add(new AjaxFormSubmitBehavior(form, "onclick") {
+                add(new AjaxFormSubmitBehavior(form, "click") {
 
                     @Override
                     protected void onSubmit(final AjaxRequestTarget target) {
@@ -64,7 +64,7 @@ abstract class MenuLink extends Link {
                     }
                 });
             } else {
-                add(new AjaxEventBehavior("onclick") {
+                add(new AjaxEventBehavior("click") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -91,7 +91,7 @@ abstract class MenuLink extends Link {
                 });
             }
         } else {
-            add(new EventStoppingBehavior("onclick"));
+            add(new EventStoppingBehavior("click"));
         }
     }
 

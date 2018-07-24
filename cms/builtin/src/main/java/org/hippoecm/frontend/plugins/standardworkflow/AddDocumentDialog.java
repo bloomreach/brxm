@@ -79,7 +79,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
             final DropDownChoice<String> folderChoice;
             SortedTypeChoiceRenderer typeChoiceRenderer = new SortedTypeChoiceRenderer(this, prototypesList);
             add(folderChoice = new DropDownChoice<>("prototype", prototypeModel, typeChoiceRenderer, typeChoiceRenderer));
-            folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            folderChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     target.add(folderChoice);

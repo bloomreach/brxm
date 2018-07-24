@@ -27,7 +27,7 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
     public AjaxBreadCrumbLink(String id, IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
-        add(new AjaxEventBehavior("onclick") {
+        add(new AjaxEventBehavior("click") {
             private static final long serialVersionUID = 1L;
 
             @Override

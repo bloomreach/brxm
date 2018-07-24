@@ -177,7 +177,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
 
         if (editable) {
-            add(new AjaxEventBehavior("onclick") {
+            add(new AjaxEventBehavior("click") {
 
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {

@@ -298,7 +298,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             final DropDownChoice querySelection;
 
             add(querySelection = new DropDownChoice("query-selection", new PropertyModel(PermissionsFolderWorkflowPlugin.this, "selected"), modelList, folderTypeRenderer));
-            querySelection.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            querySelection.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {

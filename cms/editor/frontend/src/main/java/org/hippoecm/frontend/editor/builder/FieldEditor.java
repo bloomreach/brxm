@@ -252,7 +252,7 @@ public class FieldEditor extends Panel {
         add(component);
         if (edit) {
             component.setOutputMarkupId(true);
-            component.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            component.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {

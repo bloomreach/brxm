@@ -100,7 +100,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
         if (mode == IEditor.Mode.EDIT) {
 
-            regenerateButton.add(new AjaxEventBehavior("onclick") {
+            regenerateButton.add(new AjaxEventBehavior("click") {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected void onEvent(final AjaxRequestTarget target) {

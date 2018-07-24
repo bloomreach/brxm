@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -207,7 +207,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
-        ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        ddChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {}
         });
@@ -288,7 +288,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
         valuesContainer.add(addLink);
 
-        checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        checkBox.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.add(valuesContainer);

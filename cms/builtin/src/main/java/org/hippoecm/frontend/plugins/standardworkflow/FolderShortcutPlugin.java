@@ -320,7 +320,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             prototypeContainer = new WebMarkupContainer("prototype");
             prototypeContainer.add(prototypeChoice = new DropDownChoice<>("select", new PropertyModel<>(this, "prototype"),
                     emptyList));
-            prototypeChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            prototypeChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -352,7 +352,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
                 }
             }));
-            templateChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            templateChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
                 private static final long serialVersionUID = 1L;
 
                 @Override

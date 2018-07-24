@@ -77,7 +77,7 @@ public class LanguageField extends WebMarkupContainer {
                 }));
         languageChoice.setNullValid(false);
         languageChoice.setRequired(true);
-        languageChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        languageChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
