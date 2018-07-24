@@ -127,11 +127,11 @@ public class ClasspathConfigurationModelReader {
         // add filesystems to the model
         model.setFileSystems(extensionModules.getLeft());
 
-        final ConfigurationModelImpl build = model.build();
+        model.build();
         stopWatch.stop();
         log.info("ConfigurationModel extension loaded in {}", stopWatch.toString());
 
-        return build;
+        return model;
     }
 
     /**
