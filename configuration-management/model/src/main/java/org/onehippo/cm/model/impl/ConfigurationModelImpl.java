@@ -170,7 +170,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     /**
-     * Add a single module to this model.
+     * Add a module to this model. Note: This is merely a convenience for {@link #addGroup(GroupImpl)}. Other modules
+     * in the same group will also be added as a side-effect.
      * @param module the module to add
      * @return this, for chaining
      */
