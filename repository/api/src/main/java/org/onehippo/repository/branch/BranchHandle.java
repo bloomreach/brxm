@@ -26,35 +26,62 @@ public interface BranchHandle {
 
     /**
      * Returns the branch id for which this handle should return variants.
-     * Note that if it is a non-existent branchId the variant getter methods will all return null.
+     * Note that if it is a non-existent branchId the variant getter methods will all return {@code null} except possibly
+     * for {@link #getPublishedMaster()}
      *
      * @return branch id of this handle.
      */
     String getBranchId();
 
     /**
-     * Returns the published variant for the branch returned by {@link #getBranchId()}
-     * or the published variant of master if there is one or else {@code null}.
+     * <p>
+     *     Returns the published variant for the branch returned by {@link #getBranchId()}
+     *     or {@code null} if there is no published node for the branch
+     * </p>
+     * <p>
+     *     The returned node can be either a variant below the handle but can also be a versioned history node
+     *     corresponding to the branch for {@link #getBranchId()}
+     * </p>
      *
      * @return published variant
      */
     Node getPublished();
 
     /**
-     * Returns the unpublished variant for the branch returned by {@link #getBranchId()}
-     * or null if there is none.
-     *
+     * <p>
+     *     Returns the unpublished variant for the branch returned by {@link #getBranchId()}
+     *     or {@code null} if there is no unpublished node for the branch
+     * </p>
+     * <p>
+     *     The returned node can be either a variant below the handle but can also be a versioned history node
+     *     corresponding to the branch for {@link #getBranchId()}
+     * </p>
      * @return unpublished variant
      */
     Node getUnpublished();
 
     /**
-     * Returns the draft variant for the branch returned by {@link #getBranchId()}
-     * or null if there is none.
+     * <p>
+     *     Returns the draft variant for the branch returned by {@link #getBranchId()}
+     *     or {@code null} if there is no draft node for the branch
+     * </p>
+     * <p>
+     *     The returned node can be either a variant below the handle but can also be a versioned history node
+     *     corresponding to the branch for {@link #getBranchId()}
+     * </p>
      *
      * @return draft variant
      */
     Node getDraft();
+
+    /**
+     * <p>
+     *     Tries to return the published master node for this {@link BranchHandle} or {@code null} if there is no
+     *     master published. The returned node can be a node from version history
+     * </p>
+     * @return the published master node for this {@link BranchHandle} or {@code null} if there is no such node
+     */
+    Node getPublishedMaster();
 
     /**
      * Returns {@code true} if

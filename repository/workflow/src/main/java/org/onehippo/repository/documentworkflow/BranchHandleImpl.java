@@ -62,7 +62,7 @@ public class BranchHandleImpl implements BranchHandle {
     public Node getPublished() {
         return getVariant(PUBLISHED)
                 .map(DocumentVariant::getNode)
-                .orElseGet(this::getPublishedMaster);
+                .orElse(null);
     }
 
     @Override
@@ -79,6 +79,13 @@ public class BranchHandleImpl implements BranchHandle {
                 .orElse(null);
     }
 
+    public Node getPublishedMaster() {
+        return new BranchHandleImpl(MASTER_BRANCH_ID, documentHandle)
+                .getVariant(PUBLISHED)
+                .map(DocumentVariant::getNode)
+                .orElse(null);
+    }
+
     @Override
     public boolean isModified() {
         return getVariant(UNPUBLISHED)
@@ -91,7 +98,7 @@ public class BranchHandleImpl implements BranchHandle {
 
     @Override
     public boolean isMaster() {
-        return this.branchId.equals("master");
+        return this.branchId.equals(MASTER_BRANCH_ID);
     }
 
     @Override
@@ -160,13 +167,6 @@ public class BranchHandleImpl implements BranchHandle {
 
     private DocumentVariant getDocumentVariant(WorkflowUtils.Variant variant) {
         return documentHandle.getDocuments().get(variant.getState());
-    }
-
-    private Node getPublishedMaster() {
-        return new BranchHandleImpl(MASTER_BRANCH_ID, documentHandle)
-                .getVariant(PUBLISHED)
-                .map(DocumentVariant::getNode)
-                .orElse(null);
     }
 
     private static DocumentHandle newDocumentHandle(Node handleNode) throws WorkflowException {

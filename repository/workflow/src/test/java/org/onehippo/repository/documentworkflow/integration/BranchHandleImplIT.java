@@ -35,6 +35,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION;
 
@@ -69,8 +70,7 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
         {
             final BranchHandleImpl branchHandle = new BranchHandleImpl("pqr", handle);
             final Node published = branchHandle.getPublished();
-            assertThat(getParentNodeType(published), is(NT_HANDLE));
-            assertThat(published.hasProperty(HIPPO_PROPERTY_BRANCH_ID), is(false));
+            assertNull(published);
         }
     }
 
