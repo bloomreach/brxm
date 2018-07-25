@@ -290,6 +290,10 @@ public class ObjectConverterImpl implements ObjectConverter {
             log.warn("Version history node with id stored on '{}/@{}' does not exist. Correct the handle manually.",
                     handle.getPath(), HIPPO_VERSION_HISTORY_PROPERTY);
             return node;
+        } catch (RepositoryException e) {
+            log.warn("Failed to get frozen node from version history for handle '{}', returning '{}' instead.",
+                    handle.getPath(), node.getPath(), e);
+            return node;
         }
 
     }
