@@ -705,7 +705,6 @@
       <state id="can-publish-branch">
 
         <transition event="publishBranch">
-          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be published as branch'"/>
 
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 
@@ -713,7 +712,7 @@
                                    errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be published because it doesn\'t exist'"/>
 
 
-          <if cond="live">
+          <if cond="live and !'master'.equals(_event.data?.branchId)">
             <!-- there is a published variant, we only publish to version history -->
             <if cond="unpublished.isBranch(_event.data?.branchId)">
               <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
@@ -725,8 +724,8 @@
 
           </if>
 
-          <if cond="!live">
-            <!-- there is not yet a published variant : really publish the preview -->
+          <if cond="!live or 'master'.equals(_event.data?.branchId)">
+            <!-- there is not yet a published variant or it is master: really publish the preview -->
             <if cond="!unpublished.isBranch(_event.data?.branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
               <if cond="editing">
@@ -760,7 +759,6 @@
 
       <state id="can-depublish-branch">
         <transition event="depublishBranch">
-          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be depublished as branch'"/>
 
           <hippo:listBranches unpublished="unpublished" published="published" draft="draft"/>
 

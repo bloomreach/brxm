@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -24,8 +25,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -359,15 +362,23 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
     }
 
     @Test
-    public void depublish_master_published_version_results_in_workflow_exception() throws Exception {
+    public void depublish_master_published_version() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
-        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-            workflow.depublishBranch(MASTER_BRANCH_ID);
-            fail("It should not be allowed to depublish master as branch");
-        } catch (WorkflowException e) {
-            assertEquals("Branch 'master' cannot be depublished as branch", e.getMessage());
-        }
+
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_ID + "-published"));
+
+        workflow.depublishBranch(MASTER_BRANCH_ID);
+
+        final Node publishedVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+        assertTrue(Arrays.equals(new String[]{},
+                JcrUtils.getMultipleStringProperty(publishedVariant, HippoNodeType.HIPPO_AVAILABILITY, new String[]{})));
+
+
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_ID + "-published"));
     }
 
     @Test
