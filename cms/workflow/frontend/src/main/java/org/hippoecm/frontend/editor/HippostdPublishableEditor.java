@@ -732,7 +732,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         if (published != null) {
                             this.published.detach();
                         }
-                        this.published = new JcrNodeModel(branchHandle.map(b -> b.getPublished()).orElse(child));
+                        // if there is not published for the branch we fallback to master published and if there is
+                        // no master published we just user child
+                        this.published = new JcrNodeModel(branchHandle.map(b -> b.getPublished() == null ? b.getPublishedMaster() : b.getPublished()).orElse(child));
                         break;
                     case HippoStdNodeType.DRAFT:
                         if (this.draft != null) {
