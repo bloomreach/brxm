@@ -26,8 +26,8 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
-import javax.management.relation.RelationException;
 
+import org.apache.jackrabbit.commons.flat.TreeTraverser;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -35,13 +35,14 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -54,13 +55,16 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
@@ -73,6 +77,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
     private Node homeHandle;
     private Node aboutUsHandle;
+    private Node contactHandle;
     private VersionManager versionManager;
     private VersionHistory versionHistoryHome;
     private VersionHistory versionHistoryAboutUs;
@@ -81,14 +86,17 @@ public class TestVersionedBean extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
         versionManager = session.getWorkspace().getVersionManager();
         homeHandle = session.getNode("/unittestcontent/documents/unittestproject/common/homepage");
 
         aboutUsHandle = session.getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");
+        contactHandle = session.getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/contact");
 
         // make backups to restore later
         JcrUtils.copy(session, homeHandle.getPath(), homeHandle.getPath() + "-copy");
         JcrUtils.copy(session, aboutUsHandle.getPath(), aboutUsHandle.getPath() + "-copy");
+        JcrUtils.copy(session, contactHandle.getPath(), contactHandle.getPath() + "-copy");
         session.save();
 
         createVersionHistoryFixture();
@@ -98,6 +106,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
 
         obm = new ObjectBeanManagerImpl(previewUser, objectConverter);
+
     }
 
     @Override
@@ -110,12 +119,14 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         }
         homeHandle.remove();
         aboutUsHandle.remove();
+        contactHandle.remove();
 
         JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/common/homepage-copy",
                 "/unittestcontent/documents/unittestproject/common/homepage");
         JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us-copy",
                 "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");
-
+        JcrUtils.copy(session, "/unittestcontent/documents/unittestproject/common/aboutfolder/contact-copy",
+                "/unittestcontent/documents/unittestproject/common/aboutfolder/contact");
         session.save();
 
         super.tearDown();
@@ -133,7 +144,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         changeTitleContentAndCommit(homeHandle, wf, "The christmas Title", "This is the content of the christmas homepage");
 
         versionHistoryHome = versionManager.getVersionHistory(
-                WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).get().getPath());
+                getDocumentVariantNode(homeHandle, UNPUBLISHED).get().getPath());
 
         final Document doc = wf.version();
         assertThat(doc.getNode(session).getName()).isEqualTo("1.1");
@@ -157,7 +168,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         changeTitleAndCommit(aboutUsHandle, wf2, "The Christmas Title About us");
 
         versionHistoryAboutUs = versionManager.getVersionHistory(
-                WorkflowUtils.getDocumentVariantNode(aboutUsHandle, WorkflowUtils.Variant.UNPUBLISHED).get().getPath());
+                getDocumentVariantNode(aboutUsHandle, UNPUBLISHED).get().getPath());
 
         final Document doc2 = wf2.version();
         assertThat(doc2.getNode(session).getName()).isEqualTo("1.1");
@@ -186,7 +197,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         wf.obtainEditableInstance();
         // assert after obtainEditableInstance the preview variant is present, is versionable AND that the handle also
         // has version info
-        final Optional<Node> previewVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED);
+        final Optional<Node> previewVariant = getDocumentVariantNode(handle, UNPUBLISHED);
         assertThat(previewVariant.orElse(null)).isNotNull();
         assertThat(previewVariant.get().isNodeType(MIX_VERSIONABLE)).isTrue();
         final Node versionHistoryNode = previewVariant.get().getProperty(JCR_VERSION_HISTORY).getNode();
@@ -197,7 +208,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         assertThat(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString())
                 .isEqualTo(versionHistoryNode.getIdentifier());
 
-        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        final Node draft = getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         draft.setProperty("unittestproject:title", newTitle);
         if (newContent != null) {
             draft.getNode("unittestproject:body").setProperty("hippostd:content", newContent);
@@ -352,7 +363,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
     @Test
     public void get_versioned_children_with_SNS_involved() throws Exception {
 
-        final Node previewVariant = WorkflowUtils.getDocumentVariantNode(homeHandle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node previewVariant = getDocumentVariantNode(homeHandle, UNPUBLISHED).get();
         final String bodyPath = previewVariant.getNode("unittestproject:body").getPath();
         // create SNS
         JcrUtils.copy(session, bodyPath, bodyPath);
@@ -376,6 +387,46 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         assertThat(childBeans.get(0).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body");
         assertThat(childBeans.get(1).getPath()).isEqualTo("/unittestcontent/documents/unittestproject/common/homepage/homepage/unittestproject:body[2]");
+
+    }
+
+    @Test
+    public void get_variant_without_version_history_property_retuns_original_node() throws RepositoryException, ObjectBeanManagerException, WorkflowException, RemoteException {
+
+        final Node documentHandle = this.contactHandle;
+        WorkflowUtils.getWorkflow(documentHandle, "default", DocumentWorkflow.class)
+                .orElse(null)
+                .obtainEditableInstance();
+
+        final String branchId = "id";
+        documentHandle.addMixin(NT_HIPPO_VERSION_INFO);
+        documentHandle.setProperty(HIPPO_BRANCHES_PROPERTY, new String[]{branchId});
+        documentHandle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).remove();
+
+        final Node unpublishedVariant = getDocumentVariantNode(documentHandle, UNPUBLISHED).orElse(null);
+        unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+        unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
+        unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchId);
+        session.save();
+
+        ModifiableRequestContextProvider.set(new MockHstRequestContext());
+        final HippoDocumentBean bean = (HippoDocumentBean) objectConverter.getObject(unpublishedVariant);
+
+        assertThat(bean).isNotNull();
+
+        //
+        final Node node = bean.getNode();
+        assertThat(node.hasProperty(HIPPO_PROPERTY_BRANCH_ID)).isTrue();
+        assertThat(node.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)).isFalse();
+        assertThat(node.getParent().isNodeType(NT_HANDLE)).isTrue();
+
+        final Node handle = node.getParent();
+        assertThat(handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)).isFalse();
+        assertThat(handle.isNodeType(NT_HIPPO_VERSION_INFO)).isTrue();
+        assertThat(handle.hasProperty(HIPPO_BRANCHES_PROPERTY)).isTrue();
+        final String[] branches = JcrUtils.getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
+        assertThat(branches).containsExactly(branchId);
+
 
     }
 }

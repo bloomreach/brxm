@@ -256,6 +256,11 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
+        if (!handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
+            // Without a version history identifier we can't find it in version history
+            return node;
+        }
+
         // should we serve a versioned history node or just workspace.
         try {
             final Node versionHistory = node.getSession().getNodeByIdentifier(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString());
