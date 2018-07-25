@@ -35,6 +35,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -359,9 +360,8 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private String getBranchId() {
         return Optional.ofNullable(getBranchIdModel())
-                .map(branchIdModel -> Optional.ofNullable(branchIdModel.getBranchId())
-                        .orElse(DocumentVariant.MASTER_BRANCH_ID))
-                .get();
+                .map(BranchIdModel::getBranchId)
+                .orElse(DocumentVariant.MASTER_BRANCH_ID);
     }
 
 
