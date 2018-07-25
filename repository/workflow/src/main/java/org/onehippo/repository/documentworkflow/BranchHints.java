@@ -76,7 +76,8 @@ public class BranchHints {
         public BranchHints build() throws RepositoryException {
             this.branchHandleHints = new TreeMap<>();
             this.branchHandleHints.putAll(this.documentHandleHints);
-            if (!(branchHandle.isMaster() && documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED).isMaster())) {
+            final DocumentVariant unpublished = documentHandle.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
+            if (!(branchHandle.isMaster() && (unpublished == null || unpublished.isMaster()))) {
                 modifyBooleanHint("publish", getPublish());
                 modifyBooleanHint("depublish", getDepublish());
                 modifyBooleanHint("removeBranch", getRemoveBranch());
