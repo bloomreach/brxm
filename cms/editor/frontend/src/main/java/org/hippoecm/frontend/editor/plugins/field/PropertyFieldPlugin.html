@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
       <wicket:container wicket:id="hint-panel"/>
       <div class="hippo-editor-field-nritems" wicket:id="nrItemsLabel">[1 of 3]</div>
       <div class="hippo-editor-field-subfield" wicket:id="view">
-        <wicket:container wicket:id="fragment" />
+        <wicket:container wicket:id="fieldContainer"/>
       </div>
       <a class="add-link btn btn-default btn-sm" wicket:id="add">
         <span wicket:id="add-icon"></span>
@@ -31,21 +31,4 @@
       </a>
     </div>
   </wicket:panel>
-  <wicket:fragment wicket:id="view-fragment">
-    <div class="hippo-editor-field-subfield-item" wicket:id="item"></div>
-  </wicket:fragment>
-  <wicket:fragment wicket:id="edit-fragment">
-    <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
-      <a class="up-link" wicket:id="up">
-        <span wicket:id="up-icon"></span>
-      </a>
-      <a class="down-link" wicket:id="down">
-        <span wicket:id="down-icon"></span>
-      </a>
-      <a class="remove-link" wicket:id="remove">
-        <span wicket:id="remove-icon"></span>
-      </a>
-    </div>
-    <div class="hippo-editor-field-subfield-item" wicket:id="item"></div>
-  </wicket:fragment>
 </html>
