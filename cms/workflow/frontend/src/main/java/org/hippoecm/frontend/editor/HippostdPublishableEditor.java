@@ -303,9 +303,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
 
-
-    private void detachVariant(IModel<Node> model){
-        if (model != null){
+    private void detachVariant(IModel<Node> model) {
+        if (model != null) {
             model.detach();
         }
     }
@@ -726,21 +725,24 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         if (unpublished != null) {
                             this.unpublished.detach();
                         }
-                        this.unpublished = new JcrNodeModel(branchHandle.map(b -> b.getUnpublished()).orElse(child));
+                        this.unpublished = new JcrNodeModel(branchHandle.map(BranchHandle::getUnpublished).orElse(child));
                         break;
                     case HippoStdNodeType.PUBLISHED:
                         if (published != null) {
                             this.published.detach();
                         }
-                        // if there is not published for the branch we fallback to master published and if there is
-                        // no master published we just user child
-                        this.published = new JcrNodeModel(branchHandle.map(b -> b.getPublished() == null ? b.getPublishedMaster() : b.getPublished()).orElse(child));
+                        // if there is no published for the branch we fallback to master published and if there is
+                        // no master published we just use child
+                        this.published = new JcrNodeModel(branchHandle
+                                .map(BranchHandle::getPublished)
+                                .orElseGet(() -> branchHandle.map(BranchHandle::getPublishedMaster).orElse(child))
+                        );
                         break;
                     case HippoStdNodeType.DRAFT:
                         if (this.draft != null) {
                             this.draft.detach();
                         }
-                        draft = new JcrNodeModel(branchHandle.map(b -> b.getDraft()).orElse(child));
+                        draft = new JcrNodeModel(branchHandle.map(BranchHandle::getDraft).orElse(child));
                         if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
                                 && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                             isHolder = true;
