@@ -16,7 +16,6 @@
 
 import channelComponent from './channel.component';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import channelPageModule from './page/page';
 import channelRelevanceModule from './relevance/relevance';
 import channelService from './channel.service';
 import channelSidePanelModule from './sidePanels/sidePanel';
@@ -33,7 +32,6 @@ import viewportsModule from './viewportToggle/viewportToggle.module';
 const channelModule = angular
   .module('hippo-cm.channel', [
     channelHippoIframeModule.name,
-    channelPageModule.name,
     channelRelevanceModule.name,
     channelSidePanelModule.name,
     channelSubpageModule.name,

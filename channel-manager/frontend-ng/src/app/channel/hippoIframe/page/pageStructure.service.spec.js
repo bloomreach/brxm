@@ -33,7 +33,7 @@ describe('PageStructureService', () => {
   let $rootScope;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.page');
+    angular.mock.module('hippo-cm.channel.hippoIframe.page');
 
     inject((
       _$q_,
@@ -69,7 +69,7 @@ describe('PageStructureService', () => {
   });
 
   beforeEach(() => {
-    jasmine.getFixtures().load('channel/page/pageStructure.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/page/pageStructure.service.fixture.html');
   });
 
   it('has no containers initially', () => {
