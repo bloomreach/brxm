@@ -725,6 +725,7 @@
           </if>
 
           <if cond="!live or 'master'.equals(_event.data?.branchId)">
+
             <!-- there is not yet a published variant or it is master: really publish the preview -->
             <if cond="!unpublished.isBranch(_event.data?.branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
@@ -734,6 +735,7 @@
                      the preview first to be sure before we do a checkout! -->
                 <hippo:version variant="unpublished"/>
               </if>
+              <hippo:version variant="unpublished"/>
               <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
             </if>
 

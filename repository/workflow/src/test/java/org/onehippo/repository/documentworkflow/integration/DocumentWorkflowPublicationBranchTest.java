@@ -15,15 +15,20 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
-import java.io.Serializable;
-import java.util.Map;
+import javax.jcr.Node;
+import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -32,38 +37,47 @@ import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BR
 public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkflowIntegrationTest {
 
     @Test
-    public void publication_branch_hints() throws Exception {
+    public void publication_master_when_there_are_branches() throws Exception {
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-        final Map<String, Serializable> hints = workflow.hints();
         assertTrue((Boolean)workflow.hints().get("publish"));
         assertTrue((Boolean)workflow.hints().get("requestPublication"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
         assertFalse((Boolean)workflow.hints().get("depublish"));
 
         workflow.branch("foo", "Foo");
+        workflow.obtainEditableInstance();
+
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draft.setProperty("title", "title foo");
+        session.save();
+        workflow.commitEditableInstance();
+
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+
+        assertTrue(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
         // since unpublished is now for branch, (de)publish and request(de)publication should be false
         assertFalse((Boolean)workflow.hints().get("publish"));
+        // TODO REPO-2029 since there is a version, requestPublication and requestDepublication should be disabled
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
         assertFalse((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            // below should publish master!
             workflow.publish();
-            fail("Expected workflow exception");
         } catch (WorkflowException e) {
-            System.out.println(e.getMessage());
+            fail(e.toString());
         }
 
-        workflow.checkoutBranch(MASTER_BRANCH_ID);
+        // result of the publish above should be that MASTER is published
+        assertFalse(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
-        assertTrue((Boolean)workflow.hints().get("publish"));
-        assertTrue((Boolean)workflow.hints().get("requestPublication"));
-        assertFalse((Boolean)workflow.hints().get("requestDepublication"));
-        assertFalse((Boolean)workflow.hints().get("depublish"));
-
-        workflow.publish();
+        // the branch foo should as a result be checked in
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertEquals("title foo", JcrUtils.getStringProperty(versionHistory.getVersionByLabel("foo-unpublished").getFrozenNode(),"title", null));
 
         assertFalse((Boolean)workflow.hints().get("publish"));
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
@@ -77,11 +91,10 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         assertFalse((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
-
         workflow.checkoutBranch(MASTER_BRANCH_ID);
 
         // delete the unpublished manually
-        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get().remove();
+        unpublished.remove();
         session.save();
 
         assertFalse((Boolean)workflow.hints().get("publish"));

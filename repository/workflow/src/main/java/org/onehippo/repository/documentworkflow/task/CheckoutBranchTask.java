@@ -83,7 +83,7 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
         // ensure no pending changes which would fail the checkout
         workflowSession.save();
 
-        Node targetNode = getVariant().getNode(workflowSession);
+        final Node targetNode = getVariant().getNode(workflowSession);
 
         if (ANY.equals(branchId)) {
             return checkoutMasterOrEldestBranch(workflowSession, targetNode);
