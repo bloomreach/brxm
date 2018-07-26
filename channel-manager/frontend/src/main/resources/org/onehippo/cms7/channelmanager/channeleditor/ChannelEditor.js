@@ -66,14 +66,52 @@
     loadChannel: function() {
       this._destroyComponentPropertiesWindow();
       if (this.channelId) {
-        this.hostToIFrame.publish('load-channel', this.channelId, this.initialPath, this.branchId);
+        this._getContextPath(this.channelId)
+          .when(function (contextPath) {
+            var branchedChannelId = this._getBranchedChannelId(this.channelId, this.branchId);
+            this.hostToIFrame.publish('load-channel', branchedChannelId, contextPath, this.branchId, this.initialPath);
+
+            // reset the state; the state in the app is leading. When loadChannel is called again,
+            // we'll send a reload-channel event instead that reloads the current app state.
+            this.initChannel(null, null, null);
+          }.bind(this))
+          .otherwise(function () {
+            console.error('Cannot determine context path of channel "' + this.channelId + '"');
+          }.bind(this));
       } else {
         this.hostToIFrame.publish('reload-channel');
       }
+    },
 
-      // reset the state; the state in the app is leading. When loadChannel is called again,
-      // we'll send a reload-channel event instead that reloads the current app state.
-      this.initChannel(null, null, null);
+    _getContextPath: function(channelId) {
+      return new Hippo.Future(function (success, fail) {
+        if (this.initialConfig.contextPaths.length === 1) {
+          // return the only choice
+          success(this.initialConfig.contextPaths[0]);
+        }
+        this.channelStoreFuture.when(function (config) {
+          var channelRecord = config.store.getById(channelId);
+          if (!channelRecord) {
+            // try the preview version of the channel
+            channelRecord = config.store.getById(channelId + '-preview');
+          }
+          if (channelRecord) {
+            success(channelRecord.json.contextPath);
+          } else {
+            fail();
+          }
+        }.bind(this));
+      }.bind(this));
+    },
+
+    _getBranchedChannelId: function(channelId, branchId) {
+      if (branchId === 'master') {
+        return channelId;
+      }
+      if (channelId.endsWith('-preview')) {
+        return channelId.replace(/-preview$/, '-' + branchId + '-preview');
+      }
+      return channelId + '-' + branchId;
     },
 
     /**

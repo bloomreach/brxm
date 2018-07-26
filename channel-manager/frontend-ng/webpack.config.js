@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import getByPropertyFilter from './getByProperty.filter';
-import incrementPropertyFilter from './incrementProperty.filter';
-import startWithSlashFilter from './startWithSlash.filter';
+const webpack = require('@bloomreach/frontend-build/conf/webpack');
 
-const filtersModule = angular
-  .module('hippo-cm.filters', [])
-  .filter('getByProperty', getByPropertyFilter)
-  .filter('incrementProperty', incrementPropertyFilter)
-  .filter('startWithSlash', startWithSlashFilter);
-
-export default filtersModule.name;
+module.exports = webpack;

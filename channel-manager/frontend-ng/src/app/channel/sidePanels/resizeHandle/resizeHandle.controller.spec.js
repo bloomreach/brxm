@@ -55,12 +55,26 @@ describe('resizeHandle component', () => {
     $('.resize-handle-mask').remove();
   });
 
-  it('initializes minWidth and maxWidth', () => {
+  it('initializes minWidth', () => {
     expect($ctrl.minWidth).toBe(100);
-    expect($ctrl.maxWidth).toBe($('body').width() / 2);
   });
 
   describe('starting a resize', () => {
+    it('initializes maxWidth as a round number', () => {
+      const body = $('body');
+      const oldBodyWidth = body.width();
+
+      body.width('40px');
+      mockHandleElement.trigger('mousedown');
+      expect($ctrl.maxWidth).toBe(20);
+
+      body.width('39px');
+      mockHandleElement.trigger('mousedown');
+      expect($ctrl.maxWidth).toBe(19);
+
+      body.width(oldBodyWidth);
+    });
+
     it('creates and shows a transparent mask covering the page on mouse down on the handle', () => {
       mockHandleElement.trigger('mousedown');
 
@@ -95,13 +109,13 @@ describe('resizeHandle component', () => {
       $ctrl.handlePosition = 'left';
       $ctrl.$onInit();
 
-      mockHandleElement.trigger(event('mousedown', $ctrl.maxWidth - 100));
-      $('.resize-handle-mask').trigger(event('mousemove', $ctrl.maxWidth - 200));
+      mockHandleElement.trigger(event('mousedown', 100));
+      $('.resize-handle-mask').trigger(event('mousemove', 0));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
       expect(mockSidePanelElement).toHaveCss({ width: '200px' });
 
-      $('.resize-handle-mask').trigger(event('mousemove', $ctrl.maxWidth - 150));
+      $('.resize-handle-mask').trigger(event('mousemove', 50));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 150 });
       expect(mockSidePanelElement).toHaveCss({ width: '150px' });

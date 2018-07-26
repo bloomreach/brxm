@@ -222,7 +222,7 @@ class ChannelMenuService extends MenuService {
     let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
 
     if (this._isBranch()) {
-      const project = this.ProjectService.project;
+      const project = this.ProjectService.selectedProject;
 
       content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE', {
         channelName: channel.name,

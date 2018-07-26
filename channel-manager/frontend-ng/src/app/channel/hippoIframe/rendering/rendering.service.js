@@ -30,6 +30,7 @@ class RenderingService {
     OverlayService,
     PageMetaDataService,
     PageStructureService,
+    ProjectService,
   ) {
     'ngInject';
 
@@ -45,6 +46,7 @@ class RenderingService {
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
+    this.ProjectService = ProjectService;
   }
 
   init(iframeJQueryElement) {
@@ -53,6 +55,7 @@ class RenderingService {
 
   createOverlay() {
     this.PageStructureService.clearParsedElements();
+
     this._insertCss().then(() => {
       this._parseHstComments();
       this.updateDragDrop();
@@ -107,7 +110,16 @@ class RenderingService {
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
     if (channelIdFromService !== channelIdFromPage) {
-      this.ChannelService.initializeChannel(channelIdFromPage);
+      const contextPathFromPage = this.PageMetaDataService.getContextPath();
+
+      if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
+        // Current channel is a branch, but new channel has no branch of that project
+        // therefore load core
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, this.ProjectService.core.id);
+      } else {
+        // otherwise load new channel within current project
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage);
+      }
     }
   }
 

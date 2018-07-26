@@ -36,7 +36,7 @@ class ProjectService {
       id: 'master',
       name: $translate.instant('CORE'),
     };
-    this.project = this.core;
+    this.selectedProject = this.core;
     this.allProjects = [];
   }
 
@@ -46,7 +46,7 @@ class ProjectService {
   }
 
   isBranch() {
-    return this.project !== this.core;
+    return this.selectedProject !== this.core;
   }
 
   updateSelectedProject(projectId) {
@@ -59,15 +59,21 @@ class ProjectService {
   }
 
   associateWithProject(documentId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/associate/${documentId}`;
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
     return this.$http
       .post(url)
       .then(() => {
         this._getAllProjects();
         this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
-          name: this.project.name,
+          name: this.selectedProject.name,
         });
       });
+  }
+
+  hasBranchOfProject(channelId) {
+    const baseChannelId = channelId.replace(/-preview$/, '');
+    const channels = this.selectedProject.channels;
+    return channels && !!channels.find(c => c.id === baseChannelId);
   }
 
   showAddToProjectForDocument(documentId) {
@@ -95,56 +101,56 @@ class ProjectService {
   }
 
   _selectProject(projectId) {
-    this.project = this.allProjects.find(project => project.id === projectId) || this.core;
+    this.selectedProject = this.allProjects.find(project => project.id === projectId) || this.core;
     return this._setProjectInHST();
   }
 
   _setProjectInHST() {
-    return this.project === this.core ? this._activateCore() : this._activateProject(this.project.id);
+    return this.selectedProject === this.core ? this._activateCore() : this._activateProject(this.selectedProject.id);
   }
 
   isContentOverlayEnabled() {
     // For now, to prevent all kinds of corner cases, we only enable the content overlay
     // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.project.state || this.project.state === 'UNAPPROVED';
+    return !this.selectedProject.state || this.selectedProject.state === 'UNAPPROVED';
   }
 
   isComponentsOverlayEnabled() {
-    return !this.project.state
-      || this.project.state === 'UNAPPROVED'
-      || (this.project.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
+    return !this.selectedProject.state
+      || this.selectedProject.state === 'UNAPPROVED'
+      || (this.selectedProject.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
     // The action resetChannel puts a channel back into review.
     // It is only enabled if a channel has been rejected and the project is in review.
   }
 
   isRejectEnabled() {
-    return this.project.state
-      && this.project.state === 'IN_REVIEW'
+    return this.selectedProject.state
+      && this.selectedProject.state === 'IN_REVIEW'
       && this._isActionEnabled('rejectChannel');
   }
 
   isAcceptEnabled() {
-    return this.project.state
-      && this.project.state === 'IN_REVIEW'
+    return this.selectedProject.state
+      && this.selectedProject.state === 'IN_REVIEW'
       && this._isActionEnabled('approveChannel');
   }
 
   accept(channelId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/channel/approve`;
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/approve`;
 
     return this.$http
       .post(url, channelId)
-      .then((response) => { this.project = response.data; })
+      .then((response) => { this.selectedProject = response.data; })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.project.id);
+        this._callListeners(this.selectedProject.id);
       });
   }
 
   reject(channelId, message) {
     const request = {
       method: 'POST',
-      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.project.id}/channel/reject/${channelId}`,
+      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/reject/${channelId}`,
       headers: {
         'Content-Type': 'text/plain',
       },
@@ -153,16 +159,16 @@ class ProjectService {
 
     return this.$http(request)
       .then((response) => {
-        this.project = response.data;
+        this.selectedProject = response.data;
       })
       .catch(() => {
         this.FeedbackService.showError('PROJECT_OUT_OF_SYNC', {});
-        this._callListeners(this.project.id);
+        this._callListeners(this.selectedProject.id);
       });
   }
 
   _isActionEnabled(action) {
-    const channels = this.project.channels;
+    const channels = this.selectedProject.channels;
     const channelInfo = channels && channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;
   }

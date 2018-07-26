@@ -54,12 +54,13 @@ class ChannelService {
    * configuration already.
    *
    * @param channelId the ID of the channel to load.
+   * @param contextPath the context path of the web application that contains the channel
    * @param branchId the ID of the channel branch to show. Defaults to the active project.
    * @returns {*}
    */
-  initializeChannel(channelId, branchId) {
-    return this.$q.when(branchId || this.ProjectService.project.id)
-      .then(projectId => this.HstService.getChannel(channelId)
+  initializeChannel(channelId, contextPath, branchId) {
+    return this.$q.when(branchId || this.ProjectService.selectedProject.id)
+      .then(projectId => this.HstService.getChannel(channelId, contextPath)
         .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))
           .then(() => this._getPreviewChannel(channel))
@@ -93,7 +94,7 @@ class ChannelService {
     if (channel.preview) {
       return this.$q.resolve(channel);
     }
-    return this.HstService.getChannel(`${channel.id}-preview`);
+    return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath);
   }
 
   _loadProject(channel, branchId) {
@@ -144,7 +145,7 @@ class ChannelService {
   }
 
   reload() {
-    return this.initializeChannel(this.channel.id, this.channel.branchId);
+    return this.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.branchId);
   }
 
   getPreviewPaths() {

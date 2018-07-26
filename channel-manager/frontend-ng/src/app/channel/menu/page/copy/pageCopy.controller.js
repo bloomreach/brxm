@@ -100,7 +100,7 @@ class PageCopyCtrl {
 
   _returnToNewUrl(renderPathInfo, pathInfo) {
     if (this.channel && this.channel.id !== this.channelId) {
-      this.ChannelService.initializeChannel(this.channel.id)
+      this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath)
         .then(() => {
           this.HippoIframeService.initializePath(pathInfo);
           this.onDone();
