@@ -433,7 +433,8 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
         CheckBoxMultipleChoice checkboxes = new CheckBoxMultipleChoice("checkboxes", model, choicesModel,
                 new ValueListItemRenderer(valueList));
-
+        checkboxes.setSuffix("<br/>");
+        
         // trigger setObject on selection changed
         checkboxes.add(new AjaxFormChoiceComponentUpdatingBehavior() {
 
