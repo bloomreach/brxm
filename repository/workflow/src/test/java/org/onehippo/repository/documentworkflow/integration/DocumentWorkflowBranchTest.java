@@ -25,8 +25,11 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
+import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -185,10 +188,12 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
                         "after 'foo bar",2, versionHistory.getVersionLabels().length);
 
         assertTrue(versionHistory.hasVersionLabel("foo bar-unpublished"));
-        final Version fooBar = versionHistory.getVersionByLabel("foo bar-unpublished");
 
-        assertEquals("foo bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
-        assertEquals("Foo Bar", fooBar.getFrozenNode().getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
+        final BranchHandle branchHandle = new BranchHandleImpl("foo bar", handle);
+        final DocumentVariant unpublishedFooBar = new DocumentVariant(branchHandle.getUnpublished());
+
+        assertEquals("foo bar", unpublishedFooBar.getBranchId());
+        assertEquals("Foo Bar", unpublishedFooBar.getBranchName());
 
         assertTrue(handle.isNodeType(NT_HIPPO_VERSION_INFO));
         assertEquals("Expected handle version property to point to version history of preview node",

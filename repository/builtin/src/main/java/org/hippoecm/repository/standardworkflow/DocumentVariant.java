@@ -27,8 +27,8 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 
 /**
  * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
@@ -117,11 +117,11 @@ public class DocumentVariant extends Document {
     }
 
     public String getBranchId() throws RepositoryException {
-        if (getNode().isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
-            return getNode().getProperty(HIPPO_PROPERTY_BRANCH_ID).getString();
-        } else {
-            return MASTER_BRANCH_ID;
-        }
+        return JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+    }
+
+    public String getBranchName() throws RepositoryException {
+        return JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_NAME, null);
     }
 
     public boolean isAvailable(String environment) throws RepositoryException {
