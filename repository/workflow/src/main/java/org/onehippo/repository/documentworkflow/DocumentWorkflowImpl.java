@@ -36,7 +36,6 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
@@ -88,6 +87,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
+    private SCXMLWorkflowExecutor<SCXMLWorkflowContext, BranchDocumentHandle> hintsWorkflowExecutor;
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
@@ -163,7 +163,9 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         super.setNode(node);
         try {
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
-            workflowExecutor = new SCXMLWorkflowExecutor<>(new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext()), createDocumentHandle(node));
+            final SCXMLWorkflowContext scxmlWorkflowContext = new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext());
+            workflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, createDocumentHandle(node));
+            hintsWorkflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, new BranchDocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -186,33 +188,27 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Map<String, Serializable> hints() throws WorkflowException {
-        workflowExecutor.start();
-        Map<String, Serializable> hints = super.hints();
-        hints.putAll(workflowExecutor.getContext().getFeedback());
-        hints.putAll(workflowExecutor.getContext().getActions());
-        for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
-            if (entry.getValue() instanceof Collection) {
-                // protect against modifications
-                entry.setValue((Serializable)Collections.unmodifiableCollection((Collection)entry.getValue()));
-            }
-        }
-        return Collections.unmodifiableMap(hints);
+        return hints(MASTER_BRANCH_ID);
     }
 
     @Override
     public Map<String, Serializable> hints(final String branchId) throws WorkflowException {
+        final BranchDocumentHandle branchDocumentHandle = hintsWorkflowExecutor.getData();
         BranchHandle branchHandle = new BranchHandleImpl(branchId, getNode());
-        DocumentHandle documentHandle = workflowExecutor.getData();
-        try {
-            return  new BranchHints.Builder()
-                    .branchHandle(branchHandle)
-                    .documentHandle(documentHandle)
-                    .hints(hints())
-                    .build().getHints();
-        } catch (RepositoryException e) {
-            throw new WorkflowException(String.format("Could not build hints for branchId '%s'", branchId), e);
+        branchDocumentHandle.setDraft(branchHandle.getDraft());
+        branchDocumentHandle.setPublished(branchHandle.getPublished());
+        branchDocumentHandle.setUnpublished(branchHandle.getUnpublished());
+        hintsWorkflowExecutor.start();
+        Map<String, Serializable> hints = super.hints();
+        hints.putAll(hintsWorkflowExecutor.getContext().getFeedback());
+        hints.putAll(hintsWorkflowExecutor.getContext().getActions());
+        for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
+            if (entry.getValue() instanceof Collection) {
+                // protect against modifications
+                entry.setValue((Serializable) Collections.unmodifiableCollection((Collection) entry.getValue()));
+            }
         }
-
+        return Collections.unmodifiableMap(hints);
     }
 
     // EditableWorkflow implementation
