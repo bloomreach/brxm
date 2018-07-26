@@ -43,8 +43,12 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -113,6 +117,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 String branchId = getBranchIdModel().getBranchId();
+                //TODO mrop use workflow.obtainEditableInstance(branchId)
                 if (isModelBasedOnVersionHistory(branchId)) {
                     workflow.checkoutBranch(branchId);
                 }
@@ -135,7 +140,19 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             }
 
             private boolean isModelBasedOnVersionHistory(final String branchId) {
-                return !AbstractPreviewWorkflowPlugin.this.getInitialBranchId().equals(branchId);
+                try {
+                    final BranchHandle branchHandle = new BranchHandleImpl(branchId, getWorkflow().getNode());
+                    final Node unpublished = branchHandle.getUnpublished();
+                    if (unpublished != null) {
+                        return unpublished.isNodeType(JcrConstants.NT_FROZEN_NODE);
+                    } else {
+                        final Node published = branchHandle.getPublished();
+                        return published.isNodeType(JcrConstants.NT_FROZEN_NODE);
+                    }
+                } catch (WorkflowException | RepositoryException e) {
+                    log.warn(e.getMessage(), e);
+                }
+                return false;
             }
         };
         add(editAction);
