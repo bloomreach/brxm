@@ -27,7 +27,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 
-class EditableNodeFieldContainer extends EditableFieldContainer {
+public class EditableNodeFieldContainer extends EditableFieldContainer {
 
     public EditableNodeFieldContainer(final String id,
                                final Item<IRenderService> renderItem,

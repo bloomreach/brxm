@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 
-class EditablePropertyFieldContainer extends EditableFieldContainer {
+public class EditablePropertyFieldContainer extends EditableFieldContainer {
 
     public EditablePropertyFieldContainer(final String id,
                                    final Item<IRenderService> renderItem,

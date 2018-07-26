@@ -22,7 +22,7 @@ import org.hippoecm.frontend.service.IRenderService;
 /**
  * Shares the common markup for editable field containers.
  */
-abstract class EditableFieldContainer extends FieldContainer {
+public abstract class EditableFieldContainer extends FieldContainer {
 
     public EditableFieldContainer(final String id, final Item<IRenderService> renderItem) {
         super(id, renderItem);
