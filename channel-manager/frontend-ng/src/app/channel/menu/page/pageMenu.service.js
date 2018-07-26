@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import MenuService from '../../menu/menu.service';
+import MenuService from '../menu.service';
 
-class PageActionsService extends MenuService {
+class PageMenuService extends MenuService {
   constructor(
     $translate,
     ChannelService,
@@ -169,4 +169,4 @@ class PageActionsService extends MenuService {
   }
 }
 
-export default PageActionsService;
+export default PageMenuService;
