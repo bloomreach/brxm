@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,12 +24,9 @@ import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -173,106 +170,17 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
-     */
-    @Deprecated
-    @Override
-    protected void populateViewItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
+        item.add(new FieldContainer("fieldContainer", item));
     }
 
     @Override
-    protected void populateEditItem(Item item, final JcrNodeModel model) {
-        Fragment fragment = new TransparentFragment("fragment", "edit-fragment", this);
-
-        final int index = item.getIndex();
-
-        WebMarkupContainer controls = new WebMarkupContainer("controls");
-        controls.setVisible(canRemoveItem() || canReorderItems());
-        fragment.add(controls);
-
-        MarkupContainer remove = new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                onRemoveItem(model, target);
-            }
-        };
-        if (!canRemoveItem()) {
-            remove.setVisible(false);
-        }
-
-        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
-        remove.add(removeIcon);
-
-        controls.add(remove);
-
-        MarkupContainer upLink = new AjaxLink("up") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                onMoveItemUp(model, target);
-            }
-        };
-        if (!canReorderItems()) {
-            upLink.setVisible(false);
-        }
-        if (index == 0) {
-            upLink.setEnabled(false);
-        }
-
-        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
-        upLink.add(upIcon);
-
-        controls.add(upLink);
-
-        MarkupContainer downLink = new AjaxLink("down") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                IFieldDescriptor field = getFieldHelper().getField();
-                if (field != null) {
-                    String name = field.getPath();
-                    JcrNodeModel parent = model.getParentModel();
-                    if (parent != null) {
-                        JcrNodeModel nextModel = new JcrNodeModel(parent.getItemModel().getPath() + "/" + name + "["
-                                + (index + 2) + "]");
-                        onMoveItemUp(nextModel, target);
-                    }
-                }
-            }
-        };
-        if (!canReorderItems()) {
-            downLink.setVisible(false);
-        }
-        boolean isLast = (index == provider.size() - 1);
-        downLink.setEnabled(!isLast);
-
-        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
-        downLink.add(downIcon);
-
-        controls.add(downLink);
-
-        item.add(fragment);
+    protected void populateEditItem(Item<IRenderService> item, final JcrNodeModel model) {
+        item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
     }
 
     @Override
     protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrNodeModel, JcrNodeModel)}
-     */
-    @Deprecated
-    @Override
-    protected void populateCompareItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
+        populateViewItem(item, newModel);
     }
 
     protected Component createAddLink() {

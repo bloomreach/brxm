@@ -488,20 +488,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C newModel, C oldModel) {
     }
 
-    /**
-     * @deprecated Deprecated in favor of {@link #populateViewItem(org.apache.wicket.markup.repeater.Item, IModel)}
-     */
-    @Deprecated
-    protected void populateViewItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateCompareItem(org.apache.wicket.markup.repeater.Item, IModel, IModel)}
-     */
-    @Deprecated
-    protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
-    }
-
     protected FieldPluginHelper getFieldHelper() {
         return helper;
     }
