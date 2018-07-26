@@ -15,6 +15,9 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -75,8 +78,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
 
         workflow.branch("foo", "Foo");
 
-        // preview is now for branch 'foo', we should only be allowed to branch from 'master'
-        assertFalse((Boolean)workflow.hints().get("branch"));
+        assertTrue((Boolean)workflow.hints().get("branch"));
 
         workflow.checkoutBranch(MASTER_BRANCH_ID);
 
@@ -280,9 +282,13 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         preview.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Foo");
         session.save();
 
+
+
         // now try to branch to bar
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+            final Map<String, Serializable> hints = workflow.hints();
+            assertFalse((Boolean) hints.get("branch"));
             workflow.branch("bar", "Bar");
             fail("Expected branching to be not possible since no Master branch");
         } catch (WorkflowException e) {

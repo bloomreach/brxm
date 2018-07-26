@@ -40,6 +40,7 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
@@ -391,6 +392,14 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document branch(final String branchId, final String branchName) throws WorkflowException {
+        try {
+            if (getNode().isNodeType(JcrConstants.NT_FROZEN_NODE)){
+                checkoutBranch(MASTER_BRANCH_ID);
+            }
+
+        } catch (RepositoryException e) {
+            throw new WorkflowException(e.getMessage());
+        }
         return (Document) triggerAction(DocumentWorkflowAction.branch()
                 .addEventPayload(BRANCH_ID, branchId)
                 .addEventPayload(BRANCH_NAME, branchName));

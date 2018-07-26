@@ -30,7 +30,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
@@ -40,7 +39,6 @@ import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
@@ -88,7 +86,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         workflow.branch("foo", "Foo");
 
         assertTrue(workflow.hints().containsKey("publish"));
-        assertFalse("Normal Publication should be disabled for branches", (Boolean) workflow.hints().get("publish"));
+        assertTrue("Normal Publication should be disabled for branches", (Boolean) workflow.hints().get("publish"));
 
         workflow.publishBranch("foo");
 
