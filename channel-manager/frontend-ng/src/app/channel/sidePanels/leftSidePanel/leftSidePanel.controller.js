@@ -44,7 +44,7 @@ class LeftSidePanelCtrl {
   }
 
   $postLink() {
-    this.SidePanelService.initialize('left', this.$element.find('.left-side-panel'));
+    this.SidePanelService.initialize('left', this.$element, this.sideNavElement);
   }
 
   onResize(newWidth) {

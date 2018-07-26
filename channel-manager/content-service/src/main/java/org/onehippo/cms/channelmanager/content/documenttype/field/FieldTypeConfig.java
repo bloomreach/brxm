@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,46 +30,42 @@ public class FieldTypeConfig {
 
     private final ObjectNode config;
     private final FieldTypeContext context;
-    private String removePrefix;
+    private String prefix = StringUtils.EMPTY;
 
     public FieldTypeConfig(final FieldTypeContext context) {
         this.context = context;
         config = Json.object();
     }
 
-    public FieldTypeConfig removePrefix(String removePrefix) {
-        this.removePrefix = removePrefix;
+    public FieldTypeConfig prefix(final String prefix) {
+        this.prefix = prefix;
         return this;
     }
 
-    public FieldTypeConfig booleans(String... names) {
-        for (String propertyName : names) {
-            context.getBooleanConfig(propertyName).ifPresent((value) -> config.put(key(propertyName), value));
+    public FieldTypeConfig booleans(final String... names) {
+        for (final String propertyName : names) {
+            context.getBooleanConfig(prefix + propertyName).ifPresent((value) -> config.put(propertyName, value));
         }
         return this;
     }
 
-    public FieldTypeConfig strings(String... names) {
-        for (String propertyName : names) {
-            context.getStringConfig(propertyName).ifPresent((value) -> config.put(key(propertyName), value));
+    public FieldTypeConfig strings(final String... names) {
+        for (final String propertyName : names) {
+            context.getStringConfig(prefix + propertyName).ifPresent((value) -> config.put(propertyName, value));
         }
         return this;
     }
 
-    public FieldTypeConfig multipleStrings(String... names) {
-        for (String propertyName : names) {
-            context.getMultipleStringConfig(propertyName).ifPresent((values -> {
-                final ArrayNode array = config.putArray(key(propertyName));
-                for (String value : values) {
+    public FieldTypeConfig multipleStrings(final String... names) {
+        for (final String propertyName : names) {
+            context.getMultipleStringConfig(prefix + propertyName).ifPresent((values -> {
+                final ArrayNode array = config.putArray(propertyName);
+                for (final String value : values) {
                     array.add(value);
                 }
             }));
         }
         return this;
-    }
-
-    private String key(final String propertyName) {
-        return StringUtils.removeStart(propertyName, removePrefix);
     }
 
     public ObjectNode build() {

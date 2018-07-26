@@ -11,12 +11,33 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+@import 'variables';
 
 md-toolbar.hippo-toolbar {
   background: $grey-200;
   color: $text-dark;
   height: $toolbar-height;
   min-height: $toolbar-height;
+
+  &.ng-hide {
+    height: 0;
+    min-height: 0;
+    opacity: 0;
+  }
+
+  &.ng-hide-add {
+    transition: all $full-screen-ease-in;
+  }
+
+  &.ng-hide-remove {
+    transition: all $full-screen-ease-out;
+  }
+
+  &.ng-hide-add-active,
+  &.ng-hide-remove-active {
+    // Ensure that the toolbar buttons don't bleed during the animation
+    overflow: hidden;
+  }
 
   .md-container {
     background-color: $grey-200;

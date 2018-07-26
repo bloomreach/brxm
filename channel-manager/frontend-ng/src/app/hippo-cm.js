@@ -26,7 +26,6 @@ import uiRouter from '@uirouter/angularjs';
 
 import channelModule from './channel/channel';
 import factoriesModule from './factories/factories.module';
-import filtersModule from './filters/filters.module';
 import servicesModule from './services/services.module';
 
 import config from './hippo-cm.config';
@@ -43,7 +42,6 @@ const hippoCmModule = angular
     uiRouter,
     channelModule.name,
     factoriesModule,
-    filtersModule,
     servicesModule,
   ])
   .component('hippoCm', hippoCmComponent)

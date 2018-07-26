@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ describe('projectToggle component', () => {
       CmsService = _CmsService_;
     });
 
-    ProjectService.project = projectMock;
+    ProjectService.selectedProject = projectMock;
   });
 
   describe('onInit', () => {
@@ -58,12 +58,13 @@ describe('projectToggle component', () => {
   describe('getProjects', () => {
     it('return projects list from projectService', () => {
       ProjectService.projects = [];
-      const projectList = $ctrl.getProjects();
+      $ctrl.$onInit();
+      const projectList = $ctrl.projects;
       expect(projectList).toEqual([]);
     });
   });
 
-  describe('get selectedProjects', () => {
+  describe('get selectedProject', () => {
     it('returns the selected project if set', () => {
       expect($ctrl.selectedProject).toEqual(projectMock);
     });
@@ -87,7 +88,7 @@ describe('projectToggle component', () => {
     });
 
     it('should not update selected project when it did not change', () => {
-      ProjectService.project = projectMock;
+      ProjectService.selectedProject = projectMock;
       $ctrl.selectedProject = projectMock;
       $rootScope.$digest();
 

@@ -45,7 +45,7 @@ describe('addToProjectComponent', () => {
       ContentEditor = _ContentEditor_;
     });
 
-    ProjectService.project = testProject;
+    ProjectService.selectedProject = testProject;
 
     spyOn(ProjectService, 'associateWithProject').and.returnValue($q.resolve());
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocumentId);
