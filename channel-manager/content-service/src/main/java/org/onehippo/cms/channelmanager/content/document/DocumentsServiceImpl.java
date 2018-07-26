@@ -122,6 +122,11 @@ public class DocumentsServiceImpl implements DocumentsService {
                 return createDocument(uuid, handle, docType, published);
             }
 
+            final Node publishedMaster = branchHandle.getPublishedMaster();
+            if (publishedMaster != null) {
+                return createDocument(uuid, handle, docType, publishedMaster);
+            }
+
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
