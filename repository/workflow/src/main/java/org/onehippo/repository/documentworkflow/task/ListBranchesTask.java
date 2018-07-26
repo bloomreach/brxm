@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,7 +76,7 @@ public class ListBranchesTask extends AbstractDocumentTask {
     @Override
     protected Object doExecute() throws WorkflowException, RepositoryException {
         if (getVariant() == null || !getVariant().hasNode()) {
-            throw new WorkflowException("No variant provided");
+            return Collections.emptyList();
         }
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();

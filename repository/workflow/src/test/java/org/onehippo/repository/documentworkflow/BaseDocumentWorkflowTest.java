@@ -23,6 +23,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
+import org.onehippo.cms7.services.HippoServiceException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.BranchAction;
@@ -109,8 +110,14 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "label", LabelAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
-        HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
+        try{
+            HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
+            HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
+        }
+        catch (HippoServiceException e){
+
+        }
+
     }
 
     protected static void destroyDocumentWorkflowSCXMLRegistry() throws Exception {
