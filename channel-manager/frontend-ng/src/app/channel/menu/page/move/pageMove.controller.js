@@ -48,7 +48,7 @@ class PageMoveCtrl {
       { characters: this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
 
     this.isEditable = this.SiteMapItemService.isEditable();
-    // The PageActionsService has retrieved the page meta-data when opening the page menu.
+    // The PageMenuService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
     this.item = this.SiteMapItemService.get();
     this.lastPathInfoElement = this.item.name;

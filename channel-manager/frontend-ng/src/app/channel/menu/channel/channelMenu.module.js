@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
 import changeManagementDirective from './manageChanges/manageChanges.directive';
-import channelActionsService from './channelActions.service';
+import channelMenuService from './channelMenu.service';
 import channelSettingsDirective from './settings/settings.directive';
 import helpIconDirective from './settings/helpIcon/helpIcon.directive';
 import propertyField from './settings/propertyField/propertyField.component';
 
-const channelActionsModule = angular
-  .module('hippo-cm.channel.actions', [
+const channelMenuModule = angular
+  .module('hippo-cm.channel.menu.channel', [
     ngMessages,
   ])
   .component('propertyField', propertyField)
@@ -36,6 +36,6 @@ const channelActionsModule = angular
   .directive('changeManagement', changeManagementDirective)
   .directive('channelSettings', channelSettingsDirective)
   .directive('helpIcon', helpIconDirective)
-  .service('ChannelActionsService', channelActionsService);
+  .service('ChannelMenuService', channelMenuService);
 
-export default channelActionsModule;
+export default channelMenuModule;

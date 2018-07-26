@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PageActionsService', () => {
+describe('PageMenuService', () => {
   let $q;
   let $rootScope;
   let $translate;
@@ -26,7 +26,7 @@ describe('PageActionsService', () => {
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
-  let PageActionsService;
+  let PageMenuService;
   let PageMetaDataService;
   let SessionService;
   let SiteMapItemService;
@@ -49,7 +49,7 @@ describe('PageActionsService', () => {
       _DialogService_,
       _FeedbackService_,
       _HippoIframeService_,
-      _PageActionsService_,
+      _PageMenuService_,
       _PageMetaDataService_,
       _SessionService_,
       _SiteMapItemService_,
@@ -62,7 +62,7 @@ describe('PageActionsService', () => {
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
-      PageActionsService = _PageActionsService_;
+      PageMenuService = _PageMenuService_;
       PageMetaDataService = _PageMetaDataService_;
       SessionService = _SessionService_;
       SiteMapItemService = _SiteMapItemService_;
@@ -100,11 +100,11 @@ describe('PageActionsService', () => {
     spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
   });
 
-  const getItem = name => PageActionsService.menu.items.find(item => item.name === name);
+  const getItem = name => PageMenuService.menu.items.find(item => item.name === name);
 
   // menu button
   it('only shows the menu button if the channel is editable', () => {
-    const menu = PageActionsService.menu;
+    const menu = PageMenuService.menu;
     expect(menu.isVisible()).toBe(false);
 
     ChannelService.isEditable.and.returnValue(true);
@@ -112,7 +112,7 @@ describe('PageActionsService', () => {
   });
 
   it('loads the meta data of the current page when opening the page menu', () => {
-    const menu = PageActionsService.menu;
+    const menu = PageMenuService.menu;
     menu.onClick();
 
     expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
@@ -132,10 +132,10 @@ describe('PageActionsService', () => {
   });
 
   it('opens the page-properties subpage when "properties" option is clicked', () => {
-    spyOn(PageActionsService, 'showSubPage');
+    spyOn(PageMenuService, 'showSubPage');
 
     getItem('properties').onClick();
-    expect(PageActionsService.showSubPage).toHaveBeenCalledWith('page-properties');
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-properties');
   });
 
   // copy
@@ -176,10 +176,10 @@ describe('PageActionsService', () => {
   });
 
   it('opens the page-copy subpage when "copy" option is clicked', () => {
-    spyOn(PageActionsService, 'showSubPage');
+    spyOn(PageMenuService, 'showSubPage');
 
     getItem('copy').onClick();
-    expect(PageActionsService.showSubPage).toHaveBeenCalledWith('page-copy');
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-copy');
   });
 
   // move
@@ -194,10 +194,10 @@ describe('PageActionsService', () => {
   });
 
   it('opens the page-move subpage when the "move" option is clicked', () => {
-    spyOn(PageActionsService, 'showSubPage');
+    spyOn(PageMenuService, 'showSubPage');
 
     getItem('move').onClick();
-    expect(PageActionsService.showSubPage).toHaveBeenCalledWith('page-move');
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-move');
   });
 
   // delete
@@ -292,9 +292,9 @@ describe('PageActionsService', () => {
   });
 
   it('opens the page-new subpage when the "new" option is clicked', () => {
-    spyOn(PageActionsService, 'showSubPage');
+    spyOn(PageMenuService, 'showSubPage');
 
     getItem('new').onClick();
-    expect(PageActionsService.showSubPage).toHaveBeenCalledWith('page-new');
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-new');
   });
 });
