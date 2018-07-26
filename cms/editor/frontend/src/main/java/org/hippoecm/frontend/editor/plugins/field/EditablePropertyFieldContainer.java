@@ -28,7 +28,7 @@ import org.hippoecm.frontend.skin.Icon;
 
 class EditablePropertyFieldContainer extends EditableFieldContainer {
 
-    EditablePropertyFieldContainer(final String id,
+    public EditablePropertyFieldContainer(final String id,
                                    final Item<IRenderService> renderItem,
                                    final JcrPropertyValueModel model,
                                    final PropertyFieldPlugin propertyField) {

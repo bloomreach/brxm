@@ -23,7 +23,7 @@ import org.hippoecm.frontend.service.IRenderService;
 
 public class FieldContainer extends Panel {
 
-    FieldContainer(final String id, final Item<IRenderService> renderItem) {
+    public FieldContainer(final String id, final Item<IRenderService> renderItem) {
         super(id);
 
         // the wicket:id of the renderItem's component is always "item"

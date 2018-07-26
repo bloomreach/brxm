@@ -24,7 +24,7 @@ import org.hippoecm.frontend.service.IRenderService;
  */
 abstract class EditableFieldContainer extends FieldContainer {
 
-    EditableFieldContainer(final String id, final Item<IRenderService> renderItem) {
+    public EditableFieldContainer(final String id, final Item<IRenderService> renderItem) {
         super(id, renderItem);
     }
 }

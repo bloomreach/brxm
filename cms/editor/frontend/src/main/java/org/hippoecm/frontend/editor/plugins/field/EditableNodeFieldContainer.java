@@ -29,7 +29,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 
 class EditableNodeFieldContainer extends EditableFieldContainer {
 
-    EditableNodeFieldContainer(final String id,
+    public EditableNodeFieldContainer(final String id,
                                final Item<IRenderService> renderItem,
                                final JcrNodeModel model,
                                final NodeFieldPlugin nodeField) {
