@@ -57,21 +57,33 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private static final long serialVersionUID = 1L;
 
-    private final StdWorkflow infoAction;
+
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
+
+    @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
+    private String inUseBy;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-
-
-
-
-        final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         info = getHints();
+        inUseBy = getHint("inUseBy");
+        add(new StdWorkflow("infoEdit", "infoEdit") {
 
-        infoAction = new StdWorkflow("info", "info") {
+            /**
+             * Gets whether this component and any children are visible.
+             * <p>
+             * WARNING: this method can be called multiple times during a request. If you override this method, it is a good
+             * idea to keep it cheap in terms of processing. Alternatively, you can call {@link #setVisible(boolean)}.
+             * <p>
+             *
+             * @return True if component and any children are visible
+             */
+            @Override
+            public boolean isVisible() {
+                return StringUtils.isNotEmpty(inUseBy);
+            }
 
             @Override
             public String getSubMenu() {
@@ -80,8 +92,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-                        new PropertyModel<>(AbstractPreviewWorkflowPlugin.this, "stateSummary"));
+                return new StringResourceModel("in-use-by", this, null,
+                        new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
             }
 
             @Override
@@ -89,17 +101,9 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 // The infoEdit workflow only shows feedback based on the hints.
                 // It does not show any dialog.
             }
+        });
 
-            @Override
-            public boolean isVisible() {
-                // Show the workflow status of the document, except when it is live (in that case,
-                // no user action is required anymore).
-                return !"live".equals(getStateSummary());
-            }
-        };
-        add(infoAction);
-        final StdWorkflow infoEditAction = getInfoEditAction();
-        add(infoEditAction);
+
 
         editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
 
@@ -159,12 +163,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         hideInvalidActions();
     }
 
-    private String getInitialBranchId() {
-        return BranchWorkflowUtils.getBranchId(getHints(), UNPUBLISHED, PUBLISHED);
-    }
-
-
-
     @SuppressWarnings("unused")  // used by a PropertyModel
     public String getStateSummary() {
         try {
@@ -183,7 +181,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private void hideInvalidActions() {
         hideIfNotAllowed(info, "obtainEditableInstance", editAction);
-        hideOrDisable(info, "status", infoAction);
     }
 
     protected final String getHint(final String key) {
@@ -194,5 +191,4 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         return StringUtils.EMPTY;
     }
 
-    protected abstract StdWorkflow getInfoEditAction();
 }

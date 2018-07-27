@@ -20,37 +20,21 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.repository.HippoStdNodeType;
 
 public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
-    private String inUseBy;
+    private final StdWorkflow infoAction;
 
     public PreviewWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        inUseBy = getHint("inUseBy");
-    }
-
-    protected StdWorkflow getInfoEditAction() {
-        return new StdWorkflow("infoEdit", "infoEdit") {
-
-            /**
-             * Gets whether this component and any children are visible.
-             * <p>
-             * WARNING: this method can be called multiple times during a request. If you override this method, it is a good
-             * idea to keep it cheap in terms of processing. Alternatively, you can call {@link #setVisible(boolean)}.
-             * <p>
-             *
-             * @return True if component and any children are visible
-             */
-            @Override
-            public boolean isVisible() {
-                return StringUtils.isNotEmpty(inUseBy);
-            }
+        final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
+        infoAction = new StdWorkflow("info", "info") {
 
             @Override
             public String getSubMenu() {
@@ -59,8 +43,8 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("in-use-by", this, null,
-                        new PropertyModel(PreviewWorkflowPlugin.this, "inUseBy"));
+                return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY,
+                        new PropertyModel<>(PreviewWorkflowPlugin.this, "stateSummary"));
             }
 
             @Override
@@ -68,6 +52,15 @@ public class PreviewWorkflowPlugin extends AbstractPreviewWorkflowPlugin {
                 // The infoEdit workflow only shows feedback based on the hints.
                 // It does not show any dialog.
             }
+
+            @Override
+            public boolean isVisible() {
+                // Show the workflow status of the document, except when it is live (in that case,
+                // no user action is required anymore).
+                return !"live".equals(getStateSummary());
+            }
         };
+        add(infoAction);
+        hideOrDisable(getHints(), "status", infoAction);
     }
 }
