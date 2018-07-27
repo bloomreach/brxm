@@ -209,7 +209,7 @@ public class EditPerspective extends Perspective {
 
     private boolean isFrozenNode(final Node node) {
         try {
-            return node.isNodeType("nt:frozenNode");
+            return node.isNodeType(JcrConstants.NT_FROZENNODE);
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
