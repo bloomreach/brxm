@@ -19,8 +19,8 @@ package org.onehippo.repository.scxml;
 import java.util.HashMap;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockNode;
@@ -75,17 +75,16 @@ public class SCXMLWorkflowExecutorTest {
     private static SCXMLExecutorFactory factory;
 
 
-    @BeforeClass
-    public static void before() throws Exception {
+    @Before
+    public void before() throws Exception {
         registry = new MockRepositorySCXMLRegistry();
         factory = new RepositorySCXMLExecutorFactory();
-
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(factory, SCXMLExecutorFactory.class);
     }
 
-    @AfterClass
-    public static void after() throws Exception {
+    @After
+    public void after() throws Exception {
         HippoServiceRegistry.unregisterService(factory, SCXMLExecutorFactory.class);
         HippoServiceRegistry.unregisterService(registry, SCXMLRegistry.class);
     }

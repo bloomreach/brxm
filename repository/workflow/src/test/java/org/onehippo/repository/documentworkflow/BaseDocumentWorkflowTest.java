@@ -68,12 +68,16 @@ import org.onehippo.repository.scxml.WorkflowExceptionAction;
  */
 public class BaseDocumentWorkflowTest {
 
+    private static final MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
+    private static final RepositorySCXMLExecutorFactory service = new RepositorySCXMLExecutorFactory();
+
+
     protected static String loadSCXML() throws Exception {
         return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/hcm-config/documentworkflow.scxml"));
     }
 
     protected static void createDocumentWorkflowSCXMLRegistry() throws Exception {
-        MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
+
         MockNode scxmlConfigNode = registry.createConfigNode();
         MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "documentworkflow", loadSCXML());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
@@ -110,19 +114,14 @@ public class BaseDocumentWorkflowTest {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "label", LabelAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        try{
-            HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
-            HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
-        }
-        catch (HippoServiceException e){
-
-        }
+        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
+        HippoServiceRegistry.registerService(service, SCXMLExecutorFactory.class);
 
     }
 
     protected static void destroyDocumentWorkflowSCXMLRegistry() throws Exception {
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLExecutorFactory.class), SCXMLExecutorFactory.class);
-        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLRegistry.class), SCXMLRegistry.class);
+        HippoServiceRegistry.unregisterService(registry, SCXMLRegistry.class);
+        HippoServiceRegistry.unregisterService(service, SCXMLExecutorFactory.class);
     }
 
     protected static MockNode addVariant(MockNode handle, String state) throws RepositoryException {
