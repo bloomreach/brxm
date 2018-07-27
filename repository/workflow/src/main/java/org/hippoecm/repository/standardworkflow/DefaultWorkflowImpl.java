@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,28 +27,25 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultWorkflowImpl.class);
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private WorkflowContext context;
+    private transient WorkflowContext context;
     private Document document;
-    private Node subject;
-    
+    private transient Node subject;
+
     public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
         this.context = context;
         this.document = new Document(subject);
@@ -59,37 +56,39 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         return context;
     }
 
-    public Map<String,Serializable> hints() {
+    public Map<String, Serializable> hints() {
+        return hints(MASTER_BRANCH_ID);
+    }
+
+    @Override
+    public Map<String, Serializable> hints(final String branchId) {
         Map<String, Serializable> map = new TreeMap<>();
         map.put("checkModified", true);
         return map;
     }
 
-    public Document obtainEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public Document obtainEditableInstance() {
         return document;
     }
 
-    public Document commitEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public Document commitEditableInstance() {
         return document;
     }
 
-    public Document disposeEditableInstance()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public Document disposeEditableInstance() throws WorkflowException {
         throw new WorkflowException("Document type does not allow for reverting changes");
     }
 
     @Override
-    public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public boolean isModified() throws RepositoryException {
         final HippoSession session = (HippoSession) context.getUserSession();
         final Node node = document.getNode(session);
         return session.pendingChanges(node, "nt:base", true).hasNext();
     }
 
-    public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void delete() throws WorkflowException, RepositoryException, RemoteException {
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), new Document(getContainingFolder(subject)));
-        if(workflow instanceof FolderWorkflow) {
+        if (workflow instanceof FolderWorkflow) {
             ((FolderWorkflow) workflow).delete(document);
         } else {
             throw new WorkflowException("Cannot delete document that is not contained in a folder");
@@ -105,21 +104,21 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         return folderWorkflowCategory;
     }
 
-    public void archive() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void archive() throws WorkflowException, RepositoryException, RemoteException {
         Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if (workflow instanceof FolderWorkflow) {
-            ((FolderWorkflow)workflow).archive(document);
+            ((FolderWorkflow) workflow).archive(document);
         } else {
             throw new WorkflowException("cannot archive document which is not contained in a folder");
         }
     }
 
-    public void rename(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void rename(String newName) throws WorkflowException, RepositoryException, RemoteException {
         Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if (workflow instanceof FolderWorkflow) {
-            ((FolderWorkflow)workflow).rename(document, newName);
+            ((FolderWorkflow) workflow).rename(document, newName);
         } else {
             throw new WorkflowException("cannot rename document which is not contained in a folder");
         }
@@ -146,22 +145,24 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         node.getSession().save();
     }
 
-    public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+    public void copy(Document destination, String newName) throws RemoteException, WorkflowException, RepositoryException {
         Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), destination);
-        if(workflow instanceof EmbedWorkflow)
-            ((EmbedWorkflow)workflow).copyTo(folder, document, newName, null);
-        else
+        if (workflow instanceof EmbedWorkflow) {
+            ((EmbedWorkflow) workflow).copyTo(folder, document, newName, null);
+        } else {
             throw new WorkflowException("cannot copy document which is not contained in a folder");
+        }
     }
 
-    public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+    public void move(Document destination, String newName) throws RemoteException, WorkflowException, RepositoryException {
         Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
-        if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).move(document, destination, newName);
-        else
+        if (workflow instanceof FolderWorkflow) {
+            ((FolderWorkflow) workflow).move(document, destination, newName);
+        } else {
             throw new WorkflowException("cannot move document which is not contained in a folder");
+        }
     }
 
 }

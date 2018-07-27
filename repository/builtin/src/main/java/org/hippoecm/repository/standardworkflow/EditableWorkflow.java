@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
@@ -84,4 +87,15 @@ public interface EditableWorkflow extends Workflow {
     @WorkflowAction(loggable = false)
     public boolean isModified()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     * Same as for {@link #hints()} only now the hints for a specific {@code branchId}
+     * </p>
+     *
+     * @param branchId the branch to request the hints for.
+     * @see #hints()
+     */
+    @WorkflowAction(loggable = false, mutates = false)
+    Map<String, Serializable> hints(String branchId) throws WorkflowException, RemoteException, RepositoryException;
 }

@@ -81,18 +81,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 
 
-
-    /**
-     * <p>
-     * Same as for {@link #hints()} only now the hints for a specific {@code branchId}
-     * </p>
-     *
-     * @param branchId the branch to request the hints for.
-     * @see #hints()
-     */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
-    Map<String, Serializable> hints(String branchId) throws WorkflowException, RemoteException, RepositoryException;
-
     // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
 
     /**
