@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -28,6 +29,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
@@ -53,6 +55,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +153,7 @@ public class EditPerspective extends Perspective {
         return new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
-                JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
+                JcrNodeModel nodeModel = getJcrNodeModel();
                 IModel<String> nodeName = getDisplayName(nodeModel);
                 if (nodeModel != null) {
                     Node node = nodeModel.getNode();
@@ -174,6 +177,43 @@ public class EditPerspective extends Perspective {
                 return nodeName.getObject();
             }
         };
+    }
+
+    private JcrNodeModel getJcrNodeModel() {
+        final JcrNodeModel defaultModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
+        return Optional.ofNullable(defaultModel.getNode())
+                .filter(this::isFrozenNode)
+                .map(this::getFrozenUuid)
+                .map(this::getNodeByIdentifier)
+                .map(JcrNodeModel::new)
+                .orElse(defaultModel);
+    }
+
+    private Node getNodeByIdentifier(final String uuid) {
+        try {
+            return getSession().getJcrSession().getNodeByIdentifier(uuid);
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private String getFrozenUuid(final Node frozenNode) {
+        try {
+            return JcrUtils.getStringProperty(frozenNode, JcrConstants.JCR_FROZENUUID, frozenNode.getIdentifier());
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(),e );
+        }
+        return null;
+    }
+
+    private boolean isFrozenNode(final Node node) {
+        try {
+            return node.isNodeType("nt:frozenNode");
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+        return false;
     }
 
     private IModel<String> getDisplayName(JcrNodeModel model) {
@@ -205,7 +245,7 @@ public class EditPerspective extends Perspective {
     public Component getIcon(final String id, final IconSize size) {
         if (icon == null) {
             final EditorTabIconProvider iconProvider = new EditorTabIconProvider(getLocaleProvider());
-            final JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
+            final JcrNodeModel nodeModel = getJcrNodeModel();
             icon = iconProvider.getIcon(nodeModel, id, size);
         }
 
