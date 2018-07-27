@@ -160,6 +160,31 @@ describe('ChannelService', () => {
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
   });
 
+  it('should use the non-preview channel when no -preview channel exists and the user is not allowed to create it', () => {
+    const testChannel = {
+      id: 'testChannelId',
+      hostname: 'www.example.com',
+      mountId: 'testMountId',
+      mountPath: '/testMount',
+      siteMapId: 'testSiteMapId',
+      contextPath: 'testContextPath',
+      preview: false,
+      previewHstConfigExists: false,
+    };
+
+    HstService.getChannel.and.returnValue($q.resolve(testChannel));
+    SessionService.hasWriteAccess.and.returnValue(false);
+
+    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, '/testPath');
+    $rootScope.$digest();
+
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath);
+    expect(HstService.getChannel).not.toHaveBeenCalledWith(`${testChannel.id}-preview`, testChannel.contextPath);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
+    expect(HstService.doPost).not.toHaveBeenCalled();
+    expect(ChannelService.getChannel()).toEqual(testChannel);
+  });
+
   it('should fallback to the non-editable channel if creating preview configuration fails', () => {
     const testChannel = {
       id: 'testChannelId',
