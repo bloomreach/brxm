@@ -15,7 +15,7 @@
  *
  */
 
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.documentworkflow.integration;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -28,11 +28,16 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.onehippo.repository.documentworkflow.BranchHints;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.documentworkflow.HintsBuilder;
 import org.onehippo.repository.documentworkflow.integration.AbstractDocumentWorkflowIntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BranchHintsTest extends AbstractDocumentWorkflowIntegrationTest {
+public class BranchHintsIT extends AbstractDocumentWorkflowIntegrationTest {
 
 
     private DocumentHandle documentHandle;
