@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -30,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -69,8 +67,9 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.onehippo.cms.channelmanager.content.document.ContextPayloadUtils.getBranchId;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getFolderWorkflow;
@@ -140,7 +139,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
-        final Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        Map<String, Serializable> hints = getHints(workflow, contextPayload);
         if (!hintsInspector.canObtainEditableDocument(hints)) {
             throw hintsInspector
                     .determineEditingFailure(hints, session)
@@ -169,8 +168,12 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
 
         document.getInfo().setDirty(isDirty);
-        // we must use the hints that were retrieved before the editable instance was obtained from the workflow,
-        // see the class level javadoc.
+
+        // For master documents we must use the hints that were retrieved before the editable instance was obtained
+        // from the workflow, see the class level javadoc.
+        if (!getBranchId(contextPayload).equals(MASTER_BRANCH_ID)) {
+            hints = getHints(workflow, contextPayload);
+        }
         document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
 
@@ -501,19 +504,17 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
 
-    private Map<String, Serializable> getHints(Workflow workflow, Map<String, Serializable> contextPayload) {
+    private Map<String, Serializable> getHints(EditableWorkflow workflow, Map<String, Serializable> contextPayload) {
+        final Map<String, Serializable> hints = new HashMap<>();
+        if (contextPayload != null) {
+            hints.putAll(contextPayload);
+        }
+        final String branchId = getBranchId(contextPayload);
         try {
-            return Optional.of(workflow.hints()).map(hints -> {
-                final Map<String, Serializable> hintsCopy = new HashMap<>(hints);
-                if (contextPayload != null) {
-                    hintsCopy.putAll(contextPayload);
-                }
-                return hintsCopy;
-            }).orElse(new HashMap<>());
-        } catch (WorkflowException | RemoteException | RepositoryException e) {
+            hints.putAll(workflow.hints(branchId));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed reading hints from workflow", e);
         }
-        return new HashMap<>();
+        return hints;
     }
-
 }
