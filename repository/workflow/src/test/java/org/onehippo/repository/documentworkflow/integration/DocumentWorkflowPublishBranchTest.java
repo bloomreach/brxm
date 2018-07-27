@@ -27,6 +27,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -86,7 +87,9 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         workflow.branch("foo", "Foo");
 
         assertTrue(workflow.hints().containsKey("publish"));
-        assertTrue("Normal Publication should be disabled for branches", (Boolean) workflow.hints().get("publish"));
+
+        assertTrue("#hints() should give the hints('master') which should be possible to publish even if " +
+                "unpublished variant is for 'foo'" , (Boolean) workflow.hints().get("publish"));
 
         workflow.publishBranch("foo");
 
@@ -196,6 +199,16 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         assertTrue(versionHistory.hasVersionLabel("lux2-unpublished"));
         assertTrue(versionHistory.hasVersionLabel("lux2-published"));
         assertTrue(versionHistory.getVersionByLabel("lux2-unpublished").isSame(versionHistory.getVersionByLabel("lux2-published")));
+
+        // should publish master
+        workflow.publish();
+        assertFalse("#hints() should give the hints('master') which is published already" ,
+                (Boolean) workflow.hints().get("publish"));
+
+        // since 'master' is published, we expect the published variant really to have been replaced since 'master'
+        // always gets precedence
+        assertFalse(getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get().isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+
     }
 
     @Test

@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -322,6 +323,36 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         } catch (WorkflowException e) {
             assertEquals("Cannot invoke workflow documentworkflow action branch: action not allowed or undefined", e.getMessage());
         }
+    }
+
+    @Test
+    public void branch_document_is_always_done_from_master_and_works_even_if_master_is_in_version_history() throws Exception {
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        workflow.branch("foo", "Foo");
+        workflow.obtainEditableInstance();
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draft.setProperty("title", "foo title");
+        session.save();
+        workflow.commitEditableInstance();
+
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+
+        assertTrue(Arrays.equals(new String[]{"master-unpublished"}, versionHistory.getVersionLabels()));
+
+        // foo is unpublished and there is no version yet. Now branching 'bar' should branch from master, resulting in a
+        // new version for 'foo' in version history
+
+        workflow.branch("bar", "Bar");
+
+        assertFalse("Expected branch from master which does not have the property title",
+                unpublished.hasProperty("title"));
+
+        assertTrue("Expected 'foo' to be versioned",
+                Arrays.equals(new String[]{"master-unpublished", "foo-unpublished"}, versionHistory.getVersionLabels()));
+
     }
 
 }

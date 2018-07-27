@@ -40,7 +40,6 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
-import org.onehippo.repository.util.JcrConstants;
 
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
@@ -55,6 +54,7 @@ import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayload
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DOCUMENT;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.requestDelete;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 /**
@@ -392,14 +392,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document branch(final String branchId, final String branchName) throws WorkflowException {
-        try {
-            if (getNode().isNodeType(JcrConstants.NT_FROZEN_NODE)){
-                checkoutBranch(MASTER_BRANCH_ID);
-            }
-
-        } catch (RepositoryException e) {
-            throw new WorkflowException(e.getMessage());
-        }
         return (Document) triggerAction(DocumentWorkflowAction.branch()
                 .addEventPayload(BRANCH_ID, branchId)
                 .addEventPayload(BRANCH_NAME, branchName));

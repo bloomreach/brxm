@@ -559,6 +559,11 @@
           </if>
 
           <hippo:version variant="unpublished"/>
+
+          <if cond="!unpublished.master">
+            <!-- branching is always done from 'master' -->
+            <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
+          </if>
           <hippo:branch variant="unpublished" branchId="_event.data?.branchId" branchName="_event.data?.branchName"/>
         </transition>
 
