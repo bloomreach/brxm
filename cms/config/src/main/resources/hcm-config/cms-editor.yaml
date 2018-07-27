@@ -25,5 +25,5 @@ definitions:
         plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin
         wicket.feedback: ${cluster.id}.feedback
         wicket.id: ${cluster.id}.workflows
-        workflow.categories: editing
+        workflow.categories: [editing]
         workflow.observation: false
