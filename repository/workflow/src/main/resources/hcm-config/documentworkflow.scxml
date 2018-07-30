@@ -323,7 +323,7 @@
       <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
-          <if cond="(!requestPending or user=='workflowuser') and unpublished.master">
+          <if cond="(!requestPending or user=='workflowuser')">
             <!-- if unpublished is a master version and no request pending OR invoked by the 'workflowuser'
             user (scheduled workflow jobs daemon): enable request publication operation -->
             <hippo:action action="requestPublication" enabledExpr="true"/>

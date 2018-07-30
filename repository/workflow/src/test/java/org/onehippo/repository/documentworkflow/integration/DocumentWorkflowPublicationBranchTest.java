@@ -57,9 +57,10 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
 
         assertTrue(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
-        // since unpublished is now for branch, (de)publish and request(de)publication should be false
-        assertFalse((Boolean)workflow.hints().get("publish"));
+        // although unpublished is now for branch, (de)publish should still be disabled
+        assertTrue((Boolean)workflow.hints().get("publish"));
         // TODO REPO-2029 since there is a version, requestPublication and requestDepublication should be disabled
+        // since there are branches, request(de)publication should be false, even if the unpublished is for master
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
         assertFalse((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
