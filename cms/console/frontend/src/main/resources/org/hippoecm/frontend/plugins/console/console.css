@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,7 +222,7 @@
   font-size: 11px;
 }
 
-.hippo-console-menu-advanced li a:hover {
+.hippo-console-menu-advanced li a[href]:hover {
   text-decoration: underline
 }
 
@@ -243,7 +243,7 @@ ul.hippo-console-tree-add li.hippo-console-tree-sorter {
   margin-right: 57px;
 }
 
-.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {
+.hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {
   padding: 2px;
   color: white;
   border: 1px solid white;
@@ -251,12 +251,12 @@ ul.hippo-console-tree-add li.hippo-console-tree-sorter {
   font-size: 11px;
   display: block;
   float: left;
-  background: #4587d6;
+  background-color: #4587d6;
   border-radius: 2px;
 }
 
 .hippo-console-tree-add a,
-.hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
+.hippo-console-tree-sorter a {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -264,17 +264,29 @@ li.hippo-console-menu-actions-save.session-changes a {
   background-color: red;
 }
 
-.hippo-console-tree-sorter li span em {
-  padding: 2px;
+.hippo-console-tree-sorter a {
+  background-color: #999999;
   border-color: #cccccc;
-  background: #f2f2f2
+  color: #e3e3e3;
+  padding: 2px;
 }
 
 .hippo-console-tree-sorter a:hover,
+.hippo-console-tree-sorter a:focus {
+  background-color: #999999;
+  color: #e3e3e3;
+  cursor: default;
+}
+
+.hippo-console-tree-sorter a[href]:hover,
+.hippo-console-tree-sorter a[href]:focus {
+  background-color: #1f3f63;
+  color: white;
+  cursor: pointer;
+}
+
 .hippo-console-save a:hover,
-.hippo-console-tree-add a:hover,
-.hippo-console-tree-sorter a:focus,
-.hippo-console-tree-add a:focus{
+.hippo-console-tree-add a:focus {
   color: white;
   background: #1f3f63;
 }
@@ -394,7 +406,6 @@ li.hippo-console-menu-actions-save.session-changes a {
   color: #827717;
 }
 
-.hippo-console-tree-add li.hippo-console-tree-sorter span,
 .hippo-console-tree-add li.hippo-console-tree-sorter a {
   padding: 4px;
   float: left;
@@ -417,23 +428,21 @@ li.hippo-console-menu-actions-save.session-changes a {
 }
 
 /* Disabled sorter button */
-.hippo-console-tree-sorter span {
+.hippo-console-tree-sorter a {
   margin-right: 7px;
   background-color: #999999;
   color: #e3e3e3;
-}
-
-.hippo-console-tree-sorter span em {
   font-style: normal;
   text-shadow: none;
 }
 
 /* Enabled sorter button */
-.hippo-console-tree-sorter a {
-  background: #4587d6;
+.hippo-console-tree-sorter a[href] {
+  background-color: #4587d6;
+  color: white;
 }
 
-.hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
+.hippo-console-tree-sorter a {
   text-transform: capitalize;
 }
 
@@ -514,7 +523,6 @@ li.hippo-console-menu-actions-save.session-changes a {
   margin-bottom: 15px;
   height: 24px;
   margin-top: 15px;
-  margin-bottom: 15px;
 }
 
 .hippo-console-warning p a {
@@ -1024,7 +1032,7 @@ body.hippo-root div.yui-log-container {
 
 .dropdown-content li.highlight a,
 .dropdown-content a:focus,
-.dropdown-content a:hover {
+.dropdown-content a[href]:hover {
   background-color: #e2e2e2;
 }
 
@@ -1041,27 +1049,13 @@ body.hippo-root div.yui-log-container {
   color:green;
 }
 
-em .dropdown-link-green {
-  padding: 7px 12px;
-  display: block;
-  font-weight: normal;
-  font-style: normal;
-}
-
 .dropdown-link-red {
   color: red;
-}
-em .dropdown-link-red {
-  padding: 7px 12px;
-  display: block;
-  font-weight: normal;
-  font-style: normal;
 }
 
 .dropdown-link-disabled {
   color: grey;
   font-weight: normal;
   font-style: normal;
-  padding: 7px 12px;
   display: block;
 }
