@@ -24,19 +24,18 @@ import org.apache.wicket.request.cycle.RequestCycle;
 
 public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
 
-    public AjaxBreadCrumbLink(String id, IBreadCrumbModel breadCrumbModel) {
+    public AjaxBreadCrumbLink(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
         add(new AjaxEventBehavior("click") {
-            private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onEvent(AjaxRequestTarget target) {
+            protected void onEvent(final AjaxRequestTarget target) {
                 onClick(target);
             }
 
             @Override
-            protected void onComponentTag(ComponentTag tag) {
+            protected void onComponentTag(final ComponentTag tag) {
                 // add the onclick handler only if link is enabled
                 if (isEnabledInHierarchy()) {
                     super.onComponentTag(tag);
@@ -52,21 +51,24 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
     /**
      * Listener method invoked on the ajax request generated when the user clicks the link
      *
-     * @param target
+     * @param target Request target associated with current ajax request.
      */
     public void onClick(final AjaxRequestTarget target) {
         super.onClick();
     }
 
     @Override
-    protected void onComponentTag(ComponentTag tag) {
+    protected void onComponentTag(final ComponentTag tag) {
         super.onComponentTag(tag);
 
         if (isEnabledInHierarchy()) {
-            // disable any href attr in markup
-            if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase(
-                    "link") || tag.getName().equalsIgnoreCase("area")) {
-                tag.put("href", "#");
+            final String tagName = tag.getName();
+            if (tagName.equalsIgnoreCase("a") ||
+                tagName.equalsIgnoreCase("link") ||
+                tagName.equalsIgnoreCase("area")) {
+
+                // disable any href attr in markup
+                tag.put("href", "javascript:;");
             }
         } else {
             disableLink(tag);
