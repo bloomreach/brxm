@@ -113,7 +113,7 @@ class HippoIframeService {
     return this.deferredReload.promise;
   }
 
-  // called by the hippoIframe controller when the processing of the loaded page is completed.
+  // called by the rendering service when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
     this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
