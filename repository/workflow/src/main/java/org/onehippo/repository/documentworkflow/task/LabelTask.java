@@ -25,11 +25,15 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class LabelTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
+
+    Logger log = LoggerFactory.getLogger(LabelTask.class);
 
     private DocumentVariant unpublished;
     private String addLabel;
@@ -76,7 +80,7 @@ public class LabelTask extends AbstractDocumentTask {
             if (versionHistory.hasVersionLabel(removeLabel)) {
                 versionHistory.removeVersionLabel(removeLabel);
             } else {
-                throw new WorkflowException(String.format("Cannot remove label '%s' because it does not exist", removeLabel));
+                log.info(String.format("Cannot remove label '%s' because it does not exist", removeLabel));
             }
         }
 
