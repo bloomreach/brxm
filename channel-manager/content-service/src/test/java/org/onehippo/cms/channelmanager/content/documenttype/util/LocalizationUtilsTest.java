@@ -144,35 +144,19 @@ public class LocalizationUtilsTest {
     }
 
     @Test
-    public void getFieldNameAsDisplayNameForEmptyCaption() throws Exception {
+    public void getFieldNameAsDisplayNameForMissingTranslationAndCaption() throws Exception {
         final Node editorFieldNode = createMock(Node.class);
-        final Property property = createMock(Property.class);
-        final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
-
-        expect(resourceBundle.getString("ns:title")).andReturn(null);
-        expect(editorFieldNode.hasProperty("caption")).andReturn(true);
-        expect(editorFieldNode.getProperty("caption")).andReturn(property);
-        expect(property.getString()).andReturn(" ");
-        expect(editorFieldNode.getName()).andReturn("title");
-
-        replay(resourceBundle, editorFieldNode, property);
-
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
-                Optional.of(editorFieldNode)).get(), equalTo("Title"));
-    }
-    
-    @Test
-    public void getFieldNameAsDisplayNameForMissingCaption() throws Exception {
-        final Node editorFieldNode = createMock(Node.class);
-        final Property property = createMock(Property.class);
+        final Property captionProperty = createMock(Property.class);
+        final Property fieldProperty = createMock(Property.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
 
         expect(resourceBundle.getString("ns:title")).andReturn(null);
         expect(editorFieldNode.hasProperty("caption")).andReturn(false);
-        expect(editorFieldNode.getName()).andReturn("title");
-        expect(property.getString()).andReturn(" ");
+        expect(editorFieldNode.hasProperty("field")).andReturn(true);
+        expect(editorFieldNode.getProperty("field")).andReturn(fieldProperty);
+        expect(fieldProperty.getString()).andReturn("title");
 
-        replay(resourceBundle, editorFieldNode, property);
+        replay(resourceBundle, editorFieldNode, captionProperty, fieldProperty);
 
         assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
                 Optional.of(editorFieldNode)).get(), equalTo("Title"));
@@ -183,7 +167,7 @@ public class LocalizationUtilsTest {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("caption")).andThrow(new RepositoryException());
-        expect(editorFieldNode.getName()).andThrow(new RepositoryException());
+        expect(editorFieldNode.hasProperty("field")).andThrow(new RepositoryException());
         replay(editorFieldNode);
 
         LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), Optional.of(editorFieldNode)).get();

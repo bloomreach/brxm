@@ -97,9 +97,12 @@ public class LocalizationUtils {
 
         return editorFieldNode.map(node -> {
             try {
-                return StringUtils.capitalize(node.getName());
+                if (node.hasProperty("field")) {
+                   final String propertyValue = node.getProperty("field").getString();
+                   return StringUtils.capitalize(propertyValue);
+                }
             } catch (RepositoryException e) {
-                log.warn("Failed to get node name for property '{}'", fieldId, e);
+                log.warn("Failed to read property 'field'", e);
             }
             return null;
         });
@@ -133,10 +136,7 @@ public class LocalizationUtils {
         return editorFieldNode.map(node -> {
             try {
                 if (node.hasProperty(configProperty)) {
-                    final String propertyValue = node.getProperty(configProperty).getString();
-                    if (StringUtils.isNotBlank(propertyValue)) {
-                        return propertyValue;
-                    }
+                    return node.getProperty(configProperty).getString();
                 }
             } catch (RepositoryException e) {
                 log.warn("Failed to read property '{}'", configProperty, e);
