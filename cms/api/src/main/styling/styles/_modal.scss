@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -661,22 +661,26 @@ table.hippo-window-form {
       font-size: $font-size-small;
       height: $doclist-paging-button-size;
 
-      em, a {
+      a {
+        color: $light-gray;
         display: inline-block;
         width: $doclist-paging-button-size - 2;
         height: $doclist-paging-button-size - 2;
         line-height: $doclist-paging-button-size - 2;
         text-align: center;
         border: 1px solid transparent;
+        &:hover {
+          text-decoration: none;
+        }
       }
 
-      a {
+      a[href] {
         background-color: $doclist-paging-button-fill;
         border-color: $doclist-paging-button-stroke;
         border-radius: 2px;
         color: $text-color;
+        display: inline-block;
         &:hover {
-          text-decoration: none;
           color: $doclist-paging-button-hover-color;
           background-color: $doclist-paging-button-hover-fill;
         }
