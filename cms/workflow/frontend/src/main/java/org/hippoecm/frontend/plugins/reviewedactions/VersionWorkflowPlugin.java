@@ -146,17 +146,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 DocumentWorkflow documentWorkflow = model.getWorkflow();
 
                 Version versionNode = (Version) frozenNode.getParent();
-                Calendar calendar = versionNode.getCreated();
                 // create a revision to prevent loss of content from unpublished.
-                documentWorkflow.version();
-                Document doc = documentWorkflow.obtainEditableInstance();
-                try {
-                    documentWorkflow.versionRestoreTo(calendar, doc);
-                } finally {
-                    doc = documentWorkflow.commitEditableInstance();
-                }
-
-                documentWorkflow.restoreVersionToBranch(versionNode, restoreToBranchId);
+                final Document doc = documentWorkflow.restoreVersionToBranch(versionNode, restoreToBranchId);
 
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
                 IEditorManager editorMgr = getEditorManager();
