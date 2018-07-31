@@ -213,7 +213,7 @@ public class LoginPanel extends Panel {
                         @Override
                         public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
                             final List<? extends String> choices = choicesModel.getObject();
-                            return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
+                            return choices.contains(id) ? id : null;
                         }
                     }
             ));

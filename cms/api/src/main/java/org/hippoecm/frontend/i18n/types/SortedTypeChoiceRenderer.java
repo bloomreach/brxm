@@ -108,6 +108,7 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
         return choices.size();
     }
 
+    @Override
     public String getIdValue(String type, int index) {
         return type;
     }
@@ -115,7 +116,7 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
     @Override
     public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
         final List<? extends String> choices = choicesModel.getObject();
-        return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
+        return choices.contains(id) ? id : null;
     }
 
     public Object getDisplayValue(String type) {
