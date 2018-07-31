@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.extjs;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.wicket.markup.head.HeaderItem;
@@ -38,12 +38,12 @@ public class ExtWidgetRegistryHeaderItem extends HeaderItem {
 
     @Override
     public List<HeaderItem> getDependencies() {
-        return Arrays.asList(ExtResourcesHeaderItem.get());
+        return Collections.singletonList(ExtResourcesHeaderItem.get());
     }
 
     @Override
     public Iterable<?> getRenderTokens() {
-        return Arrays.asList("ext-widget-registry-header-item");
+        return Collections.singletonList("ext-widget-registry-header-item");
     }
 
     @Override

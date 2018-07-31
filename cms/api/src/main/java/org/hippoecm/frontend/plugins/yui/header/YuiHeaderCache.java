@@ -249,7 +249,7 @@ public class YuiHeaderCache implements IHeaderContributor {
 
         @Override
         public List<HeaderItem> getDependencies() {
-            List<HeaderItem> items = new ArrayList<HeaderItem>();
+            List<HeaderItem> items = new ArrayList<>(3);
             if (file != null) {
                 items.add(file);
             }
@@ -296,7 +296,7 @@ public class YuiHeaderCache implements IHeaderContributor {
 
         @Override
         public List<HeaderItem> getDependencies() {
-            List<HeaderItem> items = new ArrayList<HeaderItem>();
+            List<HeaderItem> items = new ArrayList<>(modules.length);
             Collections.addAll(items, modules);
             return items;
         }

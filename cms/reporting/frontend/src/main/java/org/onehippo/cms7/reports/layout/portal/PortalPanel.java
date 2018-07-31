@@ -16,7 +16,7 @@
 package org.onehippo.cms7.reports.layout.portal;
 
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -72,7 +72,7 @@ public class PortalPanel extends ExtPanel {
         response.render(new JavaScriptReferenceHeaderItem(REPORTS_PORTALS_JS, null, null, false, null, null) {
             @Override
             public List<HeaderItem> getDependencies() {
-                return Arrays.asList(JavaScriptReferenceHeaderItem.forReference(ReportPanel.REPORTS_PORTLET_JS));
+                return Collections.singletonList(JavaScriptReferenceHeaderItem.forReference(ReportPanel.REPORTS_PORTLET_JS));
             }
         });
         super.internalRenderHead(container);
