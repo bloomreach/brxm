@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,19 +58,21 @@ table.hippo-panel-plugin-body {
   color: $text-color;
 }
 
-.hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb a,
-.hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb em {
+.hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb a {
   color: $darkest-shade;
   padding: 0;
+  &:hover {
+    text-decoration: none;
+  }
 }
 
-.hippo-panel-plugin-breadcrumbs a:hover {
-  text-decoration: underline
+.hippo-panel-plugin-breadcrumbs a[href]:hover {
+  text-decoration: underline;
 }
 
 .hippo-panel-plugin-navigation li {
   display: block;
-  float: left
+  float: left;
 }
 
 .hippo-panel-plugin-navigation li span {
@@ -78,7 +80,7 @@ table.hippo-panel-plugin-body {
   float: left;
   font-weight: normal;
   color: $dark-shade;
-  font-size: 11px
+  font-size: 11px;
 }
 
 .hippo-panel-plugin-navigation li a {
@@ -90,7 +92,7 @@ table.hippo-panel-plugin-body {
   float: left;
   margin: 10px;
   font-size: 12px;
-  font-weight: bold
+  font-weight: bold;
 }
 
 .hippo-panel-plugin-navigation li a div {
@@ -103,7 +105,7 @@ table.hippo-panel-plugin-body {
 }
 
 .hippo-panel-plugin-navigation li a:hover {
-  border: 1px solid $dark-shade
+  border: 1px solid $dark-shade;
 }
 
 .hippo-panel-plugin-breadcrumbs-backbutton .breadcrumbs-separator {
