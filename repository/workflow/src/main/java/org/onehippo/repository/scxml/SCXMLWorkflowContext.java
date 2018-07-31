@@ -17,9 +17,6 @@
 package org.onehippo.repository.scxml;
 
 import java.io.Serializable;
-import java.security.AccessControlException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

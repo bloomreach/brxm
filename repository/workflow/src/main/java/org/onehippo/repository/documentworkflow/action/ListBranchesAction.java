@@ -24,33 +24,6 @@ public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesT
 
     private static final long serialVersionUID = 1L;
 
-    public String getUnpublished() {
-        return getParameter("unpublishedExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setUnpublished(String unpublished) {
-        setParameter("unpublishedExpr", unpublished);
-    }
-
-    public String getPublished() {
-        return getParameter("publishedExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setPublished(String published) {
-        setParameter("publishedExpr", published);
-    }
-
-    public String getDraft() {
-        return getParameter("draftExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setDraft(String draft) {
-        setParameter("draftExpr", draft);
-    }
-
     @Override
     protected ListBranchesTask createWorkflowTask() {
         return new ListBranchesTask();
@@ -59,8 +32,5 @@ public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesT
     @Override
     protected void initTask(ListBranchesTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setUnpublished(eval(getUnpublished()));
-        task.setPublished(eval(getPublished()));
-        task.setDraft(eval(getDraft()));
     }
 }

@@ -17,21 +17,33 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 /**
  * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
@@ -42,6 +54,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     private final Node handle;
     private Map<String, DocumentVariant> documents = new HashMap<>();
+    private Set<String> branches = new HashSet<>();
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending = false;
     private boolean initialized;
@@ -81,6 +94,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
         }
         try {
             initializeDocumentVariants();
+            initializeDocumentBranches();
             initializeRequestStatus();
             initialized = true;
         }
@@ -106,7 +120,6 @@ public class DocumentHandle implements SCXMLWorkflowData {
             documents.put(doc.getState(), doc);
         }
     }
-
 
     /**
      * Provide hook for extension
@@ -144,6 +157,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
         if (initialized) {
             documents.clear();
             requests.clear();
+            branches.clear();
             requestPending = false;
             initialized = false;
             //Do NOT clear initialPayload
@@ -166,6 +180,10 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return documents;
     }
 
+    public Set<String> getBranches() {
+        return branches;
+    }
+
     public boolean hasMultipleDocumentVariants(final String state) throws RepositoryException {
         int count = 0;
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
@@ -174,6 +192,56 @@ public class DocumentHandle implements SCXMLWorkflowData {
             }
         }
         return count > 1;
+    }
+
+
+    private void initializeDocumentBranches() throws RepositoryException {
+
+        // do not use the possibly frozen nodes which you get from getDocuments().get("unpublished").getNode
+        // but use the handle instead
+        final Node published = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).orElse(null);
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).orElse(null);
+
+        if (published != null) {
+            if (published.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+                branches.add(published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+            } else {
+                branches.add(MASTER_BRANCH_ID);
+            }
+        }
+
+        if (unpublished != null) {
+            if (unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+                branches.add(unpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+            } else {
+                branches.add(MASTER_BRANCH_ID);
+            }
+            if (!unpublished.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                return;
+            }
+
+            final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
+            final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
+
+            if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+                // master branch present
+                branches.add(MASTER_BRANCH_ID);
+            }
+
+            for (String label : versionHistory.getVersionLabels()) {
+                if (label.endsWith("-" + UNPUBLISHED.getState())) {
+                    final Version version = versionHistory.getVersionByLabel(label);
+                    final Node frozenNode = version.getFrozenNode();
+                    if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
+                        // found a real branch instead of a label for a non-branch
+                        branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                    }
+                }
+            }
+
+        }
+
+
     }
 
 }

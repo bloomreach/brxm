@@ -15,12 +15,12 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.util.Calendar;
+
 import javax.jcr.Node;
 import javax.jcr.version.VersionHistory;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
@@ -62,6 +62,14 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         // TODO REPO-2029 since there is a version, requestPublication and requestDepublication should be disabled
         // since there are branches, request(de)publication should be false, even if the unpublished is for master
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
+
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.requestPublication(Calendar.getInstance().getTime());
+            fail("Expected request publication to be not allowed because there are branches");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot invoke workflow documentworkflow action requestPublication: action not allowed or undefined", e.getMessage());
+        }
+
         assertFalse((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
@@ -82,14 +90,31 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
 
         assertFalse((Boolean)workflow.hints().get("publish"));
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
-        assertTrue((Boolean)workflow.hints().get("requestDepublication"));
+
+        // since there are branches, we expected 'requestDepublication' to be false
+        assertFalse((Boolean)workflow.hints().get("requestDepublication"));
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.requestDepublication(Calendar.getInstance().getTime());
+            fail("Expected request depublication to be not allowed because there are branches");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot invoke workflow documentworkflow action requestDepublication: action not allowed or undefined", e.getMessage());
+        }
+
+        // master can be unpublished
         assertTrue((Boolean)workflow.hints().get("depublish"));
 
         workflow.checkoutBranch("foo");
+        // TODO REPO-2088 below must become workflow.obtainEditableInstance("foo");
+        workflow.obtainEditableInstance();
+        draft.setProperty("title", "title foo");
+        session.save();
+        workflow.commitEditableInstance();
 
+        // there are no changes on master but only on 'foo'
         assertFalse((Boolean)workflow.hints().get("publish"));
+
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
-        assertFalse((Boolean)workflow.hints().get("depublish"));
+        assertTrue((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
         workflow.checkoutBranch(MASTER_BRANCH_ID);
@@ -101,6 +126,7 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         assertFalse((Boolean)workflow.hints().get("publish"));
         assertFalse((Boolean)workflow.hints().get("requestPublication"));
         assertTrue((Boolean)workflow.hints().get("depublish"));
+        // version history is gone so expect no branches
         assertTrue((Boolean)workflow.hints().get("requestDepublication"));
 
     }
