@@ -33,7 +33,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -87,13 +86,6 @@ public class ScaleImageOperationTest {
         ScaleImageOperation scaleOp = new ScaleImageOperation(380, 428, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 380, 428);
-
-        // redo scaling to check the data itself
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        scaleOp = new ScaleImageOperation(380, 428, false, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.execute(data, "image/jpeg");
-        InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertFalse("Original image data should not be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
     }
 
     @Test
@@ -119,13 +111,6 @@ public class ScaleImageOperationTest {
         ScaleImageOperation scaleOp = new ScaleImageOperation(500, 500, false, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 380, 428);
-
-        // redo scaling to check the data itself
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        scaleOp = new ScaleImageOperation(500, 500, false, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.execute(data, "image/jpeg");
-        InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertFalse("Original image data should not be used as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
     }
 
     @Test
@@ -317,6 +302,26 @@ public class ScaleImageOperationTest {
 
         ratio = scaleOp.calculateResizeRatio(800, 600, 1600, 1400);
         assertTrue("Resize ratio calculated by bounding-box width.", ratio == 2.0);
+    }
+
+    @Test
+    public void scaledImageDataWeightIsNotBiggerWhenScalingToOriginalDimensions() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(380, 428, false, ImageUtils.ScalingStrategy.QUALITY);
+        scaleOp.execute(data, "image/jpeg");
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        assertTrue("Scaled image data weight is not higher when scaling to original dimensions",
+                IOUtils.toByteArray(scaleOp.getScaledData()).length <= IOUtils.toByteArray(data).length);
+    }
+
+    @Test
+    public void scaledImageDataWeightIsNotBiggerWhenScalingToLargerDimensionsAndUpscalingIsDisabled() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(500, 500, false, ImageUtils.ScalingStrategy.QUALITY);
+        scaleOp.execute(data, "image/jpeg");
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        assertTrue("Scaled image data weight is not higher when scaling to larger dimensions and upscaling is disabled",
+                IOUtils.toByteArray(scaleOp.getScaledData()).length <= IOUtils.toByteArray(data).length);
     }
 
     private void checkImageDimensions(ScaleImageOperation scaleOp, String mimeType, int expectedWidth, int expectedHeight) throws IOException {

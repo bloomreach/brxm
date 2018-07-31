@@ -284,7 +284,14 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
                 scaledWidth = scaledImage.getWidth();
                 scaledHeight = scaledImage.getHeight();
-                scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
+
+                // if the scale size equals to the original image size use the image which has the smaller weight
+                if (scaledOutputStream.toByteArray().length > IOUtils.toByteArray(dataInputStream).length
+                        && scaledWidth == originalWidth && scaledHeight == originalHeight) {
+                    scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
+                } else {
+                    scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
+                }
             }
         } finally {
             if (imageInputStream != null) {
