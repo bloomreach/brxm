@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 class MenuItem extends Panel {
 
@@ -51,6 +52,9 @@ class MenuItem extends Panel {
             }
         };
         add(link);
+        if (!wf.isEnabled()) {
+            link.add(CssClass.append("disabled"));
+        }
         
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {

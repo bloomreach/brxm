@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,17 +30,24 @@
       white-space: nowrap;
     }
 
-    // enabled item
     a.hippo-toolbar-menu-item-button {
-      white-space: nowrap;
-      text-decoration: none;
       color: $hippo-menu-enabled-color;
+      text-decoration: none;
+      white-space: nowrap;
+      
+      &.disabled {
+        color: $hippo-menu-disabled-color;
+      }
     }
 
-    // enabled item hover
     &:hover a.hippo-toolbar-menu-item-button {
-      color: $hippo-menu-enabled-hover-color;
       background-color: $hippo-menu-enabled-hover-bgcolor;
+      color: $hippo-menu-enabled-hover-color;
+      
+      &.disabled {
+        color: $hippo-menu-disabled-color !important;
+        background-color: transparent;
+      }
     }
 
     // disabled item
