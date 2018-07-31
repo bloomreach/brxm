@@ -283,8 +283,9 @@ public class Main extends PluginApplication {
 
             @Override
             public IRequestHandler mapRequest(final Request request) {
-                if (urlStartsWith(request.getUrl(), BINARIES_MOUNT)) {
-                    final String fullPath = Strings.join("/", request.getUrl().getSegments());
+                final Url url = request.getUrl();
+                if (urlStartsWith(url, BINARIES_MOUNT)) {
+                    final String fullPath = Strings.join("/", url.getSegments());
                     final String path = StringUtils.substring(fullPath, BINARIES_MOUNT.length());
                     try {
                         javax.jcr.Session subSession = UserSession.get().getJcrSession();
