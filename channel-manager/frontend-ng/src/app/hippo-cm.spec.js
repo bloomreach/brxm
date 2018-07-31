@@ -47,7 +47,7 @@ describe('hippoCm', () => {
       $window = _$window_;
       CmsService = _CmsService_;
 
-      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'go']);
+      $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'includes', 'go']);
 
       BrowserService = jasmine.createSpyObj('$state', ['isIE']);
 
@@ -103,9 +103,10 @@ describe('hippoCm', () => {
   });
 
   describe('the load-channel event', () => {
-    it('opens a different channel', () => {
+    it('opens a channel when there was no channel yet', () => {
       ChannelService.matchesChannel.and.returnValue(false);
       ChannelService.initializeChannel.and.returnValue($q.resolve());
+      $state.includes.and.returnValue(false);
       spyOn($rootScope, '$apply').and.callThrough();
 
       $ctrl.$onInit();
@@ -114,8 +115,24 @@ describe('hippoCm', () => {
       expect($rootScope.$apply).toHaveBeenCalled();
       expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
       $rootScope.$digest();
-      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
       expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
+    });
+
+    it('opens a different channel', () => {
+      ChannelService.matchesChannel.and.returnValue(false);
+      ChannelService.initializeChannel.and.returnValue($q.resolve());
+      $state.includes.and.returnValue(true);
+      spyOn($rootScope, '$apply').and.callThrough();
+
+      $ctrl.$onInit();
+      $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'testProject', '/some/path');
+
+      expect($rootScope.$apply).toHaveBeenCalled();
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'testProject');
+      $rootScope.$digest();
+      expect($state.go).not.toHaveBeenCalled();
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
     });
 
     it('changes the page in the current channel', () => {

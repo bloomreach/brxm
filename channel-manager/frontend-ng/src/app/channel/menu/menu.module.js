@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import MarkupService from './markup.service';
-import PageMetaDataService from './pageMetaData.service';
-import PageStructureService from './pageStructure.service';
+import channelMenuModule from './channel/channelMenu.module';
+import menuComponent from './menu.component';
+import pageMenuModule from './page/pageMenu.module';
 
-const channelPageModule = angular
-  .module('hippo-cm.channel.page', [])
-  .service('MarkupService', MarkupService)
-  .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService);
+const menuModule = angular
+  .module('hippo-cm.channel.menu', [
+    channelMenuModule.name,
+    pageMenuModule.name,
+  ])
+  .component('dropdownMenu', menuComponent);
 
-export default channelPageModule;
+export default menuModule;

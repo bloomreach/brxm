@@ -89,9 +89,9 @@ describe('field service', () => {
   describe('input focus preserve feature', () => {
     it('shouldPreserveFocus should return true when at least one expression is true and false otherwise', () => {
       const relatedTarget = $('<button></button>');
-      relatedTarget.addClass('btn-fullwidth'); // selector is now valid (.btn-fullwidth)
+      relatedTarget.addClass('btn-full-screen'); // selector is now valid (.btn-full-screen)
       expect(FieldService.shouldPreserveFocus(relatedTarget)).toEqual(true);
-      relatedTarget.removeClass('btn-fullwidth'); // remove valid selector
+      relatedTarget.removeClass('btn-full-screen'); // remove valid selector
       expect(FieldService.shouldPreserveFocus(relatedTarget)).toEqual(false);
     });
 

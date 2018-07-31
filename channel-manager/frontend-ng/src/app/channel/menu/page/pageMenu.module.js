@@ -16,16 +16,16 @@
 
 import focusIf from 'ng-focus-if';
 import ngMessages from 'angular-messages';
-import illegalCharactersDirective from './illegalCharacters.directive';
 
-import PageActionsService from './pageActions.service';
+import illegalCharactersDirective from './illegalCharacters.directive';
 import pageCopyComponent from './copy/pageCopy.component';
+import PageMenuService from './pageMenu.service';
 import pageMoveComponent from './move/pageMove.component';
 import pageNewComponent from './new/pageNew.component';
 import pagePropertiesComponent from './properties/pageProperties.component';
 
-const channelPageActionsModule = angular
-  .module('hippo-cm.channel.page.actions', [
+const pageMenuModule = angular
+  .module('hippo-cm.channel.menu.page', [
     ngMessages,
     focusIf,
   ])
@@ -34,6 +34,6 @@ const channelPageActionsModule = angular
   .component('pageNew', pageNewComponent)
   .component('pageProperties', pagePropertiesComponent)
   .directive('illegalCharacters', illegalCharactersDirective)
-  .service('PageActionsService', PageActionsService);
+  .service('PageMenuService', PageMenuService);
 
-export default channelPageActionsModule;
+export default pageMenuModule;
