@@ -59,6 +59,7 @@ definitions:
             jcr:primaryType: frontend:pluginconfig
             list.page.size: '10'
             list.view.size: '8'
+            document.type.show: true
         /documentsTreeLoader:
           jcr:primaryType: frontend:plugin
           cluster.name: cms-tree-views/documents
