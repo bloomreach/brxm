@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -54,8 +55,6 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.Reports.BrokenLinksListPanel")
 public class BrokenLinksListPanel extends ReportPanel {
 
-    private static final long serialVersionUID = 1L;
-
     private static final String EVENT_DOCUMENT_SELECTED = "documentSelected";
     private static final String EVENT_DOCUMENT_SELECTED_PARAM_PATH = "path";
 
@@ -64,10 +63,13 @@ public class BrokenLinksListPanel extends ReportPanel {
     private static final String TITLE_TRANSLATOR_KEY = "title";
     private static final String NO_DATA_TRANSLATOR_KEY = "no-data";
     private static final int DEFAULT_PAGE_SIZE = 10;
-    private static final CssResourceReference BROKENLINKS_CSS = new CssResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.css");
-    private static final JavaScriptResourceReference BROKENLINKS_JS = new JavaScriptResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js");
+    private static final CssResourceReference BROKENLINKS_CSS = new CssResourceReference(BrokenLinksListPanel.class,
+            "Hippo.Reports.BrokenLinksList.css");
+    private static final JavaScriptResourceReference BROKENLINKS_JS = new JavaScriptResourceReference(
+            BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js");
 
     private static final Logger log = LoggerFactory.getLogger(BrokenLinksListPanel.class);
+    public static final String PROPERTY_HIPPOSCHED_NEXT_FIRE_TIME = "hippo:request/hipposched:triggers/default/hipposched:nextFireTime";
 
     private final IPluginContext context;
     private final int pageSize;
@@ -86,38 +88,40 @@ public class BrokenLinksListPanel extends ReportPanel {
 
         updateText = null;
         try {
-            QueryManager queryManager = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
-            QueryResult queryResult = queryManager.createQuery("SELECT * FROM [brokenlinks:config]",
-                                                           Query.JCR_SQL2).execute();
-            for (NodeIterator brokenlinksConfigs = queryResult.getNodes(); brokenlinksConfigs.hasNext();) {
+            final QueryManager queryManager = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
+            final QueryResult queryResult = queryManager.createQuery("SELECT * FROM [brokenlinks:config]",
+                    Query.JCR_SQL2).execute();
+            for (final NodeIterator brokenlinksConfigs = queryResult.getNodes(); brokenlinksConfigs.hasNext(); ) {
                 Node brokenlinksConfig = brokenlinksConfigs.nextNode();
-                if (brokenlinksConfig.isNodeType(HippoNodeType.NT_DOCUMENT) && brokenlinksConfig.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (brokenlinksConfig.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                        brokenlinksConfig.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+
                     brokenlinksConfig = brokenlinksConfig.getParent();
-                    if (brokenlinksConfig.hasProperty("hippo:request/hipposched:triggers/default/hipposched:nextFireTime")) {
-                        Calendar schedule = brokenlinksConfig.getProperty("hippo:request/hipposched:triggers/default/hipposched:nextFireTime").getValue().getDate();
+                    if (brokenlinksConfig.hasProperty(PROPERTY_HIPPOSCHED_NEXT_FIRE_TIME)) {
+                        final Property property = brokenlinksConfig.getProperty(PROPERTY_HIPPOSCHED_NEXT_FIRE_TIME);
+                        final Calendar schedule = property.getValue().getDate();
                         if (updateText == null) {
                             updateText = "";
                         } else {
                             updateText += "\n";
                         }
-                        updateText += new StringResourceModel("update-known", this).setParameters(schedule.getTime()).getObject();
+                        updateText += new StringResourceModel("update-known", this)
+                                .setParameters(schedule.getTime()).getString();
                     }
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (final RepositoryException ex) {
             log.warn("Unable to load next fire time from the repository, the status message in the CMS UI will not contain the next fire time", ex);
         }
         if (updateText == null) {
-            updateText = new StringResourceModel("update-unknown", this).setDefaultValue("").getObject();
+            updateText = new StringResourceModel("update-unknown", this).setDefaultValue("").getString();
         }
-       
-        
-        addEventListener(EVENT_DOCUMENT_SELECTED, new ExtEventListener() {
-            private static final long serialVersionUID = 1L;
 
+
+        addEventListener(EVENT_DOCUMENT_SELECTED, new ExtEventListener() {
             @Override
-            public void onEvent(final AjaxRequestTarget ajaxRequestTarget, Map<String, JSONArray> parameters) {
-                String path = getParameterOrNull(parameters, EVENT_DOCUMENT_SELECTED_PARAM_PATH);
+            public void onEvent(final AjaxRequestTarget ajaxRequestTarget, final Map<String, JSONArray> parameters) {
+                final String path = getParameterOrNull(parameters, EVENT_DOCUMENT_SELECTED_PARAM_PATH);
                 if (path != null) {
                     browseToDocument(path);
                 }
@@ -130,8 +134,9 @@ public class BrokenLinksListPanel extends ReportPanel {
         if (values != null && values.length() > 0 && !values.isNull(0)) {
             try {
                 return values.getString(0);
-            } catch (JSONException e) {
-                log.warn("Ignoring parameter '{}', element 0 of {} cannot be parsed as a string", name, values.toString(), e);
+            } catch (final JSONException e) {
+                log.warn("Ignoring parameter '{}', element 0 of {} cannot be parsed as a string", name,
+                        values.toString(), e);
             }
         }
         return null;
@@ -155,17 +160,17 @@ public class BrokenLinksListPanel extends ReportPanel {
         response.render(JavaScriptHeaderItem.forReference(BROKENLINKS_JS));
     }
 
-    private Node getNode(String path) {
+    private Node getNode(final String path) {
         try {
-            Session session = UserSession.get().getJcrSession();
+            final Session session = UserSession.get().getJcrSession();
             return session.getNode(path);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Unable to get the node " + path, e);
         }
         return null;
     }
 
-    private void browseToDocument(String path) {
+    private void browseToDocument(final String path) {
         if (path == null || path.length() == 0) {
             log.warn("No document path to browse to");
             return;
@@ -176,22 +181,22 @@ public class BrokenLinksListPanel extends ReportPanel {
             return;
         }
 
-        JcrNodeModel nodeModel = new JcrNodeModel(node);
+        final JcrNodeModel nodeModel = new JcrNodeModel(node);
 
-        @SuppressWarnings("unchecked") // IBrowseService always uses a JcrNodeModel
-        IBrowseService<JcrNodeModel> browseService = context.getService("service.browse", IBrowseService.class);
+        @SuppressWarnings("unchecked") final // IBrowseService always uses a JcrNodeModel
+                IBrowseService<JcrNodeModel> browseService = context.getService("service.browse", IBrowseService.class);
 
         browseService.browse(nodeModel);
     }
 
     @Override
-    protected void preRenderExtHead(StringBuilder js) {
+    protected void preRenderExtHead(final StringBuilder js) {
         store.onRenderExtHead(js);
         super.preRenderExtHead(js);
     }
 
     @Override
-    protected void onRenderProperties(JSONObject properties) throws JSONException {
+    protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
 
         properties.put("columns", getColumnsConfig());
@@ -202,7 +207,7 @@ public class BrokenLinksListPanel extends ReportPanel {
         properties.put("updateText", this.updateText);
 
         if (config.containsKey(CONFIG_AUTO_EXPAND_COLUMN)) {
-            String autoExpandColumn = config.getString(CONFIG_AUTO_EXPAND_COLUMN);
+            final String autoExpandColumn = config.getString(CONFIG_AUTO_EXPAND_COLUMN);
 
             if (!columns.containsColumn(autoExpandColumn)) {
                 // prevent an auto-expand column that is not an actual column name, otherwise ExtJs stops rendering
@@ -216,10 +221,10 @@ public class BrokenLinksListPanel extends ReportPanel {
     }
 
     private JSONArray getColumnsConfig() throws JSONException {
-        JSONArray result = new JSONArray();
+        final JSONArray result = new JSONArray();
 
-        for (IBrokenLinkDocumentListColumn column: columns.getAllColumns()) {
-            JSONObject config = column.getExtColumnConfig();
+        for (final IBrokenLinkDocumentListColumn column : columns.getAllColumns()) {
+            final JSONObject config = column.getExtColumnConfig();
             if (config != null) {
                 result.put(config);
             }

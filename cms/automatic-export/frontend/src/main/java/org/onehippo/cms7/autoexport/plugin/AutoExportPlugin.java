@@ -24,18 +24,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cm.ConfigurationService;
@@ -48,22 +49,20 @@ import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
 import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
 
     private JcrPropertyModel enabledModel;
 
-    public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
+    public AutoExportPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         // set up label component
         final Label label = new Label("link-text", new Model<String>() {
-            private static final long serialVersionUID = 1L;
 
-            private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this).getObject();
-            private final String on = new StringResourceModel("on", AutoExportPlugin.this).getObject();
-            private final String off = new StringResourceModel("off", AutoExportPlugin.this).getObject();
+            private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this).getString();
+            private final String on = new StringResourceModel("on", AutoExportPlugin.this).getString();
+            private final String off = new StringResourceModel("off", AutoExportPlugin.this).getString();
 
             @Override
             public String getObject() {
@@ -75,31 +74,22 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         });
         label.setOutputMarkupId(true);
 
-        add(AttributeModifier.append("class", new Model<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getObject() {
-                if (!isExportAvailable()) {
-                    return "auto-export-state-unavailable";
-                }
-                return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
+        add(CssClass.append(ReadOnlyModel.of(() -> {
+            if (!isExportAvailable()) {
+                return "auto-export-state-unavailable";
             }
-        }));
+            return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
+        })));
 
-        add(AttributeModifier.append("class", "auto-export-dev-extension"));
+        add(CssClass.append("auto-export-dev-extension"));
 
-        AjaxLink<Void> link = new AjaxLink<Void>("link") {
-
-            private static final long serialVersionUID = 1L;
-
+        final AjaxLink<Void> link = new AjaxLink<Void>("link") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 setExportEnabled(!isExportEnabled());
                 target.add(label);
                 //target.add(icon);
             }
-
         };
         link.add(label);
         link.setEnabled(isExportAvailable());
@@ -109,8 +99,8 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         if (isExportAvailable()) {
             // redraw plugin when config has changed
             try {
-                Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
-                Property enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME);
+                final Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
+                final Property enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME);
                 enabledModel = new JcrPropertyModel(enabled);
                 context.registerService(new Observer<IObservable>(enabledModel) {
                     @Override
@@ -118,44 +108,44 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                         redraw();
                     }
                 }, IObserver.class.getName());
-            } catch (PathNotFoundException e) {
+            } catch (final PathNotFoundException e) {
                 log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error("An error occurred starting observation", e);
             }
         }
     }
 
     protected boolean isExportAvailable() {
-        ConfigurationService configurationService = HippoServiceRegistry.getService(ConfigurationService.class);
-        return configurationService != null ? configurationService.isAutoExportAvailable() : false;
+        final ConfigurationService configurationService = HippoServiceRegistry.getService(ConfigurationService.class);
+        return configurationService != null && configurationService.isAutoExportAvailable();
     }
 
     private boolean isExportEnabled() {
         boolean enabled = false;
         try {
-            Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
+            final Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
             enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME).getBoolean();
-        } catch (PathNotFoundException e) {
+        } catch (final PathNotFoundException e) {
             log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("An error occurred reading export enabled flag", e);
         }
         return enabled;
     }
 
-    private void setExportEnabled(boolean enabled) {
+    private void setExportEnabled(final boolean enabled) {
         Session session = null;
         try {
             // we use a separate session in order that other changes made in the console
             // don't get persisted upon save() here
             session = getJcrSession().impersonate(new SimpleCredentials(getJcrSession().getUserID(), new char[]{}));
-            Node node = session.getNode(CONFIG_NODE_PATH);
+            final Node node = session.getNode(CONFIG_NODE_PATH);
             node.setProperty(CONFIG_ENABLED_PROPERTY_NAME, enabled);
             session.save();
-        } catch (PathNotFoundException e) {
+        } catch (final PathNotFoundException e) {
             log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("An error occurred trying to set export enabled flag", e);
         } finally {
             if (session != null) {

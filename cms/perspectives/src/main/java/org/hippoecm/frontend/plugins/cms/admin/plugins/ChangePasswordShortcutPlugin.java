@@ -81,22 +81,22 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         final UserSession session = UserSession.get();
         // password max age is defined on the /hippo:configuration/hippo:security node
         try {
-            Node securityNode = session.getRootNode().getNode(SECURITY_PATH);
+            final Node securityNode = session.getRootNode().getNode(SECURITY_PATH);
             if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
                 passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONE_DAY_MS);
             }
         }
-        catch (RepositoryException e) {
+        catch (final RepositoryException e) {
             log.error("Failed to determine configured password maximum age", e);
         }
 
         username = session.getJcrSession().getUserID();
         user = new User(username);
 
-        AjaxLink link = new AjaxLink("link") {
+        final AjaxLink link = new AjaxLink("link") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IDialogService dialogService = getDialogService();
+            public void onClick(final AjaxRequestTarget target) {
+                final IDialogService dialogService = getDialogService();
                 if (user != null && canChangePassword()) {
                     currentPassword = newPassword = checkPassword = "";
                     dialogService.show(new ChangePasswordDialog());
@@ -123,7 +123,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
                 return new StringResourceModel("password-about-to-expire", this)
                         .setParameters(expiration)
-                        .getObject();
+                        .getString();
             }
             return StringUtils.EMPTY;
         });
@@ -152,7 +152,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      * Check the password
      * @return true if the password is correct, false otherwise
      */
-    private boolean checkPassword(char[] password) {
+    private boolean checkPassword(final char[] password) {
         return user.checkPassword(password);
     }
 
@@ -161,20 +161,20 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      * @param password the password to set
      * @return true if the password is successfully applied, false otherwise
      */
-    private boolean setPassword(char[] password) {
+    private boolean setPassword(final char[] password) {
         try {
             user.savePassword(new String(password));
             return true;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Error while setting user password", e);
         }
         return false;
     }
 
-    private boolean isPasswordAboutToExpire(User user) {
+    private boolean isPasswordAboutToExpire(final User user) {
         if (passwordMaxAge > 0 && notificationPeriod > 0) {
             if (user.getPasswordLastModified() != null) {
-                long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
+                final long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
                 if (passwordLastModified + passwordMaxAge - System.currentTimeMillis() < notificationPeriod) {
                     return true;
                 }
@@ -216,9 +216,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             feedback.setOutputMarkupId(true);
             feedback.add(CssClass.append(ReadOnlyModel.of(() -> feedbackLevel)));
 
-                    currentWidget = new PasswordWidget("current-password",
-                    PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),
-                    Model.of(translate("old-password-label")));
+            currentWidget = new PasswordWidget("current-password",
+            PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),
+            Model.of(translate("old-password-label")));
             currentWidget.setOutputMarkupId(true);
             add(currentWidget);
             setFocus(currentWidget);
@@ -239,7 +239,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             passwordValidationService = getPluginContext().getService(IPasswordValidationService.class.getName(),
                     IPasswordValidationService.class);
-            for (IPasswordValidator validator : passwordValidationService.getPasswordValidators()) {
+            for (final IPasswordValidator validator : passwordValidationService.getPasswordValidators()) {
                 info(validator.getDescription());
             }
         }
@@ -263,8 +263,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             } else {
                 if (passwordValidationService != null) {
                     try {
-                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, user);
-                        for (PasswordValidationStatus status : statuses) {
+                        final List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, user);
+                        for (final PasswordValidationStatus status : statuses) {
                             if (!status.accepted()) {
                                 error(status.getMessage());
                                 ok = false;
@@ -273,7 +273,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                             }
                         }
                     }
-                    catch (RepositoryException e) {
+                    catch (final RepositoryException e) {
                         log.error("Failed to validate password using password validation service", e);
                         ok = false;
                     }
@@ -308,7 +308,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                         UserSession.get().login(username, newPassword);
                         // create a new user, otherwise it will use the session of the previous login
                         user = new User(username);
-                    } catch (LoginException e) {
+                    } catch (final LoginException e) {
                         log.warn("User '{}' changed its password but failed to automatically login again.", username, e);
                     }
                 }
@@ -317,7 +317,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             }
 
             setFocus(currentWidget);
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 target.add(currentWidget);
                 target.add(newWidget);
@@ -329,7 +329,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
     private class CannotChangePasswordDialog extends Dialog {
 
-        public CannotChangePasswordDialog() {
+        CannotChangePasswordDialog() {
             setTitle(Model.of(translate("change-password-label")));
             setSize(DialogConstants.MEDIUM_AUTO);
             setCancelVisible(false);
@@ -340,7 +340,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
     private static class ChangePasswordFeedbackPanel extends FeedbackPanel {
 
-        public ChangePasswordFeedbackPanel(String id) {
+        ChangePasswordFeedbackPanel(final String id) {
             super(id);
         }
     }

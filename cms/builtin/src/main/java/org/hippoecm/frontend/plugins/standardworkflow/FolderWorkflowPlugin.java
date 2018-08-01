@@ -85,13 +85,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
 
-    private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
-    public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
+    public FolderWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new Label("new"));
@@ -153,8 +152,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             }
 
             if (isActionAvailable("reorder", hints)) {
-                add(new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this).setModel(null).setParameters(
-                ), context, getModel()) {
+                add(new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this), context, getModel()) {
                     public List<String> order = new LinkedList<>();
 
                     @Override
