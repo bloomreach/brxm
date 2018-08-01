@@ -35,13 +35,8 @@ public class MagicMimeTypeFileItem implements FileItem {
     private static final Logger log = LoggerFactory.getLogger(MagicMimeTypeFileItem.class);
     private static final Tika tika = TikaFactory.newTika();
 
-    private FileItem delegate;
+    private final FileItem delegate;
     private String contentType;
-
-    /**
-     * The file items headers.
-     */
-    private FileItemHeaders headers;
 
     public MagicMimeTypeFileItem(FileItem delegate) {
         this.delegate = delegate;
@@ -133,19 +128,11 @@ public class MagicMimeTypeFileItem implements FileItem {
         return delegate.getOutputStream();
     }
 
-    /**
-     * Returns the file item headers.
-     * @return The file items headers.
-     */
     public FileItemHeaders getHeaders() {
-        return headers;
+        return delegate.getHeaders();
     }
 
-    /**
-     * Sets the file item headers.
-     * @param pHeaders The file items headers.
-     */
-    public void setHeaders(FileItemHeaders pHeaders) {
-        headers = pHeaders;
+    public void setHeaders(FileItemHeaders headers) {
+        delegate.setHeaders(headers);
     }
 }
