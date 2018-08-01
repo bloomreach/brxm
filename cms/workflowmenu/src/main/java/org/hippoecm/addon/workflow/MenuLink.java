@@ -71,7 +71,6 @@ abstract class MenuLink extends Link {
                 manager.collapseAllContextMenus();
             }
         }
-
     }
 
     protected Form getForm() {
