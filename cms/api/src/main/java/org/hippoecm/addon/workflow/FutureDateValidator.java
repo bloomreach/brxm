@@ -35,9 +35,6 @@ public class FutureDateValidator implements IValidator<Date> {
     public static final String DATE_IN_THE_PAST = "date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
 
-    public FutureDateValidator() {
-    }
-
     @Override
     public void validate(final IValidatable<Date> validatable) {
         final Date date = validatable.getValue();
