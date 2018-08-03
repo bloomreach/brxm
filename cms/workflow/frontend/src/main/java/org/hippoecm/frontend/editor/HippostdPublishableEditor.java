@@ -105,10 +105,10 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     static Mode getMode(final IModel<Node> nodeModel) throws EditorException {
-        return getMode(nodeModel, null, null);
+        return getMode(nodeModel, null);
     }
 
-    static Mode getMode(final IModel<Node> nodeModel, final DocumentWorkflow documentWorkflow, final String branchId) throws EditorException {
+    static Mode getMode(final IModel<Node> nodeModel, final String branchId) throws EditorException {
         final Node node = nodeModel.getObject();
         try {
             if (node.isNodeType(JcrConstants.NT_VERSION)) {
@@ -124,7 +124,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException e) {
             throw new EditorException("Could not determine mode", e);
         }
-        final WorkflowState wfState = getWorkflowState(node, Optional.ofNullable(documentWorkflow), branchId);
+        final WorkflowState wfState = getWorkflowState(node, branchId);
 
         // select draft if it exists
         if (wfState.draft != null) {
@@ -159,11 +159,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     static WorkflowState getWorkflowState(final Node handleNode) throws EditorException {
-        return getWorkflowState(handleNode, Optional.empty(), null);
+        return getWorkflowState(handleNode, null);
     }
 
-    static WorkflowState getWorkflowState(final Node handleNode, final Optional<DocumentWorkflow> documentWorkflow, final String branchId) throws EditorException {
-        final WorkflowState wfState = new WorkflowState(documentWorkflow, branchId);
+    static WorkflowState getWorkflowState(final Node handleNode, final String branchId) throws EditorException {
+        final WorkflowState wfState = new WorkflowState(handleNode, branchId);
         try {
             final String user = UserSession.get().getJcrSession().getUserID();
             wfState.setUser(user);
@@ -206,21 +206,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException ex) {
             throw new EditorException("Error locating editor model", ex);
         }
-        DocumentWorkflow documentWorkflow = null;
-        try {
-            documentWorkflow = getDocumentWorkflow();
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
         final WorkflowState state;
-        if (documentWorkflow == null) {
-            state = getWorkflowState(node);
-        } else {
+        if (isDocumentWorkflow()) {
             String branchId = null;
             if (branchIdModel != null) {
                 branchId = branchIdModel.getBranchId();
             }
-            state = getWorkflowState(node, Optional.of(documentWorkflow), branchId);
+            state = getWorkflowState(node, branchId);
+        } else {
+            state = getWorkflowState(node);
         }
 
         switch (getMode()) {
@@ -275,18 +269,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Error locating base revision", ex);
         }
 
-        DocumentWorkflow documentWorkflow = null;
-        try {
-            documentWorkflow = getDocumentWorkflow();
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
-
         String branchId = null;
         if (branchIdModel != null) {
             branchId = branchIdModel.getBranchId();
         }
-        final WorkflowState state = getWorkflowState(node, Optional.ofNullable(documentWorkflow), branchId);
+        final WorkflowState state = getWorkflowState(node, branchId);
         switch (getMode()) {
             case EDIT:
                 throw new EditorException("Base model is not supported in edit mode");
@@ -344,10 +331,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
             String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
-            // TODO below should not be needed
-            if (branchId.equals("undefined")) {
-                branchId = MASTER_BRANCH_ID;
-            }
             switch (mode) {
                 case EDIT:
                     if (isFalse((Boolean) workflow.hints(branchId).get("obtainEditableInstance"))) {
@@ -417,14 +400,13 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return manager.getWorkflow("editing", handleNode);
     }
 
-    private DocumentWorkflow getDocumentWorkflow() throws RepositoryException {
-        final Workflow workflow = getWorkflow();
-        if (!(workflow instanceof EditableWorkflow)) {
-            throw new RepositoryException("Editing workflow not of type EditableWorkflow");
+    private boolean isDocumentWorkflow()  {
+        try {
+            return getWorkflow() instanceof DocumentWorkflow;
+        } catch (RepositoryException e) {
+            log.warn("Cannot determine if workflow is a document workflow", e);
         }
-        return (DocumentWorkflow) workflow;
-
-
+        return false;
     }
 
     public boolean isValid() throws EditorException {
@@ -727,19 +709,14 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         public WorkflowState() {
         }
 
-        public WorkflowState(final Optional<DocumentWorkflow> optionalDocumentWorkflow, final String branchId) {
-            branchHandle = optionalDocumentWorkflow.map(wf -> getBranchHandle(branchId, wf));
-        }
-
-        private BranchHandle getBranchHandle(final String branchId, final DocumentWorkflow wf) {
+        public WorkflowState(final Node handle, final String branchId) {
             try {
                 if (branchId != null) {
-                    return new BranchHandleImpl(branchId, wf.getNode());
+                    branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
                 }
             } catch (WorkflowException e) {
                 log.warn(e.getMessage(), e);
             }
-            return null;
         }
 
         void process(final Node child) throws RepositoryException {
