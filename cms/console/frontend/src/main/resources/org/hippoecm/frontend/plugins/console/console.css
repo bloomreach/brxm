@@ -1059,3 +1059,38 @@ body.hippo-root div.yui-log-container {
   font-style: normal;
   display: block;
 }
+
+.tree-theme-windows {
+  border: 1px solid #cccccc;
+  height: 480px;
+  overflow: auto;
+}
+
+.tree-theme-windows .tree-node {
+  line-height: 1.5em;
+}
+
+.tree-theme-windows .tree-node .tree-content .fa {
+  font-size: 15px;
+  padding-left: 2px;
+}
+
+.tree-theme-windows .tree-node .tree-content .tree-label {
+  padding-left: 2px;
+  position: relative;
+  top: -1px
+}
+
+.tree-theme-windows span.tree-content .selected span.tree-label {
+  background-color: #e0e8ff !important;
+  color: #31a !important;
+  font-weight: bold;
+}
+
+.tree-theme-windows .tree-node .tree-content .tree-folder-open,
+.tree-theme-windows .tree-node .tree-content .tree-folder-closed,
+.tree-theme-windows .tree-node .tree-content .tree-folder-other {
+  background-image: none;
+  font-size: 13px;
+  padding-left: 0;
+}
