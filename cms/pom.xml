@@ -57,7 +57,6 @@
     <module>console</module>
     <module>config</module>
 
-    <module>jquery</module>
     <module>workflowmenu</module>
     <module>gotolink</module>
     <module>reporting</module>
