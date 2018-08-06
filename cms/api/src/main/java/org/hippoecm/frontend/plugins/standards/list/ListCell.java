@@ -31,30 +31,24 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ListCell extends Panel {
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(ListCell.class);
 
-    private List<IObserver> observers;
-    private IPluginContext context;
+    private final List<IObserver> observers;
+    private final IPluginContext context;
 
     public ListCell(String id, final IModel model, IListCellRenderer renderer, Object attributeModifier,
             IPluginContext context) {
         super(id, model);
 
-        if ((attributeModifier != null) && !(attributeModifier instanceof AbstractListAttributeModifier)
-                && !(attributeModifier instanceof IListAttributeModifier)) {
-            throw new IllegalArgumentException("attribute modifier must be of type IListAttributeModifier or AbstractListAttributeModifier");
+        if ((attributeModifier != null) && !(attributeModifier instanceof AbstractListAttributeModifier)) {
+            throw new IllegalArgumentException("attribute modifier must be of type AbstractListAttributeModifier");
         }
 
         this.context = context;
-        this.observers = new LinkedList<IObserver>();
+        this.observers = new LinkedList<>();
 
         setOutputMarkupId(true);
 
@@ -79,12 +73,7 @@ class ListCell extends Panel {
         }
 
         if (attributeModifier != null) {
-            AttributeModifier[] cellModifiers;
-            if (attributeModifier instanceof AbstractListAttributeModifier) {
-                cellModifiers = ((AbstractListAttributeModifier) attributeModifier).getCellAttributeModifiers(model);
-            } else {
-                cellModifiers = ((IListAttributeModifier) attributeModifier).getCellAttributeModifiers(model);
-            }
+            final AttributeModifier[] cellModifiers = ((AbstractListAttributeModifier) attributeModifier).getCellAttributeModifiers(model);
             if (cellModifiers != null) {
                 for (final AttributeModifier cellModifier : cellModifiers) {
                     if (cellModifier == null) {
