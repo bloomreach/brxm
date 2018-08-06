@@ -54,25 +54,25 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         // add form with markup id setter so it can be updated via ajax
         final Form form = new HippoForm("form");
         form.setOutputMarkupId(true);
-        add(form);
+        queue(form);
 
         final PropertyModel<String> passwordModel = new PropertyModel<>(this, "password");
         final PasswordTextField passwordField = new PasswordTextField("password", passwordModel);
         passwordField.setResetPassword(false);
         passwordField.add(new PasswordStrengthValidator(form, context, model));
-        form.add(passwordField);
+        queue(passwordField);
 
         final PropertyModel<String> checkPasswordModel = new PropertyModel<>(this, "checkPassword");
         final PasswordTextField passwordCheckField = new PasswordTextField("password-check", checkPasswordModel);
         passwordCheckField.setModel(passwordField.getModel());
         passwordCheckField.setRequired(false);
         passwordCheckField.setResetPassword(false);
-        form.add(passwordCheckField);
+        queue(passwordCheckField);
 
         form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("set-button", form) {
+        queue(new AjaxButton("set-button", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -96,7 +96,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         });
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("cancel-button") {
+        queue(new AjaxButton("cancel-button") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
