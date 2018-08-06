@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.diff;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Vector;
 
 public class LCS {
 
@@ -115,7 +115,7 @@ public class LCS {
     public static <T> List<Change<T>> getChangeSet(T[] a, T[] b) {
         List<T> lcs = getLongestCommonSubsequence(a, b);
 
-        LinkedList<Change<T>> operations = new LinkedList<Change<T>>();
+        LinkedList<Change<T>> operations = new LinkedList<>();
 
         Iterator<T> commonIter = lcs.iterator();
         Iterator<T> oldValueIter = Arrays.asList(a).iterator();
@@ -131,18 +131,18 @@ public class LCS {
                 if (oldValue.equals(nextValue)) {
                     break;
                 } else {
-                    operations.add(new Change<T>(oldValue, ChangeType.REMOVED));
+                    operations.add(new Change<>(oldValue, ChangeType.REMOVED));
                 }
             }
             while (nextNewValue != null && !nextNewValue.equals(nextValue)) {
-                operations.add(new Change<T>(nextNewValue, ChangeType.ADDED));
+                operations.add(new Change<>(nextNewValue, ChangeType.ADDED));
                 if (newValueIter.hasNext()) {
                     nextNewValue = newValueIter.next();
                 } else {
                     nextNewValue = null;
                 }
             }
-            operations.add(new Change<T>(nextValue, ChangeType.INVARIANT));
+            operations.add(new Change<>(nextValue, ChangeType.INVARIANT));
             nextNewValue = null;
             if (newValueIter.hasNext()) {
                 nextNewValue = newValueIter.next();
@@ -150,10 +150,10 @@ public class LCS {
         }
         while (oldValueIter.hasNext()) {
             T oldValue = oldValueIter.next();
-            operations.add(new Change<T>(oldValue, ChangeType.REMOVED));
+            operations.add(new Change<>(oldValue, ChangeType.REMOVED));
         }
         while (nextNewValue != null) {
-            operations.add(new Change<T>(nextNewValue, ChangeType.ADDED));
+            operations.add(new Change<>(nextNewValue, ChangeType.ADDED));
             if (newValueIter.hasNext()) {
                 nextNewValue = newValueIter.next();
             } else {
@@ -180,13 +180,9 @@ public class LCS {
 
         // prepare index and list of sequences
 
-        Map<T, List<Integer>> index = new HashMap<T, List<Integer>>();
+        Map<T, List<Integer>> index = new HashMap<>();
         for (int i = 0; i < a.length; i++) {
-            List<Integer> positions = index.get(a[i]);
-            if (positions == null) {
-                positions = new Vector<Integer>();
-                index.put(a[i], positions);
-            }
+            List<Integer> positions = index.computeIfAbsent(a[i], k -> new ArrayList<>());
             positions.add(i);
         }
 
@@ -197,8 +193,8 @@ public class LCS {
 
         // main algorithm
 
-        for (int j = 0; j < b.length; j++) {
-            List<Integer> positions = index.get(b[j]);
+        for (final T item : b) {
+            List<Integer> positions = index.get(item);
             if (positions == null) {
                 continue;
             }
@@ -216,7 +212,7 @@ public class LCS {
         // read out
 
         Sequence sequence = sequences[a.length];
-        LinkedList<T> result = new LinkedList<T>();
+        LinkedList<T> result = new LinkedList<>();
         while (sequence != Sequence.NULL) {
             result.addFirst(a[sequence.position]);
             sequence = sequence.predecessor;
