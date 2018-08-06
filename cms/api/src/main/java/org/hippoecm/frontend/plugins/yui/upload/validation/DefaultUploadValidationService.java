@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.yui.upload.validation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -116,7 +118,8 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     @Override
     public void addViolation(final String key, final Object... params) {
-        result.getViolations().add(new Violation(this.getClass(), key, params, null));
+        final ClassResourceModel messageModel = new ClassResourceModel(key, getClass(), params);
+        result.getViolations().add(new Violation(Collections.emptySet(), messageModel));
     }
 
     private void validateExtension(FileUpload upload) {
