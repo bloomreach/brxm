@@ -36,9 +36,6 @@ public interface ITemplateEngine extends IClusterable {
 
     ITypeDescriptor getType(IModel<?> model) throws TemplateEngineException;
 
-    @Deprecated
-    IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException;
-
     IClusterConfig getTemplate(ITypeDescriptor type, IEditor.Mode mode) throws TemplateEngineException;
 
     IModel<?> getPrototype(ITypeDescriptor type) throws TemplateEngineException;
