@@ -443,6 +443,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getId() {
         return wicketId;
     }
