@@ -40,22 +40,16 @@ import java.util.TreeSet;
  * Frontend Plugin that displays the current assigned tags of the document.
  */
 public class TagsPlugin extends AbstractTagsPlugin {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(TagsPlugin.class);
 
-    static final Logger log = LoggerFactory.getLogger(TagsPlugin.class);
-
-    public static final String WIDGET_COLS = "widget.cols";
     public static final String WIDGET_ROWS = "widget.rows";
     public static final String LOWERCASE = "tolowercase";
     private static final CssResourceReference CSS = new CssResourceReference(TagsPlugin.class, "TagsPlugin.css");
 
-    private JcrNodeModel nodeModel;
-    private String cols;
+    private final JcrNodeModel nodeModel;
     private String rows;
-    private boolean toLowerCase;
+    private final boolean toLowerCase;
 
     public TagsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,7 +64,6 @@ public class TagsPlugin extends AbstractTagsPlugin {
         TagsModel tagModel = createTagModel(nodeModel);
         if ("edit".equals(mode)) {
             rows = config.getString(WIDGET_ROWS, "3");
-            cols = config.getString(WIDGET_COLS, "20");
             TextAreaWidget ta = createTextArea(tagModel);
             add(ta);
         } else {
@@ -80,11 +73,11 @@ public class TagsPlugin extends AbstractTagsPlugin {
                     IModelReference.class);
                 if (baseRef != null) {
                     TagsModel baseModel = createTagModel((JcrNodeModel) baseRef.getModel());
-                    Set<String> baseTags = new TreeSet<String>(baseModel.getTags());
-                    Set<String> currentTags = new TreeSet<String>(tagModel.getTags());
+                    Set<String> baseTags = new TreeSet<>(baseModel.getTags());
+                    Set<String> currentTags = new TreeSet<>(tagModel.getTags());
                     List<Change<String>> changes = LCS.getChangeSet(
-                        baseTags.toArray(new String[baseTags.size()]),
-                        currentTags.toArray(new String[currentTags.size()]));
+                        baseTags.toArray(new String[0]),
+                        currentTags.toArray(new String[0]));
                     boolean first = true;
                     StringBuilder sb = new StringBuilder();
                     for (Change<String> change : changes) {
@@ -138,7 +131,6 @@ public class TagsPlugin extends AbstractTagsPlugin {
     public TextAreaWidget createTextArea(TagsModel tagModel) {
         TextAreaWidget widget = new TextAreaWidget("value", tagModel);
         widget.setRows(rows);
-        //widget.addBehaviourOnFormComponent(new TagBehaviour(getPluginContext(), getPluginConfig(), nodeModel, createTagModel(nodeModel)));
         return widget;
     }
 
