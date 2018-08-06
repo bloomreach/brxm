@@ -46,7 +46,7 @@ public class LCS {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append('(');
             if (predecessor != null) {
                 sb.append(predecessor);
@@ -113,13 +113,13 @@ public class LCS {
      * @return the minimal changeset
      */
     public static <T> List<Change<T>> getChangeSet(T[] a, T[] b) {
-        List<T> lcs = getLongestCommonSubsequence(a, b);
+        final List<T> lcs = getLongestCommonSubsequence(a, b);
 
-        LinkedList<Change<T>> operations = new LinkedList<>();
+        final LinkedList<Change<T>> operations = new LinkedList<>();
 
-        Iterator<T> commonIter = lcs.iterator();
-        Iterator<T> oldValueIter = Arrays.asList(a).iterator();
-        Iterator<T> newValueIter = Arrays.asList(b).iterator();
+        final Iterator<T> commonIter = lcs.iterator();
+        final Iterator<T> oldValueIter = Arrays.asList(a).iterator();
+        final Iterator<T> newValueIter = Arrays.asList(b).iterator();
         T nextNewValue = null;
         if (newValueIter.hasNext()) {
             nextNewValue = newValueIter.next();
@@ -180,28 +180,28 @@ public class LCS {
 
         // prepare index and list of sequences
 
-        Map<T, List<Integer>> index = new HashMap<>();
+        final Map<T, List<Integer>> index = new HashMap<>();
         for (int i = 0; i < a.length; i++) {
             List<Integer> positions = index.computeIfAbsent(a[i], k -> new ArrayList<>());
             positions.add(i);
         }
 
-        Sequence[] sequences = new Sequence[a.length + 1];
+        final Sequence[] sequences = new Sequence[a.length + 1];
         for (int i = 0; i <= a.length; i++) {
             sequences[i] = Sequence.NULL;
         }
 
-        // main algorithm
+        // main algorithmCMS-11290
 
         for (final T item : b) {
-            List<Integer> positions = index.get(item);
+            final List<Integer> positions = index.get(item);
             if (positions == null) {
                 continue;
             }
-            ListIterator<Integer> positionIter = positions.listIterator(positions.size());
+            final ListIterator<Integer> positionIter = positions.listIterator(positions.size());
             while (positionIter.hasPrevious()) {
                 int position = positionIter.previous();
-                Sequence replacement = new Sequence(position, sequences[position]);
+                final Sequence replacement = new Sequence(position, sequences[position]);
                 while (position < a.length && replacement.length >= sequences[position + 1].length) {
                     sequences[position + 1] = replacement;
                     position++;
@@ -212,7 +212,7 @@ public class LCS {
         // read out
 
         Sequence sequence = sequences[a.length];
-        LinkedList<T> result = new LinkedList<>();
+        final LinkedList<T> result = new LinkedList<>();
         while (sequence != Sequence.NULL) {
             result.addFirst(a[sequence.position]);
             sequence = sequence.predecessor;
