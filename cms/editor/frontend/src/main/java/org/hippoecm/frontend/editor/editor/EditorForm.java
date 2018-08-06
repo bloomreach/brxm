@@ -25,7 +25,6 @@ import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -165,20 +164,6 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         for (IRenderService child : fields) {
             child.render(target);
         }
-    }
-
-    @Override
-    public void warn(String messageKey, Object[] parameters) {
-        warn(new StringResourceModel(messageKey, this)
-                .setModel(getDefaultModel())
-                .setParameters(parameters, messageKey));
-    }
-
-    @Override
-    public void error(String messageKey, Object[] parameters) {
-        error(new StringResourceModel(messageKey, this)
-                .setModel(getDefaultModel())
-                .setParameters(parameters, messageKey));
     }
 
     @Override

@@ -19,18 +19,6 @@ import org.apache.wicket.model.IModel;
 
 public interface IFeedbackLogger {
 
-    /**
-     * @deprecated use {@link #warn(IModel)} instead
-     */
-    @Deprecated
-    void warn(String messageKey, Object[] parameters);
-
-    /**
-     * @deprecated use {@link #error(IModel)} instead
-     */
-    @Deprecated
-    void error(String messageKey, Object[] parameters);
-
     void warn(IModel<String> message);
 
     void error(IModel<String> message);
