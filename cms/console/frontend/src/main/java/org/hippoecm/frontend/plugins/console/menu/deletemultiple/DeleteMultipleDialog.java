@@ -31,6 +31,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeProvider;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
+import org.hippoecm.frontend.plugins.console.tree.StyledTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
