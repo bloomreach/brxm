@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -29,8 +27,6 @@ import org.hippoecm.frontend.widgets.TextAreaWidget;
  */
 public class CodeMirrorPropertyValueEditor extends PropertyValueEditor {
 
-    private static final long serialVersionUID = 1L;
-
     private static final int MIN_ROWS = 10;
 
     CodeMirrorPropertyValueEditor(String id, JcrPropertyModel dataProvider) {
@@ -38,10 +34,9 @@ public class CodeMirrorPropertyValueEditor extends PropertyValueEditor {
     }
 
     @Override
-    protected Component createValueEditor(final JcrPropertyValueModel valueModel) throws RepositoryException {
+    protected Component createValueEditor(final JcrPropertyValueModel valueModel) {
         StringConverter stringModel = new StringConverter(valueModel);
         TextAreaWidget editor = createEditorWidget("value", stringModel);
-        editor.setCols(String.valueOf(TEXT_AREA_MAX_COLUMNS));
         editor.setRows(String.valueOf(getRows(stringModel)));
         return editor;
     }
