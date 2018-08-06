@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,24 +45,6 @@ public class ImageUtilTest {
         assertTrue(isRGB(rgb, "test-YCCK.jpg"));
     }
 
-    @Test
-    @Deprecated
-    public void convertYCCKtoRGBUsingDeprecatedMethod() throws Exception {
-        InputStream ycck = getClass().getResourceAsStream("/test-YCCK.jpg");
-        InputStream rgb = ImageUtils.convertToRGB(ycck, ImageMetaData.ColorModel.YCCK);
-
-        assertTrue(isRGB(rgb, "test-YCCK.jpg"));
-    }
-
-    @Test
-    @Deprecated
-    public void convertCMYKToRGBUsingDeprecatedMethod() throws Exception {
-        InputStream cmyk = getClass().getResourceAsStream("/test-CMYK.jpg");
-        InputStream rgb = ImageUtils.convertToRGB(cmyk, ImageMetaData.ColorModel.CMYK);
-
-        assertTrue(isRGB(rgb, "test-CMYK.jpg"));
-    }
-
     public static boolean isRGB(final InputStream stream, final String fileName) throws IOException, ImageReadException {
         try {
             ImageInfo info = Sanselan.getImageInfo(stream, fileName);
@@ -71,6 +53,4 @@ public class ImageUtilTest {
             IOUtils.closeQuietly(stream);
         }
     }
-
-
 }
