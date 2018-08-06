@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.console.tree;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.extensions.markup.html.repeater.tree.AbstractTree;
 import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
 import org.apache.wicket.model.IModel;
@@ -27,7 +26,6 @@ public class StyledTreeNode extends Folder<Node> {
     
     public StyledTreeNode(final String id, final AbstractTree<Node> tree, final IModel<Node> model) {
         super(id, tree, model);
-        final MarkupContainer link = (MarkupContainer) get("link");
-        link.add(NodeIconUtils.createJcrNodeIcon("icon", model));
+        queue(NodeIconUtils.createJcrNodeIcon("icon", model));
     }
 }
