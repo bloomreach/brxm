@@ -19,11 +19,11 @@ package org.hippoecm.frontend.plugins.jquery.upload;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.commons.fileupload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.behaviors.FileUploadInfo;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
@@ -112,12 +112,6 @@ public abstract class AbstractFileUploadWidget extends Panel {
      * The event is fired after the selecting files has been processed and uploaded.
      */
     protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {}
-
-    /**
-     * @deprecated This method has been replaced by {@link #onFinished(AjaxRequestTarget, int, boolean)} since version 3.2.0
-     */
-    @Deprecated
-    protected void onFinished() {}
 
     /**
      * The event is fired after all files has been uploaded.

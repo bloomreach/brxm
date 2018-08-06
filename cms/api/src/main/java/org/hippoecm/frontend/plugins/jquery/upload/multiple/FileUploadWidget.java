@@ -106,8 +106,6 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
             @Override
             protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
                 FileUploadWidget.this.onFinished(target, numberOfFiles, error);
-                // backward compatible call
-                FileUploadWidget.this.onFinished();
             }
         });
 
