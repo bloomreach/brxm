@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -137,17 +137,6 @@ public class YuiDatePicker extends AbstractYuiBehavior {
      */
     protected String getIconStyle() {
         return "cursor: pointer; border: none;";
-    }
-
-    /**
-     * Gets the url for the popup button. Users can override to provide their own icon URL.
-     *
-     * @deprecated This method is deprecated since 10.0.x, use getIcon() instead
-     * @return the url to use for the popup button/ icon
-     */
-    @Deprecated
-    protected CharSequence getIconUrl() {
-        return null;
     }
 
     /**

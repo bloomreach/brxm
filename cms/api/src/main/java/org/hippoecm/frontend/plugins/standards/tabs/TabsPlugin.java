@@ -83,7 +83,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TabsPlugin extends RenderPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
     public static final String TAB_ID = "tabs";
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
@@ -414,14 +414,6 @@ public class TabsPlugin extends RenderPlugin {
         this.avoidTabRefocus = true;
     }
 
-    /**
-     * @deprecated use {@link #focusRecentTab} or {@link #focusRecentTabUnlessHidden()} instead.
-     */
-    @Deprecated
-    public void show() {
-        focusRecentTab();
-    }
-
     public void focusRecentTabUnlessHidden() {
         if (!isHidden) {
             focusRecentTab();
@@ -558,13 +550,6 @@ public class TabsPlugin extends RenderPlugin {
                 return ((Perspective)decorator).getTitleCssClass();
             }
             return null;
-        }
-
-        @Deprecated
-        // Use public Component getIcon(String id, IconSize size) instead
-        public ResourceReference getIcon(IconSize size) {
-            log.warn("This method is deprecated in favor of public Component getIcon(String id, IconSize size)");
-            return decorator != null ? decorator.getIcon(size) : null;
         }
 
         public Component getIcon(String id, IconSize size) {

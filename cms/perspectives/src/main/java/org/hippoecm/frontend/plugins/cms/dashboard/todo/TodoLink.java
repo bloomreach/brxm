@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,23 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class TodoLink extends Panel {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(TodoLink.class);
-
-    private final DateFormat dateFormatShort = DateFormat.getDateInstance(DateFormat.MEDIUM,
-            getSession().getLocale());
-
-    /**
-     * @deprecated As of release 3.2.0, replaced by
-     * {@link #TodoLink(IPluginContext, IPluginConfig, String, BrowseLinkTarget, IModel, IModel, IModel)}
-     */
-    @Deprecated
-    public TodoLink(final IPluginContext context, final IPluginConfig config,
-                    final String id, final BrowseLinkTarget browseLinkTarget,
-                    final IModel<String> userLabelModel, final IModel<String> operationLabelModel) {
-        this(context, config, id, browseLinkTarget, userLabelModel, operationLabelModel, null);
-    }
 
     public TodoLink(final IPluginContext context, final IPluginConfig config,
                     final String id, final BrowseLinkTarget browseLinkTarget,
@@ -94,6 +78,8 @@ public class TodoLink extends Panel {
         link.add(operationLabel);
 
         // Set the creation date or an empty string when no creation date is available
+        final DateFormat dateFormatShort = DateFormat.getDateInstance(DateFormat.MEDIUM,
+                getSession().getLocale());
         final String creationDate = creationDateModel != null && creationDateModel.getObject() != null ?
                 dateFormatShort.format(creationDateModel.getObject().getTime()) : StringUtils.EMPTY;
         link.add(new Label("creationDate", new Model<>(creationDate)));

@@ -72,20 +72,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         return folderModel;
     }
 
-    /**
-     * @deprecated use {@link #getVariant(javax.jcr.Node, org.hippoecm.repository.util.WorkflowUtils.Variant)} instead
-     */
-    @Deprecated
-    protected Node getVariant(Node handle, String state) throws RepositoryException {
-        String handlePath = handle.getPath();
-        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-            if (variant.hasProperty(HippoStdNodeType.HIPPOSTD_STATE) && state.equals(variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
-                return variant;
-            }
-        }
-        throw new ItemNotFoundException("No " + state + " variant found under path: " + handlePath);
-    }
-
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
         final Optional<Node> optional = WorkflowUtils.getDocumentVariantNode(handle, variant);
         if(optional.isPresent()) {

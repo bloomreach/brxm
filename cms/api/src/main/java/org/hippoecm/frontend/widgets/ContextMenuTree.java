@@ -155,15 +155,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
     protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
     }
 
-    /**
-     * @deprecated node icons should be created in {@link #newNodeIcon(MarkupContainer, String, TreeNode)}.
-     */
-    @Override
-    @Deprecated
-    protected final ResourceReference getNodeIcon(TreeNode node) {
-        return super.getNodeIcon(node);
-    }
-
     @Override
     protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
         ResourceReference nodeIcon = super.getNodeIcon(node);

@@ -223,14 +223,6 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     }
 
     /**
-     * @deprecated use {@link ImageCropEditorDialog(IModel, GalleryProcessor, IPluginConfig, IPluginContext)} instead.
-     */
-    @Deprecated
-    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
-        this(jcrImageNodeModel, galleryProcessor, null, null);
-    }
-
-    /**
      * Execute the fitInView function on the clientside widget instance
      */
     private void executeFitInView(final AjaxRequestTarget target, final ImageCropBehavior cropBehavior) {

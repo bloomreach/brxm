@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,25 +15,23 @@
  */
 package org.hippoecm.frontend.editor.compare;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class NodeComparerTest extends PluginTest {
 
@@ -54,15 +52,14 @@ public class NodeComparerTest extends PluginTest {
     public void testNodes() throws RepositoryException, TypeException {
         build(session, content);
 
-        final Map<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
         ITypeLocator typeLocator = new ITypeLocator() {
 
-            public List<ITypeDescriptor> getSubTypes(String type) throws StoreException {
-                return Collections.EMPTY_LIST;
+            public List<ITypeDescriptor> getSubTypes(String type) {
+                return Collections.emptyList();
             }
 
-            public ITypeDescriptor locate(String type) throws StoreException {
-                return types.get(type);
+            public ITypeDescriptor locate(String type) {
+                return null;
             }
 
             public void detach() {
@@ -82,9 +79,9 @@ public class NodeComparerTest extends PluginTest {
         field.setPath("y");
         descriptor.addField(field);
 
-        NodeComparer comparer = new NodeComparer(descriptor);
+        NodeComparer comparer = new NodeComparer(descriptor, null);
         assertFalse(comparer.areEqual(root.getNode("test/a"), root.getNode("test/b")));
-        assertFalse(comparer.getHashCode(root.getNode("test/a")) == comparer.getHashCode(root.getNode("test/b")));
+        assertNotEquals(comparer.getHashCode(root.getNode("test/a")), comparer.getHashCode(root.getNode("test/b")));
 
         assertTrue(comparer.areEqual(root.getNode("test/a"), root.getNode("test/c")));
         assertEquals(comparer.getHashCode(root.getNode("test/a")), comparer.getHashCode(root.getNode("test/c")));

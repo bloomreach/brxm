@@ -109,7 +109,7 @@ public class EditorFactoryTest extends PluginTest {
         final Node unpublished = session.getRootNode().getNode("test/content/document/document");
         final Node draft = ((HippoSession) session).copy(unpublished, unpublished.getPath());
         draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "draft");
-        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, CREDENTIALS.getString("username"));
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, USER_CREDENTIALS.getUsername());
         session.save();
 
         if (editor != null) {

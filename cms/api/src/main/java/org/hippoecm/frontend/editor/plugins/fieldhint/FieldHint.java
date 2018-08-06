@@ -15,13 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins.fieldhint;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -30,12 +28,6 @@ public class FieldHint extends Panel {
     public FieldHint(String id, final IModel<String> hintModel) {
         super(id);
         add(createHint(hintModel));
-    }
-
-    @Deprecated
-    public FieldHint(String id, final String hint) {
-        super(id);
-        add(createHint(hint));
     }
 
     protected Component createHint(final IModel<String> hintModel) {
@@ -48,21 +40,4 @@ public class FieldHint extends Panel {
         }
         return hintContainer;
     }
-
-    @Deprecated
-    protected Component createHint(final String hint) {
-        WebMarkupContainer hintContainer = new WebMarkupContainer("hint-visual");
-        if (StringUtils.isBlank(hint)) {
-            // no hint available, display nothing
-            hintContainer.setVisible(false);
-        } else {
-            // Check if there's a translation of the hint, use the untranslated hint as default
-            IModel<String> translatedHintModel = new StringResourceModel(hint, this)
-                    .setDefaultValue(hint);
-            hintContainer.add(new Label("hint-text", translatedHintModel));
-            hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
-        }
-        return hintContainer;
-    }
-
 }

@@ -298,11 +298,6 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
     protected void onToggleFromClient(String position, boolean expand) {
     }
 
-    @Deprecated
-    public boolean toggle(String position, AjaxRequestTarget target) {
-        return toggle(position);
-    }
-
     public boolean toggle(String position) {
         UnitSettings unitSettings = settings.getUnit(position);
         if (unitSettings == null) {

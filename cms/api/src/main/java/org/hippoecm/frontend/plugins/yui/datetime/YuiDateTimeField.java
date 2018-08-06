@@ -190,14 +190,6 @@ public class YuiDateTimeField extends DateTimeField {
         return false;
     }
 
-    /**
-     * @deprecated As of 5.2.0 replaced by {@link #setCurrentDateLinkVisible}
-     */
-    @Deprecated
-    public void setTodayLinkVisible(final boolean todayLinkVisible) {
-        setCurrentDateLinkVisible(todayLinkVisible);
-    }
-
     public void setCurrentDateLinkVisible(final boolean currentDateLinkVisible) {
         this.currentDateLinkVisible = currentDateLinkVisible;
     }
