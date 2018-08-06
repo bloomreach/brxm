@@ -68,6 +68,11 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         this.childComparator = childComparator;
     }
 
+    @Override
+    public IModel<Node> getNodeModel() {
+        return getChainedModel();
+    }
+
     /**
      * Resolve the child that corresponds to a particular name.
      * @param name

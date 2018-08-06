@@ -34,14 +34,6 @@ public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
         }
     }
 
-    /**
-     * @deprecated
-     * Use getChainedModel() instead.
-     */
-    public JcrNodeModel getNodeModel() {
-        return nodeModel;
-    }
-
     // Implement IChainingModel
 
     public IModel<Node> getChainedModel() {
