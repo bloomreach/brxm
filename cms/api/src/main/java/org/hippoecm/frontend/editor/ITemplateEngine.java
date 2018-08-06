@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,12 +30,7 @@ public interface ITemplateEngine extends IClusterable {
      */
     String ENGINE = "engine";
 
-    String TEMPLATE = "template";
-
     String MODE = "mode";
-
-    @Deprecated
-    String EDIT_MODE = "edit";
 
     ITypeDescriptor getType(String type) throws TemplateEngineException;
 
