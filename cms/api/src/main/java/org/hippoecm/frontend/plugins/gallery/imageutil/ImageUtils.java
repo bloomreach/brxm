@@ -219,6 +219,14 @@ public class ImageUtils {
      *
      * @param img
      *            the original image to be scaled
+     * @param xOffset
+     *            the X-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
+     * @param yOffset
+     *            the Y-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
+     * @param sourceWidth
+     *            the width of the source image, in pixels relative to xOffset, to use for the scaled instance.
+     * @param sourceHeight
+     *            the height of the source image, in pixels relative to yOffset, to use for the scaled instance.
      * @param targetWidth
      *            the desired width of the scaled instance, in pixels
      * @param targetHeight
@@ -236,16 +244,7 @@ public class ImageUtils {
      *
      * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
      * the target width or target height is 0 or less.
-     *
-     * @deprecated Use {@link ImageUtils#scaleImage(java.awt.image.BufferedImage, int, int, org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy)} instead
-     * for faster scaling and/or better image quality)}
      */
-    @Deprecated
-    public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, Object hint,
-                                           boolean highQuality) {
-        return scaleImage(img, 0, 0, img.getWidth(), img.getHeight(), targetWidth, targetHeight, hint, highQuality);
-    }
-
     public static BufferedImage scaleImage(BufferedImage img, int xOffset, int yOffset, int sourceWidth, int sourceHeight, int targetWidth, int targetHeight, Object hint,
                                            boolean highQuality) {
 
