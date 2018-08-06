@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import javax.jcr.version.Version;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.TestEditorContext;
-import org.hippoecm.frontend.TestEditorContext.CloseFilter;
 import org.hippoecm.frontend.TestEditorContext.Preview;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
@@ -46,7 +45,6 @@ import static org.hippoecm.frontend.TestEditorContext.CMS_TEST_DOCUMENT;
 import static org.hippoecm.frontend.TestEditorContext.CONTENT_1;
 import static org.hippoecm.frontend.TestEditorContext.CONTENT_2;
 import static org.hippoecm.frontend.TestEditorContext.EDITORS;
-import static org.hippoecm.frontend.TestEditorContext.FILTERS;
 import static org.hippoecm.frontend.TestEditorContext.PREVIEWS;
 import static org.junit.Assert.assertThat;
 
@@ -60,10 +58,6 @@ public class EditorFactoryTest extends PluginTest {
 
     private List<IRenderService> getEditors() {
         return context.getServices(EDITORS, IRenderService.class);
-    }
-
-    private List<CloseFilter> getCloseFilters() {
-        return context.getServices(FILTERS, CloseFilter.class);
     }
 
     private static final IPluginConfig PARAMETERS;
@@ -139,7 +133,7 @@ public class EditorFactoryTest extends PluginTest {
         // simulate workflow step "obtainEditableInstance"
         final Node draft = ((HippoSession) session).copy(unpublished, unpublished.getPath());
         draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "draft");
-        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, CREDENTIALS.getString("username"));
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, USER_CREDENTIALS.getUsername());
         session.save();
         ((IRefreshable) editor).refresh();
         assertThat(editor.getMode(), is(equalTo(Mode.EDIT)));

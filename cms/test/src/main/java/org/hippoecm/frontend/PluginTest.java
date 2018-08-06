@@ -106,12 +106,6 @@ public abstract class PluginTest extends RepositoryTestCase {
         }
     }
 
-    /**
-     * Use the USER_CREDENTIALS instead
-     */
-    @Deprecated
-    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTestCase.SYSTEMUSER_ID + ",password=" + RepositoryTestCase.SYSTEMUSER_PASSWORD.toString());
-
     protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.SYSTEMUSER_ID, String.valueOf(RepositoryTestCase.SYSTEMUSER_PASSWORD));
 
     private String[] config = new String[] {
