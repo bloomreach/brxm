@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,23 +41,13 @@ import org.slf4j.LoggerFactory;
  */
 abstract public class JcrObject implements IDetachable, IObservable {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(JcrObject.class);
 
-    static final Logger log = LoggerFactory.getLogger(JcrObject.class);
-
-    private JcrNodeModel nodeModel;
+    private final JcrNodeModel nodeModel;
     private IObserver<JcrNodeModel> observer;
     private IObservationContext<JcrObject> obContext;
     private boolean observing = false;
 
-    /**
-     * Legacy constructor, to provide binary compatibility with 2.10.
-     */
-    @Deprecated
-    public JcrObject(JcrNodeModel model) {
-        this((IModel<Node>) model);
-    }
-    
     public JcrObject(IModel<Node> nodeModel) {
         if (nodeModel instanceof JcrNodeModel) {
             this.nodeModel = (JcrNodeModel) nodeModel;
