@@ -270,11 +270,6 @@ public class ChannelEditor extends ExtPanel {
                     editorManager.unregisterOpenListener(EDITOR_OPEN_LISTENER);
                 }
             }
-
-            @Override
-            public void updateService(final IClusterable service, final String name) {
-
-            }
         }, editorManagerServiceId);
     }
 
