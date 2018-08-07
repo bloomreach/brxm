@@ -161,7 +161,7 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
                 valueSetRenderer)
                 .setNullValid(false)
                 .setRequired(true)
-                .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                .add(new AjaxFormComponentUpdatingBehavior("change") {
                     private static final long serialVersionUID = 1L;
 
                     protected void onUpdate(AjaxRequestTarget target) {
