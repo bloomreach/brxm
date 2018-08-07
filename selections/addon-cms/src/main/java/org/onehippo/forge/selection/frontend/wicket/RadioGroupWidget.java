@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class RadioGroupWidget<T extends Serializable> extends Panel {
                 final T radioitem = item.getModelObject();
                 final Radio<T> radio = new Radio<T>("radio", Model.of(radioitem));
 
-                radio.add(new AjaxEventBehavior("change") {
+                radio.add(new AjaxEventBehavior("onchange") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
