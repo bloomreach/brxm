@@ -139,16 +139,6 @@
       this.hostToIFrame.publish('render-component', componentId, propertiesMap);
     },
 
-    _renderInitialComponentState: function(componentId) {
-      // don't pass any properties so the persisted properties are used
-      this._renderComponent(componentId);
-    },
-
-    _onComponentChanged: function (componentId) {
-      this._renderInitialComponentState(componentId);
-      this._syncChannel();
-    },
-
     _closeDialogAndNotifyReloadPage: function(data) {
       this._destroyComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-page', data);
@@ -198,7 +188,7 @@
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
-          componentChanged: this._onComponentChanged,
+          componentChanged: this._syncChannel,
           loadFailed: this._closeDialogAndNotifyReloadPage,
           componentLocked: this._closeDialogAndNotifyReloadPage,
           hide: function() {
