@@ -406,7 +406,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             @Override
             protected Recorder newRecorderComponent() {
                 Recorder recorder = super.newRecorderComponent();
-                recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                recorder.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                     private static final long serialVersionUID = 1L;
 
