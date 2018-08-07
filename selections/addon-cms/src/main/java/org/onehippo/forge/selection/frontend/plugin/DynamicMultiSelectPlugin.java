@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -406,7 +406,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             @Override
             protected Recorder newRecorderComponent() {
                 Recorder recorder = super.newRecorderComponent();
-                recorder.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                recorder.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                     private static final long serialVersionUID = 1L;
 
