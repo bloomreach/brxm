@@ -33,6 +33,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -497,6 +498,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 for (Channel channel : future.get()) {
                     if (StringUtils.isEmpty(channel.getType())) {
                         channel.setType(DEFAULT_TYPE);
+                    }
+                    if (StringUtils.isNotEmpty(channel.getName())) {
+                        channel.setName(
+                                StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(channel.getName())));
                     }
                     channels.put(channel.getId(), channel);
                 }
