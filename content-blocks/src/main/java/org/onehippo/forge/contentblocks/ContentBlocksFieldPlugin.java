@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,17 +48,14 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
-import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
-import org.hippoecm.frontend.editor.plugins.field.TransparentFragment;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -104,13 +101,10 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private static final String PROVIDER_COMPOUND = "cpItemsPath";
     private static final String COMPOUND_LIST = "compoundList";
     private static final String SHOW_COMPOUND_NAMES = "showCompoundNames";
-
-    private static final String FRAGMENT_ID = "fragment";
-    private static final String EDIT_FRAGMENT_ID = "edit-fragment";
-    private static final String VIEW_FRAGMENT_ID = "view-fragment";
-
+    
+    private static final String FIELD_CONTAINER_ID = "fieldContainer";
+    
     private static final String CONTENTPICKER_ADD = "contentpicker-add";
-    private static final String ITEM_TITLE = "itemTitle";
 
     private final List<String> compoundList;
     private final String providerCompoundType;
@@ -236,13 +230,38 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         if (!field.isMultiple() && !field.getValidators().contains("optional")) {
             return false;
         }
-//      must be able to replace a first item with a content block of another type, so not this check
-//      if (field.getValidators().contains("required") && provider.size() == 1) {
-//          return false;
-//      }
+        // must be able to replace a first item with a content block of another type, so not this check
+        // if (field.getValidators().contains("required") && provider.size() == 1) {
+        //     return false;
+        // }
         return true;
     }
 
+    // the next five methods make these functions available to the ContentBlocksEditableFieldContainer class
+    @Override
+    protected boolean canReorderItems() {
+        return super.canReorderItems();
+    }
+
+    @Override
+    protected IPluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
+    @Override
+    protected void redraw() {
+        super.redraw();
+    }
+
+    @Override
+    protected FieldPluginHelper getFieldHelper() {
+        return super.getFieldHelper();
+    }
+
+    protected AbstractProvider getProvider() {
+        return provider;
+    }
+    
     public int getMaxItems() {
         return maxItems;
     }
@@ -318,106 +337,17 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        Fragment fragment = new TransparentFragment(FRAGMENT_ID, EDIT_FRAGMENT_ID, this);
-
-        WebMarkupContainer controls = new WebMarkupContainer("controls");
-        controls.setVisible(canRemoveItem() || canReorderItems());
-
-        // remove button
-        MarkupContainer remove = new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-
-                IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new DeleteItemDialog(model));
-
-            }
-        };
-        remove.setVisible(canRemoveItem());
-        controls.add(remove);
-
-        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
-        remove.add(removeIcon);
-
-        final int itemIndex = item.getIndex();
-        // up arrow button
-        MarkupContainer upLink = new AjaxLink("up") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                onMoveItemUp(model, target);
-                redraw();
-            }
-        };
-        upLink.setVisible(canReorderItems());
-        upLink.setEnabled(itemIndex > 0);
-        controls.add(upLink);
-
-        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
-        upLink.add(upIcon);
-
-        // down arrow button
-        MarkupContainer downLink = new AjaxLink("down") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                IFieldDescriptor field = getFieldHelper().getField();
-                String name = field.getPath();
-                JcrNodeModel parent = model.getParentModel();
-                if (parent != null) {
-                    String nextName = name + '[' + (itemIndex + 2) + ']';
-                    String nextPath = parent.getItemModel().getPath() + '/' + nextName;
-                    JcrNodeModel nextModel = new JcrNodeModel(nextPath);
-                    onMoveItemUp(nextModel, target);
-                    redraw();
-                }
-            }
-        };
-
-        downLink.setVisible(canReorderItems());
-        downLink.setEnabled(itemIndex < provider.size() - 1);
-        controls.add(downLink);
-
-        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
-        downLink.add(downIcon);
-
-        fragment.add(controls);
-        item.add(fragment);
-
-        addCompoundNameAsTitle(item, model, null/*oldModel*/);
-    }
-    /**
-    * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrNodeModel)}
-    */
-    @Deprecated
-    @Override
-    protected void populateViewItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
-        item.add(fragment);
-    }
+        item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID, item, model, this, getBlockName(model)));
+   }
 
     @Override
     protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
-        Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
-        item.add(fragment);
-
-        addCompoundNameAsTitle(item, model, null/*oldModel*/);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrNodeModel, JcrNodeModel)}
-     */
-    @Deprecated
-    @Override
-    protected void populateCompareItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
-        item.add(fragment);
+        item.add(new ContentBlocksFieldContainer(FIELD_CONTAINER_ID, item, getBlockName(model)));
     }
 
     @Override
     protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
-        Fragment fragment = new TransparentFragment(FRAGMENT_ID, VIEW_FRAGMENT_ID, this);
-        item.add(fragment);
-
-        addCompoundNameAsTitle(item, newModel, oldModel);
+        populateViewItem(item, newModel);
     }
 
     private void addItem(final String type, final AjaxRequestTarget target) {
@@ -476,47 +406,21 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     }
 
     /**
-     * Add translated name of compound as item title.
+     * Get translated name of content block.
      */
-    protected void addCompoundNameAsTitle(final Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
-
-        if (showCompoundNames && (newModel != null || oldModel != null)) {
+    protected String getBlockName(final JcrNodeModel jcrNodeModel) {
+        if (showCompoundNames && jcrNodeModel != null) {
             try {
-                final String nodeType = (newModel != null) ? newModel.getNode().getPrimaryNodeType().getName() : oldModel.getNode().getPrimaryNodeType().getName();
+                final String nodeType = jcrNodeModel.getNode().getPrimaryNodeType().getName();
                 final IModel<String> compoundName = new TypeTranslator(new JcrNodeTypeModel(nodeType)).getTypeName();
-                item.add(new Label(ITEM_TITLE, compoundName));
-
-                return;
+                return compoundName.getObject();
             } catch (RepositoryException e) {
-                log.error("Cannot add compound name as title", e);
+                log.error("Cannot get compound block name", e);
             }
         }
-
-        // add invisible dummy
-        final Label itemTitle = new Label(ITEM_TITLE, StringUtils.EMPTY);
-        itemTitle.setVisible(false);
-        item.add(itemTitle);
+        return StringUtils.EMPTY;
     }
-
-    private class DeleteItemDialog extends Dialog<JcrNodeModel> {
-
-        private final JcrNodeModel model;
-
-        public DeleteItemDialog(JcrNodeModel model) {
-            this.model = model;
-
-            setFocusOnCancel();
-            setSize(DialogConstants.SMALL);
-            setTitleKey("delete-title");
-        }
-
-        @Override
-        protected void onOk() {
-            onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
-            redraw();
-        }
-    }
-
+ 
     private static class FocusLink extends Link<CharSequence> {
 
         private FocusLink(final String id) {
