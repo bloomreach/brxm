@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.forge.selection.frontend.plugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -65,11 +66,18 @@ public class StaticDropdownPlugin extends RenderPlugin<String> {
                         public Object getDisplayValue(String object) {
                             return optionsMap.get(object);
                         }
+
                         @Override
                         public String getIdValue(String object, int index) {
                             return object;
                         }
-            });
+
+                        @Override
+                        public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                            final List<? extends String> choices = choicesModel.getObject();
+                            return choices.contains(id) ? id : null;
+                        }
+                    });
 
             choice.add(new OnChangeAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
