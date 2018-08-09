@@ -16,6 +16,8 @@
  */
 package org.onehippo.forge.demo;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -25,6 +27,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -71,7 +74,7 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
             final IChoiceRenderer<Object> choiceRenderer = new ListChoiceRenderer(documentRootFolderNames);
             DropDownChoice<Object> rootFoldersField = new DropDownChoice<>("rootFolders", propModel, documentRootFolderNames, choiceRenderer);
             rootFoldersField.setRequired(true);
-            rootFoldersField.setLabel(new StringResourceModel("channel-dropdown-label", this, null));
+            rootFoldersField.setLabel(new StringResourceModel("channel-dropdown-label", this));
             add(rootFoldersField);
         }
 
@@ -126,6 +129,10 @@ public class DocumentChannelWizardPlugin extends NewDocumentWizardPlugin {
             return list.getKey(object);
         }
 
+        @Override
+        public Object getObject(final String id, final IModel<? extends List<?>> choices) {
+            return list.getListItemByKey(id);
+        }
     }
 
 }
