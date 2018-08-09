@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
             public void detach() {
             }
         });
-        keyField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        keyField.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -116,7 +116,7 @@ public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
     }
 
     public IModel<String> getTitle() {
-        return new StringResourceModel("new-category", this, null);
+        return new StringResourceModel("new-category", this);
     }
 
     /**
