@@ -1,11 +1,11 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.gallery.imageutil;
+package org.hippoecm.frontend.editor.plugins.field;
+
+import org.apache.wicket.markup.repeater.Item;
+import org.hippoecm.frontend.service.IRenderService;
 
 /**
- * @deprecated This class is deprecated as part of deprecating {@link ImageMetaData}
+ * Shares the common markup for editable field containers.
  */
-@Deprecated
-public class ImageMetadataException extends Exception {
+public abstract class EditableFieldContainer extends FieldContainer {
 
-    public ImageMetadataException(final String message, final Throwable cause) {
-        super(message, cause);
+    public EditableFieldContainer(final String id, final Item<IRenderService> renderItem) {
+        super(id, renderItem);
     }
 }

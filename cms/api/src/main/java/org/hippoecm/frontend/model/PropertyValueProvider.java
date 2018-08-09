@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,14 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PropertyValueProvider extends AbstractProvider<Property, JcrPropertyValueModel> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(PropertyValueProvider.class);
 
-    @Deprecated
-    public static final String NULL_DATE_VALUE = "0001-01-01T12:00:00.000+00:00";
-    @Deprecated
-    public static final Date NULL_DATE = ISO8601.parse(NULL_DATE_VALUE).getTime();
     public static final String EMPTY_DATE_VALUE = "0001-01-01T12:00:00.000+00:00";
     public static final Date EMPTY_DATE = ISO8601.parse(EMPTY_DATE_VALUE).getTime();
 

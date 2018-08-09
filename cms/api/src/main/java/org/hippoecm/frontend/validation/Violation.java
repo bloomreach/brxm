@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,10 @@
  */
 package org.hippoecm.frontend.validation;
 
-import java.lang.Class;
-import java.lang.Object;
-import java.lang.String;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 /**
  * Validation constraint violation.  Provides the list of {@link ModelPath}s that
@@ -34,25 +30,8 @@ public final class Violation implements IDetachable {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<ModelPath> fieldPaths;
-    private IModel<String> message;
-
-    /**
-     * Create a new violation whose resource bundle is looked up relative to the {@code resourceBundleClass} parameter.
-     * This constructor has been deprecated.  Validators should provide their own message translation.
-     *
-     * @param resourceBundleClass Resource bundle will be looked up relative to this class
-     * @param messageKey  The key used for translation
-     * @param parameters  Optional parameters for value substitution in translations
-     * @param fieldPaths  List of {@link ModelPath}s that led up to the violation
-     *
-     * @deprecated use the {@link #Violation(Set, IModel)} constructor instead.
-     */
-    @Deprecated
-    public Violation(Class<?> resourceBundleClass, String messageKey, Object[] parameters, Set<ModelPath> fieldPaths) {
-        this.fieldPaths = fieldPaths;
-        this.message = new ClassResourceModel(messageKey, resourceBundleClass, parameters);
-    }
+    private final Set<ModelPath> fieldPaths;
+    private final IModel<String> message;
 
     /**
      * Create a new violation with the specified message.

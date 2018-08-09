@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ public class AjaxCallbackUploadDoneBehavior extends AbstractDefaultAjaxBehavior 
         final boolean error = requestParameters.getParameterValue("error").toBoolean(false);
 
         onNotify(target, numberOfUploadedFiles, error);
-        onNotify(numberOfUploadedFiles);
     }
 
     /**
@@ -39,11 +38,4 @@ public class AjaxCallbackUploadDoneBehavior extends AbstractDefaultAjaxBehavior 
      * @param error
      */
     protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {}
-
-    /**
-     * @deprecated Deprecated by {@link #onNotify(AjaxRequestTarget, int, boolean)} since version 3.2.0
-     * @param numberOfFiles number of uploaded files
-     */
-    @Deprecated
-    protected void onNotify(final int numberOfFiles) {}
 }

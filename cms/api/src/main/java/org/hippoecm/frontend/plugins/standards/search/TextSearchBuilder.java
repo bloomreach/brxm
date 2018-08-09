@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,12 +36,6 @@ import static java.util.stream.Collectors.joining;
 public class TextSearchBuilder extends GeneralSearchBuilder implements IClusterable {
 
     static final Logger log = LoggerFactory.getLogger(TextSearchBuilder.class);
-
-    /**
-     * Use @link{GeneralSearchBuilder#TEXT_QUERY_NAME} instead.
-     */
-    @Deprecated
-    public static final String TEXT_QUERY_NAME = GeneralSearchBuilder.TEXT_QUERY_NAME;
 
     public TextSearchBuilder() {
         super();
@@ -97,13 +91,5 @@ public class TextSearchBuilder extends GeneralSearchBuilder implements IClustera
         } else {
             super.appendIncludedPrimaryNodeTypeFilter(sb);
         }
-    }
-
-    /**
-     * Use @link{GeneralSearchBuilder#isoLatin1AccentReplacer(java.lang.String)} instead.
-     */
-    @Deprecated
-    public static String isoLatin1AccentReplacer(final String input) {
-        return GeneralSearchBuilder.isoLatin1AccentReplacer(input);
     }
 }

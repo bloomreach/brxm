@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,10 +77,10 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                 dialogService.show(new PublishAllShortcutPlugin.Dialog(config));
             }
         };
-        link.setModel(new StringResourceModel(config.getString("label.link"), this, null));
+        link.setModel(new StringResourceModel(config.getString("label.link"), this));
         add(link);
         Label label = new Label("label");
-        label.setDefaultModel(new StringResourceModel(config.getString("label.link"), this, null));
+        label.setDefaultModel(new StringResourceModel(config.getString("label.link"), this));
         link.add(label);
     }
 
@@ -139,7 +139,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         }
 
         public IModel<String> getTitle() {
-            return new StringResourceModel(config.getString("label.title"), this, null);
+            return new StringResourceModel(config.getString("label.title"), this);
         }
 
         @Override

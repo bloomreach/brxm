@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
-import org.apache.wicket.util.upload.FileItem;
+import org.apache.commons.fileupload.FileItem;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.jquery.upload.AbstractFileUploadWidget;
 import org.hippoecm.frontend.plugins.jquery.upload.FileUploadViolationException;
@@ -106,8 +106,6 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
             @Override
             protected void onNotify(final AjaxRequestTarget target, final int numberOfFiles, final boolean error) {
                 FileUploadWidget.this.onFinished(target, numberOfFiles, error);
-                // backward compatible call
-                FileUploadWidget.this.onFinished();
             }
         });
 

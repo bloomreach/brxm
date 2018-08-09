@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.FrontendNodeType;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.NodeNameModel;
-
-import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
 
 public class TranslatorUtils {
 
@@ -91,7 +86,10 @@ public class TranslatorUtils {
                                                          final Throwable t, final Object... parameters) {
         HashMap<String, String> details = new HashMap<>();
 
-        return new StringResourceModel(createKey(t, details), component, Model.of(details), t.getLocalizedMessage(), parameters);
+        return new StringResourceModel(createKey(t, details), component)
+                .setModel(Model.of(details))
+                .setDefaultValue(t.getLocalizedMessage())
+                .setParameters(parameters);
     }
 
     /**
@@ -119,7 +117,10 @@ public class TranslatorUtils {
         details.put("type", t.getClass().getName());
         details.put("clazz", clazz.getName());
 
-        return new StringResourceModel(key, Model.of(details), t.getLocalizedMessage(), parameters);
+        return new StringResourceModel(key)
+                .setModel(Model.of(details))
+                .setDefaultValue(t.getLocalizedMessage())
+                .setParameters(parameters);
     }
 
     /**

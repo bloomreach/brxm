@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,4 @@ public interface IServiceTracker<S extends IClusterable> extends IClusterable {
      * @param name the name that was used to register the service tracker
      */
     void removeService(S service, String name);
-
-    @Deprecated
-    void updateService(S service, String name);
 }

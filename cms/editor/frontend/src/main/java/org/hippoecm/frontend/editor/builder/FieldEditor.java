@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,8 +68,8 @@ public class FieldEditor extends Panel {
             @Override
             public void setObject(final String path) {
                 if (StringUtils.isBlank(path)) {
-                    final StringResourceModel errorModel = new StringResourceModel("error-path-cannot-be-blank",
-                            FieldEditor.this, null, null, getDescriptor().getName());
+                    final StringResourceModel errorModel = new StringResourceModel("error-path-cannot-be-blank", FieldEditor.this)
+                            .setParameters(getDescriptor().getName());
                     showError(errorModel.getString());
                 } else {
                     try {
@@ -252,7 +252,7 @@ public class FieldEditor extends Panel {
         add(component);
         if (edit) {
             component.setOutputMarkupId(true);
-            component.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            component.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {

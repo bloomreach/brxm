@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,13 +85,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
 
-    private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
-    public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
+    public FolderWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new Label("new"));
@@ -105,7 +104,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             final Map<String, Serializable> hints = workflow.hints();
 
             if (isActionAvailable("rename", hints)) {
-                add(new StdWorkflow("rename", new StringResourceModel("rename-title", this, null), context, getModel()) {
+                add(new StdWorkflow("rename", new StringResourceModel("rename-title", this), context, getModel()) {
                     private RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments();
 
                     @Override
@@ -153,7 +152,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             }
 
             if (isActionAvailable("reorder", hints)) {
-                add(new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this, null), context, getModel()) {
+                add(new StdWorkflow("reorder", new StringResourceModel("reorder-folder", this), context, getModel()) {
                     public List<String> order = new LinkedList<>();
 
                     @Override
@@ -176,7 +175,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             }
 
             if (isActionAvailable("delete", hints)) {
-                add(new StdWorkflow("delete", new StringResourceModel("delete-title", this, null), context, getModel()) {
+                add(new StdWorkflow("delete", new StringResourceModel("delete-title", this), context, getModel()) {
 
                     @Override
                     protected Component getIcon(final String id) {
@@ -205,8 +204,9 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                     deleteAllowed = false;
                                     break;
                                 }
-                                StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
-                                        FolderWorkflowPlugin.this, null, folderName);
+                                final String resourceKey = deleteAllowed ? "delete-message-extended" : "delete-message-denied";
+                                final StringResourceModel messageModel = new StringResourceModel(resourceKey, FolderWorkflowPlugin.this)
+                                        .setParameters(folderName);
                                 return new DeleteDialog(this, messageModel, deleteAllowed);
 
                             } catch (RepositoryException e) {
@@ -214,8 +214,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             }
                         }
 
-                        final StringResourceModel notificationModel = new StringResourceModel("delete-message-error",
-                                FolderWorkflowPlugin.this, null);
+                        final StringResourceModel notificationModel = new StringResourceModel("delete-message-error", FolderWorkflowPlugin.this);
                         return new DeleteDialog(this, notificationModel, false);
                     }
 
@@ -237,7 +236,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                         @Override
                         public IModel<String> getTitle() {
-                            return new StringResourceModel("delete-title", FolderWorkflowPlugin.this, null);
+                            return new StringResourceModel("delete-title", FolderWorkflowPlugin.this);
                         }
                     }
 
@@ -262,8 +261,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             if (isActionAvailable("add", hints) && hints.containsKey("prototypes")) {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
-                    IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
-                            new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category));
+                    final IModel<String> categoryLabel = new StringResourceModel("add-category", this)
+                            .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category));
 
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
@@ -395,7 +394,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         return new RenameDocumentDialog(
                 renameDocumentArguments,
-                new StringResourceModel("rename-title", this, null),
+                new StringResourceModel("rename-title", this),
                 invoker,
                 codecModel,
                 this.getModel()

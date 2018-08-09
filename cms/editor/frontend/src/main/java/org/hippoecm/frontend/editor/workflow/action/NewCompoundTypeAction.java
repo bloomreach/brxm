@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class NewCompoundTypeAction extends Action {
     public String layout;
 
     public NewCompoundTypeAction(NamespaceWorkflowPlugin plugin, ILayoutProvider layouts) {
-        super(plugin, "new-compound-type", new StringResourceModel("new-compound-type", plugin, null));
+        super(plugin, "new-compound-type", new StringResourceModel("new-compound-type", plugin));
         this.layoutProvider = layouts;
     }
 

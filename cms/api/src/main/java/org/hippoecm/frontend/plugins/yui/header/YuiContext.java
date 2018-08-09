@@ -152,7 +152,7 @@ public class YuiContext implements IYuiContext {
             }
 
             @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
+            public List<HeaderItem> getDependencies() {
                 List<HeaderItem> items = new ArrayList<HeaderItem>();
                 if (modules != null) {
                     items.addAll(modules);

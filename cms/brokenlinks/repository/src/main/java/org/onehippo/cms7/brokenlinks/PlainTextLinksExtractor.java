@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,19 +16,13 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * plain text links extractor uses String parsing to find href and src attributes in a String The String does not need
  * to be valid xml or to be parsable as Dom
  */
 public class PlainTextLinksExtractor {
-
-    static final Logger log = LoggerFactory.getLogger(PlainTextLinksExtractor.class);
 
     protected static final String LINK_TAG = "<a";
     protected static final String IMG_TAG = "<img";
@@ -39,12 +33,6 @@ public class PlainTextLinksExtractor {
     protected static final int SRC_ATTR_NAME_LENGTH = 4;
     protected static final String DOUBLE_QUOTE = "\"";
     protected static final String SINGLE_QUOTE = "\'";
-    protected static final String SCHEME_SUFFIX = "://";
-
-    /**
-     * @deprecated this class itself should not care how to deal with each url scheme.
-     */
-    protected static final List<String> PROTOCOLS = Arrays.asList("http", "https");
 
     public static final String SPACE = " ";
 
@@ -209,21 +197,5 @@ public class PlainTextLinksExtractor {
             return value2;
         }
         return 0;
-    }
-
-    /**
-     * @deprecated
-     * @param urls
-     * @param url
-     */
-    @Deprecated
-    public static void addUrlIfExternal(final List<String> urls, final String url) {
-        if (url.contains(SCHEME_SUFFIX)) {
-            if (PROTOCOLS.contains(url.substring(0, url.indexOf(SCHEME_SUFFIX)).toLowerCase())) {
-                if (!urls.contains(url)) {
-                    urls.add(url);
-                }
-            }
-        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public DocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
+        add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this), context, getModel()) {
             private RenameDocumentArguments renameDocumentArguments;
 
             @Override
@@ -94,7 +94,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this, null);
+                    return new StringResourceModel("unavailable-tip", this);
                 }
             }
 
@@ -113,7 +113,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 }
 
                 return new RenameDocumentDialog(renameDocumentArguments,
-                        new StringResourceModel("rename-title", DocumentWorkflowPlugin.this, null),
+                        new StringResourceModel("rename-title", DocumentWorkflowPlugin.this),
                         this,
                         CodecUtils.getNodeNameCodecModel(context, locale),
                         this.getModel());
@@ -155,7 +155,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this, null), context, getModel()) {
+        add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination = null;
             String name = null;
 
@@ -243,7 +243,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         });
 
-        add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this, null), context, getModel()) {
+        add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this), context, getModel()) {
             NodeModelWrapper<Node> destination;
 
             @Override
@@ -261,7 +261,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this, null);
+                    return new StringResourceModel("unavailable-tip", this);
                 }
             }
 
@@ -303,7 +303,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         add(deleteAction = new StdWorkflow("delete",
-                new StringResourceModel("delete-label", this, null), context, getModel()) {
+                new StringResourceModel("delete-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -320,16 +320,16 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this, null);
+                    return new StringResourceModel("unavailable-tip", this);
                 }
             }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                IModel<String> message = new StringResourceModel("delete-message",
-                        DocumentWorkflowPlugin.this, null, getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this,
-                        null, getDocumentName());
+                IModel<String> message = new StringResourceModel("delete-message", DocumentWorkflowPlugin.this)
+                        .setParameters(getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this)
+                        .setParameters(getDocumentName());
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
@@ -341,7 +341,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(requestDeleteAction = new StdWorkflow("requestDelete", new StringResourceModel("request-delete", this, null), context, getModel()) {
+        add(requestDeleteAction = new StdWorkflow("requestDelete", new StringResourceModel("request-delete", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -355,10 +355,10 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                IModel<String> message = new StringResourceModel("delete-message",
-                        DocumentWorkflowPlugin.this, null, getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this,
-                        null, getDocumentName());
+                IModel<String> message = new StringResourceModel("delete-message", DocumentWorkflowPlugin.this)
+                        .setParameters(getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this)
+                        .setParameters(getDocumentName());
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
@@ -370,7 +370,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -394,7 +394,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this, null), context, getModel()) {
+        add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {

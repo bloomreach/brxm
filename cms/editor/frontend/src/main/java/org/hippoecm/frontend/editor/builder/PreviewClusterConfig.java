@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.settings.ResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
@@ -94,7 +94,7 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
                 return RenderPluginEditorPlugin.class.getName();
             }
         } catch (ClassNotFoundException ex) {
-            IResourceSettings resourceSettings = Application.get().getResourceSettings();
+            ResourceSettings resourceSettings = Application.get().getResourceSettings();
             IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
             IResourceStream stream = locator.locate(null, pluginClass.replace('.', '/') + ".html");
             if (stream == null) {

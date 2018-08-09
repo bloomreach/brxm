@@ -1,4 +1,4 @@
-// Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -98,25 +98,27 @@
 
 }
 
-.hippo-controlpanel-table-default tr.navigation td em,
 .hippo-controlpanel-table-default tr.navigation td a {
+  background: $lightest-shade;
+  color: $light-gray;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 13px;
   padding: 8px;
   padding-left: 10px;
   padding-right: 10px;
-  background: $lightest-shade;
-  color: $darkest-shade;
-  line-height: 13px;
-  font-weight: bold
+  text-decoration: none;
 }
 
-.hippo-controlpanel-table-default tr.navigation td a:hover {
+.hippo-controlpanel-table-default tr.navigation td a[href]:hover {
   background: $dark-shade;
-  color: $white
+  color: $white;
+  text-decoration: underline;
 }
 
-.hippo-controlpanel-table-default tr.navigation td em {
-  color: $light-gray;
-  display: inline-block;
+.hippo-controlpanel-table-default tr.navigation td a[href] {
+  color: $darkest-shade;
+  text-decoration: underline;
 }
 
 .hippo-controlpanel-table-default tr td a {

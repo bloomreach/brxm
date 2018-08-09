@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,14 +32,6 @@ public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
         } else {
             this.nodeModel = (JcrNodeModel) nodeModel;
         }
-    }
-
-    /**
-     * @deprecated
-     * Use getChainedModel() instead.
-     */
-    public JcrNodeModel getNodeModel() {
-        return nodeModel;
     }
 
     // Implement IChainingModel

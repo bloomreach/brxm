@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public class AbstractDialogTest {
     public void dialogIsClosedAfterSuccessfulSubmit() {
         tester.runInAjax(home, () -> getDialogService().show(new Dialog()));
 
-        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "onclick");
+        tester.executeAjaxEvent(home.get(WICKET_PATH_OK_BUTTON), "click");
         final MarkupContainer content = (MarkupContainer) home.get(WICKET_PATH_DIALOG_CONTENT);
         assertEquals(0, content.size());
     }
@@ -94,7 +94,7 @@ public class AbstractDialogTest {
         tester.runInAjax(home, () -> getDialogService().show(new FailureDialog()));
 
         final Component button = home.get(WICKET_PATH_OK_BUTTON);
-        tester.executeAjaxEvent(button, "onclick");
+        tester.executeAjaxEvent(button, "click");
         assertTrue("OK Button was hidden after failed submit", button.isVisibleInHierarchy());
     }
 

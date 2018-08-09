@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.AjaxRequestTarget.IListener;
+import org.apache.wicket.ajax.AjaxRequestTarget.AbstractListener;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class UnitBehavior extends Behavior {
         // re-render complete wireframe during the render phase
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.addListener(new IListener() {
+            target.addListener(new AbstractListener() {
                 public void onBeforeRespond(Map map, AjaxRequestTarget target) {
                     if (target.getPage() != component.findParent(Page.class)) {
                         return;

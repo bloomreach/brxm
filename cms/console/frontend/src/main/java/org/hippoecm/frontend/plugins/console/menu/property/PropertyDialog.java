@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
@@ -172,42 +173,41 @@ public class PropertyDialog extends AbstractDialog<Node> {
         add(checkBox);
 
         // dropdown for property type
-        final DropDownChoice<String> ddChoice = new DropDownChoice<String>("types") {
-            @Override
-            public List<? extends String> getChoices() {
-                if (PropertyDialog.this.name != null) {
-                    List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
-                    if (propdefs != null) {
-                        List<String> result = new ArrayList<>(propdefs.size());
-                        for (PropertyDefinition pd : propdefs) {
-                            result.add(PropertyType.nameFromValue(pd.getRequiredType()));
-                        }
-                        return result;
+        final IModel<List<String>> typeChoicesModel = ReadOnlyModel.of(() -> {
+            if (PropertyDialog.this.name != null) {
+                List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
+                if (propdefs != null) {
+                    List<String> result = new ArrayList<>(propdefs.size());
+                    for (PropertyDefinition pd : propdefs) {
+                        result.add(PropertyType.nameFromValue(pd.getRequiredType()));
                     }
+                    return result;
                 }
-                return ALL_TYPES;
-
             }
-        };
-        ddChoice.setModel(new Model<String>() {
-            @Override
-            public void setObject(String object) {
-                type = object;
-            }
+            return ALL_TYPES;
+        });
 
+        final IModel<String> typeChoiceModel = new Model<String>() {
             @Override
             public String getObject() {
-                List<? extends String> choices = ddChoice.getChoices();
+                List<? extends String> choices = typeChoicesModel.getObject();
                 if (choices.size() == 1) {
                     type = choices.iterator().next();
                 }
                 return type;
             }
-        });
+
+            @Override
+            public void setObject(final String type) {
+                PropertyDialog.this.type = type;
+            }
+        };
+
+        final DropDownChoice<String> ddChoice = new DropDownChoice<>("types", typeChoiceModel, typeChoicesModel);
 
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
-        ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        ddChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {}
         });
@@ -288,7 +288,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
         valuesContainer.add(addLink);
 
-        checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        checkBox.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.add(valuesContainer);

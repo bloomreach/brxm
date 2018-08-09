@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,11 +26,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
 
     private static final Logger log = LoggerFactory.getLogger(TextAreaWidget.class);
 
-    private static final long serialVersionUID = 1L;
     private String rows;
-    @Deprecated
-    private String cols;
-
     private TextArea<String> textArea;
 
     public TextAreaWidget(String id, IModel<String> model) {
@@ -48,24 +44,12 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
         return rows;
     }
 
-    @Deprecated
-    public void setCols(String cols) {
-        this.cols = cols;
-    }
-
-    @Deprecated
-    public String getCols() {
-        return cols;
-    }
-
     public void addBehaviourOnFormComponent(Behavior behavior){
         textArea.add(behavior);
     }
 
     protected TextArea<String> createTextArea(final IModel<String> model) {
         return new TextArea<String>("widget", model) {
-            private static final long serialVersionUID = 1L;
-
             {
                 setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
             }

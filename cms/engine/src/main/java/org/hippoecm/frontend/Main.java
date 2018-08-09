@@ -37,6 +37,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
+import org.apache.wicket.ISessionListener;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -68,18 +69,15 @@ import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
-import org.apache.wicket.request.mapper.mount.IMountedRequestMapper;
-import org.apache.wicket.request.mapper.mount.Mount;
-import org.apache.wicket.request.mapper.mount.MountMapper;
-import org.apache.wicket.request.mapper.mount.MountParameters;
+import org.apache.wicket.request.mapper.AbstractMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
-import org.apache.wicket.settings.IExceptionSettings;
-import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.settings.ExceptionSettings;
+import org.apache.wicket.settings.ResourceSettings;
 import org.apache.wicket.util.IContextProvider;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
@@ -93,9 +91,9 @@ import org.hippoecm.frontend.http.CsrfPreventionRequestCycleListener;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
 import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.observation.JcrObservationManager;
-import org.hippoecm.frontend.observation.CmsEventDispatcherServiceImpl;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -168,6 +166,10 @@ public class Main extends PluginApplication {
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
     private static final Class<?> CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
+    
+    private static final String BINARIES_MOUNT = "binaries";
+    private static final String AUTH_MOUNT = "auth";
+
     static {
         try {
             CACHING_RESOURCE_STREAM_LOCATOR_CLASS = Class.forName("CachingResourceStreamLocatorBaseKey");
@@ -249,7 +251,7 @@ public class Main extends PluginApplication {
             }
         });
 
-        final IResourceSettings resourceSettings = getResourceSettings();
+        final ResourceSettings resourceSettings = getResourceSettings();
 
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = resourceSettings.getStringResourceLoaders();
@@ -277,44 +279,48 @@ public class Main extends PluginApplication {
             resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
         }
 
-        mount(new MountMapper("binaries", new IMountedRequestMapper() {
+        mount(new AbstractMapper() {
 
             @Override
-            public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
-                String path = Strings.join("/", request.getUrl().getSegments());
-                try {
-                    javax.jcr.Session subSession = UserSession.get().getJcrSession();
-                    Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
-                            subSession.getRootNode(), path);
-                    // YUCK: no exception!
-                    if (node == null) {
-                        log.info("no binary found at " + path);
-                    } else {
-                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            node = (Node) JcrHelper.getPrimaryItem(node);
+            public IRequestHandler mapRequest(final Request request) {
+                final Url url = request.getUrl();
+                if (urlStartsWith(url, BINARIES_MOUNT)) {
+                    final String fullPath = Strings.join("/", url.getSegments());
+                    final String path = StringUtils.substring(fullPath, BINARIES_MOUNT.length());
+                    try {
+                        javax.jcr.Session subSession = UserSession.get().getJcrSession();
+                        Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
+                                subSession.getRootNode(), path);
+                        // YUCK: no exception!
+                        if (node == null) {
+                            log.info("no binary found at " + path);
+                        } else {
+                            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                node = (Node) JcrHelper.getPrimaryItem(node);
+                            }
+                            return new JcrResourceRequestHandler(node);
                         }
-                        return new JcrResourceRequestHandler(node);
+                    } catch (PathNotFoundException e) {
+                        log.info("binary not found " + e.getMessage());
+                    } catch (javax.jcr.LoginException ex) {
+                        log.warn(ex.getMessage());
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
                     }
-                } catch (PathNotFoundException e) {
-                    log.info("binary not found " + e.getMessage());
-                } catch (javax.jcr.LoginException ex) {
-                    log.warn(ex.getMessage());
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
                 return null;
             }
 
             @Override
             public int getCompatibilityScore(final Request request) {
-                return 1;
+                return 0;
             }
 
             @Override
-            public Mount mapHandler(final IRequestHandler requestHandler) {
+            public Url mapHandler(final IRequestHandler requestHandler) {
                 return null;
             }
-        }));
+        });
 
         String applicationName = getPluginApplicationName();
 
@@ -338,66 +344,68 @@ public class Main extends PluginApplication {
                 cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
                 HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
             }
-            mount(new MountMapper("auth", new IMountedRequestMapper() {
+            mount(new AbstractMapper() {
 
                 @Override
-                public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
+                public IRequestHandler mapRequest(final Request request) {
+                    if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
+                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
-                    IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
+                        IRequestParameters requestParameters = request.getRequestParameters();
+                        final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
+                        final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
+                        final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
+                                ? destinationPathParams.get(0).toString() : null;
 
-                    IRequestParameters requestParameters = request.getRequestParameters();
-                    final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
-                    final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
-                    final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
-                            ? destinationPathParams.get(0).toString() : null;
+                        PluginUserSession userSession = (PluginUserSession) Session.get();
+                        final UserCredentials userCredentials = userSession.getUserCredentials();
 
-                    PluginUserSession userSession = (PluginUserSession) Session.get();
-                    final UserCredentials userCredentials = userSession.getUserCredentials();
+                        HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
+                        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-                    HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
-                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+                        if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
 
-                    if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
+                            requestTarget = new IRequestHandler() {
 
-                        requestTarget = new IRequestHandler() {
-
-                            @Override
-                            public void respond(IRequestCycle requestCycle) {
-                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
-                                WebResponse response = (WebResponse) RequestCycle.get().getResponse();
-                                String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
-                                if (!cmsContextService.getId().equals(cmsCSID)) {
-                                    // redirect to destinationURL and include marker that it is a retry. This way
-                                    // the destination can choose to not redirect for SSO handshake again if it still does not
-                                    // have a key
-                                    if (destinationUrl.contains("?")) {
-                                        response.sendRedirect(destinationUrl + "&retry");
-                                    } else {
-                                        response.sendRedirect(destinationUrl + "?retry");
+                                @Override
+                                public void respond(IRequestCycle requestCycle) {
+                                    String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
+                                    WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+                                    String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
+                                    if (!cmsContextService.getId().equals(cmsCSID)) {
+                                        // redirect to destinationURL and include marker that it is a retry. This way
+                                        // the destination can choose to not redirect for SSO handshake again if it still does not
+                                        // have a key
+                                        if (destinationUrl.contains("?")) {
+                                            response.sendRedirect(destinationUrl + "&retry");
+                                        } else {
+                                            response.sendRedirect(destinationUrl + "?retry");
+                                        }
+                                        return;
                                     }
-                                    return;
-                                }
-                                String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
-                                if (cmsSessionContextId == null) {
-                                    CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
-                                    CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
-                                    cmsSessionContextId = newCmsSessionContext.getId();
+                                    String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
+                                    if (cmsSessionContextId == null) {
+                                        CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
+                                        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
+                                        cmsSessionContextId = newCmsSessionContext.getId();
 
+                                    }
+                                    if (destinationUrl.contains("?")) {
+                                        response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                    } else {
+                                        response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                    }
                                 }
-                                if (destinationUrl.contains("?")) {
-                                    response.sendRedirect(destinationUrl + "&cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
-                                } else {
-                                    response.sendRedirect(destinationUrl + "?cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
-                                }
-                            }
 
-                            @Override
-                            public void detach(IRequestCycle requestCycle) {
-                                //Nothing to detach.
-                            }
-                        };
-                    }
-                    return requestTarget;
+                                @Override
+                                public void detach(IRequestCycle requestCycle) {
+                                    //Nothing to detach.
+                                }
+                            };
+                        }
+                        return requestTarget;
+                    } 
+                    return null;
                 }
 
                 @Override
@@ -406,10 +414,10 @@ public class Main extends PluginApplication {
                 }
 
                 @Override
-                public Mount mapHandler(final IRequestHandler requestHandler) {
+                public Url mapHandler(final IRequestHandler requestHandler) {
                     return null;
                 }
-            }));
+            });
         }
 
         // caching resource stream locator implementation that allows the class argument to be null.
@@ -467,7 +475,7 @@ public class Main extends PluginApplication {
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
             // don't show exception page
-            getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+            getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
 
             final long timeout = NumberUtils.toLong(getConfigurationParameter(DEPLOYMENT_REQUEST_TIMEOUT_PARAM, null));
 
@@ -536,7 +544,16 @@ public class Main extends PluginApplication {
     }
 
     protected void registerSessionListeners() {
-        getSessionListeners().add(session -> ((PluginUserSession) session).login());
+        getSessionListeners().add(new ISessionListener() {
+            @Override
+            public void onCreated(final Session session) {
+                ((PluginUserSession) session).login();
+            }
+
+            @Override
+            public void onUnbound(final String sessionId) {
+            }
+        });
     }
 
     @Override

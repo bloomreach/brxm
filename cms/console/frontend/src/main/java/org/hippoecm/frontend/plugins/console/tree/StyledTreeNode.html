@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <div class="hippo-dialog-body">
-      <wicket:container wicket:id="name-url">[ name-url component ]</wicket:container>
-    </div>
-  </wicket:extend>
-</html>
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+  <a wicket:id="link">
+    <span wicket:id="icon">[icon]</span>
+    <span class="tree-label" wicket:id="label">[label]</span>
+  </a>
+</wicket:panel>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
         final IModel<Group> groupModel = Model.of(group);
-        add(new Label("view-group-panel-title", new StringResourceModel("group-view-title", this, groupModel)));
+        add(new Label("view-group-panel-title", new StringResourceModel("group-view-title", this).setModel(groupModel)));
 
         // common group properties
         add(new Label("groupname", group.getGroupname())); // groups cannot be renamed, so no model needed
@@ -111,7 +111,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         });
 
         final Label groupMembersLabel = new Label("group-members-label",
-                new StringResourceModel("group-members-label", this, groupModel));
+                new StringResourceModel("group-members-label", this).setModel(groupModel));
         add(groupMembersLabel);
 
         groupMembersListView = new GroupMembersListView("groupmembers", context);
@@ -120,7 +120,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
     @Override
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("group-view-title", component, Model.of(group));
+        return new StringResourceModel("group-view-title", component).setModel(Model.of(group));
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,25 +54,25 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         // add form with markup id setter so it can be updated via ajax
         final Form form = new HippoForm("form");
         form.setOutputMarkupId(true);
-        add(form);
+        queue(form);
 
         final PropertyModel<String> passwordModel = new PropertyModel<>(this, "password");
         final PasswordTextField passwordField = new PasswordTextField("password", passwordModel);
         passwordField.setResetPassword(false);
         passwordField.add(new PasswordStrengthValidator(form, context, model));
-        form.add(passwordField);
+        queue(passwordField);
 
         final PropertyModel<String> checkPasswordModel = new PropertyModel<>(this, "checkPassword");
         final PasswordTextField passwordCheckField = new PasswordTextField("password-check", checkPasswordModel);
         passwordCheckField.setModel(passwordField.getModel());
         passwordCheckField.setRequired(false);
         passwordCheckField.setResetPassword(false);
-        form.add(passwordCheckField);
+        queue(passwordCheckField);
 
         form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("set-button", form) {
+        queue(new AjaxButton("set-button", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -96,7 +96,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         });
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("cancel-button") {
+        queue(new AjaxButton("cancel-button") {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -107,7 +107,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
 
     @Override
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("user-set-password-title", component, model);
+        return new StringResourceModel("user-set-password-title", component).setModel(model);
     }
 
     public String getPassword() {

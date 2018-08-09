@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,10 +69,15 @@ public class LanguageField extends WebMarkupContainer {
                         return object;
                     }
 
+                    @Override
+                    public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                        List<? extends String> choices = choicesModel.getObject();
+                        return choices.contains(id) ? id : null;
+                    }
                 }));
         languageChoice.setNullValid(false);
         languageChoice.setRequired(true);
-        languageChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        languageChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {

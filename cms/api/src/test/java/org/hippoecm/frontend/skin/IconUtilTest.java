@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.settings.ResourceSettings;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -37,7 +37,7 @@ public class IconUtilTest extends WicketTester {
 
     @Before
     public void setUp() {
-        final IResourceSettings resourceSettings = Application.get().getResourceSettings();
+        final ResourceSettings resourceSettings = Application.get().getResourceSettings();
         final IPackageResourceGuard packageResourceGuard = resourceSettings.getPackageResourceGuard();
         if (packageResourceGuard instanceof SecurePackageResourceGuard) {
             SecurePackageResourceGuard guard = (SecurePackageResourceGuard) packageResourceGuard;

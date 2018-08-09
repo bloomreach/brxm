@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,9 @@ import javax.jcr.Property;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
@@ -118,6 +115,18 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
     }
 
+    @Override
+    public void onRemoveItem(final JcrPropertyValueModel childModel, final AjaxRequestTarget target) {
+        super.onRemoveItem(childModel, target);
+        hasChangedPropValueOrder = true;
+    }
+
+    @Override
+    public void onMoveItemUp(final JcrPropertyValueModel model, final AjaxRequestTarget target) {
+        super.onMoveItemUp(model, target);
+        hasChangedPropValueOrder = true;
+    }
+
     protected void subscribe(final IFieldDescriptor field) {
         if (!field.getPath().equals("*")) {
             propertyModel = newPropertyModel((JcrNodeModel) getDefaultModel());
@@ -192,99 +201,17 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
     @Override
     protected void populateViewItem(Item<IRenderService> item, final JcrPropertyValueModel model) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateViewItem(Item, JcrPropertyValueModel)}
-     */
-    @Deprecated
-    @Override
-    protected void populateViewItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
+        item.add(new FieldContainer("fieldContainer", item));
     }
 
     @Override
     protected void populateEditItem(Item item, final JcrPropertyValueModel model) {
-        Fragment fragment = new TransparentFragment("fragment", "edit-fragment", this);
-
-        WebMarkupContainer controls = new WebMarkupContainer("controls");
-        controls.setVisible(canRemoveItem() || canReorderItems());
-        fragment.add(controls);
-
-        MarkupContainer remove = new AjaxLink("remove") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                onRemoveItem(model, target);
-                hasChangedPropValueOrder = true;
-            }
-        };
-        if (!canRemoveItem()) {
-            remove.setVisible(false);
-        }
-
-        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
-        remove.add(removeIcon);
-
-        controls.add(remove);
-
-        MarkupContainer upLink = new AjaxLink("up") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                onMoveItemUp(model, target);
-                hasChangedPropValueOrder = true;
-            }
-        };
-        boolean isFirst = (model.getIndex() == 0);
-        if (!canReorderItems()) {
-            upLink.setVisible(false);
-        }
-        upLink.setEnabled(!isFirst);
-
-        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
-        upLink.add(upIcon);
-
-        controls.add(upLink);
-
-        MarkupContainer downLink = new AjaxLink("down") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
-                        .getJcrPropertymodel());
-                onMoveItemUp(nextModel, target);
-                hasChangedPropValueOrder = true;
-            }
-        };
-        boolean isLast = (model.getIndex() == provider.size() - 1);
-        if (!canReorderItems()) {
-            downLink.setVisible(false);
-        }
-        downLink.setEnabled(!isLast);
-
-        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
-        downLink.add(downIcon);
-
-        controls.add(downLink);
-
-        item.add(fragment);
+        item.add(new EditablePropertyFieldContainer("fieldContainer", item, model, this));
     }
 
     @Override
     protected void populateCompareItem(Item<IRenderService> item, final JcrPropertyValueModel newModel, final JcrPropertyValueModel oldModel) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link #populateCompareItem(Item, JcrPropertyValueModel, JcrPropertyValueModel)}
-     */
-    @Deprecated
-    @Override
-    protected void populateCompareItem(Item<IRenderService> item) {
-        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
-        item.add(fragment);
+        populateViewItem(item, newModel);
     }
 
     protected Component createAddLink() {

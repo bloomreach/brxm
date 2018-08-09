@@ -61,7 +61,10 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
         pending = new LinkedList<>();
 
-        add(new EventStoppingBehavior("onclick"));
+        add(new EventStoppingBehavior("click"));
+
+        // Simply refresh if the user wants to
+        showUnloadConfirmation(false);
     }
 
     private void closeDialog(Dialog dialog) {
@@ -163,8 +166,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        super.renderHead(container);
+    public void internalRenderHead(final HtmlHeaderContainer container) {
+        super.internalRenderHead(container);
 
         if (!container.getWebRequest().isAjax() && isShown()) {
             container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(getWindowOpenJavaScript()));

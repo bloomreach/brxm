@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -320,7 +320,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             prototypeContainer = new WebMarkupContainer("prototype");
             prototypeContainer.add(prototypeChoice = new DropDownChoice<>("select", new PropertyModel<>(this, "prototype"),
                     emptyList));
-            prototypeChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            prototypeChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -345,8 +345,14 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 public String getIdValue(String object, int index) {
                     return object;
                 }
+
+                @Override
+                public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                    final List<? extends String> choices = choicesModel.getObject();
+                    return choices.contains(id) ? id : null;
+                }
             }));
-            templateChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            templateChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -361,7 +367,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             templateChoice.setNullValid(false);
             templateChoice.setRequired(true);
             templateContainer.setOutputMarkupPlaceholderTag(true);
-            templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this, null)));
+            templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this)));
             add(templateContainer);
 
             languageContainer = new LanguageField("language", new PropertyModel<>(this, "language"), getLocaleProvider()) {
@@ -458,7 +464,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
 
         public IModel<String> getTitle() {
-            return new StringResourceModel("new-document-label", this, null);
+            return new StringResourceModel("new-document-label", this);
         }
 
         @Override

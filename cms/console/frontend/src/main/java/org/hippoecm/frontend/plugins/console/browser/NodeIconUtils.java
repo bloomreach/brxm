@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,15 +41,44 @@ public final class NodeIconUtils {
      */
     public static Component createJcrNodeIcon(final String id, final TreeNode node) {
         final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
-        if (nodeModel ==  null || nodeModel.getObject() == null) {
+        if (nodeModel ==  null) {
+            return createJcrNodeIcon(id, (Node) null);
+        }
+        return createJcrNodeIcon(id, nodeModel.getObject());
+    }
+
+    /**
+     * Create a component representing the icon for a node tree. What icon to show and
+     * whether or not it has a tooltip depends on the underlying JCR node.
+     *
+     * @param id    wicket ID of the component
+     * @param model generic model for which a tree icon is generated
+     * @return      a node-specific icon, or a default icon
+     */
+    public static Component createJcrNodeIcon(final String id, final IModel<Node> model) {
+        if (model != null) {
+            return createJcrNodeIcon(id, model.getObject());                
+        }
+        return createJcrNodeIcon(id, (Node) null);
+    }
+
+    /**
+     * Create a component representing the icon for a node tree. What icon to show and
+     * whether or not it has a tooltip depends on the underlying JCR node.
+     *
+     * @param id   wicket ID of the component
+     * @param node jcr node for which to create the icon
+     * @return     a node-specific icon, or a default icon
+     */
+    public static Component createJcrNodeIcon(final String id, final Node node) {
+        if (node ==  null) {
             return createUnknownNodeIcon(id);
         }
 
-        final Node jcrNode = nodeModel.getObject();
         final Label icon = new Label(id, StringUtils.EMPTY);
-        icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(jcrNode)));
+        icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(node)));
 
-        final String tooltip = determineNodeTooltip(jcrNode);
+        final String tooltip = determineNodeTooltip(node);
         if (StringUtils.isNotBlank(tooltip)) {
             icon.add(TitleAttribute.append(tooltip));
         }

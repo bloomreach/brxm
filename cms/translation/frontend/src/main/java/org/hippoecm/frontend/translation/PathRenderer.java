@@ -58,7 +58,7 @@ public final class PathRenderer extends ExtObservable {
         properties.put("locales", jsonLocales);
 
         JSONObject resources = new JSONObject();
-        resources.put("language", new StringResourceModel("language", component, null).getString());
+        resources.put("language", new StringResourceModel("language", component).getString());
         properties.put("resources", resources);
 
         return properties;

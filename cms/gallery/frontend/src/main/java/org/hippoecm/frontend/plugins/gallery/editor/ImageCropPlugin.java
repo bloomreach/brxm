@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
             areExceptionsThrown = true;
         }
 
-        Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
+        Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this));
         cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
 
@@ -106,7 +106,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         if (mode == IEditor.Mode.EDIT) {
             if (!isUpdateDisabled) {
 
-                cropButton.add(new AjaxEventBehavior("onclick") {
+                cropButton.add(new AjaxEventBehavior("click") {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
@@ -125,7 +125,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                                     isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled ? "crop-button-tip-inactive-height" :
                                             "crop-button-tip";
 
-            cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this, null)));
+            cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this)));
         }
 
         add(cropButton);

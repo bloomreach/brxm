@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -43,9 +44,6 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
 
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
 
-    // deprecated
-    @Deprecated
-    public static final String TITLE = "perspective.title";
     public static final String TITLE_KEY = "perspective-title";
 
     public static final String CLUSTER_NAME = "cluster.name";
@@ -54,8 +52,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public static final String IMAGE_EXTENSION = "svg";
     public static final String FALLBACK_IMAGE_EXTENSION = "png";
 
-    private static final String EVENT_PERSPECTIVE_ACTIVATED = "perspective-activated";
-    private static final String EVENT_PARAM_PERSPECTIVE_ID = "perspectiveId";
     private static final String EVENT_PARAM_CMS = "CMS";
 
     private static final ArrayList<String> cmsEventNamesList;
@@ -91,15 +87,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         super(context, config);
 
         this.eventId = eventId;
-
-        String titleKey = config.getString(TITLE);
-        if (titleKey != null) {
-            log.warn("Property {} on perspective configuration of perspective {} is deprecated, just use key 'perspective-title' " +
-                    "in the perspective's java resource bundle", TITLE, getClass());
-        } else {
-            titleKey = TITLE_KEY;
-        }
-        this.title = new StringResourceModel(titleKey, this, null);
+        this.title = new StringResourceModel(TITLE_KEY, this);
 
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
@@ -260,8 +248,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         }
 
         @Override
-        public Iterable<? extends HeaderItem> getDependencies() {
-            return Collections.singleton(UsageStatisticsHeaderItem.get());
+        public List<HeaderItem> getDependencies() {
+            return Collections.singletonList(UsageStatisticsHeaderItem.get());
         }
 
         @Override

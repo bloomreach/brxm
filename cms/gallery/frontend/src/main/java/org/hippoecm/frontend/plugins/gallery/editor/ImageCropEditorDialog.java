@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -167,7 +167,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             error(e);
         }
 
-        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null));
+        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this));
         thumbnailSize.setOutputMarkupId(true);
         add(thumbnailSize);
         //
@@ -209,8 +209,8 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         add(imagePreviewContainer);
 
         add(new Label("preview-description", cropSettings.isPreviewVisible() ?
-                new StringResourceModel("preview-description-enabled", this, null) :
-                new StringResourceModel("preview-description-disabled", this, null))
+                new StringResourceModel("preview-description-enabled", this) :
+                new StringResourceModel("preview-description-disabled", this))
         );
 
         compressionQuality = 1.0f;
@@ -220,14 +220,6 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             log.info("Cannot retrieve compression quality.", e);
         }
 
-    }
-
-    /**
-     * @deprecated use {@link ImageCropEditorDialog(IModel, GalleryProcessor, IPluginConfig, IPluginContext)} instead.
-     */
-    @Deprecated
-    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
-        this(jcrImageNodeModel, galleryProcessor, null, null);
     }
 
     /**

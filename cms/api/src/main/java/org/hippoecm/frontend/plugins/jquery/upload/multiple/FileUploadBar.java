@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,8 @@ public class FileUploadBar extends Panel {
 
         add(new GalleryFileUploadBehavior(settings));
 
-        add(new Label("select-files-message", new StringResourceModel("select.files.caption",
-                this, Model.of(settings))));
+        final StringResourceModel message = new StringResourceModel("select.files.caption", this)
+                .setModel(Model.of(settings));
+        add(new Label("select-files-message", message));
     }
 }

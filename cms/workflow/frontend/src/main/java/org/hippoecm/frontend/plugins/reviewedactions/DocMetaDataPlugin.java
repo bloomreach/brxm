@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class DocMetaDataPlugin extends AbstractDocumentWorkflowPlugin {
     public DocMetaDataPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("docMetaData", new StringResourceModel("docmetadata-label", this, null), context, getModel()) {
+        add(new StdWorkflow("docMetaData", new StringResourceModel("docmetadata-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {

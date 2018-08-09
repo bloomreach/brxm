@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,35 +36,36 @@ public class WhitelistedClassesResourceGuardTest {
 
     @Test
     public void denyPublicNonWhitelistedResource() {
-        assertFalse(guard.accept(getClass(), "/test/file.js"));
+        assertFalse(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
     @Test
     public void nullClassNamePrefixesAreIgnored() {
         guard.addClassNamePrefixes(null);
-        assertFalse(guard.accept(getClass(), "/test/file.js"));
+        assertFalse(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
     @Test
     public void allowPublicWhitelistedResource() {
         Class whitelisted = getClass();
         guard.addClassNamePrefixes(whitelisted.getPackage().getName());
-        assertTrue(guard.accept(getClass(), "/test/file.js"));
+        assertTrue(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
     @Test
     public void allowPrivateResource() {
         login();
-        assertTrue(guard.accept(getClass(), "/test/file.js"));
+        assertTrue(guard.accept("org/hippoecm/frontend/test/file.js"));
     }
 
     @Test
-    public void scopeCanBeAnonymousClass() {
-        Class<?> anonymousClass = new Cloneable() {}.getClass();
-        guard.addClassNamePrefixes(anonymousClass.getPackage().getName());
-        assertTrue(guard.accept(anonymousClass, "/test/file.js"));
+    public void allowWhitelistedResourceInJar() {
+        String jarPath = "jar:file:/my/file/system/folder/org/apache/wicket/wicket-core/7.10.0/wicket-core-7.10.0.jar!/org/hippoecm/frontend/resource/jquery/jquery-1.12.4.min.js";
+        Class whitelisted = getClass();
+        guard.addClassNamePrefixes(whitelisted.getPackage().getName());
+        assertTrue(guard.accept(jarPath));
     }
-
+    
     private void login() {
         final MockHttpSession httpSession = tester.getHttpSession();
         httpSession.setTemporary(false);

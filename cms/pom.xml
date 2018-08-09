@@ -57,7 +57,6 @@
     <module>console</module>
     <module>config</module>
 
-    <module>jquery</module>
     <module>workflowmenu</module>
     <module>gotolink</module>
     <module>reporting</module>
@@ -113,8 +112,9 @@
 
     <jetty.version>6.1.22</jetty.version>
 
-    <wicket.version>6.26.0</wicket.version>
-    <wicket-extjs.version>0.25.3</wicket-extjs.version>
+    <wicket.version>7.10.0</wicket.version>
+    <wicket-extjs.version>0.26.0-SNAPSHOT</wicket-extjs.version>
+    <wicket15-tree.version>7.1.0</wicket15-tree.version>
     <httpclient.version>4.5.5</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
@@ -297,6 +297,11 @@
         <groupId>org.wicketstuff</groupId>
         <artifactId>wicket-extjs</artifactId>
         <version>${wicket-extjs.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.wicketstuff</groupId>
+        <artifactId>wicket15-tree</artifactId>
+        <version>${wicket15-tree.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.yui</groupId>

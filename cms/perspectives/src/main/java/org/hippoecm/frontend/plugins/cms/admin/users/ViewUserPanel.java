@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         setOutputMarkupId(true);
         model = userModel;
 
-        add(new Label("view-user-panel-title", new StringResourceModel("user-view-title", this, userModel)));
+        add(new Label("view-user-panel-title", new StringResourceModel("user-view-title", this).setModel(userModel)));
         // common user properties
         add(new Label("username", new PropertyModel(userModel, "username")));
         add(new Label("firstName", new PropertyModel(userModel, "firstName")));
@@ -156,7 +156,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
     @Override
     public IModel<String> getTitle(final Component component) {
-        return new StringResourceModel("user-view-title", component, model);
+        return new StringResourceModel("user-view-title", component).setModel(model);
     }
 
 }

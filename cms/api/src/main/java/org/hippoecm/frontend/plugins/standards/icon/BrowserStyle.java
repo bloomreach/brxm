@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,18 +63,4 @@ public final class BrowserStyle {
     private static String getPackageResourcePath(final String name, final IconSize size, final String extension) {
         return "res/" + name + "-" + size.getSize() + extension;
     }
-
-    /**
-     * @param name name part of the icon file
-     * @param size size of the icon
-     * @return reference to the icon
-     * @deprecated use an {@link org.hippoecm.frontend.skin.Icon} value instead.
-     */
-    @Deprecated
-    public static ResourceReference getIcon(String name, IconSize size) {
-        final Session session = Session.get();
-        final String resourcePath = getPackageResourcePath(name, size, ".png");
-        return createResourceReference(resourcePath, session);
-    }
-
 }

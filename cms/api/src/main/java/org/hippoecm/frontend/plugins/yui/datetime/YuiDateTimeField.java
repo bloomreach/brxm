@@ -125,7 +125,7 @@ public class YuiDateTimeField extends DateTimeField {
 
         //Add change behavior to super fields
         for (final String name : new String[]{"date", "hours", "minutes", "amOrPmChoice"}) {
-            get(name).add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            get(name).add(new AjaxFormComponentUpdatingBehavior("change") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {
@@ -188,14 +188,6 @@ public class YuiDateTimeField extends DateTimeField {
     @Override
     protected boolean use12HourFormat() {
         return false;
-    }
-
-    /**
-     * @deprecated As of 5.2.0 replaced by {@link #setCurrentDateLinkVisible}
-     */
-    @Deprecated
-    public void setTodayLinkVisible(final boolean todayLinkVisible) {
-        setCurrentDateLinkVisible(todayLinkVisible);
     }
 
     public void setCurrentDateLinkVisible(final boolean currentDateLinkVisible) {

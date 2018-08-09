@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,9 +49,10 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
             protected String load() {
                 IModel<String> message = Model.of("");
                 if (provider.size() > 1) {
-                    message = new StringResourceModel("message", ModifiedDocumentsView.this, Model.of(provider));
+                    message = new StringResourceModel("message", ModifiedDocumentsView.this)
+                            .setModel(Model.of(provider));
                 } else if (provider.size() == 1) {
-                    message = new StringResourceModel("message-single", ModifiedDocumentsView.this, null);
+                    message = new StringResourceModel("message-single", ModifiedDocumentsView.this);
                 }
                 return message.getObject();
             }

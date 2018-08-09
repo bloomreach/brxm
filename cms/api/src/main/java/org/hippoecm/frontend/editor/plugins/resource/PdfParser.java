@@ -57,16 +57,6 @@ public class PdfParser {
      * @param inputStream the pdf <code>inputStream</code> that gets parsed, *and* that gets closed when finished
      * @return the first 100*1000 chars from the pdf as String. Also see {@link org.apache.tika.Tika#setMaxStringLength(int)}
      * @throws IllegalStateException in case of a {@link org.apache.tika.exception.TikaException} or {@link java.io.IOException}
-     * @deprecated use parse instead, tika and its parsers are thread-safe
-     */
-    public synchronized static String synchronizedParse(final InputStream inputStream) {
-        return instance.doParse(inputStream);
-    }
-
-    /**
-     * @param inputStream the pdf <code>inputStream</code> that gets parsed, *and* that gets closed when finished
-     * @return the first 100*1000 chars from the pdf as String. Also see {@link org.apache.tika.Tika#setMaxStringLength(int)}
-     * @throws IllegalStateException in case of a {@link org.apache.tika.exception.TikaException} or {@link java.io.IOException}
      */
     public static String parse(final InputStream inputStream) {
         return instance.doParse(inputStream);

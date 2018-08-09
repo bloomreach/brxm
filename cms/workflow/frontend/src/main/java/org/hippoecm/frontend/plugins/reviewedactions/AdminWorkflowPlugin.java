@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class AdminWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         super(context, config);
 
         final StdWorkflow unlockAction;
-        add(unlockAction = new StdWorkflow<DocumentWorkflow>("unlock", new StringResourceModel("unlock", this, null),
+        add(unlockAction = new StdWorkflow<DocumentWorkflow>("unlock", new StringResourceModel("unlock", this),
                 null, context, getModel()) {
 
             @Override

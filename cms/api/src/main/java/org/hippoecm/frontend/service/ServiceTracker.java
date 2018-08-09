@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,16 +50,6 @@ public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S
     public final void removeService(S service, String name) {
         if (clazz.isInstance(service)) {
             onRemoveService(service, name);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void updateService(S service, String name) {
-        if (clazz.isInstance(service)) {
-            onServiceChanged(service, name);
         }
     }
 

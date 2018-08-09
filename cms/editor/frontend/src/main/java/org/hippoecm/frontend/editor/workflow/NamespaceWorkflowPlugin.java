@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespa
         super(context, config);
 
         final ILayoutProvider layouts = context.getService(ILayoutProvider.class.getName(), ILayoutProvider.class);
-        add(new NewDocumentTypeAction(this, "new-document-type", new StringResourceModel("new-document-type", this, null), layouts));
+        add(new NewDocumentTypeAction(this, "new-document-type", new StringResourceModel("new-document-type", this), layouts));
         add(new NewCompoundTypeAction(this, layouts));
     }
 

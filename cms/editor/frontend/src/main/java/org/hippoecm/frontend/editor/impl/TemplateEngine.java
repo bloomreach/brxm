@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 
 public class TemplateEngine implements ITemplateEngine, IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
     private ITypeLocator typeLocator;
@@ -59,6 +57,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         this.templateLocator = templateLocator;
     }
 
+    @Override
     public ITypeDescriptor getType(String type) throws TemplateEngineException {
         try {
             return typeLocator.locate(type);
@@ -67,6 +66,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         }
     }
 
+    @Override
     public ITypeDescriptor getType(IModel model) throws TemplateEngineException {
         if (model instanceof JcrNodeModel) {
             try {
@@ -105,10 +105,11 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         throw new TemplateEngineException("Unable to resolve type of " + model);
     }
 
-    public IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException {
-        Map<String, Object> criteria = new MiniMap(2);
+    @Override
+    public IClusterConfig getTemplate(ITypeDescriptor type, Mode mode) throws TemplateEngineException {
+        final Map<String, Object> criteria = new MiniMap<>(2);
         criteria.put("type", type);
-        criteria.put("mode", mode);
+        criteria.put("mode", mode.toString());
         try {
             return templateLocator.getTemplate(criteria);
         } catch (StoreException e) {
@@ -116,14 +117,12 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         }
     }
 
-    public IClusterConfig getTemplate(ITypeDescriptor type, Mode mode) throws TemplateEngineException {
-        return getTemplate(type, mode.toString());
-    }
-    
+    @Override
     public IModel getPrototype(ITypeDescriptor type) {
         return prototypeStore.getPrototype(type.getName(), false);
     }
 
+    @Override
     public List<String> getEditableTypes() {
         if (editableTypes == null) {
             editableTypes = new EditableTypes();
@@ -131,6 +130,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         return editableTypes;
     }
 
+    @Override
     public void detach() {
         if (templateLocator instanceof IDetachable) {
             ((IDetachable) templateLocator).detach();

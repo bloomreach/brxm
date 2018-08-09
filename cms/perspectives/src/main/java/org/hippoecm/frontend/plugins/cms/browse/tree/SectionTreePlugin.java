@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -164,6 +164,18 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     public String getIdValue(final Section section, final int index) {
                         return section.extension;
                     }
+
+                    @Override
+                    public Section getObject(final String id, final IModel<? extends List<? extends Section>> choicesModel) {
+                        final List<? extends Section> choices = choicesModel.getObject();
+                        for (int index = 0; index < choices.size(); index++) {
+                            final Section choice = choices.get(index);
+                            if (getIdValue(choice, index).equals(id)) {
+                                return choice;
+                            }
+                        }
+                        return null;
+                    }
                 }
         ) {
             @Override
@@ -175,7 +187,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 return false;
             }
         };
-        select.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        select.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 Section section = selectModel.getObject();
@@ -221,8 +233,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     }
 
     @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        super.renderHead(container);
+    public void internalRenderHead(final HtmlHeaderContainer container) {
+        super.internalRenderHead(container);
 
         final IHeaderResponse response = container.getHeaderResponse();
         final String selectricOptions =

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.Objects;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,7 +40,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.upload.FileUploadException;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -94,8 +92,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
         @Override
         public IModel<String> getTitle() {
-            return new StringResourceModel(GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
-                    GalleryWorkflowPlugin.this, null);
+            return new StringResourceModel(
+                    GalleryWorkflowPlugin.this.getPluginConfig().getString("option.text", ""),
+                    GalleryWorkflowPlugin.this);
         }
 
         @Override
@@ -181,13 +180,13 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 newItems.add(node.getPath());
             } catch (Exception ex) {
                 remove(manager, node);
-                final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label",
-                        GalleryWorkflowPlugin.this, null, null, fileName);
+                final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label", this)
+                        .setParameters(fileName);
                 throw new GalleryException(messageModel.getString(), ex);
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
-            throw new GalleryException(new StringResourceModel("upload-failed-label", GalleryWorkflowPlugin.this, null).getString());
+            throw new GalleryException(new StringResourceModel("upload-failed-label", this).getString());
         }
     }
 
@@ -262,7 +261,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new DropDownChoice<>("type", new PropertyModel<>(this, "type"), galleryTypes,
                     new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
             // needed to keep dropdown selection:
-            typeComponent.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            typeComponent.add(new AjaxFormComponentUpdatingBehavior("change") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget art) {
                 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -207,6 +208,12 @@ public class LoginPanel extends Panel {
 
                         public String getIdValue(String object, int index) {
                             return object;
+                        }
+
+                        @Override
+                        public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                            final List<? extends String> choices = choicesModel.getObject();
+                            return choices.contains(id) ? id : null;
                         }
                     }
             ));

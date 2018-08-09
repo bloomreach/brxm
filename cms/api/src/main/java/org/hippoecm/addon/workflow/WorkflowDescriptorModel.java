@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,15 +46,6 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     private String category;
     private transient Workflow workflow;
     private transient Map<String, Serializable> hints;
-
-    /**
-     * deprecated: use the alternative constructor instead
-     */
-    @Deprecated
-    public WorkflowDescriptorModel(WorkflowDescriptor descriptor, String category, Node subject) throws RepositoryException {
-        super(descriptor);
-        init(category, subject);
-    }
 
     public WorkflowDescriptorModel(String category, Node subject) throws RepositoryException {
         init(category, subject);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null)) {
+        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this)) {
 
             @Override
             public String getSubMenu() {
@@ -125,7 +125,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("copy", new StringResourceModel("copy", this, null)) {
+        add(new WorkflowAction("copy", new StringResourceModel("copy", this)) {
             private static final long serialVersionUID = 1L;
 
             String name;
@@ -233,7 +233,8 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("copy-model", this, null, new PropertyModel(this, "name"));
+            return new StringResourceModel("copy-model", this)
+                    .setParameters(new PropertyModel(this, "name"));
         }
 
         @Override

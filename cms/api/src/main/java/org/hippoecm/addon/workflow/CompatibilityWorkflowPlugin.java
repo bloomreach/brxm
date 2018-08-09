@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
@@ -43,6 +42,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -51,13 +51,12 @@ import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated Please directly extend from RenderPlugin.
-   In case you use the getModel and/or getModelObject methods, you should use the 
+   In case you use the getModel and/or getModelObject methods, you should use the
    Wicket getDefaultModel/getDefaultModelObject methods and use generics or cast
    to IModel<WorkflowDescriptor> or WorkflowDescriptor, respectively.
    Additionally some implementations might need the method
@@ -69,19 +68,17 @@ import org.slf4j.LoggerFactory;
    </pre>
    to be present, though this should be avoided.
  * @author berry
- * @param <T> 
+ * @param <T>
  */
 @Deprecated
 public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
 
     /** Date formatter for internalionzed dates */
     protected final DateFormat dateFormatFull;
 
-    protected CompatibilityWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    protected CompatibilityWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, getSession().getLocale());
     }
@@ -109,16 +106,16 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     @Deprecated
     public class WorkflowAction extends StdWorkflow<T> {
 
-        public WorkflowAction(String id, String name, ResourceReference iconModel) {
+        public WorkflowAction(final String id, final String name, final ResourceReference iconModel) {
             super(id, name, iconModel, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this);
         }
 
         @Deprecated
-        public WorkflowAction(String id, StringResourceModel name) {
+        public WorkflowAction(final String id, final StringResourceModel name) {
             super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this.getModel());
         }
 
-        public WorkflowAction(String id, IModel<String> name) {
+        public WorkflowAction(final String id, final IModel<String> name) {
             super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this.getModel());
         }
 
@@ -126,21 +123,19 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class WorkflowDialog extends AbstractDialog {
 
-            private static final long serialVersionUID = 1L;
-
             public WorkflowDialog() {
                 this((IModel) null);
             }
 
-            public WorkflowDialog(IModel message) {
-                Label notification = new Label("notification");
+            public WorkflowDialog(final IModel message) {
+                final Label notification = new Label("notification");
                 if (message != null) {
                     notification.setDefaultModel(message);
                 } else {
                     notification.setVisible(false);
                 }
                 add(notification);
-                notification.add(new AttributeAppender("class", new Model("notification"), " "));
+                notification.add(CssClass.append("notification"));
                 init();
             }
 
@@ -151,17 +146,14 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             protected void onOk() {
                 try {
                     execute();
-                } catch (WorkflowException ex) {
-                    log.info("Error during workflow execution", ex);
-                    error(ex);
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     log.info("Error during workflow execution", ex);
                     error(ex);
                 }
             }
 
-            public IModel getTitle() {
-                return new Model("");
+            public IModel<String> getTitle() {
+                return Model.of("");
             }
 
             /**
@@ -176,25 +168,24 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
         @Deprecated
         public class ConfirmDialog extends WorkflowDialog {
-            private static final long serialVersionUID = 1L;
-            private IModel title;
+            private IModel<String> title;
 
-            public ConfirmDialog(IModel title, IModel question) {
+            public ConfirmDialog(final IModel<String> title, final IModel<String> question) {
                 this(title, null, null, question);
             }
 
-            public ConfirmDialog(IModel title, IModel intro, IModel text, IModel question) {
+            public ConfirmDialog(final IModel<String> title, final IModel<String> intro, final IModel<String> text, final IModel<String> question) {
                 super();
                 this.title = title;
                 if(intro == null) {
-                    Label component;
+                    final Label component;
                     add(component = new Label("intro"));
                     component.setVisible(false);
                 } else {
                     add(new Label("intro", intro));
                 }
                 if(text == null) {
-                    Label component;
+                    final Label component;
                     add(component = new Label("text"));
                     component.setVisible(false);
                 } else {
@@ -204,7 +195,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
 
             @Override
-            public IModel getTitle() {
+            public IModel<String> getTitle() {
                 return title;
             }
 
@@ -217,21 +208,20 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
         @Deprecated
         public class NameDialog extends WorkflowDialog {
-            private static final long serialVersionUID = 1L;
-            private IModel title;
+            private IModel<String> title;
 
-            public NameDialog(IModel title, IModel question, PropertyModel nameModel) {
+            public NameDialog(final IModel<String> title, final IModel<String> question, final PropertyModel nameModel) {
                 super();
                 this.title = title;
                 add(new Label("question", question));
 
-                TextFieldWidget textfield;
+                final TextFieldWidget textfield;
                 add(textfield = new TextFieldWidget("value", nameModel));
                 setFocus(textfield.getFocusComponent());
             }
 
             @Override
-            public IModel getTitle() {
+            public IModel<String> getTitle() {
                 return title;
             }
 
@@ -244,17 +234,17 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         /** @deprecated Either implement a dialog extending directly from WorkflowDialog or use a standard dialog from the CMS API.*/
         @Deprecated
         public class TextDialog extends WorkflowDialog {
-            private static final long serialVersionUID = 1L;
-            private IModel title;
 
-            public TextDialog(IModel title, IModel question, PropertyModel textModel) {
+            private IModel<String> title;
+
+            public TextDialog(final IModel<String> title, final IModel<String> question, final PropertyModel textModel) {
                 super();
                 this.title = title;
                 add(new Label("question", question));
 
-                TextAreaWidget textfield;
+                final TextAreaWidget textfield;
                 add(textfield = new TextAreaWidget("value", textModel));
-                textfield.addBehaviourOnFormComponent(new AttributeAppender("class", true, new Model<String>("text-dialog-textarea"), " "));
+                textfield.addBehaviourOnFormComponent(CssClass.append("text-dialog-textarea"));
                 setFocus(textfield.getFocusComponent());
             }
 
@@ -273,62 +263,61 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class DestinationDialog extends WorkflowDialog {
 
-            private IModel title;
+            private IModel<String> title;
             private IRenderService dialogRenderer;
             private IClusterControl control;
             private String modelServiceId;
             private ServiceTracker tracker;
 
-            public DestinationDialog(IModel title, IModel question, PropertyModel nameModel,
-                    final NodeModelWrapper destination) {
+            public DestinationDialog(final IModel<String> title, final IModel<String> question, final PropertyModel nameModel,
+                                     final NodeModelWrapper destination) {
                 super();
                 this.title = title;
                 if (question != null) {
                     add(new Label("question", question));
                 } else {
-                    Label dummy = new Label("question");
+                    final Label dummy = new Label("question");
                     dummy.setVisible(false);
                     add(dummy);
                 }
                 if (nameModel != null) {
                     add(new TextFieldWidget("name", nameModel));
                 } else {
-                    Label dummy = new Label("name");
+                    final Label dummy = new Label("name");
                     dummy.setVisible(false);
                     add(dummy);
                 }
 
                 final IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
-                IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
-                IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                final IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
+                final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                         IPluginConfigService.class);
-                IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
+                final IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
                 control = context.newCluster(cluster, config.getPluginConfig("cluster.options"));
-                IClusterConfig decorated = control.getClusterConfig();
+                final IClusterConfig decorated = control.getClusterConfig();
 
                 control.start();
 
                 modelServiceId = decorated.getString("model.folder");
                 tracker = new ServiceTracker<IModelReference>(IModelReference.class) {
-                    
+
                     IModelReference modelRef;
                     IObserver modelObserver;
 
                     @Override
-                    protected void onServiceAdded(IModelReference service, String name) {
+                    protected void onServiceAdded(final IModelReference service, final String name) {
                         super.onServiceAdded(service, name);
                         if (modelRef == null) {
                             modelRef = service;
                             modelRef.setModel(destination.getChainedModel());
                             context.registerService(modelObserver = new IObserver<IModelReference>() {
-                                private static final long serialVersionUID = 1L;
-            
+
                                 public IModelReference getObservable() {
                                     return modelRef;
                                 }
-            
-                                public void onEvent(Iterator<? extends IEvent<IModelReference>> events) {
-                                    IModel model = modelRef.getModel();
+
+                                public void onEvent(final Iterator<? extends IEvent<IModelReference>> events) {
+                                    final IModel model = modelRef.getModel();
                                     if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                                         destination.setChainedModel(model);
                                     }
@@ -339,7 +328,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     }
 
                     @Override
-                    protected void onRemoveService(IModelReference service, String name) {
+                    protected void onRemoveService(final IModelReference service, final String name) {
                         if (service == modelRef) {
                             context.unregisterService(modelObserver, IObserver.class.getName());
                             modelObserver = null;
@@ -359,7 +348,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
 
             @Override
-            public void render(PluginRequestTarget target) {
+            public void render(final PluginRequestTarget target) {
                 if (dialogRenderer != null) {
                     dialogRenderer.render(target);
                 }
@@ -377,7 +366,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
 
             @Override
-            public IModel getTitle() {
+            public IModel<String> getTitle() {
                 return title;
             }
 
@@ -391,16 +380,16 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class DateDialog extends WorkflowDialog {
 
-            public DateDialog(IModel question, final PropertyModel<Date> dateModel) {
+            public DateDialog(final IModel question, final PropertyModel<Date> dateModel) {
                 super();
-                Calendar minimum = Calendar.getInstance();
+                final Calendar minimum = Calendar.getInstance();
                 minimum.setTime(dateModel.getObject());
                 minimum.set(Calendar.SECOND, 0);
                 minimum.set(Calendar.MILLISECOND, 0);
                 // if you want to round upwards, the following ought to be executed: minimum.add(Calendar.MINUTE, 1);
                 dateModel.setObject(minimum.getTime());
                 add(new Label("question", question));
-                YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
+                final YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
                 ydtf.add(new FutureDateValidator());
                 add(ydtf);
                 setFocusOnCancel();

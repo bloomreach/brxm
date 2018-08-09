@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -165,16 +164,6 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         for (IRenderService child : fields) {
             child.render(target);
         }
-    }
-
-    @Override
-    public void warn(String messageKey, Object[] parameters) {
-        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey));
-    }
-
-    @Override
-    public void error(String messageKey, Object[] parameters) {
-        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey));
     }
 
     @Override

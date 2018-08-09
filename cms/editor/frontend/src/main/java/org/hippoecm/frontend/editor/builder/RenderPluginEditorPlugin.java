@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
 import org.hippoecm.frontend.editor.layout.LayoutContext;
 import org.hippoecm.frontend.editor.layout.RenderContext;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -95,12 +95,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         container.setOutputMarkupId(true);
         add(container);
 
-        add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return builderContext.hasFocus() ? "active" : StringUtils.EMPTY;
-            }
-        }));
+        add(CssClass.append(ReadOnlyModel.of(() -> builderContext.hasFocus() ? "active" : StringUtils.EMPTY)));
 
         // add transitions from parent container
         container.add(new RefreshingView<ILayoutTransition>("transitions") {
@@ -126,12 +121,12 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             }
 
             @Override
-            protected void populateItem(Item<ILayoutTransition> item) {
+            protected void populateItem(final Item<ILayoutTransition> item) {
                 final ILayoutTransition transition = item.getModelObject();
-                AjaxLink<Void> link = new AjaxLink<Void>("link") {
+                final AjaxLink<Void> link = new AjaxLink<Void>("link") {
 
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
+                    public void onClick(final AjaxRequestTarget target) {
                         layoutContext.apply(transition);
                     }
 
@@ -158,7 +153,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         final AjaxLink removeLink = new AjaxLink("remove") {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 if (validateDelete()) {
                     builderContext.delete();
                 }
@@ -177,10 +172,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
 
         if (editable) {
-            add(new AjaxEventBehavior("onclick") {
+            add(new AjaxEventBehavior("click") {
 
                 @Override
-                protected void onEvent(AjaxRequestTarget target) {
+                protected void onEvent(final AjaxRequestTarget target) {
                     builderContext.focus();
                 }
 
@@ -194,14 +189,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             builderContext.addBuilderListener(new IBuilderListener() {
 
                 public void onBlur() {
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
                         target.add(RenderPluginEditorPlugin.this);
                     }
                 }
 
                 public void onFocus() {
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
                         target.add(RenderPluginEditorPlugin.this);
                     }
@@ -223,7 +218,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 return editedConfig;
             }
 
-            public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
+            public void onEvent(final Iterator<? extends IEvent<IPluginConfig>> events) {
                 updatePreview();
             }
 
@@ -237,19 +232,19 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         super.render(target);
 
         if (previewControl != null) {
-            String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
-            IRenderService previewService = getPluginContext().getService(serviceId, IRenderService.class);
+            final String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
+            final IRenderService previewService = getPluginContext().getService(serviceId, IRenderService.class);
             if (previewService != null) {
                 previewService.render(target);
             }
         }
     }
 
-    public void setLayoutContext(ILayoutContext layoutContext) {
+    public void setLayoutContext(final ILayoutContext layoutContext) {
         this.layoutContext = layoutContext;
     }
 
@@ -261,8 +256,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     @Override
     public ILayoutAware getDefaultChild() {
         if (trackers != null) {
-            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
-                ChildTracker tracker = entry.getValue();
+            for (final Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
+                final ChildTracker tracker = entry.getValue();
                 final ILayoutAware service = tracker.getService();
                 if (service != null) {
                     return service;
@@ -275,7 +270,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     @Override
     public List<ILayoutAware> getChildren() {
         if (trackers != null) {
-            List<ILayoutAware> children = new LinkedList<>();
+            final List<ILayoutAware> children = new LinkedList<>();
             trackers.forEach((id, childTracker) -> children.add(childTracker.getService()));
             return children;
         }
@@ -311,7 +306,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
             };
         } else {
-            List<ILayoutTransition> list = Collections.emptyList();
+            final List<ILayoutTransition> list = Collections.emptyList();
             return list.iterator();
         }
     }
@@ -324,18 +319,18 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         unregisterChildTrackers();
 
-        IPluginContext pluginContext = getPluginContext();
-        JavaClusterConfig childClusterConfig = new JavaClusterConfig();
-        IPluginConfig childPluginConfig = new JavaPluginConfig(getEffectivePluginConfig());
+        final IPluginContext pluginContext = getPluginContext();
+        final JavaClusterConfig childClusterConfig = new JavaClusterConfig();
+        final IPluginConfig childPluginConfig = new JavaPluginConfig(getEffectivePluginConfig());
 
-        String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
+        final String serviceId = getPluginContext().getReference(this).getServiceId() + ".preview";
         childPluginConfig.put(RenderService.WICKET_ID, serviceId);
         childClusterConfig.addPlugin(childPluginConfig);
 
         previewControl = pluginContext.newCluster(childClusterConfig, null);
         previewControl.start();
 
-        IRenderService renderService = pluginContext.getService(serviceId, IRenderService.class);
+        final IRenderService renderService = pluginContext.getService(serviceId, IRenderService.class);
         if (renderService != null) {
             renderService.bind(this, "preview");
             addOrReplace(renderService.getComponent());
@@ -356,15 +351,15 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     protected void registerChildTrackers() {
         trackers = new LinkedHashMap<>();
 
-        IPluginConfig bare = builderContext.getEditablePluginConfig();
-        IPluginConfig effective = getEffectivePluginConfig();
-        Map<String, ILayoutPad> pads = renderContext.getLayoutDescriptor().getLayoutPads();
-        for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
-            String extension = "extension." + entry.getKey();
+        final IPluginConfig bare = builderContext.getEditablePluginConfig();
+        final IPluginConfig effective = getEffectivePluginConfig();
+        final Map<String, ILayoutPad> pads = renderContext.getLayoutDescriptor().getLayoutPads();
+        for (final Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
+            final String extension = "extension." + entry.getKey();
             if (effective.getString(extension) != null) {
-                ChildTracker tracker = newChildTracker(entry.getValue(), bare.getString(extension));
+                final ChildTracker tracker = newChildTracker(entry.getValue(), bare.getString(extension));
 
-                String effectiveWicketId = effective.getString(extension);
+                final String effectiveWicketId = effective.getString(extension);
                 getPluginContext().registerTracker(tracker, effectiveWicketId);
                 trackers.put(effectiveWicketId, tracker);
             }
@@ -373,14 +368,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
     protected void unregisterChildTrackers() {
         if (trackers != null) {
-            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
+            for (final Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
                 getPluginContext().unregisterTracker(entry.getValue(), entry.getKey());
             }
             trackers = null;
         }
     }
 
-    protected ChildTracker newChildTracker(ILayoutPad pad, String wicketId) {
+    protected ChildTracker newChildTracker(final ILayoutPad pad, final String wicketId) {
         return new ChildTracker(pad, wicketId);
     }
 
@@ -403,14 +398,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         private String wicketId;
         private ILayoutContext control;
 
-        public ChildTracker(ILayoutPad pad, String wicketId) {
+        public ChildTracker(final ILayoutPad pad, final String wicketId) {
             super(ILayoutAware.class);
             this.pad = pad;
             this.wicketId = wicketId;
         }
 
         @Override
-        protected void onServiceAdded(ILayoutAware service, String name) {
+        protected void onServiceAdded(final ILayoutAware service, final String name) {
             if (control != null) {
                 throw new RuntimeException("A ILayoutAware service has already registered at " + name);
             }
@@ -420,7 +415,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         }
 
         @Override
-        protected void onRemoveService(ILayoutAware service, String name) {
+        protected void onRemoveService(final ILayoutAware service, final String name) {
             service.setLayoutContext(null);
             control = null;
         }
@@ -429,7 +424,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             return service;
         }
 
-        protected ILayoutContext newLayoutControl(ILayoutAware service) {
+        protected ILayoutContext newLayoutControl(final ILayoutAware service) {
             return new LayoutContext(builderContext, service, pad, wicketId);
         }
 
@@ -440,9 +435,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
     // A utility method to check for subtypes whether they have editor templates or not
     protected boolean checkWhetherSubtypesHaveEditorTemplates() {
-        IPluginContext context = getPluginContext();
-        IPluginConfig config = getPluginConfig();
-        BuilderContext builderContext = getBuilderContext();
+        final IPluginContext context = getPluginContext();
+        final IPluginConfig config = getPluginConfig();
+        final BuilderContext builderContext = getBuilderContext();
 
         final String field = getBuilderContext().getEditablePluginConfig().getString("field");
         if (StringUtils.isEmpty(field)) {
@@ -455,15 +450,15 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 ITemplateEngine.class);
 
         final List<String> subTypeNames = new ArrayList<>();
-        for (ITypeDescriptor subType : subTypes) {
+        for (final ITypeDescriptor subType : subTypes) {
             try {
                 final IClusterConfig template = templateEngine.getTemplate(subType, IEditor.Mode.VIEW);
-                for (IPluginConfig plugin : template.getPlugins()) {
+                for (final IPluginConfig plugin : template.getPlugins()) {
                     if (StringUtils.equals(field, plugin.getString("field"))) {
                         subTypeNames.add(subType.getName());
                     }
                 }
-            } catch (TemplateEngineException e) {
+            } catch (final TemplateEngineException e) {
                 // This error does not prevent deletion.
                 log.warn("Misconfiguration of type definition {} encountered.", subType.getName());
             }
@@ -481,12 +476,11 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
      * @param subTypeNames names of subTypes where the field exists.
      * @return the formatted error message.
      */
-    private String buildErrorMessage(String field, List<String> subTypeNames) {
-        final String[] types = subTypeNames.toArray(new String[subTypeNames.size()]);
-        StringResourceModel srm = new StringResourceModel("field-is-inherited", this, null,
-                new String[]{field, Strings.join(", ", types)});
+    private String buildErrorMessage(final String field, final List<String> subTypeNames) {
+        final StringResourceModel errorMessageModel = new StringResourceModel("field-is-inherited", this)
+                .setParameters(field, Strings.join(", ", subTypeNames));
 
-        return srm.getObject();
+        return errorMessageModel.getString();
     }
 
     private Icon getTransitionIconByName(final String name) {

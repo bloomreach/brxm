@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,11 +46,13 @@ public final class ReportUtil {
      *
      * @return the translation of a key, or the default value if no translation can be found.
      */
-    public static String getTranslation(Component component, String key, String defaultValue) {
+    public static String getTranslation(final Component component, final String key, final String defaultValue) {
         if (StringUtils.isEmpty(key)) {
             return defaultValue;
         }
-        return new StringResourceModel(key, component, null, defaultValue).getObject();
+        return new StringResourceModel(key, component)
+                .setDefaultValue(defaultValue)
+                .getString();
     }
 
     /**
@@ -63,7 +65,7 @@ public final class ReportUtil {
      *
      * @return the string with substituted variables
      */
-    public static String substituteVariables(String s) {
+    public static String substituteVariables(final String s) {
         if (StringUtils.contains(s, VAR_USER)) {
             final String currentUserId = UserSession.get().getJcrSession().getUserID();
             return StringUtils.replace(s, VAR_USER, currentUserId);

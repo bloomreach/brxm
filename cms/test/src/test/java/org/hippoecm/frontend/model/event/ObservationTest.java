@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -434,7 +434,7 @@ public class ObservationTest extends PluginTest {
         context = new PluginContext(((PluginPage) home).getPluginManager(), new JavaPluginConfig("test"));
 
         // remove from page manager
-        pageManager.sessionExpired(Session.get().getId());
+        pageManager.clear();
 
         gc();
 

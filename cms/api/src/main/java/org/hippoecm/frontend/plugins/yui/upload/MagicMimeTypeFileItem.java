@@ -21,10 +21,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MediaTypeRegistry;
-import org.apache.wicket.util.upload.FileItem;
+import org.apache.commons.fileupload.FileItem;
 import org.onehippo.repository.tika.TikaFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class MagicMimeTypeFileItem implements FileItem {
     private static final Logger log = LoggerFactory.getLogger(MagicMimeTypeFileItem.class);
     private static final Tika tika = TikaFactory.newTika();
 
-    private FileItem delegate;
+    private final FileItem delegate;
     private String contentType;
 
     public MagicMimeTypeFileItem(FileItem delegate) {
@@ -99,7 +100,7 @@ public class MagicMimeTypeFileItem implements FileItem {
         return delegate.getString();
     }
 
-    public void write(File file) throws IOException {
+    public void write(File file) throws Exception {
         delegate.write(file);
     }
 
@@ -125,5 +126,13 @@ public class MagicMimeTypeFileItem implements FileItem {
 
     public OutputStream getOutputStream() throws IOException {
         return delegate.getOutputStream();
+    }
+
+    public FileItemHeaders getHeaders() {
+        return delegate.getHeaders();
+    }
+
+    public void setHeaders(FileItemHeaders headers) {
+        delegate.setHeaders(headers);
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,8 +99,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return object;
             }
 
+            @Override
+            public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                final List<? extends String> choices = choicesModel.getObject();
+                return choices.contains(id) ? id : null;
+            }
         });
-        type.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        type.add(new AjaxFormComponentUpdatingBehavior("change") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
@@ -129,7 +134,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
 
             @Override
             public Object getDisplayValue(final String object) {
-                return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
+                return new StringResourceModel(object, ImageBrowserDialog.this).getString();
             }
 
             @Override
@@ -137,8 +142,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
                 return object;
             }
 
+            @Override
+            public String getObject(final String id, final IModel<? extends List<? extends String>> choicesModel) {
+                final List<? extends String> choices = choicesModel.getObject();
+                return choices.stream().filter(choice -> choice.equals(id)).findFirst().orElse(null);
+            }
         });
-        align.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        align.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 checkState();

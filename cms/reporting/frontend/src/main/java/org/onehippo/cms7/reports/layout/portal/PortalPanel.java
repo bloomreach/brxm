@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package org.onehippo.cms7.reports.layout.portal;
 
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -66,16 +66,16 @@ public class PortalPanel extends ExtPanel {
     }
 
     @Override
-    public void renderHead(final HtmlHeaderContainer container) {
+    public void internalRenderHead(final HtmlHeaderContainer container) {
         final IHeaderResponse response = container.getHeaderResponse();
         response.render(CssHeaderItem.forReference(REPORTS_PORTALS_CSS));
         response.render(new JavaScriptReferenceHeaderItem(REPORTS_PORTALS_JS, null, null, false, null, null) {
             @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return Arrays.asList(JavaScriptReferenceHeaderItem.forReference(ReportPanel.REPORTS_PORTLET_JS));
+            public List<HeaderItem> getDependencies() {
+                return Collections.singletonList(JavaScriptReferenceHeaderItem.forReference(ReportPanel.REPORTS_PORTLET_JS));
             }
         });
-        super.renderHead(container);
+        super.internalRenderHead(container);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
         add(formComponent = component);
         component.setOutputMarkupId(true);
         if(throttleDelay == null) {
-            component.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            component.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class RadioGroupWidget<T> extends Panel {
      *      Model that represents selected {@link Radio} item  
      *      
      */
-    public RadioGroupWidget(String id, List<? extends T> choices, IModel<T> model) {
+    public RadioGroupWidget(final String id, final List<T> choices, final IModel<T> model) {
         super(id);
 
         final RadioGroup<T> group = new RadioGroup<T>("widget", model);
@@ -57,7 +57,7 @@ public class RadioGroupWidget<T> extends Panel {
             protected void populateItem(ListItem<T> item) {
 
                 final Radio<T> radio = new Radio<T>("radio", item.getModel());
-                radio.add(new AjaxEventBehavior("onchange") {
+                radio.add(new AjaxEventBehavior("change") {
                     private static final long serialVersionUID = 1L;
 
                     @Override

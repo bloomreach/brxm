@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
@@ -154,15 +155,6 @@ public class ContextMenuTree extends DefaultAbstractTree {
     protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
     }
 
-    /**
-     * @deprecated node icons should be created in {@link #newNodeIcon(MarkupContainer, String, TreeNode)}.
-     */
-    @Override
-    @Deprecated
-    protected final ResourceReference getNodeIcon(TreeNode node) {
-        return super.getNodeIcon(node);
-    }
-
     @Override
     protected Component newNodeIcon(final MarkupContainer parent, final String id, final TreeNode node) {
         ResourceReference nodeIcon = super.getNodeIcon(node);
@@ -240,6 +232,12 @@ public class ContextMenuTree extends DefaultAbstractTree {
             super(id);
             this.content = content;
             this.parent = parent;
+        }
+
+        @Override
+        protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.STOP);
         }
 
         public void collapse(AjaxRequestTarget target) {

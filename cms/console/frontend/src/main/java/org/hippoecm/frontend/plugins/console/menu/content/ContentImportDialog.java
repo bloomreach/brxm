@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
         try {
             String path = this.nodeModel.getNode().getPath();
-            add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
+            add(new Label("message", new StringResourceModel("dialog.message", this).setParameters(path)));
 
             //info("Import content from a file to node: " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,7 +38,6 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -73,20 +70,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             log.warn("Could not determine folder path", ex);
         }
         return folderModel;
-    }
-
-    /**
-     * @deprecated use {@link #getVariant(javax.jcr.Node, org.hippoecm.repository.util.WorkflowUtils.Variant)} instead
-     */
-    @Deprecated
-    protected Node getVariant(Node handle, String state) throws RepositoryException {
-        String handlePath = handle.getPath();
-        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-            if (variant.hasProperty(HippoStdNodeType.HIPPOSTD_STATE) && state.equals(variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
-                return variant;
-            }
-        }
-        throw new ItemNotFoundException("No " + state + " variant found under path: " + handlePath);
     }
 
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
@@ -157,7 +140,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             }
         } catch (RepositoryException ignored) {
         }
-        return new StringResourceModel("unknown", this, null);
+        return new StringResourceModel("unknown", this);
     }
 
     protected DocumentWorkflow getWorkflow() {

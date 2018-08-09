@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -174,7 +174,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     }
 
     protected IModel<String> getTitle() {
-        return new StringResourceModel(getName(), this, null, getName());
+        return new StringResourceModel(getName(), this)
+            .setDefaultValue(getName());
     }
 
     protected IModel<String> getTooltip() {

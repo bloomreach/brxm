@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.cmscontext;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -90,7 +89,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 } else {
                     // will already be removed in case cmsCtx itself is being detached
                     sharedContextsMap.remove(id);
-                    removeDeprecatedHSTSessionAttributes();
                 }
 
                 service = null;
@@ -106,26 +104,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
                 dataMap = Collections.emptyMap();
-            }
-        }
-
-        /**
-         * TODO: remove this for *HST* 5.0 when these deprecated attributes will be dropped from ContainerConstants
-         * @Deprecated
-         */
-        @Deprecated
-        private void removeDeprecatedHSTSessionAttributes() {
-            if (session != null) {
-                try {
-                    // ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME
-                    session.removeAttribute("org.hippoecm.hst.sso.cms.repo.creds");
-                    // ContainerConstants.CMS_SSO_AUTHENTICATED
-                    session.removeAttribute("org.hippoecm.hst.container.sso_cms_authenticated");
-                    // ContainerConstants.CMS_USER_ID_ATTR
-                    session.removeAttribute("org.hippoecm.hst.container.cms_user_id");
-                } catch (IllegalStateException e) {
-                    // ignore: session already invalidated
-                }
             }
         }
 
@@ -154,9 +132,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         @Override
         public void valueUnbound(final HttpSessionBindingEvent event) {
             if (session != null && session.getId().equals(event.getSession().getId()) && SESSION_KEY.equals(event.getName())) {
-                if (this != cmsCtx) {
-                    removeDeprecatedHSTSessionAttributes();
-                }
                 session = null;
                 detach();
             }

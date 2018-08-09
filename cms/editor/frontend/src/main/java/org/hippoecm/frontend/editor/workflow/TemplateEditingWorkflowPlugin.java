@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         }, context.getReference(editor).getServiceId());
 
-        add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
+        add(new WorkflowAction("save", new StringResourceModel("save", this)) {
 
             @Override
             public String getSubMenu() {
@@ -125,7 +125,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-        add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
+        add(new WorkflowAction("done", new StringResourceModel("done", this)) {
 
             @Override
             public String getSubMenu() {
@@ -242,8 +242,9 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
 
         public IModel<String> getTitle() {
-            return new StringResourceModel("close-document", this, null, "Close {0}",
-                        new PropertyModel(TemplateEditingWorkflowPlugin.this, "model.node.name"));
+            return new StringResourceModel("close-document", this)
+                .setDefaultValue("Close {0}")
+                .setParameters(new PropertyModel(TemplateEditingWorkflowPlugin.this, "model.node.name"));
         }
 
     }

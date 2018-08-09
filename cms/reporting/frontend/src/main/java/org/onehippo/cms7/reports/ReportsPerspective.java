@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
         setOutputMarkupId(true);
 
         refreshGroup = new WebMarkupContainer("refresh-group");
-        refreshGroup.add(new Label("latest-refresh-label", new StringResourceModel("last-refresh-label", this, null)));
+        refreshGroup.add(new Label("latest-refresh-label", new StringResourceModel("last-refresh-label", this)));
         lastRefreshDateLabel = new DateLabel("latest-refresh-date", new PatternDateConverter("HH:mm", false));
         lastRefreshDateLabel.setOutputMarkupId(true);
         refreshGroup.add(lastRefreshDateLabel);
@@ -75,7 +75,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
                 target.appendJavaScript("if (typeof Hippo.Reports.RefreshObservableInstance !== 'undefined') { Hippo.Reports.RefreshObservableInstance.fireEvent('refresh'); }");
             }
         };
-        refreshLink.add(new Label("refresh-link-label", new StringResourceModel("refresh-link-text", this, null)));
+        refreshLink.add(new Label("refresh-link-label", new StringResourceModel("refresh-link-text", this)));
         refreshGroup.add(refreshLink);
         add(refreshGroup);
     }
@@ -103,7 +103,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
 
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("perspective-title", this, null);
+        return new StringResourceModel("perspective-title", this);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("created", this, null, new LoadableDetachableModel<String>() {
+                return new StringResourceModel("created", this).setParameters(new LoadableDetachableModel<String>() {
 
                     protected String load() {
                         try {
@@ -93,7 +93,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("restore", new StringResourceModel("restore", this, null), getModel()) {
+        add(new StdWorkflow("restore", new StringResourceModel("restore", this), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -162,7 +162,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("select", new StringResourceModel("select", this, null), context, getModel()) {
+        add(new StdWorkflow("select", new StringResourceModel("select", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {

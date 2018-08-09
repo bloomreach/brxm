@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         this.model = model;
         this.domain = model.getObject();
 
-        add(new Label("permissions-set-title", new StringResourceModel("permissions-set-title", this, model)));
+        add(new Label("permissions-set-title", new StringResourceModel("permissions-set-title", this).setModel(model)));
 
         // All local groups
         hippoForm = new HippoForm("form");
@@ -118,7 +118,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         final DropDownChoice<String> roleChoice = new DropDownChoice<>("roles-select",
                 new PropertyModel<>(this, "selectedRole"), allRoles);
         roleChoice.setNullValid(false);
-        roleChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        roleChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 target.add(submit);
@@ -130,7 +130,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         final DropDownChoice<Group> groupChoice = new DropDownChoice<>("groups-select",
                 new PropertyModel<>(this, "selectedGroup"), allGroups, new ChoiceRenderer<>("groupname"));
         groupChoice.setNullValid(false);
-        groupChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+        groupChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 target.add(submit);
@@ -230,7 +230,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
 
     @Override
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("permissions-set-title", component, model);
+        return new StringResourceModel("permissions-set-title", component).setModel(model);
     }
 
 }

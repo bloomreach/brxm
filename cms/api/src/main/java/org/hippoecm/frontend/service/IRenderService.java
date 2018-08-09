@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,13 +59,6 @@ public interface IRenderService extends IClusterable {
      * after this method has been invoked.
      */
     void unbind();
-
-    /**
-     * The id that the component is bound to.  Undefined when the service has
-     * not yet been bound to a parent or has been released.
-     */
-    @Deprecated
-    String getId();
 
     /**
      * The parent service for this render service.

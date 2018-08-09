@@ -77,7 +77,7 @@ public class MixinPlugin extends RenderPlugin {
         }
         helper = new FieldPluginHelper(context, config);
 
-        final String defaultCaption = new StringResourceModel("mixins", this, null).getString();
+        final String defaultCaption = new StringResourceModel("mixins", this).getString();
         add(new Label("name", helper.getCaptionModel(this, defaultCaption)));
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);

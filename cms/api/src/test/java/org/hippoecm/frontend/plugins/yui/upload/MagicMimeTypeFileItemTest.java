@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
-import org.apache.wicket.util.upload.FileItem;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.junit.Test;
 
 import java.io.*;
@@ -145,6 +146,15 @@ public class MagicMimeTypeFileItemTest {
         @Override
         public OutputStream getOutputStream() throws IOException {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public FileItemHeaders getHeaders() {
+            return null;
+        }
+
+        @Override
+        public void setHeaders(final FileItemHeaders headers) {
         }
     }
 

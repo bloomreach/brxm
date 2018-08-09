@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class ImageUtils {
     /**
      * The available strategies for scaling images.
      */
-    public static enum ScalingStrategy {
+    public enum ScalingStrategy {
         /**
          * Automatically determine the best strategy to get the nicest looking image in the least amount of time.
          */
@@ -94,19 +94,6 @@ public class ImageUtils {
      */
     protected ImageUtils() {
         // do nothing
-    }
-
-    /**
-     * Fixes issues for certain image MIME types.
-     *
-     * @param mimeType the MIME type to fix
-     *
-     * @return the fixed MIME type
-     * @deprecated Use MimeTypeHelper.sanitizeMimeType instead
-     */
-    @Deprecated
-    public static String fixMimeType(String mimeType) {
-        return MimeTypeHelper.sanitizeMimeType(mimeType);
     }
 
     /**
@@ -232,6 +219,14 @@ public class ImageUtils {
      *
      * @param img
      *            the original image to be scaled
+     * @param xOffset
+     *            the X-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
+     * @param yOffset
+     *            the Y-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
+     * @param sourceWidth
+     *            the width of the source image, in pixels relative to xOffset, to use for the scaled instance.
+     * @param sourceHeight
+     *            the height of the source image, in pixels relative to yOffset, to use for the scaled instance.
      * @param targetWidth
      *            the desired width of the scaled instance, in pixels
      * @param targetHeight
@@ -249,16 +244,7 @@ public class ImageUtils {
      *
      * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
      * the target width or target height is 0 or less.
-     *
-     * @deprecated Use {@link ImageUtils#scaleImage(java.awt.image.BufferedImage, int, int, org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy)} instead
-     * for faster scaling and/or better image quality)}
      */
-    @Deprecated
-    public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, Object hint,
-                                           boolean highQuality) {
-        return scaleImage(img, 0, 0, img.getWidth(), img.getHeight(), targetWidth, targetHeight, hint, highQuality);
-    }
-
     public static BufferedImage scaleImage(BufferedImage img, int xOffset, int yOffset, int sourceWidth, int sourceHeight, int targetWidth, int targetHeight, Object hint,
                                            boolean highQuality) {
 
@@ -418,19 +404,5 @@ public class ImageUtils {
                 input.close();
             }
         }
-    }
-
-    /**
-     * Convert image in CYYK or CMYK color space to RGB using {@link ImageUtils#convertToRGB(InputStream is, ColorModel colorModel)}
-     *
-     * @param is the image data
-     * @param colorModel the color model of the image
-     * @return the RGB version of the supplied image
-     *
-     * @deprecated This method is deprecated in favor of {@link ImageUtils#convertToRGB(InputStream is, ColorModel colorModel)}
-     */
-    @Deprecated
-    public static InputStream convertToRGB(InputStream is, ImageMetaData.ColorModel colorModel) throws IOException, UnsupportedImageException {
-        return convertToRGB(is, ColorModel.valueOf(colorModel.name()));
     }
 }

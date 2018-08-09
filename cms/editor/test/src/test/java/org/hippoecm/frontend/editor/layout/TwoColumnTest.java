@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -134,11 +134,11 @@ public class TwoColumnTest extends PluginTest {
     @Test
     public void testListExtensionPointSelected() throws Exception {
         // select left list
-        tester.executeAjaxEvent("root:preview:extension.left", "onclick");
+        tester.executeAjaxEvent("root:preview:extension.left", "click");
         assertEquals("${cluster.id}.left.item", locator.getSelectedExtensionPoint());
 
         // select right list
-        tester.executeAjaxEvent("root:preview:extension.right", "onclick");
+        tester.executeAjaxEvent("root:preview:extension.right", "click");
         assertEquals("${cluster.id}.right.item", locator.getSelectedExtensionPoint());
 
 //        Utilities.dump(root.getNode("test"));

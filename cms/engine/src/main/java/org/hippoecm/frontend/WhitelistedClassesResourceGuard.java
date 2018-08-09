@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package org.hippoecm.frontend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -36,21 +38,23 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
-    private final List<String> classNamePrefixes;
+    private final List<String> pathPrefixes;
     private volatile boolean initialized;
 
     public WhitelistedClassesResourceGuard() {
-        classNamePrefixes = new ArrayList<>();
+        pathPrefixes = new ArrayList<>();
     }
 
-    public void addClassNamePrefixes(final String... prefixes) {
-        if (prefixes != null) {
-            classNamePrefixes.addAll(Arrays.asList(prefixes));
+    public void addClassNamePrefixes(final String... classNamePrefixes) {
+        if (classNamePrefixes != null) {
+            pathPrefixes.addAll(Arrays.stream(classNamePrefixes)
+                    .map(prefix -> prefix.replace('.', '/'))
+                    .collect(Collectors.toList()));
         }
     }
 
     @Override
-    public boolean accept(final Class<?> scope, final String absolutePath) {
+    public boolean accept(final String absolutePath) {
         // use double checked locking pattern to reduce overhead
         if (!initialized) {
             synchronized (this) {
@@ -61,8 +65,8 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
             }
         }
 
-        if (isUserLoggedIn() || isWhitelisted(scope)) {
-            return super.accept(scope, absolutePath);
+        if (isUserLoggedIn() || isWhitelisted(absolutePath)) {
+            return super.accept(absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
         return false;
@@ -71,17 +75,21 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     protected void onInit() {
     }
 
-    private boolean isWhitelisted(final Class<?> scope) {
-        String scopeClassName = scope.getCanonicalName();
-        if (scopeClassName == null) {
-            scopeClassName = scope.getName();
-        }
-        for (final String prefix : classNamePrefixes) {
-            if (scopeClassName.startsWith(prefix)) {
+    private boolean isWhitelisted(final String absolutePath) {
+        final String strippedPath = stripFilePrexix(absolutePath);
+        for (final String prefix : pathPrefixes) {
+            if (strippedPath.startsWith(prefix)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private String stripFilePrexix(final String absolutePath) {
+        if (absolutePath.startsWith("jar:")) {
+            return StringUtils.substringAfterLast(absolutePath, "!/");
+        }
+        return absolutePath;
     }
 
     private static boolean isUserLoggedIn() {
