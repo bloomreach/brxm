@@ -500,8 +500,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         channel.setType(DEFAULT_TYPE);
                     }
                     if (StringUtils.isNotEmpty(channel.getName())) {
-                        channel.setName(
-                                StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(channel.getName())));
+                        channel.setName(StringEscapeUtils.escapeHtml(channel.getName()));
                     }
                     channels.put(channel.getId(), channel);
                 }

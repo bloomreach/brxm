@@ -99,9 +99,6 @@
 
             for (i = 0, len = records.length; i < len; i++) {
                 data = this.prepareData(records[i].json, startIndex + i, records[i]);
-                if (data.name !== null) {
-                    data.name = Ext.util.Format.htmlEncode(data.name);
-                }
                 if (data.changedBySet.length > 0) {
                     data.lockedDetail = data.changedBySet.join();
                     changedByCurrentUser = false;
