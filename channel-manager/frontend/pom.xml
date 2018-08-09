@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -253,6 +253,28 @@
           <reuseForks>false</reuseForks>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+        <artifactId>serviceloader-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <configuration>
+          <services>
+            <!--
+            Register all implementations of Wicket's IInitializer so Wicket will instantiate them when the application
+            loads. Used to be done via wicket.properties file which was deprecated in Wicket 7.
+            See CMS-8034 and CHANNELMGR-2014.
+            -->
+            <param>org.apache.wicket.IInitializer</param>
+          </services>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
