@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.resourcebundle;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.jcr.Node;
@@ -109,6 +110,15 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
             public String getIdValue(final ValueSet valueSet, final int index) {
                 return valueSet.getName();
             }
+
+            @Override
+            public ValueSet getObject(final String id, final IModel<? extends List<? extends ValueSet>> choicesModel) {
+                final List<? extends ValueSet> choices = choicesModel.getObject();
+                return choices.stream()
+                        .filter(valueSet -> valueSet.getName().equals(id))
+                        .findFirst()
+                        .orElse(null);
+            }
         };
 
         // display shows a table of resources, one resource is represented by one row in the table.
@@ -151,7 +161,7 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
                 valueSetRenderer)
                 .setNullValid(false)
                 .setRequired(true)
-                .add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                .add(new AjaxFormComponentUpdatingBehavior("change") {
                     private static final long serialVersionUID = 1L;
 
                     protected void onUpdate(AjaxRequestTarget target) {
