@@ -25,10 +25,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "exception,type=org.apache.wicket.util.upload.FileUploadException" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "exception,type=org.hippoecm.repository.api.WorkflowException" : {
       "status" : "CLEAN",
       "locales" : null
@@ -36,6 +32,16 @@
     "exception,type=org.hippoecm.frontend.plugins.gallery.model.SvgScriptGalleryException" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "exception,type=org.apache.commons.fileupload.FileUploadException" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
