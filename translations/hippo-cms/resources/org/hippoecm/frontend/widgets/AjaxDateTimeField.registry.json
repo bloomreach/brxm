@@ -1,9 +1,0 @@
-{
-  "bundleType" : "WICKET",
-  "keyData" : {
-    "set-to-current-date" : {
-      "status" : "CLEAN",
-      "locales" : null
-    }
-  }
-}
