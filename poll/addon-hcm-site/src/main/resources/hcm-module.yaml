@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-poll
+    after: [hippo-cms, hippo-site-toolkit]
+module: hippo-plugin-poll-addon-hcm-site
