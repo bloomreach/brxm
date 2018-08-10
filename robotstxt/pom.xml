@@ -124,6 +124,7 @@
 
   <modules>
     <module>repository</module>
+    <module>hcm-site</module>
     <module>hst</module>
   </modules>
 
