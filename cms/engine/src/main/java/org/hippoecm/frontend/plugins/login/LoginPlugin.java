@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 
 public class LoginPlugin extends RenderPlugin {
 
-    public static final String TERMS_AND_CONDITIONS_LINK = "http://www.onehippo.com/tnc";
+    public static final String TERMS_AND_CONDITIONS_LINK = "https://www.bloomreach.com/en/about/privacy";
 
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/hippo-cms.ico"));
