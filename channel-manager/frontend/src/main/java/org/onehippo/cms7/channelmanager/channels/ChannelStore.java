@@ -33,7 +33,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.WebApplicationException;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -50,13 +49,13 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.rest.ChannelService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -498,9 +497,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 for (Channel channel : future.get()) {
                     if (StringUtils.isEmpty(channel.getType())) {
                         channel.setType(DEFAULT_TYPE);
-                    }
-                    if (StringUtils.isNotEmpty(channel.getName())) {
-                        channel.setName(StringEscapeUtils.escapeHtml(channel.getName()));
                     }
                     channels.put(channel.getId(), channel);
                 }
