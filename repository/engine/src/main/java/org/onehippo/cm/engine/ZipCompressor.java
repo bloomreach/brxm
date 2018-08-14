@@ -71,7 +71,9 @@ public class ZipCompressor {
              final ZipOutputStream zos = new ZipOutputStream(fos)) {
 
             for (final String filePath : paths) {
-                final ZipEntry ze = new ZipEntry(filePath.substring(dir.toAbsolutePath().toString().length() + 1, filePath.length()));
+                // zip file paths use unix folder seperators regardless from the operating system
+                final ZipEntry ze = new ZipEntry(filePath
+                        .substring(dir.toAbsolutePath().toString().length() + 1, filePath.length()).replace("\\", "/"));
                 zos.putNextEntry(ze);
 
                 try (FileInputStream fis = new FileInputStream(filePath)) {
