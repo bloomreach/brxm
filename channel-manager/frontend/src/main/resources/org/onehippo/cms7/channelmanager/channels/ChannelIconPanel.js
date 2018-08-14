@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@
             '        </div>',
             '        <br>',
             '        <img class="channel-region-icon" src="{channelRegionImg}" class="regionIcon" />',
-            '        <span class="channel-name">{name}</span>',
+            '        <span class="channel-name">{[Ext.util.Format.htmlEncode(values.name)]}</span>',
             '        <tpl if="changedBySet.length &gt; 0">',
             '          <div class="lockedBy" title="{lockedDetail}">{lockedLabel}</div>',
             '        </tpl>',
