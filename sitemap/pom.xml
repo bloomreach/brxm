@@ -96,7 +96,7 @@
   
   <modules>
     <module>component</module>
-    <module>content</module>
+    <module>hcm-site</module>
   </modules>
 
 </project>
