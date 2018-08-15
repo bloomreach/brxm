@@ -37,12 +37,14 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
-import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import static org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialsFileUtils.nativePath;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -53,8 +55,8 @@ public class ProjectServiceImpl implements ProjectService {
     private static final String MODULE_NAME_DEVELOPMENT = "development";
     private static final String MODULE_NAME_REPOSITORY_DATA = "repository-data";
     private static final String MODULE_NAME_SITE = "site";
-    private static final String MODULE_NAME_SITE_COMPONENTS = "components";
-    private static final String MODULE_NAME_SITE_WEBAPP = "webapp";
+    private static final String MODULE_NAME_SITE_COMPONENTS = "site/components";
+    private static final String MODULE_NAME_SITE_WEBAPP = "site/webapp";
     private static final String MODULE_NAME_WEB_FILES = "webfiles";
     private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
@@ -75,11 +77,11 @@ public class ProjectServiceImpl implements ProjectService {
             case ESSENTIALS:
                 return projectPath.resolve(ProjectUtils.getEssentialsModuleName());
             case SITE:
-                return projectPath.resolve(getSiteModuleName());
+                return projectPath.resolve(nativePath(getSiteModuleName()));
             case SITE_COMPONENTS:
-                return projectPath.resolve(getSiteModuleName()).resolve(getSiteComponentsModuleName());
+                return projectPath.resolve(nativePath(getSiteComponentsModuleName()));
             case SITE_WEBAPP:
-                return projectPath.resolve(getSiteModuleName()).resolve(getSiteWebappModuleName());
+                return projectPath.resolve(nativePath(getSiteWebappModuleName()));
             case CMS:
                 return projectPath.resolve(getCmsModuleName());
             case CMS_DEPENDENCIES:
@@ -92,6 +94,8 @@ public class ProjectServiceImpl implements ProjectService {
                 return projectPath.resolve(getRepositoryDataModuleName()).resolve(getDevelopmentModuleName());
             case REPOSITORY_DATA_WEB_FILES:
                 return projectPath.resolve(getRepositoryDataModuleName()).resolve(getWebFilesModuleName());
+            case HCM_HST_DEPENDENCIES:
+                return getBasePathForModule(resolveHstHcmDependenciesAlias());
         }
 
         throw new IllegalArgumentException("Invalid module to derive path: " + module);
@@ -160,6 +164,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Path getAssemblyFolderPath() {
         return getBasePathForModule(Module.PROJECT).resolve("src").resolve("main").resolve("assembly");
+    }
+
+    private Module resolveHstHcmDependenciesAlias() {
+        final String hcmHstDependenciesAlias = settingsService.getSettings().getHstHcmDependenciesAlias();
+        return hcmHstDependenciesAlias == null ? Module.SITE_WEBAPP : Module.valueOf(hcmHstDependenciesAlias);
     }
 
     private Path makePackagePath(final Path basePath, final String packagesName) {

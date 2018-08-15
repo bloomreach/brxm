@@ -55,6 +55,7 @@
       <xs:enumeration value="webfiles"/>
       <xs:enumeration value="application"/>
       <xs:enumeration value="development"/>
+      <xs:enumeration value="hcm-hst-dependencies"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="mavenDependencyScopeType">

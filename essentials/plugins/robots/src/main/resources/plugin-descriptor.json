@@ -40,6 +40,12 @@
       "artifactId": "hippo-plugin-robotstxt-hst-client",
       "scope": "compile",
       "targetPom": "site-components"
+    },
+    {
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-robotstxt-addon-hcm-hst",
+      "scope": "compile",
+      "targetPom": "hcm-hst-dependencies"
     }
   ],
   "pluginDependencies": [

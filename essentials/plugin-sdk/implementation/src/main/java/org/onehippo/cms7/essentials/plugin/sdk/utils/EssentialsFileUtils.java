@@ -28,6 +28,12 @@ public final class EssentialsFileUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EssentialsFileUtils.class);
 
+    private static final boolean UNIXFS = File.separator.equals("/");
+
+    public static String nativePath(final String unixPath) {
+        return UNIXFS ? unixPath : unixPath.replace('/', '\\');
+    }
+
     public static void createParentDirectories(final File directory) throws IOException {
         if (directory == null) {
             throw new IllegalArgumentException("Directory was null");

@@ -21,8 +21,8 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 
 import com.google.common.base.Strings;
 
@@ -57,6 +57,8 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     private String hstRoot;
     private String webfileBundleName;
+
+    private String hstHcmDependenciesAlias;
 
     private boolean setupDone;
     private Set<String> pluginRepositories = new HashSet<>();
@@ -233,6 +235,14 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setSelectedProjectPackage(final String selectedProjectPackage) {
         this.selectedProjectPackage = selectedProjectPackage;
+    }
+
+    public String getHstHcmDependenciesAlias() {
+        return hstHcmDependenciesAlias;
+    }
+
+    public void setHstHcmDependenciesAlias(final String hstHcmDependenciesAlias) {
+        this.hstHcmDependenciesAlias = hstHcmDependenciesAlias;
     }
 
     @Override

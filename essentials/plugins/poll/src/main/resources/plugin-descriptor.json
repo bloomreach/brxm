@@ -45,6 +45,12 @@
       "artifactId": "hippo-plugin-poll-hst-client",
       "scope": "compile",
       "targetPom": "site-components"
+    },
+    {
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-poll-addon-hcm-hst",
+      "scope": "compile",
+      "targetPom": "hcm-hst-dependencies"
     }
   ]
 }

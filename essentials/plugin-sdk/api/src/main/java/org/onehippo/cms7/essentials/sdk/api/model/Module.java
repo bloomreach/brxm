@@ -31,6 +31,7 @@ public enum Module {
     REPOSITORY_DATA_APPLICATION("application"),
     REPOSITORY_DATA_DEVELOPMENT("development"),
     ESSENTIALS("essentials"),
+    HCM_HST_DEPENDENCIES("hcm-hst-dependencies"),
     PROJECT("project");
 
     private final String name;
@@ -78,6 +79,8 @@ public enum Module {
             return REPOSITORY_DATA_WEB_FILES;
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
+        } else if (type.equals(HCM_HST_DEPENDENCIES.name)) {
+            return HCM_HST_DEPENDENCIES;
         }
         return Module.INVALID;
 

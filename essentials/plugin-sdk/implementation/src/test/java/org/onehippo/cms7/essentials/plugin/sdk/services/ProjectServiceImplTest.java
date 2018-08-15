@@ -32,8 +32,8 @@ import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.TestSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
-import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -46,8 +46,8 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     static {
         projectSettings.setSiteModule("test-site");
-        projectSettings.setSiteWebappSubModule("test-site-webapp");
-        projectSettings.setSiteComponentsSubModule("test-site-components");
+        projectSettings.setSiteWebappSubModule("test-site/test-site-webapp");
+        projectSettings.setSiteComponentsSubModule("test-site/test-site-components");
         projectSettings.setCmsModule("test-cms");
         projectSettings.setCmsDependenciesModule("test-cms-depedencies");
         projectSettings.setRepositoryDataModule("test-repository-data");

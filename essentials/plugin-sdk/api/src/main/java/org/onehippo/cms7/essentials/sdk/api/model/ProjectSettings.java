@@ -91,6 +91,12 @@ public interface ProjectSettings {
     String getSelectedProjectPackage();
 
     /**
+     * HST HCM Alias. Controls where HCM HST dependencies should be put into.
+     * For pre 13.0 projects should be 'cms' and for 13.0 and later should be 'site-webapp'
+     */
+    String getHstHcmDependenciesAlias();
+
+    /**
      * The nested Java package name containing the project's REST resources, typically below the 'project package'.
      */
     String getSelectedRestPackage();
