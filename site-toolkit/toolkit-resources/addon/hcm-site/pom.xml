@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
- 
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
-       http://www.apache.org/licenses/LICENSE-2.0
- 
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,27 +18,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>toolkit-resources</artifactId>
+    <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
+    <artifactId>addon</artifactId>
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Addon Resources</name>
-  <description>Hippo Site Toolkit Addon Resources</description>
-  <groupId>org.onehippo.cms7.hst.toolkit-resources</groupId>
-  <artifactId>addon</artifactId>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>hcm-site</module>
-    <module>repository</module>
-    <module>unittestcontents</module>
-    <module>unittestspringconfig</module>
-    <module>toolkit-cnd</module>
-  </modules>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
+  <name>Hippo Site Toolkit Addon Resources to the Repository</name>
+  <description>Hippo Site Toolkit Addon Resources to the Repository</description>
+  <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+  <artifactId>hst-addon-hcm-site</artifactId>
+  <packaging>jar</packaging>
 
 </project>
