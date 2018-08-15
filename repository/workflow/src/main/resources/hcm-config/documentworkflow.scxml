@@ -261,7 +261,6 @@
 
         <!-- target-less transition to 'accept' a specific request -->
         <transition event="acceptRequest">
-
           <!-- define temporary request variable for the event payload request parameter -->
           <cs:var name="request" expr="_event.data?.request"/>
           <!-- store the request workflow type as temporary variable -->
@@ -273,10 +272,12 @@
                Note: After this, the request object no longer can be accessed!
                      Which is why we need to define the temporary variables workflowType and targetDate above.
           -->
+
           <hippo:deleteRequest requestExpr="request"/>
 
           <if cond="!targetDate">
             <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
+
             <send event="workflowType"/>
             <!-- log the workflowType after it has been processed -->
             <send event="'logEvent.'+workflowType"/>
@@ -319,18 +320,17 @@
           </if>
         </onentry>
         <!-- event-less transition to publishable state if not currently editing and the document is modified -->
-        <transition target="publishable" cond="!editing and modified"/>
+        <transition target="publishable" cond="!editing and modified and branches.contains('master')"/>
       </state>
 
       <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
-          <if cond="(!requestPending or user=='workflowuser')">
-            <!-- if there is a master version and there are no branches and no request pending OR invoked by the 'workflowuser'
+
+          <if cond="(!requestPending or user=='workflowuser') and branches.contains('master')">
+            <!-- if unpublished is a master version and no request pending OR invoked by the 'workflowuser'
             user (scheduled workflow jobs daemon): enable request publication operation -->
-            <if cond="branches.contains('master') and branches.size() == 1">
-              <hippo:action action="requestPublication" enabledExpr="true"/>
-            </if>
+            <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
               <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
               <hippo:action action="publish" enabledExpr="true"/>
@@ -350,12 +350,8 @@
 
         <!-- target-less transition to publish the document when no event payload parameter targetDate is provided -->
         <transition event="publish" cond="!_event.data?.targetDate">
-          <!-- copy the content of the unpublished variant to the published variant -->
-          <hippo:copyVariant sourceState="unpublished" targetState="published"/>
-          <!-- mark the published variant as published and set its availability to (only) 'live' -->
-          <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
-          <!-- create a JCR version of the published document via the unpublished variant -->
-          <hippo:version variant="unpublished" trigger="publication"/>
+          <!-- this will publish 'master' because no 'branchId' provided -->
+          <send event="'publishBranch'"/>
         </transition>
 
         <!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate -->
@@ -381,20 +377,17 @@
             <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
-        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' and published
-            version is for master and unpublished is missing OR is present but for master-->
-        <transition target="depublishable" cond="!editing and live and published.master and (!unpublished or unpublished.master)"/>
+        <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
+        <transition target="depublishable" cond="!editing and live and branches.contains('master')"/>
       </state>
 
-      <!-- state depublishable is active when the  document is live and not currently edited and published is for master -->
+      <!-- state depublishable is active when the  document is live and not currently edited -->
       <state id="depublishable">
         <onentry>
-          <if cond="!requestPending or user=='workflowuser'">
+          <if cond="(!requestPending or user=='workflowuser') and branches.contains('master')">
             <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
                  enable request depublication operation -->
-            <if cond="branches.contains('master') and branches.size() == 1">
-              <hippo:action action="requestDepublication" enabledExpr="true"/>
-            </if>
+            <hippo:action action="requestDepublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(published, 'hippo:editor')">
               <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
               <hippo:action action="depublish" enabledExpr="true"/>
@@ -414,16 +407,7 @@
 
         <!-- target-less transition to depublish the document when no event payload parameter targetDate is provided -->
         <transition event="depublish" cond="!_event.data?.targetDate">
-          <if cond="!unpublished">
-            <!-- if no unpublished variant exists yet, copy it from the published variant -->
-            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
-          </if>
-          <!-- ensure the unpublished variant to be versionable set its availability to (only) 'preview' -->
-          <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
-          <!-- remove all availabilities from the published variant -->
-          <hippo:configVariant variant="published" availabilities=""/>
-          <!-- create an extra version of the current unpublished (possibly modified?) -->
-          <hippo:version variant="unpublished"/>
+          <send event="'depublishBranch'"/>
         </transition>
 
         <!-- target-less transition to schedule the depublication of the document at the required event payload parameter targetDate -->
@@ -706,26 +690,29 @@
 
         <transition event="publishBranch">
 
-          <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be published because it doesn\'t exist'"/>
+          <!-- if there is no branch id, we will use master -->
+          <cs:var name="branchId" expr="_event.data?.branchId?: 'master'"/>
+
+          <hippo:workflowException cond="!branches.contains(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' cannot be published because it doesn\'t exist'"/>
 
 
-          <if cond="live and !'master'.equals(_event.data?.branchId)">
+          <if cond="live and !'master'.equals(branchId)">
             <!-- there is a published variant, we only publish to version history -->
-            <if cond="unpublished.isBranch(_event.data?.branchId)">
+            <if cond="unpublished.isBranch(branchId)">
               <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
               <hippo:version variant="unpublished" trigger="publication"/>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
-              <hippo:label unpublished="unpublished" addLabel="_event.data?.branchId + '-published'" onLabel="_event.data?.branchId + '-unpublished'"/>
+              <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
             </if>
 
           </if>
 
-          <if cond="!live or 'master'.equals(_event.data?.branchId)">
+          <if cond="!live or 'master'.equals(branchId)">
 
             <!-- there is not yet a published variant or it is master: really publish the preview -->
-            <if cond="!unpublished.isBranch(_event.data?.branchId)">
+            <if cond="!unpublished.isBranch(branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
               <if cond="editing">
                 <!-- the other branch is being edited : In case it gets saved afterward it would replace the preview again
@@ -734,7 +721,7 @@
                 <hippo:version variant="unpublished"/>
               </if>
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
             </if>
 
             <!-- copy the content of the unpublished variant to the published variant -->
@@ -760,20 +747,25 @@
       <state id="can-depublish-branch">
         <transition event="depublishBranch">
 
-          <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be depublished because it doesn\'t exist'"/>
+          <!-- if there is no branch id, we will use master -->
+          <cs:var name="branchId" expr="_event.data?.branchId?: 'master'"/>
+
+
+          <hippo:workflowException cond="!branches.contains(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' cannot be depublished because it doesn\'t exist'"/>
 
           <if cond="!!unpublished">
             <!-- there is already an unpublished version -->
 
             <!-- remove the published label from version history -->
-            <hippo:label unpublished="unpublished" removeLabel="_event.data?.branchId + '-published'"/>
+            <hippo:label unpublished="unpublished" removeLabel="branchId + '-published'"/>
 
-            <if cond="published.isBranch(_event.data?.branchId)">
+            <if cond="published.isBranch(branchId)">
               <!-- this is a very complex state: the branch gets depublished but the published variant is for the branch : This
               means we need to unpublish this one BUT if it turns out there is ANY other
               branch (including Master) live in version history, we need to publish that branch!! Master has
               precedence to become the live variant (although in general it already always is) -->
+              <!-- TODO cs:var -->
               <script>
                 var originalUnpublishedBranchId = unpublished.getBranchId();
               </script>
@@ -803,7 +795,7 @@
 
           <if cond="!unpublished">
             <!-- there is no unpublished version : Only allow the depublish IF the published variant is for the current right branch -->
-            <if cond="published.isBranch(_event.data?.branchId)">
+            <if cond="published.isBranch(branchId)">
               <hippo:copyVariant sourceState="published" targetState="unpublished"/>
               <!-- ensure the unpublished variant to be versionable set its availability to (only) 'preview' -->
               <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
@@ -813,7 +805,7 @@
               <hippo:version variant="unpublished"/>
             <else/>
               <!-- should never come here since 'branchId' branch exists and there is only a published version -->
-              <hippo:workflowException errorExpr="'Cannot depublish branch \'' + _event.data?.branchId + '\' since there is not a published version for it'"/>
+              <hippo:workflowException errorExpr="'Cannot depublish branch \'' + branchId + '\' since there is not a published version for it'"/>
             </if>
           </if>
 
