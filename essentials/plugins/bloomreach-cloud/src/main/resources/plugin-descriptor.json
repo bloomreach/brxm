@@ -1,9 +1,9 @@
 {
   "id": "bloomreachCloud",
   "name": "BloomReach Cloud",
-  "icon": "/essentials/images/bloomreachCloud.png",
-  "introduction": "With the BloomReach Cloud feature, You can setup a project to be prepared to run on BloomReach Cloud.",
-  "description": "Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. ",
+  "icon": "/essentials/feature/bloomreachCloud/icon.png",
+  "introduction": "With the BloomReach Cloud feature, you set up a project for running on BloomReach Cloud.",
+  "description": "This feature just triggers the installation of a collection of other plugins it depends on. Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. ",
   "documentationLink": "https://www.onehippo.org/bloomreach-cloud/bloomreach-cloud-introduction.html",
   "installWithParameters": false,
   "packageFile": "/META-INF/bloomreach_cloud_plugin_instructions.xml",
