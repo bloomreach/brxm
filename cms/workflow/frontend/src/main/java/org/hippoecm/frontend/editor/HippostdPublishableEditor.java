@@ -99,6 +99,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     private static boolean isWorkflowMethodAvailable(final Workflow workflow, final String methodName) throws RepositoryException, RemoteException, WorkflowException {
+        // TODO make branch hints aware?
         final Serializable hint = workflow.hints().get(methodName);
         return hint == null || Boolean.parseBoolean(hint.toString());
     }
@@ -347,7 +348,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                     if (!isWorkflowMethodAvailable(workflow, "obtainEditableInstance")) {
                         return false;
                     }
-                    workflow.obtainEditableInstance();
+                    if (branchIdModel != null) {
+                        workflow.obtainEditableInstance(branchIdModel.getBranchId());
+                    } else {
+                        workflow.obtainEditableInstance();
+                    }
                     break;
                 case VIEW:
                 case COMPARE:
@@ -450,7 +455,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 final EditableWorkflow workflow = getEditableWorkflow();
                 workflow.commitEditableInstance();
                 session.getJcrSession().refresh(true);
-                workflow.obtainEditableInstance();
+                if (branchIdModel != null) {
+                    workflow.obtainEditableInstance(branchIdModel.getBranchId());
+                } else {
+                    workflow.obtainEditableInstance();
+                }
                 modified = false;
             } else {
                 throw new EditorException("The document is not valid");
