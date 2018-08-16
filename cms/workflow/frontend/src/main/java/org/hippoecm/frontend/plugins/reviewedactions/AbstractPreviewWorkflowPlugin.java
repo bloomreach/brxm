@@ -121,11 +121,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 String branchId = getBranchIdModel().getBranchId();
-                //TODO mrop use workflow.obtainEditableInstance(branchId)
-                if (isModelBasedOnVersionHistory(branchId)) {
-                    workflow.checkoutBranch(branchId);
-                }
-                Document docRef = workflow.obtainEditableInstance();
+                Document docRef = workflow.obtainEditableInstance(branchId);
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
                 Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
@@ -143,21 +139,6 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 return null;
             }
 
-            private boolean isModelBasedOnVersionHistory(final String branchId) {
-                try {
-                    final BranchHandle branchHandle = new BranchHandleImpl(branchId, getWorkflow().getNode());
-                    final Node unpublished = branchHandle.getUnpublished();
-                    if (unpublished != null) {
-                        return unpublished.isNodeType(JcrConstants.NT_FROZEN_NODE);
-                    } else {
-                        final Node published = branchHandle.getPublished();
-                        return published.isNodeType(JcrConstants.NT_FROZEN_NODE);
-                    }
-                } catch (WorkflowException | RepositoryException e) {
-                    log.warn(e.getMessage(), e);
-                }
-                return false;
-            }
         };
         add(editAction);
         hideInvalidActions();
