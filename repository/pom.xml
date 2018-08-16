@@ -95,7 +95,9 @@
     <commons-collections4.version>4.1</commons-collections4.version>
     <tika.version>1.18</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
-    <!-- tika pdfbox dependency version is different than the original pdfbox version, changed by the REPO-2099 -->
+    <!-- The pdfbox version we use is different from the current version used by tika.
+         Typically these should be the same but currently we need a newer pdfbox.
+         As soon as Tika 'catches' up with the latest pdfbox, they should preferrably be kept in sync again. -->
     <pdfbox.version>2.0.11</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
     <json-lib.version>2.4</json-lib.version>
@@ -370,7 +372,7 @@
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
           </exclusion>
-          <!-- version of the pdfbox is directly managed by the repository pom -->
+          <!-- the pdfbox dependency is instead added and managed through the tika/pom.xml -->
           <exclusion>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
