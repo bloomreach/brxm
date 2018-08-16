@@ -32,7 +32,7 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <locales>fr,nl,de,zh,es</locales>
     <locale/>
     <format>excel</format>
