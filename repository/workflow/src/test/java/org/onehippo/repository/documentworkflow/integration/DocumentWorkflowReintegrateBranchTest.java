@@ -109,7 +109,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.branch("foo", "Foo");
 
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         // set a property for 'master' version
         draft.setProperty("title", "Foo title");
@@ -168,7 +168,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         // set a property for 'master' version
         draft.setProperty("title", "Foo title");
@@ -196,7 +196,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         // set a property for 'master' version
         draft.setProperty("title", "Foo title");
@@ -273,7 +273,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
@@ -295,7 +295,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         assertFalse(versionHistory.hasVersionLabel("bar-unpublished"));
 
         // obtain editable instance for branch 'bar'
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("bar");
         assertTrue(draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
 
         assertFalse(preview.hasProperty("title"));

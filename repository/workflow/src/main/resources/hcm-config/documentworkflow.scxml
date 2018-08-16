@@ -95,11 +95,11 @@
           <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
         </onentry>
-        <!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited -->
-        <transition target="editing"  cond="!requestPending and editing"/>
-        <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
+        <!-- event-less transition to state "editing" if the draft variant is edited -->
+        <transition target="editing"  cond="editing"/>
+        <!-- (else) event-less transition to state "editable" (even if there is no pending request) and the draft variant
                     doesn't exist yet or isn't edited -->
-        <transition target="editable" cond="!requestPending"/>
+        <transition target="editable"/>
       </state>
 
       <!-- editing state becomes active when the draft variant is currently edited -->
@@ -145,9 +145,23 @@
            by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
         <!-- copy/update draft unless user already is holder (editing) -->
+        <hippo:workflowException cond="!!requestPending and 'master'.equals(_event.data?.branchId)"
+                                 errorExpr="'Cannot obtain editable instance for \'master\' if there is a request pending'"/>
+
+        <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
+                                 errorExpr="'Cannot obtain editable instance for branch \'' + _event.data?.branchId + '\' since it doesn\'t exist'"/>
+
         <if cond="!editor">
           <if cond="!!unpublished">
-            <!-- unpublished document exists: copy it to draft first, unless we're already editor -->
+            <!-- unpublished document exists -->
+            <!-- make sure the unpublished is the right branch -->
+            <if cond="!unpublished.isBranch(_event.data?.branchId)">
+              <!-- current unpublished is not for the branch to restore to. First checkin old branch and then checkout
+              the request branch -->
+              <hippo:version variant="unpublished"/>
+              <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+            </if>
+            <!-- copy it to draft first, unless we're already editor -->
             <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
           <elseif cond="!!published"/>
             <!-- else if published document exists: first copy it to unpublished -->
@@ -786,7 +800,7 @@
                 <hippo:configVariant variant="published" applyPublished="true" availabilities="live"/>
                 <!-- we do not need an extra version! -->
 
-                <!-- we need to restore the preview of before -->
+                <!-- we need to restore the preview of before! -->
                 <hippo:checkoutBranch variant="unpublished" branchId="originalUnpublishedBranchId" forceReplace="true"/>
               </if>
 

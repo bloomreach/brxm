@@ -71,6 +71,10 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         return document;
     }
 
+    public Document obtainEditableInstance(final String branchId) {
+        return document;
+    }
+
     public Document commitEditableInstance() {
         return document;
     }

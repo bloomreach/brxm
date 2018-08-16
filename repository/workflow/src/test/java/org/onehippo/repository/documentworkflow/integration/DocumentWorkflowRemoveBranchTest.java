@@ -130,7 +130,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.branch("foo", "Foo");
         assertTrue(ImmutableSet.of("master", "foo").equals(workflow.listBranches()));
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
 
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.removeBranch("foo");

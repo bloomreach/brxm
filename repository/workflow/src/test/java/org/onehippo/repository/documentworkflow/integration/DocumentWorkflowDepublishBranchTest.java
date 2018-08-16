@@ -396,18 +396,9 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
 
     @Test
     public void depublish_branch_foo_while_bar_published_exists_and_bar_unpublished_has_changes() throws Exception {
-        depublish_foo_with_bar_published_assertions(documentWorkflow -> {
-        });
-    }
-
-    private void depublish_foo_with_bar_published_assertions(final Consumer<DocumentWorkflow> consumer) throws RepositoryException, WorkflowException, RemoteException {
-        // this setup assumes that the published variant is 'foo' and there is a live 'bar' version but 'bar' also has
-        // changes in unpublished variant : When depublishing 'foo', we expect the published version of 'bar' to become
-        // live and after that, the unpublished again replaced with the unpublished bar
-        // depending on xxx, there can also be an editable instance of 'bar' which is being edited
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-        workflow.branch("foo", "Foo");
+        workflow.branch("foo", "foo");
         workflow.publishBranch("foo");
 
         workflow.checkoutBranch(MASTER_BRANCH_ID);
@@ -416,13 +407,11 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         workflow.publishBranch("bar");
 
         // make changes to unpublished variant
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("bar");
         final Node draft = getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         draft.setProperty("title", "bar title");
         session.save();
         workflow.commitEditableInstance();
-
-        consumer.accept(workflow);
 
         final Node unpublished = getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
@@ -433,27 +422,19 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         assertTrue(versionHistory.hasVersionLabel("bar-published"));
         assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
 
-        final Version barUnpublishedVersion = versionHistory.getVersionByLabel("bar-unpublished");
-        final Version barPublishedVersion = versionHistory.getVersionByLabel("bar-published");
-
         workflow.depublishBranch("foo");
 
         // as a result, we expect the 'bar' live version to be live. The 'bar' unpublished version is a different version
         // and is expected to be restored
 
         final Node published = getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+
+
         assertEquals("bar", published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         // assert that NOT the unpublished from bar got published since it got changes
         assertFalse(published.hasProperty("title"));
 
-
         assertEquals("bar", unpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
-
-        // assert the unpublished still has the 'title' property because *AFTER* the published from version history
-        // was restored and published, the unpublished 'bar' version should be restored
-
-        assertTrue(unpublished.hasProperty("title"));
-        assertEquals("bar title", getStringProperty(unpublished, "title", null));
 
         // assert for bar unpublished and published point to a different version
         assertFalse(versionHistory.getVersionByLabel("bar-unpublished").isSame(versionHistory.getVersionByLabel("bar-published")));
@@ -465,25 +446,72 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         assertTrue(versionHistory.hasVersionLabel("bar-published"));
         assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
 
-        // as a result of the depublish of 'foo', we expect that the 'bar-unpublished' variant got versioned hence moved
-        assertFalse(barUnpublishedVersion.isSame(versionHistory.getVersionByLabel("bar-unpublished")));
-        assertTrue(barPublishedVersion.isSame(versionHistory.getVersionByLabel("bar-published")));
     }
 
     @Test
     public void depublish_branch_foo_while_bar_published_exists_and_bar_unpublished_has_changes_and_being_edited() throws Exception {
-        depublish_foo_with_bar_published_assertions(documentWorkflow -> {
-            try {
-                documentWorkflow.obtainEditableInstance();
-                final Node draft = getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
-                draft.setProperty("title", "title in editing");
-                draft.setProperty("summary", "summary in editing");
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        });
 
+
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        workflow.branch("foo", "foo");
+        workflow.publishBranch("foo");
+
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+        workflow.branch("bar", "Bar");
+        workflow.publishBranch("bar");
+
+        // make changes to unpublished variant
+        workflow.obtainEditableInstance("bar");
         final Node draft = getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draft.setProperty("title", "bar title");
+        session.save();
+        workflow.commitEditableInstance();
+
+        workflow.obtainEditableInstance("foo");
+        draft.setProperty("title", "title in editing");
+        draft.setProperty("summary", "summary in editing");
+
+        final Node unpublished = getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+        assertEquals(5, versionHistory.getVersionLabels().length);
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("foo-published"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+
+        workflow.depublishBranch("foo");
+
+        // as a result, we expect the 'bar' live version to be live. The 'bar' unpublished version is a different version
+        // and is expected to be restored
+
+        final Node published = getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+
+
+        assertEquals("bar", published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+        // assert that NOT the unpublished from bar got published since it got changes
+        assertFalse(published.hasProperty("title"));
+
+        // although bar has been published via 'unpublished' as a result of workflow.depublishBranch("foo");, we still
+        // expect the unpublished to be 'foo' (since that should be restored)
+        assertEquals("foo", unpublished.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+
+        // assert the unpublished doesn't have the 'title' property because *AFTER* the published 'bar' from version history
+        // was restored and published, the unpublished 'foo' version should be restored
+
+        assertFalse(unpublished.hasProperty("title"));
+
+        // assert for bar unpublished and published point to a different version
+        assertFalse(versionHistory.getVersionByLabel("bar-unpublished").isSame(versionHistory.getVersionByLabel("bar-published")));
+
+
+        assertEquals(4, versionHistory.getVersionLabels().length);
+        assertTrue(versionHistory.hasVersionLabel("foo-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-unpublished"));
+        assertTrue(versionHistory.hasVersionLabel("bar-published"));
+        assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
+
         assertTrue(draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("title in editing", draft.getProperty("title").getString());
         assertEquals("summary in editing", draft.getProperty("summary").getString());

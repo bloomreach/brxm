@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import javax.jcr.Node;
@@ -22,6 +23,7 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -47,7 +49,7 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         assertFalse((Boolean)workflow.hints().get("depublish"));
 
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
 
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         draft.setProperty("title", "title foo");
@@ -96,14 +98,30 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
 
         workflow.requestDepublication();
 
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.obtainEditableInstance();
+            fail("Since there is a request publication for master, obtainEditableInstance without argument (master) " +
+                    "should be not allowed");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot obtain editable instance for 'master' if there is a request pending",
+                    e.getMessage());
+        }
+
         // master can now not be unpublished since outstanding request
         assertFalse((Boolean)workflow.hints().get("depublish"));
 
-        workflow.checkoutBranch("foo");
-        // TODO REPO-2088 below must become workflow.obtainEditableInstance("foo") and should be allowed
-        workflow.obtainEditableInstance();
+        assertFalse(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+
+        workflow.obtainEditableInstance("foo");
+
+        // obtainEditableInstance should have checked out the branch to unpublished
+        assertTrue(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertTrue(draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+
         draft.setProperty("title", "title foo");
         session.save();
+
+
         workflow.commitEditableInstance();
 
         // depublication should be allowed, and should take the live master offline

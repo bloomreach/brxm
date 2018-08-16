@@ -221,7 +221,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
-        return (Document) triggerAction(DocumentWorkflowAction.obtainEditableInstance());
+        return obtainEditableInstance(MASTER_BRANCH_ID);
+    }
+
+    @Override
+    public Document obtainEditableInstance(final String branchId) throws RepositoryException, WorkflowException {
+        return (Document) triggerAction(DocumentWorkflowAction.obtainEditableInstance().addEventPayload(BRANCH_ID, branchId));
     }
 
     @Override

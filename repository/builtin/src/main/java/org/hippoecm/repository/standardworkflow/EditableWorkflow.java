@@ -38,7 +38,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 public interface EditableWorkflow extends Workflow {
 
     /**
-     * Request this editable copy of the document.
+     * Request the editable copy of the {@link DocumentVariant#MASTER_BRANCH_ID} document.
      * @return A reference to the document that may actually be modified, and should either be committed or disposed.
      * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
@@ -47,6 +47,20 @@ public interface EditableWorkflow extends Workflow {
      */
     public Document obtainEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     *
+     * @param branchId
+     * @return
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document obtainEditableInstance(String branchId)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
 
     /**
      * Persists editable copy of the document, the editable variant of the document is no longer available after this call.

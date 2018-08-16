@@ -99,7 +99,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
 
         {
             final Document draftDocument = workflow.getBranch("foo", DRAFT);

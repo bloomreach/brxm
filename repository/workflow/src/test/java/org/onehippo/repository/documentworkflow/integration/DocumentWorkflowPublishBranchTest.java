@@ -97,8 +97,6 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         final Node live = getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
         assertEquals("foo", live.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // now branch the preview to bar.
-        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("bar", "Bar");
 
         workflow.publishBranch("bar");
@@ -124,19 +122,18 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
         getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get().remove();
         session.save();
 
-        workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("lux1", "Lux1");
         {
-            final Node draft = workflow.obtainEditableInstance().getNode(session);
+            final Node draft = workflow.obtainEditableInstance("lux1").getNode(session);
             draft.setProperty("title", "Lux 1");
             session.save();
         }
         workflow.commitEditableInstance();
 
-        workflow.checkoutBranch(MASTER_BRANCH_ID);
+      //  workflow.checkoutBranch(MASTER_BRANCH_ID);
         workflow.branch("lux2", "Lux2");
         {
-            final Node draft = workflow.obtainEditableInstance().getNode(session);
+            final Node draft = workflow.obtainEditableInstance("lux2").getNode(session);
             draft.setProperty("title", "Lux 2");
             session.save();
         }

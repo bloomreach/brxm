@@ -113,7 +113,7 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertEquals(numberOfVersions + 2, versionHistory.getAllVersions().getSize());
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.obtainEditableInstance();
+            workflow.obtainEditableInstance("foo");
         }
         final Optional<Node> draftVariant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT);
         assertTrue(draftVariant.isPresent());

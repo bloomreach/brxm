@@ -116,7 +116,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertTrue(versionHistory.hasVersionLabel("foo bar-published"));
 
         // when now editing, we expect the draft to also contain the branch info mixin
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo bar");
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
 
         assertTrue("draft variant is expected to have branch info after publish.", draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
@@ -330,7 +330,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
         workflow.branch("foo", "Foo");
-        workflow.obtainEditableInstance();
+        workflow.obtainEditableInstance("foo");
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
         draft.setProperty("title", "foo title");
         session.save();
