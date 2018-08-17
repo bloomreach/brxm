@@ -90,7 +90,7 @@
     <hippo.services.contenttype.version>4.5.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.testutils.version>1.5.0-SNAPSHOT</hippo.testutils.version>
 
-    <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <stax2-api.version>3.1.4</stax2-api.version>
     <woodstox.version>4.4.1</woodstox.version>
