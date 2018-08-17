@@ -143,8 +143,6 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
         workflow.branch("foo", "Foo");
 
-        final Set<String> strings = workflow.listBranches();
-
         assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
         assertTrue((Boolean) workflow.hints("foo").get("obtainEditableInstance"));
 
@@ -154,8 +152,17 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         } catch (WorkflowException e) {
             assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined", e.getMessage());
         }
-
         workflow.obtainEditableInstance("foo");
+    }
+
+    @Test
+    public void obtain_editable_instance_fails_for_non_existing_branch() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.obtainEditableInstance("foo");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot obtain editable instance for branch 'foo' since it doesn't exist", e.getMessage());
+        }
     }
 
     @Test
