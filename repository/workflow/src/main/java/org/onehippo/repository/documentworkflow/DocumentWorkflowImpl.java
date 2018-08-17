@@ -88,7 +88,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
 
     private SCXMLWorkflowExecutor<SCXMLWorkflowContext, DocumentHandle> workflowExecutor;
-    private SCXMLWorkflowExecutor<SCXMLWorkflowContext, BranchDocumentHandle> hintsWorkflowExecutor;
 
     /**
      * All implementations of a work-flow must provide a single, no-argument constructor.
@@ -166,7 +165,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
             final SCXMLWorkflowContext scxmlWorkflowContext = new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext());
             workflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, createDocumentHandle(node));
-            hintsWorkflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, new BranchDocumentHandle(node));
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
