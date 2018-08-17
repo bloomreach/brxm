@@ -523,14 +523,14 @@
 
     /**
      * Save all dirty forms in the panel
-     * @param fireEvent
+     * @param redrawEditor whether to redraw the editor or not; defaults to true
      */
-    saveAll: function (fireEvent) {
+    saveAll: function (redrawEditor) {
       var dirtyEditors = this._getDirtyEditors(),
         savePromises = [],
         dirtyVariantIds = [],
         activeVariantId = this.getActiveTab().variant.id,
-        doFire = Ext.isDefined(fireEvent) ? fireEvent : true;
+        redraw = Ext.isDefined(redrawEditor) ? redrawEditor : true;
 
       dirtyEditors.forEach(function(editor) {
         savePromises.push(editor.save());
@@ -542,15 +542,18 @@
           mapVariantIds = [].slice.call(arguments),
           savedVariantIds = Ext.pluck(mapVariantIds, "newId");
 
-        activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
-        if (doFire) {
-          this._onSaved(savedVariantIds, activeVariantId);
-        }
-
         dirtyEditors.forEach(function(editor) {
           afterSavePromises.push(editor.onAfterSave());
         });
-        return $.when.apply($, afterSavePromises).then(this.notifyComponentChanged.bind(this));
+
+        return $.when.apply($, afterSavePromises)
+          .then(function () {
+            activeVariantId = this._findActiveVariantId(mapVariantIds, activeVariantId);
+            if (redraw) {
+              this._onSaved(savedVariantIds, activeVariantId);
+            }
+          }.bind(this))
+          .then(this.notifyComponentChanged.bind(this));
       }.bind(this));
     },
 
