@@ -106,7 +106,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
-    <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
