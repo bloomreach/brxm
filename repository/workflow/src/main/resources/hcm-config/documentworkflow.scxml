@@ -513,7 +513,7 @@
 
       <onentry>
         <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
-        <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and !requestPending and branches.contains('master')"/>
+        <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
         <hippo:action action="getBranch" enabledExpr="true"/>
       </onentry>
@@ -539,7 +539,7 @@
         <!-- event-less transition to branchable state when an unpublished OR published document variant exists AND the
              unpublished is for master OR there is no unpublished (in which case there is only one variant from which
              you can branch -->
-        <transition target="branchable" cond="!editing and (!!unpublished or !!published) and !requestPending"/>
+        <transition target="branchable" cond="!editing and (!!unpublished or !!published)"/>
       </state>
 
       <!-- the branchable state becomes active when an unpublished document variant exists -->

@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,6 +31,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -132,6 +134,28 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.requestPublication();
         assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+    }
+
+    @Test
+    public void can_edit_branch_with_pending_request_for_master() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        workflow.requestPublication();
+        assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+        workflow.branch("foo", "Foo");
+
+        final Set<String> strings = workflow.listBranches();
+
+        assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+        assertTrue((Boolean) workflow.hints("foo").get("obtainEditableInstance"));
+
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.obtainEditableInstance();
+            fail("Obtain Editable Instance should not be allowed");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined", e.getMessage());
+        }
+
+        workflow.obtainEditableInstance("foo");
     }
 
     @Test
