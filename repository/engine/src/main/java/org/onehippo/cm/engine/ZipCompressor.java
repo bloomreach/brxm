@@ -35,7 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import static org.onehippo.cm.model.util.FilePathUtils.isUnixFs;
+import static org.onehippo.cm.model.util.FilePathUtils.unixPath;
 
 /**
  * Zip utility
@@ -74,12 +74,12 @@ public class ZipCompressor {
 
             for (final String filePath : paths) {
                 String folderPath = filePath.substring(dir.toAbsolutePath().toString().length() + 1, filePath.length());
-                if (!isUnixFs()) {
-                    // When creating a ZIP file on Windows OS, if the file contains folders, we must
-                    // replace Windows folder seperators with the UNIX one. Because ZIP file
-                    // format uses UNIX file seperators on folders regardless from the operating system.
-                    folderPath = folderPath.replace("\\", "/");
-                }
+
+                // When creating a ZIP file on Windows OS, if the file contains folders, we must
+                // replace Windows folder seperators with the UNIX one. Because ZIP file
+                // format uses UNIX file seperators on folders regardless from the operating system.
+                folderPath = unixPath(folderPath);
+
                 final ZipEntry ze = new ZipEntry(folderPath);
                 zos.putNextEntry(ze);
 
