@@ -539,7 +539,7 @@
         <!-- event-less transition to branchable state when an unpublished OR published document variant exists AND the
              unpublished is for master OR there is no unpublished (in which case there is only one variant from which
              you can branch -->
-        <transition target="branchable" cond="!editing and (!!unpublished or !!published)"/>
+        <transition target="branchable" cond="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
       </state>
 
       <!-- the branchable state becomes active when an unpublished document variant exists -->

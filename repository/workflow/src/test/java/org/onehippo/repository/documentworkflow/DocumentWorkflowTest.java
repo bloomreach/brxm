@@ -47,8 +47,6 @@ import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
-@Ignore
-// TODO REPO-2092 fix this test again
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
     @BeforeClass
@@ -279,11 +277,11 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
 
-        // #branch is still allowed since there is no unpublished version
+        // #branch is still not allowed any more since there is no master any more (draft doesn't count)
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(true).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .branchFeedback("foo", null, MASTER_BRANCH_ID)
                 .hints()
@@ -295,7 +293,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(true).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .branchFeedback("foo", null, "foo")
                 .hints()
@@ -319,6 +317,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .branchFeedback("foo", "foo", null)
                 .hints()
         );
+
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
                 .noBranchable().canCheckoutBranch().canRemoveBranch().canReintegrateBranch().canPublishBranch().canDepublishBranch()
