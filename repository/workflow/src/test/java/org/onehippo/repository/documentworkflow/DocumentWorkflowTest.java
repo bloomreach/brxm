@@ -124,7 +124,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         addVariant(handleNode, HippoStdNodeType.DRAFT);
         wf.setNode(handleNode);
-        wf.getWorkflowExecutor().start();
+        wf.getWorkflowExecutor().start(null);
     }
 
     @Test

@@ -29,6 +29,8 @@
     def getPublished() { workflowData.documents['published'] }
     // branches property method
     def getBranches() { workflowData.branches }
+    // current branchId for the action feedback or triggered action
+    def getBranchId() { workflowData.branchId }
     // current user property method
     def getUser() { workflowContext.user }
     // current requests map property method
@@ -95,11 +97,11 @@
           <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
         </onentry>
-        <!-- event-less transition to state "editing" if the draft variant is edited -->
+        <!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited -->
         <transition target="editing"  cond="editing"/>
-        <!-- (else) event-less transition to state "editable" (even if there is no pending request) and the draft variant
+        <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
                     doesn't exist yet or isn't edited -->
-        <transition target="editable"/>
+        <transition target="editable" cond="!requestPending or !branchId.equals('master')"/>
       </state>
 
       <!-- editing state becomes active when the draft variant is currently edited -->
@@ -108,7 +110,8 @@
           <if cond="editor">
             <!-- current editor is allowed all editing operations -->
             <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
-            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
+            <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
+            <hippo:action action="obtainEditableInstance" enabledExpr="editor"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
           <else/>
             <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
@@ -145,9 +148,6 @@
            by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
         <!-- copy/update draft unless user already is holder (editing) -->
-        <hippo:workflowException cond="!!requestPending and 'master'.equals(_event.data?.branchId)"
-                                 errorExpr="'Cannot obtain editable instance for \'master\' if there is a request pending'"/>
-
         <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
                                  errorExpr="'Cannot obtain editable instance for branch \'' + _event.data?.branchId + '\' since it doesn\'t exist'"/>
 

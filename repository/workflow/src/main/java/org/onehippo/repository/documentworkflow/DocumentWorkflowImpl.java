@@ -194,15 +194,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Map<String, Serializable> hints(final String branchId) throws WorkflowException {
-        final BranchDocumentHandle branchDocumentHandle = hintsWorkflowExecutor.getData();
-        BranchHandle branchHandle = new BranchHandleImpl(branchId, getNode());
-        branchDocumentHandle.setDraft(branchHandle.getDraft());
-        branchDocumentHandle.setPublished(branchHandle.getPublished());
-        branchDocumentHandle.setUnpublished(branchHandle.getUnpublished());
-        hintsWorkflowExecutor.start();
+        workflowExecutor.start(branchId);
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(hintsWorkflowExecutor.getContext().getFeedback());
-        hints.putAll(hintsWorkflowExecutor.getContext().getActions());
+        hints.putAll(workflowExecutor.getContext().getFeedback());
+        hints.putAll(workflowExecutor.getContext().getActions());
         for (Map.Entry<String, Serializable> entry : hints.entrySet()) {
             if (entry.getValue() instanceof Collection) {
                 // protect against modifications
@@ -446,8 +441,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                     "was of type '%s'.", DocumentWorkflowAction.class.getName(), action.getClass().getName()));
         }
         DocumentWorkflowAction dwfAction = (DocumentWorkflowAction) action;
-        workflowExecutor.start();
         final Map<String, Object> eventPayload = dwfAction.getEventPayload();
+
+        workflowExecutor.start((String)eventPayload.get(BRANCH_ID.getKey()));
+
         final String requestIdentifier = dwfAction.getRequestIdentifier();
         if (requestIdentifier !=null){
             dwfAction.addEventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier));

@@ -104,7 +104,7 @@ public interface EditableWorkflow extends Workflow {
 
     /**
      * <p>
-     * Same as for {@link #hints()} only now the hints for a specific {@code branchId}
+     * Same as for {@link #hints()} (which returns hints for master) only now the hints for a specific {@code branchId}
      * </p>
      *
      * @param branchId the branch to request the hints for.

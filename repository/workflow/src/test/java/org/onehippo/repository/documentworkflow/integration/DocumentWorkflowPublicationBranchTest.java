@@ -103,14 +103,22 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
             fail("Since there is a request publication for master, obtainEditableInstance without argument (master) " +
                     "should be not allowed");
         } catch (WorkflowException e) {
-            assertEquals("Cannot obtain editable instance for 'master' if there is a request pending",
+            assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined",
                     e.getMessage());
         }
 
         // master can now not be unpublished since outstanding request
         assertFalse((Boolean)workflow.hints().get("depublish"));
 
+        // For master there cannot be obtained an editable instance since there is an outstanding request
+        assertFalse((Boolean)workflow.hints().get("obtainEditableInstance"));
+
+        // For 'foo' there can be obtained an editable instance even when there is an outstanding request for master
+        assertTrue((Boolean)workflow.hints("foo").get("obtainEditableInstance"));
+
+
         assertFalse(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+
 
         workflow.obtainEditableInstance("foo");
 
@@ -120,7 +128,6 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
 
         draft.setProperty("title", "title foo");
         session.save();
-
 
         workflow.commitEditableInstance();
 

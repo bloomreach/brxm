@@ -24,7 +24,7 @@ import org.hippoecm.repository.api.WorkflowException;
  * <p>
  * A concrete SCXMLWorkflowData instance will be injected in the SCXML root context under the predefined and reserved
  * {@link #SCXML_CONTEXT_KEY} ("workflowData") key by the {@link SCXMLWorkflowExecutor}, which will also manage its
- * internal state by invoking the {@link #initialize()} and {@link #reset()} method when the SCXML state machine is
+ * internal state by invoking the {@link #initialize(String)} and {@link #reset()} method when the SCXML state machine is
  * started and reset.
  */
 public interface SCXMLWorkflowData {
@@ -32,5 +32,6 @@ public interface SCXMLWorkflowData {
     String SCXML_CONTEXT_KEY = "workflowData";
 
     void initialize() throws WorkflowException;
+    void initialize(final String branchId) throws WorkflowException;
     void reset();
 }

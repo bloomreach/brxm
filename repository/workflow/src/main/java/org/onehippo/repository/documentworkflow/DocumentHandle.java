@@ -55,6 +55,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private final Node handle;
     private Map<String, DocumentVariant> documents = new HashMap<>();
     private Set<String> branches = new HashSet<>();
+    private String branchId;
     private Map<String, Request> requests = new HashMap<>();
     private boolean requestPending = false;
     private boolean initialized;
@@ -89,10 +90,20 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     @Override
     public void initialize() throws WorkflowException {
+        initialize(null);
+    }
+
+    @Override
+    public void initialize(final String branchId) throws WorkflowException {
         if (initialized) {
             reset();
         }
         try {
+            if (branchId == null ) {
+                this.branchId = MASTER_BRANCH_ID;
+            } else {
+                this.branchId = branchId;
+            }
             initializeDocumentVariants();
             initializeDocumentBranches();
             initializeRequestStatus();
@@ -155,6 +166,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     @Override
     public void reset() {
         if (initialized) {
+            branchId = null;
             documents.clear();
             requests.clear();
             branches.clear();
@@ -182,6 +194,10 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     public Set<String> getBranches() {
         return branches;
+    }
+
+    public String getBranchId() {
+        return branchId;
     }
 
     public boolean hasMultipleDocumentVariants(final String state) throws RepositoryException {
