@@ -39,7 +39,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
 
         WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(nodeField.canRemoveItem() || nodeField.canReorderItems());
-        add(controls);
+        queue(controls);
 
         MarkupContainer remove = new AjaxLink("remove") {
             @Override
@@ -50,11 +50,24 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         if (!nodeField.canRemoveItem()) {
             remove.setVisible(false);
         }
+        queue(remove);
 
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
-        remove.add(removeIcon);
+        queue(removeIcon);
 
-        controls.add(remove);
+        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                nodeField.onMoveItemToTop(model);
+                nodeField.redraw();
+            }
+        };
+        upToTopLink.setVisible(nodeField.canReorderItems());
+        upToTopLink.setEnabled(index > 0);
+        queue(upToTopLink);
+
+        final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+        queue(upToTopIcon);
 
         MarkupContainer upLink = new AjaxLink("up") {
             @Override
@@ -68,11 +81,10 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         if (index == 0) {
             upLink.setEnabled(false);
         }
+        queue(upLink);
 
         final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
-        upLink.add(upIcon);
-
-        controls.add(upLink);
+        queue(upIcon);
 
         MarkupContainer downLink = new AjaxLink("down") {
             @Override
@@ -94,10 +106,24 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         }
         boolean isLast = (index == nodeField.provider.size() - 1);
         downLink.setEnabled(!isLast);
+        queue(downLink);
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
-        downLink.add(downIcon);
+        queue(downIcon);
 
-        controls.add(downLink);
+        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                nodeField.onMoveItemToBottom(model);
+                nodeField.redraw();
+            }
+        };
+        downToBottomLink.setVisible(nodeField.canReorderItems());
+        downToBottomLink.setEnabled(index < nodeField.getProvider().size() - 1);
+        queue(downToBottomLink);
+
+        final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+        queue(downToBottomIcon);
+
     }
 }
