@@ -206,6 +206,16 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
     }
 
     @Override
+    public void moveToTop(final JcrPropertyValueModel model) {
+        throw new UnsupportedOperationException("Move to top not yet implemented for Properties.");
+    }
+
+    @Override
+    public void moveToBottom(final JcrPropertyValueModel model) {
+        throw new UnsupportedOperationException("Move to bottom not yet implemented for Properties.");
+    }
+
+    @Override
     public ModelPathElement getFieldElement(JcrPropertyValueModel model) {
         int index = model.getIndex();
         if (index == -1) {

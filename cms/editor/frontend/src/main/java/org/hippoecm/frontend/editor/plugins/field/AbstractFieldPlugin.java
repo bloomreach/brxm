@@ -419,7 +419,15 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         provider.moveUp(model);
     }
 
-    private void addValidationFilter(Object key, ValidationFilter listener) {
+    public void onMoveItemToTop(final C model) {
+        provider.moveToTop(model);
+    }
+
+    public void onMoveItemToBottom(final C model) {
+        provider.moveToBottom(model);
+    }
+
+    private void addValidationFilter(final Object key, final ValidationFilter listener) {
         listeners.put(key, listener);
     }
 
