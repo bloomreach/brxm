@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -56,6 +57,7 @@ public class AbstractRestApiIT {
         componentManager = new SpringComponentManager(new PropertiesConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
+        servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/onehippo/**/*.class");
         servletContext.setContextPath("/site");
         ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
 

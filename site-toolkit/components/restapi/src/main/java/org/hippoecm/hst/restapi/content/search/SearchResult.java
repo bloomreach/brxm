@@ -22,17 +22,16 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.linking.RestApiLinkCreator;
-import org.onehippo.cms7.services.search.result.Hit;
-import org.onehippo.cms7.services.search.result.HitIterator;
-import org.onehippo.cms7.services.search.result.QueryResult;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -57,16 +56,14 @@ public class SearchResult {
     public List<Map<String, Object>> items;
 
     public void populateFromDocument(final int offset, final int max,
-                                     final QueryResult queryResult,
+                                     final HstQueryResult queryResult,
                                      final ResourceContext context) throws RepositoryException {
         final List<Map<String, Object>> itemArrayList = new ArrayList<>();
-        final HitIterator iterator = queryResult.getHits();
-        final Session session = context.getRequestContext().getSession();
+        final HippoBeanIterator iterator = queryResult.getHippoBeans();
         final RestApiLinkCreator restApiLinkCreator = context.getRestApiLinkCreator();
         while (iterator.hasNext()) {
-            final Hit hit = iterator.nextHit();
-            final String variantUUID = hit.getSearchDocument().getContentId().toIdentifier();
-            final Node node = session.getNodeByIdentifier(variantUUID);
+            final HippoBean bean = iterator.nextHippoBean();
+            final Node node = bean.getNode();
             final Node handleNode = node.getParent();
             if (!handleNode.isNodeType(NT_HANDLE)) {
                 throw new IllegalStateException(String.format("Expected node of type 'NT_HANDLE' but was '%s'.",
@@ -85,7 +82,7 @@ public class SearchResult {
         this.offset = offset;
         this.max = max;
         count = itemArrayList.size();
-        total = queryResult.getTotalHitCount();
+        total = queryResult.getTotalSize();
         more = (offset + count) < total;
         items = itemArrayList;
     }
