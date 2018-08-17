@@ -309,6 +309,22 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         validateModelObjects();
     }
 
+    @Override
+    public void onMoveItemToTop(final JcrNodeModel model) {
+        super.onMoveItemToTop(model);
+        validateModelObjects();
+    }
+
+    @Override
+    public void onMoveItemToBottom(final JcrNodeModel model) {
+        super.onMoveItemToBottom(model);
+        validateModelObjects();
+    }
+
+    protected AbstractProvider getProvider() {
+        return provider;
+    }
+
     /**
      * If validation has already been done, trigger it again. This is useful when items in the form
      * have moved to a different location or have been removed. After redrawing a possible error message
