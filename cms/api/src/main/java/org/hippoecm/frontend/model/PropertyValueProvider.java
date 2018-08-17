@@ -201,12 +201,60 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
 
     @Override
     public void moveToTop(final JcrPropertyValueModel model) {
-        throw new UnsupportedOperationException("Move to top not yet implemented for Properties.");
+        load();
+        final int index = model.getIndex();
+        if (index == 0) {
+            log.warn("Item {} is already the first element.", model);
+            return;
+        }
+        if (descriptor.isMultiple() && index > 0) {
+            try {
+                Property property = (Property) getItemModel().getObject();
+                Value[] oldValues = property.getValues();
+                Value[] newValues = new Value[oldValues.length];
+
+                final int secondPartLength = oldValues.length - index - 1;
+
+                newValues[0] = oldValues[index]; // 1st item = moved item
+                System.arraycopy(oldValues, 0, newValues, 1, index); // next: items before
+                System.arraycopy(oldValues, index + 1, newValues, index + 1, secondPartLength); // then: items after 
+
+                property.setValue(newValues);
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.error("Cannot move first value further up.");
+        }
     }
 
     @Override
     public void moveToBottom(final JcrPropertyValueModel model) {
-        throw new UnsupportedOperationException("Move to bottom not yet implemented for Properties.");
+        load();
+        final int index = model.getIndex();
+        if (descriptor.isMultiple()) {
+            try {
+                Property property = (Property) getItemModel().getObject();
+                Value[] oldValues = property.getValues();
+                if (index == oldValues.length - 1) {
+                    log.warn("Item {} is already the last element.", model);
+                    return;
+                }
+                Value[] newValues = new Value[oldValues.length];
+
+                final int secondPartLength = oldValues.length - index - 1;
+
+                newValues[oldValues.length - 1] = oldValues[index]; // last item = moved item
+                System.arraycopy(oldValues, 0, newValues, 0, index); // next: items before
+                System.arraycopy(oldValues, index + 1, newValues, index, secondPartLength); // then: items after 
+
+                property.setValue(newValues);
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.error("Cannot move item in single value Property.");
+        }
     }
 
     @Override

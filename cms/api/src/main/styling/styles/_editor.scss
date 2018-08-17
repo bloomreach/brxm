@@ -236,13 +236,18 @@
   }
 }
 
+.hide-top-arrow .hippo-editor-field-subfield-controls .top,
+.hide-bottom-arrow .hippo-editor-field-subfield-controls .bottom {
+  display: none;
+}
+
 .hippo-editor-field-subfield-controls {
   opacity: 0;
   padding: 8px;
   position: absolute;
   right: 0;
   top: 0;
-
+  
   .hippo-editor-field-subfield:hover > & {
     opacity: 1;
   }
