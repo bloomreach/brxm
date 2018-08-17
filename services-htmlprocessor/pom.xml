@@ -38,7 +38,7 @@
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <!-- test dependencies -->
     <easymock.version>3.0</easymock.version>
