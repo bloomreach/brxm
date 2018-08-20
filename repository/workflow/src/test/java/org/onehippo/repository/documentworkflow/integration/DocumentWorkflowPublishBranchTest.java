@@ -256,7 +256,7 @@ public class DocumentWorkflowPublishBranchTest extends AbstractDocumentWorkflowI
             workflow.publishBranch("foo");
             fail("Branch 'foo' does not exist so publishing should not be possible");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'foo' cannot be published because it doesn't exist", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action publishBranch: action not allowed or undefined", e.getMessage());
         }
 
     }

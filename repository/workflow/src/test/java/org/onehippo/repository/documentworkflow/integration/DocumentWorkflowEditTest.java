@@ -161,7 +161,7 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.obtainEditableInstance("foo");
         } catch (WorkflowException e) {
-            assertEquals("Cannot obtain editable instance for branch 'foo' since it doesn't exist", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined", e.getMessage());
         }
     }
 

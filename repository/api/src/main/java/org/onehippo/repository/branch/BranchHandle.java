@@ -109,4 +109,10 @@ public interface BranchHandle {
      * @return if the published variant exists and is live
      */
     boolean isLive();
+
+
+    /**
+     * @return  {@code true} if there is a variant for {@link #getBranchId()} that exists and has availability preview
+     */
+    boolean isPreview();
 }

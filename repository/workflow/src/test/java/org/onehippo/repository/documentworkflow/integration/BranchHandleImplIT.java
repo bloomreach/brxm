@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;

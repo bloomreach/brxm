@@ -196,6 +196,34 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return branches;
     }
 
+    public boolean isOnlyMaster() {
+        return branches.size() == 1 && branches.contains(MASTER_BRANCH_ID);
+    }
+
+    public boolean isLiveAvailable(final String branchId) throws WorkflowException {
+        return new BranchHandleImpl(branchId, this).isLive();
+    }
+
+    public boolean isAnyBranchLiveAvailable() throws WorkflowException {
+        final DocumentVariant published = documents.get(WorkflowUtils.Variant.PUBLISHED.getState());
+        if (published == null) {
+            return false;
+        }
+        try {
+            return WorkflowUtils.hasAvailability(published.getNode(), "live");
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Exception while trying to find live variant", e);
+        }
+    }
+
+    public boolean isPreviewAvailable(final String branchId) throws WorkflowException {
+        return new BranchHandleImpl(branchId, this).isPreview();
+    }
+
+    public boolean isModified(final String branchId) throws WorkflowException {
+        return new BranchHandleImpl(branchId, this).isModified();
+    }
+
     public String getBranchId() {
         return branchId;
     }
@@ -217,6 +245,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
         // but use the handle instead
         final Node published = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).orElse(null);
         final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).orElse(null);
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).orElse(null);
 
         if (published != null) {
             if (published.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
@@ -257,7 +286,13 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
         }
 
-
+        if (draft != null) {
+            if (draft.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
+                branches.add(draft.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+            } else {
+                branches.add(MASTER_BRANCH_ID);
+            }
+        }
     }
 
 }

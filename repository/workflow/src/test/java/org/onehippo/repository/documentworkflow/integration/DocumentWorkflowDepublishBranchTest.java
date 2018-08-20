@@ -26,8 +26,10 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
@@ -234,11 +236,15 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
 
         workflow.checkoutBranch(MASTER_BRANCH_ID);
 
-        // trigger a change to be able to publish
+        // trigger a change in master to be able to publish
         workflow.obtainEditableInstance();
         workflow.commitEditableInstance();
 
         workflow.publish();
+
+        assertTrue((Boolean)workflow.hints().get("depublishBranch"));
+        assertTrue((Boolean)workflow.hints("master").get("depublishBranch"));
+        assertTrue((Boolean)workflow.hints("foo").get("depublishBranch"));
 
         // as a result, the published version should have become MASTER, and version history still contains "foo-published"
 
@@ -324,7 +330,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
             workflow.depublishBranch("bar");
             fail("Branch bar should not exist and throw exception when tried to be depublished");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'bar' cannot be depublished because it doesn't exist", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action depublishBranch: action not allowed or undefined", e.getMessage());
         }
 
         workflow.depublishBranch("foo");
@@ -390,7 +396,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
             workflow.depublishBranch("foo");
             fail("Branch 'foo' does not exist so depublishing should not be possible");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'foo' cannot be depublished because it doesn't exist", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action depublishBranch: action not allowed or undefined", e.getMessage());
         }
     }
 

@@ -47,7 +47,8 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         assertTrue(workflow.hints().containsKey("checkoutBranch"));
-        assertTrue((Boolean)workflow.hints().get("checkoutBranch"));
+        // there is no branch yet
+        assertFalse((Boolean)workflow.hints().get("checkoutBranch"));
 
         // when there is only a live version, checkout is NOT possible
         final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
@@ -57,8 +58,18 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         session.save();
         assertFalse((Boolean)workflow.hints().get("checkoutBranch"));
 
-        // when editing, checkoutbranch is not supported
+
+        workflow.branch("foo", "Foo");
+        assertTrue((Boolean)workflow.hints().get("checkoutBranch"));
+
+        // when editing, checkoutbranch is not supported (below obtains master editable instance)
         workflow.obtainEditableInstance();
+        assertFalse((Boolean)workflow.hints().get("checkoutBranch"));
+
+        workflow.commitEditableInstance();
+        assertTrue((Boolean)workflow.hints().get("checkoutBranch"));
+
+        workflow.obtainEditableInstance("foo");
         assertFalse((Boolean)workflow.hints().get("checkoutBranch"));
 
         workflow.commitEditableInstance();
@@ -162,13 +173,13 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         final long numberOfVersions = versionHistory.getAllVersions().getSize();
 
-        // below triggers the master-unpublished to be versioned
         {
             try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
                 final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+                assertFalse((Boolean)workflow.hints("foo").get("checkoutBranch"));
                 workflow.checkoutBranch("foo");
             } catch (WorkflowException e) {
-                assertEquals("Branch 'foo' cannot be checked out because it doesn't exist",
+                assertEquals("Cannot invoke workflow documentworkflow action checkoutBranch: action not allowed or undefined",
                         e.getMessage());
                 assertEquals("In case of a failed checkout, no new version should be created",
                         numberOfVersions, versionHistory.getAllVersions().getSize());

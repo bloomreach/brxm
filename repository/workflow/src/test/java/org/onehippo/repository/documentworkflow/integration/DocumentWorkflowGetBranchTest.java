@@ -47,7 +47,8 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         assertTrue(workflow.hints().containsKey("getBranch"));
-        assertTrue((Boolean)workflow.hints().get("getBranch"));
+        // there is not yet any branch
+        assertFalse((Boolean)workflow.hints().get("getBranch"));
 
         // when there is only a live version, branching is still possible (and will create a preview first)
         final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
@@ -55,9 +56,12 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
         toBecomeLive.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
         toBecomeLive.removeMixin(MIX_VERSIONABLE);
         session.save();
+
+        workflow.branch("foo", "Foo");
+
         assertTrue((Boolean)workflow.hints().get("getBranch"));
 
-        // when document is being edited, you getBranch is still allowed
+        // when master document is being edited, getBranch is still allowed
         workflow.obtainEditableInstance();
         assertTrue((Boolean)workflow.hints().get("getBranch"));
 
@@ -73,7 +77,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
                 workflow.getBranch("foo", DRAFT);
                 fail("There is no branch 'foo' so expected WorkflowException");
             } catch (WorkflowException e) {
-                assertEquals("Cannot get branch 'foo' because it doesn't exist", e.getMessage());
+                assertEquals("Cannot invoke workflow documentworkflow action getBranch: action not allowed or undefined", e.getMessage());
             }
         }
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
@@ -81,7 +85,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
                 workflow.getBranch("foo", UNPUBLISHED);
                 fail("There is no branch 'foo' so expected WorkflowException");
             } catch (WorkflowException e) {
-                assertEquals("Cannot get branch 'foo' because it doesn't exist", e.getMessage());
+                assertEquals("Cannot invoke workflow documentworkflow action getBranch: action not allowed or undefined", e.getMessage());
             }
         }
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
@@ -89,7 +93,7 @@ public class DocumentWorkflowGetBranchTest extends AbstractDocumentWorkflowInteg
                 workflow.getBranch("foo", PUBLISHED);
                 fail("There is no branch 'foo' so expected WorkflowException");
             } catch (WorkflowException e) {
-                assertEquals("Cannot get branch 'foo' because it doesn't exist", e.getMessage());
+                assertEquals("Cannot invoke workflow documentworkflow action getBranch: action not allowed or undefined", e.getMessage());
             }
         }
     }

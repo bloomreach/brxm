@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -48,23 +49,56 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         assertTrue(workflow.hints().containsKey("removeBranch"));
-        assertTrue((Boolean) workflow.hints().get("removeBranch"));
+        // there are no branches yet
+        assertFalse((Boolean) workflow.hints().get("removeBranch"));
+
+        // master can never be removed as branch
+        assertFalse((Boolean) workflow.hints("master").get("removeBranch"));
+
+        // cannot remove a non existing branch
+        assertFalse((Boolean) workflow.hints("foo").get("removeBranch"));
+
+        workflow.branch("foo", "Foo");
+        assertTrue((Boolean) workflow.hints("foo").get("removeBranch"));
 
         // when document is being edited, you can still try to remove a branch
         workflow.obtainEditableInstance();
-        assertTrue((Boolean) workflow.hints().get("removeBranch"));
+        assertFalse((Boolean) workflow.hints("master").get("removeBranch"));
+        assertTrue((Boolean) workflow.hints("foo").get("removeBranch"));
 
         workflow.commitEditableInstance();
-        assertTrue((Boolean) workflow.hints().get("removeBranch"));
+        assertTrue((Boolean) workflow.hints("foo").get("removeBranch"));
 
         // when there is only a live version, removing branch is not possible
+        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get().remove();
         final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
         toBecomeLive.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
         toBecomeLive.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
         toBecomeLive.removeMixin(MIX_VERSIONABLE);
         session.save();
         assertFalse((Boolean) workflow.hints().get("removeBranch"));
+        // foo is gone because was moved to version history after workflow.obtainEditableInstance();
+        assertFalse((Boolean) workflow.hints("foo").get("removeBranch"));
 
+        // manually make the published now for 'foo
+        toBecomeLive.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+        toBecomeLive.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
+        toBecomeLive.setProperty(HIPPO_PROPERTY_BRANCH_NAME, "Foo");
+        session.save();
+
+        // foo is live thus cannot be removed
+        assertFalse((Boolean) workflow.hints("foo").get("removeBranch"));
+
+        // after unpublish, the branch should be possible to be removed
+        workflow.depublishBranch("foo");
+
+        assertTrue((Boolean) workflow.hints("foo").get("removeBranch"));
+
+        workflow.removeBranch("foo");
+
+        assertFalse(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get().isNodeType(HIPPO_MIXIN_BRANCH_INFO));
+        assertEquals(1, workflow.listBranches().size());
+        assertTrue(workflow.listBranches().contains(MASTER_BRANCH_ID));
     }
 
     @Test
@@ -74,7 +108,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.removeBranch("non-existing");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'non-existing' cannot be removed because it doesn't exist.", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action removeBranch: action not allowed or undefined", e.getMessage());
         }
     }
 
@@ -211,7 +245,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.removeBranch(MASTER_BRANCH_ID);
         } catch (WorkflowException e) {
-            assertEquals("Branch 'master' cannot be removed.", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action removeBranch: action not allowed or undefined", e.getMessage());
         }
     }
 

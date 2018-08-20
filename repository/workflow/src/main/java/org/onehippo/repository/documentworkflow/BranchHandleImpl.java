@@ -29,6 +29,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class BranchHandleImpl implements BranchHandle {
     private final String branchId;
     private final DocumentHandle documentHandle;
 
-    private BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) {
+    public BranchHandleImpl(final String branchId, final DocumentHandle documentHandle) {
         this.branchId = branchId;
         this.documentHandle = documentHandle;
     }
@@ -108,6 +109,13 @@ public class BranchHandleImpl implements BranchHandle {
                 .orElse(false);
     }
 
+    @Override
+    public boolean isPreview() {
+        return getVariant(UNPUBLISHED)
+                .map(this::isPreview)
+                .orElse(false);
+    }
+
     private Optional<DocumentVariant> getVariant(WorkflowUtils.Variant variant) {
         final DocumentVariant documentVariant = getDocumentVariant(variant);
         if (documentVariant == null || !isBranch(documentVariant)) {
@@ -123,8 +131,10 @@ public class BranchHandleImpl implements BranchHandle {
     private Optional<DocumentVariant> getFrozenVariant(final WorkflowUtils.Variant variant, final DocumentVariant unpublished) {
         if (unpublished != null) {
             try {
-                final VersionManager versionManager = unpublished.getNode().getSession().getWorkspace().getVersionManager();
-                final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getNode().getPath());
+                final VersionHistory versionHistory = getVersionHistory();
+                if (versionHistory == null) {
+                    return Optional.empty();
+                }
                 final String versionLabel = branchId + "-" + variant.getState();
                 if (versionHistory.hasVersionLabel(versionLabel)) {
                     final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
@@ -138,6 +148,15 @@ public class BranchHandleImpl implements BranchHandle {
         return Optional.empty();
     }
 
+    private VersionHistory getVersionHistory() throws RepositoryException {
+        final DocumentVariant unpublished = getDocumentVariant(UNPUBLISHED);
+        if (!unpublished.getNode().isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            return null;
+        }
+        final VersionManager versionManager = unpublished.getNode().getSession().getWorkspace().getVersionManager();
+        return versionManager.getVersionHistory(unpublished.getNode().getPath());
+    }
+
     private boolean isModified(final DocumentVariant unpublished, final DocumentVariant published) {
         try {
             return unpublished.getLastModified().after(published.getLastModified());
@@ -149,11 +168,39 @@ public class BranchHandleImpl implements BranchHandle {
 
     private boolean isLive(final DocumentVariant variant) {
         try {
-            return WorkflowUtils.hasAvailability(variant.getNode(), "live");
+            if (variant.getNode().isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+                // hippo:availability is not present in version history! We need to check the version label
+                return hasLabel(branchId + "-" + PUBLISHED.getState());
+            } else {
+                return WorkflowUtils.hasAvailability(variant.getNode(), "live");
+            }
         } catch (RepositoryException e) {
             log.error("Cannot determine if document {} is live, returning false", variant.getIdentity(), e);
             return false;
         }
+    }
+
+    private boolean isPreview(final DocumentVariant variant) {
+        try {
+            if (variant.getNode().isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+                return hasLabel(branchId + "-" + UNPUBLISHED.getState());
+
+            } else {
+                return WorkflowUtils.hasAvailability(variant.getNode(), "preview");
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot determine if document {} is preview, returning false", variant.getIdentity(), e);
+            return false;
+        }
+    }
+
+    private boolean hasLabel(final String label) throws RepositoryException {
+        // hippo:availability is not present in version history! We need to check the version label
+        final VersionHistory versionHistory = getVersionHistory();
+        if (versionHistory == null) {
+            return false;
+        }
+        return versionHistory.hasVersionLabel(label);
     }
 
     private boolean isBranch(final DocumentVariant variant) {
