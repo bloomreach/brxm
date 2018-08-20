@@ -168,7 +168,6 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
         try {
             final JcrNodeModel firstElement = elements.getFirst();
             if (model.equals(firstElement)) {
-                log.warn("Node {} is already the first element.", model);
                 return;
             }
             final Node parent = (Node) getItemModel().getObject();
@@ -189,7 +188,6 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
         try {
             final JcrNodeModel lastElement = elements.getLast();
             if (model.equals(lastElement)) {
-                log.warn("Node {} is already the last element.", model);
                 return;
             }
             final Node parent = (Node) getItemModel().getObject();
