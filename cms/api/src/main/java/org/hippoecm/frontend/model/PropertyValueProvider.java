@@ -204,7 +204,6 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
         load();
         final int index = model.getIndex();
         if (index == 0) {
-            log.warn("Item {} is already the first element.", model);
             return;
         }
         if (descriptor.isMultiple() && index > 0) {
@@ -237,7 +236,6 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
                 Property property = (Property) getItemModel().getObject();
                 Value[] oldValues = property.getValues();
                 if (index == oldValues.length - 1) {
-                    log.warn("Item {} is already the last element.", model);
                     return;
                 }
                 Value[] newValues = new Value[oldValues.length];

@@ -119,7 +119,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
             }
         };
         downToBottomLink.setVisible(nodeField.canReorderItems());
-        downToBottomLink.setEnabled(index < nodeField.getProvider().size() - 1);
+        downToBottomLink.setEnabled(index < nodeField.provider.size() - 1);
         queue(downToBottomLink);
 
         final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
