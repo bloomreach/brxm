@@ -236,11 +236,6 @@
   }
 }
 
-.hide-top-arrow .hippo-editor-field-subfield-controls .top,
-.hide-bottom-arrow .hippo-editor-field-subfield-controls .bottom {
-  display: none;
-}
-
 .hippo-editor-field-subfield-controls {
   opacity: 0;
   padding: 8px;
@@ -267,10 +262,6 @@
   a:active,
   a:hover {
     text-decoration: none;
-  }
-
-  .remove-link .hi {
-    color: $danger;
   }
 }
 
