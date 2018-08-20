@@ -375,6 +375,8 @@
         componentPropertiesForm.stopMonitoring();
       });
 
+      editor.on('renderComponent', this._renderComponentForActiveTab, this);
+
       editor.on('variantsDeleted', this._onVariantsDeleted, this);
 
       return editor;
@@ -384,6 +386,10 @@
       var tabsHeight = this.stripWrap.getHeight(),
         visibleHeight = Math.max(tabsHeight, editorVisibleHeight);
       this.fireEvent('visibleHeightChanged', visibleHeight);
+    },
+
+    _renderComponentForActiveTab: function () {
+      this.getActiveTab().componentPropertiesForm.firePropertiesChanged();
     },
 
     _hideTabs: function () {
