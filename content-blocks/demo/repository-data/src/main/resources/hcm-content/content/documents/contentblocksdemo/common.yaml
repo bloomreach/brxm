@@ -18,7 +18,6 @@
       contentblocksdemo:summary: ''
       contentblocksdemo:title: Content Blocks Demo
       hippo:availability: [live]
-      hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
@@ -93,7 +92,6 @@
       jcr:uuid: 155a79a9-4498-46fc-91f1-a6b22a41fed0
       contentblocksdemo:title: Content Blocks by list configuration
       hippo:availability: []
-      hippostd:holder: admin
       hippostd:state: draft
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-08-25T11:34:26.605+02:00
