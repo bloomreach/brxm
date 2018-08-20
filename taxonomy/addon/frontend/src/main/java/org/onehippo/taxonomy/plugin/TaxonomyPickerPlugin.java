@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 return Collections.emptyIterator();
             }
 
-            final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+            final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModel());
             final Iterator<String> upstream = classification.getKeys().iterator();
             return new Iterator<IModel<String>>() {
 
@@ -222,8 +222,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                         if (baseRef != null) {
                             final IModel<Node> baseModel = baseRef.getModel();
                             if (baseModel != null) {
-                                final List<String> currentKeys = dao.getClassification(getModel().getObject()).getKeys();
-                                final List<String> baseKeys = dao.getClassification(baseModel.getObject()).getKeys();
+                                final List<String> currentKeys = dao.getClassification(getModel()).getKeys();
+                                final List<String> baseKeys = dao.getClassification(baseModel).getKeys();
                                 return LCS.getChangeSet(baseKeys.toArray(new String[baseKeys.size()]), currentKeys
                                         .toArray(new String[currentKeys.size()]));
                             }
@@ -245,7 +245,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             protected CanonicalCategory load() {
                 final Taxonomy taxonomy = getTaxonomy();
                 if (taxonomy != null) {
-                    final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+                    final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModel());
                     return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocaleObject());
                 } else {
                     return null;
@@ -484,7 +484,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     private void addControlsToListItem(final ListItem<?> item) {
         final boolean isEditMode = (mode == Mode.EDIT);
 
-        final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+        final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModel());
         final int itemCount = classification.getKeyCount();
         final int itemIndex = item.getIndex();
 
