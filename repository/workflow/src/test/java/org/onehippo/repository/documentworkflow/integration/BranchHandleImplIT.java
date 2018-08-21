@@ -24,11 +24,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -37,6 +39,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION;
 
 public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest {
@@ -63,6 +67,8 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
         getDocumentWorkflow(handle).publishBranch(branchId);
         {
             final Node published = new BranchHandleImpl(branchId, handle).getPublished();
+            assertTrue(published.isNodeType(NT_FROZEN_NODE));
+            assertTrue("even frozen nodes should be decorated to HippoNode", published instanceof HippoNode);
             assertThat(getParentNodeType(published), is(NT_VERSION));
             assertThat(published.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString(), is(branchId));
         }

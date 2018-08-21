@@ -25,6 +25,7 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.WorkflowUtils;
@@ -138,7 +139,14 @@ public class BranchHandleImpl implements BranchHandle {
                 final String versionLabel = branchId + "-" + variant.getState();
                 if (versionHistory.hasVersionLabel(versionLabel)) {
                     final Version versionByLabel = versionHistory.getVersionByLabel(versionLabel);
-                    return Optional.of(new DocumentVariant(versionByLabel.getFrozenNode()));
+                    Node frozenNode = versionByLabel.getFrozenNode();
+                    if (!(frozenNode instanceof HippoNode)) {
+                        // looks odd but depending on version 12 or 13, the version manager is not yet decorated, hence
+                        // this explicit refetch of the frozen node via the handle session to make sure to get a HippoNode
+                        // decorated variant
+                        frozenNode = documentHandle.getHandle().getSession().getNode(frozenNode.getPath());
+                    }
+                    return Optional.of(new DocumentVariant(frozenNode));
                 }
             } catch (RepositoryException e) {
                 log.error("Cannot get frozen node of document {} for branch {}, returning null",
