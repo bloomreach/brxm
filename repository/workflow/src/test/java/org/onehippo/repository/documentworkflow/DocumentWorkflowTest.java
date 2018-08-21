@@ -146,7 +146,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishedVariant.setProperty(HIPPO_AVAILABILITY, new String[]{"live"});
 
         // set (only) author permission
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
@@ -181,7 +180,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        unpublishedVariant.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
 
         // set (only) author permission
         session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
@@ -293,7 +291,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishedVariant.setProperty(HIPPO_AVAILABILITY, new String[]{"live"});
         // set (only) author permission
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
@@ -338,19 +335,28 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         draftVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, session.getUserID());
 
+        // only branch 'foo' is left so #getBranch for master is disabled
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback("foo", null, "foo")
+                .hints()
+        );
+
+        assertMatchingHints(wf.hints("foo"), HintsBuilder.build()
+                .status(true).isLive(true).previewAvailable(true).checkModified(false).noEdit().editable()
+                .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
+                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
+                .branchFeedback("foo",  null, "foo")
                 .hints()
         );
 
         draftVariant.remove();
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        unpublishedVariant.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
         // set (only) author permission
         session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
 
@@ -361,7 +367,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(true).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback("foo", "foo", null)
                 .hints()
@@ -428,7 +434,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
@@ -440,7 +446,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).editing()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
@@ -452,7 +458,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
@@ -466,7 +472,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
@@ -478,7 +484,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(false).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
@@ -490,7 +496,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(true).previewAvailable(false).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
@@ -502,7 +508,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(true).previewAvailable(true).checkModified(false).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
                 .branchFeedback(MASTER_BRANCH_ID, null, MASTER_BRANCH_ID)
                 .hints()
@@ -518,7 +524,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(true).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(true)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(true)
                 .reintegrateBranch(true).publishBranch(true).depublishBranch(true)
                 .branchFeedback(MASTER_BRANCH_ID, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
@@ -530,7 +536,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(false).isLive(false).previewAvailable(true).checkModified(true).noEdit().inUseBy("otheruser")
                 .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(true)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(true)
                 .reintegrateBranch(true).publishBranch(true).depublishBranch(false)
                 .branchFeedback(null, MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints()
@@ -542,7 +548,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
-                .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(true)
+                .listBranches().branch(true).getBranch(false).checkoutBranch(true).removeBranch(true)
                 .reintegrateBranch(true).publishBranch(true).depublishBranch(false)
                 .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()

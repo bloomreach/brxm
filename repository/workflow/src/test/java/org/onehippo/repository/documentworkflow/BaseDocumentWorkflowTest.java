@@ -63,6 +63,8 @@ import org.onehippo.repository.scxml.SCXMLExecutorFactory;
 import org.onehippo.repository.scxml.SCXMLRegistry;
 import org.onehippo.repository.scxml.WorkflowExceptionAction;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+
 /**
  * Base class for DocumentWorkflow based tests
  */
@@ -127,6 +129,11 @@ public class BaseDocumentWorkflowTest {
     protected static MockNode addVariant(MockNode handle, String state) throws RepositoryException {
         MockNode variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
+        if (state.equals("published")) {
+            variant.setProperty(HIPPO_AVAILABILITY, new String[]{"live"});
+        } else if (state.equals("unpublished")) {
+            variant.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
+        }
         return variant;
     }
 

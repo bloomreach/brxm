@@ -519,7 +519,7 @@
         <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
         <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
-        <hippo:action action="getBranch" enabledExpr="!onlyMaster"/>
+        <hippo:action action="getBranch" enabledExpr="!onlyMaster and branches.contains(branchId)"/>
       </onentry>
 
       <!-- target-less transition to report a list of available branches of the document -->
@@ -529,9 +529,6 @@
 
       <!-- target-less transition to get a branch -->
       <transition event="getBranch">
-
-        <hippo:workflowException cond="!branches.contains(branchId)"
-                                 errorExpr="'Cannot get branch \'' + branchId + '\' because it doesn\'t exist'"/>
 
         <hippo:getBranch branchId="branchId" state="_event.data?.state"
                             unpublished="unpublished" published="published" draft="draft"/>
