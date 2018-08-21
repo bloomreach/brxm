@@ -105,7 +105,7 @@
         <transition target="editing"  cond="editing"/>
         <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
                     doesn't exist yet or isn't edited -->
-        <transition target="editable" cond="!requestPending or !branchId.equals('master')"/>
+        <transition target="editable" cond="!requestPending or !'master'.equals(branchId)"/>
       </state>
 
       <!-- editing state becomes active when the draft variant is currently edited -->
@@ -152,18 +152,18 @@
            by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
         <!-- copy/update draft unless user already is holder (editing) -->
-        <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                 errorExpr="'Cannot obtain editable instance for branch \'' + _event.data?.branchId + '\' since it doesn\'t exist'"/>
+        <hippo:workflowException cond="!branches.contains(branchId)"
+                                 errorExpr="'Cannot obtain editable instance for branch \'' + branchId + '\' since it doesn\'t exist'"/>
 
         <if cond="!editor">
           <if cond="!!unpublished">
             <!-- unpublished document exists -->
             <!-- make sure the unpublished is the right branch -->
-            <if cond="!unpublished.isBranch(_event.data?.branchId)">
+            <if cond="!unpublished.isBranch(branchId)">
               <!-- current unpublished is not for the branch to restore to. First checkin old branch and then checkout
               the request branch -->
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
             </if>
             <!-- copy it to draft first, unless we're already editor -->
             <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
@@ -496,15 +496,15 @@
 
         <transition event="restoreVersionToBranch">
 
-          <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Cannot restore version to branch \'' + _event.data?.branchId + '\' since it doesn\'t exist'"/>
+          <hippo:workflowException cond="!branches.contains(branchId)"
+                                   errorExpr="'Cannot restore version to branch \'' + branchId + '\' since it doesn\'t exist'"/>
 
           <!-- to avoid potentially loosing unpublished changes, first version -->
           <hippo:version variant="unpublished"/>
 
-          <if cond="!unpublished.isBranch(_event.data?.branchId)">
+          <if cond="!unpublished.isBranch(branchId)">
               <!-- current unpublished is not for the branch to restore to. First checkout the branch -->
-            <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+            <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
           </if>
           <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
           <hippo:restoreVersionByVersion version="_event.data?.version" target="unpublished" />
@@ -530,10 +530,10 @@
       <!-- target-less transition to get a branch -->
       <transition event="getBranch">
 
-        <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                 errorExpr="'Cannot get branch \'' + _event.data?.branchId + '\' because it doesn\'t exist'"/>
+        <hippo:workflowException cond="!branches.contains(branchId)"
+                                 errorExpr="'Cannot get branch \'' + branchId + '\' because it doesn\'t exist'"/>
 
-        <hippo:getBranch branchId="_event.data?.branchId" state="_event.data?.state"
+        <hippo:getBranch branchId="branchId" state="_event.data?.state"
                             unpublished="unpublished" published="published" draft="draft"/>
       </transition>
 
@@ -551,8 +551,8 @@
         <!-- target-less transition to create a new branch for the current unpublished variant -->
         <transition event="branch">
 
-          <hippo:workflowException cond="branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' already exists'"/>
+          <hippo:workflowException cond="branches.contains(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' already exists'"/>
 
           <if cond="!unpublished and !!published">
             <!-- if no unpublished variant exists yet, copy it from the published variant -->
@@ -567,7 +567,7 @@
             <!-- branching is always done from 'master' -->
             <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
           </if>
-          <hippo:branch variant="unpublished" branchId="_event.data?.branchId" branchName="_event.data?.branchName"/>
+          <hippo:branch variant="unpublished" branchId="branchId" branchName="_event.data?.branchName"/>
         </transition>
 
       </state>
@@ -589,17 +589,17 @@
       <state id="can-checkout-branch">
         <transition event="checkoutBranch">
 
-          <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be checked out because it doesn\'t exist'"/>
+          <hippo:workflowException cond="!branches.contains(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' cannot be checked out because it doesn\'t exist'"/>
 
-          <if cond="unpublished.isBranch(_event.data?.branchId)">
+          <if cond="unpublished.isBranch(branchId)">
             <!-- return the same DocumentVariant object we already had -->
             <script>
               workflowContext.setResult(unpublished);
             </script>
           <else/>
             <hippo:version variant="unpublished"/>
-            <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+            <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
           </if>
         </transition>
 
@@ -620,17 +620,17 @@
         <transition event="removeBranch">
 
           <!-- if the draft is for the branch to be removed AND it is being edited, the branch removal is not allowed -->
-          <hippo:workflowException cond="editing and draft.isBranch(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be removed because being edited.'"/>
+          <hippo:workflowException cond="editing and draft.isBranch(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' cannot be removed because being edited.'"/>
 
-          <if cond="unpublished.isBranch(_event.data?.branchId)">
+          <if cond="unpublished.isBranch(branchId)">
             <!-- first checkout any other branch because the unpublished is for branch to be removed -->
             <hippo:version variant="unpublished"/>
             <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'unpublished'"/>
           </if>
 
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
-                              branchId="_event.data?.branchId"/>
+                              branchId="branchId"/>
         </transition>
       </state>
 
@@ -648,24 +648,24 @@
       <state id="can-reintegrate-branch">
         <transition event="reintegrateBranch">
 
-          <hippo:workflowException cond="'master'.equals(_event.data?.branchId)" errorExpr="'Branch \'master\' cannot be reintegrated'"/>
+          <hippo:workflowException cond="'master'.equals(branchId)" errorExpr="'Branch \'master\' cannot be reintegrated'"/>
 
-          <hippo:workflowException cond="!branches.contains(_event.data?.branchId)"
-                                   errorExpr="'Branch \'' + _event.data?.branchId + '\' cannot be reintegrated because it doesn\'t exist'"/>
+          <hippo:workflowException cond="!branches.contains(branchId)"
+                                   errorExpr="'Branch \'' + branchId + '\' cannot be reintegrated because it doesn\'t exist'"/>
 
           <!-- if the unpublished version is not for the branch to reintegrate, first version it to avoid any loss of
            changes in the preview -->
-          <if cond="!unpublished.isBranch(_event.data?.branchId)">
+          <if cond="!unpublished.isBranch(branchId)">
             <hippo:version variant="unpublished"/>
           </if>
 
           <hippo:setPreReintegrationLabels unpublished="unpublished"/>
 
-          <hippo:checkoutBranch variant="unpublished" branchId="_event.data?.branchId"/>
+          <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
 
           <!-- during reintegration we need to remove the branch for the variants that belong to the branch -->
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
-                              branchId="_event.data?.branchId"/>
+                              branchId="branchId"/>
 
           <!-- only publish when preview is different than live -->
           <if cond="_event.data?.publish and modified">
@@ -697,7 +697,7 @@
         <transition event="publishBranch">
 
           <!-- if there is no branch id, we will use master -->
-          <cs:var name="branchId" expr="_event.data?.branchId?: 'master'"/>
+          <cs:var name="branchId" expr="branchId?: 'master'"/>
 
           <hippo:workflowException cond="!branches.contains(branchId)"
                                    errorExpr="'Branch \'' + branchId + '\' cannot be published because it doesn\'t exist'"/>
@@ -754,7 +754,7 @@
         <transition event="depublishBranch">
 
           <!-- if there is no branch id, we will use master -->
-          <cs:var name="branchId" expr="_event.data?.branchId?: 'master'"/>
+          <cs:var name="branchId" expr="branchId?: 'master'"/>
 
 
           <hippo:workflowException cond="!branches.contains(branchId)"
