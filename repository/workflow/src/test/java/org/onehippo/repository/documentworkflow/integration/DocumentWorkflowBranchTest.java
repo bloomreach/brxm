@@ -301,7 +301,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
             workflow.checkoutBranch(MASTER_BRANCH_ID);
             fail("Expected checkout to Master not possible since no Master branch");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'master' cannot be checked out because it doesn't exist", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action checkoutBranch: action not allowed or undefined", e.getMessage());
         }
 
     }

@@ -16,6 +16,8 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
@@ -40,6 +42,7 @@ import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BR
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -167,9 +170,11 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         workflow.obtainEditableInstance("foo");
 
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            assertFalse((Boolean)workflow.hints().get("removeBranch"));
             workflow.removeBranch("foo");
+            fail("Removal of branch 'foo' should not be possible");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'foo' cannot be removed because being edited.", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action removeBranch: action not allowed or undefined", e.getMessage());
         }
 
         assertTrue(ImmutableSet.of("master", "foo").equals(workflow.listBranches()));

@@ -15,8 +15,6 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
-import java.io.Serializable;
-import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.version.VersionHistory;
@@ -35,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkflowIntegrationTest {
 
@@ -134,10 +131,19 @@ public class DocumentWorkflowPublicationBranchTest extends AbstractDocumentWorkf
         // depublication should be allowed, and should take the live master offline
         workflow.acceptRequest(handle.getNode(HIPPO_REQUEST).getIdentifier());
 
+        workflow.obtainEditableInstance();
+
+        final Node draftMaster = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draftMaster.setProperty("title", "title Master");
+        session.save();
+        workflow.commitEditableInstance();
+
         // master should be allowed to be published again
         assertTrue((Boolean)workflow.hints().get("publish"));
 
         assertTrue((Boolean)workflow.hints().get("requestPublication"));
+
+        // published is not live any more
         assertFalse((Boolean)workflow.hints().get("depublish"));
         assertFalse((Boolean)workflow.hints().get("requestDepublication"));
 
