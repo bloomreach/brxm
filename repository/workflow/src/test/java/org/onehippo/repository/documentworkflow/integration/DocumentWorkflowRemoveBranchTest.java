@@ -125,7 +125,7 @@ public class DocumentWorkflowRemoveBranchTest extends AbstractDocumentWorkflowIn
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.removeBranch("foo");
         } catch (WorkflowException e) {
-            assertEquals("Branch 'foo' cannot be removed because it is published.", e.getMessage());
+            assertEquals("Cannot invoke workflow documentworkflow action removeBranch: action not allowed or undefined", e.getMessage());
         }
         assertTrue(ImmutableSet.of("master", "foo").equals(workflow.listBranches()));
     }
