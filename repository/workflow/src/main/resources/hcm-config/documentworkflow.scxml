@@ -740,11 +740,11 @@
 
     <state id="depublish-branch">
       <onentry>
-        <hippo:action action="depublishBranch" enabledExpr="live"/>
+        <hippo:action action="depublishBranch" enabledExpr="live and branches.contains(branchId)"/>
       </onentry>
       <state id="no-depublish-branch">
         <!-- event-less transition to 'can-depublish-branch' state -->
-        <transition target="can-depublish-branch" cond="live"/>
+        <transition target="can-depublish-branch" cond="live and branches.contains(branchId)"/>
       </state>
 
       <state id="can-depublish-branch">
@@ -752,10 +752,6 @@
 
           <!-- if there is no branch id, we will use master -->
           <cs:var name="branchId" expr="branchId?: 'master'"/>
-
-
-          <hippo:workflowException cond="!branches.contains(branchId)"
-                                   errorExpr="'Branch \'' + branchId + '\' cannot be depublished because it doesn\'t exist'"/>
 
           <if cond="!!unpublished">
             <!-- there is already an unpublished version -->
