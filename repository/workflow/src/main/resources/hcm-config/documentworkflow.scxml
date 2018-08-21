@@ -667,8 +667,8 @@
           <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
                               branchId="branchId"/>
 
-          <!-- only publish when preview is different than live -->
-          <if cond="_event.data?.publish and modified">
+          <!-- for reintegrate, always publish. Checking modified we do not do -->
+          <if cond="_event.data?.publish">
             <!-- copy the content of the unpublished variant to the published variant -->
             <hippo:copyVariant sourceState="unpublished" targetState="published"/>
             <!-- mark the published variant as published and set its availability to (only) 'live' -->

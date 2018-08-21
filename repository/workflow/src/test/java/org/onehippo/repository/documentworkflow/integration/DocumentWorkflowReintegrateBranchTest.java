@@ -51,17 +51,21 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
 
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         assertTrue(workflow.hints().containsKey("reintegrateBranch"));
-        // Reintegrate is enabled when there is a preview
-        assertTrue((Boolean) workflow.hints().get("reintegrateBranch"));
+        // Master can never be reintegrated
+        assertFalse((Boolean) workflow.hints().get("reintegrateBranch"));
 
         // create a branch
         workflow.branch("foo", "Foo");
-
-        assertTrue((Boolean) workflow.hints().get("reintegrateBranch"));
+        // Reintegrate is enabled when there is a preview
+        assertFalse((Boolean) workflow.hints().get("reintegrateBranch"));
+        assertFalse((Boolean) workflow.hints(MASTER_BRANCH_ID).get("reintegrateBranch"));
+        // bar does not exist
+        assertFalse((Boolean) workflow.hints("bar").get("reintegrateBranch"));
+        assertTrue((Boolean) workflow.hints("foo").get("reintegrateBranch"));
 
         // when document is being edited, you can still reintegrate
         workflow.obtainEditableInstance();
-        assertTrue((Boolean) workflow.hints().get("reintegrateBranch"));
+        assertTrue((Boolean) workflow.hints("foo").get("reintegrateBranch"));
 
         // when there is only a live version, reintegrating branch is not possible
         final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
@@ -70,6 +74,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         toBecomeLive.removeMixin(MIX_VERSIONABLE);
         session.save();
         assertFalse((Boolean) workflow.hints().get("reintegrateBranch"));
+        assertFalse((Boolean) workflow.hints("foo").get("reintegrateBranch"));
 
     }
 
@@ -85,7 +90,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
             workflow.reintegrateBranch(MASTER_BRANCH_ID, true);
         } catch (WorkflowException e) {
 
-                assertEquals("Branch 'master' cannot be reintegrated", e.getMessage());
+                assertEquals("Cannot invoke workflow documentworkflow action reintegrateBranch: action not allowed or undefined", e.getMessage());
         }
     }
 
@@ -95,7 +100,7 @@ public class DocumentWorkflowReintegrateBranchTest extends AbstractDocumentWorkf
         try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
             workflow.reintegrateBranch("foo", true);
         } catch (WorkflowException e) {
-            assertEquals("Branch 'foo' cannot be reintegrated because it doesn't exist",
+            assertEquals("Cannot invoke workflow documentworkflow action reintegrateBranch: action not allowed or undefined",
                     e.getMessage());
         }
     }
