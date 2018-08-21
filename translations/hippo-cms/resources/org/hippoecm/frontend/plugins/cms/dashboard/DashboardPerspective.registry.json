@@ -4,11 +4,7 @@
     "todo" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "RESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "nl" : "RESOLVED"
       }
     },
     "perspective-title" : {
