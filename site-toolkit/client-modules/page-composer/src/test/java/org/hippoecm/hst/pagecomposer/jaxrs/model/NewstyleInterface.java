@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.Date;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -28,10 +27,6 @@ interface NewstyleInterface {
     @Parameter(name = "00-color", defaultValue = "blue")
     @Color
     String getColor();
-
-    @Parameter(name = "01-documentLocation", displayName = "Document Location")
-    @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
-    String getDocumentLocation();
 
     @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
     @ImageSetPath
