@@ -376,8 +376,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             final Node documentNode = getEditorModel().getObject();
             path = documentNode.getPath();
 
-            final HippoSession session = (HippoSession) documentNode.getSession();
             if (!modified) {
+                // Get session from handle node to make sure we get a decorated hippo session.
+                final HippoSession session = (HippoSession) super.getModel().getObject().getSession();
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final EditableWorkflow workflow = getEditableWorkflow();
