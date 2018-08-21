@@ -36,6 +36,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentParamsScannerTest {
@@ -44,12 +45,24 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void non_existing_component_class_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames("NonExistingClass", classLoader).size());
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn("NonExistingclass");
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+
+        replay(componentConfiguration);
+        
+        assertEquals(0, DocumentParamsScanner.getNames(componentConfiguration, classLoader).size());
     }
 
     @Test
     public void component_without_parametersInfo_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames(GenericHstComponent.class.getName(), classLoader).size());
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+        
+        replay(componentConfiguration);
+
+        assertEquals(0, DocumentParamsScanner.getNames(componentConfiguration, classLoader).size());
     }
 
     public static interface JcrPathParametersInfo {
@@ -64,7 +77,13 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPath_parameter() {
-        final Set<String> names = DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader);
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(1, names.size());
         assertTrue(names.contains("news-jcrPath"));
     }
@@ -95,7 +114,13 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void two_jcrPath_parameters_combined() {
-        final Set<String> names = DocumentParamsScanner.getNames(TwoJcrPathsComponent.class.getName(), classLoader);
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(TwoJcrPathsComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(TwoJcrPathParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
         assertTrue(names.contains("news-jcrPath-2"));
@@ -110,7 +135,13 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void jcrPaths_parameter_inheritance() {
-        final Set<String> names = DocumentParamsScanner.getNames(InheritanceComponent.class.getName(), classLoader);
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(InheritanceComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(InheritanceParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
         assertTrue(names.contains("news-jcrPath-2"));
@@ -118,12 +149,21 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void component_scanning_cached() {
-        assertTrue(DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader));
-        assertTrue(DocumentParamsScanner.getNames(JcrPathComponent2.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(JcrPathComponent2.class.getName(), classLoader));
-        assertTrue(DocumentParamsScanner.getNames(TwoJcrPathsComponent.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(TwoJcrPathsComponent.class.getName(), classLoader));
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName()).times(2);
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName()).times(2);
+
+        HstComponentConfiguration componentConfiguration2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName()).times(2);
+        expect(componentConfiguration2.getParametersInfoClassName()).andReturn(JcrPathParametersInfo2.class.getName()).times(2);
+
+        replay(componentConfiguration, componentConfiguration2);
+
+        assertSame(DocumentParamsScanner.getNames(componentConfiguration, classLoader), 
+                   DocumentParamsScanner.getNames(componentConfiguration, classLoader));
+
+        assertSame(DocumentParamsScanner.getNames(componentConfiguration2, classLoader), 
+                   DocumentParamsScanner.getNames(componentConfiguration2, classLoader));
     }
 
     @Test
