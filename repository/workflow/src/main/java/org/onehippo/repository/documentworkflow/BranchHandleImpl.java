@@ -104,14 +104,14 @@ public class BranchHandleImpl implements BranchHandle {
     }
 
     @Override
-    public boolean isLive() {
+    public boolean isLiveAvailable() {
         return getVariant(PUBLISHED)
                 .map(this::isLive)
                 .orElse(false);
     }
 
     @Override
-    public boolean isPreview() {
+    public boolean isPreviewAvailable() {
         return getVariant(UNPUBLISHED)
                 .map(this::isPreview)
                 .orElse(false);

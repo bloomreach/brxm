@@ -201,7 +201,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     }
 
     public boolean isLiveAvailable(final String branchId) throws WorkflowException {
-        return new BranchHandleImpl(branchId, this).isLive();
+        return new BranchHandleImpl(branchId, this).isLiveAvailable();
     }
 
     public boolean isAnyBranchLiveAvailable() throws WorkflowException {
@@ -217,7 +217,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
     }
 
     public boolean isPreviewAvailable(final String branchId) throws WorkflowException {
-        return new BranchHandleImpl(branchId, this).isPreview();
+        return new BranchHandleImpl(branchId, this).isPreviewAvailable();
     }
 
     public boolean isModified(final String branchId) throws WorkflowException {

@@ -58,7 +58,7 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
             final BranchHandle branchHandle = new BranchHandleImpl(MASTER_BRANCH_ID, handle);
             final Node published = branchHandle.getPublished();
             assertThat(getParentNodeType(published), is(NT_HANDLE));
-            assertThat(branchHandle.isLive(), is(true));
+            assertThat(branchHandle.isLiveAvailable(), is(true));
             assertThat(published.hasProperty(HIPPO_PROPERTY_BRANCH_ID), is(false));
         }
 
