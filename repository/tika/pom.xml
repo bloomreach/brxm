@@ -28,6 +28,12 @@
   <artifactId>hippo-repository-tika</artifactId>
 
   <dependencies>
+    <!-- tika project should use the pdfbox version which defined on the parent repository pom -->
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>${pdfbox.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>

@@ -18,10 +18,12 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -368,6 +370,9 @@ public class AutoExportIntegrationTest {
                 });
     }
 
+    /**
+     * Test basic behavior of hcm-actions.yaml reload and delete actions on content.
+     */
     @Test
     public void reapply_content() throws Exception {
         final ModuleInfo cycle1Module = new ModuleInfo("reapply_content", "cycle1", "in", "in");
@@ -376,6 +381,7 @@ public class AutoExportIntegrationTest {
         final String moduleBaselineRoot = "/hcm:hcm/hcm:baseline/hippo-cms-test/autoexport-integration-test-project/autoexport-integration-test-module";
 
         final Validator validateBaselineAfterCycle1 = (session, configurationModel) -> {
+            // baseline should store the "order before" for a content root properly after first bootstrap
             final Node baselineNode1 = session.getNode(moduleBaselineRoot + "/hcm-content/node1.yaml");
             final Node baselineNode2 = session.getNode(moduleBaselineRoot + "/hcm-content/node2.yaml");
             assertFalse(baselineNode1.hasProperty(HCM_CONTENT_ORDER_BEFORE));
@@ -383,17 +389,23 @@ public class AutoExportIntegrationTest {
             assertTrue(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node3.yaml"));
             assertTrue(session.getNode(moduleBaselineRoot + "/hcm-content").hasNode("node4.yaml"));
 
+            // ordering should be correctly applied to content JCR nodes
             assertOrderInJcr("[node2, node3, node1, node4]", "/content-test", session);
+
+            // correct values should be loaded for properties of the content nodes
             assertEquals("node1-cycle1", session.getProperty("/content-test/node1/property").getString());
             assertEquals("node2-cycle1", session.getProperty("/content-test/node2/property").getString());
             assertEquals("node3-cycle1", session.getProperty("/content-test/node3/property").getString());
 
-            // 3 from module 'hippo-repository-engine-test' and 4 from this test
+            // 3 defs come from module 'hippo-repository-engine-test' and 4 from this test
             assertEquals(7, configurationModel.getContentDefinitions().size());
+
+            // verify correct order-before values in HCM model
             assertEquals(null, getOrderBefore(configurationModel, "/content-test/node1"));
             assertEquals("node1", getOrderBefore(configurationModel, "/content-test/node2"));
         };
-        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {}, NOOP);
+        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {
+        }, NOOP);
 
         final Validator validateBaselineAfterCycle2 = (session, configurationModel) -> {
             final Node baselineNode1 = session.getNode(moduleBaselineRoot + "/hcm-content/node1.yaml");
@@ -413,9 +425,47 @@ public class AutoExportIntegrationTest {
             assertEquals(META_ORDER_BEFORE_FIRST, getOrderBefore(configurationModel, "/content-test/node1"));
             assertEquals(null, getOrderBefore(configurationModel, "/content-test/node2"));
         };
-        final Run run2 = new Run(cycle2Module, validateBaselineAfterCycle2, (session) -> {}, NOOP);
+        final Run run2 = new Run(cycle2Module, validateBaselineAfterCycle2, (session) -> {
+        }, NOOP);
 
         new Fixture().run(run1, run2);
+    }
+
+    /**
+     * Tests special case error resilience to allow Essentials to add a content source while the repo is running.
+     */
+    @Test
+    public void add_content_source_while_running() throws Exception {
+        // Reuse the fixture from the "reapply_content" test, since we just need some simple content files
+        final ModuleInfo cycle1Module = new ModuleInfo("reapply_content", "cycle1", "in", "in");
+
+        final Run run1 = new Run(cycle1Module, (session, configurationModel) -> {
+            // ordering should be correctly applied to content JCR nodes by initial bootstrap
+            assertOrderInJcr("[node2, node3, node1, node4]", "/content-test", session);
+
+            // write a new source file for a nonexistent node
+            final Path node5path = cycle1Module.getInPath().resolve("hcm-config").resolve("node5.yaml");
+            final Path node5WorkingPath = cycle1Module.getWorkingDirectory().resolve("hcm-config").resolve("node5.yaml");
+
+            Files.write(node5path, Arrays.asList(
+                    "/content-test/node5:",
+                    "  jcr:primaryType: nt:unstructured",
+                    "  property: node5prop"
+            ), StandardCharsets.UTF_8);
+
+            Files.copy(node5path, node5WorkingPath);
+            node5path.toFile().deleteOnExit();
+            node5WorkingPath.toFile().deleteOnExit();
+
+        }, (session) -> {
+        }, (session, configurationModel) -> {
+            // JCR should be unchanged, with the new content file not-yet-applied
+            assertOrderInJcr("[node2, node3, node1, node4]", "/content-test", session);
+        });
+
+        // Auto-export should do nothing, with no exceptions thrown
+        // the correct behaviour is to ignore the node5.yaml file and neither delete nor write it
+        new Fixture().run(run1);
     }
 
     @Test
