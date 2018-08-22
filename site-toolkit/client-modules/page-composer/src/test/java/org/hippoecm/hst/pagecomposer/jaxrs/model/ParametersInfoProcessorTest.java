@@ -230,8 +230,8 @@ public class ParametersInfoProcessorTest {
 
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
 
-        // NewstyleSubContainer has 2 properties and NewstyleContainer which is extends has 16 properties, BUT
-        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 16 + 1
+        // NewstyleSubContainer has 2 properties and NewstyleContainer which it extends has 15 properties, BUT
+        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 15 + 1
         assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
