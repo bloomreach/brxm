@@ -28,14 +28,14 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>4.5.0-SNAPSHOT</version>
+  <version>4.6.0-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
   <properties>
     <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
-    <hippo.testutils.version>1.5.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>1.6.0-SNAPSHOT</hippo.testutils.version>
   </properties>
 
   <dependencies>
