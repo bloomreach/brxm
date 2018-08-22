@@ -29,9 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For now, the supported UI xtypes (used for rendering the UI view) are <ul> <li>textfield</li>
- * <li>numberfield</li> <li>checkbox</li> <li>datefield</li> <li>colorfield : see also {@link Color}</li> <li>combo
- * </li> </ul> The ParameterType.UNKNOWN will result in xtype "textfield"
+ * For now, the supported UI xtypes (used for rendering the UI view) are
+ * <ul>
+ *     <li>textfield</li>
+ *     <li>numberfield</li>
+ *     <li>checkbox</li>
+ *     <li>datefield</li>
+ *     <li>colorfield : see also {@link Color}</li>
+ * </ul>
+ * ParameterType.UNKNOWN will result in xtype "textfield"
  */
 public enum ParameterType {
 
