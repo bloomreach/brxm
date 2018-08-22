@@ -20,6 +20,7 @@ describe('RightSidePanel', () => {
   let $rootScope;
   let $state;
   let $timeout;
+  let $transitions;
   let RightSidePanelService;
   let SidePanelService;
 
@@ -31,12 +32,13 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _ChannelService_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $timeout = _$timeout_;
+      $transitions = _$transitions_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
@@ -171,5 +173,35 @@ describe('RightSidePanel', () => {
     expect($element.hasClass('side-panel-open')).toBe(false);
     expect($element.hasClass('full-screen')).toBe(false);
     expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
+  });
+
+  describe('focus handling', () => {
+    let mdSidenav;
+
+    beforeEach(() => {
+      $ctrl.$onInit();
+
+      mdSidenav = jasmine.createSpyObj('mdSidenav', ['focus']);
+      spyOn($element, 'find').and.returnValue(mdSidenav);
+
+      $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
+      $rootScope.$digest();
+    });
+
+    it('focuses the sidepanel again when transitioning to the parent state fails (e.g. because a confirmation dialog is cancelled)', () => {
+      $transitions.onBefore({ to: 'hippo-cm.channel' }, () => false);
+      $state.go('hippo-cm.channel');
+      $rootScope.$digest();
+    });
+
+    it('focuses the sidepanel again when transitioning to a sibling state fails (e.g. because a confirmation dialog is cancelled)', () => {
+      $transitions.onBefore({ to: 'hippo-cm.channel.edit-content' }, () => false);
+      $state.go('hippo-cm.channel.edit-content', { documentId: 'docId2' });
+      $rootScope.$digest();
+    });
+
+    afterEach(() => {
+      expect(mdSidenav.focus).toHaveBeenCalled();
+    });
   });
 });

@@ -52,6 +52,7 @@ class RightSidePanelCtrl {
 
     this.$transitions.onBefore({ to: 'hippo-cm.channel.*' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel' }, () => this._closePanel());
+    this.$transitions.onError({ from: 'hippo-cm.channel.*' }, () => this._focusPanel());
   }
 
   $postLink() {
@@ -82,6 +83,10 @@ class RightSidePanelCtrl {
   _closePanel() {
     this.setFullScreen(false);
     this.SidePanelService.close('right');
+  }
+
+  _focusPanel() {
+    this.$element.find('md-sidenav').focus();
   }
 
   isFullScreen() {
