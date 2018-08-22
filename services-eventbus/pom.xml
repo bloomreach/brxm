@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - eventbus</name>
   <artifactId>hippo-services-eventbus</artifactId>
-  <version>4.5.0-SNAPSHOT</version>
+  <version>4.6.0-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -34,8 +34,8 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - eventbus</notice.project.name>
     
-    <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
-    <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.6.0-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>4.6.0-SNAPSHOT</hippo.commons.version>
 
     <asm.version>5.0.3</asm.version>
     <junit.version>4.10</junit.version>
