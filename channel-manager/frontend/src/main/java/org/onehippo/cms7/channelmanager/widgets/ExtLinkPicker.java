@@ -21,9 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -38,6 +43,9 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
+import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -164,15 +172,44 @@ public class ExtLinkPicker extends ExtObservable {
                 selectableNodeTypes = selectableNodeTypesList.toArray(selectableNodeTypes);
             }
 
-            return JcrPathWidget.createPickerConfig(configuration, remembersLastVisited, selectableNodeTypes, initialPath, rootPath);
+            return createPickerConfig(configuration, remembersLastVisited, selectableNodeTypes, initialPath, rootPath);
         }
 
-        return JcrPathWidget.createPickerConfig(
+        return createPickerConfig(
                 DEFAULT_PICKER_CONFIGURATION,
                 DEFAULT_PICKER_REMEMBERS_LAST_VISITED,
                 DEFAULT_PICKER_SELECTABLE_NODE_TYPES,
                 DEFAULT_PICKER_INITIAL_PATH,
                 DEFAULT_PICKER_ROOT_PATH);
+    }
+
+    private static JavaPluginConfig createPickerConfig(String pickerConfigPath, boolean remembersLastVisited,
+                                               String[] selectableNodeTypes, String initialPath, String rootPath) {
+        JavaPluginConfig pickerConfig = new JavaPluginConfig();
+        pickerConfig.put("cluster.name", pickerConfigPath);
+        pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(remembersLastVisited));
+        pickerConfig.put(NodePickerControllerSettings.SELECTABLE_NODETYPES, selectableNodeTypes);
+
+        if (StringUtils.isNotEmpty(initialPath)) {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            try {
+                Node node = session.getNode(initialPath);
+                pickerConfig.put(NodePickerControllerSettings.BASE_UUID, node.getIdentifier());
+            } catch (PathNotFoundException e) {
+                log.warn("Initial picker path not found: '{}'. Using the default initial path of '{}' instead.",
+                        initialPath, pickerConfigPath);
+            } catch (RepositoryException e) {
+                log.error("Could not retrieve the UUID of initial picker path node '" + initialPath
+                        + "'. Using the default initial path of '" + pickerConfigPath + "' instead.", e);
+            }
+        }
+        if (StringUtils.isNotEmpty(rootPath)) {
+            // set the cluster option 'root.path', which will be used as the root of the navigator in the document picker
+            final JavaPluginConfig clusterOptions = new JavaPluginConfig();
+            clusterOptions.put("root.path", rootPath);
+            pickerConfig.put("cluster.options", clusterOptions);
+        }
+        return pickerConfig;
     }
 
     @Override
