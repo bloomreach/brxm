@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 interface NewstyleInterface {
-    @Parameter(name = "00-color", defaultValue = "blue")
+    @Parameter(name = "01-color", defaultValue = "blue")
     @Color
     String getColor();
 
