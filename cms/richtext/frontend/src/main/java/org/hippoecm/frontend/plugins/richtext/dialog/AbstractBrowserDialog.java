@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     private final NodePickerController controller;
     private final NodeBreadcrumbWidget breadcrumbs;
 
-    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
+    public AbstractBrowserDialog(final IPluginContext context, final IPluginConfig config, final IModel<T> model) {
         super(model);
 
         this.context = context;
@@ -53,15 +53,15 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
             }
 
             @Override
-            protected void onSelect(boolean isValid) {
-                IModel<Node> selectedModel = getSelectedModel();
+            protected void onSelect(final boolean isValid) {
+                final IModel<Node> selectedModel = getSelectedModel();
                 if (isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
                     onModelSelected(selectedModel);
-                    checkState();
                 } else {
-                    setOkEnabled(false);
+                    getModelObject().setLinkTarget(null);
                 }
+                checkState();
             }
 
             @Override
@@ -95,7 +95,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
         }};
     }
 
-    protected void onModelSelected(IModel<Node> model) {
+    protected void onModelSelected(final IModel<Node> model) {
     }
 
     protected IModel<Node> getFolderModel() {
@@ -103,7 +103,7 @@ public abstract class AbstractBrowserDialog<T extends RichTextEditorDocumentLink
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         super.render(target);
 
         if (controller.getRenderer() != null) {

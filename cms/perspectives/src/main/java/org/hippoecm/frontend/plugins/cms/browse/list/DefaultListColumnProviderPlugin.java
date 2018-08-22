@@ -38,6 +38,7 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
     private final ListColumn<Node> TYPE_COLUMN = DocumentListingPlugin.createTypeColumn();
 
     private final List<ListColumn<Node>> COLLAPSED_COLUMNS = Arrays.asList(ICON_AND_STATE_COLUMN, NAME_COLUMN);
+    private final List<ListColumn<Node>> TYPE_VIEW_COLUMNS = Arrays.asList(ICON_AND_STATE_COLUMN, NAME_COLUMN, TYPE_COLUMN);
     private final List<ListColumn<Node>> EXPANDED_COLUMNS = Arrays.asList(ICON_AND_STATE_COLUMN, NAME_COLUMN, TYPE_COLUMN);
 
     public DefaultListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
@@ -47,6 +48,11 @@ public final class DefaultListColumnProviderPlugin extends AbstractListColumnPro
     @Override
     public List<ListColumn<Node>> getColumns() {
         return COLLAPSED_COLUMNS;
+    }
+
+    @Override
+    public List<ListColumn<Node>> getTypeViewColumns() {
+        return TYPE_VIEW_COLUMNS;
     }
 
     @Override
