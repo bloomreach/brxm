@@ -56,9 +56,9 @@ describe('addToProjectComponent', () => {
 
   describe('addDocumentToProject', () => {
     it('adds the document to the selected project', () => {
-      spyOn(EditContentService, 'editDocument');
+      spyOn(EditContentService, 'branchAndEditDocument');
       $ctrl.addDocumentToProject();
-      expect(EditContentService.editDocument).toHaveBeenCalledWith(testDocumentId);
+      expect(EditContentService.branchAndEditDocument).toHaveBeenCalledWith(testDocumentId);
     });
 
     it('closes the content service', () => {

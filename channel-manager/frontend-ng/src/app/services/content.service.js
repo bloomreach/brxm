@@ -29,6 +29,10 @@ class ContentService {
     this._running = false;
   }
 
+  branchDocument(id) {
+    return this._send('POST', ['documents', id, 'branch']);
+  }
+
   getEditableDocument(id) {
     return this._send('POST', ['documents', id, 'editable']);
   }

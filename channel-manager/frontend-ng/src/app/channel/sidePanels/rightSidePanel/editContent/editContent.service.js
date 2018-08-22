@@ -94,6 +94,11 @@ class EditContentService {
     }
   }
 
+  branchAndEditDocument(documentId) {
+    this.ContentService.branchDocument(documentId)
+      .then(() => this.editDocument(documentId));
+  }
+
   editDocument(documentId) {
     this.$state.go('hippo-cm.channel.edit-content', { documentId });
   }
