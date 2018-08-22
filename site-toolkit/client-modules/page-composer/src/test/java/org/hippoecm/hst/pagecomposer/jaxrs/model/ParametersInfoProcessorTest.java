@@ -172,27 +172,27 @@ public class ParametersInfoProcessorTest {
     }
 
 
-    static interface a extends b, c {
+    interface a extends b, c {
     }
 
-    static interface b extends d, e {
+    interface b extends d, e {
     }
 
-    static interface d {
+    interface d {
     }
 
-    static interface e extends h {
+    interface e extends h {
     }
 
-    static interface h {
+    interface h {
     }
 
-    static interface c extends f, g {
+    interface c extends f, g {
     }
 
-    static interface f {
+    interface f {
     }
-    static interface g {
+    interface g {
     }
 
     /**
@@ -267,7 +267,7 @@ public class ParametersInfoProcessorTest {
      * Below, we have a broken situation: 
      * @Color annotation is not allowed to return a int
      */
-    static interface InvalidReturnTypeAnnotationInterface {
+    interface InvalidReturnTypeAnnotationInterface {
         @Parameter(name="00-color", defaultValue = "blue")
         @Color
         int getColor();
@@ -306,7 +306,7 @@ public class ParametersInfoProcessorTest {
     }
 
     @FieldGroupList({})
-    static interface EmptyFieldGroupListInterface {
+    interface EmptyFieldGroupListInterface {
         @Parameter(name = "one")
         String getOne();
     }
@@ -326,7 +326,7 @@ public class ParametersInfoProcessorTest {
     @FieldGroupList({
             @FieldGroup({"two", "one"})
     })
-    static interface FieldGroupWithoutTitleInterface {
+    interface FieldGroupWithoutTitleInterface {
         @Parameter(name = "one")
         String getOne();
 
@@ -353,7 +353,7 @@ public class ParametersInfoProcessorTest {
                     value = {"parameter"}
             )
     })
-    static interface FieldGroupWithUntranslatedTitleInterface {
+    interface FieldGroupWithUntranslatedTitleInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -373,7 +373,7 @@ public class ParametersInfoProcessorTest {
     @FieldGroupList({
             @FieldGroup({"nosuchparameter"})
     })
-    static interface FieldGroupWithUnknownParameterInterface {
+    interface FieldGroupWithUnknownParameterInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -398,7 +398,7 @@ public class ParametersInfoProcessorTest {
                     value = {"parameter"}
             )
     })
-    static interface FieldGroupWithDuplicateParameterInterface {
+    interface FieldGroupWithDuplicateParameterInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -421,7 +421,7 @@ public class ParametersInfoProcessorTest {
                     value = {"one", "two"}
             )
     })
-    static interface FieldGroupWithSubsetOfParametersInterface {
+    interface FieldGroupWithSubsetOfParametersInterface {
         @Parameter(name = "one")
         String getOne();
 
@@ -456,7 +456,7 @@ public class ParametersInfoProcessorTest {
                 value = {"d3"}
             )
     })
-    static interface FieldGroupInheritedInterfaceD {
+    interface FieldGroupInheritedInterfaceD {
         @Parameter(name = "d1")
         String getD1();
 
@@ -470,7 +470,7 @@ public class ParametersInfoProcessorTest {
         String getD4();
     }
 
-    static interface FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedInterfaceC {
         @Parameter(name = "c1")
         String getC1();
 
@@ -488,7 +488,7 @@ public class ParametersInfoProcessorTest {
                     value = {"b2", "d3"}
             )
     })
-    static interface FieldGroupInheritedInterfaceB extends FieldGroupInheritedInterfaceD {
+    interface FieldGroupInheritedInterfaceB extends FieldGroupInheritedInterfaceD {
         @Parameter(name = "b1")
         String getB1();
 
@@ -510,7 +510,7 @@ public class ParametersInfoProcessorTest {
             )
 
     })
-    static interface FieldGroupInheritedInterfaceA extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedInterfaceA extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 
@@ -554,7 +554,7 @@ public class ParametersInfoProcessorTest {
                     value = {"a2", "a3"}
             )
     })
-    static interface FieldGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 
@@ -596,7 +596,7 @@ public class ParametersInfoProcessorTest {
                     value = {"a2", "a3"}
             )
     })
-    static interface FieldEmptyGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldEmptyGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 

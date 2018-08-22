@@ -88,7 +88,7 @@ public class DocumentParamsScannerTest {
         assertTrue(names.contains("news-jcrPath"));
     }
 
-    public static interface JcrPathParametersInfo2 {
+    public interface JcrPathParametersInfo2 {
         @Parameter(name = "news-jcrPath-2", displayName = "Picked News")
         @JcrPath()
         String getPickedNews();
@@ -98,7 +98,7 @@ public class DocumentParamsScannerTest {
     public static class JcrPathComponent2 extends GenericHstComponent {
     }
 
-    public static interface TwoJcrPathParametersInfo {
+    public interface TwoJcrPathParametersInfo {
         @Parameter(name = "news-jcrPath", displayName = "Picked News")
         @JcrPath(isRelative = false, pickerInitialPath = "")
         String getPickedNewsJcrPath();
@@ -126,7 +126,7 @@ public class DocumentParamsScannerTest {
         assertTrue(names.contains("news-jcrPath-2"));
     }
 
-    public static interface InheritanceParametersInfo extends JcrPathParametersInfo, JcrPathParametersInfo2 {
+    public interface InheritanceParametersInfo extends JcrPathParametersInfo, JcrPathParametersInfo2 {
     }
 
     @ParametersInfo(type = InheritanceParametersInfo.class)
