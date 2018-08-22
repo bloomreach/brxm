@@ -27,7 +27,7 @@
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>4.5.0-SNAPSHOT</version>
+  <version>4.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -42,10 +42,10 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>5.5.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>5.5.0-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>5.6.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.6.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.6.0-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>4.6.0-SNAPSHOT</hippo.commons.version>
   </properties>
 
   <repositories>
