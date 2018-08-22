@@ -26,15 +26,10 @@ import javax.jcr.Session;
 
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
-public interface EditingService {
+public class BranchingServiceImpl implements BranchingService {
 
-    /**
-     * Get a backing JCR node of a document.
-     *
-     * @param workflow workflow for the desired document
-     * @param hints    the hints obtained earlier from the workflow
-     * @param session  JCR session for obtaining the backing node
-     * @return JCR node or nothing, wrapped in an Optional
-     */
-    Optional<Node> getEditableDocumentNode(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session);
+    @Override
+    public Node branch(final DocumentWorkflow workflow, final Map<String, Serializable> hints, final Session session) {
+        throw new UnsupportedOperationException("cannot create a branch without a name");
+    }
 }

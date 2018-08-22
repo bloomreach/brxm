@@ -131,7 +131,7 @@ public class EditingUtils {
      * Check a workflow to see if an action is available.
      *
      * @param workflow the workflow to check
-     * @param action name of the action to check for
+     * @param action   name of the action to check for
      * @return true if the action is present as a workflow hint and its value is true
      */
     public static boolean isActionAvailable(final Workflow workflow, final String action) {
@@ -163,7 +163,7 @@ public class EditingUtils {
     /**
      * Check if an action is available as hint with value true.
      *
-     * @param hints map of workflow hints
+     * @param hints  map of workflow hints
      * @param action name of the action to check for
      * @return true if the hints map contains the action and its value is true
      */
@@ -179,7 +179,7 @@ public class EditingUtils {
     /**
      * Check if an action is available as hint and has value false.
      *
-     * @param hints map of workflow hints
+     * @param hints  map of workflow hints
      * @param action name of the action to check for
      * @return true if the hints map contains the action and its value is false
      */
@@ -222,15 +222,17 @@ public class EditingUtils {
     }
 
     /**
-     * Get a backing JCR node of an editable document.
+     * Get a backing JCR node of an editable document for the branch given by branchId. If workflow or repository
+     * exceptions occur while getting the node an empty optional is returned and a warning is logged.
      *
      * @param workflow Editable workflow for the desired document
+     * @param branchId id of the branch
      * @param session  JCR session for obtaining the backing node
      * @return JCR node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> getEditableDocumentNode(final EditableWorkflow workflow, final Session session) {
+    public static Optional<Node> getEditableDocumentNode(final EditableWorkflow workflow, final String branchId, final Session session) {
         try {
-            final Document document = workflow.obtainEditableInstance();
+            final Document document = workflow.obtainEditableInstance(branchId);
             return Optional.of(document.getNode(session));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);

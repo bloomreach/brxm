@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsServiceImpl;
-import org.onehippo.cms.channelmanager.content.document.util.EditingService;
-import org.onehippo.cms.channelmanager.content.document.util.EditingServiceImpl;
+import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
+import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -72,7 +72,7 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
     protected void doInitialize(final Session session) throws RepositoryException {
         super.doInitialize(session);
         this.documentsService.setHintsInspector(createHintsInspector(session));
-        this.documentsService.setEditingService(createEditingService(session));
+        this.documentsService.setBranchingService(createBranchingService(session));
     }
 
     private HintsInspector createHintsInspector(final Session session) throws RepositoryException {
@@ -86,12 +86,12 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
         }
     }
 
-    private EditingService createEditingService(final Session session) throws RepositoryException {
-        final String propertyPath = moduleConfigPath + "/editingServiceClass";
-        final String defaultValue = EditingServiceImpl.class.getName();
+    private BranchingService createBranchingService(final Session session) throws RepositoryException {
+        final String propertyPath = moduleConfigPath + "/branchingServiceClass";
+        final String defaultValue = BranchingServiceImpl.class.getName();
         final String className = JcrUtils.getStringProperty(session, propertyPath, defaultValue);
         try {
-            return (EditingService) Class.forName(className).newInstance();
+            return (BranchingService) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RepositoryException(e);
         }

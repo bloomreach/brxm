@@ -41,6 +41,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -284,11 +285,11 @@ public class EditingUtilsTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Document document = createMock(Document.class);
 
-        expect(workflow.obtainEditableInstance()).andReturn(document);
+        expect(workflow.obtainEditableInstance(MASTER_BRANCH_ID)).andReturn(document);
         expect(document.getNode(session)).andReturn(draftNode);
         replay(workflow, document);
 
-        final Optional<Node> nodeOptional = EditingUtils.getEditableDocumentNode(workflow, session);
+        final Optional<Node> nodeOptional = EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session);
         assertThat("There should be a draft", nodeOptional.isPresent());
         if (nodeOptional.isPresent()) {
             assertThat(nodeOptional.get(), equalTo(draftNode));
@@ -302,11 +303,11 @@ public class EditingUtilsTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Session session = createMock(Session.class);
 
-        expect(workflow.obtainEditableInstance()).andThrow(new WorkflowException("bla"));
+        expect(workflow.obtainEditableInstance(MASTER_BRANCH_ID)).andThrow(new WorkflowException("bla"));
         expect(session.getUserID()).andReturn("bla");
         replay(workflow, session);
 
-        assertFalse(EditingUtils.getEditableDocumentNode(workflow, session).isPresent());
+        assertFalse(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session).isPresent());
 
         verify(workflow, session);
     }

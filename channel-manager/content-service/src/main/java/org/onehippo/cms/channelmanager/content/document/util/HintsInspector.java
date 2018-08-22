@@ -18,12 +18,22 @@ package org.onehippo.cms.channelmanager.content.document.util;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 
 public interface HintsInspector {
+
+    /**
+     * Check if a document draft can be branched, given its workflow hints, returns an empty optional if it can and an
+     * optional containing the error info otherwise.
+     *
+     * @param hints workflow hints
+     * @return empty optional if a branch can be created for the document.
+     */
+    Optional<ErrorInfo> canBranchDocument(Map<String, Serializable> hints, Set<String> existingBranches);
 
     /**
      * Check if a document draft can be created, given its workflow hints.

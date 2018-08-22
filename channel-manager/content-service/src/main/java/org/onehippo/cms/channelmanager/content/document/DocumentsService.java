@@ -48,13 +48,29 @@ public interface DocumentsService {
     Document getDocument(String uuid, String branchId, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
+     * Branches a document.
+     * <p>
+     * If all goes well, the document's content is returned.
+     *
+     * @param uuid           UUID of the requested document (handle)
+     * @param session        user-authenticated, invocation-scoped JCR session
+     * @param locale         Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
+     * @return JSON-serializable representation of the parts supported for exposing
+     * @throws ErrorWithPayloadException If branching the document failed
+     */
+    Document branchDocument(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+
+
+    /**
      * Retrieves an editable version of a document and locks it for editing by the current CMS user.
      * <p>
      * If all goes well, the document's content is returned.
      *
-     * @param uuid    UUID of the requested document (handle)
-     * @param session user-authenticated, invocation-scoped JCR session
-     * @param locale  Locale of the CMS user
+     * @param uuid           UUID of the requested document (handle)
+     * @param session        user-authenticated, invocation-scoped JCR session
+     * @param locale         Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If obtaining the editable instance failed
      */

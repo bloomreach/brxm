@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -44,6 +45,12 @@ public class HintsInspectorImpl implements HintsInspector {
     private static final String HINT_REQUESTS = "requests";
 
     private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
+    private static final ErrorInfo NOT_BRANCHEABLE = new ErrorInfo(ErrorInfo.Reason.NOT_BRANCHEABLE);
+
+    @Override
+    public Optional<ErrorInfo> canBranchDocument(final Map<String, Serializable> hints, Set<String> existingBranches) {
+        return Optional.of(NOT_BRANCHEABLE);
+    }
 
     @Override
     public boolean canObtainEditableDocument(Map<String, Serializable> hints) {

@@ -84,6 +84,13 @@ public class ContentResource {
     }
 
     @POST
+    @Path("documents/{documentId}/branch")
+    public Response branchDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                (session, locale) -> documentService.branchDocument(id, session, locale, getPayload(servletRequest)));
+    }
+
+    @POST
     @Path("documents/{documentId}/editable")
     public Response obtainEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,

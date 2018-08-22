@@ -93,6 +93,8 @@ public class ErrorInfo {
         MULTIPLE_REQUESTS,
         NO_REQUEST_PENDING,
         NOT_A_DOCUMENT,
+        NOT_BRANCHEABLE,
+        BRANCH_ALREADY_EXISTS,
         NOT_EDITABLE,
         NOT_A_FOLDER,
         OTHER_HOLDER,

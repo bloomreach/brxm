@@ -26,7 +26,7 @@ import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BR
 /**
  * Utility methods for interacting with the context payload.
  */
-final class ContextPayloadUtils {
+public final class ContextPayloadUtils {
 
     // TODO (meggermont): Replace Hard-coded constant copied from WpmConstants with constant in HST or repository.
     // If the enterprise wpm feature is enabled, then the channel manager client code will call a wpm REST method
@@ -39,7 +39,13 @@ final class ContextPayloadUtils {
     private ContextPayloadUtils() {
     }
 
-    static String getBranchId(Map<String, Serializable> contextPayload) {
+    /**
+     * Returns the branchId from the given context payload if present and the MASTER branch id otherwise.
+     *
+     * @param contextPayload the context payload from the http request
+     * @return branchId
+     */
+    public static String getBranchId(Map<String, Serializable> contextPayload) {
         return Optional.ofNullable(contextPayload)
                 .map(m -> (String) m.getOrDefault(ATTRIBUTE_SESSION_CONTEXT_ACTIVE_BRANCH_ID, null))
                 .orElse(MASTER_BRANCH_ID);
