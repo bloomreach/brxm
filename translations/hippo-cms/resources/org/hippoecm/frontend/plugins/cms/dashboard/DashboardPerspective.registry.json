@@ -2,8 +2,10 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "todo" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "nl" : "RESOLVED"
+      }
     },
     "perspective-title" : {
       "status" : "CLEAN",
