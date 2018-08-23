@@ -69,7 +69,8 @@
     <cluster.node>node1</cluster.node>
     <mysql.version>5.1.39</mysql.version>
     <!-- end clustering support properties -->
-
+    
+    <buildNumber>${maven.build.timestamp}</buildNumber>
   </properties>
 
   <repositories>
