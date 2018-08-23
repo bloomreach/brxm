@@ -15,27 +15,27 @@
   -->
 
 <div layout="column"
-     flex
-     ng-hide="channelCtrl.isSubpageOpen()">
+     layout-fill
+     ng-hide="$ctrl.isSubpageOpen()">
   <md-toolbar class="hippo-toolbar qa-toolbar"
-              ng-show="channelCtrl.isToolbarDisplayed()">
+              ng-show="$ctrl.isToolbarDisplayed()">
     <div class="md-toolbar-tools"
          ng-if="!$ctrl.isControlsDisabled()">
       <div flex="30"
            layout
            layout-align="start center">
         <left-side-panel-toggle></left-side-panel-toggle>
-        <dropdown-menu items="channelCtrl.menus"></dropdown-menu>
+        <dropdown-menu items="$ctrl.menus"></dropdown-menu>
       </div>
 
       <div flex="40"
            layout
            layout-align="center center">
-        <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+        <relevance-view-as render-variant="$ctrl.getRenderVariant()"></relevance-view-as>
 
         <viewport-toggle></viewport-toggle>
 
-        <project-toggle ng-if="channelCtrl.projectsEnabled"
+        <project-toggle ng-if="$ctrl.projectsEnabled"
                         flex>
         </project-toggle>
       </div>
@@ -44,22 +44,22 @@
            layout
            layout-align="end center">
         <overlay-toggle name="components"
-                        state="channelCtrl.isComponentsOverlayDisplayed"
+                        state="$ctrl.isComponentsOverlayDisplayed"
                         default-state="false"
-                        disabled="!channelCtrl.isComponentsOverlayEnabled"
+                        disabled="!$ctrl.isComponentsOverlayEnabled"
                         icon-svg="toggle_components_overlay"
-                        tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
+                        tooltip="{{ $ctrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
-                        ng-if="channelCtrl.isEditable()">
+                        ng-if="$ctrl.isEditable()">
         </overlay-toggle>
 
         <overlay-toggle name="content"
-                        state="channelCtrl.isContentOverlayDisplayed"
+                        state="$ctrl.isContentOverlayDisplayed"
                         default-state="true"
-                        disabled="!channelCtrl.isContentOverlayEnabled"
+                        disabled="!$ctrl.isContentOverlayEnabled"
                         icon-svg="document"
                         class="qa-toggle-content"
-                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
+                        tooltip="{{ $ctrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
       </div>
     </div>
@@ -72,68 +72,69 @@
   <md-content class="channel-content"
               layout="row"
               flex>
-    <left-side-panel layout="row"
-                     is-configuration-locked="channelCtrl.isConfigurationLocked()"
-                     components-visible="channelCtrl.isComponentsOverlayDisplayed">
+    <left-side-panel is-configuration-locked="$ctrl.isConfigurationLocked()"
+                     ng-hide="$ctrl.isSidePanelFullScreen('right')"
+                     components-visible="$ctrl.isComponentsOverlayDisplayed">
     </left-side-panel>
 
     <hippo-iframe flex
-                  ng-show="channelCtrl.isChannelLoaded()"
-                  show-components-overlay="channelCtrl.isComponentsOverlayDisplayed"
-                  show-content-overlay="channelCtrl.isContentOverlayDisplayed"
-                  on-edit-menu="channelCtrl.editMenu(menuUuid)">
+                  ng-class="{ 'locked-width': $ctrl.isSidePanelFullScreen('right') }"
+                  ng-show="$ctrl.isChannelLoaded()"
+                  show-components-overlay="$ctrl.isComponentsOverlayDisplayed"
+                  show-content-overlay="$ctrl.isContentOverlayDisplayed"
+                  on-edit-menu="$ctrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row"
-                      ng-show="channelCtrl.isChannelLoaded()">
+    <right-side-panel ng-class="{ 'side-panel-full-screen': $ctrl.isSidePanelFullScreen('right') }"
+                      ng-show="$ctrl.isChannelLoaded()">
     </right-side-panel>
   </md-content>
 </div>
 
-<page-properties layout="column"
-                 flex
-                 ng-if="channelCtrl.currentSubpage == 'page-properties'"
-                 on-done="channelCtrl.hideSubpage()">
+<page-properties flex
+                 layout="column"
+                 ng-if="$ctrl.currentSubpage == 'page-properties'"
+                 on-done="$ctrl.hideSubpage()">
 </page-properties>
 
-<page-copy layout="column"
-           flex
-           ng-if="channelCtrl.currentSubpage == 'page-copy'"
-           on-done="channelCtrl.hideSubpage()">
+<page-copy flex
+           layout="column"
+           ng-if="$ctrl.currentSubpage == 'page-copy'"
+           on-done="$ctrl.hideSubpage()">
 </page-copy>
 
-<page-move layout="column"
-           flex
-           ng-if="channelCtrl.currentSubpage == 'page-move'"
-           on-done="channelCtrl.hideSubpage()">
+<page-move flex
+           layout="column"
+           ng-if="$ctrl.currentSubpage == 'page-move'"
+           on-done="$ctrl.hideSubpage()">
 </page-move>
 
-<page-new layout="column"
-          flex
-          ng-if="channelCtrl.currentSubpage == 'page-new'"
-          on-done="channelCtrl.hideSubpage()">
+<page-new flex
+          layout="column"
+          ng-if="$ctrl.currentSubpage == 'page-new'"
+          on-done="$ctrl.hideSubpage()">
 </page-new>
 
-<channel-settings layout="column"
-                  flex
-                  ng-if="channelCtrl.currentSubpage == 'channel-settings'"
-                  on-done="channelCtrl.hideSubpage()"
-                  on-success="channelCtrl.onSubpageSuccess(key, params)"
-                  on-error="channelCtrl.onSubpageError(key, params)">
+<channel-settings flex
+                  layout="column"
+                  ng-if="$ctrl.currentSubpage == 'channel-settings'"
+                  on-done="$ctrl.hideSubpage()"
+                  on-error="$ctrl.onSubpageError(key, params)"
+                  on-success="$ctrl.onSubpageSuccess(key, params)">
 </channel-settings>
 
-<change-management layout="column"
-                   flex
-                   ng-if="channelCtrl.currentSubpage == 'manage-changes'"
-                   on-done="channelCtrl.hideSubpage()">
+<change-management flex
+                   layout="column"
+                   ng-if="$ctrl.currentSubpage == 'manage-changes'"
+                   on-done="$ctrl.hideSubpage()">
 </change-management>
 
-<site-menu-editor layout="column"
-             flex
-             ng-if="channelCtrl.currentSubpage == 'site-menu-editor'"
-             menu-uuid="{{channelCtrl.menuUuid}}"
-             on-done="channelCtrl.hideSubpage()"
-             on-error="channelCtrl.onSubpageError(key, params)">
+<site-menu-editor flex
+                  layout="column"
+                  menu-uuid="{{$ctrl.menuUuid}}"
+                  ng-if="$ctrl.currentSubpage == 'site-menu-editor'"
+                  on-done="$ctrl.hideSubpage()"
+                  on-error="$ctrl.onSubpageError(key, params)">
 </site-menu-editor>
 
-<mask state="channelCtrl.isComponentsOverlayDisplayed"></mask>
+<mask state="$ctrl.isComponentsOverlayDisplayed"></mask>

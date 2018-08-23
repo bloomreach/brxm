@@ -17,12 +17,11 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ChannelCtrl', () => {
+describe('ChannelController', () => {
+  let $ctrl;
   let $q;
-  let $rootScope;
   let $timeout;
   let $window;
-  let ChannelCtrl;
   let ChannelService;
   let SidePanelService;
   let ComponentsService;
@@ -36,8 +35,7 @@ describe('ChannelCtrl', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      $controller,
-      _$rootScope_,
+      $componentController,
       _$timeout_,
       _$q_,
       _$window_,
@@ -49,7 +47,6 @@ describe('ChannelCtrl', () => {
     ) => {
       const resolvedPromise = _$q_.when();
 
-      $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $q = _$q_;
       $window = _$window_;
@@ -58,16 +55,13 @@ describe('ChannelCtrl', () => {
       OverlayService = _OverlayService_;
       ProjectService = _ProjectService_;
 
-      const $stateParams = {
-        initialRenderPath: '/testPath',
-      };
-
       spyOn(ChannelService, 'clearChannel');
       spyOn(ChannelService, 'hasChannel');
       spyOn(ChannelService, 'isEditable');
 
       SidePanelService = jasmine.createSpyObj('SidePanelService', [
         'open',
+        'isFullScreen',
       ]);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
@@ -86,9 +80,7 @@ describe('ChannelCtrl', () => {
         'getRenderVariant',
       ]);
 
-      ChannelCtrl = $controller('ChannelCtrl', {
-        $scope: $rootScope.$new(),
-        $stateParams,
+      $ctrl = $componentController('channel', {
         ChannelService,
         SidePanelService,
         ComponentsService,
@@ -102,120 +94,124 @@ describe('ChannelCtrl', () => {
 
   describe('initialise overlays', () => {
     it('content overlay and component overlay values are aligned with OverlayService', () => {
-      expect(ChannelCtrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
-      expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
+      expect($ctrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
+      expect($ctrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
     });
 
     it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed should call overlayService functions', () => {
       spyOn(OverlayService, 'showContentOverlay');
       spyOn(OverlayService, 'showComponentsOverlay');
       const arg = false;
-      ChannelCtrl.isContentOverlayDisplayed = arg;
-      ChannelCtrl.isComponentsOverlayDisplayed = arg;
+      $ctrl.isContentOverlayDisplayed = arg;
+      $ctrl.isComponentsOverlayDisplayed = arg;
 
       expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(arg);
       expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(arg);
     });
   });
 
-  it('loads the initial page', () => {
-    expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
-  });
-
   it('checks whether the channel is loaded', () => {
     ChannelService.hasChannel.and.returnValue(false);
-    expect(ChannelCtrl.isChannelLoaded()).toBe(false);
+    expect($ctrl.isChannelLoaded()).toBe(false);
 
     ChannelService.hasChannel.and.returnValue(true);
-    expect(ChannelCtrl.isChannelLoaded()).toBe(true);
+    expect($ctrl.isChannelLoaded()).toBe(true);
   });
 
   it('checks whether the page is loaded', () => {
     HippoIframeService.isPageLoaded.and.returnValue(false);
-    expect(ChannelCtrl.isPageLoaded()).toBe(false);
+    expect($ctrl.isPageLoaded()).toBe(false);
 
     HippoIframeService.isPageLoaded.and.returnValue(true);
-    expect(ChannelCtrl.isPageLoaded()).toBe(true);
+    expect($ctrl.isPageLoaded()).toBe(true);
   });
 
   it('checks whether controls are disabled', () => {
     ChannelService.hasChannel.and.returnValue(false);
     HippoIframeService.isPageLoaded.and.returnValue(false);
-    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+    expect($ctrl.isControlsDisabled()).toBe(true);
 
     ChannelService.hasChannel.and.returnValue(false);
     HippoIframeService.isPageLoaded.and.returnValue(true);
-    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+    expect($ctrl.isControlsDisabled()).toBe(true);
 
     ChannelService.hasChannel.and.returnValue(true);
     HippoIframeService.isPageLoaded.and.returnValue(false);
-    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+    expect($ctrl.isControlsDisabled()).toBe(true);
 
     ChannelService.hasChannel.and.returnValue(true);
     HippoIframeService.isPageLoaded.and.returnValue(true);
-    expect(ChannelCtrl.isControlsDisabled()).toBe(false);
+    expect($ctrl.isControlsDisabled()).toBe(false);
   });
 
   it('checks whether a channel is editable', () => {
     ChannelService.isEditable.and.returnValue(false);
-    expect(ChannelCtrl.isEditable()).toBe(false);
+    expect($ctrl.isEditable()).toBe(false);
 
     ChannelService.isEditable.and.returnValue(true);
-    expect(ChannelCtrl.isEditable()).toBe(true);
+    expect($ctrl.isEditable()).toBe(true);
   });
 
   it('gets the render variant from the page meta-data service', () => {
     PageMetaDataService.getRenderVariant.and.returnValue('variant1');
-    expect(ChannelCtrl.getRenderVariant()).toBe('variant1');
+    expect($ctrl.getRenderVariant()).toBe('variant1');
   });
 
   it('should not be true by default (components overlay)', () => {
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
+    expect($ctrl.isComponentsOverlayDisplayed).toEqual(false);
   });
 
   it('correctly shows and hides subpages', () => {
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    expect($ctrl.isSubpageOpen()).toBe(false);
     HippoIframeService.reload.and.returnValue($q.when());
 
-    ChannelCtrl.showSubpage('test');
-    expect(ChannelCtrl.isSubpageOpen()).toBe(true);
+    $ctrl.showSubpage('test');
+    expect($ctrl.isSubpageOpen()).toBe(true);
 
-    ChannelCtrl.hideSubpage();
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $ctrl.hideSubpage();
+    expect($ctrl.isSubpageOpen()).toBe(false);
     $timeout.flush();
 
-    ChannelCtrl.showSubpage('test');
-    ChannelCtrl.onSubpageError('key', { param: 'value' });
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $ctrl.showSubpage('test');
+    $ctrl.onSubpageError('key', { param: 'value' });
+    expect($ctrl.isSubpageOpen()).toBe(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('key', { param: 'value' });
 
     FeedbackService.showError.calls.reset();
-    ChannelCtrl.showSubpage('test');
-    ChannelCtrl.onSubpageError();
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $ctrl.showSubpage('test');
+    $ctrl.onSubpageError();
+    expect($ctrl.isSubpageOpen()).toBe(false);
     expect(FeedbackService.showError).not.toHaveBeenCalled();
 
-    ChannelCtrl.showSubpage('test');
-    ChannelCtrl.onSubpageSuccess('key', { param: 'value' });
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $ctrl.showSubpage('test');
+    $ctrl.onSubpageSuccess('key', { param: 'value' });
+    expect($ctrl.isSubpageOpen()).toBe(false);
 
-    ChannelCtrl.showSubpage('test');
-    ChannelCtrl.onSubpageSuccess();
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $ctrl.showSubpage('test');
+    $ctrl.onSubpageSuccess();
+    expect($ctrl.isSubpageOpen()).toBe(false);
   });
 
   it('opens the menu editor when told so', () => {
-    ChannelCtrl.editMenu('testUuid');
+    $ctrl.editMenu('testUuid');
 
-    expect(ChannelCtrl.menuUuid).toBe('testUuid');
-    expect(ChannelCtrl.currentSubpage).toBe('site-menu-editor');
+    expect($ctrl.menuUuid).toBe('testUuid');
+    expect($ctrl.currentSubpage).toBe('site-menu-editor');
   });
 
   it('should return channel toolbar display status', () => {
     ChannelService.setToolbarDisplayed(true);
-    expect(ChannelCtrl.isToolbarDisplayed()).toBe(true);
+    expect($ctrl.isToolbarDisplayed()).toBe(true);
     ChannelService.setToolbarDisplayed(false);
-    expect(ChannelCtrl.isToolbarDisplayed()).toBe(false);
+    expect($ctrl.isToolbarDisplayed()).toBe(false);
+  });
+
+  it('delegates the side-panel full-screen check to the SidePanelService', () => {
+    $ctrl.isSidePanelFullScreen('right');
+    expect(SidePanelService.isFullScreen).toHaveBeenCalledWith('right');
+
+    $ctrl.isSidePanelFullScreen('left');
+    expect(SidePanelService.isFullScreen).toHaveBeenCalledWith('left');
   });
 
   it('should delegate isContentOverlayEnabled to ProjectService', () => {
@@ -224,8 +220,8 @@ describe('ChannelCtrl', () => {
       toggle = !toggle;
       return toggle;
     });
-    expect(ChannelCtrl.isContentOverlayEnabled).toBeTruthy();
-    expect(ChannelCtrl.isContentOverlayEnabled).toBeFalsy();
+    expect($ctrl.isContentOverlayEnabled).toBeTruthy();
+    expect($ctrl.isContentOverlayEnabled).toBeFalsy();
   });
 
   it('should delegate isComponentsOverlayEnabled to ProjectService', () => {
@@ -234,39 +230,39 @@ describe('ChannelCtrl', () => {
       toggle = !toggle;
       return toggle;
     });
-    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeTruthy();
-    expect(ChannelCtrl.isComponentsOverlayEnabled).toBeFalsy();
+    expect($ctrl.isComponentsOverlayEnabled).toBeTruthy();
+    expect($ctrl.isComponentsOverlayEnabled).toBeFalsy();
   });
 
-  describe('reload-channel event from ExtJS', () => {
+  describe('reload-page event from ExtJS', () => {
     beforeEach(() => {
-      ChannelCtrl.$onInit();
+      $ctrl.$onInit();
     });
 
-    it('handles the reload-channel event from ExtJS when an item is already locked', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
+    it('handles the reload-page event from ExtJS when an item is already locked', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', { lockedBy: 'admin' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('handles the reload-channel event from ExtJS when an item is not found', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: 'ITEM_NOT_FOUND', parameterMap: { component: 'Banner' } });
+    it('handles the reload-page event from ExtJS when an item is not found', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: 'ITEM_NOT_FOUND', parameterMap: { component: 'Banner' } });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_COMPONENT_DELETED', { component: 'Banner' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
-    it('handles the reload-channel event from ExtJS when editing a component failed', () => {
-      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+    it('handles the reload-page event from ExtJS when editing a component failed', () => {
+      $window.CMS_TO_APP.publish('reload-page', { error: '' });
 
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
     it('is unsubscribed when the controller is destroyed', () => {
-      ChannelCtrl.$onDestroy();
-      $window.CMS_TO_APP.publish('reload-channel', { error: '' });
+      $ctrl.$onDestroy();
+      $window.CMS_TO_APP.publish('reload-page', { error: '' });
       expect(FeedbackService.showError).not.toHaveBeenCalled();
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
     });

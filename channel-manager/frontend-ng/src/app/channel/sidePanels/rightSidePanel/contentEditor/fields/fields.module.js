@@ -15,6 +15,7 @@
  */
 
 import imageLinkComponent from './imageLink/imageLink.component';
+import nodeLinkComponent from './nodeLink/nodeLink.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
@@ -34,6 +35,7 @@ const fieldsModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('imageLink', imageLinkComponent)
+  .component('nodeLink', nodeLinkComponent)
   .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse)
   .service('FieldService', fieldService);

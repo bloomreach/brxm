@@ -15,15 +15,10 @@
  */
 
 class resizeHandleController {
-  constructor($element, $document, $scope) {
+  constructor($element) {
     'ngInject';
 
-    this.$document = $document;
-    this.$scope = $scope;
     this.handle = $element;
-    this.maxWidth = $('body').width() / 2;
-    this.hippoOverlay = {};
-    this.hippoOverlayTransitionTime = this.hippoOverlayTransitionTime;
   }
 
   $onInit() {
@@ -33,52 +28,39 @@ class resizeHandleController {
   }
 
   _registerEvents(manipulatedElement) {
-    this.handle.mousedown((mouseDownEvent) => {
-      let newWidth;
-      const initialWidth = manipulatedElement.width();
+    this.handle.on('mousedown', (mouseDownEvent) => {
+      this.maxWidth = Math.floor($('body').width() / 2);
+
       const initialX = mouseDownEvent.pageX;
-      const hippoIframe = $('hippo-iframe').find('iframe');
-      hippoIframe.css('pointer-events', 'none');
-      manipulatedElement.addClass('in-resize');
+      const initialWidth = manipulatedElement.width();
 
-      this.hippoOverlay = hippoIframe.contents().find('.hippo-overlay');
-      this._hideHippoOverlay();
-
-      this.$document.mousemove((moveEvent) => {
+      const mask = this._createMask();
+      mask.on('mousemove', (moveEvent) => {
         const diff = initialX - moveEvent.pageX;
-        newWidth = this.add ? initialWidth + diff : initialWidth - diff;
+        let newWidth = this.add ? initialWidth + diff : initialWidth - diff;
 
         if (newWidth < this.minWidth) newWidth = this.minWidth;
         if (newWidth > this.maxWidth) newWidth = this.maxWidth;
 
-        if (manipulatedElement.width() >= this.minWidth && manipulatedElement.width() <= this.maxWidth) {
+        if (newWidth !== manipulatedElement.width()) {
           manipulatedElement.css('width', newWidth);
           this.onResize({ newWidth });
         }
       });
 
-      this.$document.mouseup(() => {
-        hippoIframe.css('pointer-events', '');
-        this._showHippoOverlay();
-        manipulatedElement.removeClass('in-resize');
-        this.$document.unbind('mousemove');
-        this.$document.unbind('mouseup');
+      mask.on('mouseup', () => {
+        mask.hide();
+        mask.off('mousemove');
+        mask.off('mouseup');
+        mask.remove();
       });
+
+      mask.show();
     });
   }
 
-  _hideHippoOverlay() {
-    this.hippoOverlay.animate({
-      opacity: '0',
-    }, this.hippoOverlayTransitionTime);
-    setTimeout(() => this.hippoOverlay.css('display', 'none'), this.hippoOverlayTransitionTime);
-  }
-
-  _showHippoOverlay() {
-    this.hippoOverlay.css('display', '');
-    this.hippoOverlay.animate({
-      opacity: '1',
-    }, this.hippoOverlayTransitionTime);
+  _createMask() {
+    return $('<div class="resize-handle-mask"></div>').appendTo('body');
   }
 }
 

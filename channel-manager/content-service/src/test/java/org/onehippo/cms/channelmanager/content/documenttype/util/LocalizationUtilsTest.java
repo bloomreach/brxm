@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,11 +143,31 @@ public class LocalizationUtilsTest {
                 Optional.of(editorFieldNode)).get(), equalTo(displayName));
     }
 
+    @Test
+    public void getFieldNameAsDisplayNameForMissingTranslationAndCaption() throws Exception {
+        final Node editorFieldNode = createMock(Node.class);
+        final Property captionProperty = createMock(Property.class);
+        final Property fieldProperty = createMock(Property.class);
+        final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
+
+        expect(resourceBundle.getString("ns:title")).andReturn(null);
+        expect(editorFieldNode.hasProperty("caption")).andReturn(false);
+        expect(editorFieldNode.hasProperty("field")).andReturn(true);
+        expect(editorFieldNode.getProperty("field")).andReturn(fieldProperty);
+        expect(fieldProperty.getString()).andReturn("title");
+
+        replay(resourceBundle, editorFieldNode, captionProperty, fieldProperty);
+
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
+                Optional.of(editorFieldNode)).get(), equalTo("Title"));
+    }
+    
     @Test(expected = NoSuchElementException.class)
     public void getConfigBasedFieldDisplayNameWithRepositoryException() throws Exception {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("caption")).andThrow(new RepositoryException());
+        expect(editorFieldNode.hasProperty("field")).andThrow(new RepositoryException());
         replay(editorFieldNode);
 
         LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), Optional.of(editorFieldNode)).get();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -157,6 +157,7 @@ public class ChannelGridPanel extends ExtPanel {
         // render the 'name' column as a link to the template composer
         String tooltipNamePrefix = getLocalizer().getString("tooltip.name.prefix", this);
         fieldConfig.put("xtype", "templatecolumn");
-        fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix + " {name}\">{name}</a>");
+        fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix
+                + " {[Ext.util.Format.htmlEncode(values.name)]}\">{[Ext.util.Format.htmlEncode(values.name)]}</a>");
     }
 }

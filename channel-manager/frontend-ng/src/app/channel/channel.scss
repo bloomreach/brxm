@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.channel-content {
-  // hide horizontal scrollbar that appears during the close animation of the right sidepanel
-  overflow-x: hidden;
+@import 'layout';
+
+channel {
+  @include layout-fill-flex;
 }

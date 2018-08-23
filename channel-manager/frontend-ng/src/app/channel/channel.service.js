@@ -19,7 +19,6 @@ class ChannelService {
     $log,
     $q,
     $rootScope,
-    $state,
     CatalogService,
     CmsService,
     ConfigService,
@@ -35,7 +34,6 @@ class ChannelService {
     this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.$state = $state;
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -45,92 +43,65 @@ class ChannelService {
     this.ProjectService = ProjectService;
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
-  }
 
-  initialize() {
     this.isToolbarDisplayed = true;
     this.channel = {};
-    this.channels = [];
-
-    this.CmsService.subscribe('channel-changed-in-extjs', () => {
-      this.$rootScope.$apply(() => this.reload());
-    });
-
-    this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
-      this._initializeChannel(channel, initialPath, projectId);
-    });
-
-    // Handle reloading of iframe by BrowserSync during development
-    this.CmsService.publish('reload-channel');
   }
 
-  _initializeChannel(channel, initialPath, passedProjectId) {
-    let channelId = channel.id;
-    let setupPromise;
-
-    if (this.ConfigService.projectsEnabled) {
-      setupPromise = this.$q
-        .when(passedProjectId || this.ProjectService.getActiveProject())
-        .then((selectedProjectId) => {
-          if (selectedProjectId && selectedProjectId !== 'master') {
-            channelId = channelId.replace(/-preview$/, `-${selectedProjectId}-preview`);
-          }
-          return selectedProjectId;
-        })
-        .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId))
-        .then(() => {
-          this.ProjectService.registerUpdateListener(() => {
-            const baseChannelId = this.ProjectService.getBaseChannelId(channelId);
-            this.CmsService.publish('load-channel', baseChannelId);
-          });
-        });
-    } else {
-      setupPromise = this.$q.resolve();
-    }
-
-    return setupPromise
-      .then(() => this.ConfigService.setContextPathForChannel(channel.contextPath))
-      .then(() => this.loadChannel(channelId))
-      .then(() => {
-        const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
-        this.$state.go('hippo-cm.channel', {
-          channelId: this.channel.id,
-          initialRenderPath,
-        });
-      });
-  }
-
-  loadChannel(channelId) {
-    return this.HstService
-      .getChannel(channelId)
-      .then(channel =>
-        this.SessionService
-          .initialize(channel.hostname, channel.mountId)
+  /**
+   * Loads a channel. When the channel to load does not have a preview configuration yet it will be
+   * created. Note that a branched channel (e.g. with a branch ID in the channel ID) will always have a preview
+   * configuration already.
+   *
+   * @param channelId the ID of the channel to load.
+   * @param contextPath the context path of the web application that contains the channel
+   * @param branchId the ID of the channel branch to show. Defaults to the active project.
+   * @returns {*}
+   */
+  initializeChannel(channelId, contextPath, branchId) {
+    return this.$q.when(branchId || this.ProjectService.selectedProject.id)
+      .then(projectId => this.HstService.getChannel(channelId, contextPath)
+        .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))
-          .then(previewChannel => this._setChannel(previewChannel)),
-      )
-      .catch((error) => {
-        this.$log.error(`Failed to load channel '${channelId}'.`, error);
-        return this.$q.reject();
-      });
+          .then(previewChannel => this._loadProject(channel, projectId)
+            .then(() => this._setChannel(previewChannel)),
+          ),
+        )
+        .catch((error) => {
+          this.$log.error(`Failed to load channel '${channelId}'.`, error);
+          return this.$q.reject();
+        }),
+      );
   }
 
   _ensurePreviewHstConfigExists(channel) {
     if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
       return this.HstService
         .doPost(null, channel.mountId, 'edit')
-        .then(() => this.HstService.getChannel(`${channel.id}-preview`))
+        .then(() => this._getPreviewChannel(channel))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
           this.FeedbackService.showError('ERROR_ENTER_EDIT');
-
-          // initialize the app with the non-editable channel so it becomes read-only
-          return this.$q.resolve(channel);
+          return this.$q.reject();
         });
     }
 
     // channel is already editable or the user is not allowed to edit it
     return this.$q.resolve(channel);
+  }
+
+  _getPreviewChannel(channel) {
+    if (channel.preview) {
+      return this.$q.resolve(channel);
+    }
+    return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath);
+  }
+
+  _loadProject(channel, branchId) {
+    if (!this.ConfigService.projectsEnabled) {
+      return this.$q.resolve();
+    }
+    return this.ProjectService.load(channel.mountId, branchId);
   }
 
   _setChannel(channel) {
@@ -140,11 +111,13 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
-    this.SiteMapService.load(channel.siteMapId);
+    this.SiteMapService.load(this.getSiteMapId());
 
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
+
+    this.CmsService.publish('set-breadcrumb', this.channel.name);
   }
 
   _makeContextPrefix(contextPath) {
@@ -163,23 +136,31 @@ class ChannelService {
     return !!this.channel.id;
   }
 
+  matchesChannel(channelId) {
+    return this.hasChannel() && this.channel.id === channelId;
+  }
+
   getChannel() {
     return this.channel;
   }
 
-  reload(channelId = this.channel.id) {
-    return this.loadChannel(channelId);
+  reload() {
+    return this.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.branchId);
   }
 
   getPreviewPaths() {
     return this.ConfigService.contextPaths.map(path => this._makeContextPrefix(path));
   }
 
-  makePath(renderPathInfo) {
+  makeRenderPath(channelRelativePath) {
+    return this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
+  }
+
+  makePath(renderPath) {
     let path = this.channelPrefix;
 
-    if (renderPathInfo) {
-      path = this.PathService.concatPaths(path, renderPathInfo);
+    if (renderPath) {
+      path = this.PathService.concatPaths(path, renderPath);
     }
 
     if (path === this.channel.contextPath) {

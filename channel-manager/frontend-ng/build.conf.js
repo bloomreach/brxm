@@ -65,16 +65,20 @@ const customConfig = {
       'angular-local-storage',
       'angular-material',
       'angular-messages',
+      'angular-mocks',
       'angular-translate',
       'angular-translate-loader-static-files',
       '@uirouter/angularjs',
       'angular-ui-tree',
       'ng-device-detector',
-      'ng-focus-if'],
+      'ng-focus-if',
+    ],
     vendor: [
       '@bloomreach/dragula',
       'jquery',
-      'mutation-summary'],
+      'mutation-summary',
+      'moment-timezone',
+    ],
   },
 };
 
