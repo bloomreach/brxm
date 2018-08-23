@@ -46,7 +46,6 @@
     <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>13.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>13.0.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.ckeditor.version>4.7.1-h13.0.0-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
@@ -78,7 +77,7 @@
     <hippo.plugin.taxonomy.version>13.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>13.0.0-SNAPSHOT</hippo.addon-crisp.version>
 
-    <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
   </properties>
@@ -878,28 +877,6 @@
         <artifactId>hippo-plugin-taxonomy-hstclient</artifactId>
         <version>${hippo.plugin.taxonomy.version}</version>
       </dependency>
-
-      <!-- All Hippo Github artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>optimized</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>sources</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor-config</artifactId>
-        <version>${hippo.ckeditor.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
