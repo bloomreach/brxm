@@ -92,7 +92,7 @@ public interface ProjectSettings {
 
     /**
      * HST HCM Alias. Controls where HCM HST dependencies should be put into.
-     * For pre 13.0 projects should be 'cms' and for 13.0 and later should be 'site-webapp'
+     * For pre 13.0 projects should be 'CMS' and for 13.0 and later should be 'SITE_WEBAPP'
      */
     String getHstHcmDependenciesAlias();
 
