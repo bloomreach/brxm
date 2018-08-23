@@ -27,7 +27,7 @@
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>2.5.0-SNAPSHOT</version>
+  <version>2.5.0</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
@@ -43,11 +43,11 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jaxen.version>1.1.6</jaxen.version>
 
-    <hippo.commons.version>4.5.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>4.5.0-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>4.5.0</hippo.commons.version>
+    <hippo.services.version>4.5.0</hippo.services.version>
 
-    <hippo.repository.version>5.5.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>5.5.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>5.5.0</hippo.repository.version>
+    <hippo.hst.version>5.5.0</hippo.hst.version>
 
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
