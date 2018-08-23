@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,6 @@ public final class SearchInputParsingUtils {
         parsed = removeLeadingOrTrailingOrOperator(parsed);
         parsed = rewriteNotOperatorsToMinus(parsed);
         parsed = removeLeadingAndTrailingAndReplaceWithSpaceAndOperators(parsed);
-        log.debug("Rewrote input '{}' to '{}'", input, parsed);
         return parsed;
     }
 
@@ -166,7 +165,6 @@ public final class SearchInputParsingUtils {
         if (parsed.length() > maxLength) {
             parsed = parsed.substring(0, maxLength);
         }
-        log.debug("Rewrote input '{}' to '{}'", input, parsed);
         return parsed;
     }
 
@@ -191,9 +189,6 @@ public final class SearchInputParsingUtils {
             }
         }
         String output = sb.toString();
-        if (!input.equals(output)) {
-            log.debug("Rewrote input '{}' to '{}'", input, output);
-        }
         return output;
     }
 
@@ -327,9 +322,6 @@ public final class SearchInputParsingUtils {
             }
         }
         String output = sb.toString();
-        if (!input.equals(output)) {
-            log.debug("Rewrote input '{}' to '{}'", input, output);
-        }
         return compressWhitespace(output);
     }
 
