@@ -62,7 +62,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <issueManagement>
     <system>Jira Hippo Plugins</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/10996</url>
