@@ -25,17 +25,19 @@
     </name-url-fields>
 
     <!-- Document type field -->
-    <md-select ng-model="$ctrl.documentType"
-               name="documentType"
-               required
-               placeholder="{{ ::'PLACEHOLDER_DOCUMENT_TYPE' | translate }}"
-               ng-disabled="$ctrl.documentTypes.length === 1"
-               class="input-document-type create-content-field qa-document-type-select"
-               ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
-      <md-option ng-repeat="documentType in $ctrl.documentTypes"
-                 value="{{ documentType.id }}">{{ documentType.displayName }}
-      </md-option>
-    </md-select>
+    <md-input-container class="create-content-field qa-doctype-field">
+      <label>{{ ::'PLACEHOLDER_DOCUMENT_TYPE' | translate }}</label>
+      <md-select ng-model="$ctrl.documentType"
+                 name="documentType"
+                 required
+                 ng-disabled="$ctrl.documentTypes.length === 1"
+                 class="input-document-type create-content-field qa-document-type-select"
+                 ng-class="{ 'hide-select-arrow': $ctrl.documentTypes.length === 1 }">
+        <md-option ng-repeat="documentType in $ctrl.documentTypes"
+                   value="{{ documentType.id }}">{{ documentType.displayName }}
+        </md-option>
+      </md-select>
+    </md-input-container>  
 
     <!-- Document location field -->
     <document-location-field root-path="$ctrl.rootPath"
@@ -55,11 +57,11 @@
         {{ 'CANCEL' | translate }}
       </md-button>
 
-      <md-button class="qa-continue"
+      <md-button class="qa-create"
                  type="submit"
                  ng-click="$ctrl.submit()"
                  ng-disabled="$ctrl.form.$invalid">
-        {{ 'CONTINUE' | translate }}
+        {{ 'CREATE' | translate }}
       </md-button>
     </div>
   </md-toolbar>

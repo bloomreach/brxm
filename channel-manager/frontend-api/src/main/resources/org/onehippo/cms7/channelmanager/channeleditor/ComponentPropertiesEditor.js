@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
       this.isReadOnly = config.isReadOnly;
       this.componentMessageBus = config.componentMessageBus;
 
-      this.addEvents('enableDeleteComponent', 'componentChanged', 'variantsDeleted', 'visibleHeightChanged');
+      this.addEvents('enableDeleteComponent', 'componentChanged', 'renderComponent', 'variantsDeleted', 'visibleHeightChanged');
     },
 
     load: function () {
@@ -87,6 +87,10 @@
 
     enableDeleteComponent: function (enabled) {
       this.fireEvent('enableDeleteComponent', enabled);
+    },
+
+    renderComponent: function() {
+      this.fireEvent('renderComponent');
     },
 
     notifyComponentChanged: function () {

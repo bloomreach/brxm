@@ -15,60 +15,26 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
+import org.apache.wicket.util.collections.MiniMap;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
 import org.onehippo.cms.json.Json;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldType {
+public class ImageLinkFieldType extends LinkFieldType {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageLinkFieldType.class);
-
-    private static final String[] IMAGE_PICKER_STRING_PROPERTIES = {
-            "base.uuid",
-            "cluster.name",
-            "enable.upload",
-            "last.visited.enabled",
-            "last.visited.key",
-    };
-    private static final String[] IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES = {
-            "nodetypes",
-    };
-
-    private static final String IMAGE_PICKER_PROPERTY_PREFIX = "image.";
-    private static final String[] IMAGE_PICKER_PREFIXED_STRING_PROPERTIES = {
-            IMAGE_PICKER_PROPERTY_PREFIX + "validator.id"
-    };
-
-    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
     private static final ImageItemFactory IMAGE_ITEM_FACTORY = new ImageItemFactory();
 
     private ObjectNode config;
-    private ImageItemFactory imageItemFactory;
+    private final ImageItemFactory imageItemFactory;
 
     public ImageLinkFieldType() {
         this(IMAGE_ITEM_FACTORY);
@@ -86,110 +52,20 @@ public class ImageLinkFieldType extends PrimitiveFieldType implements NodeFieldT
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         config = Json.object();
-
-        final ObjectNode imagePickerConfig = new FieldTypeConfig(fieldContext)
-                .strings(IMAGE_PICKER_STRING_PROPERTIES)
-                .multipleStrings(IMAGE_PICKER_MULTIPLE_STRING_PROPERTIES)
-                .removePrefix(IMAGE_PICKER_PROPERTY_PREFIX)
-                .strings(IMAGE_PICKER_PREFIXED_STRING_PROPERTIES)
-                .build();
-        config.set("imagepicker", imagePickerConfig);
+        config.set("imagepicker", ImagePicker.build(fieldContext));
 
         return super.init(fieldContext);
     }
 
     @Override
-    protected String getDefault() {
-        return DEFAULT_VALUE;
+    protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) {
+        final MiniMap<String, Object> map = new MiniMap<>(1);
+        map.put("url", getImageUrl(uuid, session));
+        return map;
     }
 
-    @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
-        final String valueName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(valueName);
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write image link field '{}'", valueName, e);
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
-    }
-
-    @Override
-    protected List<FieldValue> readValues(final Node node) {
-        final String nodeName = getId();
-
-        try {
-            final NodeIterator children = node.getNodes(nodeName);
-            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
-                if (value.hasValue()) {
-                    values.add(value);
-                }
-            }
-            return values;
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read nodes for image link type '{}'", getId(), e);
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public FieldValue readValue(final Node node) {
-        final FieldValue value = new FieldValue();
-        try {
-            final String uuid = readUuid(node);
-            value.setValue(uuid);
-            value.setUrl(createImageUrl(uuid, node.getSession()));
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read image link '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
-        }
-        return value;
-    }
-
-    private static String readUuid(final Node node) throws RepositoryException {
-        final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, StringUtils.EMPTY);
-        final String rootUuid = node.getSession().getRootNode().getIdentifier();
-        return uuid.equals(rootUuid) ? StringUtils.EMPTY : uuid;
-    }
-
-    private String createImageUrl(final String uuid, final Session session) {
+    private String getImageUrl(final String uuid, final Session session) {
         final ImageItem imageItem = imageItemFactory.createImageItem(uuid);
         return imageItem.getPrimaryUrl(() -> session);
-    }
-
-    @Override
-    public void writeValue(final Node node, final FieldValue fieldValue) throws RepositoryException {
-        writeUuid(node, fieldValue.getValue());
-    }
-
-    private static void writeUuid(final Node node, final String uuid) throws RepositoryException {
-        if (StringUtils.isEmpty(uuid)) {
-            final String rootUuid = node.getSession().getRootNode().getIdentifier();
-            writeDocBase(node, rootUuid);
-        } else {
-            writeDocBase(node, uuid);
-        }
-    }
-
-    private static void writeDocBase(final Node node, final String rootUuid) throws RepositoryException {
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, rootUuid);
-    }
-
-    @Override
-    public boolean validateValue(final FieldValue value) {
-        return !isRequired() || validateSingleRequired(value);
     }
 }

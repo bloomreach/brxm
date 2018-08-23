@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
@@ -140,6 +141,10 @@ public class ChoiceFieldUtils {
             final ImageLinkFieldType imageLink = new ImageLinkFieldType();
             imageLink.init(fieldContext);
             return imageLink;
+        } else if (contentType.isContentType(HippoNodeType.NT_MIRROR)) {
+            final NodeLinkFieldType link = new NodeLinkFieldType();
+            link.init(fieldContext);
+            return link;
         }
         return null;
     }
@@ -230,6 +235,12 @@ public class ChoiceFieldUtils {
             final ImageLinkFieldType imageLink = new ImageLinkFieldType();
             imageLink.init(fieldContext);
             return imageLink;
+        }
+
+        if (contentType.isContentType(HippoNodeType.NT_MIRROR)) {
+            final NodeLinkFieldType link = new NodeLinkFieldType();
+            link.init(fieldContext);
+            return link;
         }
 
         return null;
