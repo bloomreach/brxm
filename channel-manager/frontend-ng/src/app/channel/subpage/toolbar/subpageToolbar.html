@@ -17,13 +17,13 @@
 <md-toolbar class="hippo-toolbar qa-toolbar">
   <div class="md-toolbar-tools">
     <md-button class="qa-button-back md-icon-button"
-               aria-label="{{ ::toolbar.ariaLabel }}"
-               title="{{ ::toolbar.ariaLabel }}"
-               ng-click="onBack()">
-      <md-icon md-svg-icon="{{ ::toolbar.icon }}"></md-icon>
+               aria-label="{{ ::$ctrl.ariaLabel }}"
+               title="{{ ::$ctrl.ariaLabel }}"
+               ng-click="$ctrl.onBack()">
+      <md-icon md-svg-icon="{{ ::$ctrl.icon }}"></md-icon>
     </md-button>
     <span flex></span>
-    <h2>{{ ::title }}</h2>
+    <h2>{{ ::$ctrl.title }}</h2>
     <span flex></span>
   </div>
 </md-toolbar>
