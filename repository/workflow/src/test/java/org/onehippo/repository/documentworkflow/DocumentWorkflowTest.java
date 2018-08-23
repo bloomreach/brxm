@@ -1308,7 +1308,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
                 .requestPublication(false).requestDepublication(false).listVersions().requestDelete(true)
-                .listBranches().branch(false).getBranch(true).checkoutBranch(false).removeBranch(false)
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .reintegrateBranch(false).publishBranch(false).depublishBranch(false)
                 .branchFeedback(null, null, MASTER_BRANCH_ID)
                 .hints()
@@ -1327,32 +1327,32 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).requestDepublication(false).listVersions().retrieveVersion().requestDelete(true)
-                .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(true)
-                .reintegrateBranch(true).publishBranch(true).depublishBranch(false)
+                .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
+                .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
                 .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().noCopy()
-                .branchable().canCheckoutBranch().canRemoveBranch().canReintegrateBranch().canPublishBranch().noDepublishBranch()
+                .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().noDepublishBranch()
                 .states()
         );
 
         session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
 
-        // author, unpublished: listVersions=true, retrieveVersion=true, versionable
+        // editor, unpublished: listVersions=true, retrieveVersion=true, versionable
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().editable()
                 .requestPublication(true).publish(true).requestDepublication(false).depublish(false)
                 .listVersions().retrieveVersion().versionable().requestDelete(true).terminateable(true).copy()
-                .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(true)
-                .reintegrateBranch(true).publishBranch(true).depublishBranch(false)
+                .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
+                .reintegrateBranch(false).publishBranch(true).depublishBranch(false)
                 .branchFeedback(null, MASTER_BRANCH_ID, null)
                 .hints()
         );
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
                 .status().logEvent().editable().noRequest().publishable().noDepublish().versionable().terminateable().copyable()
-                .branchable().canCheckoutBranch().canRemoveBranch().canReintegrateBranch().canPublishBranch().noDepublishBranch()
+                .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().noDepublishBranch()
                 .states()
         );
     }
