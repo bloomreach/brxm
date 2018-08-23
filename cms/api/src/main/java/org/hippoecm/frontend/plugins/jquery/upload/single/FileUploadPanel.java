@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,9 @@ public abstract class FileUploadPanel extends Panel {
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
                 final List<String> errorMessages = fileUploadInfo.getErrorMessages();
                 if (!errorMessages.isEmpty()) {
-                    errorMessages.forEach(form::error);
+                    // Added as info message: the file was not uploaded so the document is not in an invalid state.
+                    // Saving the document is not blocked by this info message.
+                    errorMessages.forEach(form::info);
                     log.debug("file {} contains errors: {}", fileUploadInfo.getFileName(), String.join(";", errorMessages));
                 }
             }

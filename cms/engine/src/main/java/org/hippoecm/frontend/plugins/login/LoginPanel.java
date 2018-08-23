@@ -94,6 +94,22 @@ public class LoginPanel extends Panel {
     protected void login() throws LoginException {
         PluginUserSession userSession = PluginUserSession.get();
 
+        if (userSession.getAuthorizedAppCounter() == 0) {
+            log.debug("Invalidating user session to make sure a new session id is created");
+            userSession.invalidateNow();
+            userSession = PluginUserSession.get();
+        } else {
+            final String alreadyAuthorizedUser = userSession.getUserName();
+            if (alreadyAuthorizedUser.equals(username) || isDevMode()) {
+                log.debug("User is already authenticated to /cms or /cms/console and now logs in into second app. Hence we " +
+                        "should not invalidate the user session.");
+            } else {
+                log.info("Invalidating http session because attempt to login to different app with different user name");
+                userSession.invalidateNow();
+                userSession = PluginUserSession.get();
+            }
+        }
+
         final char[] pwdAsChars = password == null ? new char[]{} : password.toCharArray();
         userSession.login(new UserCredentials(new SimpleCredentials(username, pwdAsChars)));
 
@@ -101,6 +117,10 @@ public class LoginPanel extends Panel {
         ConcurrentLoginFilter.validateSession(session, username, false);
 
         userSession.setLocale(getSelectedLocale());
+    }
+
+    private boolean isDevMode() {
+        return System.getProperty("project.basedir") != null;
     }
 
     private Locale getSelectedLocale() {

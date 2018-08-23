@@ -50,16 +50,16 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
     static final Logger log = LoggerFactory.getLogger(DestinationDialog.class);
 
     private IRenderService dialogRenderer;
-    private IClusterControl control;
-    private String modelServiceId;
     private ServiceTracker tracker;
     private final IPluginContext context;
-    private final String intialPath;
+    private final IClusterControl control;
     private final NodeModelWrapper<Node> destination;
+    private final String intialPath;
+    private final String modelServiceId;
 
-    public DestinationDialog(IModel<String> title, IModel<String> question, IModel<String> answer,
-                             final NodeModelWrapper destination,
-                             final IPluginContext context, IPluginConfig config) {
+    public DestinationDialog(final IModel<String> title, final IModel<String> question, final IModel<String> answer,
+                             final NodeModelWrapper<Node> destination,
+                             final IPluginContext context, final IPluginConfig config) {
 
         setTitle(title);
         setSize(DialogConstants.LARGE_AUTO);
@@ -72,11 +72,11 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
 
         add(createQuestionPanel("question", question, answer));
 
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+        final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                                                                       IPluginConfigService.class);
-        IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
+        final IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
         control = context.newCluster(cluster, config.getPluginConfig("cluster.options"));
-        IClusterConfig decorated = control.getClusterConfig();
+        final IClusterConfig decorated = control.getClusterConfig();
 
         control.start();
 
@@ -87,7 +87,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
             IObserver modelObserver;
 
             @Override
-            protected void onServiceAdded(IModelReference service, String name) {
+            protected void onServiceAdded(final IModelReference service, final String name) {
                 super.onServiceAdded(service, name);
                 if (modelRef == null) {
                     modelRef = service;
@@ -98,9 +98,9 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
                             return modelRef;
                         }
 
-                        public void onEvent(Iterator<? extends IEvent<IModelReference>> events) {
-                            IModel model = modelRef.getModel();
-                            if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
+                        public void onEvent(final Iterator<? extends IEvent<IModelReference>> events) {
+                            final IModel model = modelRef.getModel();
+                            if (model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                                 destination.setChainedModel(model);
                             }
                             DestinationDialog.this.setOkEnabled(isOkEnabled());
@@ -110,7 +110,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
             }
 
             @Override
-            protected void onRemoveService(IModelReference service, String name) {
+            protected void onRemoveService(final IModelReference service, final String name) {
                 if (service == modelRef) {
                     context.unregisterService(modelObserver, IObserver.class.getName());
                     modelObserver = null;
@@ -128,7 +128,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (dialogRenderer != null) {
             dialogRenderer.render(target);
         }
@@ -155,7 +155,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
             } else {
                 error(new StringResourceModel("permission.denied", this).getString());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.info("Could not execute workflow.", e);
             error(e);
         }
@@ -190,7 +190,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
     private String getDestinationPath() {
         try {
             return destination.getChainedModel().getObject().getPath();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Failed to get path of the destination node", e);
             return "";
         }

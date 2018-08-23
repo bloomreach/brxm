@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RichTextEditorImageLink.class);
 
     public static final String URL = "f_url";
@@ -37,11 +36,11 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
     public static final String HEIGHT = "f_height";
     public static final String TYPE = "f_type";
 
-    public RichTextEditorImageLink(Map<String, String> values, IModel<Node> targetModel) {
+    public RichTextEditorImageLink(final Map<String, String> values, final IModel<Node> targetModel) {
         super(values, targetModel);
     }
 
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         put(URL, url);
     }
 
@@ -49,7 +48,7 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
         return get(URL);
     }
 
-    public void setType(String type){
+    public void setType(final String type){
         put(TYPE, type);
     }
 
@@ -58,12 +57,15 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
     }
 
     @Override
-    public void setLinkTarget(IModel<Node> model) {
+    public void setLinkTarget(final IModel<Node> model) {
         super.setLinkTarget(model);
-        trySetUuid(model);
-        if(model != null && !model.equals(getInitialModel())) {
-            put(WIDTH, "");
-            put(HEIGHT, "");
+        if (model != null) {
+            trySetUuid(model);
+
+            if (!model.equals(getInitialModel())) {
+                put(WIDTH, "");
+                put(HEIGHT, "");
+            }
         }
     }
 
@@ -71,7 +73,7 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
         final Node targetNode = model.getObject();
         try {
             setUuid(targetNode.getIdentifier());
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Cannot get the identifier of linked image '{}'", JcrUtils.getNodePathQuietly(targetNode));
         }
     }

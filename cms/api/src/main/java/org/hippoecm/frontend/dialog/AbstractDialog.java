@@ -89,7 +89,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         private List<FeedbackMessage> messages;
 
-        private PersistentFeedbackMessagesModel(Component component) {
+        private PersistentFeedbackMessagesModel(final Component component) {
             super(component);
         }
 
@@ -109,16 +109,16 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
 
-        public Container(String id) {
+        public Container(final String id) {
             super(id);
         }
 
-        public String getCacheKey(MarkupContainer container, Class containerClass) {
+        public String getCacheKey(final MarkupContainer container, final Class containerClass) {
             return cacheKeyProvider.getCacheKey(AbstractDialog.this, AbstractDialog.this.getClass());
         }
 
         // implement IMarkupResourceStreamProvider.
-        public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
+        public IResourceStream getMarkupResourceStream(final MarkupContainer container, final Class containerClass) {
             return streamProvider.getMarkupResourceStream(AbstractDialog.this, AbstractDialog.this.getClass());
         }
 
@@ -126,7 +126,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         @Override
         public Markup getAssociatedMarkup() {
             try {
-                Markup markup = MarkupFactory.get().getMarkup(AbstractDialog.this, false);
+                final Markup markup = MarkupFactory.get().getMarkup(AbstractDialog.this, false);
 
                 // If we found markup for this container
                 if (markup != null && markup != Markup.NO_MARKUP) {
@@ -134,10 +134,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 }
 
                 return null;
-            } catch (MarkupException | MarkupNotFoundException ex) {
+            } catch (final MarkupException | MarkupNotFoundException ex) {
                 // Re-throw it. The exception already contains all the information required.
                 throw ex;
-            } catch (WicketRuntimeException ex) {
+            } catch (final WicketRuntimeException ex) {
                 // throw exception since there is no associated markup
                 throw new MarkupNotFoundException(
                         exceptionMessage("Markup of type '" + getMarkupType().getExtension() +
@@ -153,7 +153,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         /**
          * Create a feedback panel and display only messages of children components.
          */
-        protected ExceptionFeedbackPanel(String id) {
+        protected ExceptionFeedbackPanel(final String id) {
             this(id, new ContainerFeedbackMessageFilter(AbstractDialog.this));
         }
 
@@ -161,31 +161,26 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
          * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the
          * filter are visible.
          */
-        protected ExceptionFeedbackPanel(String id, final IFeedbackMessageFilter filter) {
+        protected ExceptionFeedbackPanel(final String id, final IFeedbackMessageFilter filter) {
             super(id, filter);
             setOutputMarkupId(true);
 
-            add(CssClass.append(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return hasFeedbackMessage() ? "feedback-enabled" : "feedback-disabled";
-                }
-            }));
+            add(CssClass.append(() -> hasFeedbackMessage() ? "feedback-enabled" : "feedback-disabled"));
         }
 
         protected class ExceptionLabel extends Panel {
 
-            protected ExceptionLabel(String id, IModel<String> model, final Exception ex, boolean escape) {
+            protected ExceptionLabel(final String id, final IModel<String> model, final Exception ex, final boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
 
-                Link<String> link = new Link<String>("message") {
+                final Link<String> link = new Link<String>("message") {
                     @Override
                     public void onClick() {
                         RequestCycle.get().scheduleRequestHandlerAfterCurrent(new ErrorDownloadRequestTarget(ex));
                     }
                 };
-                Label label = new Label("label", model);
+                final Label label = new Label("label", model);
                 label.setEscapeModelStrings(escape);
                 link.add(label);
                 add(link);
@@ -193,15 +188,15 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
 
         @Override
-        protected Component newMessageDisplayComponent(String id, FeedbackMessage message) {
-            Serializable serializable = message.getMessage();
+        protected Component newMessageDisplayComponent(final String id, final FeedbackMessage message) {
+            final Serializable serializable = message.getMessage();
             if (serializable instanceof Exception) {
-                Exception ex = (Exception) message.getMessage();
-                IModel<String> exceptionModel = getExceptionTranslation(ex);
+                final Exception ex = (Exception) message.getMessage();
+                final IModel<String> exceptionModel = getExceptionTranslation(ex);
                 return new ExceptionLabel(id, exceptionModel, ex,
                         ExceptionFeedbackPanel.this.getEscapeModelStrings());
             } else {
-                Label label = new Label(id);
+                final Label label = new Label(id);
                 label.setDefaultModel(new Model<>(serializable == null ? "" : serializable.toString()));
                 label.setEscapeModelStrings(ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
@@ -218,33 +213,33 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return TranslatorUtils.getExceptionTranslation(AbstractDialog.this, t, parameters);
     }
 
-    protected PersistentFeedbackMessagesModel fmm;
+    protected PersistentFeedbackMessagesModel feedbackMessages;
     protected FeedbackPanel feedback;
     private Component focusComponent;
 
-    private LinkedList<ButtonWrapper> buttons;
+    private final LinkedList<ButtonWrapper> buttons;
     private final ButtonWrapper ok;
     private final ButtonWrapper cancel;
+    private final Panel container;
 
     private IDialogService dialogService;
-    private Panel container;
     private AjaxIndicatorAppender indicator;
 
-    protected boolean cancelled = false;
     private boolean isRemoved = false;
+    protected boolean cancelled = false;
 
     public AbstractDialog() {
         this(null);
     }
 
-    public AbstractDialog(IModel<T> model) {
+    public AbstractDialog(final IModel<T> model) {
         super("form", model);
 
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
 
         feedback = newFeedbackPanel("feedback");
-        IFeedbackMessageFilter filter = feedback.getFilter();
+        final IFeedbackMessageFilter filter = feedback.getFilter();
 
         if (filter == null) {
             // make sure the feedback filters out messages unrelated to this dialog
@@ -258,9 +253,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         add(feedback);
 
         buttons = new LinkedList<>();
-        ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
+        final ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
             @Override
-            protected void populateItem(ListItem<ButtonWrapper> item) {
+            protected void populateItem(final ListItem<ButtonWrapper> item) {
                 final Button button = item.getModelObject().getButton();
                 if (StringUtils.isNotEmpty(buttonCssClass)) {
                     button.add(CssClass.append(buttonCssClass));
@@ -327,7 +322,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                         }
                     }) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                     target.appendJavaScript(getFullscreenScript());
                     target.add(this); //update button label
                     fullscreen = !fullscreen;
@@ -357,12 +352,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * @return Javascript that toggles the dialog between fullscreen and initial size
      */
     protected String getFullscreenScript() {
-        StringBuilder script = new StringBuilder();
+        final StringBuilder script = new StringBuilder();
         script.append("(function() {");
         script.append("var wDialog = Wicket.Window.get();");
         script.append("if (typeof wDialog !== 'undefined') {");
         script.append("    var fullscreen = wDialog.toggleFullscreen();");
-        String additional = getAdditionalFullscreenScript(fullscreen);
+        final String additional = getAdditionalFullscreenScript(fullscreen);
         if (additional != null) {
             script.append(additional);
         }
@@ -377,7 +372,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * @param isFullscreen flag indicating the current fullscreen state
      * @return Custom javascript that is executed after the dialog changed fullscreen state
      */
-    protected String getAdditionalFullscreenScript(boolean isFullscreen) {
+    protected String getAdditionalFullscreenScript(final boolean isFullscreen) {
         return null;
     }
 
@@ -398,8 +393,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     @Override
     protected void onDetach() {
-        if (fmm != null) {
-            fmm.detach();
+        if (feedbackMessages != null) {
+            feedbackMessages.detach();
         }
         super.onDetach();
     }
@@ -407,15 +402,15 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     /**
      * Create a feedback panel and display only messages from children components.
      */
-    protected FeedbackPanel newFeedbackPanel(String id) {
+    protected FeedbackPanel newFeedbackPanel(final String id) {
         return new ExceptionFeedbackPanel(id);
     }
 
     protected final FeedbackMessagesModel getFeedbackMessagesModel() {
-        if (fmm == null) {
-            fmm = new PersistentFeedbackMessagesModel(this);
+        if (feedbackMessages == null) {
+            feedbackMessages = new PersistentFeedbackMessagesModel(this);
         }
-        return fmm;
+        return feedbackMessages;
     }
 
     /**
@@ -436,28 +431,27 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     // button manipulation routines
-
     public void setNonAjaxSubmit() {
         ok.setAjax(false);
     }
 
-    public void setAjaxChannel(AjaxChannel ajaxChannel) {
+    public void setAjaxChannel(final AjaxChannel ajaxChannel) {
         this.ajaxChannel = ajaxChannel;
     }
 
-    protected void setOkEnabled(boolean isset) {
+    protected void setOkEnabled(final boolean isset) {
         ok.setEnabled(isset);
     }
 
-    protected void setOkVisible(boolean isset) {
+    protected void setOkVisible(final boolean isset) {
         ok.setVisible(isset);
     }
 
-    protected void setOkLabel(String label) {
+    protected void setOkLabel(final String label) {
         setOkLabel(Model.of(label));
     }
 
-    protected void setOkLabel(IModel<String> label) {
+    protected void setOkLabel(final IModel<String> label) {
         ok.setLabel(label);
     }
 
@@ -465,19 +459,19 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         setFocus(ok.getButton());
     }
 
-    protected void setCancelEnabled(boolean isset) {
+    protected void setCancelEnabled(final boolean isset) {
         cancel.setEnabled(isset);
     }
 
-    protected void setCancelVisible(boolean isset) {
+    protected void setCancelVisible(final boolean isset) {
         cancel.setVisible(isset);
     }
 
-    protected void setCancelLabel(String label) {
+    protected void setCancelLabel(final String label) {
         setCancelLabel(Model.of(label));
     }
 
-    protected void setCancelLabel(IModel<String> label) {
+    protected void setCancelLabel(final IModel<String> label) {
         cancel.setLabel(label);
     }
 
@@ -485,25 +479,25 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         setFocus(cancel.getButton());
     }
 
-    protected void setOkKeyType(KeyType keyType) {
+    protected void setOkKeyType(final KeyType keyType) {
         ok.setKeyType(keyType);
     }
 
-    protected void setCancelKeyType(KeyType keyType) {
+    protected void setCancelKeyType(final KeyType keyType) {
         cancel.setKeyType(keyType);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setDialogService(IDialogService dialogService) {
+    public void setDialogService(final IDialogService dialogService) {
         this.dialogService = dialogService;
     }
 
     /**
      * Add a {@link Button} to the button bar.  The id of the button must equal "button".
      */
-    protected void addButton(Button button) {
+    protected void addButton(final Button button) {
         if (DialogConstants.BUTTON.equals(button.getId())) {
             buttons.addFirst(new ButtonWrapper(button));
         } else {
@@ -514,8 +508,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     /**
      * Remove a button from the button bar.
      */
-    protected void removeButton(Button button) {
-        for (ButtonWrapper bw : buttons) {
+    protected void removeButton(final Button button) {
+        for (final ButtonWrapper bw : buttons) {
             if (bw.getButton().equals(button)) {
                 buttons.remove(bw);
                 break;
@@ -526,7 +520,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     /**
      * Set a specific class that is added to all the buttons in the dialog
      */
-    protected void setButtonCssClass(String buttonCssClass) {
+    protected void setButtonCssClass(final String buttonCssClass) {
         this.buttonCssClass = buttonCssClass;
     }
 
@@ -560,8 +554,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     private void tryResetFeedbackModel() {
-        if (!isRemoved && fmm != null) {
-            fmm.reset();
+        if (!isRemoved && feedbackMessages != null) {
+            feedbackMessages.reset();
         }
     }
 
@@ -596,11 +590,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * {@inheritDoc}
      */
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (target != null) {
             if (!isRemoved) {
                 target.add(feedback);
-                for (ButtonWrapper bw : buttons) {
+                for (final ButtonWrapper bw : buttons) {
                     if (bw.hasChanges()) {
                         target.add(bw.getButton());
                         bw.rendered();
@@ -621,9 +615,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      */
     @Override
     public void onClose() {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            for (ButtonWrapper bw : buttons) {
+            for (final ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
                     target.prependJavaScript("if (window['shortcut']) { shortcut.remove('" + bw.getKeyType() + "'); }\n");
@@ -640,7 +634,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return DialogConstants.LARGE;
     }
 
-    public Component setFocus(Component c) {
+    public Component setFocus(final Component c) {
         if (focusComponent != null) {
             return c;
         }
@@ -651,13 +645,13 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return focusComponent = c;
     }
 
-    public AjaxUpdatingWidget<?> setFocus(AjaxUpdatingWidget<?> widget) {
+    public AjaxUpdatingWidget<?> setFocus(final AjaxUpdatingWidget<?> widget) {
         setFocus(widget.getFocusComponent());
         return widget;
     }
 
     @Override
-    public void process(IFormSubmitter submittingComponent) {
+    public void process(final IFormSubmitter submittingComponent) {
         /*
          * Manually clear old feedback generated by CMS validation prior processing because
          * {@link org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin(IPluginContext, IPluginConfig)} configures

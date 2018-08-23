@@ -48,6 +48,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     private boolean isExpanded = false;
     private String className = null;
     private transient boolean updateDatatable = false;
+    private boolean showDocumentType = false;
 
     public ExpandCollapseListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -68,6 +69,8 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         addButton(toggleLink);
 
         updateDatatable = true;
+
+        showDocumentType = config.getAsBoolean("document.type.show", false);
     }
 
     protected void addButton(Component c) {
@@ -80,7 +83,8 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
     @Override
     protected TableDefinition<Node> newTableDefinition() {
-        return new TableDefinition<Node>(isExpanded ? getExpandedColumns() : getColumns());
+        return new TableDefinition<Node>(
+                isExpanded ? getExpandedColumns() : showDocumentType ? getTypeViewColumns() : getColumns());
     }
 
     public void collapse() {
@@ -177,6 +181,17 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         List<IListColumnProvider> providers = getListColumnProviders();
         for (IListColumnProvider provider : providers) {
             columns.addAll(provider.getColumns());
+        }
+
+        return columns;
+    }
+
+    protected List<ListColumn<Node>> getTypeViewColumns() {
+        List<ListColumn<Node>> columns = new ArrayList<>();
+
+        List<IListColumnProvider> providers = getListColumnProviders();
+        for (IListColumnProvider provider : providers) {
+            columns.addAll(provider.getTypeViewColumns());
         }
 
         return columns;
