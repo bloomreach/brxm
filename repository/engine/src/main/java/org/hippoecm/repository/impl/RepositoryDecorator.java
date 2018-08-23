@@ -56,9 +56,9 @@ public class RepositoryDecorator implements RepositoryService {
         if(REP_NAME_DESC.equals(key)) {
             return "Hippo Repository";
         } else if(REP_VENDOR_DESC.equals(key)) {
-            return "Hippo B.V.";
+            return "BloomReach, Inc., BloomReach B.V.";
         } else if(REP_VENDOR_URL_DESC.equals(key)) {
-            return "http://www.onehippo.org/";
+            return "https://www.onehippo.org/";
         } else if(REP_VERSION_DESC.equals(key)) {
             return getClass().getPackage().getImplementationVersion();
         } else {
@@ -101,7 +101,6 @@ public class RepositoryDecorator implements RepositoryService {
             if (HDC.isStarted()) {
                 loginTask = HDC.getCurrentTask().startSubtask("login");
             }
-
 
             if (credentials instanceof JvmCredentials) {
                 JvmCredentials jvmCredentials = (JvmCredentials)credentials;
