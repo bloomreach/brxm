@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS & SAMPLE CONTENT -->
   <instructionSet>
+    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-hst-client"/>
+    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-addon-repository"/>
     <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class"/>
     <xml action="copy" source="xml/robots_sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
 
   <instructionSet group="sampleData">
-     <xml action="copy" source="xml/robots_content.xml" target="/content/documents/administration"/>
+    <file action="copy" source="yaml/sample-robotstxt-document.yaml" target="{{applicationContent}}/essentials/robotstxt/sample-robotstxt-document.yaml"/>
   </instructionSet>
 </instructions>

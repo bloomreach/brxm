@@ -134,16 +134,35 @@ public class WebXmlServiceImpl implements WebXmlService {
         return parentElementFor(selector, doc);
     }
 
+    private String filterMappingSelectorFor(final String filterName) {
+        return String.format("/web-app/*[name()='filter-mapping']/*[name()='filter-name' and text()='%s']", filterName);
+    }
+
     @Override
     public boolean addFilterMapping(final Module module, final String filterName, final List<String> urlPatterns) {
         return update(module, doc -> {
             final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
             final Element filterMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "filter-mapping", null);
-            Dom4JUtils.addIndentedElement(filterMapping, "filter-name", filterName);
-            for (String pattern : urlPatterns) {
-                Dom4JUtils.addIndentedElement(filterMapping, "url-pattern", pattern);
-            }
+            addNameAndPatternsToFilterMapping(filterMapping, filterName, urlPatterns);
         });
+    }
+
+    @Override
+    public boolean insertFilterMapping(final Module module, final String filterName, final List<String> urlPatterns,
+                                       final String insertBefore) {
+        return update(module, doc -> {
+            final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+            final String locationSelector = filterMappingSelectorFor(insertBefore);
+            final Element filterMapping = Dom4JUtils.insertIndentedElement(webApp, "filter-mapping", locationSelector);
+            addNameAndPatternsToFilterMapping(filterMapping, filterName, urlPatterns);
+        });
+    }
+
+    private void addNameAndPatternsToFilterMapping(final Element mapping, final String filterName, final List<String> urlPatterns) {
+        Dom4JUtils.addIndentedElement(mapping, "filter-name", filterName);
+        for (String pattern : urlPatterns) {
+            Dom4JUtils.addIndentedElement(mapping, "url-pattern", pattern);
+        }
     }
 
     @Override

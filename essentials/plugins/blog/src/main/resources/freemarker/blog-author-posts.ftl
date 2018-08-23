@@ -7,8 +7,9 @@
 <@hst.setBundle basename="essentials.blog"/>
 <#if pageable??>
   <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading has-edit-button">
       <h3 class="panel-title"><@fmt.message key="blog.moreby" var="moreby"/>${moreby?html}&nbsp;${author.fullName?html}</h3>
+      <@hst.manageContent hippobean=author/>
     </div>
     <#if pageable?? && (pageable.total > 0)>
       <div class="panel-body">

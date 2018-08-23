@@ -97,14 +97,14 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
-      </dependency>      
+      </dependency>
 
       <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${freemarker.version}</version>
       </dependency>
-  
+
       <dependency>
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
@@ -203,6 +203,7 @@
                 <!-- no license headers needed for these files -->
                 <exclude>**/*.cnd</exclude>
                 <exclude>**/*.json</exclude>
+                <exclude>**/*.yaml</exclude>
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.patch</exclude>
                 <exclude>**/*.properties</exclude>
@@ -237,6 +238,7 @@
                 <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
                 <exclude>plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css</exclude>
                 <exclude>plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js</exclude>
+                <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/content/sample-rule.xml</exclude>
                 <exclude>**/target/**</exclude>
               </excludes>
             </configuration>

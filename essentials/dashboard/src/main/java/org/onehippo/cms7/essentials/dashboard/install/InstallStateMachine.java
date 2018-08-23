@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.plugin.PluginSet;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
@@ -62,6 +63,7 @@ public class InstallStateMachine {
         // then check if plugins can tryBoarding through the state machine
         pluginSet.getPlugins().forEach(plugin -> {
             if (plugin.getState() != InstallState.DISCOVERED) {
+                parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, plugin);
                 tryBoarding(plugin, pluginSet, parameters, feedback, new ArrayList<>());
             }
         });
