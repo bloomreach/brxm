@@ -80,14 +80,14 @@ definitions:
           label: XML Export
           plugin.class: org.hippoecm.frontend.plugins.console.menu.content.ContentExportPlugin
           wicket.id: service.menu.xml.item
-        /yamlexport:
-          jcr:primaryType: frontend:plugin
-          wicket.id: service.menu.yaml.item
-          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlExportPlugin
         /yamlimport:
           jcr:primaryType: frontend:plugin
           wicket.id: service.menu.yaml.item
           plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlImportPlugin
+        /yamlexport:
+          jcr:primaryType: frontend:plugin
+          wicket.id: service.menu.yaml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlExportPlugin
         /addnamespace:
           jcr:primaryType: frontend:plugin
           plugin.class: org.hippoecm.frontend.plugins.console.menu.namespace.NamespacePlugin
