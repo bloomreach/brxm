@@ -269,7 +269,7 @@ public class ExtensionIntegrationTest {
         final Path extensionPath = extensionsBasePath.resolve(extensionName);
         final URL dirUrl = new URL(extensionPath.toUri().toURL().toString());
         final URLClassLoader extensionClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
-        return new HippoWebappContext(HippoWebappContext.Type.HST,
+        return new HippoWebappContext(HippoWebappContext.Type.SITE,
                 new ExtensionServletContext(extensionPath.toString(), "/"+extensionName, extensionClassLoader));
     }
 

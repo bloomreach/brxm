@@ -28,8 +28,8 @@ public final class Constants {
 
     public static final String NT_HCM_ROOT = "hcm:hcm";
     public static final String NT_HCM_BASELINE = "hcm:baseline";
-    public static final String NT_HCM_EXTENSIONS = "hcm:extensions";
-    public static final String NT_HCM_EXTENSION = "hcm:extension";
+    public static final String NT_HCM_SITES = "hcm:sites";
+    public static final String NT_HCM_SITE = "hcm:site";
     public static final String NT_HCM_GROUP = "hcm:group";
     public static final String NT_HCM_PROJECT = "hcm:project";
     public static final String NT_HCM_MODULE = "hcm:module";
@@ -46,7 +46,7 @@ public final class Constants {
 
     public static final String HCM_ROOT = NT_HCM_ROOT;
     public static final String HCM_BASELINE = "hcm:baseline";
-    public static final String HCM_EXTENSIONS = "hcm:extensions";
+    public static final String HCM_SITES = "hcm:sites";
     public static final String HCM_HSTROOT = "hcm:hstroot";
     public static final String HCM_LAST_UPDATED = "hcm:lastupdated";
     public static final String HCM_MODULE_DESCRIPTOR = HCM_MODULE_YAML;
@@ -68,6 +68,9 @@ public final class Constants {
     public static final String HCM_BASELINE_PATH = HCM_ROOT_PATH + "/" + HCM_BASELINE;
     public static final String HCM_CONTENT_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_CONTENT;
     public static final String HCM_BUNDLE_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_BUNDLES;
+
+    public static final String HCM_SITE_DESCRIPTOR = "hcm-site.yaml";
+    public static final String HCM_SITE_DESCRIPTOR_LOCATION = "META-INF/" + HCM_SITE_DESCRIPTOR;
 
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
 

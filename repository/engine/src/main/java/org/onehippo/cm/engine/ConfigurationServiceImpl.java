@@ -93,6 +93,8 @@ import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_SITE_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.HCM_SITE_DESCRIPTOR_LOCATION;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
@@ -105,13 +107,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
-    private static class ExtensionRecord {
-        final String extensionName;
+    private static class HcmSiteRecord {
+        final String siteName;
         final JcrPath hstRoot;
         final ServletContext servletContext;
 
-        public ExtensionRecord(final String extensionName, final JcrPath hstRoot, final ServletContext servletContext) {
-            this.extensionName = extensionName;
+        public HcmSiteRecord(final String siteName, final JcrPath hstRoot, final ServletContext servletContext) {
+            this.siteName = siteName;
             this.hstRoot = hstRoot;
             this.servletContext = servletContext;
         }
@@ -123,7 +125,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private ConfigurationConfigService configService;
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
-    private Map<String, ExtensionRecord> extensionRecords = new ConcurrentHashMap<>();
+    private Map<String, HcmSiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
 
     /**
@@ -157,24 +159,24 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         return this;
     }
 
-    public void applySiteExtension(final ExtensionRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
-        log.info("New site extension detected: {}", record.extensionName);
+    private void applySiteConfig(final HcmSiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
+        log.info("New HCM site detected: {}", record.siteName);
 
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
         // TODO: this is not actually a new model, so code below that assumes it is must be reworked
-        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readExtension(record.extensionName, record.hstRoot,
+        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readHcmSite(record.siteName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
         if (startAutoExportService) {
-            final List<ModuleImpl> extensionModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
-                    .stream().filter(m -> record.extensionName.equals(m.getExtensionName())).collect(toList());
-            if (CollectionUtils.isNotEmpty(extensionModulesFromSourceFiles)) {
-                newRuntimeConfigModel = mergeWithSourceModules(extensionModulesFromSourceFiles, newRuntimeConfigModel);
+            final List<ModuleImpl> hcmSiteModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
+                    .stream().filter(m -> record.siteName.equals(m.getHcmSiteName())).collect(toList());
+            if (CollectionUtils.isNotEmpty(hcmSiteModulesFromSourceFiles)) {
+                newRuntimeConfigModel = mergeWithSourceModules(hcmSiteModulesFromSourceFiles, newRuntimeConfigModel);
             }
         }
 
         //Reload baseline for bootstrap 2+
-        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
+        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getHcmSiteNames());
 
         boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, false, false, false);
         if (success) {
@@ -183,27 +185,28 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
         if (success) {
             runtimeConfigurationModel = newRuntimeConfigModel;
-            //store only extension modules
+            //store only HCM Site modules
             final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                    .filter(m -> record.extensionName.equals(m.getExtensionName())).collect(toList());
-            baselineService.storeExtension(record.extensionName, modulesToSave, session);
-            if (startAutoExportService)
-            {
-                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getExtensionNames());
+                    .filter(m -> record.siteName.equals(m.getHcmSiteName())).collect(toList());
+            baselineService.storeHcmSite(record.siteName, modulesToSave, session);
+            if (startAutoExportService) {
+                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getHcmSiteNames());
             }
 
-            //process webfilebundle instructions from extensions which are not from the current site
-            final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream().
-                    filter(m -> record.extensionName.equals(m.getExtensionName())).flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
-            configService.writeWebfiles(webfileBundleDefs, baselineService, session);
-
-            log.info("Extension '{}' was successfuly applied", record.extensionName);
+            processHcmSiteWebFileBundles(record);
+            log.info("HCM Site Configuration '{}' was successfuly applied", record.siteName);
         } else {
-            log.error("Extension '{}' failed to be applied", record.extensionName);
+            log.error("HCM Site '{}' failed to be applied", record.siteName);
         }
+
+
+    private void processHcmSiteWebFileBundles(final HcmSiteRecord record) throws IOException, RepositoryException {
+        //process webfilebundle instructions from HCM Site which are not from the current site
+        final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream()
+                .filter(m -> record.siteName.equals(m.getHcmSiteName()))
+                .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
+        configService.writeWebfiles(webfileBundleDefs, baselineService, session);
     }
-
-
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
         lockManager = new ConfigurationLockManager();
@@ -222,8 +225,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
-            final Set<String> knownExtensions = extensionRecords.keySet();
-            ConfigurationModelImpl baselineModel = loadBaselineModel(knownExtensions);
+            ConfigurationModelImpl baselineModel = loadBaselineModel(knownHcmSites);
 
             // check the appropriate params to determine our state and bootstrap mode
             // empty baseline means we've never applied the v12+ bootstrap model before, since we should have at
@@ -259,9 +261,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                             final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
                                     .filter(bootstrapModules::contains)
                                     .peek(m -> {
-                                        //Copy the module's extension name and hstRoot (if exist) from bootstrap module
+                                        //Copy the module's hcm site name and hstRoot (if exist) from bootstrap module
                                         ModuleImpl source = bootstrapModules.get(bootstrapModules.indexOf(m));
-                                        m.setExtensionName(source.getExtensionName());
+                                        m.setHcmSiteName(source.getHcmSiteName());
                                         m.setHstRoot(source.getHstRoot());
                                     })
                                     .collect(toList());
@@ -310,7 +312,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     if (success) {
                         // reload the baseline after storing, so we have a JCR-backed view of our modules
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
-                        baselineModel = loadBaselineModel(knownExtensions);
+                        baselineModel = loadBaselineModel(knownHcmSites);
 
                         // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
                         if (startAutoExportService) {
@@ -384,7 +386,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
         HippoWebappContextRegistry.get().removeTracker(this);
 
-        extensionRecords.clear();
+        hcmSiteRecords.clear();
 
         if (autoExportService != null) {
             autoExportService.close();
@@ -466,7 +468,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
             if (baselineModel == null) {
-                // TODO: call with appropriate extensions
                 baselineModel = loadBaselineModel();
             }
 
@@ -603,8 +604,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         try {
             final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
-            for (ExtensionRecord record : extensionRecords.values()) {
-                model = modelReader.readExtension(record.extensionName, record.hstRoot, record.servletContext.getClassLoader(), model);
+            for (final HcmSiteRecord record : hcmSiteRecords.values()) {
+                model = modelReader.readHcmSite(record.siteName, record.hstRoot, record.servletContext.getClassLoader(), model);
             }
             return model;
         } catch (Exception e) {
@@ -660,7 +661,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
             log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
 
-            // When loading module from disk, use extension info from matching module previously-loaded from jars
+            // When loading module from disk, use hcm site info from matching module previously-loaded from jars
             final ModuleImpl module =
                     new ModuleReader().readReplacement(moduleDescriptorPath, bootstrapModel).getModule();
 
@@ -672,7 +673,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     }
 
     /**
-     * @return a valid baseline without extension modules, if one exists, or an empty ConfigurationModel
+     * @return a valid baseline without hcm site modules, if one exists, or an empty ConfigurationModel
      * @throws RepositoryException
      */
     private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
@@ -681,13 +682,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     /**
      * @return a valid baseline, if one exists, or an empty ConfigurationModel
-     * @param extensionNames A set of extensions which should be included in the baseline
+     * @param hcmSiteNames A set of hcm sites which should be included in the baseline
      * @throws RepositoryException only if an unexpected repository problem occurs (not if the baseline is missing)
      * TODO: specify a Set<String> of extension names here
      */
-    private ConfigurationModelImpl loadBaselineModel(Set<String> extensionNames) throws RepositoryException {
+    private ConfigurationModelImpl loadBaselineModel(Set<String> hcmSiteNames) throws RepositoryException {
         try {
-            ConfigurationModelImpl model = baselineService.loadBaseline(session, extensionNames);
+            ConfigurationModelImpl model = baselineService.loadBaseline(session, hcmSiteNames);
             if (model == null) {
                 model = new ConfigurationModelImpl().build();
             }
@@ -873,54 +874,54 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     @Override
     @SuppressWarnings("unchecked")
     public void serviceRegistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
-        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.HST) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE) {
             final ServletContext servletContext = serviceHolder.getServiceObject().getServletContext();
-            final Map<String, String> extensionConfig;
-            try (final InputStream extensionIs = servletContext.getResourceAsStream("META-INF/hcm-extension.yaml")) {
-                if (extensionIs == null) {
-                    throw new FileNotFoundException("META-INF/hcm-extension.yaml");
+            final Map<String, String> hcmSiteConfig;
+            try (final InputStream hcmSiteIs = servletContext.getResourceAsStream(HCM_SITE_DESCRIPTOR_LOCATION)) {
+                if (hcmSiteIs == null) {
+                    throw new FileNotFoundException(HCM_SITE_DESCRIPTOR_LOCATION);
                 }
                 final Yaml yamlReader = new Yaml();
-                extensionConfig = (Map<String, String>) yamlReader.load(extensionIs);
+                hcmSiteConfig = (Map<String, String>) yamlReader.load(hcmSiteIs);
             } catch (IOException e) {
-                log.error("Failed to read hcm-extension.yaml", e);
+                log.error(String.format("Failed to read %s", HCM_SITE_DESCRIPTOR), e);
                 return;
             }
-            final String extensionName = extensionConfig.get("name");
-            final JcrPath hstRoot = JcrPaths.getPath(extensionConfig.get("hstRoot"));
+            final String hcmSiteName = hcmSiteConfig.get("name");
+            final JcrPath hstRoot = JcrPaths.getPath(hcmSiteConfig.get("hstRoot"));
             try {
                 lockManager.lock();
                 try {
-                    if (extensionRecords.containsKey(extensionName)) {
-                        log.error("Extension: "+extensionName+" already added");
+                    if (hcmSiteRecords.containsKey(hcmSiteName)) {
+                        log.error("HCM Site: " + hcmSiteName + " already added");
                         return;
                     }
-                    final ExtensionRecord record = new ExtensionRecord(extensionName, hstRoot, servletContext);
+                    final HcmSiteRecord record = new HcmSiteRecord(hcmSiteName, hstRoot, servletContext);
                     if (runtimeConfigurationModel != null) {
-                        // already initialized: apply site extension
-                        applySiteExtension(record);
+                        // already initialized: apply hcm site
+                        applySiteConfig(record);
                     }
-                    extensionRecords.put(extensionName, record);
+                    hcmSiteRecords.put(hcmSiteName, record);
                 } finally {
                     lockManager.unlock();
                 }
             } catch (IOException|ParserException|URISyntaxException|RepositoryException e) {
-                log.error("Failed to add site extension: "+extensionName+" for context path: "+servletContext.getContextPath(), e);
+                log.error("Failed to add hcm site: "+hcmSiteName+" for context path: "+servletContext.getContextPath(), e);
             }
         }
     }
 
     @Override
     public void serviceUnregistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
-        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.HST) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE) {
             final String contextPath = serviceHolder.getServiceObject().getServletContext().getContextPath();
             try {
                 lockManager.lock();
                 try {
-                    for (ExtensionRecord record : extensionRecords.values()) {
+                    for (HcmSiteRecord record : hcmSiteRecords.values()) {
                         if (record.servletContext.getContextPath().equals(contextPath)) {
                             // TODO: autoexport handling to be adjusted for this?
-                            extensionRecords.remove(record.extensionName);
+                            hcmSiteRecords.remove(record.siteName);
                             return;
                         }
                     }
@@ -928,7 +929,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     lockManager.unlock();
                 }
             } catch (RepositoryException e) {
-                log.error("Failed to remove site extension for context path: "+contextPath, e);
+                log.error("Failed to remove HCM Site for context path: "+contextPath, e);
             }
         }
     }

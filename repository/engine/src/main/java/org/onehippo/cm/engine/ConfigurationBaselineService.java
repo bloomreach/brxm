@@ -81,13 +81,13 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
-import static org.onehippo.cm.engine.Constants.HCM_EXTENSIONS;
 import static org.onehippo.cm.engine.Constants.HCM_HSTROOT;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_SITES;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
@@ -100,11 +100,11 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
-import static org.onehippo.cm.engine.Constants.NT_HCM_EXTENSION;
-import static org.onehippo.cm.engine.Constants.NT_HCM_EXTENSIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_SITE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_SITES;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -126,7 +126,7 @@ public class ConfigurationBaselineService {
     /**
      * Store and session save a merged configuration model as a baseline configuration in the JCR.
      * The provided ConfigurationModel is assumed to be fully formed and validated for the core model and
-     * for any extension with at least one module present in the model. Other extensions may not have been loaded yet.
+     * for any HCM Site with at least one module present in the model. Other HCM sites may not have been loaded yet.
      *
      * @param model   the configuration model to store as the new baseline
      * @param session the session for processing the model
@@ -150,17 +150,17 @@ public class ConfigurationBaselineService {
             // set lastupdated date to now
             baselineNode.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-            final Node extensionsNode = createNodeIfNecessary(baselineNode, HCM_EXTENSIONS, NT_HCM_EXTENSIONS, false);
+            final Node hcmSitesNode = createNodeIfNecessary(baselineNode, HCM_SITES, NT_HCM_SITES, false);
 
 
             // TODO: implement a smarter partial-update process instead of brute-force removal
             // clear existing group nodes before creating new ones
-            // clear any module whose extension is present in the model, plus any core module
-            // this gives us a clean slate for storing the new baseline for core and extensions that are available now
-            //TODO SS: Remove all extensions at once?
-            for (String extensionName: model.getExtensionNames()) {
-                if (extensionsNode.hasNode(extensionName)) {
-                    extensionsNode.getNode(extensionName).remove();
+            // clear any module whose HCM site is present in the model, plus any core module
+            // this gives us a clean slate for storing the new baseline for core and HCM sites that are available now
+            //TODO SS: Remove all hcm sites configs at once?
+            for (String hcmSiteName: model.getHcmSiteNames()) {
+                if (hcmSitesNode.hasNode(hcmSiteName)) {
+                    hcmSitesNode.getNode(hcmSiteName).remove();
                 }
             }
 
@@ -175,17 +175,17 @@ public class ConfigurationBaselineService {
             // compute and store digest from model manifest
             // Note: we've decided not to worry about processing data twice, since we don't expect large files
             //       in the config portion, and content is already optimized to use content path instead of digest
-            // TODO: compute a separate digest for core and each extension; for now, we just care about core
+            // TODO: compute a separate digest for core and each hcm site; for now, we just care about core
             String modelDigestString = model.getDigest(null);
             baselineNode.setProperty(HCM_DIGEST, modelDigestString);
 
             // create group, project, and module nodes, if necessary
             // foreach group
 
-            final List<ModuleImpl> extensionModules = model.getModulesStream().filter(m -> m.getExtensionName() != null)
+            final List<ModuleImpl> hcmSiteModules = model.getModulesStream().filter(m -> m.getHcmSiteName() != null)
                     .collect(toList());
-            for (ModuleImpl module: extensionModules) {
-                storeExtensionModule(module, extensionsNode, session);
+            for (ModuleImpl module: hcmSiteModules) {
+                storeHcmSiteModule(module, hcmSitesNode, session);
             }
 
             for (GroupImpl group : model.getSortedGroups()) {
@@ -197,7 +197,7 @@ public class ConfigurationBaselineService {
 
                     // foreach module
                     for (ModuleImpl module : project.getModules()) {
-                        if (!module.isExtension()) {
+                        if (!module.isHcmSite()) {
                             Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
                             // process each core module in detail
                             storeBaselineModule(module, moduleNode, session, false);
@@ -223,20 +223,20 @@ public class ConfigurationBaselineService {
 
 
     //TODO SS: Add javadocs
-    public void storeExtension(String extensionName, final Collection<ModuleImpl> modules, final Session session)
+    public void storeHcmSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
             throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
 
             session.refresh(true);
-            final Node extensionsCatalogNode = session.getNode(HCM_BASELINE_PATH).getNode(HCM_EXTENSIONS);
+            final Node hcmSitesCatalogNode = session.getNode(HCM_BASELINE_PATH).getNode(HCM_SITES);
 
-            if (extensionsCatalogNode.hasNode(extensionName)) {
-                extensionsCatalogNode.getNode(extensionName).remove();
+            if (hcmSitesCatalogNode.hasNode(hcmSiteName)) {
+                hcmSitesCatalogNode.getNode(hcmSiteName).remove();
             }
 
             for (ModuleImpl module: modules) {
-                storeExtensionModule(module, extensionsCatalogNode, session);
+                storeHcmSiteModule(module, hcmSitesCatalogNode, session);
             }
             session.save();
 
@@ -247,27 +247,27 @@ public class ConfigurationBaselineService {
 
 
     //TODO SS: Add javadocs
-    private void storeExtensionModule(final ModuleImpl module, final Node parentNode, final Session session)
+    private void storeHcmSiteModule(final ModuleImpl module, final Node parentNode, final Session session)
             throws RepositoryException, IOException {
-        if (StringUtils.isEmpty(module.getExtensionName())) {
-            throw new ConfigurationRuntimeException(String.format("Module %s is not an extension", module));
+        if (StringUtils.isEmpty(module.getHcmSiteName())) {
+            throw new ConfigurationRuntimeException(String.format("Module %s does not belong to an HCM site", module));
         }
         if (module.getHstRoot() == null) {
-            throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has no hstRoot", module, module.getExtensionName()));
+            throw new ConfigurationRuntimeException(String.format("Module %s for HCM site %s has no hstRoot", module, module.getHcmSiteName()));
         }
-        final Node extensionNode = createNodeIfNecessary(parentNode, module.getExtensionName(), NT_HCM_EXTENSION, false);
-        final String hstRoot = JcrUtils.getStringProperty(extensionNode, HCM_HSTROOT, null);
+        final Node hcmSiteNode = createNodeIfNecessary(parentNode, module.getHcmSiteName(), NT_HCM_SITE, false);
+        final String hstRoot = JcrUtils.getStringProperty(hcmSiteNode, HCM_HSTROOT, null);
         if (hstRoot != null && !module.getHstRoot().equals(hstRoot)) {
-            throw new ConfigurationRuntimeException(String.format("Module %s for extension %s has different hstRoot %s than in baseline (%s)"
-                    , module, module.getExtensionName(), module.getHstRoot(), hstRoot));
+            throw new ConfigurationRuntimeException(String.format("Module %s for hcm site %s has different hstRoot %s than in baseline (%s)"
+                    , module, module.getHcmSiteName(), module.getHstRoot(), hstRoot));
         }
         if (hstRoot == null) {
-            extensionNode.setProperty(HCM_HSTROOT, module.getHstRoot().toString());
+            hcmSiteNode.setProperty(HCM_HSTROOT, module.getHstRoot().toString());
         }
         final ProjectImpl project = module.getProject();
         final GroupImpl group = project.getGroup();
 
-        final Node groupNode = createNodeIfNecessary(extensionNode, group.getName(), NT_HCM_GROUP, true);
+        final Node groupNode = createNodeIfNecessary(hcmSiteNode, group.getName(), NT_HCM_GROUP, true);
         final Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
         final Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
         storeBaselineModule(module, moduleNode, session, false);
@@ -295,7 +295,7 @@ public class ConfigurationBaselineService {
 
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
             final Node baseline = hcmRootNode.getNode(HCM_BASELINE);
-            final Node extensionsNode = baseline.getNode(HCM_EXTENSIONS);
+            final Node hcmSitesNode = baseline.getNode(HCM_SITES);
 
             final Set<ModuleImpl> newBaselineModules = new HashSet<>();
             for (final ModuleImpl module : modules) {
@@ -305,9 +305,9 @@ public class ConfigurationBaselineService {
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
                 Node moduleNode;
-                if (module.isExtension()) {
-                    final Node extensionNode = extensionsNode.getNode(module.getExtensionName());
-                    moduleNode = getModuleNode(extensionNode, module);
+                if (module.isHcmSite()) {
+                    final Node hcmSiteNode = hcmSitesNode.getNode(module.getHcmSiteName());
+                    moduleNode = getModuleNode(hcmSiteNode, module);
                 } else {
                     moduleNode = getModuleNode(baseline, module);
                 }
@@ -319,14 +319,14 @@ public class ConfigurationBaselineService {
                 }
 
                 final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
-                reloadedModule.setExtensionName(module.getExtensionName());
+                reloadedModule.setHcmSiteName(module.getHcmSiteName());
                 reloadedModule.setHstRoot(module.getHstRoot());
                 parseSources(singletonList(reloadedModule));
                 newBaselineModules.add(reloadedModule);
             }
 
             // update digest
-            // TODO: use separate digests for core and extensions; for now, we just care about core
+            // TODO: use separate digests for core and hcm sites; for now, we just care about core
             ConfigurationModelImpl newBaseline = mergeWithSourceModules(newBaselineModules, baselineModel);
             baseline.setProperty(HCM_DIGEST, newBaseline.getDigest(null));
 
@@ -659,10 +659,10 @@ public class ConfigurationBaselineService {
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @param session the session to load the baseline with
-     * @param extensions the set of extensions to include when loading the baseline (may be null or empty to include only core)
+     * @param hcmSites the set of HCM Sites to include when loading the baseline (may be null or empty to include only core)
      * @throws Exception
      */
-    public ConfigurationModelImpl loadBaseline(final Session session, Set<String> extensions) throws RepositoryException, ParserException, IOException {
+    public ConfigurationModelImpl loadBaseline(final Session session, Set<String> hcmSites) throws RepositoryException, ParserException, IOException {
         ConfigurationModelImpl result;
 
         final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
@@ -683,22 +683,22 @@ public class ConfigurationBaselineService {
                 // otherwise, if the baseline node DOES exist...
                 final Node baselineNode = hcmRootNode.getNode(HCM_BASELINE);
 
-                // make sure we load core modules, in addition to specified extensions
+                // make sure we load core modules, in addition to specified HCM Sites
                 // First phase: load and parse core module descriptors
                 final List<ModuleImpl> modules = parseDescriptors(baselineNode);
 
-                if (isNotEmpty(extensions)) {
-                    final Node extensionCatalogNode = baselineNode.getNode(HCM_EXTENSIONS);
-                    for (NodeIterator eni = extensionCatalogNode.getNodes(); eni.hasNext();) {
-                        final Node extensionNode = eni.nextNode();
-                        final String extensionName = extensionNode.getName();
-                        final String hstRoot = extensionNode.getProperty(HCM_HSTROOT).getString();
-                        final List<ModuleImpl> extensionModules = parseDescriptors(extensionNode);
-                        extensionModules.forEach(module -> {
-                            module.setExtensionName(extensionName);
+                if (isNotEmpty(hcmSites)) {
+                    final Node hcmSiteCatalogNode = baselineNode.getNode(HCM_SITES);
+                    for (NodeIterator eni = hcmSiteCatalogNode.getNodes(); eni.hasNext();) {
+                        final Node hcmSiteNode = eni.nextNode();
+                        final String hcmSiteName = hcmSiteNode.getName();
+                        final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
+                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode);
+                        hcmSiteModules.forEach(module -> {
+                            module.setHcmSiteName(hcmSiteName);
                             module.setHstRoot(JcrPaths.getPath(hstRoot));
                         });
-                        modules.addAll(extensionModules);
+                        modules.addAll(hcmSiteModules);
                     }
                 }
 
@@ -765,7 +765,7 @@ public class ConfigurationBaselineService {
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
 
-            // TODO: determine and set actual extension name
+            // TODO: determine and set actual HCM Site name
 
             final String lastExecutedAction = getLastExecutedAction(moduleNode);
             module.setLastExecutedAction(lastExecutedAction);
