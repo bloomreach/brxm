@@ -661,10 +661,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "FULL_WIDTH" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "SHOW_CONTENT" : {
       "status" : "CLEAN",
       "locales" : null
@@ -722,10 +718,6 @@
       "locales" : null
     },
     "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "RESTORE_WIDTH" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -1078,10 +1070,8 @@
       "locales" : null
     },
     "CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "DOCUMENT_LIVE_TOOLTIP" : {
       "status" : "CLEAN",
@@ -1104,6 +1094,14 @@
       "locales" : null
     },
     "NOTIFICATION_PUBLICATION_REQUESTED" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "FULL_SIZE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NORMAL_SIZE" : {
       "status" : "CLEAN",
       "locales" : null
     }
