@@ -65,6 +65,19 @@ public interface WebXmlService {
     boolean addFilterMapping(Module module, String filterName, List<String> urlPatterns);
 
     /**
+     * Insert a filter mapping to the web.xml file of the specified module, before some other filter mapping.
+     *
+     * No attempt is made to avoid duplicate mappings.
+     *
+     * @param module       target module to adjust
+     * @param filterName   name of the filter
+     * @param urlPatterns  list of URL patterns to map to the filter
+     * @param insertBefore name of the other filter mapping, to insert this one before. Append to end if not found.
+     * @return             true if the mapping was added successfully, false otherwise.
+     */
+    boolean insertFilterMapping(Module module, String filterName, List<String> urlPatterns, String insertBefore);
+
+    /**
      * Add dispatchers to a filter mapping of the web.xml file of the specified module.
      *
      * @param module      target module to adjust

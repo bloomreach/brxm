@@ -377,7 +377,7 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="nodetypes" sv:type="String">
+          <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
             <sv:value>{{namespace}}:author</sv:value>
           </sv:property>
         </sv:node>

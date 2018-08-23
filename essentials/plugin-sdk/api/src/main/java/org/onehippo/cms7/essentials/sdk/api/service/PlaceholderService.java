@@ -70,6 +70,10 @@ public interface PlaceholderService {
     String WEBFILES_IMAGES_ROOT = "webfilesImagesRoot";
     String WEBFILES_PREFIX = "webfilesPrefix";
     String ESSENTIALS_ROOT = "essentialsRoot";
+    String APPLICATION_CONFIG = "applicationConfig";
+    String APPLICATION_CONTENT = "applicationContent";
+    String DEVELOPMENT_CONFIG = "developmentConfig";
+    String DEVELOPMENT_CONTENT = "developmentContent";
 
     /**
      * Make and return a fresh set of placeholders.

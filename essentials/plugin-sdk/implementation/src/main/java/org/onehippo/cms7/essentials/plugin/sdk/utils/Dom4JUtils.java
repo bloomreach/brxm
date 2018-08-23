@@ -105,13 +105,51 @@ public class Dom4JUtils {
      */
     public static Element addIndentedElement(final Element parent, final String elementName, final String elementText,
                                              final int indentSpaces, final boolean appendToSameNameSiblings) {
-        final QName elementQName = new QName(elementName, parent.getNamespace());
-        final Element element = DocumentHelper.createElement(elementQName);
-        if (elementText != null) {
-            element.addText(elementText);
-        }
+        final Element element = createElement(parent, elementName, elementText);
 
         addIndentedElement(parent, element, indentSpaces, appendToSameNameSiblings);
+
+        return element;
+    }
+
+    /**
+     * Try to insert a new child element before the child element matching the specified location selector
+     *
+     * If the location selector produces at least one match for the parent element, the first match is used to derive
+     * the parent's child element, before which the new element is inserted.
+     *
+     * If the location selector produces no match, the new element is inserted nevertheless, as last same-name-sibling
+     * if there already are same-name-siblings, or as the last child otherwise.
+     *
+     * @param parent           parent element for new element
+     * @param elementName      name of the new element
+     * @param locationSelector selector to locate before which existing child the new element is to be inserted
+     * @return                 the new (child) element
+     */
+    public static Element insertIndentedElement(final Element parent, final String elementName, final String locationSelector) {
+        final Element element = createElement(parent, elementName, null);
+
+        Node insertBefore = Iterables.getFirst(parent.selectNodes(locationSelector), null);
+        if (insertBefore != null) {
+            final List<Node> children = parent.content();
+            // Selected node may be nested child (depending on selector), determine immediate child node.
+            while (!children.contains(insertBefore)) {
+                insertBefore = insertBefore.getParent();
+            }
+            int insertionIndex = children.indexOf(insertBefore);
+            if (insertionIndex > 0) {
+                // If node before 'insertionIndex' is indentation, clone it for the new element
+                Node indentation = children.get(insertionIndex - 1);
+                if (indentation instanceof DefaultText) {
+                    children.add(insertionIndex, (Node) indentation.clone());
+                }
+            }
+            children.add(insertionIndex, element);
+        } else {
+            LOG.warn("Cannot insert element '{}' before selector '{}' for element '{}', no matching child found.",
+                    elementName, locationSelector, parent.getPath());
+            addIndentedElement(parent, element, DEFAULT_INDENT_CHARS, true);
+        }
 
         return element;
     }
@@ -126,15 +164,22 @@ public class Dom4JUtils {
         addIndentedElement(parent, child, DEFAULT_INDENT_CHARS, false);
     }
 
+    private static Element createElement(final Element parent, final String elementName, final String elementText) {
+        final QName elementQName = new QName(elementName, parent.getNamespace());
+        final Element element = DocumentHelper.createElement(elementQName);
+        if (elementText != null) {
+            element.addText(elementText);
+        }
+        return element;
+    }
+
     private static void addIndentedElement(final Element parent, final Element element, final int indentSpaces,
-                                              final boolean appendToSameNameSiblings) {
+                                           final boolean appendToSameNameSiblings) {
         final List<Node> children = parent.content();
         if (children.isEmpty()) {
             final Node indentation = deriveIndentation(parent);
             if (indentation != null) {
                 final String prefix = INDENT.substring(0, indentation.getText().length() + indentSpaces);
-                final Node prefixNode = (Node)indentation.clone();
-                prefixNode.setText(INDENT.substring(0, indentation.getText().length() + indentSpaces));
 
                 parent.addText(prefix);
                 parent.add(element);

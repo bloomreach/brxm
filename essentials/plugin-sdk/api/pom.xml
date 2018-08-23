@@ -52,7 +52,7 @@
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
-  
+
     <!-- TEST dependencies -->
     <dependency>
       <groupId>junit</groupId>
