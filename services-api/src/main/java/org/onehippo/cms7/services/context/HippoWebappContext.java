@@ -22,7 +22,7 @@ public final class HippoWebappContext {
     public enum Type {
         PLATFORM,
         CMS,
-        HST,
+        SITE,
         UNKNOWN
     };
 

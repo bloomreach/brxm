@@ -30,7 +30,7 @@ public class HippoWebappListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
-        context = new HippoWebappContext(HippoWebappContext.Type.HST, sce.getServletContext());
+        context = new HippoWebappContext(HippoWebappContext.Type.SITE, sce.getServletContext());
         HippoWebappContextRegistry.get().register(context);
     }
 
