@@ -20,10 +20,13 @@
         <#if item.introduction??>
           <p>${item.introduction?html}</p>
         </#if>
-        <a href="${link}"><@fmt.message key="blog.read.post" var="msg"/>${msg?html}</a>
+        <p><a href="${link}"><@fmt.message key="blog.read.post" var="msg"/>${msg?html}</a></p>
       </div>
     </div>
   </#list>
+  <div class="has-new-content-button">
+    <@hst.manageContent templateQuery="new-blog-document" rootPath="blog" defaultPath="${currentYear}/${currentMonth}"/>
+  </div>
   <#if cparam.showPagination>
     <#include "../../../include/pagination.ftl">
   </#if>

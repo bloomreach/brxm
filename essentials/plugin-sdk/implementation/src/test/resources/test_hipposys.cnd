@@ -206,7 +206,6 @@
   + hippo:update (hipposys:update) = hipposys:update autocreated
   + hippo:roles (hipposys:rolefolder) = hipposys:rolefolder
   + hippo:domains (hipposys:domainfolder) = hipposys:domainfolder
-  + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
   + hippo:workflows (hipposys:workflowfolder) = hipposys:workflowfolder mandatory
   + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
   + hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder mandatory autocreated
@@ -234,11 +233,6 @@
   mixin
   - hipposys:classname (string) mandatory
   - hipposys:serialver (long)
-
-[hipposys:initializeitem] > hippo:initializeitem
-  - hipposys:extensionversion (string)
-  - hipposys:extensionsource (string)
-  - hipposys:extensionbuild (long)
 
 [hipposys:relativepropertyreference] > hipposys:propertyreference
   - hipposys:relPath (string) mandatory

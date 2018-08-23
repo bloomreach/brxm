@@ -95,31 +95,6 @@
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
-// BOOTSTRAP
-
-[hippo:initializeitem] > nt:base
-- hippo:sequence (double)
-- hippo:namespace (string)
-- hippo:nodetypesresource (string)
-- hippo:nodetypes (binary)
-- hippo:contentresource (string)
-- hippo:content (string)
-- hippo:contentroot (string)
-- hippo:contentdelete (string)
-- hippo:contentpropdelete (string)
-- hippo:contentpropset (string) multiple
-- hippo:contentpropadd (string) multiple
-- hippo:reloadonstartup (boolean)
-- hippo:status (string) < 'pending', 'done', 'disabled'
-- hippo:contextnodename (string)
-- hippo:version (string)
-- hippo:timestamp (long)
-
-[hippo:initializefolder] > nt:base orderable
-- hippo:version (string) multiple // never specify this item at this time
-- hippo:sequence (double) // not yet supported
-+ * (hippo:initializeitem) = hippo:initializeitem
-
 [hippo:deleted] > hippo:document, mix:versionable
 - hippo:deletedDate (date)
 - hippo:deletedBy (string)

@@ -62,7 +62,7 @@ public class ProjectsInstruction implements Instruction {
         WPM_RESOURCE_ATTRIBUTES.put("username", "sa");
         WPM_RESOURCE_ATTRIBUTES.put("password", "");
         WPM_RESOURCE_ATTRIBUTES.put("driverClassName", "org.h2.Driver");
-        WPM_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:./wpm/wpm;AUTO_SERVER=TRUE");
+        WPM_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:${repo.path}/wpm/wpm;AUTO_SERVER=TRUE");
     }
 
     @Inject private ContextXmlService contextXmlService;

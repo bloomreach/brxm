@@ -329,13 +329,13 @@ public class ContentTypeServiceImplTest extends BaseRepositoryTest {
         jcrService.destroySession(session);
 
         testContentTypeService = new TestContentTypeService();
-        HippoServiceRegistry.registerService(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
+        HippoServiceRegistry.register(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
     }
 
     @After
     public void cleanup() {
         if (testContentTypeService != null) {
-            HippoServiceRegistry.unregisterService(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
+            HippoServiceRegistry.unregister(testContentTypeService, org.onehippo.cms7.services.contenttype.ContentTypeService.class);
             testContentTypeService = null;
         }
     }
