@@ -56,13 +56,13 @@ public interface Module extends OrderableByName {
     /**
      * @return true if this module is part of an extension; false if this module is in the core model
      */
-    boolean isExtension();
+    boolean isHcmSite();
 
     /**
-     * @return Extension name of the Module or null if it is a core Module
+     * @return HCM Site name of the Module or null if it is a core Module
      * @since 13.0
      */
-    String getExtensionName();
+    String getHcmSiteName();
 
     /**
      * @return JcrPath of HST root configuration node for the corresponding extension or null if it is a core Module

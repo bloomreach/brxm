@@ -80,7 +80,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private String extensionName = null;
+    private String hcmSiteName = null;
     private JcrPath hstRoot = null;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
@@ -143,7 +143,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         sortedSources.forEach(source -> source.setModule(this));
 
         mvnPath = module.getMvnPath();
-        extensionName = module.getExtensionName();
+        hcmSiteName = module.getHcmSiteName();
         hstRoot = module.getHstRoot();
         archiveFile = module.getArchiveFile();
         build();
@@ -243,12 +243,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     @Override
-    public String getExtensionName() {
-        return extensionName;
+    public String getHcmSiteName() {
+        return hcmSiteName;
     }
 
-    public void setExtensionName(final String extension) {
-        this.extensionName = extension;
+    public void setHcmSiteName(final String hcmSiteName) {
+        this.hcmSiteName = hcmSiteName;
     }
 
     @Override
@@ -261,11 +261,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     /**
-     * @return true if this module is part of an extension; false if this module is in the core model
+     * @return true if this module is part of an HCM Site; false if this module is in the core model
      */
     @Override
-    public boolean isExtension() {
-        return extensionName != null;
+    public boolean isHcmSite() {
+        return hcmSiteName != null;
     }
 
     /**
@@ -652,7 +652,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
-                ((extensionName ==null)? "": ("extensionName='" + extensionName +"', ")) +
+                ((hcmSiteName ==null)? "": ("hcmSiteName='" + hcmSiteName +"', ")) +
                 ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
@@ -687,7 +687,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
-            newModule.setExtensionName(extensionName);
+            newModule.setHcmSiteName(hcmSiteName);
             newModule.setHstRoot(hstRoot);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);

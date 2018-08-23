@@ -38,7 +38,6 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -396,8 +395,8 @@ public class ConfigurationTreeBuilder {
             if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
                 //Compare with parent definition extension. It should be core or have the same extension
                 final TreeDefinitionImpl<?> parentDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
-                final String parentNodeExtensionName = parentDefinition.getSource().getModule().getExtensionName();
-                final String childDefinitionExtensionName = definition.getSource().getModule().getExtensionName();
+                final String parentNodeExtensionName = parentDefinition.getSource().getModule().getHcmSiteName();
+                final String childDefinitionExtensionName = definition.getSource().getModule().getHcmSiteName();
                 if (parentNodeExtensionName != null && !Objects.equals(childDefinitionExtensionName, parentNodeExtensionName)) {
                     final String errMessage = String.format("Cannot add child config definition '%s' to parent node definition, " +
                                     "as it is defined in different extension: %s -> %s",
@@ -414,8 +413,8 @@ public class ConfigurationTreeBuilder {
         } else  if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
             //Config node already exists, validate if existing config node belongs to the same extension
             final TreeDefinitionImpl<?> existingDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
-            if (!Objects.equals(definition.getSource().getModule().getExtensionName(),
-                    existingDefinition.getSource().getModule().getExtensionName())) {
+            if (!Objects.equals(definition.getSource().getModule().getHcmSiteName(),
+                    existingDefinition.getSource().getModule().getHcmSiteName())) {
                 final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
                                 "extensions or in both core and an extension: %s -> %s",
                         definition.getNode().getPath(), existingDefinition.getSource(), definition.getSource());

@@ -379,7 +379,7 @@ public class ConfigurationModelImplTest {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
         final ModuleImpl m2 = c1.addProject("p2").addModule("m2");
-        m2.setExtensionName("m2");
+        m2.setHcmSiteName("m2");
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m2);

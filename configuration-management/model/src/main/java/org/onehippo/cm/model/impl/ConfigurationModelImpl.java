@@ -74,8 +74,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
     private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
-    private final Set<String> modifiableExtensionNames = new HashSet<>();
-    private final Set<String> extensionNames = Collections.unmodifiableSet(modifiableExtensionNames);
+    private final Set<String> modifiableHcmSiteNames = new HashSet<>();
+    private final Set<String> hcmSiteNames = Collections.unmodifiableSet(modifiableHcmSiteNames);
     private final Set<JcrPath> modifiableHstRoots = new HashSet<>();
     private final Set<JcrPath> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
 
@@ -107,14 +107,14 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     /**
-     * The set of all names of extensions present in this model. The "core" is always assumed to be present and
+     * The set of all names of hcm sites present in this model. The "core" is always assumed to be present and
      * does not have an explicit representation. Thus, a core-only model will return an empty Set.
-     * @return a Set of names for extensions present in this model; does not contain null
+     * @return a Set of names for hcm sites present in this model; does not contain null
      * @since 2.0
      */
     @Override
-    public Set<String> getExtensionNames() {
-        return extensionNames;
+    public Set<String> getHcmSiteNames() {
+        return hcmSiteNames;
     }
 
     @Override
@@ -263,19 +263,19 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
         modifiableDeletedConfigProperties.clear();
-        modifiableExtensionNames.clear();
+        modifiableHcmSiteNames.clear();
         modifiableHstRoots.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
 
-        // sort modules so that extension modules would be at the bottom of the list (including dependencies)
-        // TODO: fix groupSorter to do this properly with lexical sort by extension name, so getModulesStream() does this consistently
-        // TODO: disallow dependencies that force an ordering that violates extension isolation
+        // sort modules so that hcm site modules would be at the bottom of the list (including dependencies)
+        // TODO: fix groupSorter to do this properly with lexical sort by HCM Site name, so getModulesStream() does this consistently
+        // TODO: disallow dependencies that force an ordering that violates HCM Site isolation
         getModulesStream()
-                .filter(m -> Objects.isNull(m.getExtensionName()))
+                .filter(m -> Objects.isNull(m.getHcmSiteName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
         getModulesStream()
-                .filter(m -> Objects.nonNull(m.getExtensionName()))
+                .filter(m -> Objects.nonNull(m.getHcmSiteName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
@@ -294,8 +294,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
         module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
         configurationTreeBuilder.finishModule();
-        if (module.getExtensionName() != null) {
-            modifiableExtensionNames.add(module.getExtensionName());
+        if (module.getHcmSiteName() != null) {
+            modifiableHcmSiteNames.add(module.getHcmSiteName());
         }
         if (module.getHstRoot() != null) {
             modifiableHstRoots.add(module.getHstRoot());
@@ -367,21 +367,21 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * be normalized to use Module-relative paths, rather than the mix of Module- and Source-relative
      * paths as used within the Source text. Resource paths will use 4-spaces indentation, and Modules will use none.
      * Lines will use a single "\n" line separator, and the final resource reference will end in a line separator.
-     * @param extension the name of an extension whose digest is desired, or null for the core digest
+     * @param hcmSiteName the name of an HCM Site whose digest is desired, or null for the core digest
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String getDigest(final String extension) {
+    public String getDigest(final String hcmSiteName) {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
-            if (StringUtils.equalsIgnoreCase(extension, m.getExtensionName())) {
+            if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getHcmSiteName())) {
                 m.compileManifest(this, manifest);
             }
         }
 
         final String modelManifest = manifestToString(manifest);
-        log.debug("model manifest for extension {}:\n{}", extension, modelManifest);
+        log.debug("model manifest for HCM Site {}:\n{}", hcmSiteName, modelManifest);
 
         return DigestUtils.computeManifestDigest(modelManifest);
     }

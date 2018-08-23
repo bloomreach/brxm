@@ -62,7 +62,7 @@ public class ClasspathConfigurationModelReader {
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
      * configuration and content into a ConfigurationModel. This method only loads "core" modules that are not part
-     * of an extension.
+     * of an HCM Site.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
      * @param verifyOnly when true use 'verify only' yaml parsing, allowing (but warning on) certain model errors
@@ -81,7 +81,7 @@ public class ClasspathConfigurationModelReader {
         final Pair<Set<FileSystem>, List<ModuleImpl>> coreModules =
                 readModulesFromClasspath(classLoader, verifyOnly, null, null);
 
-        // TODO: filter out isExtension() modules
+        // TODO: filter out isHcmSite() modules
 
         // add classpath modules to model
         coreModules.getRight().forEach(model::addModule);
@@ -100,36 +100,36 @@ public class ClasspathConfigurationModelReader {
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
-     * configuration and content into a ConfigurationModel. This method only loads modules that are part of an extension.
+     * configuration and content into a ConfigurationModel. This method only loads modules that are part of an HCM Site.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
      * @return a ConfigurationModel of configuration and content definitions
      * @throws IOException
      * @throws ParserException
      */
-    public ConfigurationModelImpl readExtension(final String extensionName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
+    public ConfigurationModelImpl readHcmSite(final String hcmSiteName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final Pair<Set<FileSystem>, List<ModuleImpl>> extensionModules =
-                readModulesFromClasspath(classLoader, false, extensionName, hstRoot);
+        final Pair<Set<FileSystem>, List<ModuleImpl>> hcmSiteModules =
+                readModulesFromClasspath(classLoader, false, hcmSiteName, hstRoot);
 
-        // insert extension name and hstRoot into each module
-        extensionModules.getRight().forEach(module -> {
-            module.setExtensionName(extensionName);
+        // insert hcm site name and hstRoot into each module
+        hcmSiteModules.getRight().forEach(module -> {
+            module.setHcmSiteName(hcmSiteName);
             module.setHstRoot(hstRoot);
         });
 
         // TODO: why use the override addReplacementModule codepath here instead of the normal addModule?
-        extensionModules.getRight().forEach(model::addReplacementModule);
+        hcmSiteModules.getRight().forEach(model::addReplacementModule);
 
         // add filesystems to the model
-        model.setFileSystems(extensionModules.getLeft());
+        model.setFileSystems(hcmSiteModules.getLeft());
 
         model.build();
         stopWatch.stop();
-        log.info("ConfigurationModel extension loaded in {}", stopWatch.toString());
+        log.info("ConfigurationModel of HCM Site loaded in {}", stopWatch.toString());
 
         return model;
     }
@@ -138,14 +138,14 @@ public class ClasspathConfigurationModelReader {
      * Read modules that are packaged on the classpath for the given ClassLoader.
      * @param classLoader the classloader to search for packaged config modules
      * @param verifyOnly TODO describe
-     * @param extensionName if not null, load extension modules and set this name on the resulting modules;
+     * @param hcmSiteName if not null, load HCM Site modules and set this name on the resulting modules;
      *                     if null, load core modules
      * @param hstRoot set this value on modules loaded here -- null is a valid argument
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
     private Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
                                                                              final boolean verifyOnly,
-                                                                             final String extensionName,
+                                                                             final String hcmSiteName,
                                                                              final JcrPath hstRoot)
             throws IOException, ParserException, URISyntaxException {
         final Pair<Set<FileSystem>, List<ModuleImpl>> modules = new MutablePair<>(new HashSet<>(), new ArrayList<>());
@@ -159,9 +159,9 @@ public class ClasspathConfigurationModelReader {
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
 
-            // Skip modules in the parent (shared in web container) classloader during extension loading.
+            // Skip modules in the parent (shared in web container) classloader during hcm site loading.
             // These should be considered part of the core HCM model.
-            if (extensionName != null && parentResources.contains(resource)) {
+            if (hcmSiteName != null && parentResources.contains(resource)) {
                 continue;
             }
 
@@ -190,7 +190,7 @@ public class ClasspathConfigurationModelReader {
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
                 final ModuleImpl moduleImpl =
-                        new ModuleReader().read(moduleDescriptorPath, verifyOnly, extensionName, hstRoot)
+                        new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
                                 .getModule();
                 moduleImpl.setArchiveFile(archiveFile);
 
@@ -205,7 +205,7 @@ public class ClasspathConfigurationModelReader {
                 // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
                 final Path moduleDescriptorPath = Paths.get(resource.toURI());
                 modules.getRight()
-                        .add(new ModuleReader().read(moduleDescriptorPath, verifyOnly, extensionName, hstRoot)
+                        .add(new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
                                 .getModule());
             }
         }

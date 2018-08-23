@@ -286,7 +286,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2, "module2", true);
         final ConfigDefinitionImpl definition2 = (ConfigDefinitionImpl) definitions2.get(0);
-        definition2.getSource().getModule().setExtensionName("module-extension");
+        definition2.getSource().getModule().setHcmSiteName("module-extension");
         try {
             builder.push(definition2);
             fail("Cannot merge config definitions with the same path defined in different " +

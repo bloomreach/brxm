@@ -84,7 +84,7 @@ public class ModuleReader {
                            final String extensionName, final JcrPath hstRoot) throws IOException, ParserException {
         final ModuleImpl module = readDescriptor(moduleDescriptorPath);
 
-        module.setExtensionName(extensionName);
+        module.setHcmSiteName(extensionName);
         module.setHstRoot(hstRoot);
 
         final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
@@ -99,7 +99,7 @@ public class ModuleReader {
         // if there was already a matching module in the comparisonModule, use the extension info from that one
         comparisonModel.getModulesStream().filter(Predicate.isEqual(module)).findFirst()
                 .ifPresent(comparisonModule -> {
-            module.setExtensionName(comparisonModule.getExtensionName());
+            module.setHcmSiteName(comparisonModule.getHcmSiteName());
             module.setHstRoot(comparisonModule.getHstRoot());
         });
 
