@@ -36,6 +36,7 @@
     <module>banner-and-carousel</module>
     <module>bean-writer</module>
     <module>blog</module>
+    <module>bloomreach-cloud</module>
     <module>bloomreach-connector</module>
     <module>commerce-detail</module>
     <module>commerce-more-like-this</module>
