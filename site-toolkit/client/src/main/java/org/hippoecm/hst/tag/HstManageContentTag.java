@@ -17,8 +17,8 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -42,7 +41,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
-import org.hippoecm.hst.utils.ParameterUtils;
+import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -50,6 +49,20 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DEFAULT_PATH;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE_MANAGE_CONTENT_LINK;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_NAME;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE_IS_RELATIVE_PATH;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_CONFIGURATION;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_INITIAL_PATH;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_REMEMBERS_LAST_VISITED;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_ROOT_PATH;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_SELECTABLE_NODE_TYPES;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_ROOT_PATH;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_TEMPLATE_QUERY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_UUID;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_COMPONENT_WINDOW;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 import static org.hippoecm.hst.utils.TagUtils.encloseInHTMLComment;
@@ -62,11 +75,43 @@ public class HstManageContentTag extends TagSupport {
 
     private static final Logger log = LoggerFactory.getLogger(HstManageContentTag.class);
 
-    private String parameterName;
-    private String defaultPath;
     private HippoBean hippoBean;
-    private String rootPath;
     private String templateQuery;
+    private String parameterName;
+    private String rootPath;
+    private String defaultPath;
+
+    private HstRequestContext cmsRequestContext;
+    private JcrPath jcrPath;
+    private SortedMap<String, String> result;
+
+    public void setHippobean(final HippoBean hippoBean) {
+        this.hippoBean = hippoBean;
+    }
+
+    public void setTemplateQuery(final String templateQuery) {
+        if (StringUtils.isBlank(templateQuery)) {
+            log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
+                    + " Expected the name of a template query instead.", getComponentRenderPath(), templateQuery);
+        }
+        this.templateQuery = templateQuery;
+    }
+
+    public void setParameterName(final String parameterName) {
+        if (StringUtils.isBlank(parameterName)) {
+            log.warn("The parameterName attribute of a manageContent tag in template '{}' is set to '{}'."
+                    + " Expected the name of an HST component parameter instead.", getComponentRenderPath(), parameterName);
+        }
+        this.parameterName = parameterName;
+    }
+
+    public void setDefaultPath(final String defaultPath) {
+        this.defaultPath = defaultPath;
+    }
+
+    public void setRootPath(final String rootPath) {
+        this.rootPath = rootPath;
+    }
 
     @Override
     public int doStartTag() {
@@ -75,114 +120,175 @@ public class HstManageContentTag extends TagSupport {
 
     @Override
     public int doEndTag() throws JspException {
-        try {
-            final HstRequestContext requestContext = RequestContextProvider.get();
-
-            if (requestContext == null) {
-                log.warn("Cannot create a manageContent button outside the hst request.");
-                return EVAL_PAGE;
-            }
-
-            if (!requestContext.isCmsRequest()) {
-                log.debug("Skipping manageContent tag because not in cms preview.");
-                return EVAL_PAGE;
-            }
-
-            if (templateQuery == null && hippoBean == null && parameterName == null) {
-                log.debug("Skipping manageContent tag because neither 'templateQuery', 'hippobean' or 'parameterName' attribute specified.");
-                return EVAL_PAGE;
-            }
-
-            String documentId = null;
-            if (hippoBean != null) {
-                final HippoNode documentNode = (HippoNode) hippoBean.getNode();
-                try {
-                    final Node editNode = documentNode.getCanonicalNode();
-                    if (editNode == null) {
-                        log.debug("Cannot create a manageContent tag, cannot find canonical node of '{}'",
-                                documentNode.getPath());
-                        return EVAL_PAGE;
-                    }
-
-                    final Node handleNode = getHandleNodeIfIsAncestor(editNode);
-                    if (handleNode == null) {
-                        log.warn("Could not find handle node of {}", editNode.getPath());
-                        return EVAL_PAGE;
-                    }
-
-                    log.debug("The node path for the manageContent tag is '{}'", handleNode.getPath());
-                    documentId = handleNode.getIdentifier();
-                } catch (RepositoryException e) {
-                    log.warn("Error while retrieving the handle of '{}', skipping manageContent tag",
-                            JcrUtils.getNodePathQuietly(hippoBean.getNode()), e);
-                    return EVAL_PAGE;
-                }
-            }
-
-            final JcrPath jcrPath = getJcrPath();
-            final boolean isRelativePathParameter = jcrPath != null && jcrPath.isRelative();
-            if (isRelativePathParameter && StringUtils.startsWith(rootPath, "/")) {
-                log.warn("Ignoring manageContent tag in template '{}' for component parameter '{}':"
-                                + " the @{} annotation of the parameter makes it store a relative path to the"
-                                + " content root of the channel while the 'rootPath' attribute of the manageContent"
-                                + " tag points to the absolute path '{}'."
-                                + " Either make the root path relative to the channel content root,"
-                                + " or make the component parameter store an absolute path.",
-                        getComponentRenderPath(), parameterName, JcrPath.class.getSimpleName(), rootPath);
-                return EVAL_PAGE;
-            }
-
-            String absoluteRootPath;
-            try {
-                absoluteRootPath = checkRootPath(requestContext);
-            } catch (final RepositoryException e) {
-                log.warn("Exception while checking rootPath parameter for manageContent tag in template '{}'.",
-                        getComponentRenderPath(), e);
-                return EVAL_PAGE;
-            }
-            final String componentValue = getComponentValue(isRelativePathParameter);
-
-            try {
-                write(documentId, componentValue, jcrPath, isRelativePathParameter, absoluteRootPath);
-            } catch (final IOException ignore) {
-                throw new JspException("manageContent tag exception in template '" + getComponentRenderPath()
-                        + "': cannot write to the output writer.");
-            }
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (!isCmsRequest(requestContext)) {
             return EVAL_PAGE;
-        } finally {
-            cleanup();
         }
+
+        try {
+            cmsRequestContext = requestContext;
+            jcrPath = getJcrPath();
+            result = new TreeMap<>();
+
+            checkMandatoryParameters();
+            checkRootPath();
+
+            write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
+            processHippoBean();
+            processTemplateQuery();
+            processParameterName();
+            processPaths();
+
+            generateHtmlComment();
+        } catch (SkipManageContentTagException e) {
+            log.debug(e.getMessage());
+        } catch (ManageContentTagException e) {
+            log.warn(e.getMessage());
+        } finally {
+            cmsRequestContext = null;
+            jcrPath = null;
+            result.clear();
+        }
+        return EVAL_PAGE;
     }
 
-    private String getChannelRootPath() {
-        final ResolvedMount resolvedMount = RequestContextProvider.get().getResolvedMount();
-        return resolvedMount.getMount().getContentPath();
+    private static boolean isCmsRequest(final HstRequestContext requestContext) {
+        if (requestContext == null) {
+            log.warn("Cannot create a manageContent button outside the hst request.");
+            return false;
+        }
+        if (!requestContext.isCmsRequest()) {
+            log.debug("Skipping manageContent tag because not in cms preview.");
+            return false;
+        }
+        return true;
     }
 
-    private String checkRootPath(final HstRequestContext requestContext) throws RepositoryException {
-        if (rootPath == null) {
+    private JcrPath getJcrPath() {
+        if (parameterName == null) {
             return null;
         }
 
-        String absoluteRootPath = getAbsoluteRootPath(requestContext);
+        final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(HST_COMPONENT_WINDOW);
+        final HstComponent component = window.getComponent();
+        final ComponentConfiguration componentConfig = component.getComponentConfiguration();
+        final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
+        return ParametersInfoUtils.getParameterAnnotation(paramsInfo, parameterName, JcrPath.class);
+    }
+
+    private void checkMandatoryParameters() throws SkipManageContentTagException {
+        if (templateQuery == null && hippoBean == null && parameterName == null) {
+            throw new SkipManageContentTagException("Skipping manageContent tag because neither 'templateQuery', " +
+                    "'hippobean' or 'parameterName' attribute specified.");
+        }
+    }
+
+    private void checkRootPath() throws ManageContentTagException {
+        if (rootPath == null) {
+            return;
+        }
+
+        if (isRelativePathParameter() && StringUtils.startsWith(rootPath, "/")) {
+            final String warning = String.format("Ignoring manageContent tag in template '%s' for component parameter '%s':"
+                            + " the @%s annotation of the parameter makes it store a relative path to the"
+                            + " content root of the channel while the 'rootPath' attribute of the manageContent"
+                            + " tag points to the absolute path '%s'."
+                            + " Either make the root path relative to the channel content root,"
+                            + " or make the component parameter store an absolute path.",
+                    getComponentRenderPath(), parameterName, JcrPath.class.getSimpleName(), rootPath);
+            throw new ManageContentTagException(warning);
+        }
+
+        final String absoluteRootPath = getAbsoluteRootPath();
 
         try {
-            final Node rootPathNode = requestContext.getSession().getNode(absoluteRootPath);
+            final Node rootPathNode = cmsRequestContext.getSession().getNode(absoluteRootPath);
             if (!rootPathNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !rootPathNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
                 log.warn("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath of manageContent tag"
                         + " in template '{}' are ignored.", rootPath, getComponentRenderPath());
-                rootPath = null;
-                defaultPath = null;
-                absoluteRootPath = null;
+                rootPath = defaultPath = null;
             }
         } catch (final PathNotFoundException e) {
             log.warn("Rootpath '{}' does not exist. Parameters rootPath and defaultPath of manageContent tag"
                     + " in template '{}' are ignored.", rootPath, getComponentRenderPath());
-            rootPath = null;
-            defaultPath = null;
-            absoluteRootPath = null;
+            rootPath = defaultPath = null;
+        } catch (RepositoryException e) {
+            throw new ManageContentTagException("Exception while checking rootPath parameter for manageContent tag " +
+                    "in template '" + getComponentRenderPath() + "'.", e);
         }
-        return absoluteRootPath;
+    }
+
+    private boolean isRelativePathParameter() {
+        return jcrPath != null && jcrPath.isRelative();
+    }
+
+    private void processHippoBean() throws ManageContentTagException, SkipManageContentTagException {
+        if (hippoBean == null) {
+            return;
+        }
+
+        final HippoNode documentNode = (HippoNode) hippoBean.getNode();
+        try {
+            final Node editNode = documentNode.getCanonicalNode();
+            if (editNode == null) {
+                throw new SkipManageContentTagException("Cannot create a manageContent tag, " +
+                        "cannot find canonical node of '" + documentNode.getPath() + "'");
+            }
+
+            final Node handleNode = getHandleNodeIfIsAncestor(editNode);
+            if (handleNode == null) {
+                throw new ManageContentTagException("Could not find handle node of " + editNode.getPath());
+            }
+
+            log.debug("The node path for the manageContent tag is '{}'", handleNode.getPath());
+            write(MANAGE_CONTENT_UUID, handleNode.getIdentifier());
+        } catch (final RepositoryException e) {
+            throw new ManageContentTagException("Error while retrieving the handle of '"
+                    + JcrUtils.getNodePathQuietly(hippoBean.getNode()) + "', skipping manageContent tag", e);
+        }
+    }
+
+    private void processTemplateQuery() {
+        write(MANAGE_CONTENT_TEMPLATE_QUERY, templateQuery);
+    }
+
+    private void processParameterName() {
+        write(MANAGE_CONTENT_PARAMETER_NAME, parameterName);
+
+        if (jcrPath != null) {
+            write(MANAGE_CONTENT_PICKER_CONFIGURATION, jcrPath.pickerConfiguration());
+            write(MANAGE_CONTENT_PICKER_INITIAL_PATH, getPickerInitialPath(jcrPath));
+            write(MANAGE_CONTENT_PICKER_REMEMBERS_LAST_VISITED, Boolean.toString(jcrPath.pickerRemembersLastVisited()));
+
+            final String pickerRootPath = getFirstNonBlankString(jcrPath.pickerRootPath(), getAbsoluteRootPath(), getChannelRootPath());
+            write(MANAGE_CONTENT_PICKER_ROOT_PATH, pickerRootPath);
+
+            final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
+            write(MANAGE_CONTENT_PICKER_SELECTABLE_NODE_TYPES, nodeTypes);
+        }
+
+        if (parameterName != null) {
+            final String parameterValue = getParameterValue();
+            write(MANAGE_CONTENT_PARAMETER_VALUE, parameterValue);
+            write(MANAGE_CONTENT_PARAMETER_VALUE_IS_RELATIVE_PATH, Boolean.toString(isRelativePathParameter()));
+        }
+    }
+
+    private void processPaths() {
+        write(MANAGE_CONTENT_ROOT_PATH, rootPath);
+        write(MANAGE_CONTENT_DEFAULT_PATH, defaultPath);
+    }
+
+    private String getAbsoluteRootPath() {
+        if (rootPath == null) {
+            return null;
+        }
+
+        if (StringUtils.startsWith(rootPath, "/")) {
+            return rootPath;
+        } else {
+            return "/" + cmsRequestContext.getSiteContentBasePath() + "/" + rootPath;
+        }
     }
 
     private String getComponentRenderPath() {
@@ -201,27 +307,19 @@ public class HstManageContentTag extends TagSupport {
         return componentConfiguration.getRenderPath();
     }
 
-    private String getAbsoluteRootPath(final HstRequestContext requestContext) {
-        if (StringUtils.startsWith(rootPath, "/")) {
-            return rootPath;
-        } else {
-            return "/" + requestContext.getSiteContentBasePath() + "/" + rootPath;
-        }
-    }
-
-    private String getComponentValue(final boolean isRelativePathParameter) {
+    private String getParameterValue() {
         if (parameterName == null) {
             return null;
         }
 
         final HstComponentWindow window = getCurrentComponentWindow();
-        final String prefixedParameterName = getPrefixedParameterName(window, parameterName);
-        final String componentValue = window.getParameter(prefixedParameterName);
+        final String prefixedParameterName = getPrefixedParameterName(window);
+        final String parameterValue = window.getParameter(prefixedParameterName);
 
-        if (componentValue != null && isRelativePathParameter) {
-            return getChannelRootPath() + "/" + componentValue;
+        if (parameterValue != null && isRelativePathParameter()) {
+            return getChannelRootPath() + "/" + parameterValue;
         }
-        return componentValue;
+        return parameterValue;
     }
 
     private HstComponentWindow getCurrentComponentWindow() {
@@ -229,88 +327,14 @@ public class HstManageContentTag extends TagSupport {
         return (HstComponentWindow) request.getAttribute(HST_COMPONENT_WINDOW);
     }
 
-    private String getPrefixedParameterName(final HstComponentWindow window, final String parameterName) {
+    private String getPrefixedParameterName(final HstComponentWindow window) {
         final Object parameterPrefix = window.getAttribute(RENDER_VARIANT);
 
         if (parameterPrefix == null || parameterPrefix.equals("")) {
             return parameterName;
         }
 
-        return ConfigurationUtils.createPrefixedParameterName(parameterPrefix.toString(), this.parameterName);
-    }
-
-    private JcrPath getJcrPath() {
-        if (parameterName == null) {
-            return null;
-        }
-
-        final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(HST_COMPONENT_WINDOW);
-        final HstComponent component = window.getComponent();
-        final ComponentConfiguration componentConfig = component.getComponentConfiguration();
-        final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
-        return ParameterUtils.getParameterAnnotation(paramsInfo, parameterName, JcrPath.class);
-    }
-
-    protected void cleanup() {
-        templateQuery = null;
-        rootPath = null;
-        defaultPath = null;
-        parameterName = null;
-        hippoBean = null;
-    }
-
-    private void write(final String documentId, final String componentValue, final JcrPath jcrPath,
-                       final boolean isRelativePathParameter, final String absoluteRootPath) throws IOException {
-        final JspWriter writer = pageContext.getOut();
-        final Map<String, Object> attributeMap = getAttributeMap(documentId, componentValue, jcrPath, isRelativePathParameter, absoluteRootPath);
-        final String comment = encloseInHTMLComment(toJSONMap(attributeMap));
-        writer.print(comment);
-    }
-
-    private Map<String, Object> getAttributeMap(final String documentId, final String componentValue, final JcrPath jcrPath,
-                                                final boolean isRelativePathParameter, final String absoluteRootPath) {
-        final Map<String, Object> result = new LinkedHashMap<>();
-        writeToMap(result, ChannelManagerConstants.HST_TYPE, "MANAGE_CONTENT_LINK");
-        writeToMap(result, "uuid", documentId);
-        writeToMap(result, "templateQuery", templateQuery);
-        writeToMap(result, "rootPath", rootPath);
-        writeToMap(result, "defaultPath", defaultPath);
-        writeToMap(result, "parameterName", parameterName);
-
-        if (parameterName != null) {
-            writeToMap(result, "parameterValueIsRelativePath", Boolean.toString(isRelativePathParameter));
-            writeToMap(result, "parameterValue", componentValue);
-        }
-
-        if (jcrPath != null) {
-            writeToMap(result, "pickerConfiguration", jcrPath.pickerConfiguration());
-            writeToMap(result, "pickerInitialPath", getPickerInitialPath(jcrPath));
-            writeToMap(result, "pickerRemembersLastVisited", Boolean.toString(jcrPath.pickerRemembersLastVisited()));
-
-            final String pickerRootPath = getFirstNonBlankString(jcrPath.pickerRootPath(), absoluteRootPath, getChannelRootPath());
-            writeToMap(result, "pickerRootPath", pickerRootPath);
-
-            final String nodeTypes = Arrays.stream(jcrPath.pickerSelectableNodeTypes()).collect(Collectors.joining(","));
-            writeToMap(result, "pickerSelectableNodeTypes", nodeTypes);
-        }
-
-        return result;
-    }
-
-    private static void writeToMap(final Map<String, Object> result, final String key, final String value) {
-        if (StringUtils.isNotEmpty(value)) {
-            result.put(key, value);
-        }
-    }
-
-    /**
-     * Get the first String that is not blank from a number of Strings.
-     *
-     * @param strings variable list of Strings
-     * @return first non-null and not empty String or null if all are blank
-     */
-    private String getFirstNonBlankString(final String ... strings) {
-        return Arrays.stream(strings).filter(StringUtils::isNotBlank).findFirst().orElse(null);
+        return ConfigurationUtils.createPrefixedParameterName(parameterPrefix.toString(), parameterName);
     }
 
     private String getPickerInitialPath(final JcrPath jcrPath) {
@@ -321,6 +345,38 @@ public class HstManageContentTag extends TagSupport {
         } else {
             return prependRootPath + (prependRootPath.endsWith("/") ? "" : "/") + pickerInitialPath;
         }
+    }
+
+    private String getChannelRootPath() {
+        final ResolvedMount resolvedMount = cmsRequestContext.getResolvedMount();
+        return resolvedMount.getMount().getContentPath();
+    }
+
+    private void write(final String key, final String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            result.put(key, value);
+        }
+    }
+
+    private void generateHtmlComment() throws JspException {
+        try {
+            final JspWriter writer = pageContext.getOut();
+            final String comment = encloseInHTMLComment(toJSONMap(result));
+            writer.print(comment);
+        } catch (final IOException ignore) {
+            throw new JspException("manageContent tag exception in template '" + getComponentRenderPath()
+                    + "': cannot write to the output writer.");
+        }
+    }
+
+    /**
+     * Get the first String that is not blank from a number of Strings.
+     *
+     * @param strings variable list of Strings
+     * @return first non-null and not empty String or null if all are blank
+     */
+    private static String getFirstNonBlankString(final String... strings) {
+        return Arrays.stream(strings).filter(StringUtils::isNotBlank).findFirst().orElse(null);
     }
 
     /*
@@ -342,37 +398,19 @@ public class HstManageContentTag extends TagSupport {
         return getHandleNodeIfIsAncestor(currentNode.getParent(), rootNode);
     }
 
-    public void setParameterName(final String parameterName) {
-        if (StringUtils.isBlank(parameterName)) {
-            log.warn("The parameterName attribute of a manageContent tag in template '{}' is set to '{}'."
-                    + " Expected the name of an HST component parameter instead.", getComponentRenderPath(), parameterName);
+    private static class ManageContentTagException extends Exception {
+        ManageContentTagException(final String message) {
+            super(message);
         }
-        this.parameterName = parameterName;
-    }
 
-    public void setDefaultPath(final String defaultPath) {
-        this.defaultPath = defaultPath;
-    }
-
-    public void setHippobean(final HippoBean hippoBean) {
-        this.hippoBean = hippoBean;
-    }
-
-    public void setRootPath(final String rootPath) {
-        this.rootPath = rootPath;
-    }
-
-    public void setTemplateQuery(final String templateQuery) {
-        if (StringUtils.isBlank(templateQuery)) {
-            log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
-                    + " Expected the name of a template query instead.", getComponentRenderPath(), templateQuery);
+        ManageContentTagException(final String message, final Throwable cause) {
+            super(message, cause);
         }
-        this.templateQuery = templateQuery;
+    }
+
+    private static class SkipManageContentTagException extends Exception {
+        SkipManageContentTagException(final String message) {
+            super(message);
+        }
     }
 }
-
-
-
-
-
-

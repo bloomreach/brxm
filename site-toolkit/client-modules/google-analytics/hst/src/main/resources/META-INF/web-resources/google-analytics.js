@@ -15,7 +15,9 @@
  */
 
 var _gaq = _gaq || [];
-_gaq.push( [ '_setAccount', Hippo_Ga_AccountId ]);
+if (typeof(Hippo_Ga_AccountId) != 'undefined' && Hippo_Ga_AccountId.length > 0) {
+	_gaq.push( [ '_setAccount', Hippo_Ga_AccountId ]);	
+}
 if (typeof(Hippo_Ga_Documents) != 'undefined' && Hippo_Ga_Documents.length > 0) {
     for (var i = 0; i < Hippo_Ga_Documents.length; i++) {
         _gaq.push( [ '_trackPageview', Hippo_Ga_Documents[i] ]);
