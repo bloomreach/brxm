@@ -20,9 +20,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import org.hippoecm.repository.HippoStdNodeType;
-import org.onehippo.repository.scxml.BranchFeedbackAction;
-
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
@@ -106,6 +103,21 @@ public class HintsBuilder {
         return this;
     }
 
+    public HintsBuilder obtainEditableInstance(boolean value) {
+        actions.put(ACTION_OBTAIN_EDITABLE_INSTANCE, value);
+        return this;
+    }
+
+    public HintsBuilder commitEditableInstance(boolean value) {
+        actions.put(ACTION_COMMIT_EDITABLE_INSTANCE, value);
+        return this;
+    }
+
+    public HintsBuilder disposeEditableInstance(boolean value) {
+        actions.put(ACTION_DISPOSE_EDITABLE_INSTANCE, value);
+        return this;
+    }
+
     public HintsBuilder checkModified(boolean checkModified) {
         actions.put(ACTION_CHECK_MODIFIED, checkModified);
         return this;
@@ -142,7 +154,7 @@ public class HintsBuilder {
 
     @SuppressWarnings("unchecked")
     protected TreeMap<String, Boolean> getRequestActions(String requestId) {
-        TreeMap<String, TreeMap<String, Boolean>> requests = (TreeMap<String, TreeMap<String, Boolean>>)info.get(INFO_REQUESTS);
+        TreeMap<String, TreeMap<String, Boolean>> requests = (TreeMap<String, TreeMap<String, Boolean>>) info.get(INFO_REQUESTS);
         if (requests == null) {
             requests = new TreeMap<>();
             info.put(INFO_REQUESTS, requests);

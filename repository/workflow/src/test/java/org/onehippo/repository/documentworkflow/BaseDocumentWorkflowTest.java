@@ -16,9 +16,12 @@
 
 package org.onehippo.repository.documentworkflow;
 
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -144,4 +147,21 @@ public class BaseDocumentWorkflowTest {
         variant.addMixin(HippoNodeType.NT_REQUEST);
         return variant;
     }
+
+    protected void assertMatchingKeyValues(Map<String, ?> actions, Map<String, ?> expected) {
+
+        SoftAssertions.assertSoftly(softAssertions -> {
+                    expected.forEach((key, value) ->
+                            softAssertions
+                                    .assertThat(actions.get(key))
+                                    .as(key)
+                                    .isEqualTo(value)
+                    );
+                    softAssertions.assertThat(actions.keySet())
+                            .containsOnlyElementsOf(expected.keySet());
+
+                }
+        );
+    }
+
 }
