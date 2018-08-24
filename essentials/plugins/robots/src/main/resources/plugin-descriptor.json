@@ -43,7 +43,7 @@
     },
     {
       "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-robotstxt-addon-hcm-hst",
+      "artifactId": "hippo-plugin-robotstxt-addon-hcm-site",
       "scope": "compile",
       "targetPom": "hcm-hst-dependencies"
     }

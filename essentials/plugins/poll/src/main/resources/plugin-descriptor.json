@@ -48,7 +48,7 @@
     },
     {
       "groupId": "org.onehippo.cms7",
-      "artifactId": "hippo-plugin-poll-addon-hcm-hst",
+      "artifactId": "hippo-plugin-poll-addon-hcm-site",
       "scope": "compile",
       "targetPom": "hcm-hst-dependencies"
     }
