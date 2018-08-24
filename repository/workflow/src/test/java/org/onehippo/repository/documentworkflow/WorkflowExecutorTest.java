@@ -83,7 +83,8 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 editing_branch(),
                 viewing_branch_unpublished_frozen_node(),
                 viewing_branch_published_frozen_node(),
-                viewing_branch_published_and_unpublished_frozen_node()
+                viewing_branch_published_and_unpublished_frozen_node(),
+                viewing_branch_published_and_unpublished_modified_frozen_node()
         );
     }
 
@@ -306,6 +307,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                     .branch(false)
                     .requestDelete(false)
                     .requestDepublication(false)
+                    //.retrieveVersion() //TODO(mrop) adjust scxml
                     .listVersions()
                     .requestPublication(false)
                     .listBranches()
@@ -354,14 +356,14 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                     .commitEditableInstance(false)
                     .disposeEditableInstance(false)
                     .depublishBranch(true)
-                    .publishBranch(true)
+                    .publishBranch(false) //TODO(mrop) Adjust scxml
                     .reintegrateBranch(false)
                     .checkModified(false)
                     .branch(false)
                     .requestDelete(false)
                     .requestDepublication(false)
                     .listVersions()
-                    .retrieveVersion()
+                    //.retrieveVersion() //TODO(mrop) Adjust scxml
                     .requestPublication(false)
                     .listBranches()
                     .checkoutBranch(false)
