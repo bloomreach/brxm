@@ -1,5 +1,5 @@
 <%--
-  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,4 +14,4 @@
   limitations under the License.
 --%>
 <%@ include file="/WEB-INF/jspf/htmlTags.jspf" %>
-<p>Take a look at the <a href="http://content-blocks.forge.onehippo.org/">Documentation</a>!</p>
+<p>Take a look at the <a href="https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html">Documentation</a>!</p>
