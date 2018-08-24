@@ -29,6 +29,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -57,18 +58,9 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
  */
 public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
-
-    private static final MockNode ROOT = MockNode.root();
-    private static final MockAccessManagedSession SESSION = new MockAccessManagedSession(ROOT);
-    private static final MockNode HANDLE = ROOT;
-
-    static {
-        try {
-            ROOT.addNode("document-1", NT_HANDLE);
-        } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private MockNode root;
+    private MockAccessManagedSession session;
+    private MockNode handle;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -80,22 +72,30 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         destroyDocumentWorkflowSCXMLRegistry();
     }
 
+    @Before
+    public void setUp() throws RepositoryException {
+        root = MockNode.root();
+        session = new MockAccessManagedSession(root);
+        handle = root.addNode("document-1", NT_HANDLE);
+    }
+
+
     @Test
     public void editing_master() throws WorkflowException, RepositoryException {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(emptySet());
         expect(data.getBranchId()).andStubReturn("master");
         replay(data);
 
-        final MockNode draftVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode draftVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant draft = new DocumentVariant(draftVariant);
         draft.setState(HippoStdNodeType.DRAFT);
         draft.setHolder("testuser");
-        SESSION.setPermissions(draftVariant.getPath(), "hippo:author", true);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.DRAFT, draft);
 
 
@@ -127,20 +127,20 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(emptySet());
         expect(data.getBranchId()).andStubReturn(branchId);
         replay(data);
 
-        final MockNode draftVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode draftVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant draft = new DocumentVariant(draftVariant);
         draftVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         draftVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, branchId);
 
         draft.setState(HippoStdNodeType.DRAFT);
         draft.setHolder("testuser");
-        SESSION.setPermissions(draftVariant.getPath(), "hippo:author", true);
+        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.DRAFT, draft);
 
 
@@ -173,7 +173,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -184,13 +184,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode unpublishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode unpublishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant unpublished = new DocumentVariant(unpublishedVariant);
         unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
 
         unpublished.setState(HippoStdNodeType.UNPUBLISHED);
-        SESSION.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.UNPUBLISHED, unpublished);
 
 
@@ -224,7 +224,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -235,13 +235,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode unpublishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode unpublishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant unpublished = new DocumentVariant(unpublishedVariant);
         unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
 
         unpublished.setState(HippoStdNodeType.UNPUBLISHED);
-        SESSION.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.UNPUBLISHED, unpublished);
 
 
@@ -275,7 +275,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -286,13 +286,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode publishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant published = new DocumentVariant(publishedVariant);
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
 
         published.setState(HippoStdNodeType.PUBLISHED);
-        SESSION.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.PUBLISHED, published);
 
 
@@ -325,7 +325,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -336,13 +336,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode publishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant published = new DocumentVariant(publishedVariant);
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
 
         published.setState(HippoStdNodeType.PUBLISHED);
-        SESSION.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.PUBLISHED, published);
 
 
@@ -375,7 +375,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -386,13 +386,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode publishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant published = new DocumentVariant(publishedVariant);
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
 
         published.setState(HippoStdNodeType.PUBLISHED);
-        SESSION.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.PUBLISHED, published);
 
 
@@ -426,7 +426,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(HANDLE);
+        expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
@@ -437,13 +437,13 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(true);
         replay(data);
 
-        final MockNode publishedVariant = HANDLE.addNode("document-1", "hippo:variant");
+        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
         final DocumentVariant published = new DocumentVariant(publishedVariant);
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
         publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
 
         published.setState(HippoStdNodeType.PUBLISHED);
-        SESSION.setPermissions(publishedVariant.getPath(), "hippo:author", true);
+        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
         variantsMap.put(HippoStdNodeType.PUBLISHED, published);
 
 
@@ -470,7 +470,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
     }
 
     private void assertExpectedActions(final DocumentHandle data, final Map<String, ?> expectedActions) throws RepositoryException, WorkflowException {
-        final MockWorkflowContext testuserContext = new MockWorkflowContext("testuser", SESSION);
+        final MockWorkflowContext testuserContext = new MockWorkflowContext("testuser", session);
         final SCXMLWorkflowContext context = new SCXMLWorkflowContext("documentworkflow", testuserContext);
         SCXMLWorkflowExecutor scxmlWorkflowExecutor = new SCXMLWorkflowExecutor<SCXMLWorkflowContext, SCXMLWorkflowData>(context, data);
         scxmlWorkflowExecutor.start(data.getBranchId());
