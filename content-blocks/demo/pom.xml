@@ -53,7 +53,7 @@
 
   <dependencyManagement>
     <dependencies>
-      
+
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>org.apache.taglibs</groupId>
@@ -84,7 +84,7 @@
 
     </dependencies>
   </dependencyManagement>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
@@ -184,7 +184,7 @@
         </plugins>
       </build>
     </profile>
-    
+
   </profiles>
 
 </project>

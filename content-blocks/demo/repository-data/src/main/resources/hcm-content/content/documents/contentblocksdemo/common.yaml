@@ -1,6 +1,6 @@
 /content/documents/contentblocksdemo/common:
   jcr:primaryType: hippostd:folder
-  jcr:mixinTypes: ['hippotranslation:translated', 'hippo:named', 'mix:referenceable']
+  jcr:mixinTypes: ['hippo:named', 'hippotranslation:translated', 'mix:referenceable']
   jcr:uuid: 80831ad8-04e8-4c8f-b45b-104d8f77ec24
   hippo:name: Common
   hippostd:foldertype: [new-translated-folder, new-document]
@@ -18,7 +18,6 @@
       contentblocksdemo:summary: ''
       contentblocksdemo:title: Content Blocks Demo
       hippo:availability: [live]
-      hippostd:holder: admin
       hippostd:state: published
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
@@ -34,7 +33,7 @@
           hippostd:content: "<p>This is the demo site for the Hippo Forge Content\
             \ Blocks Plugin.</p> \n<p>The purpose of this site is to show how the\
             \ Content Blocks Plugin can be used in a project.</p> \n<p>For more information\
-            \ on how to use this plugin check out the \n<a href=\"http://content-blocks.forge.onehippo.org/\"\
+            \ on how to use this plugin check out the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html\"\
             >Documentation</a></p>"
     /homepage[2]:
       jcr:primaryType: contentblocksdemo:providercompounddocument
@@ -57,11 +56,11 @@
           hippostd:content: "<p>This is the demo site for the Hippo Forge Content\
             \ Blocks Plugin.</p> \n<p>The purpose of this site is to show how the\
             \ Content Blocks Plugin can be used in a project.</p> \n<p>For more information\
-            \ on how to use this plugin check out the \n<a href=\"http://content-blocks.forge.onehippo.org/\"\
+            \ on how to use this plugin check out the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html\"\
             >Documentation</a></p>"
     /homepage[3]:
       jcr:primaryType: contentblocksdemo:providercompounddocument
-      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable', 'mix:referenceable']
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
       jcr:uuid: 5415d5fc-950c-42a8-bd6a-c0c10d7de2bc
       contentblocksdemo:summary: ''
       contentblocksdemo:title: Content Blocks Demo
@@ -80,7 +79,7 @@
           hippostd:content: "<p>This is the demo site for the Hippo Forge Content\
             \ Blocks Plugin.</p> \n<p>The purpose of this site is to show how the\
             \ Content Blocks Plugin can be used in a project.</p> \n<p>For more information\
-            \ on how to use this plugin check out the \n<a href=\"http://content-blocks.forge.onehippo.org/\"\
+            \ on how to use this plugin check out the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/about.html\"\
             >Documentation</a></p>"
   /content-blocks-by-list:
     jcr:primaryType: hippo:handle
@@ -96,7 +95,7 @@
       hippostd:state: draft
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-08-25T11:34:26.605+02:00
-      hippostdpubwf:lastModificationDate: 2014-09-01T10:43:57.738+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-17T15:01:58.687+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotranslation:id: 9eeda3fb-d6b4-4ff9-b786-da18b7d3d115
       hippotranslation:locale: en
@@ -132,7 +131,7 @@
             \ \n<p>(i.e. this text is in a separate text block)</p>"
     /content-blocks-by-list[2]:
       jcr:primaryType: contentblocksdemo:contentblocksdocument
-      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable', 'mix:referenceable']
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
       jcr:uuid: 4fcb3914-ba75-4b04-83b9-836d97e03615
       contentblocksdemo:title: Content Blocks by list configuration
       hippo:availability: [preview]
@@ -232,7 +231,7 @@
       hippostd:state: draft
       hippostdpubwf:createdBy: admin
       hippostdpubwf:creationDate: 2014-08-22T11:28:34.765+02:00
-      hippostdpubwf:lastModificationDate: 2014-09-01T10:44:09.200+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-17T15:01:13.017+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippotranslation:id: a417e91a-22e9-468b-a143-18b697a772d9
       hippotranslation:locale: en
@@ -240,10 +239,11 @@
         jcr:primaryType: contentblocksdemo:textblock
         /contentblocksdemo:text:
           jcr:primaryType: hippostd:html
-          hippostd:content: |-
-            <p>This document has the content blocks added to the docment type using a compound provider (which is a compound).&nbsp;</p>
-                          <p>See step 2.2b in the
-                          <a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank">CMS Configuration page</a> in the documentation for more information.</p>
+          hippostd:content: "<p>This document has the content blocks added to the\
+            \ docment type using a compound provider (which is a compound).&nbsp;</p>\
+            \ \n<p>See step 2.2b in the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html\"\
+            \ target=\"_blank\">CMS Configuration page</a> in the documentation for\
+            \ more information.</p>"
       /contentblocksdemo:contentblocksitem[2]:
         jcr:primaryType: contentblocksdemo:videoblock
         contentblocksdemo:video: AR3mVEZOEok
@@ -264,7 +264,7 @@
           hippo:values: []
     /content-blocks-by-provider[2]:
       jcr:primaryType: contentblocksdemo:providercompounddocument
-      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable', 'mix:referenceable']
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
       jcr:uuid: 450157b7-934a-432b-afba-1bc4831dbaaa
       contentblocksdemo:title: Content Blocks by compound provider and links style
         rendering
@@ -282,7 +282,7 @@
           jcr:primaryType: hippostd:html
           hippostd:content: "<p>This document has the content blocks added to the\
             \ docment type using a compound provider (which is a compound).&nbsp;</p>\
-            \ \n<p>See step 2.2b in the \n<a href=\"http://content-blocks.forge.onehippo.org/cmsconfiguration.html\"\
+            \ \n<p>See step 2.2b in the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html\"\
             \ target=\"_blank\">CMS Configuration page</a> in the documentation for\
             \ more information.</p>"
       /contentblocksdemo:contentblocksitem[2]:
@@ -324,7 +324,7 @@
           jcr:primaryType: hippostd:html
           hippostd:content: "<p>This document has the content blocks added to the\
             \ docment type using a compound provider (which is a compound).&nbsp;</p>\
-            \ \n<p>See step 2.2b in the \n<a href=\"http://content-blocks.forge.onehippo.org/cmsconfiguration.html\"\
+            \ \n<p>See step 2.2b in the \n<a href=\"https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html\"\
             \ target=\"_blank\">CMS Configuration page</a> in the documentation for\
             \ more information.</p>"
       /contentblocksdemo:contentblocksitem[2]:

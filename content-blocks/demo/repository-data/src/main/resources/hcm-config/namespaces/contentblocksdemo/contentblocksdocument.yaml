@@ -84,3 +84,4 @@ definitions:
             wicket.model: ${wicket.model}
             /cluster.options:
               jcr:primaryType: frontend:pluginconfig
+              maxitems: 6
