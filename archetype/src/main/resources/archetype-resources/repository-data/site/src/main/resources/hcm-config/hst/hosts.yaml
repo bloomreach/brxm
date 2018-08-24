@@ -5,7 +5,7 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:hosts/dev-localhost:
+    /hst:hst/hst:hosts/dev-localhost:
       .meta:residual-child-node-category: content
       jcr:primaryType: hst:virtualhostgroup
       hst:cmslocation: http://localhost:8080/cms

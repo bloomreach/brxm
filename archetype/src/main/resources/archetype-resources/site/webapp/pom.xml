@@ -29,6 +29,11 @@
       <artifactId>${artifactId}-components</artifactId>
       <version>${version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-hcm-site</artifactId>
+      <version>${dollar}{hippo.hst.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

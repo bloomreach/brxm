@@ -5,7 +5,7 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations:
+    /hst:hst/hst:configurations:
       /common:
         jcr:primaryType: hst:configuration
         /hst:sitemap:

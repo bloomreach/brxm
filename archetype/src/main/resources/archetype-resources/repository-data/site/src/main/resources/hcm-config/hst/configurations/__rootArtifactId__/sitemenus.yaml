@@ -5,5 +5,5 @@
 #set($empty = '')
 definitions:
   config:
-    /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:sitemenus:
+    /hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:sitemenus:
       jcr:primaryType: hst:sitemenus
