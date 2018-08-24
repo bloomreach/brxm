@@ -72,12 +72,11 @@ public class GoogleAnalyticsAccountIdTagTest {
         tag.setValue(null);
         assertNull(tag.getValue());
 
-        try {
-            tag.doStartTag();
-            tag.doEndTag();
-            fail("Should have thrown a JspException due to the empty GA account ID.");
-        } catch (JspException jspEx) {
-            // expected...
-        }
-    }
+		tag.doStartTag();
+		tag.doEndTag();
+
+		assertEquals("", response.getContentAsString());
+
+		assertNull(tag.getValue());
+	}
 }
