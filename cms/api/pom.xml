@@ -81,6 +81,22 @@
       <artifactId>wicket-core</artifactId>
       <scope>compile</scope>
     </dependency>
+    <!--
+      Use a newer version of commons-fileupload than pulled in by wicket-core 7.10
+      TODO: remove override once wicket-core also depends on commons-fileupload 1.3.3 or higher
+    -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.3.3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>

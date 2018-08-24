@@ -225,7 +225,7 @@ definitions:
           plugin.class: org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin
       /hippostd:folder:
         jcr:primaryType: frontend:plugincluster
-        frontend:properties: [list.page.size, list.view.size]
+        frontend:properties: [list.page.size, list.view.size, document.type.show]
         frontend:references: [model.folder, model.document]
         frontend:services: [wicket.id]
         list.page.size: '50'
