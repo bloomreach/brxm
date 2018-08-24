@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -339,10 +339,6 @@
   margin: 0 0 5px;
   padding-top: 0;
   border: none;
-}
-
-#componentPropertiesWindow .create-document-link {
-  font-size: 12px;
 }
 
 #componentPropertiesWindow .x-panel-body,
