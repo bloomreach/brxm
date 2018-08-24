@@ -17,19 +17,19 @@ package org.onehippo.cm.engine.extension;
 
 import org.onehippo.cm.engine.autoexport.ModuleInfo;
 
-import static org.onehippo.cm.engine.extension.ExtensionIntegrationTest.EXTENSIONS_INTEGRATION_TEST;
+import static org.onehippo.cm.engine.extension.HcmSiteIntegrationTest.EXTENSIONS_INTEGRATION_TEST;
 
-public class ExtensionModuleInfo extends ModuleInfo {
+public class HcmSiteModuleInfo extends ModuleInfo {
 
-    public ExtensionModuleInfo(final String fixtureName) {
+    public HcmSiteModuleInfo(final String fixtureName) {
         super(fixtureName);
     }
 
-    public ExtensionModuleInfo(final String fixtureName, final String moduleName) {
+    public HcmSiteModuleInfo(final String fixtureName, final String moduleName) {
         super(fixtureName, moduleName);
     }
 
-    public ExtensionModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
+    public HcmSiteModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
         super(fixtureName, moduleName, inName, outName);
     }
 

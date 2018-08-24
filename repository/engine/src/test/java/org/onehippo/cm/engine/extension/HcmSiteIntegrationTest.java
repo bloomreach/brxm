@@ -59,7 +59,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
-public class ExtensionIntegrationTest {
+public class HcmSiteIntegrationTest {
 
     static final String EXTENSIONS_INTEGRATION_TEST = "ExtensionsIntegrationTest";
 
@@ -294,7 +294,7 @@ public class ExtensionIntegrationTest {
         private final Path projectPath;
 
         public Fixture(final String fixtureName) throws IOException {
-            this(new ExtensionModuleInfo(fixtureName));
+            this(new HcmSiteModuleInfo(fixtureName));
         }
 
         private Fixture(final ModuleInfo... modules) throws IOException {
