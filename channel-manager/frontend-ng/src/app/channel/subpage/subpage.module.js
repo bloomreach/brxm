@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import SubpageToolbarCtrl from './toolbar.controller';
-import subpageToolbarDirective from './toolbar.directive';
-import subpageContentDirective from './content/subpageContent.directive';
+import subpageContentComponent from './content/subpageContent.component';
+import subpageToolbarComponent from './toolbar/subpageToolbar.component';
 
 const channelSubpageModule = angular
   .module('hippo-cm.channel.subpage', [])
-  .controller('SubpageToolbarCtrl', SubpageToolbarCtrl)
-  .directive('subpageToolbar', subpageToolbarDirective)
-  .directive('subpageContent', subpageContentDirective);
+  .component('subpageContent', subpageContentComponent)
+  .component('subpageToolbar', subpageToolbarComponent);
 
 export default channelSubpageModule;

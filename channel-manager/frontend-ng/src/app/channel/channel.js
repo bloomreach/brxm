@@ -15,34 +15,34 @@
  */
 
 import channelComponent from './channel.component';
-import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import channelRelevanceModule from './relevance/relevance';
+import channelConfig from './channel.config';
 import channelService from './channel.service';
-import channelSidePanelModule from './sidePanels/sidePanel';
-import channelSubpageModule from './subpage/subpage';
-import config from './channel.config';
+
+import hippoIframeModule from './hippoIframe/hippoIframe';
 import maskModule from './mask/mask.module';
 import menuModule from './menu/menu.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
-
 import projectToggleModule from './projectToggle/projectToggle.module';
+import relevanceModule from './relevance/relevance';
+import sidePanelModule from './sidePanels/sidePanel';
 import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
-import viewportsModule from './viewportToggle/viewportToggle.module';
+import subpageModule from './subpage/subpage.module';
+import viewportToggleModule from './viewportToggle/viewportToggle.module';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
-    channelHippoIframeModule.name,
-    channelRelevanceModule.name,
-    channelSidePanelModule.name,
-    channelSubpageModule.name,
-    overlayToggleModule.name,
+    hippoIframeModule.name,
     maskModule.name,
     menuModule.name,
+    overlayToggleModule.name,
     projectToggleModule.name,
+    relevanceModule.name,
+    sidePanelModule.name,
     siteMenuEditorModule.name,
-    viewportsModule.name,
+    subpageModule.name,
+    viewportToggleModule.name,
   ])
-  .config(config)
+  .config(channelConfig)
   .component('channel', channelComponent)
   .service('ChannelService', channelService);
 
