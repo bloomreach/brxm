@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -288,9 +288,6 @@
       }
 
       switch (xtype) {
-        case 'documentcombobox':
-          field = this._addDocumentComboBox(record, defaultValue, value);
-          break;
         case 'combo':
           field = this._addComboBox(record, defaultValue, value);
           break;
@@ -299,146 +296,6 @@
       }
 
       return field;
-    },
-
-    _addDocumentComboBox: function (record, defaultValue, initialValue) {
-      var comboStore, propertyField, createDocumentLinkId;
-
-      comboStore = new Ext.data.JsonStore({
-        root: 'data',
-        url: this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?Force-Client-Host=true',
-        fields: ['path']
-      });
-
-      propertyField = this.add({
-        fieldLabel: record.get('label'),
-        xtype: 'combo',
-        allowBlank: !record.get('required'),
-        name: record.get('name'),
-        value: initialValue,
-        defaultValue: defaultValue,
-        disabled: this.isReadOnly,
-        store: comboStore,
-        forceSelection: true,
-        triggerAction: 'all',
-        displayField: 'path',
-        valueField: 'path',
-        listeners: {
-          afterrender: fixComboLeftPadding,
-          select: function (combo, comboRecord) {
-            record.set('value', comboRecord.get('path') || defaultValue);
-            record.commit();
-          }
-        }
-      });
-
-      if (record.get('allowCreation') && !this.isReadOnly) {
-        createDocumentLinkId = Ext.id();
-
-        this.add({
-          bodyCfg: {
-            tag: 'div',
-            cls: 'create-document-link',
-            html: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-link-text'].format('<a href="#" id="' + createDocumentLinkId + '">&nbsp;', '&nbsp;</a>&nbsp;')
-          },
-          border: false
-        });
-
-        this.on('afterlayout', function () {
-          Ext.get(createDocumentLinkId).on("click", this._createDocument, this, {
-            docType: record.get('docType'),
-            docLocation: record.get('docLocation'),
-            comboId: propertyField.id
-          });
-        }, this, {single: true});
-      }
-
-      return propertyField;
-    },
-
-    _createDocument: function (ev, target, options) {
-      var createUrl, createDocumentWindow;
-
-      createUrl = this.composerRestMountUrl + '/' + this.mountId + './create';
-      createDocumentWindow = new Ext.Window({
-        title: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-window-title'],
-        height: 200,
-        width: 450,
-        modal: true,
-        items: [
-          {
-            xtype: 'form',
-            height: 200,
-            labelWidth: 120,
-            id: 'createDocumentForm',
-            defaults: {
-              labelSeparator: '',
-              anchor: '100%'
-            },
-            items: [
-              {
-                xtype: 'textfield',
-                fieldLabel: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-field-name'],
-                allowBlank: false
-              },
-              {
-                xtype: 'textfield',
-                disabled: true,
-                fieldLabel: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-field-location'],
-                value: options.docLocation
-              }
-            ]
-          }
-        ],
-        layout: 'fit',
-        buttons: [
-          {
-            cls: 'btn btn-default',
-            text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-button-create'],
-            handler: function () {
-              var createDocForm = Ext.getCmp('createDocumentForm').getForm();
-              createDocForm.submit();
-              options.docName = createDocForm.items.get(0).getValue();
-
-              if (options.docName === '') {
-                return;
-              }
-              createDocumentWindow.hide();
-
-              Ext.Ajax.request({
-                url: createUrl,
-                params: options,
-                headers: {
-                  'Force-Client-Host': 'true'
-                },
-                success: function () {
-                  Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
-                },
-                failure: function () {
-                  Hippo.Msg.alert(Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-message'],
-                    Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-failed'],
-                    function () {
-                      Hippo.ChannelManager.ChannelEditor.Instance.initComposer();
-                    }
-                  );
-                }
-              });
-
-            }
-          }
-        ]
-      });
-      createDocumentWindow.addButton(
-        {
-          cls: 'btn btn-default',
-          text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-create-new-document-button-cancel']
-        },
-        function () {
-          this.hide();
-        },
-        createDocumentWindow
-      );
-      createDocumentWindow.show();
     },
 
     _addComboBox: function (record, defaultValue, initialValue) {
