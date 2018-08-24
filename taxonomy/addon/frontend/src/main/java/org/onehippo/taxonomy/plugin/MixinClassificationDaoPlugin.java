@@ -1,12 +1,12 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.map.JcrValueList;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -55,11 +56,12 @@ public class MixinClassificationDaoPlugin extends Plugin implements Classificati
 
     /**{@inheritDoc} */
     @Override
-    public Classification getClassification(Node node) {
+    public Classification getClassification(final IModel<Node> nodeModel) {
         List<String> values;
         String nodePath = null;
         String canonicalKeyValue = null;
         try {
+            final Node node = nodeModel.getObject();
             nodePath = node.getPath();
 
             if (JcrHelper.isNodeType(node, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE)) {
@@ -80,7 +82,7 @@ public class MixinClassificationDaoPlugin extends Plugin implements Classificati
         } catch (RepositoryException e) {
             throw new RuntimeException("RepositoryException creating classification object for node with path " + nodePath, e);
         }
-        return new Classification(values, new JcrNodeModel(node), canonicalKeyValue);
+        return new Classification(values, nodeModel, canonicalKeyValue);
     }
 
     /**{@inheritDoc} */
