@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@ package org.onehippo.cms7.hst.ga.tags;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import javax.servlet.jsp.JspException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,12 +69,11 @@ public class GoogleAnalyticsAccountIdTagTest {
         tag.setValue(null);
         assertNull(tag.getValue());
 
-        try {
-            tag.doStartTag();
-            tag.doEndTag();
-            fail("Should have thrown a JspException due to the empty GA account ID.");
-        } catch (JspException jspEx) {
-            // expected...
-        }
-    }
+		tag.doStartTag();
+		tag.doEndTag();
+
+		assertEquals("", response.getContentAsString());
+
+		assertNull(tag.getValue());
+	}
 }
