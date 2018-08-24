@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.GenericHstComponent;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -37,6 +36,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentParamsScannerTest {
@@ -45,12 +45,24 @@ public class DocumentParamsScannerTest {
 
     @Test
     public void non_existing_component_class_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames("NonExistingClass", classLoader).size());
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn("NonExistingclass");
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+
+        replay(componentConfiguration);
+        
+        assertEquals(0, DocumentParamsScanner.getNames(componentConfiguration, classLoader).size());
     }
 
     @Test
     public void component_without_parametersInfo_returns_empty_set_parameters() {
-        assertEquals(0, DocumentParamsScanner.getNames(GenericHstComponent.class.getName(), classLoader).size());
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(null);
+        
+        replay(componentConfiguration);
+
+        assertEquals(0, DocumentParamsScanner.getNames(componentConfiguration, classLoader).size());
     }
 
     public static interface JcrPathParametersInfo {
@@ -63,56 +75,58 @@ public class DocumentParamsScannerTest {
     public static class JcrPathComponent extends GenericHstComponent {
     }
 
-
     @Test
     public void jcrPath_parameter() {
-        final Set<String> names = DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader);
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(1, names.size());
         assertTrue(names.contains("news-jcrPath"));
     }
 
-    public static interface DocumentLinkParametersInfo {
-        @Parameter(name = "news-documentLink", displayName = "Picked News")
-        @DocumentLink
+    public interface JcrPathParametersInfo2 {
+        @Parameter(name = "news-jcrPath-2", displayName = "Picked News")
+        @JcrPath()
         String getPickedNews();
     }
 
-    @ParametersInfo(type = DocumentLinkParametersInfo.class)
-    public static class DocumentLinkComponent extends GenericHstComponent {
+    @ParametersInfo(type = JcrPathParametersInfo2.class)
+    public static class JcrPathComponent2 extends GenericHstComponent {
     }
 
-    @Test
-    public void documentLink_parameter() {
-        final Set<String> names = DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader);
-        assertEquals(1, names.size());
-        assertTrue(names.contains("news-documentLink"));
-    }
-
-    public static interface JcrPathDocumentLinkParametersInfo {
+    public interface TwoJcrPathParametersInfo {
         @Parameter(name = "news-jcrPath", displayName = "Picked News")
         @JcrPath(isRelative = false, pickerInitialPath = "")
         String getPickedNewsJcrPath();
 
-        @Parameter(name = "news-documentLink", displayName = "Picked News")
-        @DocumentLink
-        String getPickedNewsDocumentLink();
+        @Parameter(name = "news-jcrPath-2", displayName = "Picked News")
+        @JcrPath()
+        String getPickedNewsJcrPath2();
     }
 
-    @ParametersInfo(type = JcrPathDocumentLinkParametersInfo.class)
-    public static class JcrPathDocumentLinkComponent extends GenericHstComponent {
+    @ParametersInfo(type = TwoJcrPathParametersInfo.class)
+    public static class TwoJcrPathsComponent extends GenericHstComponent {
     }
 
     @Test
-    public void jcrPath_and_documentLink_parameter_combined() {
-        final Set<String> names = DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader);
+    public void two_jcrPath_parameters_combined() {
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(TwoJcrPathsComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(TwoJcrPathParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
-        assertTrue(names.contains("news-documentLink"));
+        assertTrue(names.contains("news-jcrPath-2"));
     }
 
-
-    public static interface InheritanceParametersInfo extends JcrPathParametersInfo, DocumentLinkParametersInfo {
-
+    public interface InheritanceParametersInfo extends JcrPathParametersInfo, JcrPathParametersInfo2 {
     }
 
     @ParametersInfo(type = InheritanceParametersInfo.class)
@@ -120,31 +134,45 @@ public class DocumentParamsScannerTest {
     }
 
     @Test
-    public void jcrPath_and_documentLink_parameter_inheritance() {
-        final Set<String> names = DocumentParamsScanner.getNames(InheritanceComponent.class.getName(), classLoader);
+    public void jcrPaths_parameter_inheritance() {
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(InheritanceComponent.class.getName());
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(InheritanceParametersInfo.class.getName());
+
+        replay(componentConfiguration);
+
+        final Set<String> names = DocumentParamsScanner.getNames(componentConfiguration, classLoader);
         assertEquals(2, names.size());
         assertTrue(names.contains("news-jcrPath"));
-        assertTrue(names.contains("news-documentLink"));
+        assertTrue(names.contains("news-jcrPath-2"));
     }
-
 
     @Test
     public void component_scanning_cached() {
-        assertTrue(DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(JcrPathComponent.class.getName(), classLoader));
-        assertTrue(DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(DocumentLinkComponent.class.getName(), classLoader));
-        assertTrue(DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader) ==
-                DocumentParamsScanner.getNames(JcrPathDocumentLinkComponent.class.getName(), classLoader));
+        HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration.getComponentClassName()).andReturn(JcrPathComponent.class.getName()).times(2);
+        expect(componentConfiguration.getParametersInfoClassName()).andReturn(JcrPathParametersInfo.class.getName()).times(2);
+
+        HstComponentConfiguration componentConfiguration2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
+        expect(componentConfiguration2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName()).times(2);
+        expect(componentConfiguration2.getParametersInfoClassName()).andReturn(JcrPathParametersInfo2.class.getName()).times(2);
+
+        replay(componentConfiguration, componentConfiguration2);
+
+        assertSame(DocumentParamsScanner.getNames(componentConfiguration, classLoader), 
+                   DocumentParamsScanner.getNames(componentConfiguration, classLoader));
+
+        assertSame(DocumentParamsScanner.getNames(componentConfiguration2, classLoader), 
+                   DocumentParamsScanner.getNames(componentConfiguration2, classLoader));
     }
 
     @Test
-    public void jcrPath_and_documentLink_from_ComponentConfiguration() {
+    public void two_jcrPaths_from_ComponentConfiguration() {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
 
         expect(componentConfiguration.getComponentClassName()).andReturn(InheritanceComponent.class.getName());
         expect(componentConfiguration.getParameter(eq("news-jcrPath"))).andReturn("/jcrPathNews");
-        expect(componentConfiguration.getParameter(eq("news-documentLink"))).andReturn("/documentLinkNews");
+        expect(componentConfiguration.getParameter(eq("news-jcrPath-2"))).andReturn("/jcrPathTwoNews");
         expect(componentConfiguration.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         expect(componentConfiguration.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
         replay(componentConfiguration);
@@ -152,11 +180,11 @@ public class DocumentParamsScannerTest {
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(componentConfiguration, classLoader);
         assertEquals(2, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
-        assertTrue(documentPaths.contains("/documentLinkNews"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNews"));
     }
 
     @Test
-    public void jcrPath_and_documentLink_from_ComponentConfiguration_tree() {
+    public void two_jcrPaths_from_ComponentConfiguration_tree() {
         HstComponentConfiguration root = EasyMock.createNiceMock(HstComponentConfiguration.class);
         expect(root.getComponentClassName()).andReturn(GenericHstComponent.class.getName());
 
@@ -167,8 +195,8 @@ public class DocumentParamsScannerTest {
         expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        expect(child2.getComponentClassName()).andReturn(DocumentLinkComponent.class.getName());
-        expect(child2.getParameter(eq("news-documentLink"))).andReturn("/documentLinkNews");
+        expect(child2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName());
+        expect(child2.getParameter(eq("news-jcrPath-2"))).andReturn("/jcrPathTwoNews");
         expect(child2.getParameterPrefixes()).andReturn(Collections.emptySet()).anyTimes();
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
@@ -182,19 +210,19 @@ public class DocumentParamsScannerTest {
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
         assertEquals(2, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
-        assertTrue(documentPaths.contains("/documentLinkNews"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNews"));
     }
 
     @Test
-    public void jcrPath_and_documentLink_from_ComponentConfiguration_tree_with_variants() {
+    public void two_jcrPaths_from_ComponentConfiguration_tree_with_variants() {
         HstComponentConfiguration root = setUpHstConfiguration();
 
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader);
         assertEquals(4, documentPaths.size());
         assertTrue(documentPaths.contains("/jcrPathNews"));
-        assertTrue(documentPaths.contains("/documentLinkNews"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNews"));
         assertTrue(documentPaths.contains("/jcrPathNewsProfessional"));
-        assertTrue(documentPaths.contains("/documentLinkNewsProfessional"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNewsProfessional"));
 
     }
 
@@ -214,11 +242,11 @@ public class DocumentParamsScannerTest {
         expect(child1.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
         HstComponentConfiguration child2 = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        expect(child2.getComponentClassName()).andReturn(DocumentLinkComponent.class.getName());
-        expect(child2.getParameter(eq("news-documentLink"))).andReturn("/documentLinkNews");
+        expect(child2.getComponentClassName()).andReturn(JcrPathComponent2.class.getName());
+        expect(child2.getParameter(eq("news-jcrPath-2"))).andReturn("/jcrPathTwoNews");
         expect(child2.getParameter(
-                eq(ConfigurationUtils.createPrefixedParameterName("professional","news-documentLink"))))
-                .andReturn("/documentLinkNewsProfessional");
+                eq(ConfigurationUtils.createPrefixedParameterName("professional","news-jcrPath-2"))))
+                .andReturn("/jcrPathTwoNewsProfessional");
         expect(child2.getParameterPrefixes()).andReturn(expectedParameterPrefixes).anyTimes();
         expect(child2.getChildren()).andReturn(Collections.emptyMap()).anyTimes();
 
@@ -240,8 +268,8 @@ public class DocumentParamsScannerTest {
         final HstComponentConfiguration toSkip = root.getChildByName("child1");
         final List<String> documentPaths = DocumentParamsScanner.findDocumentPathsRecursive(root, classLoader, new SkipChildPredicate(toSkip));
         assertEquals(2, documentPaths.size());
-        assertTrue(documentPaths.contains("/documentLinkNews"));
-        assertTrue(documentPaths.contains("/documentLinkNewsProfessional"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNews"));
+        assertTrue(documentPaths.contains("/jcrPathTwoNewsProfessional"));
     }
 
     class SkipChildPredicate implements Predicate<HstComponentConfiguration> {

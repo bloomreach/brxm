@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -198,10 +197,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
 
     interface ParametersInfoDocuments {
-        @Parameter(name = "documentLink")
-        @DocumentLink()
-        String getDocumentLink();
-
         @Parameter(name = "relativeJcrPath")
         @JcrPath(isRelative = true)
         String getRelativeJcrPath();
@@ -229,7 +224,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[] {
-                        "documentLink",
                         "relativeJcrPath",
                         "absoluteJcrPath",
                         "absoluteFolderJcrPath"
@@ -237,7 +231,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
                 new String[] {
-                        "News/News2",
                         "News/News1",
                         "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us",
                         "/unittestcontent/documents/unittestproject/common"
@@ -248,18 +241,16 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
-        assertEquals(4, availableDocumentRepresentations.size());
+        assertEquals(3, availableDocumentRepresentations.size());
 
         DocumentRepresentation representation1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News2", "News2", true, true);
-        DocumentRepresentation representation2 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/News/News1", "News1", true, true);
-        DocumentRepresentation representation3 = new DocumentRepresentation(
+        DocumentRepresentation representation2 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us", "About Us", true, true);
         DocumentRepresentation folderRepresentation = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/common", "common", false, true);
 
-        DocumentRepresentation[] presentRepresentations = {representation1, representation2, representation3, homePage.getPrimaryDocumentRepresentation()};
+        DocumentRepresentation[] presentRepresentations = {representation1, representation2, homePage.getPrimaryDocumentRepresentation()};
         for (DocumentRepresentation representation : presentRepresentations) {
             assertTrue(availableDocumentRepresentations.contains(representation));
         }
@@ -302,7 +293,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES,
                 new String[] {
-                        "documentLink",
                         "relativeJcrPath",
                         "absoluteJcrPath",
                         "absoluteFolderJcrPath",
@@ -314,7 +304,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         leftComponent.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES,
                 new String[] {
-                        "News/News2",
                         "News/News1",
                         "/unittestcontent/documents/unittestproject/common/aboutfolder/default-about-us",
                         "/unittestcontent/documents/unittestproject/default-common",
@@ -325,7 +314,6 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
                 });
         leftComponent.setProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES,
                 new String[] {
-                        "",
                         "",
                         "",
                         "",
@@ -340,39 +328,31 @@ public class SiteMapItemDocumentRepresentationsTest extends AbstractSiteMapResou
 
         final SiteMapItemRepresentation homePage = getSiteMapItemRepresentation(session, "home");
         final Set<DocumentRepresentation> availableDocumentRepresentations = homePage.getAvailableDocumentRepresentations();
-        assertEquals(4, availableDocumentRepresentations.size());
+        assertEquals(3, availableDocumentRepresentations.size());
 
         DocumentRepresentation existing1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/News/News2", "News2", true, true);
-        DocumentRepresentation existing2 = new DocumentRepresentation(
                  "/unittestcontent/documents/unittestproject/News/News1", "News1", true, true);
-
-        DocumentRepresentation existing3 = new DocumentRepresentation(
+        DocumentRepresentation existing2 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/common/aboutfolder/about-us", "About Us", true, true);
-
         DocumentRepresentation folderRepresentation = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/common", "common", false, true);
 
         DocumentRepresentation nonExisting1 = new DocumentRepresentation(
-                "/unittestcontent/documents/unittestproject/dummy-News/News2", null, false, false);
-        DocumentRepresentation nonExisting2 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/dummy-News/News1", null, false, false);
-        DocumentRepresentation nonExisting3 = new DocumentRepresentation(
+        DocumentRepresentation nonExisting2 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/common/aboutfolder/dummy-about-us", null, false, false);
-        DocumentRepresentation nonExisting4 = new DocumentRepresentation(
+        DocumentRepresentation nonExisting3 = new DocumentRepresentation(
                 "/unittestcontent/documents/unittestproject/dummy-common", null, false, false);
 
-        DocumentRepresentation[] presentRepresentations = {existing1, existing2, existing3, homePage.getPrimaryDocumentRepresentation()};
+        DocumentRepresentation[] presentRepresentations = {existing1, existing2, homePage.getPrimaryDocumentRepresentation()};
 
         for (DocumentRepresentation representation : presentRepresentations) {
             assertTrue(availableDocumentRepresentations.contains(representation));
         }
 
-
         assertFalse("Folders should not be present", availableDocumentRepresentations.contains(folderRepresentation));
 
-
-        DocumentRepresentation[] notExistingRepresentations = {nonExisting1, nonExisting2, nonExisting3, nonExisting4};
+        DocumentRepresentation[] notExistingRepresentations = {nonExisting1, nonExisting2, nonExisting3};
 
         for (DocumentRepresentation representation : notExistingRepresentations) {
             assertFalse(availableDocumentRepresentations.contains(representation));

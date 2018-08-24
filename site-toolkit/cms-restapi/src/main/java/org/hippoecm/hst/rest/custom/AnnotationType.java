@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package org.hippoecm.hst.rest.custom;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
@@ -27,7 +26,6 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 
 public enum AnnotationType {
     Color(Color.class),
-    DocumentLink(DocumentLink.class),
     DropDownList(DropDownList.class),
     FieldGroup(FieldGroup.class),
     FieldGroupList(FieldGroupList.class),

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.FieldGroup;
@@ -194,14 +193,8 @@ public class ParametersInfoProcessor {
                 prop.setLabel(label);
 
                 final Annotation annotation = ParameterType.getTypeAnnotation(method);
-                if (annotation instanceof DocumentLink) {
-                    // for DocumentLink we need some extra processing
-                    final DocumentLink documentLink = (DocumentLink) annotation;
-                    prop.setDocType(documentLink.docType());
-                    prop.setDocLocation(documentLink.docLocation());
-                    prop.setAllowCreation(documentLink.allowCreation());
-                } else if (annotation instanceof JcrPath) {
-                    // for JcrPath we need some extra processing too
+                if (annotation instanceof JcrPath) {
+                    // for JcrPath we need some extra processing
                     final JcrPath jcrPath = (JcrPath) annotation;
                     prop.setPickerConfiguration(jcrPath.pickerConfiguration());
                     prop.setPickerInitialPath(jcrPath.pickerInitialPath());

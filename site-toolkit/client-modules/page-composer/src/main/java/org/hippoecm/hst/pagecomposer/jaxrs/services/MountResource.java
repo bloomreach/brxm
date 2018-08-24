@@ -419,35 +419,6 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-
-    /**
-     * Creates a document in the repository using the WorkFlowManager The post parameters should contain the 'path',
-     * 'docType' and 'name' of the document.
-     *
-     * @param params The POST parameters
-     * @return response JSON with the status of the result
-     */
-    @POST
-    @Path("/create/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createDocument(MultivaluedMap<String, String> params) {
-
-        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        try {
-            final Mount editingMount = getPageComposerContextService().getEditingMount();
-            String canonicalContentPath = editingMount.getContentPath();
-            WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
-                    getObjectConverter(requestContext));
-            workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
-        } catch (RepositoryException | ObjectBeanPersistenceException e) {
-            log.warn("Exception happened while trying to create the document " + e, e);
-            return error("Exception happened while trying to create the document " + e);
-        }
-
-        log.info("Successfully created a document");
-        return ok("Successfully created a document", null);
-    }
-
     /**
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
