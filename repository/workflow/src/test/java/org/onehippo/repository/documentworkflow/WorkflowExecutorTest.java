@@ -44,6 +44,17 @@ import static org.easymock.EasyMock.replay;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
+/**
+ * This class tests the actions that are set by the workflow executor
+ * If differs from the DocumentWorkflowTest on the following points:
+ * <ul>
+ *     <li>Each test has one assertions</li>
+ *     <li>The WorkflowData has been mocked</li>
+ * </ul>
+ *
+ * This enables testing cases where frozen nodes influence the actions.
+ *
+ */
 public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
 
@@ -89,9 +100,22 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(false)
+                .obtainEditableInstance(true)
                 .commitEditableInstance(true)
                 .disposeEditableInstance(true)
+                .depublishBranch(false)
+                .reintegrateBranch(false)
+                .checkModified(false)
+                .branch(false)
+                .requestDelete(false)
+                .requestDepublication(false)
+                .listVersions()
+                .publishBranch(false)
+                .requestPublication(false)
+                .listBranches()
+                .checkoutBranch(false)
+                .removeBranch(false)
+                .getBranch(false)
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -121,9 +145,22 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(false)
+                .obtainEditableInstance(true)
                 .commitEditableInstance(true)
                 .disposeEditableInstance(true)
+                .depublishBranch(false)
+                .reintegrateBranch(false)
+                .checkModified(false)
+                .branch(false)
+                .requestDelete(false)
+                .requestDepublication(false)
+                .listVersions()
+                .publishBranch(false)
+                .requestPublication(false)
+                .listBranches()
+                .checkoutBranch(false)
+                .removeBranch(false)
+                .getBranch(false)
                 .actions();
         assertExpectedActions(data, expectedActions);
 
