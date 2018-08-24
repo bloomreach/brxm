@@ -60,6 +60,22 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         remove.add(removeIcon);
 
         final int itemIndex = item.getIndex();
+
+        // up to top arrow button
+        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                plugin.onMoveItemToTop(model);
+                plugin.redraw();
+            }
+        };
+        upToTopLink.setVisible(plugin.canReorderItems());
+        upToTopLink.setEnabled(itemIndex > 0);
+        controls.add(upToTopLink);
+
+        final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+        upToTopLink.add(upToTopIcon);
+
         // up arrow button
         MarkupContainer upLink = new AjaxLink("up") {
             @Override
@@ -98,6 +114,22 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         downLink.add(downIcon);
+        
+        // down to bottom arrow button
+        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                plugin.onMoveItemToBottom(model);
+                plugin.redraw();
+            }
+        };
+
+        downToBottomLink.setVisible(plugin.canReorderItems());
+        downToBottomLink.setEnabled(itemIndex < plugin.getProvider().size() - 1);
+        controls.add(downToBottomLink);
+
+        final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+        downToBottomLink.add(downToBottomIcon);
         
         return controls;
     }
