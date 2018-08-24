@@ -36,7 +36,7 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
 
         final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(propertyField.canRemoveItem() || propertyField.canReorderItems());
-        add(controls);
+        queue(controls);
 
         MarkupContainer remove = new AjaxLink("remove") {
             @Override
@@ -47,11 +47,25 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
         if (!propertyField.canRemoveItem()) {
             remove.setVisible(false);
         }
+        queue(remove);
 
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
-        remove.add(removeIcon);
+        queue(removeIcon);
+        
+        boolean isFirst = (model.getIndex() == 0);
+        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                propertyField.onMoveItemToTop(model);
+                propertyField.redraw();
+            }
+        };
+        upToTopLink.setVisible(propertyField.canReorderItems());
+        upToTopLink.setEnabled(!isFirst);
+        queue(upToTopLink);
 
-        controls.add(remove);
+        final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+        queue(upToTopIcon);
 
         MarkupContainer upLink = new AjaxLink("up") {
             @Override
@@ -59,16 +73,14 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
                 propertyField.onMoveItemUp(model, target);
             }
         };
-        boolean isFirst = (model.getIndex() == 0);
         if (!propertyField.canReorderItems()) {
             upLink.setVisible(false);
         }
         upLink.setEnabled(!isFirst);
+        queue(upLink);
 
         final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
-        upLink.add(upIcon);
-
-        controls.add(upLink);
+        queue(upIcon);
 
         MarkupContainer downLink = new AjaxLink("down") {
             @Override
@@ -83,10 +95,23 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
             downLink.setVisible(false);
         }
         downLink.setEnabled(!isLast);
+        queue(downLink);
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
-        downLink.add(downIcon);
+        queue(downIcon);
 
-        controls.add(downLink);
+        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                propertyField.onMoveItemToBottom(model);
+                propertyField.redraw();
+            }
+        };
+        downToBottomLink.setVisible(propertyField.canReorderItems());
+        downToBottomLink.setEnabled(!isLast);
+        queue(downToBottomLink);
+
+        final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+        queue(downToBottomIcon);
     }
 }

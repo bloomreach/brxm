@@ -242,7 +242,7 @@
   position: absolute;
   right: 0;
   top: 0;
-
+  
   .hippo-editor-field-subfield:hover > & {
     opacity: 1;
   }
@@ -265,6 +265,10 @@
   a:active,
   a:hover {
     text-decoration: none;
+  }
+
+  .hide-top-bottom-arrows & .top-bottom-arrow {
+    display: none;
   }
 }
 
