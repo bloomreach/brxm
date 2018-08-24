@@ -19,7 +19,9 @@
                  on-back="changeMan.goBack()">
 </subpage-toolbar>
 
-<subpage-content flex class="qa-change-management">
+<subpage-content flex 
+                 layout="row"
+                 class="qa-change-management">
   <md-list>
     <md-list-item>
       <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ ::'DISCARD_ALL' | translate }}</md-button>
