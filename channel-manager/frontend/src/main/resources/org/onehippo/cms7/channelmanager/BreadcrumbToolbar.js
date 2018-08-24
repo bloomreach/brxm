@@ -38,6 +38,9 @@
     },
 
     createBreadcrumbItem: function (card) {
+      if (card.title !== null) {
+        card.title = Ext.util.Format.htmlEncode(card.title);
+      }
       var item = this.add({
         id: 'breadcrumb-item' + this.breadcrumbStackSize,
         cls: 'breadcrumb-item',
@@ -71,7 +74,7 @@
      * Updates the title of the breadcrumb
      */
     _onTitleChange: function (panel, title) {
-      this.setText(title);
+      this.setText(title !== null ? Ext.util.Format.htmlEncode(title) : title);
     },
 
     // public methods:

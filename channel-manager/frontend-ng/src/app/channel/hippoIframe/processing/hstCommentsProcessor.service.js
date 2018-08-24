@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import HstConstants from '../hst.constants';
+
 class HstCommentsProcessorService {
-  constructor($log, HstConstants) {
+  constructor($log) {
     'ngInject';
 
     this.$log = $log;
-    this.HstConstants = HstConstants;
   }
 
   run(document, callback) {
@@ -92,11 +93,11 @@ class HstCommentsProcessorService {
       return false;
     }
     const trimmedData = data.trim();
-    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(this.HstConstants.TYPE);
+    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(HstConstants.TYPE);
   }
 
   _isHstEndMarker(data) {
-    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(this.HstConstants.END_MARKER);
+    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HstConstants.END_MARKER);
   }
 
   _parseJson(data) {

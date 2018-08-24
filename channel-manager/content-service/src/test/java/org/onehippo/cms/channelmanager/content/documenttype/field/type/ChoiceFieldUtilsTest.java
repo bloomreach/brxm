@@ -238,6 +238,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
+        expect(compound.isContentType("hippo:mirror")).andReturn(false);
 
         replayAll();
 
@@ -405,6 +406,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
+        expect(compound.isContentType("hippo:mirror")).andReturn(false);
 
         replayAll();
 

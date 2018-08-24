@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
@@ -89,7 +90,22 @@ public class LocalizationUtils {
     public static Optional<String> determineFieldDisplayName(final String fieldId,
                                                              final Optional<ResourceBundle> resourceBundle,
                                                              final Optional<Node> editorFieldNode) {
-        return determineFieldLabel(resourceBundle, fieldId, editorFieldNode, "caption");
+        Optional<String> label = determineFieldLabel(resourceBundle, fieldId, editorFieldNode, "caption");
+        if (label.isPresent()) {
+            return label;
+        }
+
+        return editorFieldNode.map(node -> {
+            try {
+                if (node.hasProperty("field")) {
+                   final String propertyValue = node.getProperty("field").getString();
+                   return StringUtils.capitalize(propertyValue);
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to read property 'field'", e);
+            }
+            return null;
+        });
     }
 
     /**

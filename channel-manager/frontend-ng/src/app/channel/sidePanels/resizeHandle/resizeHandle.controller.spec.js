@@ -20,7 +20,12 @@ describe('resizeHandle component', () => {
 
   let mockHandleElement;
   let mockSidePanelElement;
-  let mockDocumentElement;
+
+  function event(name, pageX) {
+    const e = new $.Event(name);
+    e.pageX = pageX;
+    return e;
+  }
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -30,100 +35,183 @@ describe('resizeHandle component', () => {
     });
 
     jasmine.getFixtures().load('channel/sidePanels/resizeHandle/resizeHandle.controller.fixture.html');
-    mockHandleElement = $j('#resizeHandle');
-    mockSidePanelElement = $j('#sidePanel');
-    mockDocumentElement = $j('<div></div>');
+    mockHandleElement = $('#resizeHandle');
+    mockSidePanelElement = $('#sidePanel');
 
     $ctrl = $componentController('resizeHandle', {
       $element: mockHandleElement,
-      $document: mockDocumentElement,
     }, {
       element: mockSidePanelElement,
+      minWidth: 100,
       onResize: () => { },
     });
 
-    $ctrl.maxWidth = 1350;
     spyOn($ctrl, 'onResize');
-  });
 
-  it('should initialize the component', () => {
-    spyOn($ctrl, '_registerEvents');
     $ctrl.$onInit();
-    expect($ctrl._registerEvents).toHaveBeenCalled();
   });
 
-  it('should register events', () => {
-    $ctrl._registerEvents(mockSidePanelElement);
-
-    const eMouseDown = new $j.Event('mousedown');
-    eMouseDown.pageX = 500;
-    eMouseDown.pageY = 100;
-
-    mockHandleElement.trigger(eMouseDown);
-
-    mockSidePanelElement.width('450px');
-    expect(mockSidePanelElement.width()).toEqual(450);
-
-    const eMouseMove = new $j.Event('mousemove');
-    eMouseMove.pageX = 800;
-    eMouseMove.pageY = 100;
-
-    $ctrl.$document.trigger(eMouseMove);
-
-    $ctrl.$document.trigger('mouseup');
-    expect(mockSidePanelElement.width() > 440).toEqual(true);
+  afterEach(() => {
+    $('.resize-handle-mask').remove();
   });
 
-  it('should not allow a too small or too big sidepanel', () => {
-    $ctrl._registerEvents(mockSidePanelElement);
-    $ctrl.minWidth = 440;
+  it('initializes minWidth', () => {
+    expect($ctrl.minWidth).toBe(100);
+  });
 
-    const eMouseDown = new $j.Event('mousedown');
-    eMouseDown.pageX = 500;
-    eMouseDown.pageY = 100;
+  describe('starting a resize', () => {
+    it('initializes maxWidth as a round number', () => {
+      const body = $('body');
+      const oldBodyWidth = body.width();
 
-    mockHandleElement.trigger(eMouseDown);
+      body.width('40px');
+      mockHandleElement.trigger('mousedown');
+      expect($ctrl.maxWidth).toBe(20);
 
-    mockSidePanelElement.width('440px');
-    expect(mockSidePanelElement.width()).toEqual(440);
+      body.width('39px');
+      mockHandleElement.trigger('mousedown');
+      expect($ctrl.maxWidth).toBe(19);
 
-    spyOn(mockSidePanelElement, 'css');
+      body.width(oldBodyWidth);
+    });
 
-    const eMouseMove = new $j.Event('mousemove');
-    eMouseMove.pageX = 99999;
-    eMouseMove.pageY = 100;
+    it('creates and shows a transparent mask covering the page on mouse down on the handle', () => {
+      mockHandleElement.trigger('mousedown');
 
-    $ctrl.$document.trigger(eMouseMove);
+      expect('.resize-handle-mask').toBeInDOM();
+      expect('.resize-handle-mask').toBeVisible();
+      expect($('.resize-handle-mask').width()).toEqual($('body').width());
+      expect($('.resize-handle-mask').height()).toEqual($('body').height());
+    });
 
-    $ctrl.$document.trigger('mouseup');
-    expect(mockSidePanelElement.css).toHaveBeenCalled();
+    it('attaches the mask to the body', () => {
+      mockHandleElement.trigger('mousedown');
+
+      expect($('.resize-handle-mask').parent()[0]).toEqual($('body')[0]);
+    });
+  });
+
+  describe('resizing', () => {
+    beforeEach(() => {
+      mockSidePanelElement.width('100px');
+    });
+
+    it('captures the mouse move events on the mask element', () => {
+      mockHandleElement.trigger(event('mousedown', 100));
+
+      const mask = $('.resize-handle-mask');
+      mask.trigger(event('mousemove', 200));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
+    });
+
+    it('resizes the target element if handle is on the left side', () => {
+      $ctrl.handlePosition = 'left';
+      $ctrl.$onInit();
+
+      mockHandleElement.trigger(event('mousedown', 100));
+      $('.resize-handle-mask').trigger(event('mousemove', 0));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
+      expect(mockSidePanelElement).toHaveCss({ width: '200px' });
+
+      $('.resize-handle-mask').trigger(event('mousemove', 50));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 150 });
+      expect(mockSidePanelElement).toHaveCss({ width: '150px' });
+    });
+
+    it('resizes the target element if handle is on the right side', () => {
+      $ctrl.handlePosition = 'right';
+      $ctrl.$onInit();
+
+      mockHandleElement.trigger(event('mousedown', 100));
+      $('.resize-handle-mask').trigger(event('mousemove', 200));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
+      expect(mockSidePanelElement).toHaveCss({ width: '200px' });
+
+      $('.resize-handle-mask').trigger(event('mousemove', 150));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 150 });
+      expect(mockSidePanelElement).toHaveCss({ width: '150px' });
+    });
+
+    it('does not resize below the minWidth', () => {
+      mockHandleElement.trigger(event('mousedown', 100));
+
+      const mask = $('.resize-handle-mask');
+      mask.trigger(event('mousemove', 0));
+
+      expect($ctrl.onResize).not.toHaveBeenCalled();
+
+      mockSidePanelElement.width('150px');
+      mask.trigger(event('mousemove', 0));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 100 });
+    });
+
+    it('does not resize above the maxWidth', () => {
+      mockHandleElement.trigger(event('mousedown', 100));
+
+      const mask = $('.resize-handle-mask');
+      mask.trigger(event('mousemove', $ctrl.maxWidth + 10));
+
+      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: $ctrl.maxWidth });
+
+      $ctrl.onResize.calls.reset();
+      mask.trigger(event('mousemove', $ctrl.maxWidth + 10));
+
+      expect($ctrl.onResize).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ending a resize', () => {
+    it('removes the mask on mouse up on the mask', () => {
+      mockHandleElement.trigger('mousedown');
+
+      const mask = $('.resize-handle-mask');
+      mask.trigger('mouseup');
+
+      expect('.resize-handle-mask').not.toBeInDOM();
+    });
+
+    it('removes the mouse up and mouse move event listeners from the mask', () => {
+      mockHandleElement.trigger('mousedown');
+
+      const mask = $('.resize-handle-mask');
+      mask.trigger('mouseup');
+
+      const events = $._data(mask[0], 'events');
+      expect(events).toBeUndefined();
+    });
   });
 
   it('will make the manipulated element bigger when the handle is positioned on the left', () => {
     $ctrl.handlePosition = 'left';
     $ctrl.$onInit();
+
     expect($ctrl.add).toBe(true);
   });
 
   it('will make the manipulated element smaller when the handle is not positioned on the left', () => {
     $ctrl.handlePosition = 'notdefaultvalue';
     $ctrl.$onInit();
+
     expect($ctrl.add).toBe(false);
   });
 
   it('adds a class named left on the handle when the handle is positioned on the left', () => {
-    spyOn($ctrl.handle, 'addClass');
-
     $ctrl.handlePosition = 'left';
     $ctrl.$onInit();
-    expect($ctrl.handle.addClass).toHaveBeenCalledWith('left');
+
+    expect($ctrl.handle).toHaveClass('left');
   });
 
   it('adds a class named right on the handle when the handle is not positioned on the left', () => {
-    spyOn($ctrl.handle, 'addClass');
-
     $ctrl.handlePosition = 'notthedefaultvalue';
     $ctrl.$onInit();
-    expect($ctrl.handle.addClass).toHaveBeenCalledWith('right');
+
+    expect($ctrl.handle).toHaveClass('right');
   });
 });

@@ -55,6 +55,7 @@ class RenderingService {
 
   createOverlay() {
     this.PageStructureService.clearParsedElements();
+
     this._insertCss().then(() => {
       this._parseHstComments();
       this.updateDragDrop();
@@ -105,26 +106,21 @@ class RenderingService {
   }
 
   _updateChannelIfSwitched() {
-    const channelToLoad = this._getChannelToLoad();
-    if (channelToLoad !== null) {
-      const path = this.PageMetaDataService.getPathInfo();
-      this.CmsService.publish('load-channel', channelToLoad, path);
-    }
-  }
-
-  _getChannelToLoad() {
     const channelIdFromService = this.ChannelService.getId();
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
-    if (channelIdFromService === channelIdFromPage) {
-      return null;
-    }
+    if (channelIdFromService !== channelIdFromPage) {
+      const contextPathFromPage = this.PageMetaDataService.getContextPath();
 
-    if (this.ConfigService.projectsEnabled) {
-      const projectId = this.ChannelService.selectedProjectId;
-      return this.ProjectService.getBaseChannelId(projectId ? channelIdFromService : channelIdFromPage);
+      if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
+        // Current channel is a branch, but new channel has no branch of that project
+        // therefore load core
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, this.ProjectService.core.id);
+      } else {
+        // otherwise load new channel within current project
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage);
+      }
     }
-    return channelIdFromPage;
   }
 
   _parseLinks() {

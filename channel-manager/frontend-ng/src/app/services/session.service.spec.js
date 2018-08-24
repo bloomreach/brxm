@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,11 @@ describe('SessionService', () => {
 
   it('should resolve a promise with the channel argument when initialization is successful', () => {
     const promiseSpy = jasmine.createSpy('promiseSpy');
-    SessionService.initialize('hostname', 'mountId').then(promiseSpy);
+    const channel = {};
+    SessionService.initialize(channel).then(promiseSpy);
     $rootScope.$apply();
     expect(promiseSpy).toHaveBeenCalled();
-    expect(HstService.initializeSession).toHaveBeenCalledWith('hostname', 'mountId');
+    expect(HstService.initializeSession).toHaveBeenCalledWith(channel);
   });
 
   it('should reject a promise when initialization fails', () => {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ import 'angular-mocks';
 describe('projectToggle component', () => {
   let $ctrl;
   let $rootScope;
-  let $q;
   let ProjectService;
   let CmsService;
-  let $mdSelect;
-  let project;
+
+  const projectMock = {
+    name: 'testProject',
+    id: 1,
+  };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -32,22 +34,17 @@ describe('projectToggle component', () => {
     inject((
       $componentController,
       _$rootScope_,
-      _$q_,
       _HippoIframeService_,
       _ProjectService_,
       _CmsService_,
-      _ChannelActionsService_,
-      _$mdSelect_,
     ) => {
       $ctrl = $componentController('projectToggle', {});
       $rootScope = _$rootScope_;
-      $q = _$q_;
       ProjectService = _ProjectService_;
       CmsService = _CmsService_;
-      $mdSelect = _$mdSelect_;
     });
 
-    project = { name: 'testProject', id: 1 };
+    ProjectService.selectedProject = projectMock;
   });
 
   describe('onInit', () => {
@@ -61,49 +58,42 @@ describe('projectToggle component', () => {
   describe('getProjects', () => {
     it('return projects list from projectService', () => {
       ProjectService.projects = [];
-      const projectList = $ctrl.getProjects();
+      $ctrl.$onInit();
+      const projectList = $ctrl.projects;
       expect(projectList).toEqual([]);
     });
   });
 
-  describe('get selectedProjects', () => {
-    it('return core project if there are no selected projects', () => {
-      ProjectService.selectedProject = null;
-      // activate onInit to get the core set up
-      $ctrl.$onInit();
-      const expectedCoreProject = { name: 'CORE' };
-
-      expect($ctrl.selectedProject).toEqual(expectedCoreProject);
-    });
-
-    it('return the selected project if set', () => {
-      ProjectService.selectedProject = project;
-
-      expect($ctrl.selectedProject).toEqual(project);
+  describe('get selectedProject', () => {
+    it('returns the selected project if set', () => {
+      expect($ctrl.selectedProject).toEqual(projectMock);
     });
   });
 
-  describe('set selectedProject', () => {
+  describe('sets selectedProject', () => {
     beforeEach(() => {
       // init to get core project
       $ctrl.$onInit();
-      spyOn($mdSelect, 'hide').and.returnValue($q.resolve());
       spyOn(ProjectService, 'updateSelectedProject');
       spyOn(CmsService, 'reportUsageStatistic');
     });
 
-    it('should call $mdSelect hide', () => {
-      $ctrl.selectedProject = project;
+    it('should update selected project on project service with the selected project id', () => {
+      const projectMock2 = { id: 'test' };
+      $ctrl.selectedProject = projectMock2;
+      $rootScope.$digest();
 
-      expect($mdSelect.hide).toHaveBeenCalled();
+      expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(projectMock2.id);
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
     });
 
-    it('should call update selectedProject on project service with the selected project id', () => {
-      $ctrl.selectedProject = project;
-      $rootScope.$apply();
+    it('should not update selected project when it did not change', () => {
+      ProjectService.selectedProject = projectMock;
+      $ctrl.selectedProject = projectMock;
+      $rootScope.$digest();
 
-      expect(ProjectService.updateSelectedProject).toHaveBeenCalledWith(project.id);
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsProjectSwitch');
+      expect(ProjectService.updateSelectedProject).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
     });
   });
 });
