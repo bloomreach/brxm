@@ -116,7 +116,7 @@
             <!-- current editor is allowed all editing operations -->
             <hippo:action action="disposeEditableInstance" enabledExpr="true"/>
             <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
-            <hippo:action action="obtainEditableInstance" enabledExpr="false"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
           <else/>
             <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
