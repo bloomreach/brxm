@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -178,7 +178,7 @@ public class TaxonomyBrowser extends Panel {
         container.add(lv);
         container.add(emptyDetails);
 
-        Label selectedCategoriesLabel = new Label("selected-categories-label", new StringResourceModel("taxonomy-selected-header", this, null, null));
+        Label selectedCategoriesLabel = new Label("selected-categories-label", new StringResourceModel("taxonomy-selected-header", this));
         selectedCategoriesLabel.setVisible(!detailsReadOnly);
         container.add(selectedCategoriesLabel);
 
@@ -190,7 +190,7 @@ public class TaxonomyBrowser extends Panel {
                 return new CanonicalCategory(taxonomyModel.getObject(), classification.getCanonical(), getPreferredLocaleObject());
             }
         };
-        container.add(new Label("canon", new StringResourceModel("canonical", this, canonicalNameModel)) {
+        container.add(new Label("canon", new StringResourceModel("canonical", this).setModel(canonicalNameModel)) {
 
             @Override
             public boolean isVisible() {

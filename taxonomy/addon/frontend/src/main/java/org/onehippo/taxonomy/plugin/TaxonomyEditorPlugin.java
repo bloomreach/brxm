@@ -814,7 +814,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                     final String destParentCategoryKey = getCurrentCategoryKey();
 
                     if (StringUtils.equals(key, destParentCategoryKey)) {
-                        error(new StringResourceModel("cannot-move-category-to-itself", TaxonomyEditorPlugin.this, null, new NameModel()).getString());
+                        error(new StringResourceModel("cannot-move-category-to-itself", TaxonomyEditorPlugin.this)
+                                .setParameters(new NameModel())
+                                .getString());
                     } else if (destParentCategoryKey != null) {
                         try {
                             EditableCategory destParentCategory = taxonomy.getCategoryByKey(destParentCategoryKey);
@@ -884,8 +886,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             if (!categoryNode.isLeaf()) {
                 dialogService.show(
                         new ConfirmDialog(
-                                new StringResourceModel("cannot-remove-category-title", this, null),
-                                new StringResourceModel("cannot-remove-nonleaf-category-message", this, null, new NameModel()),
+                                new StringResourceModel("cannot-remove-category-title", this),
+                                new StringResourceModel("cannot-remove-nonleaf-category-message", this).setParameters(new NameModel()),
                                 null, null) {
                             {
                                 setCancelVisible(false);
@@ -906,8 +908,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 if (referringDocumentHandlePaths.isEmpty()) {
                     dialogService.show(
                             new ConfirmDialog(
-                                    new StringResourceModel("remove-category-confirm-title", this, null),
-                                    new StringResourceModel("remove-category-confirm-message", this, null, new NameModel())) {
+                                    new StringResourceModel("remove-category-confirm-title", this),
+                                    new StringResourceModel("remove-category-confirm-message", this).setParameters(new NameModel())) {
 
                                 @Override
                                 public void invokeWorkflow() throws Exception {
@@ -930,8 +932,8 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 } else {
                     dialogService.show(
                             new ConfirmDialog(
-                                    new StringResourceModel("cannot-remove-category-title", this, null),
-                                    new StringResourceModel("cannot-remove-category-message", this, null, new NameModel()),
+                                    new StringResourceModel("cannot-remove-category-title", this),
+                                    new StringResourceModel("cannot-remove-category-message", this).setParameters(new NameModel()),
                                     new Model<>(StringUtils.join(referringDocumentHandlePaths, "\n")),
                                     null) {
                                 {

@@ -252,7 +252,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 }
             }
         };
-        add(new Label("canon", new StringResourceModel("canonical", this, canonicalNameModel)) {
+        add(new Label("canon", new StringResourceModel("canonical", this).setModel(canonicalNameModel)) {
 
             @Override
             public boolean isVisible() {
