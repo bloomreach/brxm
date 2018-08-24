@@ -297,7 +297,7 @@ public class ConfigurationConfigService {
             throws RepositoryException {
 
         final Optional<? extends NamespaceDefinition> cndExtension =
-                namespaceDefinitions.stream().filter(ns -> (ns.getSource().getModule().isExtension())).findFirst();
+                namespaceDefinitions.stream().filter(ns -> (ns.getSource().getModule().isHcmSite())).findFirst();
         cndExtension.ifPresent(def -> {
             final String msg = String.format("Failed to process namespace definition defined in %s: " +
                     "namespace with prefix '%s'. Namespace definition can not be a part of extension module: '%s'",
