@@ -497,4 +497,123 @@ describe('SiteMenuService', () => {
       $rootScope.$digest();
     });
   });
+
+  describe('increment title additions for new items', () => {
+    function getNewItemTitle(menu, done) {
+      spyOn(HstService, 'doGet');
+      HstService.doGet.and.returnValue($q.when({ data: menu }));
+
+      spyOn(HstService, 'doPostWithParams');
+      HstService.doPostWithParams.and.returnValue($q.when({ data: 'xxx' }));
+
+      let title;
+      SiteMenuService.createEditableMenuItem()
+        .then(() => {
+          expect(HstService.doPostWithParams).toHaveBeenCalled();
+          const args = HstService.doPostWithParams.calls.mostRecent().args;
+          title = args[0].title;
+          done();
+        })
+        .catch(() => fail());
+      $rootScope.$digest();
+      return title;
+    }
+
+    it('adds no increment if the default new title does not exist in the menu', (done) => {
+      const filterMenuEmpty = {
+        id: 'filterId',
+        items: [],
+      };
+      const result = getNewItemTitle(filterMenuEmpty, done);
+      expect(result).toBe('NEW_MENU_ITEM_TITLE');
+    });
+
+    it('adds increment when an item with the default title exists', (done) => {
+      const filterMenu = {
+        id: 'filterId',
+        items: [
+          {
+            id: '1',
+            title: 'NEW_MENU_ITEM_TITLE',
+          },
+        ],
+      };
+
+      const result = getNewItemTitle(filterMenu, done);
+      expect(result).toBe('NEW_MENU_ITEM_TITLE (1)');
+    });
+
+    it('adds increment linearly when items with default title exist', (done) => {
+      const filterMenu = {
+        id: 'filterId',
+        items: [
+          {
+            id: '1',
+            title: 'NEW_MENU_ITEM_TITLE',
+          },
+          {
+            id: '2',
+            title: 'NEW_MENU_ITEM_TITLE (1)',
+          },
+        ],
+      };
+
+      const result = getNewItemTitle(filterMenu, done);
+      expect(result).toBe('NEW_MENU_ITEM_TITLE (2)');
+    });
+
+    it('adds increment after the highest value when items with default title exist', (done) => {
+      const filterMenu = {
+        id: 'filterId',
+        items: [
+          {
+            id: '1',
+            title: 'NEW_MENU_ITEM_TITLE',
+          },
+          {
+            id: '2',
+            title: 'NEW_MENU_ITEM_TITLE (4)',
+          },
+        ],
+      };
+
+      const result = getNewItemTitle(filterMenu, done);
+      expect(result).toBe('NEW_MENU_ITEM_TITLE (5)');
+    });
+
+    it('adds increment correctly taking child items into account', (done) => {
+      const filterMenu = {
+        id: 'filterId',
+        items: [
+          {
+            id: '1',
+            title: 'NEW_MENU_ITEM_TITLE',
+            items: [
+              {
+                id: 'child1',
+                title: 'NEW_MENU_ITEM_TITLE (3)',
+              },
+              {
+                id: 'child2',
+                title: 'NEW_MENU_ITEM_TITLE (4)',
+                items: [
+                  {
+                    id: 'child3',
+                    title: 'NEW_MENU_ITEM_TITLE (18)',
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: '2',
+            title: 'NEW_MENU_ITEM_TITLE (6)',
+          },
+        ],
+      };
+
+      const result = getNewItemTitle(filterMenu, done);
+      expect(result).toBe('NEW_MENU_ITEM_TITLE (19)');
+    });
+  });
 });

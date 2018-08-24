@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-import './channel.scss';
-
 class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
-    $stateParams,
     $translate,
-    ChannelActionsService,
+    ChannelMenuService,
     ChannelService,
     CmsService,
     ConfigService,
     FeedbackService,
     HippoIframeService,
     OverlayService,
-    PageActionsService,
+    PageMenuService,
     PageMetaDataService,
     ProjectService,
     SidePanelService,
@@ -39,37 +36,35 @@ class ChannelCtrl {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
-    this.ChannelActionsService = ChannelActionsService;
+    this.ChannelMenuService = ChannelMenuService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
-    this.PageActionsService = PageActionsService;
+    this.PageMenuService = PageMenuService;
     this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
 
     this.projectsEnabled = ConfigService.projectsEnabled;
 
-    this.HippoIframeService.load($stateParams.initialRenderPath);
-
     this.menus = [
-      ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
-      PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
+      ChannelMenuService.getMenu(subPage => this.showSubpage(subPage)),
+      PageMenuService.getMenu(subPage => this.showSubpage(subPage)),
     ];
   }
 
   $onInit() {
-    this.CmsService.subscribe('reload-channel', this._reloadChannel, this);
+    this.CmsService.subscribe('reload-page', this._reloadPage, this);
   }
 
   $onDestroy() {
-    this.CmsService.unsubscribe('reload-channel', this._reloadChannel, this);
+    this.CmsService.unsubscribe('reload-page', this._reloadPage, this);
   }
 
-  _reloadChannel(errorResponse) {
+  _reloadPage(errorResponse) {
     let errorKey;
     switch (errorResponse.error) {
       case 'ITEM_ALREADY_LOCKED':
@@ -175,6 +170,10 @@ class ChannelCtrl {
 
   isToolbarDisplayed() {
     return this.ChannelService.isToolbarDisplayed;
+  }
+
+  isSidePanelFullScreen(side) {
+    return this.SidePanelService.isFullScreen(side);
   }
 }
 

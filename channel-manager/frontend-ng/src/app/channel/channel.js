@@ -14,43 +14,36 @@
  * limitations under the License.
  */
 
-import channelSubpageModule from './subpage/subpage';
-import channelPageModule from './page/page';
-import channelPageActionsModule from './page/actions/actions';
-import channelActionsModule from './actions/actions';
-import channelMenuModule from './menu/menu';
-import channelSidePanelModule from './sidePanels/sidePanel';
-import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
+import channelComponent from './channel.component';
+import channelConfig from './channel.config';
+import channelService from './channel.service';
+
+import hippoIframeModule from './hippoIframe/hippoIframe';
 import maskModule from './mask/mask.module';
-import channelRelevanceModule from './relevance/relevance';
-import projectToggleModule from './projectToggle/projectToggle.module';
-import viewportsModule from './viewportToggle/viewportToggle.module';
+import menuModule from './menu/menu.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
-import config from './channel.config';
-import ChannelCtrl from './channel.controller';
-import ChannelService from './channel.service';
-import run from './channel.run';
+import projectToggleModule from './projectToggle/projectToggle.module';
+import relevanceModule from './relevance/relevance';
+import sidePanelModule from './sidePanels/sidePanel';
+import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
+import subpageModule from './subpage/subpage.module';
+import viewportToggleModule from './viewportToggle/viewportToggle.module';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
-    channelSubpageModule.name,
-    channelPageModule.name,
-    channelPageActionsModule.name,
-    channelActionsModule.name,
-    channelMenuModule.name,
-    channelSidePanelModule.name,
-    channelHippoIframeModule.name,
-    siteMenuEditorModule.name,
-    channelRelevanceModule.name,
-    projectToggleModule.name,
-    viewportsModule.name,
-    overlayToggleModule.name,
+    hippoIframeModule.name,
     maskModule.name,
+    menuModule.name,
+    overlayToggleModule.name,
+    projectToggleModule.name,
+    relevanceModule.name,
+    sidePanelModule.name,
+    siteMenuEditorModule.name,
+    subpageModule.name,
+    viewportToggleModule.name,
   ])
-  .config(config)
-  .controller('ChannelCtrl', ChannelCtrl)
-  .service('ChannelService', ChannelService)
-  .run(run);
+  .config(channelConfig)
+  .component('channel', channelComponent)
+  .service('ChannelService', channelService);
 
 export default channelModule;

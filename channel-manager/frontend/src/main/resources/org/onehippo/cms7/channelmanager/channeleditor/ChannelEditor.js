@@ -37,22 +37,15 @@
       });
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.constructor.call(this, config);
 
-      // In case of reloading the iframe, the ng-app will ask us to provide the channel info (again)
-      this.iframeToHost.subscribe('reload-channel', function() {
-        if (this.selectedChannel) {
-          this.loadChannel(this.selectedChannel.id);
-        }
-      }.bind(this));
-
+      this.iframeToHost.subscribe('set-breadcrumb', this.setTitle, this);
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
-      this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
-      this.iframeToHost.subscribe('load-channel', this.loadChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
-      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
-      this.iframeToHost.subscribe('show-image-variant-picker', this._showImageVariantPicker, this);
       this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
+      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-link-picker', this._showRichTextLinkPicker, this);
+      this.iframeToHost.subscribe('show-rich-text-image-picker', this._showRichTextImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -64,10 +57,61 @@
       this.addEvents('show-channel-overview');
     },
 
-    loadChannel: function(channelId, initialPath, branchId) {
-      this._setChannel(channelId).when(function(channelRecord) {
-        this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
+    initChannel: function(channelId, initialPath, branchId) {
+      this.channelId = channelId;
+      this.initialPath = initialPath;
+      this.branchId = branchId;
+    },
+
+    loadChannel: function() {
+      this._destroyComponentPropertiesWindow();
+      if (this.channelId) {
+        this._getContextPath(this.channelId)
+          .when(function (contextPath) {
+            var branchedChannelId = this._getBranchedChannelId(this.channelId, this.branchId);
+            this.hostToIFrame.publish('load-channel', branchedChannelId, contextPath, this.branchId, this.initialPath);
+
+            // reset the state; the state in the app is leading. When loadChannel is called again,
+            // we'll send a reload-channel event instead that reloads the current app state.
+            this.initChannel(null, null, null);
+          }.bind(this))
+          .otherwise(function () {
+            console.error('Cannot determine context path of channel "' + this.channelId + '"');
+          }.bind(this));
+      } else {
+        this.hostToIFrame.publish('reload-channel');
+      }
+    },
+
+    _getContextPath: function(channelId) {
+      return new Hippo.Future(function (success, fail) {
+        if (this.initialConfig.contextPaths.length === 1) {
+          // return the only choice
+          success(this.initialConfig.contextPaths[0]);
+        }
+        this.channelStoreFuture.when(function (config) {
+          var channelRecord = config.store.getById(channelId);
+          if (!channelRecord) {
+            // try the preview version of the channel
+            channelRecord = config.store.getById(channelId + '-preview');
+          }
+          if (channelRecord) {
+            success(channelRecord.json.contextPath);
+          } else {
+            fail();
+          }
+        }.bind(this));
       }.bind(this));
+    },
+
+    _getBranchedChannelId: function(channelId, branchId) {
+      if (branchId === 'master') {
+        return channelId;
+      }
+      if (channelId.endsWith('-preview')) {
+        return channelId.replace(/-preview$/, '-' + branchId + '-preview');
+      }
+      return channelId + '-' + branchId;
     },
 
     /**
@@ -86,43 +130,18 @@
       }.bind(this));
     },
 
-    reloadPage: function() {
-      if (this.selectedChannel) {
-        this.hostToIFrame.publish('reload-page');
-      }
-    },
-
     _syncChannel: function() {
-      this._reloadChannels().when(function (channelStore) {
-        var id = this.selectedChannel.id,
-          channelRecord = channelStore.getById(id);
-        if (channelRecord) {
-          this.selectedChannel = channelRecord.json;
-        } else {
-          // we may just have created the preview config of this channel
-          this.selectedChannel = channelStore.getById(id + '-preview').json;
-        }
-        this.hostToIFrame.publish('channel-changed-in-extjs');
-      }.bind(this));
+      this.hostToIFrame.publish('channel-changed-in-extjs');
+      this._reloadChannels();
     },
 
     _renderComponent: function(componentId, propertiesMap) {
       this.hostToIFrame.publish('render-component', componentId, propertiesMap);
     },
 
-    _renderInitialComponentState: function(componentId) {
-      // don't pass any properties so the persisted properties are used
-      this._renderComponent(componentId);
-    },
-
-    _onComponentChanged: function (componentId) {
-      this._renderInitialComponentState(componentId);
-      this._syncChannel();
-    },
-
-    _closeDialogAndNotifyReloadChannel: function(data) {
+    _closeDialogAndNotifyReloadPage: function(data) {
       this._destroyComponentPropertiesWindow();
-      this.hostToIFrame.publish('reload-channel', data);
+      this.hostToIFrame.publish('reload-page', data);
     },
 
     _destroyComponentPropertiesWindow: function() {
@@ -147,38 +166,7 @@
       this.hostToIFrame.publish('close-content-result', uuid, isClosed);
     },
 
-    _setChannel: function(channelId) {
-      return new Hippo.Future(function (success, failure) {
-        this._reloadChannels().when(function (channelStore) {
-          var channelRecord = this._getChannelRecord(channelStore, channelId);
-          if (channelRecord) {
-            this._initialize(channelRecord.json);
-            success(channelRecord);
-          } else {
-            failure();
-          }
-        }.bind(this));
-      }.bind(this));
-    },
-
-    _getChannelRecord: function(channelStore, channelId) {
-      var channelRecord = channelStore.getById(channelId);
-      if (!channelRecord && !channelId.endsWith('-preview')) {
-        channelRecord = channelStore.getById(channelId+'-preview');
-      }
-      return channelRecord;
-    },
-
-    _initialize: function(channel) {
-      this.selectedChannel = channel;
-
-      this._destroyComponentPropertiesWindow();
-
-      // update breadcrumb
-      this.setTitle(channel.name);
-    },
-
-    _createComponentPropertiesWindow: function() {
+    _createComponentPropertiesWindow: function(channel) {
       return new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow({
         id: 'componentPropertiesWindow',
         title: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-default-title'],
@@ -192,17 +180,17 @@
         renderTo: this.el,
         constrain: true,
         hidden: true,
-        composerRestMountUrl: this.selectedChannel.contextPath + this.apiUrlPrefix,
+        composerRestMountUrl: channel.contextPath + this.apiUrlPrefix,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
-        mountId: this.selectedChannel.mountId,
+        mountId: channel.mountId,
         listeners: {
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
-          componentChanged: this._onComponentChanged,
-          loadFailed: this._closeDialogAndNotifyReloadChannel,
-          componentLocked: this._closeDialogAndNotifyReloadChannel,
+          componentChanged: this._syncChannel,
+          loadFailed: this._closeDialogAndNotifyReloadPage,
+          componentLocked: this._closeDialogAndNotifyReloadPage,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },
@@ -219,7 +207,7 @@
 
     _showComponentProperties: function(selected) {
       if (!this.componentPropertiesWindow) {
-        this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+        this.componentPropertiesWindow = this._createComponentPropertiesWindow(selected.channel);
       }
       this.componentPropertiesWindow.showComponent(
         selected.component,
@@ -246,18 +234,22 @@
       this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
     },
 
-    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
-      selectedLink.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
-    },
-
-    _showImageVariantPicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
-      selectedImage.fieldId = fieldId;
-      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imageVariantPickerWicketUrl);
-    },
-
     _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
       this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showLinkPicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.linkPickerWicketUrl);
+    },
+
+    _showRichTextImagePicker: function(fieldId, dialogConfig, selectedImage, successCallback, cancelCallback) {
+      selectedImage.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedImage, successCallback, cancelCallback, this.initialConfig.richTextImagePickerWicketUrl);
+    },
+
+    _showRichTextLinkPicker: function(fieldId, dialogConfig, selectedLink, successCallback, cancelCallback) {
+      selectedLink.fieldId = fieldId;
+      this._showPicker(dialogConfig, selectedLink, successCallback, cancelCallback, this.initialConfig.richTextLinkPickerWicketUrl);
     },
 
     _showPicker: function(dialogConfig, parameters, successCallback, cancelCallback, wicketUrl) {
@@ -339,9 +331,26 @@
     },
 
     _startApp: function() {
+      if (this._isDevMode()) {
+        this._clearAppState();
+      }
+
       var url = './angular/hippo-cm/index.html';
       url = Ext.urlAppend(url, 'antiCache=' + this.antiCache);
       this.setLocation(url);
+    },
+
+    _isDevMode: function() {
+      return document.documentElement.classList.contains('wicket-development-mode');
+    },
+
+    _clearAppState: function() {
+      // The app uses sessionStorage to store state in dev mode, so reloads by Webpack retain the current channel and
+      // page. Clear that state so a reload of the CMS (or loading a different CMS) in the same tab won't reuse the
+      // state and request non-existing channels or pages.
+      delete sessionStorage.channelId;
+      delete sessionStorage.channelPath;
+      delete sessionStorage.channelBranch;
     }
   });
 

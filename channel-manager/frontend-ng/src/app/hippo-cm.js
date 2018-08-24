@@ -25,12 +25,8 @@ import 'angular-translate-loader-static-files';
 import uiRouter from '@uirouter/angularjs';
 
 import channelModule from './channel/channel';
-import directivesModule from './directives/directives.module';
 import factoriesModule from './factories/factories.module';
-import filtersModule from './filters/filters.module';
 import servicesModule from './services/services.module';
-
-import HstConstants from './constants/hst.constants';
 
 import config from './hippo-cm.config';
 import hippoCmComponent from './hippo-cm.component';
@@ -45,13 +41,10 @@ const hippoCmModule = angular
     ngTranslate,
     uiRouter,
     channelModule.name,
-    directivesModule,
     factoriesModule,
-    filtersModule,
     servicesModule,
   ])
   .component('hippoCm', hippoCmComponent)
-  .config(config)
-  .constant('HstConstants', HstConstants);
+  .config(config);
 
 export default hippoCmModule;

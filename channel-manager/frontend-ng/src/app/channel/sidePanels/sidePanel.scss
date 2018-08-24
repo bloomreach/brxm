@@ -1,0 +1,64 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+.side-panel-open {
+  max-width: 50% !important;
+
+  md-sidenav {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  &.side-panel-full-screen {
+    max-width: initial !important;
+
+    md-sidenav {
+      max-width: 100vw !important;
+      width: 100vw !important;
+    }
+  }
+
+  &.side-panel-full-screen-add {
+    max-width: initial !important;
+    transition: width $full-screen-ease-in;
+
+    md-sidenav {
+      transition: width $full-screen-ease-in;
+    }
+  }
+
+  &.side-panel-full-screen-remove {
+    max-width: initial !important;
+    transition: width $full-screen-ease-out;
+
+    md-sidenav {
+      transition: width $full-screen-ease-out;
+    }
+  }
+
+  &.ng-hide {
+    max-width: 0 !important;
+    opacity: 0;
+  }
+
+  &.ng-hide-add {
+    transition: all $full-screen-ease-in;
+  }
+
+  &.ng-hide-remove {
+    transition: all $full-screen-ease-out;
+  }
+}
