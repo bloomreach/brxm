@@ -1088,16 +1088,17 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         // workflowuser, request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
         // published = foo
         assertMatchingKeyValues(wf.hints("foo"), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
+                .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit().editable()
                 .requestPublication(false).publish(false).requestDepublication(false)
                 .listVersions().retrieveVersion().versionable().requestDelete(false).terminateable(false)
                 .listBranches().branch(true).getBranch(true).checkoutBranch(true).removeBranch(false)
-                .reintegrateBranch(false).publishBranch(true).depublishBranch(true)
+                .reintegrateBranch(true).publishBranch(false).depublishBranch(true)
                 .branchFeedback("foo", MASTER_BRANCH_ID, MASTER_BRANCH_ID)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().noEdit().requested().publishable().depublishable().versionable().noTerminate().noCopy()
-                .branchable().canCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().canDepublishBranch()
+                .status().logEvent().editable().requested().versionable().noTerminate().noCopy()
+                .noPublish().noDepublish()
+                .branchable().canCheckoutBranch().noRemoveBranch().canReintegrateBranch().noPublishBranch().canDepublishBranch()
                 .states()
         );
     }
