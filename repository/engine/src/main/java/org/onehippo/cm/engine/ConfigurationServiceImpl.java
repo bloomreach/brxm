@@ -62,6 +62,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
@@ -88,6 +89,7 @@ import org.yaml.snakeyaml.Yaml;
 import com.google.common.io.Files;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
@@ -128,6 +130,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private Map<String, HcmSiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
 
+    private static final String USE_HCM_SITES_PROPERTY = "use.hcm.sites";
+
+    static final boolean USE_HCM_SITES_MODE = isUseHcmSitesMode();
+
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
      */
@@ -137,6 +143,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * This should be non-null on any successful startup.
      */
     private ConfigurationModelImpl runtimeConfigurationModel;
+
+    private static boolean isUseHcmSitesMode() {
+        final String useHcmSites = System.getProperty(USE_HCM_SITES_PROPERTY);
+        return StringUtils.isEmpty(useHcmSites) || useHcmSites.toLowerCase().equals("true") || useHcmSites.toLowerCase().equals("y");
+    }
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
@@ -198,7 +209,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         } else {
             log.error("HCM Site '{}' failed to be applied", record.siteName);
         }
-
+    }
 
     private void processHcmSiteWebFileBundles(final HcmSiteRecord record) throws IOException, RepositoryException {
         //process webfilebundle instructions from HCM Site which are not from the current site
@@ -213,6 +224,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         baselineService = new ConfigurationBaselineService(lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
+
+        final Set<String> knownHcmSites = hcmSiteRecords.keySet();
 
         // acquire a write lock for the hcm
         lockManager.lock();
@@ -287,11 +300,16 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
                     }
 
-                    log.info("Loading preMigrators");
-                    final List<ConfigurationMigrator> preMigrators = loadMigrators(PreMigrator.class);
-                    if (!preMigrators.isEmpty()) {
-                        log.info("Running preMigrators: {}", preMigrators);
-                        runMigrators(bootstrapModel, preMigrators, false);
+
+                    applyPreMigrators(bootstrapModel);
+
+                    // If use.hcm.sites == true and no hst sites are available yet & boostrap model has /hst:hst then consider this
+                    // as error, since core bootstrap model should not contain any hst specific configuration
+                    if (USE_HCM_SITES_MODE && isEmpty(knownHcmSites)) {
+                        final ConfigurationNodeImpl hstRootNode = bootstrapModel.getConfigurationRootNode().getNode("hst:hst");
+                        if (hstRootNode != null && hstRootNode.getProperty("jcr:primaryType").getValue().getString().equals("hst:hst")) {
+                            throw new IllegalArgumentException("Core bootstrap model contains hst nodes");
+                        }
                     }
 
                     log.info("ConfigurationService: apply bootstrap config");
@@ -319,6 +337,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                             this.baselineModel = baselineModel;
                         }
 
+                        // use the baseline version of modules, since we want to close ZipFileSystems backing the
+                        // bootstrap module loaded from jars
                         // also, we prefer using source modules over baseline modules
                         runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
                     }
@@ -338,22 +358,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                     // post migrators need to run after the auto export service has been started because the
                     // changes of the migrators might have to be exported
-                    log.info("Loading postMigrators");
-                    final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
-                    if (!postMigrators.isEmpty()) {
-                        try {
-                            if (session.hasPendingChanges()) {
-                                throw new IllegalStateException("Pending changes at this moment not allowed");
-                            }
-                            log.debug("ConfigurationService: Resetting ObservationManager userData before running postMigrators to enable auto-export of their changes (if any).");
-                            session.getWorkspace().getObservationManager().setUserData(null);
-                            log.info("ConfigurationService: Running postMigrators: {}", postMigrators);
-                            runMigrators(bootstrapModel, postMigrators, autoExportRunning);
-                        } finally {
-                            log.debug("ConfigurationService: Setting ObservationManager userData again to {} to skip further change events from this session for auto-export", Constants.HCM_ROOT);
-                            session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
-                        }
-                    }
+                    applyPostMigrators(bootstrapModel, autoExportRunning);
 
                 } finally {
                     if (bootstrapModel != null) {
@@ -377,6 +382,34 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 lockManager.unlock();
             } catch (Exception e) {
                 log.error("Failed to release the configuration lock", e);
+            }
+        }
+    }
+
+    private void applyPreMigrators(final ConfigurationModelImpl bootstrapModel) {
+        log.info("Loading preMigrators");
+        final List<ConfigurationMigrator> preMigrators = loadMigrators(PreMigrator.class);
+        if (!preMigrators.isEmpty()) {
+            log.info("Running preMigrators: {}", preMigrators);
+            runMigrators(bootstrapModel, preMigrators, false);
+        }
+    }
+
+    private void applyPostMigrators(final ConfigurationModelImpl bootstrapModel, final boolean autoExportRunning) throws RepositoryException {
+        log.info("Loading postMigrators");
+        final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
+        if (!postMigrators.isEmpty()) {
+            try {
+                if (session.hasPendingChanges()) {
+                    throw new IllegalStateException("Pending changes at this moment not allowed");
+                }
+                log.debug("ConfigurationService: Resetting ObservationManager userData before running postMigrators to enable auto-export of their changes (if any).");
+                session.getWorkspace().getObservationManager().setUserData(null);
+                log.info("ConfigurationService: Running postMigrators: {}", postMigrators);
+                runMigrators(bootstrapModel, postMigrators, autoExportRunning);
+            } finally {
+                log.debug("ConfigurationService: Setting ObservationManager userData again to {} to skip further change events from this session for auto-export", Constants.HCM_ROOT);
+                session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
             }
         }
     }
@@ -712,9 +745,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             stopWatch.start();
 
             configService.computeAndWriteDelta(baseline, config, session, forceApply);
-            if (verify) {
-                configService.computeAndWriteDelta(baseline, config, session, forceApply);
-            }
             if (!verifyOnly) {
                 session.save();
             }
@@ -748,7 +778,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel, boolean)}, {@code false} is
      * returned.
      */
-    private void runMigrators(final ConfigurationModelImpl model, final List<ConfigurationMigrator> migrators,
+    private void runMigrators(final ConfigurationModel model, final List<ConfigurationMigrator> migrators,
                               final boolean autoExportRunning) {
         for (ConfigurationMigrator migrator : migrators) {
             try {
@@ -874,6 +904,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     @Override
     @SuppressWarnings("unchecked")
     public void serviceRegistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
+
+        if (USE_HCM_SITES_MODE == false) {
+            throw new UnsupportedOperationException(String.format("HCM Site registration is forbidden " +
+                    "for legacy projects using old structure. " +
+                    "Change '%s' property to 'true'", USE_HCM_SITES_PROPERTY));
+        }
+
         if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE) {
             final ServletContext servletContext = serviceHolder.getServiceObject().getServletContext();
             final Map<String, String> hcmSiteConfig;

@@ -86,6 +86,8 @@ import static java.util.function.Function.identity;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.onehippo.cm.engine.ConfigurationServiceImpl.USE_HCM_SITES_MODE;
+import static org.onehippo.cm.engine.Constants.HST_DEFAULT_ROOT_PATH;
 import static org.onehippo.cm.engine.ValueProcessor.determineVerifiedValues;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
@@ -677,7 +679,7 @@ public class ConfigurationConfigService {
 //                    // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
 //                    //            Such a check would be rather invasive (potentially full sub-tree compare)
 //                }
-                childNode.remove();
+                removeNode(childNode);
             }
         }
 
@@ -687,6 +689,19 @@ public class ConfigurationConfigService {
         if (orderingIsRelevant && updateNode.getNodes().size() > 0) {
             reorderChildren(targetNode, updateNode.getNodes().stream().map(ConfigurationNode::getName).collect(Collectors.toList()));
         }
+    }
+
+    protected void removeNode(final Node childNode) throws RepositoryException {
+
+        final JcrPath excludedPath = JcrPaths.getPath(HST_DEFAULT_ROOT_PATH);
+        if (USE_HCM_SITES_MODE) {
+            final JcrPath nodePath = JcrPaths.getPath(childNode.getPath());
+            if (nodePath.startsWith(excludedPath)) {
+                log.info("Skipping '/hst:hst' node removal");
+                return;
+            }
+        }
+        childNode.remove();
     }
 
     private Node addNode(final Node parentNode, final String childName, final String childPrimaryType,
