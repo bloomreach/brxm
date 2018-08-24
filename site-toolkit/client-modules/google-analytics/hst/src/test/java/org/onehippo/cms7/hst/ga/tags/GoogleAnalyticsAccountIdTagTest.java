@@ -17,9 +17,6 @@ package org.onehippo.cms7.hst.ga.tags;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import javax.servlet.jsp.JspException;
 
 import org.junit.Before;
 import org.junit.Test;
