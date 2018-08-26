@@ -49,6 +49,7 @@ import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
 import org.slf4j.Logger;
@@ -189,10 +190,15 @@ public class PluginStore {
         final Set<String> restClasses = new HashSet<>();
 
         for (PluginDescriptor plugin : pluginSet.getPlugins()) {
-            // load the plugin's current installation state
-            installService.loadInstallStateFromFileSystem(plugin);
+            if (plugin.getType().equals("feature")) {
+                // load the plugin's current installation state
+                installService.loadInstallStateFromFileSystem(plugin);
 
-            plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
+                plugin.setDependencySummary(makeDependencySummary(plugin, pluginSet));
+            } else {
+                // 'tools' are always considered installed.
+                plugin.setState(InstallState.INSTALLED);
+            }
 
             // extract all REST classes to setup the dynamic endpoints
             if (plugin.getRestClasses() != null) {

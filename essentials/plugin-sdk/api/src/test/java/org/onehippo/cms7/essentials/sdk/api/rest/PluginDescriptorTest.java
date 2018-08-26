@@ -57,7 +57,6 @@ public class PluginDescriptorTest {
         repositoryPolicy.setUpdatePolicy("testupdatepolicy");
         repository.setReleasePolicy(repositoryPolicy);
         repository.setTargetPom(Module.PROJECT.getName());
-        value.setRepositories(Collections.singletonList(repository));
 
         // test json:
 
@@ -66,12 +65,5 @@ public class PluginDescriptorTest {
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
         assertEquals(vendor.getName(), fromJson.getVendor().getName());
-        assertEquals("Expected 1 repository", 1, value.getRepositories().size());
-        assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleasePolicy().getChecksumPolicy());
-        assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleasePolicy().getUpdatePolicy());
-        assertEquals("Expected repository enabled not to be set", null, value.getRepositories().get(0).getReleasePolicy().getEnabled());
-        assertEquals("Expected repository snapshots checksum policy", "test-snapshots-checksumpolicy", value.getRepositories().get(0).getSnapshotPolicy().getChecksumPolicy());
-        assertEquals("Expected repository snapshots update policy", "test-snapshots-updatepolicy", value.getRepositories().get(0).getSnapshotPolicy().getUpdatePolicy());
-        assertEquals("Expected repository snapshots enabled not to be set", null, value.getRepositories().get(0).getSnapshotPolicy().getEnabled());
     }
 }

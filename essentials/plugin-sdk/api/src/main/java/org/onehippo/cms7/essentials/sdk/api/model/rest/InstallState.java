@@ -21,10 +21,8 @@ package org.onehippo.cms7.essentials.sdk.api.model.rest;
  */
 public enum InstallState {
     DISCOVERED("discovered"),
-    BOARDING_PENDING("boardingPending"),
-    BOARDING("boarding"),
-    ONBOARD("onBoard"),
     INSTALLATION_PENDING("installationPending"),
+    AWAITING_USER_INPUT("awaitingUserInput"),
     INSTALLING("installing"),
     INSTALLED("installed");
 

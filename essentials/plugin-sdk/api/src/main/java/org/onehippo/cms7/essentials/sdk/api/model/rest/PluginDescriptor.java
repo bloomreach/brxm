@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.sdk.api.model.rest;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +34,6 @@ public class PluginDescriptor {
     private List<String> restClasses;
 
     private Vendor vendor;
-    private List<MavenDependency.WithModule> dependencies;
-    private List<MavenRepository.WithModule> repositories;
     private String name;
     private String introduction;
     private String description;
@@ -145,17 +142,6 @@ public class PluginDescriptor {
         this.documentationLink = documentationLink;
     }
 
-    public List<MavenDependency.WithModule> getDependencies() {
-        if (dependencies == null) {
-            return new ArrayList<>();
-        }
-        return dependencies;
-    }
-
-    public void setDependencies(final List<MavenDependency.WithModule> dependencies) {
-        this.dependencies = dependencies;
-    }
-
     public String getIntroduction() {
         return introduction;
     }
@@ -188,17 +174,6 @@ public class PluginDescriptor {
         this.imageUrls = imageUrls;
     }
 
-    public List<MavenRepository.WithModule> getRepositories() {
-        if (repositories == null) {
-            return new ArrayList<>();
-        }
-        return repositories;
-    }
-
-    public void setRepositories(final List<MavenRepository.WithModule> repositories) {
-        this.repositories = repositories;
-    }
-
     public String getIcon() {
         if (Strings.isNullOrEmpty(icon)) {
             return "/essentials/images/icons/missing-icon.png";
@@ -215,7 +190,6 @@ public class PluginDescriptor {
         final StringBuilder sb = new StringBuilder("PluginRestful{");
         sb.append("restClasses=").append(restClasses);
         sb.append(", vendor=").append(vendor);
-        sb.append(", dependencies=").append(dependencies);
         sb.append(", name='").append(name).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
         sb.append(", id='").append(id).append('\'');
@@ -291,7 +265,6 @@ public class PluginDescriptor {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Dependency {
         private String pluginId;
-        @JsonIgnore private InstallState minStateForBoarding;
         @JsonIgnore private InstallState minStateForInstalling = InstallState.INSTALLING;
 
         public String getPluginId() {
@@ -300,18 +273,6 @@ public class PluginDescriptor {
 
         public void setPluginId(final String pluginId) {
             this.pluginId = pluginId;
-        }
-
-        public InstallState getMinStateForBoarding() {
-            return minStateForBoarding;
-        }
-
-        public String getMinInstallStateForBoarding() {
-            return minStateForBoarding != null ? minStateForBoarding.toString() : null;
-        }
-
-        public void setMinInstallStateForBoarding(final String minInstallStateForBoarding) {
-            this.minStateForBoarding = InstallState.fromString(minInstallStateForBoarding);
         }
 
         public InstallState getMinStateForInstalling() {

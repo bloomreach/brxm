@@ -28,11 +28,11 @@
             </div>
           </div>
         </div>
-        <div class="col-xs-6 text-right">
-          <a ng-show="needsRebuild()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-          <a ng-show="needsConfiguration()" class="btn btn-danger" href="#/features/{{plugin.id}}">Needs to be configured</a>
-          <a ng-show="hasConfiguration()" class="btn btn-primary" href="#/features/{{plugin.id}}">Configure</a>
-          <a ng-show="isPending()" class="btn btn-default">Installation Pending</a>
+        <div ng-switch="plugin.installState" class="col-xs-6 text-right">
+          <a ng-switch-when="installationPending" class="btn btn-default">Installation Pending</a>
+          <a ng-switch-when="awaitingUserInput" class="btn btn-danger" href="#/features/{{plugin.id}}">Control Installation</a>
+          <a ng-switch-when="installing" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+          <a ng-switch-default ng-show="plugin.hasConfiguration" class="btn btn-primary" href="#/features/{{plugin.id}}">Configure</a>
         </div>
       </div>
       <div class="row">

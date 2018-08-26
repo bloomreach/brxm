@@ -122,7 +122,7 @@
                     plugin: '='
                 },
                 templateUrl: 'directives/essentials-plugin.html',
-                controller: function ($scope, $filter, $log, $rootScope, $http, pluginService) {
+                controller: function ($scope, $filter, $log, $rootScope, $http, $location, pluginService) {
                     $scope.slides = [];
                     angular.forEach($scope.plugin.imageUrls, function(url) {
                         $scope.slides.push({
@@ -135,27 +135,18 @@
                         $event.preventDefault();
                         $scope.showDescription = !$scope.showDescription;
                     };
-                    $scope.isDiscovered = function() {
-                        return $scope.plugin.type === 'feature' && $scope.plugin.installState === 'discovered';
-                    };
-                    $scope.isBoarding = function() {
-                        return $scope.plugin.installState === 'boarding' || $scope.plugin.installState === 'installing';
-                    };
-                    $scope.isPending = function() {
-                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
-                    };
-                    $scope.isOnBoard = function() {
-                        return $scope.plugin.type === 'tool' ||
-                               $scope.plugin.installState === 'onBoard' ||
-                               $scope.plugin.installState === 'installed';
-                    };
                     $scope.installPlugin = function () {
                         $scope.installButtonDisabled = true; // avoid double-clicking
 
-                        // Due to inter-plugin dependencies, successful installation reloads the list of plugins
-                        // to have all states updated. This causes angular to re-instantiate this controller, so
-                        // we don't need to do anything with the promise returned by #install().
-                        pluginService.install($scope.plugin.id);
+                        // If the new state of the plugin (available if the promise resolves successfully) is
+                        // 'awaitingUserInput', we switch the view to the plugin's page, where the user
+                        // is prompted for input.
+                        pluginService.install($scope.plugin.id).then(function() {
+                            if ($scope.plugin.installState === 'awaitingUserInput') {
+                                $location.path('/features/' + $scope.plugin.id);
+                            }
+                            // else we stay in the current state so more features can be installed.
+                        });
                     };
                 }
             };
@@ -166,22 +157,7 @@
                 scope: {
                     plugin: '='
                 },
-                templateUrl: 'directives/essentials-installed-feature.html',
-                controller: function ($scope) {
-                    $scope.needsRebuild = function() {
-                        var state = $scope.plugin.installState;
-                        return state === 'boarding' || state === 'installing';
-                    };
-                    $scope.needsConfiguration = function() {
-                        return $scope.plugin.installState === 'onBoard';
-                    };
-                    $scope.hasConfiguration = function() {
-                        return $scope.plugin.installState === 'installed' && $scope.plugin.hasConfiguration;
-                    };
-                    $scope.isPending = function() {
-                        return $scope.plugin.installState === 'boardingPending' || $scope.plugin.installState === 'installationPending';
-                    };
-                }
+                templateUrl: 'directives/essentials-installed-feature.html'
             };
         }).directive("essentialsInstalledTool", function () {
             return {

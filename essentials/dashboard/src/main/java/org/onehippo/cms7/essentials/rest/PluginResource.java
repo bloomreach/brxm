@@ -141,37 +141,23 @@ public class PluginResource {
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
     public synchronized UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId,
+                                                   final Map<String, Object> parameters,
                                                    @Context HttpServletResponse response) {
         final PluginSet pluginSet = pluginStore.loadPlugins();
-        final Map<String, Object> parameters = createDefaultInstallationParameters();
         final UserFeedback feedback = new UserFeedback();
 
-        parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
-        if (!installStateMachine.tryBoarding(pluginId, pluginSet, parameters, feedback)) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-        }
-
-        return feedback;
-    }
-
-
-    @ApiOperation(
-            value = "Confirm the installation of a plugin with an explicit set of installation parameters.",
-            notes = "Only used if the global settings instruct Essentials to have the installation parameters confirmed.",
-            response = UserFeedback.class)
-    @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
-    @POST
-    @Path("/{" + PLUGIN_ID + "}/setup")
-    public UserFeedback setupPluginGeneralized(@PathParam(PLUGIN_ID) final String pluginId,
-                                               final Map<String, Object> parameters,
-                                               @Context HttpServletResponse response) {
-        final PluginSet pluginSet = pluginStore.loadPlugins();
-        final UserFeedback feedback = new UserFeedback();
-        ensureGenericInstallationParameters(parameters);
-        parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
-
-        if (!installStateMachine.tryInstallation(pluginId, pluginSet, parameters, feedback)) {
-            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+        if (!parameters.isEmpty()) {
+            ensureGenericInstallationParameters(parameters);
+            parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
+            if (!installStateMachine.installWithParameters(pluginId, pluginSet, parameters, feedback)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            }
+        } else {
+            final Map<String, Object> defaultParams = createDefaultInstallationParameters();
+            defaultParams.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
+            if (!installStateMachine.installWithDependencies(pluginId, pluginSet, defaultParams, feedback)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            }
         }
 
         return feedback;
