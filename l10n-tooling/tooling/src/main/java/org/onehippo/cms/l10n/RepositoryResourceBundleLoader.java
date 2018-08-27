@@ -34,8 +34,8 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +61,8 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
                 java.nio.file.Path descriptor = fileSystem.getPath(HCM_MODULE_YAML);
 
                 if (Files.exists(descriptor)) {
-                    final PathConfigurationReader configurationReader = new PathConfigurationReader();
-                    final ModuleImpl module = configurationReader.read(fileSystem.getPath(HCM_MODULE_YAML)).getModuleContext().getModule();
+                    final ModuleReader moduleReader = new ModuleReader();
+                    final ModuleImpl module = moduleReader.read(fileSystem.getPath(HCM_MODULE_YAML), false).getModule();
 
                     final Stream<DefinitionNodeImpl> configDefinitionStream = module.getConfigSources().stream()
                             .flatMap(s -> s.getDefinitions().stream())
