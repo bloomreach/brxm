@@ -20,10 +20,11 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS & SAMPLE CONTENT -->
   <instructionSet>
-    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-hst-client"/>
-    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-addon-repository"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-hst-client"/>
+    <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-addon-repository"/>
+    <mavenDependency targetPom="hcm-hst-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-robotstxt-addon-hcm-site"/>
     <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class"/>
-    <xml action="copy" source="xml/robots_sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="xml/robots_sitemap.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
 
   <instructionSet group="sampleData">

@@ -142,7 +142,7 @@ public class RestPluginResource {
 
         final Session session = jcrService.createSession();
         try {
-            final Node targetNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+            final Node targetNode = session.getNode(settingsService.getSettings().getHstRoot() + "/hst:hosts/dev-localhost/localhost/hst:root");
             if (targetNode.hasNode(mountName)) {
                 final String msg = String.format("REST API mount '%s' already exists, skipping creation.", mountName);
                 LOG.warn(msg);

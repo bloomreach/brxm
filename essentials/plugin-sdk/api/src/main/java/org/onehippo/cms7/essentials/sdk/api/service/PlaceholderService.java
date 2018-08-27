@@ -74,6 +74,7 @@ public interface PlaceholderService {
     String APPLICATION_CONTENT = "applicationContent";
     String DEVELOPMENT_CONFIG = "developmentConfig";
     String DEVELOPMENT_CONTENT = "developmentContent";
+    String HST_ROOT = "hstRoot";
 
     /**
      * Make and return a fresh set of placeholders.

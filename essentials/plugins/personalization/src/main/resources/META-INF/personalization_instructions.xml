@@ -17,7 +17,7 @@
 
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
-    <mavenDependency targetPom="cms" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-components-repository" version="${hippo.addon-personalization.version}"/>
-    <mavenDependency targetPom="site" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-dependencies" type="pom" version="${hippo.addon-personalization.version}"/>
+    <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-components-repository" version="${hippo.addon-personalization.version}"/>
+    <mavenDependency targetPom="site-components" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-dependencies" type="pom" version="${hippo.addon-personalization.version}"/>
   </instructionSet>
 </instructions>

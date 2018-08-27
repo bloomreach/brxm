@@ -31,9 +31,24 @@ public interface ProjectSettings {
     String getSiteModule();
 
     /**
+     * The name of the sub-directory of the site components module, representing the components module, defaults to 'components'.
+     */
+    String getSiteComponentsSubModule();
+
+    /**
+     * The name of the sub-directory of the site webapp module, representing the web application module, defaults to 'webapp'.
+     */
+    String getSiteWebappSubModule();
+
+    /**
      * The name of the project root-level directory representing the 'cms' module, defaults to 'cms'.
      */
     String getCmsModule();
+
+    /**
+     * The name of the project root-level directory representing the 'cms-dependencies' module, defaults to 'cms-dependencies'.
+     */
+    String getCmsDependenciesModule();
 
     /**
      * The name of the project root-level directory representing the repository data module, defaults to 'repository-data'.
@@ -56,6 +71,16 @@ public interface ProjectSettings {
     String getWebfilesSubModule();
 
     /**
+     * The name of hst root node.
+     */
+    String getHstRoot();
+
+    /**
+     * The name of webfile bundle.
+     */
+    String getWebfileBundleName();
+
+    /**
      * The primary JCR namespace used by the project, for example 'myhippoproject'.
      */
     String getProjectNamespace();
@@ -64,6 +89,12 @@ public interface ProjectSettings {
      * The nested Java package name used primarily throughout the project, for example 'com.myhippoproject'.
      */
     String getSelectedProjectPackage();
+
+    /**
+     * HST HCM Alias. Controls where HCM HST dependencies should be put into.
+     * For pre 13.0 projects should be 'CMS' and for 13.0 and later should be 'SITE_WEBAPP'
+     */
+    String getHstHcmDependenciesAlias();
 
     /**
      * The nested Java package name containing the project's REST resources, typically below the 'project package'.
@@ -119,7 +150,7 @@ public interface ProjectSettings {
      * Development environments with different separators (i.e. Unix vs. Windows) is currently not supported for this
      * parameter.
      *
-     * Example/default: 'site/src/main/java'
+     * Example/default: 'site/components/src/main/java'
      */
     String getBeansFolder();
 }

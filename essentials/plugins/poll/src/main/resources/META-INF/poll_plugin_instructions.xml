@@ -20,9 +20,10 @@
 
   <!-- INSTRUCTION ADDING BEAN MAPPINGS TO HST BEANS-->
   <instructionSet>
-    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-addon-cms"/>
-    <mavenDependency targetPom="cms" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-addon-repository"/>
-    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-hst-client"/>
+    <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-addon-cms"/>
+    <mavenDependency targetPom="cms-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-addon-repository"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-hst-client"/>
+    <mavenDependency targetPom="hcm-hst-dependencies" groupId="org.onehippo.cms7" artifactId="hippo-plugin-poll-addon-hcm-site"/>
     <hstBeanClasses pattern="classpath*:org/onehippo/forge/**/*.class"/>
     <xml action="copy" source="xml/new-poll-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/new-poll-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>

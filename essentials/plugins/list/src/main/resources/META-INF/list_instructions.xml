@@ -21,12 +21,12 @@
 
   <instructionSet group="jsp">
     <file action="copy" source="jsp/list-component.jsp" target="{{jspRoot}}/hstdefault/list-component.jsp"/>
-    <xml action="copy" source="xml/hst/templates/list-component-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/list-component-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="freemarker">
     <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-component.ftl"/>
-    <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -45,7 +45,7 @@
   </instructionSet>
 
   <instructionSet>
-    <xml action="copy" source="xml/hst/catalog/list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="xml/hst/catalog/list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
   </instructionSet>
 
