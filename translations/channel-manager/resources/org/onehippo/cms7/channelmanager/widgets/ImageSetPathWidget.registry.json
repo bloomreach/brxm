@@ -1,9 +1,0 @@
-{
-  "bundleType" : "WICKET",
-  "keyData" : {
-    "imageset.select" : {
-      "status" : "CLEAN",
-      "locales" : null
-    }
-  }
-}

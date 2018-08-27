@@ -1,9 +1,0 @@
-{
-  "bundleType" : "WICKET",
-  "keyData" : {
-    "path.select" : {
-      "status" : "CLEAN",
-      "locales" : null
-    }
-  }
-}
