@@ -19,19 +19,19 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.onehippo.cms7.services.htmlprocessor.richtext.RichTextException;
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImage;
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RichTextEditorImageService implements IDetachable {
+public class RichTextEditorImageService implements IClusterable {
 
     static final Logger log = LoggerFactory.getLogger(RichTextEditorImageService.class);
 
@@ -90,11 +90,6 @@ public class RichTextEditorImageService implements IDetachable {
                 }
             }
         };
-    }
-
-    @Override
-    public void detach() {
-        factory.release();
     }
 
     private RichTextImage loadImageItem(final Map<String, String> values) {

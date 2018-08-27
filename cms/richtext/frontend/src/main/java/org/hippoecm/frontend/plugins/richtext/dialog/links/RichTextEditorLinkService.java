@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
-import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.RichTextException;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLink;
@@ -33,25 +33,25 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RichTextEditorLinkService implements IDetachable {
+public class RichTextEditorLinkService implements IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextEditorLinkService.class);
 
-    private RichTextLinkFactory factory;
+    private final RichTextLinkFactory factory;
 
-    public RichTextEditorLinkService(RichTextLinkFactory factory) {
+    public RichTextEditorLinkService(final RichTextLinkFactory factory) {
         this.factory = factory;
     }
 
-    public RichTextEditorInternalLink create(Map<String, String> p) {
+    public RichTextEditorInternalLink create(final Map<String, String> p) {
         final String uuid = p.get(RichTextEditorLink.UUID);
         if (uuid != null) {
-            if (factory.getLinkUuids().contains(uuid)) {
+            if (factory.hasLink(uuid)) {
                 try {
                     final RichTextLink link = factory.loadLink(uuid);
                     final IModel<Node> targetModel = new JcrNodeModel(link.getTargetModel().get());
                     return new InternalLink(p, targetModel);
-                } catch (RichTextException e) {
+                } catch (final RichTextException e) {
                     log.error("Could not load link '" + uuid + "'", e);
                 }
             }
@@ -59,14 +59,9 @@ public class RichTextEditorLinkService implements IDetachable {
         return new InternalLink(p, null);
     }
 
-    @Override
-    public void detach() {
-        factory.release();
-    }
-
     private class InternalLink extends RichTextEditorInternalLink {
 
-        public InternalLink(Map<String, String> values, IModel<Node> targetModel) {
+        InternalLink(final Map<String, String> values, final IModel<Node> targetModel) {
             super(values, targetModel);
         }
 
@@ -84,7 +79,7 @@ public class RichTextEditorLinkService implements IDetachable {
                     final RichTextLink link = factory.createLink(linkTarget);
                     final String uuid = link.getUuid();
                     setUuid(uuid);
-                } catch (RichTextException e) {
+                } catch (final RichTextException e) {
                     log.error("Error creating link", e);
                 }
             }

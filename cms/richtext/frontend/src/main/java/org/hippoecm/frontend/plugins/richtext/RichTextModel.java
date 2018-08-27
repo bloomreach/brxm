@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,22 +18,26 @@ package org.hippoecm.frontend.plugins.richtext;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketURLEncoder;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
 
 public class RichTextModel implements IModel<String> {
 
     private final RichTextProcessorModel processorModel;
+    private IModel<String> valueModel;
+    private IModel<Node> nodeModel;
 
     public RichTextModel(final RichTextProcessorModel processorModel) {
         this.processorModel = processorModel;
     }
 
-    public RichTextModel(final String processorId, final Model<String> valueModel, final Model<Node> nodeModel) {
-        this.processorModel = new RichTextProcessorModel(valueModel, nodeModel,
+    public RichTextModel(final String processorId, final IModel<String> valueModel, final IModel<Node> nodeModel) {
+        this.valueModel = valueModel;
+        this.nodeModel = nodeModel;
+        this.processorModel = new RichTextProcessorModel(WicketModel.of(valueModel), WicketModel.of(nodeModel),
                                                          HtmlProcessorFactory.of(processorId),
                                                          WicketNodeFactory.INSTANCE,
                                                          WicketURLEncoder.INSTANCE);
@@ -51,7 +55,12 @@ public class RichTextModel implements IModel<String> {
 
     @Override
     public void detach() {
-        processorModel.release();
+        if (valueModel != null) {
+            valueModel.detach();
+        }
+        if (nodeModel != null) {
+            nodeModel.detach();
+        }
     }
 
 }

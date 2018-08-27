@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
-import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -65,10 +64,8 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextViewPan
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
         final JcrPropertyValueModel<String> currentModel = getContentModelOrNull(currentNodeModel);
 
-        final IModel<String> baseRichTextModel = modelFactory.create(WicketModel.of(baseModel),
-                                                                     WicketModel.of(baseNodeModel));
-        final IModel<String> currentRichTextModel = modelFactory.create(WicketModel.of(currentModel),
-                                                                        WicketModel.of(currentNodeModel));
+        final IModel<String> baseRichTextModel = modelFactory.create(baseModel, baseNodeModel);
+        final IModel<String> currentRichTextModel = modelFactory.create(currentModel, currentNodeModel);
 
         final StripScriptModel scriptlessBase = new StripScriptModel(baseRichTextModel);
         final StripScriptModel scriptlessCurrent = new StripScriptModel(currentRichTextModel);

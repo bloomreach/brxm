@@ -133,10 +133,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     @Override
     protected IModel<String> createEditModel() {
-        final Model<String> valueModel = WicketModel.of(getHtmlModel());
-        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
-
-        return new RichTextModel(getHtmlProcessorId(), valueModel, nodeModel);
+        return new RichTextModel(getHtmlProcessorId(), getHtmlModel(), getNodeModel());
     }
 
     @Override

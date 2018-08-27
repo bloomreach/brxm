@@ -49,9 +49,4 @@ public class LinkPickerManager extends DialogManager<RichTextEditorDocumentLink>
         return new DocumentBrowserDialog<>(context, config, model);
     }
 
-    @Override
-    public void detach() {
-        linkService.detach();
-        super.detach();
-    }
 }

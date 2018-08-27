@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
@@ -46,6 +45,6 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
                                            final String htmlProcessorId) {
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
 
-        return new RichTextModel(htmlProcessorId, WicketModel.of(stripScriptModel), WicketModel.of(nodeModel));
+        return new RichTextModel(htmlProcessorId, stripScriptModel, nodeModel);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -32,7 +33,7 @@ import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorImpl;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.URLEncoder;
 import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.serialize.HtmlSerializer;
 import org.onehippo.repository.mock.MockNode;
@@ -67,11 +68,12 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         final HtmlProcessorFactory processorFactory = () -> new HtmlProcessorImpl(processorConfig);
         modelFactory = new RichTextModelFactory("default") {
             @Override
-            public IModel<String> create(final Model<String> valueModel, final Model<Node> nodeModel) {
-                return new RichTextModel(new RichTextProcessorModel(valueModel,
-                                                                    nodeModel,
+            public IModel<String> create(final IModel<String> valueModel, final IModel<Node> nodeModel) {
+                return new RichTextModel(new RichTextProcessorModel(WicketModel.of(valueModel),
+                                                                    WicketModel.of(nodeModel),
                                                                     processorFactory,
-                                                                    WicketNodeFactory.INSTANCE));
+                                                                    WicketNodeFactory.INSTANCE,
+                                                                    URLEncoder.OPAQUE));
             }
         };
     }

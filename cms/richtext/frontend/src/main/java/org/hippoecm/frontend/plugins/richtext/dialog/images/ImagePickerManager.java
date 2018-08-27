@@ -51,9 +51,4 @@ public class ImagePickerManager extends DialogManager<RichTextEditorImageLink> {
         return new ImageBrowserDialog(context, config, model);
     }
 
-    @Override
-    public void detach() {
-        super.detach();
-        imageService.detach();
-    }
 }

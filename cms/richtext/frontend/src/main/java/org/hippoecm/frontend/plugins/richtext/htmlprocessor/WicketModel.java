@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,11 +34,6 @@ public class WicketModel<T> implements Model<T> {
     @Override
     public void set(final T value) {
         model.setObject(value);
-    }
-
-    @Override
-    public void release() {
-        model.detach();
     }
 
     public static <T> Model<T> of(final IModel<T> wicketModel) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
 public class RichTextModelFactory {
 
@@ -29,7 +28,7 @@ public class RichTextModelFactory {
         this.processorId = processorId;
     }
 
-    public IModel<String> create(final Model<String> valueModel, final Model<Node> nodeModel) {
+    public IModel<String> create(final IModel<String> valueModel, final IModel<Node> nodeModel) {
         return new RichTextModel(processorId, valueModel, nodeModel);
     }
 }
