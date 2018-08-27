@@ -32,6 +32,12 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-hcm-site</artifactId>
+      <version>${hippo.hst.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
