@@ -30,6 +30,10 @@ public interface IListColumnProvider extends IClusterable {
 
     List<ListColumn<Node>> getColumns();
 
+    default List<ListColumn<Node>> getTypeViewColumns() {
+        return getColumns();
+    }
+
     List<ListColumn<Node>> getExpandedColumns();
 
 }
