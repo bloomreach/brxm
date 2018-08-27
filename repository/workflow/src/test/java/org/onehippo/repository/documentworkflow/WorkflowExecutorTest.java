@@ -58,9 +58,11 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
  */
 public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
+    public static final String MASTER = "master";
     private MockNode root;
     private MockAccessManagedSession session;
     private MockNode handle;
+    private Map<String, DocumentVariant> variantsMap;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -77,100 +79,143 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         root = MockNode.root();
         session = new MockAccessManagedSession(root);
         handle = root.addNode("document-1", NT_HANDLE);
+        variantsMap = new HashMap<>();
     }
 
-
+    /**
+     * <ul>
+     *     <li>Go to the content perspective</li>
+     *     <li>Create a new document</li>
+     * </ul>
+     */
     @Test
     public void editing_master() throws WorkflowException, RepositoryException {
-        final Map<String, DocumentVariant> variantsMap = new HashMap<>();
+        String branchId = MASTER;
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
         expect(data.getHandle()).andStubReturn(handle);
-
         expect(data.getBranches()).andStubReturn(emptySet());
-        expect(data.getBranchId()).andStubReturn("master");
+        expect(data.getBranchId()).andStubReturn(branchId);
         replay(data);
 
-        final MockNode draftVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant draft = new DocumentVariant(draftVariant);
-        draft.setState(HippoStdNodeType.DRAFT);
-        draft.setHolder("testuser");
-        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.DRAFT, draft);
+
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.DRAFT)
+                .holder("testuser")
+                .permissions("hippo:author")
+                .branchId(branchId)
+                .add();
 
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(true)
-                .disposeEditableInstance(true)
-                .depublishBranch(false)
-                .reintegrateBranch(false)
-                .checkModified(false)
                 .branch(false)
+                .checkModified(false)
+                .checkoutBranch(false)
+                .commitEditableInstance(true)
+                .depublishBranch(false)
+                .disposeEditableInstance(true)
+                .getBranch(false)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
+                .publishBranch(false)
+                .reintegrateBranch(false)
+                .removeBranch(false)
                 .requestDelete(false)
                 .requestDepublication(false)
-                .listVersions()
-                .publishBranch(false)
                 .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
-                .removeBranch(false)
-                .getBranch(false)
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
 
+    /**
+     * <ul>
+     *     <li>Go to the content perspective</li>
+     *     <li>Create a new document</li>
+     *     <li>Save & Close</li>
+     *     <li>Add to branch "foo"</li>
+     *     <li>Edit the document</li>
+     * </ul>
+     *
+     * In version history there is now a version with label "foo-unpublished"
+     *
+     * Under the handle the following variants exist:
+     * <ul>
+     *     <li>draft ("foo")</li>
+     *     <li>unpublished("master")</li>
+     * </ul>
+     */
     @Test
     public void editing_branch() throws RepositoryException, WorkflowException {
         final String branchId = "foo";
 
-        final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
         expect(data.getHandle()).andStubReturn(handle);
 
         expect(data.getBranches()).andStubReturn(emptySet());
         expect(data.getBranchId()).andStubReturn(branchId);
+        expect(data.isOnlyMaster()).andStubReturn(false);
+        expect(data.isLiveAvailable(branchId)).andStubReturn(false);
+        expect(data.isAnyBranchLiveAvailable()).andStubReturn(false);
+        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
+        expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode draftVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant draft = new DocumentVariant(draftVariant);
-        draftVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        draftVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, branchId);
 
-        draft.setState(HippoStdNodeType.DRAFT);
-        draft.setHolder("testuser");
-        session.setPermissions(draftVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.DRAFT, draft);
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.DRAFT)
+                .holder("testuser")
+                .permissions("hippo:author")
+                .branchId(branchId)
+                .add();
 
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.UNPUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(true)
-                .disposeEditableInstance(true)
-                .depublishBranch(false)
-                .reintegrateBranch(false)
-                .checkModified(false)
                 .branch(false)
+                .checkModified(true)
+                .checkoutBranch(false)
+                .commitEditableInstance(true)
+                .depublishBranch(false)
+                .disposeEditableInstance(true)
+                .getBranch(false)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
+                .publishBranch(false)
+                .reintegrateBranch(false)
+                .removeBranch(false)
                 .requestDelete(false)
                 .requestDepublication(false)
-                .listVersions()
-                .publishBranch(false)
                 .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
-                .removeBranch(false)
-                .getBranch(false)
+                .retrieveVersion()
                 .actions();
         assertExpectedActions(data, expectedActions);
-
     }
 
+
+    /**
+     * <ul>
+     *     <li>Go to the content perspective</li>
+     *     <li>Open a document</li>
+     *     <li>Add it to branch "foo"</li>
+     *     <li>Select "master"</li>
+     *     <li>Edit and save</li>
+     *     <li>Select branch "foo"</li>
+     * </ul>
+     */
     @Test
     public void viewing_branch_unpublished_frozen_node() throws WorkflowException, RepositoryException {
         final String branchId = "foo";
 
-        final Map<String, DocumentVariant> variantsMap = new HashMap<>();
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
         expect(data.getHandle()).andStubReturn(handle);
@@ -184,39 +229,48 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode unpublishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant unpublished = new DocumentVariant(unpublishedVariant);
-        unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
-
-        unpublished.setState(HippoStdNodeType.UNPUBLISHED);
-        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.UNPUBLISHED, unpublished);
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.UNPUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
 
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
+                .branch(false)
+                .checkModified(false)
+                .checkoutBranch(true)
                 .commitEditableInstance(false)
-                .disposeEditableInstance(false)
                 .depublishBranch(false)
+                .disposeEditableInstance(false)
+                .getBranch(true)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
                 .publishBranch(false)
                 .reintegrateBranch(true)
-                .checkModified(false)
-                .branch(false)
+                .removeBranch(true)
                 .requestDelete(true)
                 .requestDepublication(false)
-                .listVersions()
-                .retrieveVersion()
                 .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(true)
-                .removeBranch(true)
-                .getBranch(true)
+                .retrieveVersion()
+                .retrieveVersion()
                 .actions();
 
         assertExpectedActions(data, expectedActions);
     }
 
+    /**
+     * <ul>
+     *     <li>Go to the content perspective</li>
+     *     <li>Open a document</li>
+     *     <li>Add it to branch "foo"</li>
+     *     <li>Select "master"</li>
+     * </ul>
+     * @throws WorkflowException
+     * @throws RepositoryException
+     */
     @Test
     public void viewing_master_unpublished_frozen_node() throws WorkflowException, RepositoryException {
         final String branchId = "master";
@@ -235,89 +289,53 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode unpublishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant unpublished = new DocumentVariant(unpublishedVariant);
-        unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
-
-        unpublished.setState(HippoStdNodeType.UNPUBLISHED);
-        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.UNPUBLISHED, unpublished);
-
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.UNPUBLISHED)
+                .permissions("hippo:author")
+                .branchId("foo")
+                .add();
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(false)
-                .disposeEditableInstance(false)
-                .depublishBranch(false)
-                .publishBranch(false)
-                .reintegrateBranch(false) //TODO(mrop) should be true, adjust scxml
-                .checkModified(false)
                 .branch(true)
-                .requestDelete(true)
-                .requestDepublication(false)
-                .listVersions()
-                .retrieveVersion()
-                .requestPublication(false)
-                .listBranches()
+                .checkModified(false)
                 .checkoutBranch(true)
-                .removeBranch(false) //TODO(mrop) should be true,  adjust scxml
-                .getBranch(true)
-                .actions();
-        assertExpectedActions(data, expectedActions);
-    }
-
-
-    @Test
-    public void viewing_branch_published_frozen_node() throws WorkflowException, RepositoryException {
-        final String branchId = "foo";
-
-        final Map<String, DocumentVariant> variantsMap = new HashMap<>();
-        final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
-        expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(handle);
-
-        expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
-        expect(data.getBranchId()).andStubReturn(branchId);
-        expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(true);
-        expect(data.isAnyBranchLiveAvailable()).andStubReturn(true);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(false);
-        expect(data.isModified(branchId)).andStubReturn(false);
-        replay(data);
-
-        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant published = new DocumentVariant(publishedVariant);
-        publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
-
-        published.setState(HippoStdNodeType.PUBLISHED);
-        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.PUBLISHED, published);
-
-
-        final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
                 .commitEditableInstance(false)
+                .depublishBranch(false)
                 .disposeEditableInstance(false)
-                .depublishBranch(true)
+                .getBranch(true)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
                 .publishBranch(false)
                 .reintegrateBranch(false)
-                .checkModified(false)
-                .branch(false)
-                .requestDelete(false)
-                .requestDepublication(false)
-                .listVersions()
-                // .retrieveVersion() TODO (mrop) adjust scxml to include retrieveVersion
-                .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
                 .removeBranch(false)
-                .getBranch(true)
+                .requestDelete(true)
+                .requestDepublication(false)
+                .requestPublication(false)
+                .retrieveVersion()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
 
+   
+
+    
+
+
+    /**
+     *
+     * <ul>
+     *     <li>Open a document</li>
+     *     <li>Add it to branch "foo" ( unpublished variant becomes "foo" )</li>
+     *     <li>Make sure "foo" gets published</li>
+     *     <li>Select branch "master"</li>
+     *     <li>Edit & Save ( unpublished variant becomes "master"</li>
+     *     <li>Publish ( published variant becomes "master" )</li>
+     * </ul>
+     * @throws WorkflowException
+     * @throws RepositoryException
+     */
     @Test
     public void viewing_branch_published_and_unpublished_frozen_node() throws WorkflowException, RepositoryException {
         final String branchId = "foo";
@@ -336,89 +354,60 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(false);
         replay(data);
 
-        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant published = new DocumentVariant(publishedVariant);
-        publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
 
-        published.setState(HippoStdNodeType.PUBLISHED);
-        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.PUBLISHED, published);
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.PUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
+
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.UNPUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
 
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(false)
-                .disposeEditableInstance(false)
-                .depublishBranch(true)
-                .publishBranch(false)
-                .reintegrateBranch(false)
-                .checkModified(false)
                 .branch(false)
+                .checkModified(false)
+                .checkoutBranch(true)
+                .commitEditableInstance(false)
+                .depublishBranch(true)
+                .disposeEditableInstance(false)
+                .getBranch(true)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
+                .publishBranch(false)
+                .reintegrateBranch(true)
+                .removeBranch(false)
                 .requestDelete(false)
                 .requestDepublication(false)
-                //.retrieveVersion() //TODO(mrop) adjust scxml
-                .listVersions()
                 .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
-                .removeBranch(false)
-                .getBranch(true)
+                .retrieveVersion()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
 
-    @Test
-    public void viewing_master_published_frozen_node() throws WorkflowException, RepositoryException {
-        final String branchId = "master";
-
-        final Map<String, DocumentVariant> variantsMap = new HashMap<>();
-        final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
-        expect(data.getDocuments()).andStubReturn(variantsMap);
-        expect(data.getHandle()).andStubReturn(handle);
-
-        expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
-        expect(data.getBranchId()).andStubReturn(branchId);
-        expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(true);
-        expect(data.isAnyBranchLiveAvailable()).andStubReturn(true);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(false);
-        expect(data.isModified(branchId)).andStubReturn(false);
-        replay(data);
-
-        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant published = new DocumentVariant(publishedVariant);
-        publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
-
-        published.setState(HippoStdNodeType.PUBLISHED);
-        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.PUBLISHED, published);
 
 
-        final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(false)
-                .disposeEditableInstance(false)
-                .depublishBranch(true)
-                .publishBranch(false)
-                //.publish(true) //TODO (mrop) add ("publish",true) , adjust scxml
-                .reintegrateBranch(false)
-                .checkModified(false)
-                .branch(true)
-                .requestDelete(false)
-                .requestDepublication(true)
-                .listVersions()
-                // .retrieveVersion() TODO (mrop) aa ("retrieveVersion", adjust scxml
-                .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
-                .removeBranch(false)
-                .getBranch(true)
-                .actions();
-        assertExpectedActions(data, expectedActions);
-    }
-
+    /**
+     *
+     * <ul>
+     *     <li>Open a document</li>
+     *     <li>Add it to branch "foo" ( unpublished variant becomes "foo" )</li>
+     *     <li>Make sure "foo" gets published</li>
+     *     <li>Select branch "master"</li>
+     *     <li>Edit & Save ( unpublished variant becomes "master"</li>
+     *     <li>Publish ( published variant becomes "master" )</li>
+     *     <li>Select branch "foo"</li>
+     * </ul>
+     * @throws WorkflowException
+     * @throws RepositoryException
+     */
     @Test
     public void viewing_branch_published_and_unpublished_modified_frozen_node() throws WorkflowException, RepositoryException {
         final String branchId = "foo";
@@ -437,34 +426,38 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.isModified(branchId)).andStubReturn(true);
         replay(data);
 
-        final MockNode publishedVariant = handle.addNode("document-1", "hippo:variant");
-        final DocumentVariant published = new DocumentVariant(publishedVariant);
-        publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "master");
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.PUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
 
-        published.setState(HippoStdNodeType.PUBLISHED);
-        session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
-        variantsMap.put(HippoStdNodeType.PUBLISHED, published);
-
+        new DocumentVariantBuilder(session, handle, variantsMap)
+                .relPath("document-1")
+                .state(HippoStdNodeType.UNPUBLISHED)
+                .permissions("hippo:author")
+                .branchId(MASTER)
+                .add();
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
-                .obtainEditableInstance(true)
-                .commitEditableInstance(false)
-                .disposeEditableInstance(false)
-                .depublishBranch(true)
-                .publishBranch(false) //TODO(mrop) should be true, adjust scxml
-                .reintegrateBranch(false)
-                .checkModified(false)
                 .branch(false)
+                .checkModified(false)
+                .checkoutBranch(true)
+                .commitEditableInstance(false)
+                .depublishBranch(true)
+                .disposeEditableInstance(false)
+                .getBranch(true)
+                .listBranches()
+                .listVersions()
+                .obtainEditableInstance(true)
+                .publishBranch(true)
+                .reintegrateBranch(true)
+                .removeBranch(false)
                 .requestDelete(false)
                 .requestDepublication(false)
-                .listVersions()
-                //.retrieveVersion() //TODO(mrop) add retrieveVersion, adjust scxml
                 .requestPublication(false)
-                .listBranches()
-                .checkoutBranch(false)
-                .removeBranch(false)
-                .getBranch(true)
+                .retrieveVersion()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -476,6 +469,5 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         scxmlWorkflowExecutor.start(data.getBranchId());
         assertMatchingKeyValues(scxmlWorkflowExecutor.getContext().getActions(), expectedActions);
     }
-
 
 }
