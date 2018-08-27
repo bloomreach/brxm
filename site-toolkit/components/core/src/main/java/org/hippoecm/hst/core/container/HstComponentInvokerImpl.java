@@ -346,13 +346,15 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             namedDispatching = (dispatchUrl != null);
         }
 
+        // NOTE: No need to dispatch to the render path or named renderer unless a resource template path is explicitly set.
+        //       So, stop processing here with info logging in that case. Probably a component's #doBeforeServeResource()
+        //       implements everything properly to write (binary) data (e.g, pdf) to the response already without having to
+        //       dispatch to any other external servlet or page here.
         if (dispatchUrl == null) {
-            dispatchUrl = window.getRenderPath();
-        }
-
-        if (dispatchUrl == null) {
-            dispatchUrl = window.getNamedRenderer();
-            namedDispatching = (dispatchUrl != null);
+            log.info("Skipping #invokeServeResource() as the component doesn't have @hst:resourcetemplate "
+                    + "property, associated with a servlet or template. Component window: {}, component "
+                    + "class: {}.", window.getName(), component.getClass().getName());
+            return;
         }
 
         ServletRequest wrappedRequest = ((HstRequestImpl) hstRequest).getRequest();
