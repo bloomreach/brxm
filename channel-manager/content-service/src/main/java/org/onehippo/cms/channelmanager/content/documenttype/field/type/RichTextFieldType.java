@@ -42,6 +42,7 @@ import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.URLEncoder;
 import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageTagProcessor;
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
@@ -162,7 +163,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         final Model<Node> nodeModel = Model.of(node);
         final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
         final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                nodeFactory);
+                nodeFactory, URLEncoder.OPAQUE);
         processorModel.getVisitors().add(RELATIVE_IMAGE_PATH_VISITOR);
         return processorModel.get();
     }
@@ -172,7 +173,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
         final Model<String> htmlModel = Model.of("");
         final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                nodeFactory);
+                nodeFactory, URLEncoder.OPAQUE);
         processorModel.set(html);
         return htmlModel.get();
     }
@@ -204,8 +205,5 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
         @Override
         public void after() {}
-
-        @Override
-        public void release() {}
     }
 }
