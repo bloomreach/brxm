@@ -668,6 +668,11 @@
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+        <artifactId>hst-addon-hcm-site</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-cms-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
@@ -794,6 +799,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-poll-addon-hcm-site</artifactId>
+        <version>${hippo.plugin.poll.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-relateddocs</artifactId>
         <version>${hippo.plugin.relateddocs.version}</version>
       </dependency>
@@ -815,6 +825,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-robotstxt-hst-client</artifactId>
+        <version>${hippo.plugin.robotstxt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-robotstxt-addon-hcm-site</artifactId>
         <version>${hippo.plugin.robotstxt.version}</version>
       </dependency>
       <dependency>
@@ -849,7 +864,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-sitemap-content</artifactId>
+        <artifactId>hippo-plugin-sitemap-hcm-site</artifactId>
         <version>${hippo.plugin.sitemap.version}</version>
       </dependency>
       <dependency>
