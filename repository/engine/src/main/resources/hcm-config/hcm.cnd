@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -77,9 +77,18 @@
 [hcm:group]
   + * (hcm:project)
 
+[hcm:site]
+  - hcm:hstroot (string) mandatory
+  + * (hcm:group)
+
+[hcm:sites]
+  + * (hcm:site)
+
+
 // Stores an entire configuration baseline with multiple groups, projects, and modules
 [hcm:baseline] > mix:lockable, hcm:digested
   - hcm:lastupdated (date)
+  + hcm:sites (hcm:sites)
   + * (hcm:group)
 
 // Stores history of content processing

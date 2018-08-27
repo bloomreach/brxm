@@ -8,14 +8,14 @@ definitions:
       autoexport:injectresidualchildnodecategory:
         operation: add
         type: string
-        value: ['**/hst:workspace/**[hst:containercomponent]: content', '/test/*:
+        value: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content', '/test/*:
             content']
       autoexport:overrideresidualchildnodecategory:
         operation: add
         type: string
-        value: ['/hst:hst/hst:configurations: config', '/test/children-ignored-by-config:
+        value: ['/hst:*/hst:configurations: config', '/test/children-ignored-by-config:
             system', '/test/inject-and-override: config']
-    /hst:hst:
+    /hst:test:
       jcr:primaryType: nt:unstructured
       /hst:configurations:
         .meta:residual-child-node-category: content

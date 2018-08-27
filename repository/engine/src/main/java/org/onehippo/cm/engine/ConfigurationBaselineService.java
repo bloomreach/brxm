@@ -43,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -59,12 +60,15 @@ import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
@@ -77,11 +81,13 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
+import static org.onehippo.cm.engine.Constants.HCM_HSTROOT;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_EXECUTED_ACTION;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_SITES;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
@@ -97,6 +103,8 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_SITE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_SITES;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -117,42 +125,71 @@ public class ConfigurationBaselineService {
 
     /**
      * Store and session save a merged configuration model as a baseline configuration in the JCR.
-     * The provided ConfigurationModel is assumed to be fully formed and validated.
-     * @param model the configuration model to store as the new baseline
+     * The provided ConfigurationModel is assumed to be fully formed and validated for the core model and
+     * for any HCM Site with at least one module present in the model. Other HCM sites may not have been loaded yet.
+     *
+     * @param model   the configuration model to store as the new baseline
      * @param session the session for processing the model
      */
-    public void storeBaseline(final ConfigurationModelImpl model, final Session session) throws RepositoryException, IOException {
+    public void storeBaseline(final ConfigurationModelImpl model, final Session session)
+            throws RepositoryException, IOException, ParserException {
         configurationLockManager.lock();
         try {
             // Ensure/force cluster synchronization in case another instance just modified the baseline
             session.refresh(true);
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
+
+            // assume that HCM_ROOT_PATH already exists
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
 
+            // create storage nodes for main baseline and webfile bundles baseline, if necessary
+            Node baselineNode = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
             createNodeIfNecessary(hcmRootNode, NT_HCM_BUNDLES, NT_HCM_BUNDLES, false);
-            Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
+
+            // set lastupdated date to now
+            baselineNode.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
+
+            final Node hcmSitesNode = createNodeIfNecessary(baselineNode, HCM_SITES, NT_HCM_SITES, false);
+
 
             // TODO: implement a smarter partial-update process instead of brute-force removal
             // clear existing group nodes before creating new ones
-            for (NodeIterator nodes = baseline.getNodes(); nodes.hasNext();) {
-                Node groupNode = nodes.nextNode();
-                groupNode.remove();
+            // clear any module whose HCM site is present in the model, plus any core module
+            // this gives us a clean slate for storing the new baseline for core and HCM sites that are available now
+            //TODO SS: Remove all hcm sites configs at once?
+            for (String hcmSiteName: model.getHcmSiteNames()) {
+                if (hcmSitesNode.hasNode(hcmSiteName)) {
+                    hcmSitesNode.getNode(hcmSiteName).remove();
+                }
             }
 
-            // set lastupdated date to now
-            baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
+            // for each group node under this baseline
+            for (NodeIterator nodes = baselineNode.getNodes(); nodes.hasNext();) {
+                final Node groupNode = nodes.nextNode();
+                if (groupNode.getPrimaryNodeType().isNodeType(NT_HCM_GROUP)) {
+                    groupNode.remove();
+                }
+            }
 
             // compute and store digest from model manifest
             // Note: we've decided not to worry about processing data twice, since we don't expect large files
             //       in the config portion, and content is already optimized to use content path instead of digest
-            String modelDigestString = model.getDigest();
-            baseline.setProperty(HCM_DIGEST, modelDigestString);
+            // TODO: compute a separate digest for core and each hcm site; for now, we just care about core
+            String modelDigestString = model.getDigest(null);
+            baselineNode.setProperty(HCM_DIGEST, modelDigestString);
 
             // create group, project, and module nodes, if necessary
             // foreach group
+
+            final List<ModuleImpl> hcmSiteModules = model.getModulesStream().filter(m -> m.getHcmSiteName() != null)
+                    .collect(toList());
+            for (ModuleImpl module: hcmSiteModules) {
+                storeHcmSiteModule(module, hcmSitesNode, session);
+            }
+
             for (GroupImpl group : model.getSortedGroups()) {
-                Node groupNode = createNodeIfNecessary(baseline, group.getName(), NT_HCM_GROUP, true);
+                Node groupNode = createNodeIfNecessary(baselineNode, group.getName(), NT_HCM_GROUP, true);
 
                 // foreach project
                 for (ProjectImpl project : group.getProjects()) {
@@ -160,25 +197,80 @@ public class ConfigurationBaselineService {
 
                     // foreach module
                     for (ModuleImpl module : project.getModules()) {
-                        Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
+                        if (!module.isHcmSite()) {
+                            Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
+                            // process each core module in detail
+                            storeBaselineModule(module, moduleNode, session, false);
+                        }
 
-                        // process each module in detail
-                        storeBaselineModule(module, moduleNode, session, false);
                     }
                 }
             }
 
+            // clean up empty nodes
+            removeEmptyGroupsAndProjects(baselineNode);
+
             session.save();
             stopWatch.stop();
             log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
-        }
-        catch (RepositoryException|IOException e) {
+        } catch (RepositoryException | IOException e) {
             log.error("Failed to store baseline configuration", e);
             throw e;
-        }
-        finally {
+        } finally {
             configurationLockManager.unlock();
         }
+    }
+
+
+    //TODO SS: Add javadocs
+    public void storeHcmSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
+            throws RepositoryException, IOException {
+        configurationLockManager.lock();
+        try {
+
+            session.refresh(true);
+            final Node hcmSitesCatalogNode = session.getNode(HCM_BASELINE_PATH).getNode(HCM_SITES);
+
+            if (hcmSitesCatalogNode.hasNode(hcmSiteName)) {
+                hcmSitesCatalogNode.getNode(hcmSiteName).remove();
+            }
+
+            for (ModuleImpl module: modules) {
+                storeHcmSiteModule(module, hcmSitesCatalogNode, session);
+            }
+            session.save();
+
+        } finally {
+            configurationLockManager.unlock();
+        }
+    }
+
+
+    //TODO SS: Add javadocs
+    private void storeHcmSiteModule(final ModuleImpl module, final Node parentNode, final Session session)
+            throws RepositoryException, IOException {
+        if (StringUtils.isEmpty(module.getHcmSiteName())) {
+            throw new ConfigurationRuntimeException(String.format("Module %s does not belong to an HCM site", module));
+        }
+        if (module.getHstRoot() == null) {
+            throw new ConfigurationRuntimeException(String.format("Module %s for HCM site %s has no hstRoot", module, module.getHcmSiteName()));
+        }
+        final Node hcmSiteNode = createNodeIfNecessary(parentNode, module.getHcmSiteName(), NT_HCM_SITE, false);
+        final String hstRoot = JcrUtils.getStringProperty(hcmSiteNode, HCM_HSTROOT, null);
+        if (hstRoot != null && !module.getHstRoot().equals(hstRoot)) {
+            throw new ConfigurationRuntimeException(String.format("Module %s for hcm site %s has different hstRoot %s than in baseline (%s)"
+                    , module, module.getHcmSiteName(), module.getHstRoot(), hstRoot));
+        }
+        if (hstRoot == null) {
+            hcmSiteNode.setProperty(HCM_HSTROOT, module.getHstRoot().toString());
+        }
+        final ProjectImpl project = module.getProject();
+        final GroupImpl group = project.getGroup();
+
+        final Node groupNode = createNodeIfNecessary(hcmSiteNode, group.getName(), NT_HCM_GROUP, true);
+        final Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
+        final Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
+        storeBaselineModule(module, moduleNode, session, false);
     }
 
     /**
@@ -202,7 +294,8 @@ public class ConfigurationBaselineService {
             stopWatch.start();
 
             final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
-            Node baseline = hcmRootNode.getNode(HCM_BASELINE);
+            final Node baseline = hcmRootNode.getNode(HCM_BASELINE);
+            final Node hcmSitesNode = baseline.getNode(HCM_SITES);
 
             final Set<ModuleImpl> newBaselineModules = new HashSet<>();
             for (final ModuleImpl module : modules) {
@@ -211,9 +304,13 @@ public class ConfigurationBaselineService {
                 // set lastupdated date to now
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-                Node moduleNode = getModuleNode(baseline, module);
-
-                // do incremental update
+                Node moduleNode;
+                if (module.isHcmSite()) {
+                    final Node hcmSiteNode = hcmSitesNode.getNode(module.getHcmSiteName());
+                    moduleNode = getModuleNode(hcmSiteNode, module);
+                } else {
+                    moduleNode = getModuleNode(baseline, module);
+                }
                 storeBaselineModule(module, moduleNode, session, true);
 
                 // now that we've saved the baseline, we should clear the dirty flags on all sources
@@ -221,15 +318,17 @@ public class ConfigurationBaselineService {
                     source.markUnchanged();
                 }
 
-                final List<GroupImpl> groups = new ArrayList<>();
-                loadModuleDescriptor(moduleNode, groups);
-                parseSources(groups);
-                newBaselineModules.add(groups.get(0).getProjects().get(0).getModules().get(0));
+                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
+                reloadedModule.setHcmSiteName(module.getHcmSiteName());
+                reloadedModule.setHstRoot(module.getHstRoot());
+                parseSources(singletonList(reloadedModule));
+                newBaselineModules.add(reloadedModule);
             }
 
             // update digest
+            // TODO: use separate digests for core and hcm sites; for now, we just care about core
             ConfigurationModelImpl newBaseline = mergeWithSourceModules(newBaselineModules, baselineModel);
-            baseline.setProperty(HCM_DIGEST, newBaseline.getDigest());
+            baseline.setProperty(HCM_DIGEST, newBaseline.getDigest(null));
 
             session.save();
             stopWatch.stop();
@@ -317,6 +416,7 @@ public class ConfigurationBaselineService {
         Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
 
         // delete removed resources, which might include removed sources
+
         if (incremental) {
             log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
             log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
@@ -559,9 +659,10 @@ public class ConfigurationBaselineService {
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @param session the session to load the baseline with
+     * @param hcmSites the set of HCM Sites to include when loading the baseline (may be null or empty to include only core)
      * @throws Exception
      */
-    public ConfigurationModelImpl loadBaseline(final Session session) throws RepositoryException, ParserException, IOException {
+    public ConfigurationModelImpl loadBaseline(final Session session, Set<String> hcmSites) throws RepositoryException, ParserException, IOException {
         ConfigurationModelImpl result;
 
         final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
@@ -581,17 +682,32 @@ public class ConfigurationBaselineService {
 
                 // otherwise, if the baseline node DOES exist...
                 final Node baselineNode = hcmRootNode.getNode(HCM_BASELINE);
-                final ConfigurationModelImpl model = new ConfigurationModelImpl();
-                final List<GroupImpl> groups = new ArrayList<>();
 
-                // First phase: load and parse module descriptors
-                parseDescriptors(baselineNode, groups);
+                // make sure we load core modules, in addition to specified HCM Sites
+                // First phase: load and parse core module descriptors
+                final List<ModuleImpl> modules = parseDescriptors(baselineNode);
+
+                if (isNotEmpty(hcmSites)) {
+                    final Node hcmSiteCatalogNode = baselineNode.getNode(HCM_SITES);
+                    for (NodeIterator eni = hcmSiteCatalogNode.getNodes(); eni.hasNext();) {
+                        final Node hcmSiteNode = eni.nextNode();
+                        final String hcmSiteName = hcmSiteNode.getName();
+                        final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
+                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode);
+                        hcmSiteModules.forEach(module -> {
+                            module.setHcmSiteName(hcmSiteName);
+                            module.setHstRoot(JcrPaths.getPath(hstRoot));
+                        });
+                        modules.addAll(hcmSiteModules);
+                    }
+                }
 
                 // Second phase: load and parse config Sources, load and mockup content Sources
-                parseSources(groups);
+                parseSources(modules);
 
                 // build the final merged model
-                groups.forEach(model::addGroup);
+                final ConfigurationModelImpl model = new ConfigurationModelImpl();
+                modules.forEach(model::addModule);
                 result = model.build();
                 stopWatch.stop();
                 log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
@@ -610,29 +726,33 @@ public class ConfigurationBaselineService {
     /**
      * First phase of loading a baseline: loading and parsing module descriptors. Accumulates results in rips and groups.
      * @param baselineNode the base node for the entire stored configuration baseline
-     * @param groups accumulator object for configuration Groups
+     * @return List of configuration modules loaded here
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected void parseDescriptors(final Node baselineNode, final List<GroupImpl> groups)
+    protected List<ModuleImpl> parseDescriptors(final Node baselineNode)
             throws RepositoryException, ParserException {
+        // groups accumulator
+        final List<ModuleImpl> modules = new ArrayList<>();
+
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            loadModuleDescriptor(moduleNode, groups);
+            final ModuleImpl module = loadModuleDescriptor(moduleNode);
+            modules.add(module);
         }
 
-        log.debug("After parsing descriptors, we have {} groups and {} modules", groups.size(),
-                groups.stream().flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).count());
+        log.debug("After parsing descriptors, we have {} modules", modules.size());
+
+        return modules;
     }
 
     /**
-     * Helper for {@link #parseDescriptors(Node, List)} -- loads one module descriptor from a given module baseline node.
+     * Helper for {@link #parseDescriptors(Node)} -- loads one module descriptor from a given module baseline node.
      * @param moduleNode the JCR node where the baseline for a module has been previously stored
-     * @param groups accumulator for Groups as defined by modules loaded here
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected void loadModuleDescriptor(final Node moduleNode, final List<GroupImpl> groups) throws RepositoryException, ParserException {
+    protected ModuleImpl loadModuleDescriptor(final Node moduleNode) throws RepositoryException, ParserException {
         final ModuleImpl module;
 
         Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
@@ -644,6 +764,8 @@ public class ConfigurationBaselineService {
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
+
+            // TODO: determine and set actual HCM Site name
 
             final String lastExecutedAction = getLastExecutedAction(moduleNode);
             module.setLastExecutedAction(lastExecutedAction);
@@ -665,8 +787,7 @@ public class ConfigurationBaselineService {
             module.setContentResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONTENT_FOLDER)));
         }
 
-        // accumulate all groups
-        groups.add(module.getProject().getGroup());
+        return module;
     }
 
     private String getLastExecutedAction(final Node moduleNode) throws RepositoryException {
@@ -684,86 +805,83 @@ public class ConfigurationBaselineService {
     /**
      * Second phase of loading a baseline: loading and parsing config Sources and reconstructing minimal content
      * Source mockups (containing only the root definition path).
-     * @param groups accumulator object from first phase
+     * @param modules accumulator list from first phase
      * @throws RepositoryException
      * @throws IOException
      * @throws ParserException
      */
-    protected void parseSources(final List<GroupImpl> groups) throws RepositoryException, IOException, ParserException {
-        // for each group
-        for (GroupImpl group : groups) {
-            // for each project
-            for (ProjectImpl project : group.getProjects()) {
-                // for each module
-                for (ModuleImpl module : project.getModules()) {
-                    log.debug("Parsing sources from baseline for {}/{}/{}",
+    protected void parseSources(final List<ModuleImpl> modules) throws RepositoryException, IOException, ParserException {
+        // for each module
+        for (ModuleImpl module : modules) {
+            final ProjectImpl project = module.getProject();
+            final GroupImpl group = project.getGroup();
+
+            log.debug("Parsing sources from baseline for {}/{}/{}",
+                    group.getName(), project.getName(), module.getName());
+
+            BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
+            if (rip == null) {
+                log.debug("No {} folder in {}/{}/{}", HCM_CONFIG_FOLDER,
+                        group.getName(), project.getName(), module.getName());
+            }
+            else {
+                ConfigSourceParser parser = new ConfigSourceParser(rip);
+                Node configFolderNode = rip.getBaseNode();
+
+                // for each config source
+                final List<Node> configSourceNodes = rip.getConfigSourceNodes();
+                log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
+                        group.getName(), project.getName(), module.getName());
+
+                for (Node configNode : configSourceNodes) {
+                    // compute config-root-relative path
+                    String sourcePath = StringUtils.removeStart(configNode.getPath(), configFolderNode.getPath() + "/");
+
+                    // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                    sourcePath = NodeNameCodec.decode(sourcePath);
+
+                    log.debug("Loading config from {} in {}/{}/{}", sourcePath,
                             group.getName(), project.getName(), module.getName());
 
-                    BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
-                    if (rip == null) {
-                        log.debug("No {} folder in {}/{}/{}", HCM_CONFIG_FOLDER,
-                                group.getName(), project.getName(), module.getName());
-                    }
-                    else {
-                        ConfigSourceParser parser = new ConfigSourceParser(rip);
-                        Node configFolderNode = rip.getBaseNode();
+                    // get InputStream
+                    // TODO adding the slash here is a silly hack to load a source path without needing the source first
+                    InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
-                        // for each config source
-                        final List<Node> configSourceNodes = rip.getConfigSourceNodes();
-                        log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
-                                group.getName(), project.getName(), module.getName());
+                    // parse config source
+                    parser.parse(is, sourcePath, configNode.getPath(), module);
+                }
+            }
 
-                        for (Node configNode : configSourceNodes) {
-                            // compute config-root-relative path
-                            String sourcePath = StringUtils.removeStart(configNode.getPath(), configFolderNode.getPath() + "/");
+            // for each content source
+            rip = (BaselineResourceInputProvider) module.getContentResourceInputProvider();
+            if (rip == null) {
+                log.debug("No {} folder in {}/{}/{}", HCM_CONTENT_FOLDER,
+                        group.getName(), project.getName(), module.getName());
+            }
+            else {
+                Node contentFolderNode = rip.getBaseNode();
 
-                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                            sourcePath = NodeNameCodec.decode(sourcePath);
+                final List<Node> contentSourceNodes = rip.getContentSourceNodes();
+                log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
+                        group.getName(), project.getName(), module.getName());
 
-                            log.debug("Loading config from {} in {}/{}/{}", sourcePath,
-                                    group.getName(), project.getName(), module.getName());
+                for (Node contentNode : contentSourceNodes) {
+                    // compute content-root-relative path
+                    String sourcePath = StringUtils.removeStart(contentNode.getPath(), contentFolderNode.getPath() + "/");
 
-                            // get InputStream
-                            // TODO adding the slash here is a silly hack to load a source path without needing the source first
-                            InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
+                    // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                    sourcePath = NodeNameCodec.decode(sourcePath);
 
-                            // parse config source
-                            parser.parse(is, sourcePath, configNode.getPath(), module);
-                        }
-                    }
+                    log.debug("Building content def from {} in {}/{}/{}", sourcePath,
+                            group.getName(), project.getName(), module.getName());
 
-                    // for each content source
-                    rip = (BaselineResourceInputProvider) module.getContentResourceInputProvider();
-                    if (rip == null) {
-                        log.debug("No {} folder in {}/{}/{}", HCM_CONTENT_FOLDER,
-                                group.getName(), project.getName(), module.getName());
-                    }
-                    else {
-                        Node contentFolderNode = rip.getBaseNode();
+                    // get content path and order before from JCR Node
+                    String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
+                    String orderBefore = getOrderBefore(contentNode);
 
-                        final List<Node> contentSourceNodes = rip.getContentSourceNodes();
-                        log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
-                                group.getName(), project.getName(), module.getName());
-
-                        for (Node contentNode : contentSourceNodes) {
-                            // compute content-root-relative path
-                            String sourcePath = StringUtils.removeStart(contentNode.getPath(), contentFolderNode.getPath() + "/");
-
-                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                            sourcePath = NodeNameCodec.decode(sourcePath);
-
-                            log.debug("Building content def from {} in {}/{}/{}", sourcePath,
-                                    group.getName(), project.getName(), module.getName());
-
-                            // get content path and order before from JCR Node
-                            String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
-                            String orderBefore = getOrderBefore(contentNode);
-
-                            // create Source
-                            // create ContentDefinition with a single definition node and just the node path and the order before
-                            module.addContentSource(sourcePath).addContentDefinition(contentPath, orderBefore);
-                        }
-                    }
+                    // create Source
+                    // create ContentDefinition with a single definition node and just the node path and the order before
+                    module.addContentSource(sourcePath).addContentDefinition(contentPath, orderBefore);
                 }
             }
         }
@@ -816,6 +934,35 @@ public class ConfigurationBaselineService {
 
         log.debug("Found {} modules in baseline", moduleNodes.size());
         return moduleNodes;
+    }
+
+    /**
+     * Clean up empty groups and projects after storing a new baseline.
+     * @param baselineNode the root node of the baseline
+     * @throws RepositoryException
+     */
+    protected void removeEmptyGroupsAndProjects(Node baselineNode) throws RepositoryException {
+        // for each group node
+        for (NodeIterator gni = baselineNode.getNodes(); gni.hasNext();) {
+            Node possibleGroup = gni.nextNode();
+            if (possibleGroup.getPrimaryNodeType().isNodeType(NT_HCM_GROUP)) {
+                // for each project node
+                for (NodeIterator pni = possibleGroup.getNodes(); pni.hasNext(); ) {
+                    Node possibleProject = pni.nextNode();
+                    if (possibleProject.getPrimaryNodeType().isNodeType(NT_HCM_PROJECT)) {
+                        // if project is empty, remove it
+                        if (!possibleProject.hasNodes()) {
+                            possibleProject.remove();
+                        }
+                    }
+                }
+
+                // if group is empty, remove it
+                if (!possibleGroup.hasNodes()) {
+                    possibleGroup.remove();
+                }
+            }
+        }
     }
 
     /**

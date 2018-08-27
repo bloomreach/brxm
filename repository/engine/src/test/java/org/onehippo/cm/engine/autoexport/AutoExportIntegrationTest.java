@@ -45,6 +45,7 @@ import static org.junit.Assert.assertNull;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
+import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 
 public class AutoExportIntegrationTest {
@@ -152,8 +153,11 @@ public class AutoExportIntegrationTest {
     public void autoexport_config_inject_residual() throws Exception {
         new Fixture("autoexport_config_inject_residual").test(session -> {
             // this fixture uses the following configuration:
-            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content', '/base/*: system']
-            final Node containers = session.getNode("/hst:hst/hst:configurations/hippogogreen/hst:workspace/hst:containers");
+            // autoexport:injectresidualchildnodecategory: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content', '/base/*: system']
+            // Note that this fixture doesn't attempt to simulate a full extension setup, since that would be too complex,
+            // so config and content yaml files still contain the literal "hst:test" root node.
+
+            final Node containers = session.getNode("/hst:test/hst:configurations/hippogogreen/hst:workspace/hst:containers");
 
             // add a new container matching the pattern, its nodes should go into content, the property to config
             final Node container = containers.addNode("container", "hst:containercomponent");
@@ -180,9 +184,9 @@ public class AutoExportIntegrationTest {
     public void autoexport_config_override_residual() throws Exception {
         new Fixture("autoexport_config_override_residual").test(session -> {
             // this fixture uses the following configuration:
-            // autoexport:injectresidualchildnodecategory: ['**/hst:workspace/**[hst:containercomponent]: content']
-            // autoexport:overrideresidualchildnodecategory: ['/hst:hst/hst:configurations: config', '**/children-ignored-by-config: system']
-            final Node configurations = session.getNode("/hst:hst/hst:configurations");
+            // autoexport:injectresidualchildnodecategory: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content']
+            // autoexport:overrideresidualchildnodecategory: ['/hst:*/hst:configurations: config', '**/children-ignored-by-config: system']
+            final Node configurations = session.getNode("/hst:test/hst:configurations");
 
             // add a new channel, the channel should be exported to config, the nodes within "container" to content
             // due to the injectresidual setting
@@ -566,90 +570,6 @@ public class AutoExportIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    private static class ModuleInfo {
-        private final String fixtureName;
-        private final String moduleName;
-        private final String inName;
-        private final String outName;
-        private Path workingDirectory = null;
-        ModuleInfo(final String fixtureName) {
-            this(fixtureName, null, "in", "out");
-        }
-        ModuleInfo(final String fixtureName, final String moduleName) {
-            this(fixtureName, moduleName, "in", "out");
-        }
-        ModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
-            this.fixtureName = fixtureName;
-            this.moduleName = moduleName;
-            this.inName = inName;
-            this.outName = outName;
-        }
-        String getFixtureName() {
-            return fixtureName;
-        }
-        String getEffectiveModuleName() {
-            return moduleName == null ? "TestModuleFileSource" : moduleName;
-        }
-        Path getInPath() {
-            return getPath(inName);
-        }
-        Path getOutPath() {
-            return getPath(outName);
-        }
-        Path getWorkingDirectory() {
-            return workingDirectory;
-        }
-        void setWorkingDirectory(final Path workingDirectory) {
-            this.workingDirectory = workingDirectory;
-        }
-        private Path getPath(final String lastSegment) {
-            final Path subPath = Paths.get("src", "test", "resources", "AutoExportIntegrationTest", fixtureName);
-            final Path intermediate = calculateBasePath().resolve(subPath);
-            return moduleName == null
-                    ? intermediate.resolve(lastSegment)
-                    : intermediate.resolve(moduleName).resolve(lastSegment);
-        }
-    }
-
-    private static class Run {
-        private final ModuleInfo[] modules;
-        private final Validator preConditionValidator;
-        private final JcrRunner jcrRunner;
-        private final Validator postConditionValidator;
-        Run(final ModuleInfo module,
-            final Validator preConditionValidator,
-            final JcrRunner jcrRunner,
-            final Validator postConditionValidator)
-        {
-            this(new ModuleInfo[]{module}, preConditionValidator, jcrRunner, postConditionValidator);
-        }
-        Run(final ModuleInfo[] modules,
-            final Validator preConditionValidator,
-            final JcrRunner jcrRunner,
-            final Validator postConditionValidator)
-        {
-            this.modules = modules;
-            this.preConditionValidator = preConditionValidator;
-            this.jcrRunner = jcrRunner;
-            this.postConditionValidator = postConditionValidator;
-        }
-        ModuleInfo[] getModules() {
-            return modules;
-        }
-        Validator getPreConditionValidator() {
-            return preConditionValidator;
-        }
-        JcrRunner getJcrRunner() {
-            return jcrRunner;
-        }
-        Validator getPostConditionValidator() {
-            return postConditionValidator;
-        }
-    }
-
-    // Validator that checks nothing -- used as a stand-in when you want only a pre- or only a post-validator
-    private static final Validator NOOP = (session, configurationModel) -> {};
-
     private class Fixture extends AbstractBaseTest {
 
         private final ModuleInfo[] modules;
@@ -729,27 +649,6 @@ public class AutoExportIntegrationTest {
                 }
             }
         }
-    }
-
-    @FunctionalInterface
-    private interface JcrRunner {
-        void run(final Session session) throws Exception;
-    }
-
-    @FunctionalInterface
-    private interface Validator {
-        void validate(final Session session, final ConfigurationModelImpl configurationModel) throws Exception;
-    }
-
-    /**
-     * Utility method to calculate correct path in case when run under Intellij IDEA (Working directory should be set to
-     * module's root, e.g. ../master/engine).
-     * @return base directory
-     */
-    private static Path calculateBasePath() {
-        String basedir = System.getProperty("basedir");
-        basedir = basedir != null ? basedir: System.getProperty("user.dir");
-        return Paths.get(basedir);
     }
 
 }

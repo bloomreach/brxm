@@ -17,9 +17,12 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Session;
@@ -34,9 +37,11 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
-import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
 
 /**
  * Create a LocalHippoRepository running in its own isolated classloader. Running the repository in its own classloader
@@ -69,6 +74,8 @@ public class IsolatedRepository {
     private String originalAutoexportAllowed;
     private String originalRepoBootstrap;
 
+    private Set<String> sharedClasses = Sets.newHashSet();
+
     /**
      * Constructor that will start a repository in given folder with AutoExport disabled.
      */
@@ -90,6 +97,27 @@ public class IsolatedRepository {
         this.autoExportEnabled = true;
     }
 
+    public IsolatedRepository(final File folder, final File projectFolder, final List<URL> additionalClasspathURLs, boolean autoExportEnabled) {
+        this.folder = folder;
+        this.projectFolder = projectFolder;
+        this.additionalClasspathURLs = additionalClasspathURLs.toArray(new URL[additionalClasspathURLs.size()]);
+        this.autoExportEnabled = autoExportEnabled;
+    }
+
+    public IsolatedRepository(final File folder, final File projectFolder, final List<URL> additionalClasspathURLs, final Set<String> sharedClasses) {
+        this(folder, projectFolder, additionalClasspathURLs);
+        this.sharedClasses.addAll(sharedClasses);
+    }
+
+    public IsolatedRepository(final File folder,
+                              final File projectFolder,
+                              final List<URL> additionalClasspathURLs,
+                              final Set<String> sharedClasses,
+                              boolean autoExportEnabled) {
+        this(folder, projectFolder, additionalClasspathURLs, autoExportEnabled);
+        this.sharedClasses.addAll(sharedClasses);
+    }
+
     public void startRepository() throws Exception {
         final File repositoryFolder = new File(folder, "repository");
         FileUtils.forceMkdir(repositoryFolder);
@@ -108,6 +136,7 @@ public class IsolatedRepository {
             System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "true");
         } else {
+            System.setProperty(PROJECT_BASEDIR_PROPERTY, projectFolder.getAbsolutePath());
             System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         }
 
@@ -135,7 +164,7 @@ public class IsolatedRepository {
         final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
         classLoader = new RepositoryClassLoader(
                 (URL[]) ArrayUtils.addAll(contextClassLoader.getURLs(), additionalClasspathURLs),
-                contextClassLoader);
+                contextClassLoader, sharedClasses);
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             return Class.forName("org.hippoecm.repository.LocalHippoRepository", true, classLoader)
@@ -187,6 +216,24 @@ public class IsolatedRepository {
         }
     }
 
+    public ConfigurationModelImpl getBaselineConfigurationModel() throws Exception {
+        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        try {
+            final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
+
+            final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
+                    .getMethod("getService", Class.class)
+                    .invoke(null, configurationServiceClass);
+
+            final Class internalConfigService = Class.forName(InternalConfigurationService.class.getName(), true, classLoader);
+            final Method method = internalConfigService.getMethod("getBaselineModel");
+            return (ConfigurationModelImpl) method.invoke(service);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+    }
+
     public void stop() throws Exception {
         if (repository != null) {
             close(repository);
@@ -205,15 +252,24 @@ public class IsolatedRepository {
     private static class RepositoryClassLoader extends URLClassLoader {
 
         private final URLClassLoader shared;
+        private Set<String> sharedClasses = new HashSet<>();
 
         RepositoryClassLoader(final URL[] urls, final URLClassLoader shared) {
             super(urls, null);
             this.shared = shared;
         }
 
+        RepositoryClassLoader(final URL[] urls, final URLClassLoader shared, final Set<String> sharedClasses) {
+            this(urls, shared);
+            this.sharedClasses.addAll(sharedClasses);
+        }
+
+
         @Override
         public Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
-            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model")) {
+            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model") || name.startsWith("javax.servlet") ||
+                    sharedClasses.stream().anyMatch(name::startsWith))
+            {
                 return shared.loadClass(name);
             }
             return super.loadClass(name, resolve);

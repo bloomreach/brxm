@@ -47,7 +47,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
@@ -100,9 +99,11 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
-import static org.onehippo.cm.model.Constants.YAML_EXT;
+import static org.onehippo.cm.model.Constants.HST_HST_PATH;
+import static org.onehippo.cm.model.Constants.HST_PREFIX;
 import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
@@ -219,7 +220,7 @@ public class DefinitionMergeService {
         // note: we assume that the original baseline will perform any required cleanup in close(), so we don't need
         //       to copy FileSystems etc. here
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
-        toExport.values().forEach(model::addModule);
+        toExport.values().forEach(model::addReplacementModule);
         baseline.getSortedGroups().forEach(model::addGroup);
         model.build();
 
@@ -717,25 +718,30 @@ public class DefinitionMergeService {
      *
      */
     protected void mergeNamespace(final NamespaceDefinitionImpl nsd) {
-        // find the corresponding definition by namespace prefix -- only one is permitted
-        final Optional<NamespaceDefinitionImpl> found = model.getNamespaceDefinitions().stream()
-                .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
-                .findFirst();
+
+        // find all corresponding definitions by namespace prefix
+        final List<NamespaceDefinitionImpl> nsDefs =
+                model.getNamespaceDefinitions().stream()
+                        .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
+                        .collect(toList());
+
+        final NamespaceDefinitionImpl lastNsDef = isNotEmpty(nsDefs) ? nsDefs.get(nsDefs.size() - 1): null;
 
         // clone the CndPath Value which retains a "foreign source" back-reference for use later when copying data
         final ValueImpl cndPath = nsd.getCndPath().clone();
 
-        if (found.isPresent()) {
+        if (lastNsDef != null) {
             // this is an update to an existing namespace def
             // find the corresponding source by path
-            final SourceImpl oldSource = found.get().getSource();
+            final SourceImpl oldSource = lastNsDef.getSource();
 
             // this source will have a reference to a module in the baseline, not our clones, so lookup by mvnPath
             final ModuleImpl newModule = toExport.get(oldSource.getModule().getMvnPath());
 
             // short-circuit this loop iteration if we cannot create a valid merged definition
             if (newModule == null) {
-                log.error("Cannot merge a namespace: {} that belongs to an upstream module", nsd.getPrefix());
+                log.warn("Cannot merge a namespace: {} that belongs to an upstream module", nsd.getPrefix());
+                createNsDefinition(nsd, cndPath);
                 return;
             }
 
@@ -760,29 +766,33 @@ public class DefinitionMergeService {
             }
         }
         else {
-            // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
-            final JcrPath incomingPath = JcrPaths.getPath("/hippo:namespaces", nsd.getPrefix());
-
-            // what module should we put it in?
-            final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath);
-
-            // what source should we put it in?
-            final ConfigSourceImpl newSource;
-            if (newModule.getNamespaceDefinitions().isEmpty()) {
-                // We don't have any namespaces yet, so we can generate a new source and put it there
-                newSource = createConfigSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
-            }
-            else {
-                // if we have any existing namespace definitions in the destination module, we have to keep all
-                // new namespaces in that same source file, due to validation rules on our model
-                newSource = newModule.getNamespaceDefinitions().get(0).getSource();
-            }
-
-            log.debug("Creating new namespace definition: {} in module: {} aka {} in file {}",
-                    nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
-
-            newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI(), cndPath);
+            createNsDefinition(nsd, cndPath);
         }
+    }
+
+    private void createNsDefinition(final NamespaceDefinitionImpl nsd, final ValueImpl cndPath) {
+        // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
+        final JcrPath incomingPath = JcrPaths.getPath("/hippo:namespaces", nsd.getPrefix());
+
+        // what module should we put it in?
+        final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath);
+
+        // what source should we put it in?
+        final ConfigSourceImpl newSource;
+        if (newModule.getNamespaceDefinitions().isEmpty()) {
+            // We don't have any namespaces yet, so we can generate a new source and put it there
+            newSource = createConfigSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
+        }
+        else {
+            // if we have any existing namespace definitions in the destination module, we have to keep all
+            // new namespaces in that same source file, due to validation rules on our model
+            newSource = newModule.getNamespaceDefinitions().get(0).getSource();
+        }
+
+        log.debug("Creating new namespace definition: {} in module: {} aka {} in file {}",
+                nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
+
+        newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI(), cndPath);
     }
 
     /**
@@ -1104,12 +1114,42 @@ public class DefinitionMergeService {
      * @param incomingPath the JCR node path to test
      * @return true iff this path should go in a new file, different than its parent node
      */
-    protected static boolean shouldPathCreateNewSource(final JcrPath incomingPath) {
+    protected boolean shouldPathCreateNewSource(JcrPath incomingPath) {
+
+        // If we see a node that we want to treat as an HST root, swap it with the default HST root path
+        // for purposes of the test in the final line of this method.
+        incomingPath = swapHstRootForDefault(incomingPath);
+
         // for the sake of creating new source files, we always want to use the minimally-indexed path
         // to avoid annoying and unnecessary "[1]" tags on filenames
-        final String minimallyIndexedPath = incomingPath.suppressIndices().toString();
+        String minimallyIndexedPath = incomingPath.suppressIndices().toString();
+
+        // the actual test...
         return JcrPaths.getPath(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
                 .equals(incomingPath);
+    }
+
+    /**
+     * If a path has a root node that matches the "hst:" prefix, swap it for the default HST root for
+     * purposes of pattern-matching.
+     * @param incomingPath the path to potentially swap for a new root node
+     * @return a new path based on the HST default root node
+     */
+    private JcrPath swapHstRootForDefault(final JcrPath incomingPath) {
+        //TODO SS: Enhance location mapper to use nodetype matchers
+
+        if (!incomingPath.isRoot()) {
+            final String rootNode = incomingPath.getSegment(0).toString();
+            if (rootNode.startsWith(HST_PREFIX)) {
+                if (incomingPath.getSegmentCount() == 1) {
+                    return HST_HST_PATH;
+                }
+                else {
+                    return HST_HST_PATH.resolve(incomingPath.subpath(1));
+                }
+            }
+        }
+        return incomingPath;
     }
 
     /**
@@ -1118,12 +1158,16 @@ public class DefinitionMergeService {
      * @param path the JCR path for which we want to generate a new source file
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
-    protected String getFilePathByLocationMapper(JcrPath path) {
-        String xmlFile = LocationMapper.fileForPath(path.suppressIndices().toString(), true);
-        if (xmlFile == null) {
+    protected String getFilePathByLocationMapper(final JcrPath path) {
+        // If we see a node that we want to treat as an HST root, swap it with the default HST root path
+        // so that the location mapper rules will match with it.
+        final String normalizedPath = swapHstRootForDefault(path).suppressIndices().toString();
+
+        String yamlFile = LocationMapper.fileForPath(normalizedPath, true);
+        if (yamlFile == null) {
             return "main.yaml";
         }
-        return cleanFilePath(StringUtils.removeEnd(xmlFile, ".xml")) + YAML_EXT;
+        return cleanFilePath(yamlFile);
     }
 
     /**

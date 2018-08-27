@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
 
-import com.google.common.collect.ImmutableList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.definition.ActionType;
@@ -39,6 +37,8 @@ import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import com.google.common.collect.ImmutableList;
 
 import junit.framework.AssertionFailedError;
 import static org.easymock.EasyMock.anyObject;
@@ -256,7 +256,7 @@ public class ConfigurationContentServiceTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationContentService.class).build()) {
             List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions(), true);
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
-                    "Following node(s) reference the same node multiple times in order before")));
+                    "Following node(s) reference the same node multiple times in order-before")));
 
             assertAfter(sortedDefinitions, ca4, ca1);
             assertAfter(sortedDefinitions, ca5, ca1);
@@ -297,7 +297,7 @@ public class ConfigurationContentServiceTest {
             List<ContentDefinitionImpl> sortedDefinitions = ConfigurationContentService.getSortedDefinitions(module.getContentDefinitions(), true);
             assertEquals("[c2, c4, c3, c1, c5]", sortedNames(sortedDefinitions));
             assertTrue(listener.messages().anyMatch(m ->
-                    m.contains("Following node(s) reference the same node multiple times in order before:")
+                    m.contains("Following node(s) reference the same node multiple times in order-before:")
                     && m.contains("/c3 in stubGroup/stubProject/stubModule [content: s3],")
                     && m.contains("/c5 in stubGroup/stubProject/stubModule [content: s5]")));
         }

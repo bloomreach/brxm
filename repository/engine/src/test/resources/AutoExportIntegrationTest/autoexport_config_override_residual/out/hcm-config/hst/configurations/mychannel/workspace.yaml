@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hst:hst/hst:configurations/mychannel/hst:workspace:
+    /hst:test/hst:configurations/mychannel/hst:workspace:
       jcr:primaryType: nt:unstructured
       /hst:containers:
         jcr:primaryType: nt:unstructured

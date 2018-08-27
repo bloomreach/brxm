@@ -1,0 +1,7 @@
+group:
+  name: hippo-extension-test4
+  after: [hippo-cms, test-group, hippo-extension-test2]
+project:
+  name: extension-test4
+module: 
+  name: extension-test4

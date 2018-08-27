@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /m5-extension:
+      jcr:primaryType: nt:unstructured
+      property: value1
+    /corenode/subcorenode:
+      .meta:delete: true

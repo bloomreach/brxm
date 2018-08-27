@@ -21,8 +21,10 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,13 +50,16 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.impl.DigestBundleResolver;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -67,6 +72,7 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
+import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.onehippo.repository.util.PartialZipFile;
 import org.slf4j.Logger;
@@ -76,9 +82,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import static java.util.Collections.emptyList;
+import static java.util.function.Function.identity;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.onehippo.cm.engine.ConfigurationServiceImpl.USE_HCM_SITES_MODE;
+import static org.onehippo.cm.engine.Constants.HST_DEFAULT_ROOT_PATH;
 import static org.onehippo.cm.engine.ValueProcessor.determineVerifiedValues;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
@@ -109,26 +118,39 @@ public class ConfigurationConfigService {
         }
     }
 
-    void writeWebfiles(final ConfigurationModel model, final ConfigurationBaselineService baselineService, final Session session) throws IOException, RepositoryException {
-        if (!model.getWebFileBundleDefinitions().isEmpty()) {
+    void writeWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles, final ConfigurationBaselineService baselineService, final Session session)
+            throws IOException, RepositoryException {
+
+        if (!webfileBundles.isEmpty()) {
+
+            final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
+            final List<String> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
+
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
-                log.warn(String.format("Skipping import web file bundles: service '%s' not available.",
+                log.warn(String.format("Skipping import web file bundles: '%s' not available.",
                         WebFilesService.class.getName()));
                 return;
             }
-            for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
+            for (WebFileBundleDefinition webFileBundleDefinition : webfileBundles) {
                 final String bundleName = webFileBundleDefinition.getName();
                 log.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
                         webFileBundleDefinition.getOrigin()));
 
                 final Module module = webFileBundleDefinition.getSource().getModule();
                 if (module.isArchive()) {
+
+                    //check if webfile service already loaded this module
+                    if (watchedModules.contains(module.getFullName())) {
+                        //Module was already loaded by WebFileService
+                        continue;
+                    }
+
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
                     boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);
                     if (reload) {
-                        webFilesService.importJcrWebFileBundle(session, bundleZipFile, true);
+                        webFilesService.importJcrWebFileBundle(session, bundleZipFile, false);
                         final Map<String, String> bundlesDigests = baselineService.getBundlesDigests(session);
                         final String baselineBundleDigest = bundlesDigests.get(bundleName);
                         if ((baselineBundleDigest != null && !baselineBundleDigest.equals(fsBundleDigest)) || baselineBundleDigest == null) {
@@ -144,6 +166,28 @@ public class ConfigurationConfigService {
                 }
             }
         }
+    }
+
+    /**
+     * Collect all webfilebundle modules watched by WebFileWatcherService
+     */
+    private static List<String> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
+
+        final List<String> webfileModules = new ArrayList<>();
+        if (webFilesWatcherService != null) {
+            final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
+            for (final Path webFilesDirectory : webFilesDirectories) {
+                final Path moduleDescriptorPath = webFilesDirectory.resolveSibling(Constants.HCM_MODULE_YAML);
+                try {
+                    // TODO: this is somewhat excessive -- we could load just the module descriptor instead of all the sources
+                    final ModuleImpl moduleImpl = new ModuleReader().read(moduleDescriptorPath, false).getModule();
+                    webfileModules.add(moduleImpl.getFullName());
+                } catch (Exception e) {
+                    throw new RuntimeException(String.format("Failed to read webfile bundle module: %s", moduleDescriptorPath), e);
+                }
+            }
+        }
+        return webfileModules;
     }
 
     /**
@@ -218,8 +262,15 @@ public class ConfigurationConfigService {
         //       Therefore, both the baseline configuration and the forceApply flag are immaterial
         //       to the handling of namespaces. The same applies to node types, at least, as far as
         //       BootstrapUtils#initializeNodetypes offers support.
-        applyNamespaces(update.getNamespaceDefinitions(), session);
-        applyNodeTypes(baseline.getNamespaceDefinitions(), update.getNamespaceDefinitions(), session);
+
+        final Collection<? extends NamespaceDefinition> updateNsDefs =
+                removeDuplicateNamespaceDefinitions(update.getNamespaceDefinitions());
+
+        final Collection<? extends NamespaceDefinition> baselineNsDefs =
+                removeDuplicateNamespaceDefinitions(baseline.getNamespaceDefinitions());
+
+        applyNamespaces(updateNsDefs, session);
+        applyNodeTypes(baselineNsDefs, updateNsDefs, session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -230,8 +281,32 @@ public class ConfigurationConfigService {
         postProcessReferences(unprocessedReferences);
     }
 
-    private void applyNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
+    /**
+     * Return a collection of namespace definitions without duplicates. Only last namespace
+     * in a list with the same prefix is preserved
+     * @param definitions Definitions to clean
+     */
+    private Collection<? extends NamespaceDefinition> removeDuplicateNamespaceDefinitions(final List<? extends NamespaceDefinition> definitions) {
+        return definitions.stream().collect(
+                Collectors.toMap(NamespaceDefinition::getPrefix, identity(), (d1, d2) -> {
+                    log.warn(String.format("Duplicate namespace definitions %s, %s", d1, d2));
+                    return d2;
+                }, LinkedHashMap::new))
+                .values();
+    }
+
+    private void applyNamespaces(final Collection<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
             throws RepositoryException {
+
+        final Optional<? extends NamespaceDefinition> cndExtension =
+                namespaceDefinitions.stream().filter(ns -> (ns.getSource().getModule().isHcmSite())).findFirst();
+        cndExtension.ifPresent(def -> {
+            final String msg = String.format("Failed to process namespace definition defined in %s: " +
+                    "namespace with prefix '%s'. Namespace definition can not be a part of extension module: '%s'",
+                    def.getOrigin(), def.getPrefix(), def.getSource().getModule());
+            throw new ConfigurationRuntimeException(msg);
+        });
+
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
 
         for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {
@@ -256,8 +331,8 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void applyNodeTypes(final List<? extends NamespaceDefinition> baselineDefs,
-                                final List<? extends NamespaceDefinition> nsDefinitions,
+    private void applyNodeTypes(final Collection<? extends NamespaceDefinition> baselineDefs,
+                                final Collection<? extends NamespaceDefinition> nsDefinitions,
                                 final Session session) throws RepositoryException, IOException {
         // index baseline defs by prefix for faster lookups later
         final ImmutableMap<String, ? extends NamespaceDefinition> baselineDefsByPrefix =
@@ -604,7 +679,7 @@ public class ConfigurationConfigService {
 //                    // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
 //                    //            Such a check would be rather invasive (potentially full sub-tree compare)
 //                }
-                childNode.remove();
+                removeNode(childNode);
             }
         }
 
@@ -614,6 +689,19 @@ public class ConfigurationConfigService {
         if (orderingIsRelevant && updateNode.getNodes().size() > 0) {
             reorderChildren(targetNode, updateNode.getNodes().stream().map(ConfigurationNode::getName).collect(Collectors.toList()));
         }
+    }
+
+    protected void removeNode(final Node childNode) throws RepositoryException {
+
+        final JcrPath excludedPath = JcrPaths.getPath(HST_DEFAULT_ROOT_PATH);
+        if (USE_HCM_SITES_MODE) {
+            final JcrPath nodePath = JcrPaths.getPath(childNode.getPath());
+            if (nodePath.startsWith(excludedPath)) {
+                log.info("Skipping '/hst:hst' node removal");
+                return;
+            }
+        }
+        childNode.remove();
     }
 
     private Node addNode(final Node parentNode, final String childName, final String childPrimaryType,

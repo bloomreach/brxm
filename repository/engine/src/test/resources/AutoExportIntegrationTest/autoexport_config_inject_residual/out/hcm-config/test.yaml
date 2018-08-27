@@ -8,9 +8,9 @@ definitions:
       autoexport:injectresidualchildnodecategory:
         operation: add
         type: string
-        value: ['**/hst:workspace/**[hst:containercomponent]: content', '/base/*:
+        value: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content', '/base/*:
             system']
-    /hst:hst:
+    /hst:test:
       jcr:primaryType: nt:unstructured
       /hst:configurations:
         jcr:primaryType: nt:unstructured

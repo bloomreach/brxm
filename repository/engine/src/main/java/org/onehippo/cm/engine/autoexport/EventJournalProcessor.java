@@ -54,6 +54,7 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
+import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -62,8 +63,8 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.parser.ModuleReader;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -595,7 +596,7 @@ public class EventJournalProcessor {
 
             // 1) export result to filesystem
             // convert the project basedir to a Path, so we can resolve modules against it
-            final String projectDir = System.getProperty(org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY);
+            final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
             final Path projectPath = Paths.get(projectDir);
 
             // write each module to the file system
@@ -615,10 +616,9 @@ public class EventJournalProcessor {
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader(false, true).read(moduleDescriptorPath);
-
-                final ModuleImpl loadedModule = result.getModuleContext().getModule();
+                final ModuleImpl loadedModule = new ModuleReader(false, true)
+                        .read(moduleDescriptorPath, false, module.getHcmSiteName(), module.getHstRoot())
+                        .getModule();
                 // store mvnPath again for later use
                 loadedModule.setMvnPath(module.getMvnPath());
 
