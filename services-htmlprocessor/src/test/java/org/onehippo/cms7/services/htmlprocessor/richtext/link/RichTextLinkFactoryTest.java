@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,10 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.easymock.EasyMock;
-import org.hamcrest.CoreMatchers;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +31,6 @@ import org.onehippo.repository.mock.MockNode;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -102,10 +98,6 @@ public class RichTextLinkFactoryTest {
                 @Override
                 public void set(final Node value) {
                 }
-
-                @Override
-                public void release() {
-                }
             });
             fail("Should throw an exception");
         } catch (final RichTextException e) {
@@ -138,8 +130,7 @@ public class RichTextLinkFactoryTest {
         assertTrue(factory.isValid(nodeFactory.getNodeModelByNode(reference)));
 
         final Node mockNode = EasyMock.createMock(Node.class);
-        expect(mockNode.getIdentifier()).andReturn("mock-node-uuid");
-        expect(mockNode.isNodeType("mix:referenceable")).andThrow(new RepositoryException("Expected exception"));
+        expect(mockNode.getIdentifier()).andReturn("broken-node-uuid");
         EasyMock.replay(mockNode);
 
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(mockNode)));
@@ -165,9 +156,8 @@ public class RichTextLinkFactoryTest {
         final MockNode second = root.addNode("second", "nt:unstructured");
         factory.createLink(nodeFactory.getNodeModelByNode(second));
 
-        final Set<String> linkUuids = factory.getLinkUuids();
-        assertEquals(linkUuids.size(), 2);
-        assertThat(linkUuids, CoreMatchers.hasItems(targetHandle.getIdentifier(), second.getIdentifier()));
+        assertTrue(factory.hasLink(targetHandle.getIdentifier()));
+        assertTrue(factory.hasLink(second.getIdentifier()));
 
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import javax.jcr.Node;
 
@@ -25,13 +24,12 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.RichTextException;
 
 public interface RichTextLinkFactory extends Serializable {
 
-    Set<String> getLinkUuids();
-
     boolean isValid(Model<Node> targetModel);
 
     RichTextLink createLink(Model<Node> targetModel) throws RichTextException;
 
     RichTextLink loadLink(String uuid) throws RichTextException;
 
-    void release();
+    boolean hasLink(String uuid);
+
 }

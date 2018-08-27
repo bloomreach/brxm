@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,20 +36,12 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageAndLinkVisit
 
 public class RichTextProcessorModel extends HtmlProcessorModel {
 
-    private final Model<Node> nodeModel;
     private final List<TagVisitor> visitors = new ArrayList<>();
-
-    public RichTextProcessorModel(final Model<String> valueModel, final Model<Node> nodeModel,
-                                  final HtmlProcessorFactory processorFactory, final NodeFactory nodeFactory) {
-        this(valueModel, nodeModel, processorFactory, nodeFactory, URLEncoder.OPAQUE);
-    }
 
     public RichTextProcessorModel(final Model<String> valueModel, final Model<Node> nodeModel,
                                   final HtmlProcessorFactory processorFactory, final NodeFactory nodeFactory,
                                   final URLEncoder encoder) {
         super(valueModel, processorFactory);
-
-        this.nodeModel = nodeModel;
 
         final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(nodeModel, nodeFactory);
         final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel, nodeFactory, encoder);
@@ -66,12 +58,4 @@ public class RichTextProcessorModel extends HtmlProcessorModel {
         return visitors;
     }
 
-    @Override
-    public void release() {
-        super.release();
-        if (nodeModel != null) {
-            nodeModel.release();
-        }
-        visitors.forEach(TagVisitor::release);
-    }
 }

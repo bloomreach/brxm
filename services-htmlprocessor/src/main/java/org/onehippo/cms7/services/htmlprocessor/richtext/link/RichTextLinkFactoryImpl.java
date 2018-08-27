@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -26,10 +23,10 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
-import org.onehippo.cms7.services.htmlprocessor.util.StringUtil;
 import org.onehippo.cms7.services.htmlprocessor.richtext.RichTextException;
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.NodeFactory;
+import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
+import org.onehippo.cms7.services.htmlprocessor.util.StringUtil;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +37,6 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
 
     private final Model<Node> nodeModel;
     private final NodeFactory nodeFactory;
-
-    private transient Set<String> links = null;
 
     public RichTextLinkFactoryImpl(final Model<Node> nodeModel, final NodeFactory nodeFactory) {
         this.nodeModel = nodeModel;
@@ -61,6 +56,25 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
             throw new RichTextException("Rich text link factory for node '" + JcrUtils.getNodePathQuietly(node) + "'"
                     + " cannot find linked node with UUID '" + uuid + "'", e);
         }
+    }
+
+    @Override
+    public boolean hasLink(final String uuid) {
+        try {
+            final NodeIterator nodeIterator = nodeModel.get().getNodes();
+            while (nodeIterator.hasNext()) {
+                final Node child = nodeIterator.nextNode();
+                if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    final String linkUuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    if (linkUuid.equals(uuid)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (final RepositoryException ex) {
+            log.error("Error checking if link with UUID {} already exists", uuid, ex);
+        }
+        return false;
     }
 
     @Override
@@ -98,31 +112,5 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
             log.error(e.getMessage());
             return false;
         }
-    }
-
-    @Override
-    public Set<String> getLinkUuids() {
-        if (links == null) {
-            links = new TreeSet<>();
-            try {
-                final NodeIterator iter = nodeModel.get().getNodes();
-                while (iter.hasNext()) {
-                    final Node child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        final String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        links.add(uuid);
-                    }
-                }
-            } catch (final RepositoryException ex) {
-                log.error("Error retrieving links", ex);
-            }
-        }
-        return links;
-    }
-
-    @Override
-    public void release() {
-        nodeModel.release();
-        links = null;
     }
 }

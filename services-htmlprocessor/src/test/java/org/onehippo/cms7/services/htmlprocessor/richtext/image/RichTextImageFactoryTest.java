@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -122,8 +122,7 @@ public class RichTextImageFactoryTest {
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(handleWithWrongChild)));
 
         final Node mockNode = EasyMock.createMock(Node.class);
-        expect(mockNode.getIdentifier()).andReturn("broken-handle-node-uuid");
-        expect(mockNode.isNodeType(HippoNodeType.NT_HANDLE)).andThrow(new RepositoryException("Expected exception"));
+        expect(mockNode.getIdentifier()).andReturn("broken-node-uuid");
         replay(mockNode);
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(mockNode)));
 

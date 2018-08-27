@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class RichTextImageURLProvider implements URLProvider {
             final String facetName = StringUtils.substringBefore(link, PATH_SEPARATOR);
             final String type = StringUtils.substringAfterLast(link, PATH_SEPARATOR);
             final String uuid = FacetUtil.getChildDocBaseOrNull(node, facetName);
-            if (uuid != null && linkFactory.getLinkUuids().contains(uuid)) {
+            if (uuid != null && linkFactory.hasLink(uuid)) {
                 final RichTextImage rti = imageFactory.loadImageItem(uuid, type);
                 return rti.getUrl();
             }

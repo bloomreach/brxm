@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -95,7 +95,6 @@ public class JcrNodeFactoryTest {
         };
 
         final Model<Node> nodeModel = nodeFactory.getNodeModelByNode(root);
-        nodeModel.release();
         try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrNodeFactory.class).build()) {
             nodeModel.get();
             assertLogMessage(interceptor, "Failed to load node with uuid cafebabe-cafe-babe-cafe-babecafebabe", Level.ERROR);

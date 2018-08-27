@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 
 public class FacetVisitorTest {
 
@@ -48,17 +47,6 @@ public class FacetVisitorTest {
         doc2 = root.addNode("doc2", "nt:unstructured");
     }
 
-    @Test
-    public void nodeModelIsReleased() throws Exception {
-        final Model<Node> mockNodeModel = createMock(Model.class);
-        mockNodeModel.release();
-        expectLastCall();
-        replay(mockNodeModel);
-
-        final FacetVisitor visitor = new FacetVisitor(mockNodeModel);
-        visitor.release();
-        verify(mockNodeModel);
-    }
 
     @Test
     public void callsTagProcessors() throws Exception {

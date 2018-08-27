@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext.image;
-
-import java.util.Collections;
 
 import javax.jcr.Node;
 
@@ -101,7 +99,7 @@ public class RichTextImageUrlProviderTest {
                 .andReturn(richTextImage);
 
         final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
-        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+        expect(mockLinkFactory.hasLink(eq(image.getIdentifier()))).andReturn(true);
 
         replay(mockImageFactory, mockLinkFactory);
 
@@ -138,7 +136,7 @@ public class RichTextImageUrlProviderTest {
 
         final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
         final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
-        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.emptySet());
+        expect(mockLinkFactory.hasLink(eq(image.getIdentifier()))).andReturn(false);
 
         replay(mockImageFactory, mockLinkFactory);
 
@@ -160,7 +158,7 @@ public class RichTextImageUrlProviderTest {
                 .andThrow(new RichTextException("Expected exception"));
 
         final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
-        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+        expect(mockLinkFactory.hasLink(eq(image.getIdentifier()))).andReturn(true);
 
         replay(mockImageFactory, mockLinkFactory);
 

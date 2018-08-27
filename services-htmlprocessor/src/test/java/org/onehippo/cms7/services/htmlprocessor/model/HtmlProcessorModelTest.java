@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -120,19 +120,6 @@ public class HtmlProcessorModelTest {
                     "Expected exception", Level.WARN);
         }
         verify(processor, processorFactory);
-    }
-
-    @Test
-    public void testRelease() throws Exception {
-        final Model<String> valueModel = EasyMock.createMock(Model.class);
-        valueModel.release();
-        expectLastCall();
-        replay(valueModel);
-
-        final HtmlProcessorModel processorModel = new HtmlProcessorModel(valueModel, null);
-        processorModel.release();
-
-        verify(valueModel);
     }
 
     private static HtmlProcessorFactory createProcessorFactory(final HtmlProcessor processor) {

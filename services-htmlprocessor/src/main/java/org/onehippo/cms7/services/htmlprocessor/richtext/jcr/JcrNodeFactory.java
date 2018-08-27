@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,18 +51,18 @@ public class JcrNodeFactory implements NodeFactory {
 
     @Override
     public Model<Node> getNodeModelByNode(final Node node) {
-        if (node == null) {
-            return null;
-        }
-        try {
-            return new NodeModel(node);
-        } catch (final RepositoryException e) {
-            if (log.isInfoEnabled()) {
-                log.error("Failed to create node model from node {}", JcrUtils.getNodePathQuietly(node), e);
-            } else {
-                log.error("Failed to create node model from node {}", JcrUtils.getNodePathQuietly(node));
+        if (node != null) {
+            try {
+                return new NodeModel(node.getIdentifier());
+            } catch (final RepositoryException e) {
+                if (log.isInfoEnabled()) {
+                    log.error("Failed to create node model from node {}", JcrUtils.getNodePathQuietly(node), e);
+                } else {
+                    log.error("Failed to create node model from node {}", JcrUtils.getNodePathQuietly(node));
+                }
             }
         }
+
         return null;
     }
 
@@ -77,23 +77,15 @@ public class JcrNodeFactory implements NodeFactory {
     private class NodeModel implements Model<Node> {
 
         private String uuid;
-        private Node node;
 
-        public NodeModel(final Node node) throws RepositoryException {
-            this.uuid = node.getIdentifier();
-            this.node = node;
-        }
-
-        public NodeModel(final String uuid) {
+        NodeModel(final String uuid) {
             this.uuid = uuid;
         }
 
         @Override
         public Node get() {
             try {
-                if (node == null) {
-                    node = getNodeByIdentifier(uuid);
-                }
+                return getNodeByIdentifier(uuid);
             } catch (final RepositoryException e) {
                 if (log.isInfoEnabled()) {
                     log.error("Failed to load node with uuid {}", uuid, e);
@@ -101,14 +93,13 @@ public class JcrNodeFactory implements NodeFactory {
                     log.error("Failed to load node with uuid {}", uuid);
                 }
             }
-            return node;
+            return null;
         }
 
         @Override
         public void set(final Node value) {
             try {
                 uuid = value.getIdentifier();
-                node = value;
             } catch (final RepositoryException e) {
                 if (log.isInfoEnabled()) {
                     log.error("Failed to retrieve uuid from node {}", JcrUtils.getNodePathQuietly(value), e);
@@ -116,11 +107,6 @@ public class JcrNodeFactory implements NodeFactory {
                     log.error("Failed to retrieve uuid from node {}", JcrUtils.getNodePathQuietly(value));
                 }
             }
-        }
-
-        @Override
-        public void release() {
-            node = null;
         }
     }
 }

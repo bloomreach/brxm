@@ -277,9 +277,6 @@ public class HtmlProcessorTest {
         public void after() {
         }
 
-        @Override
-        public void release() {
-        }
     }
 
 }

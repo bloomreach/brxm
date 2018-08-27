@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,11 +66,6 @@ public class HtmlProcessorModel implements Model<String> {
                 log.warn("Value not set because html processing failed : {}", e.toString());
             }
         }
-    }
-
-    @Override
-    public void release() {
-        valueModel.release();
     }
 
     public List<TagVisitor> getVisitors() {

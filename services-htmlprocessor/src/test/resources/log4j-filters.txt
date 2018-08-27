@@ -1,5 +1,5 @@
 #
-#  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
 #  limitations under the License.
 #
 
-Expected exception
-Failed to load node with uuid cafebabe-cafe-babe-cafe-babecafebabe
-Failed to retrieve uuid from node /broken-node
-Failed to create node model from node /broken-node
+Cannot create facet node below '/document', target UUID does not exist: 'non-existing-uuid'
 Error creating image link for input
+Expected exception
+Failed to load node with uuid broken-node-uuid
 HtmlProcessor id 'org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService' has been replaced by 'richtext', please update the configuration.
 HtmlProcessor id 'org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService' has been replaced by 'formatted', please update the configuration.
-Cannot create facet node below '/document', target UUID does not exist: 'non-existing-uuid'

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,8 +23,6 @@ public interface Model<T> extends Serializable {
 
     void set(final T value);
 
-    void release();
-
     static <T> Model<T> of(final T o) {
         return new SimpleModel<>(o);
     }
@@ -47,9 +45,6 @@ public interface Model<T> extends Serializable {
             this.value = value;
         }
 
-        @Override
-        public void release() {
-        }
     }
 }
 
