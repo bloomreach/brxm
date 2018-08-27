@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.source.ConfigSource;
 import org.onehippo.cm.model.source.ContentSource;
 import org.onehippo.cm.model.source.ResourceInputProvider;
@@ -51,6 +52,23 @@ public interface Module extends OrderableByName {
      * @return the Project of which this Module is a part
      */
     Project getProject();
+
+    /**
+     * @return true if this module is part of an extension; false if this module is in the core model
+     */
+    boolean isHcmSite();
+
+    /**
+     * @return HCM Site name of the Module or null if it is a core Module
+     * @since 13.0
+     */
+    String getHcmSiteName();
+
+    /**
+     * @return JcrPath of HST root configuration node for the corresponding extension or null if it is a core Module
+     * @since 13.0
+     */
+    JcrPath getHstRoot();
 
     /**
      * @return The immutable set of all {@link Source}s of this module, in undefined order.

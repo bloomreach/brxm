@@ -41,7 +41,8 @@ import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.parser.ModuleReader;
+import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -74,24 +75,24 @@ public abstract class AbstractBaseTest {
 
     };
 
-    protected PathConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
+    protected ModuleContext readFromResource(final String resourceName) throws IOException, ParserException {
         return readFromResource(resourceName, DEFAULT_EXPLICIT_SEQUENCING);
     }
 
-    protected PathConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
+    protected ModuleContext readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
         final Path moduleConfig = find(resourceName);
-        return new PathConfigurationReader(explicitSequencing).read(moduleConfig);
+        return new ModuleReader(explicitSequencing).read(moduleConfig, false);
     }
 
-    protected PathConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
+    protected ModuleContext readFromTestJar(final String resourceName) throws IOException, ParserException {
         final Path jarPath = Paths.get("target/test-classes.jar");
         try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
             final Path moduleConfig = fs.getPath(resourceName);
-            return new PathConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig);
+            return new ModuleReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig, false);
         }
     }
 
-    protected Path find(final String moduleConfigResourceName) throws IOException {
+    protected static Path find(final String moduleConfigResourceName) throws IOException {
         final URL url = AbstractBaseTest.class.getResource(moduleConfigResourceName);
         if (url == null) {
             fail("cannot find resource " + moduleConfigResourceName);
@@ -99,7 +100,7 @@ public abstract class AbstractBaseTest {
         return Paths.get(FilePathUtils.getNativeFilePath(url));
     }
 
-    protected Path findBase(final String moduleConfigResourceName) throws IOException {
+    protected static Path findBase(final String moduleConfigResourceName) throws IOException {
         return getParentOrFsRoot(find(moduleConfigResourceName));
     }
 
@@ -346,11 +347,11 @@ public abstract class AbstractBaseTest {
     }
 
 
-    protected void assertNoFileDiff(final Path expectedRoot, final Path actualRoot) throws IOException {
+    protected static void assertNoFileDiff(final Path expectedRoot, final Path actualRoot) throws IOException {
         assertNoFileDiff(null, expectedRoot, actualRoot);
     }
 
-    protected void assertNoFileDiff(final String msg, final Path expectedRoot, final Path actualRoot) throws IOException {
+    protected static void assertNoFileDiff(final String msg, final Path expectedRoot, final Path actualRoot) throws IOException {
         final List<Path> expected = findFiles(expectedRoot);
         final List<Path> actual = findFiles(actualRoot);
 
@@ -363,7 +364,7 @@ public abstract class AbstractBaseTest {
         }
     }
 
-    private List<Path> findFiles(final Path root) throws IOException {
+    private static List<Path> findFiles(final Path root) throws IOException {
         final List<Path> paths = new ArrayList<>();
         //Ignore hcm-actions file as it is not being serialized to disk
         final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile() && !filePath.endsWith(Constants.ACTIONS_YAML);

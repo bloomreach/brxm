@@ -24,6 +24,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -34,14 +35,15 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClasspathConfigurationModelReader {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReader.class);
+
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
@@ -59,7 +61,8 @@ public class ClasspathConfigurationModelReader {
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
-     * configuration and content into a ConfigurationModel.
+     * configuration and content into a ConfigurationModel. This method only loads "core" modules that are not part
+     * of an HCM Site.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
      * @param verifyOnly when true use 'verify only' yaml parsing, allowing (but warning on) certain model errors
@@ -75,20 +78,58 @@ public class ClasspathConfigurationModelReader {
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         // load modules that are packaged on the classpath
-        final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
-                readModulesFromClasspath(classLoader, verifyOnly);
+        final Pair<Set<FileSystem>, List<ModuleImpl>> coreModules =
+                readModulesFromClasspath(classLoader, verifyOnly, null, null);
+
+        // TODO: filter out isHcmSite() modules
 
         // add classpath modules to model
-        classpathGroups.getRight().forEach(model::addGroup);
+        coreModules.getRight().forEach(model::addModule);
 
         // add filesystems to the model
-        model.setFileSystems(classpathGroups.getLeft());
+        model.setFileSystems(coreModules.getLeft());
 
         // build the merged model
         model.build();
 
         stopWatch.stop();
-        log.info("ConfigurationModel loaded in {}", stopWatch.toString());
+        log.info("ConfigurationModel core loaded in {}", stopWatch.toString());
+
+        return model;
+    }
+
+    /**
+     * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
+     * configuration and content into a ConfigurationModel. This method only loads modules that are part of an HCM Site.
+     *
+     * @param classLoader the ClassLoader which will be searched for HCM modules
+     * @return a ConfigurationModel of configuration and content definitions
+     * @throws IOException
+     * @throws ParserException
+     */
+    public ConfigurationModelImpl readHcmSite(final String hcmSiteName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
+            throws IOException, ParserException, URISyntaxException {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        final Pair<Set<FileSystem>, List<ModuleImpl>> hcmSiteModules =
+                readModulesFromClasspath(classLoader, false, hcmSiteName, hstRoot);
+
+        // insert hcm site name and hstRoot into each module
+        hcmSiteModules.getRight().forEach(module -> {
+            module.setHcmSiteName(hcmSiteName);
+            module.setHstRoot(hstRoot);
+        });
+
+        // TODO: why use the override addReplacementModule codepath here instead of the normal addModule?
+        hcmSiteModules.getRight().forEach(model::addReplacementModule);
+
+        // add filesystems to the model
+        model.setFileSystems(hcmSiteModules.getLeft());
+
+        model.build();
+        stopWatch.stop();
+        log.info("ConfigurationModel of HCM Site loaded in {}", stopWatch.toString());
 
         return model;
     }
@@ -96,18 +137,34 @@ public class ClasspathConfigurationModelReader {
     /**
      * Read modules that are packaged on the classpath for the given ClassLoader.
      * @param classLoader the classloader to search for packaged config modules
-     * @param verifyOnly TODO
+     * @param verifyOnly TODO describe
+     * @param hcmSiteName if not null, load HCM Site modules and set this name on the resulting modules;
+     *                     if null, load core modules
+     * @param hstRoot set this value on modules loaded here -- null is a valid argument
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
+    private Pair<Set<FileSystem>, List<ModuleImpl>> readModulesFromClasspath(final ClassLoader classLoader,
+                                                                             final boolean verifyOnly,
+                                                                             final String hcmSiteName,
+                                                                             final JcrPath hstRoot)
             throws IOException, ParserException, URISyntaxException {
-        final Pair<Set<FileSystem>, List<GroupImpl>> groups = new MutablePair<>(new HashSet<>(), new ArrayList<>());
+        final Pair<Set<FileSystem>, List<ModuleImpl>> modules = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
         final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
+        final Enumeration<URL> parentResourcesEn = classLoader.getParent() != null ?
+                classLoader.getParent().getResources(Constants.HCM_MODULE_YAML) : Collections.emptyEnumeration();
+        final HashSet<URL> parentResources = new HashSet<>(Collections.list(parentResourcesEn));
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
+
+            // Skip modules in the parent (shared in web container) classloader during hcm site loading.
+            // These should be considered part of the core HCM model.
+            if (hcmSiteName != null && parentResources.contains(resource)) {
+                continue;
+            }
+
             final String resourcePath = resource.getPath();
 
             // look for the marker that indicates this is a path within a jar file
@@ -132,27 +189,26 @@ public class ClasspathConfigurationModelReader {
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
+                final ModuleImpl moduleImpl =
+                        new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
+                                .getModule();
                 moduleImpl.setArchiveFile(archiveFile);
 
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
-                groups.getLeft().add(fs);
+                modules.getLeft().add(fs);
 
-                groups.getRight().add(moduleImpl.getProject().getGroup());
+                modules.getRight().add(moduleImpl);
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
                 // this is useful for loading a module for testing purposes without packaging it into a jar
                 // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
                 final Path moduleDescriptorPath = Paths.get(resource.toURI());
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-
-                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                modules.getRight()
+                        .add(new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
+                                .getModule());
             }
         }
-        return groups;
+        return modules;
     }
 }

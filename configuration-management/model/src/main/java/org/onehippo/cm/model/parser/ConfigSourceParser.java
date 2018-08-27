@@ -104,7 +104,8 @@ public class ConfigSourceParser extends SourceParser {
     protected void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final JcrPath key = asPathScalar(nodeTuple.getKeyNode(), true, true);
+            final JcrPath rawPath = asPathScalar(nodeTuple.getKeyNode(), true, true);
+            final JcrPath key = adjustHstRoot(rawPath.toAbsolutePath(), parent.getModule());
             constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }

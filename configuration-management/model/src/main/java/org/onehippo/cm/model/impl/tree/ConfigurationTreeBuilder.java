@@ -22,16 +22,18 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyKind;
+import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
@@ -146,11 +148,13 @@ public class ConfigurationTreeBuilder {
     public Map<JcrPath, ConfigurationPropertyImpl> getDeletedProperties() {
         return deletedProperties;
     }
+
     /**
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+
         if (definitionNode.isDeletedAndEmpty()) {
 
             if (node.getParent() == null || !node.getParent().isDeleted()) {
@@ -387,11 +391,35 @@ public class ConfigurationTreeBuilder {
                         definition.getOrigin(), definitionRootPath);
                 return null;
             }
+
+            if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
+                //Compare with parent definition extension. It should be core or have the same extension
+                final TreeDefinitionImpl<?> parentDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
+                final String parentNodeExtensionName = parentDefinition.getSource().getModule().getHcmSiteName();
+                final String childDefinitionExtensionName = definition.getSource().getModule().getHcmSiteName();
+                if (parentNodeExtensionName != null && !Objects.equals(childDefinitionExtensionName, parentNodeExtensionName)) {
+                    final String errMessage = String.format("Cannot add child config definition '%s' to parent node definition, " +
+                                    "as it is defined in different extension: %s -> %s",
+                            definition.getNode().getPath(), definition.getSource(), parentDefinition.getSource());
+                    logger.error(errMessage);
+                    throw new IllegalArgumentException(errMessage);
+                }
+            }
+
             rootForDefinition =
                     createChildNode(rootForDefinition, nodeName.toString(), definition.getNode());
-        } else {
-            if (rootForDefinition == root && definitionNode.isDelete()) {
-                throw new IllegalArgumentException("Deleting the root node is not supported.");
+        } else if (rootForDefinition == root && definitionNode.isDelete()) {
+            throw new IllegalArgumentException("Deleting the root node is not supported.");
+        } else  if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
+            //Config node already exists, validate if existing config node belongs to the same extension
+            final TreeDefinitionImpl<?> existingDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
+            if (!Objects.equals(definition.getSource().getModule().getHcmSiteName(),
+                    existingDefinition.getSource().getModule().getHcmSiteName())) {
+                final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
+                                "extensions or in both core and an extension: %s -> %s",
+                        definition.getNode().getPath(), existingDefinition.getSource(), definition.getSource());
+                logger.error(errMessage);
+                throw new IllegalArgumentException(errMessage);
             }
         }
 

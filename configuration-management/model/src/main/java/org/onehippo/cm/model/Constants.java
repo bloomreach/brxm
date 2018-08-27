@@ -16,39 +16,37 @@
 
 package org.onehippo.cm.model;
 
-import java.io.File;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
+import org.onehippo.cm.model.path.JcrPaths;
 
 public final class Constants {
 
     public static final boolean DEFAULT_EXPLICIT_SEQUENCING = false;
 
     // Constants used to locate configuration files
-
-    public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
     public static final String HCM_CONTENT_FOLDER = "hcm-content";
     public static final String HCM_CONFIG_FOLDER = "hcm-config";
 
     public static final String YAML_EXT =".yaml";
     public static final String HCM_MODULE_YAML = "hcm-module" + YAML_EXT;
     public static final String ACTIONS_YAML = "hcm-actions" + YAML_EXT;
-    public static final String ACTION_LISTS_NODE = "action-lists";
-
-    // Constants used for generating new (resource) files
-    public static final String FILE_PATH_DELIMITER = File.separator;
-    public static final String FILE_NAME_EXT_SEPARATOR = ".";
-    public static final String FILE_NAME_SEQ_PREFIX = "-";
 
     // Following keys used in hcm-module.yaml
-    public static final String GROUPS_KEY = "groups";
-    public static final String PROJECTS_KEY = "projects";
-    public static final String MODULES_KEY = "modules";
     public static final String GROUP_KEY = "group";
     public static final String PROJECT_KEY = "project";
     public static final String MODULE_KEY = "module";
     public static final String AFTER_KEY = "after";
     public static final String NAME_KEY = "name";
 
-    // Following keys used in module yaml
+    // Keys used in hcm-actions.yaml
+    public static final String ACTION_LISTS_NODE = "action-lists";
+
+    // Constants used for generating new (resource) files
+    public static final String FILE_NAME_EXT_SEPARATOR = ".";
+    public static final String FILE_NAME_SEQ_PREFIX = "-";
+
+    // Following keys used in definition file yaml
     public static final String DEFINITIONS = "definitions";
     public static final String OPERATION_KEY = "operation";
     public static final String TYPE_KEY = "type";
@@ -65,5 +63,11 @@ public final class Constants {
     public static final String META_CATEGORY_KEY = META_KEY_PREFIX + "category";
     public static final String META_RESIDUAL_CHILD_NODE_CATEGORY_KEY = META_KEY_PREFIX + "residual-child-node-category";
 
+    // Used to compute file fingerprints
     public static final String DEFAULT_DIGEST = "MD5";
+
+    // Used for special-case handling of HST root nodes
+    public static final String HST_PREFIX = "hst:";
+    public static final JcrPathSegment HST_HST_SEGMENT = JcrPaths.getSegment("hst:hst", 0);
+    public static final JcrPath HST_HST_PATH = JcrPaths.ROOT.resolve(HST_HST_SEGMENT);
 }

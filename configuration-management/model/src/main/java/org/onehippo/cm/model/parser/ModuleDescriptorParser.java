@@ -38,7 +38,8 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
 
     public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
-        final Map<String, Node> rootNodeMap = asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
+        final Map<String, Node> rootNodeMap =
+                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
 
         final Node groupNode = rootNodeMap.get(GROUP_KEY);
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
@@ -76,14 +77,17 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
     }
 
     protected ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
+        ModuleImpl module;
         if (src instanceof ScalarNode) {
-            return parent.addModule(asStringScalar(src));
+            module = parent.addModule(asStringScalar(src));
         } else {
-            final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
+            final Map<String, Node> map =
+                    asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(map.get(NAME_KEY));
-            final ModuleImpl module = parent.addModule(name);
+            module = parent.addModule(name);
             module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
-            return module;
         }
+
+        return module;
     }
 }

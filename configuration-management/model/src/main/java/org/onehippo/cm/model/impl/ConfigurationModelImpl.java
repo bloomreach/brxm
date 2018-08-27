@@ -25,10 +25,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
@@ -36,11 +38,11 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
@@ -72,6 +74,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
     private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
+    private final Set<String> modifiableHcmSiteNames = new HashSet<>();
+    private final Set<String> hcmSiteNames = Collections.unmodifiableSet(modifiableHcmSiteNames);
+    private final Set<JcrPath> modifiableHstRoots = new HashSet<>();
+    private final Set<JcrPath> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -98,6 +104,22 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     public Iterable<ModuleImpl> getModules() {
         return getModulesStream()::iterator;
+    }
+
+    /**
+     * The set of all names of hcm sites present in this model. The "core" is always assumed to be present and
+     * does not have an explicit representation. Thus, a core-only model will return an empty Set.
+     * @return a Set of names for hcm sites present in this model; does not contain null
+     * @since 2.0
+     */
+    @Override
+    public Set<String> getHcmSiteNames() {
+        return hcmSiteNames;
+    }
+
+    @Override
+    public Set<JcrPath> getHstRoots() {
+        return hstRoots;
     }
 
     @Override
@@ -147,6 +169,22 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         this.configurationRootNode = configurationRootNode;
     }
 
+    /**
+     * Add a module to this model. Note: This is merely a convenience for {@link #addGroup(GroupImpl)}. Other modules
+     * in the same group will also be added as a side-effect.
+     * @param module the module to add
+     * @return this, for chaining
+     */
+    public ConfigurationModelImpl addModule(final ModuleImpl module) {
+        return addGroup(module.getProject().getGroup());
+    }
+
+    /**
+     * Add a group of projects and modules to this model. This method is directly useful mainly for copying modules
+     * from an existing model.
+     * @param group the group to add
+     * @return this, for chaining
+     */
     public ConfigurationModelImpl addGroup(final GroupImpl group) {
         if (!groupMap.containsKey(group.getName())) {
             groupMap.put(group.getName(), new GroupImpl(group.getName()));
@@ -171,9 +209,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * where a new clone of a module will be used to replace an existing module from an existing ConfigurationModel.
      * Call this method with any new replacement modules before adding the groups from the existing model instance.
      * @param module the new module to add as a replacement
-     * @return this
+     * @return this, for chaining
      */
-    public ConfigurationModelImpl addModule(final ModuleImpl module) {
+    public ConfigurationModelImpl addReplacementModule(final ModuleImpl module) {
         // this duplicates much of the logic of addGroup(),
         // but it's necessary to avoid grabbing undesired sibling modules
         final GroupImpl group = module.getProject().getGroup();
@@ -196,6 +234,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return this;
     }
 
+    /**
+     * Rebuild internal data structures, including definition lists and the merged configuration tree.
+     * @return this, for chaining
+     */
     public ConfigurationModelImpl build() {
         buildTimeStamp = System.currentTimeMillis();
 
@@ -221,27 +263,43 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
         modifiableDeletedConfigProperties.clear();
+        modifiableHcmSiteNames.clear();
+        modifiableHstRoots.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
-        for (GroupImpl g : groups) {
-            for (ProjectImpl p : g.getProjects()) {
-                for (ModuleImpl module : p.getModules()) {
-                    log.info("Merging module {}", module.getFullName());
-                    addNamespaceDefinitions(module.getNamespaceDefinitions());
-                    addConfigDefinitions(module.getConfigDefinitions());
-                    addContentDefinitions(module.getContentDefinitions());
-                    addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
-                    module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
-                    configurationTreeBuilder.finishModule();
-                }
-            }
-        }
+
+        // sort modules so that hcm site modules would be at the bottom of the list (including dependencies)
+        // TODO: fix groupSorter to do this properly with lexical sort by HCM Site name, so getModulesStream() does this consistently
+        // TODO: disallow dependencies that force an ordering that violates HCM Site isolation
+        getModulesStream()
+                .filter(m -> Objects.isNull(m.getHcmSiteName()))
+                .forEach(module -> buildModule(configurationTreeBuilder, module));
+        getModulesStream()
+                .filter(m -> Objects.nonNull(m.getHcmSiteName()))
+                .forEach(module -> buildModule(configurationTreeBuilder, module));
+
         setConfigurationRootNode(configurationTreeBuilder.build());
 
         modifiableDeletedConfigNodes.putAll(configurationTreeBuilder.getDeletedNodes());
         modifiableDeletedConfigProperties.putAll(configurationTreeBuilder.getDeletedProperties());
 
         return this;
+    }
+
+    private void buildModule(final ConfigurationTreeBuilder configurationTreeBuilder, final ModuleImpl module) {
+        log.info("Merging module {}", module.getFullName());
+        addNamespaceDefinitions(module.getNamespaceDefinitions());
+        addConfigDefinitions(module.getConfigDefinitions());
+        addContentDefinitions(module.getContentDefinitions());
+        addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
+        module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+        configurationTreeBuilder.finishModule();
+        if (module.getHcmSiteName() != null) {
+            modifiableHcmSiteNames.add(module.getHcmSiteName());
+        }
+        if (module.getHstRoot() != null) {
+            modifiableHstRoots.add(module.getHstRoot());
+        }
     }
 
     /**
@@ -309,18 +367,21 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * be normalized to use Module-relative paths, rather than the mix of Module- and Source-relative
      * paths as used within the Source text. Resource paths will use 4-spaces indentation, and Modules will use none.
      * Lines will use a single "\n" line separator, and the final resource reference will end in a line separator.
+     * @param hcmSiteName the name of an HCM Site whose digest is desired, or null for the core digest
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String getDigest() {
+    public String getDigest(final String hcmSiteName) {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
-            m.compileManifest(this, manifest);
+            if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getHcmSiteName())) {
+                m.compileManifest(this, manifest);
+            }
         }
 
         final String modelManifest = manifestToString(manifest);
-        log.debug("model manifest:\n{}", modelManifest);
+        log.debug("model manifest for HCM Site {}:\n{}", hcmSiteName, modelManifest);
 
         return DigestUtils.computeManifestDigest(modelManifest);
     }
@@ -471,7 +532,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
 
         // start with the source modules
-        sourceModules.forEach(mergedModel::addModule);
+        sourceModules.forEach(mergedModel::addReplacementModule);
 
         // then layer on top all of the other modules
         model.getSortedGroups().forEach(mergedModel::addGroup);
@@ -493,7 +554,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         for (ModuleImpl module : existingModel.getModules()) {
             if (module.getMvnPath() != null) {
                 log.debug("Merging module: {}", module);
-                mergedModel.addModule(module);
+                mergedModel.addReplacementModule(module);
             }
         }
 

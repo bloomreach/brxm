@@ -47,7 +47,6 @@ import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
@@ -58,6 +57,7 @@ import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceHeadParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
@@ -79,6 +79,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+
+    private String hcmSiteName = null;
+    private JcrPath hstRoot = null;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
             .comparing(SourceImpl::getPath)
@@ -140,6 +143,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         sortedSources.forEach(source -> source.setModule(this));
 
         mvnPath = module.getMvnPath();
+        hcmSiteName = module.getHcmSiteName();
+        hstRoot = module.getHstRoot();
         archiveFile = module.getArchiveFile();
         build();
     }
@@ -235,6 +240,32 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     public void setLastExecutedAction(String value) {
         lastExecutedAction = value;
+    }
+
+    @Override
+    public String getHcmSiteName() {
+        return hcmSiteName;
+    }
+
+    public void setHcmSiteName(final String hcmSiteName) {
+        this.hcmSiteName = hcmSiteName;
+    }
+
+    @Override
+    public JcrPath getHstRoot() {
+        return hstRoot;
+    }
+
+    public void setHstRoot(final JcrPath hstRoot) {
+        this.hstRoot = hstRoot;
+    }
+
+    /**
+     * @return true if this module is part of an HCM Site; false if this module is in the core model
+     */
+    @Override
+    public boolean isHcmSite() {
+        return hcmSiteName != null;
     }
 
     /**
@@ -621,6 +652,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
+                ((hcmSiteName ==null)? "": ("hcmSiteName='" + hcmSiteName +"', ")) +
                 ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
@@ -655,6 +687,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
+            newModule.setHcmSiteName(hcmSiteName);
+            newModule.setHstRoot(hstRoot);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
 

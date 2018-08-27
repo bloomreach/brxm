@@ -24,46 +24,36 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.util.FilePathUtils.unixPath;
 
-public class PathConfigurationReader {
+public class ModuleReader {
 
-    private static final Logger log = LoggerFactory.getLogger(PathConfigurationReader.class);
+    private static final Logger log = LoggerFactory.getLogger(ModuleReader.class);
 
     private final boolean explicitSequencing;
     private final boolean contentSourceHeadOnly;
 
-    public static class ReadResult {
-
-        private final ModuleContext moduleContext;
-
-        public ReadResult(ModuleContext moduleContext) {
-            this.moduleContext = moduleContext;
-        }
-
-        public ModuleContext getModuleContext() {
-            return moduleContext;
-        }
-    }
-
-    public PathConfigurationReader() {
+    public ModuleReader() {
         this(Constants.DEFAULT_EXPLICIT_SEQUENCING);
     }
 
-    public PathConfigurationReader(final boolean explicitSequencing) {
+    public ModuleReader(final boolean explicitSequencing) {
         this(explicitSequencing, false);
     }
 
-    public PathConfigurationReader(final boolean explicitSequencing, final boolean contentSourceHeadOnly) {
+    public ModuleReader(final boolean explicitSequencing, final boolean contentSourceHeadOnly) {
         this.explicitSequencing = explicitSequencing;
         this.contentSourceHeadOnly = contentSourceHeadOnly;
     }
@@ -76,10 +66,6 @@ public class PathConfigurationReader {
         return contentSourceHeadOnly;
     }
 
-    public ReadResult read(final Path moduleDescriptorPath) throws IOException, ParserException {
-        return read(moduleDescriptorPath, false);
-    }
-
     /**
      * Read the module dependency data to extract the raw components of a configuration model.
      * These raw portions of config will be assembled into a ConfigurationModel later.
@@ -90,19 +76,48 @@ public class PathConfigurationReader {
      * @throws IOException
      * @throws ParserException
      */
-    public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
+    public ModuleContext read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
+        return read(moduleDescriptorPath, verifyOnly, null, null);
+    }
+
+    public ModuleContext read(final Path moduleDescriptorPath, final boolean verifyOnly,
+                           final String extensionName, final JcrPath hstRoot) throws IOException, ParserException {
+        final ModuleImpl module = readDescriptor(moduleDescriptorPath);
+
+        module.setHcmSiteName(extensionName);
+        module.setHstRoot(hstRoot);
+
+        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
+        readModule(module, moduleContext, verifyOnly);
+        return moduleContext;
+    }
+
+    public ModuleContext readReplacement(final Path moduleDescriptorPath, final ConfigurationModelImpl comparisonModel)
+            throws IOException, ParserException {
+        final ModuleImpl module = readDescriptor(moduleDescriptorPath);
+
+        // if there was already a matching module in the comparisonModule, use the extension info from that one
+        comparisonModel.getModulesStream().filter(Predicate.isEqual(module)).findFirst()
+                .ifPresent(comparisonModule -> {
+            module.setHcmSiteName(comparisonModule.getHcmSiteName());
+            module.setHstRoot(comparisonModule.getHstRoot());
+        });
+
+        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
+        readModule(module, moduleContext, true);
+        return moduleContext;
+    }
+
+    private ModuleImpl readDescriptor(final Path moduleDescriptorPath) throws IOException, ParserException {
         try (InputStream inputStream = Files.newInputStream(moduleDescriptorPath.toRealPath());
              final InputStream moduleDescriptorInputStream = new BufferedInputStream(inputStream)) {
 
             final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-            final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
-            final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
-            readModule(module, moduleContext, verifyOnly);
-            return new ReadResult(moduleContext);
+            return moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
         }
     }
 
-    /**
+                           /**
      * Reads the single module config/content definitions
      * @param module
      * @param moduleContext

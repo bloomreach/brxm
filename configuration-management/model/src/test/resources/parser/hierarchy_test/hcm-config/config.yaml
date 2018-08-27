@@ -53,4 +53,8 @@ definitions:
         jcr:mixinTypes:
           operation: add
           value: ['some:mixin']
+    /hst:hst:
+      jcr:primaryType: hst:hst
+    /hst:hst/hst:hst:
+      jcr:primaryType: hst:configurations
   webfilebundle: site

@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.parser.HierarchyTest;
 import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
@@ -60,14 +60,25 @@ public class SerializerTest extends AbstractBaseTest {
     }
 
     private void readAndWrite(final String moduleConfig, final boolean explicitSequencing) throws IOException, ParserException {
-        final PathConfigurationReader.ReadResult result = readFromResource(moduleConfig, explicitSequencing);
+        final ModuleContext result = readFromResource(moduleConfig, explicitSequencing);
 
         final ModuleWriter writer = new ModuleWriter();
-        writer.write(folder.getRoot().toPath(), result.getModuleContext(), explicitSequencing);
+        writer.write(folder.getRoot().toPath(), result, explicitSequencing);
 
         final Path expectedRoot = findBase(moduleConfig);
         final Path actualRoot = folder.getRoot().toPath();
         assertNoFileDiff(expectedRoot, actualRoot);
     }
 
+    /**
+     * Used by {@link HierarchyTest}.
+     */
+    public static void write(final ModuleContext moduleContext, final String moduleConfig, final TemporaryFolder folder) throws IOException, ParserException {
+        final ModuleWriter writer = new ModuleWriter();
+        writer.write(folder.getRoot().toPath(), moduleContext, false);
+
+        final Path expectedRoot = findBase(moduleConfig);
+        final Path actualRoot = folder.getRoot().toPath();
+        assertNoFileDiff(expectedRoot, actualRoot);
+    }
 }

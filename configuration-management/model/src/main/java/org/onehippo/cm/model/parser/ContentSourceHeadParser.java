@@ -21,14 +21,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.path.JcrPath;
-import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.yaml.snakeyaml.events.AliasEvent;
 import org.yaml.snakeyaml.events.Event;
@@ -74,7 +72,8 @@ public class ContentSourceHeadParser extends ContentSourceParser {
         final Pair<Node, List<NodeTuple>> head = composeYamlHead(inputStream, location);
         final ContentSourceImpl source = parent.addContentSource(relativePath);
         final ContentDefinitionImpl definition = source.addContentDefinition();
-        final JcrPath key = asPathScalar(head.getKey(), true, true);
+        final JcrPath rawPath = asPathScalar(head.getKey(), true, true);
+        final JcrPath key = adjustHstRoot(rawPath, parent);
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(key, definition);
         definition.setNode(definitionNode);
         populateDefinitionNode(definitionNode, head.getKey(), head.getValue());
