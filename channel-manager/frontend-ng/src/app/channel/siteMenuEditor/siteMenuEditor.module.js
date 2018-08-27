@@ -15,7 +15,7 @@
  */
 
 import getByPropertyFilter from './tree/getByProperty.filter';
-import pickerModule from './picker/picker';
+import pickerModule from './picker/picker.module';
 import scrollToIfDirective from './scrollToIf.directive';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
 import siteMenuEditorComponent from './siteMenuEditor.component';

@@ -18,13 +18,13 @@ import controller from './siteMenuEditor.controller';
 import template from './siteMenuEditor.html';
 
 const siteMenuEditorComponent = {
-  controller,
   bindings: {
     menuUuid: '@',
     onDone: '&',
     onError: '&',
     onSuccess: '&',
   },
+  controller,
   template,
 };
 

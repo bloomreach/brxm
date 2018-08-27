@@ -53,10 +53,10 @@
       </section>
 
     </md-content>
-    <md-content flex="66" flex-sm="50" listing
-                class="hippo-listing scroll-to-container"
-                data-selected-item="picker.selectedItem"
-                data-selected-document="picker.selectedDocument"></md-content>
+    <md-content flex="66" flex-sm="50" class="hippo-listing scroll-to-container">
+      <item-listing items="picker.selectedItem.items"
+                    selected-item="picker.selectedDocument" />
+    </md-content>
   </md-dialog-content>
   <md-dialog-actions layout="row">
     <md-button ng-click="picker.cancel()">

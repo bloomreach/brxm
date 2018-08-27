@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import ListingCtrl from './listing.controller';
-import listingDirective from './listing.directive';
+import itemListingComponent from './itemListing.component';
 import PickerService from './picker.service';
 import PickerCtrl from './picker.controller';
 import uiTreeModule from '../tree/tree';
@@ -24,9 +23,8 @@ const pickerModule = angular
   .module('hippo-cm.channel.siteMenuEditor.picker', [
     uiTreeModule.name,
   ])
+  .component('itemListing', itemListingComponent)
   .controller('PickerCtrl', PickerCtrl)
-  .controller('ListingCtrl', ListingCtrl)
-  .service('PickerService', PickerService)
-  .directive('listing', listingDirective);
+  .service('PickerService', PickerService);
 
 export default pickerModule;

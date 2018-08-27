@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,15 +17,12 @@
 <section>
   <md-subheader>{{ 'PICKER_LISTING_NAME' | translate }}</md-subheader>
   <md-list>
-    <md-list-item ng-repeat="item in listing.selectedItem.items"
+    <md-list-item ng-repeat="item in $ctrl.items"
                   ng-if="item.selectable"
-                  ng-class="{
-                  active: listing.selectedDocument === item,
-                  document: item.type !== 'folder'
-                  }"
-                  scroll-to-if="listing.selectedDocument === item"
-                  ng-click="listing.selectDocument(item)">
-      <md-icon md-svg-icon="{{ listing.getItemIcon(item) }}"></md-icon>
+                  ng-class="{ active: $ctrl.selectedItem === item }"
+                  scroll-to-if="$ctrl.selectedItem === item"
+                  ng-click="$ctrl.selectItem(item)">
+      <md-icon md-svg-icon="{{ $ctrl.getItemIcon(item) }}"></md-icon>
       <p>{{item.displayName}}</p>
     </md-list-item>
   </md-list>
