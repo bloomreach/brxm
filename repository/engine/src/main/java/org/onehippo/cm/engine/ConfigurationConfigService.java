@@ -138,13 +138,14 @@ public class ConfigurationConfigService {
                         webFileBundleDefinition.getOrigin()));
 
                 final Module module = webFileBundleDefinition.getSource().getModule();
-                if (module.isArchive()) {
 
-                    //check if webfile service already loaded this module
-                    if (watchedModules.contains(module.getFullName())) {
-                        //Module was already loaded by WebFileService
-                        continue;
-                    }
+                //check if webfile service already loaded this module
+                if (watchedModules.contains(module.getFullName())) {
+                    //Module was already loaded by WebFileService
+                    continue;
+                }
+
+                if (module.isArchive()) {
 
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
