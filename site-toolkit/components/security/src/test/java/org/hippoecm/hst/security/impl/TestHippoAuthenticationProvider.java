@@ -26,6 +26,7 @@ import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientRole;
 import org.hippoecm.hst.security.User;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -40,6 +41,13 @@ import static org.junit.Assert.fail;
 public class TestHippoAuthenticationProvider extends RepositoryTestCase {
     
     private AuthenticationProvider authenticationProvider;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
 
     @Override
     @Before

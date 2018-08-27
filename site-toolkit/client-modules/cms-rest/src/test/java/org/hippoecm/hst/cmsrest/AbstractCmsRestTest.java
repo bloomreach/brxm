@@ -34,6 +34,7 @@ import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ServletContextAware;
@@ -45,6 +46,12 @@ public abstract class AbstractCmsRestTest {
 
     private MockServletContext servletContext;
     private MockServletContext servletContext2;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

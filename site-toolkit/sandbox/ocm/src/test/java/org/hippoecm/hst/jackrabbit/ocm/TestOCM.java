@@ -26,6 +26,7 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdFolder;
 import org.hippoecm.hst.jackrabbit.ocm.util.OCMUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -43,7 +44,14 @@ public class TestOCM extends RepositoryTestCase {
     
     private String [] fallbackHippoBeans = { "hippo:document" };
     private Class [] annotatedBeans = { TextPage.class };
-    
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
+
     @Test
     public void testTextPage() throws Exception {
         

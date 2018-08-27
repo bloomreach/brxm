@@ -29,6 +29,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 

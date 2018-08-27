@@ -59,6 +59,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -78,6 +79,11 @@ public class AbstractPageComposerTest {
     private HstConfigurationEventListener listener;
     protected final MockServletContext servletContext = new MockServletContext();
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -77,6 +77,9 @@ public abstract class AbstractSpringTestCase
 
     @BeforeClass
     public static void clearRepository() {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+
         // when run together with other RepositoryTestCase based tests *and*
         // -Dorg.onehippo.repository.test.keepserver=true
         // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test

@@ -39,6 +39,7 @@ import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,6 +52,12 @@ public class AbstractRestApiIT {
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
     protected Filter filter;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

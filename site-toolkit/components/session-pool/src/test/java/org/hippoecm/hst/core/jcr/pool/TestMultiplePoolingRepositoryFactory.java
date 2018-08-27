@@ -39,12 +39,19 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestMultiplePoolingRepositoryFactory {
     
     private Map<String, String> multiplePoolConfigMap = new HashMap<String, String>();
-    
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
+
     @Before
     public void setUp() {
         multiplePoolConfigMap.put("repositoryAddress", " , ");
