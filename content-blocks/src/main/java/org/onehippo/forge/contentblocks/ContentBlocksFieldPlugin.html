@@ -1,5 +1,5 @@
 <!--
-  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -60,8 +60,10 @@
   <wicket:fragment wicket:id="edit-fragment">
     <div class="hippo-editor-field">
       <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
+        <a class="up-link top-bottom-arrow" wicket:id="upToTop"><span wicket:id="up-top-icon"></span></a>
         <a class="up-link" wicket:id="up"><span wicket:id="up-icon"></span></a>
         <a class="down-link" wicket:id="down"><span wicket:id="down-icon"></span></a>
+        <a class="down-link top-bottom-arrow" wicket:id="downToBottom"><span wicket:id="down-bottom-icon"></span></a>
         <a class="remove-link" wicket:id="remove"><span wicket:id="remove-icon"></span></a>
       </div>
       <div class="content-block-title">
