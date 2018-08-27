@@ -71,9 +71,9 @@ public interface WebFilesService {
      * @param session the JCR session used to access web files.
      * @param directory the directory containing the web files to import.
      * @param skipIfAlreadyAutoLoaded If <code>true</code> and AutoReloadService is enabled, then skip loading of webfilebundle
-     *                                as it already will have been loaded by AutoReloadService. If AutoReloadService is disabled,
-     *                                load webfilebundle.<br/><code>false</code>
-     *                                Webfilebundle must be loaded, regardless of the state of AutoReloadService.
+     *                                as it already will have been loaded by AutoReloadService.<br/>
+     *                                If <code>true</code> and AutoReloadService is disabled, load webfilebundle.<br/>
+     *                                If <code>false</code>, Webfilebundle must be loaded, regardless of the state of AutoReloadService.
      * @throws IOException if an I/O error occurs while reading web files from file system
      * @throws WebFileException if another error occurs while importing web files
      */
@@ -88,9 +88,9 @@ public interface WebFilesService {
      * @param session the JCR session used to access web files.
      * @param zip the ZIP file containing the web files to import.
      * @param skipIfAlreadyAutoLoaded If <code>true</code> and AutoReloadService is enabled, then skip loading of webfilebundle
-     *                                as it already will have been loaded by AutoReloadService. If AutoReloadService is disabled,
-     *                                load webfilebundle.<br/><code>false</code>
-     *                                Webfilebundle must be loaded, regardless of the state of AutoReloadService.
+     *                                as it already will have been loaded by AutoReloadService.<br/>
+     *                                If <code>true</code> and AutoReloadService is disabled, load webfilebundle.<br/>
+     *                                If <code>false</code>, Webfilebundle must be loaded, regardless of the state of AutoReloadService.
      * @throws IOException if an I/O error occurs while reading web files from the ZIP file
      * @throws WebFileException if another error occurs while importing web files
      */
