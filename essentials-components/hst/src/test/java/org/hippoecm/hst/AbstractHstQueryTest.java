@@ -23,6 +23,8 @@ import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AbstractHstQueryTest extends AbstractBeanTestCase {
+
   protected HstQueryManager queryManager;
   protected Node baseContentNode;
   protected Node galleryContentNode;
@@ -38,6 +41,13 @@ public class AbstractHstQueryTest extends AbstractBeanTestCase {
   protected HippoBean galleryContentBean;
   protected HippoBean assetsContentBean;
   private MockHstRequestContext requestContext;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
 
   @Before
   public void setUp() throws Exception {
