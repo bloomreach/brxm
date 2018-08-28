@@ -30,6 +30,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -60,6 +61,10 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 /**
  * An editor that takes a hippo:handle for its JcrNodeModel and displays one of the variants.
@@ -96,12 +101,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
-    }
-
-    private static boolean isWorkflowMethodAvailable(final Workflow workflow, final String methodName) throws RepositoryException, RemoteException, WorkflowException {
-        // TODO make branch hints aware?
-        final Serializable hint = workflow.hints().get(methodName);
-        return hint == null || Boolean.parseBoolean(hint.toString());
     }
 
     static Mode getMode(final IModel<Node> nodeModel) throws EditorException {
@@ -343,20 +342,21 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
+            String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
+            // TODO below should not be needed
+            if (branchId.equals("undefined")) {
+                branchId = MASTER_BRANCH_ID;
+            }
             switch (mode) {
                 case EDIT:
-                    if (!isWorkflowMethodAvailable(workflow, "obtainEditableInstance")) {
+                    if (isFalse((Boolean) workflow.hints(branchId).get("obtainEditableInstance"))) {
                         return false;
                     }
-                    if (branchIdModel != null) {
-                        workflow.obtainEditableInstance(branchIdModel.getBranchId());
-                    } else {
-                        workflow.obtainEditableInstance();
-                    }
+                    workflow.obtainEditableInstance(branchId);
                     break;
                 case VIEW:
                 case COMPARE:
-                    if (!isWorkflowMethodAvailable(workflow, "commitEditableInstance")) {
+                    if (isFalse((Boolean) workflow.hints(branchId).get("commitEditableInstance"))) {
                         return false;
                     }
                     workflow.commitEditableInstance();
@@ -382,6 +382,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final EditableWorkflow workflow = getEditableWorkflow();
+                // TODO make branch hints aware?
                 final Map<String, Serializable> hints = workflow.hints();
                 if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = workflow.isModified();
