@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -105,6 +105,20 @@ public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWra
      */
     public abstract void moveUp(M model);
 
+    /**
+     * Move a model to the top of the list.
+     *
+     * @param model the model to move
+     */
+    public abstract void moveToTop(M model);
+    
+    /**
+     * Move a model to the bottom of the list.
+     *
+     * @param model the model to move
+     */
+    public abstract void moveToBottom(M model);
+    
     /**
      * Retrieve the {@link ModelPathElement} to access an element.
      *
