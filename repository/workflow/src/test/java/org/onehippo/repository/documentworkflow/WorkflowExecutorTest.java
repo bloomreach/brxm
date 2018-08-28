@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.easymock.EasyMock;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.AfterClass;
@@ -42,8 +41,8 @@ import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 import static java.util.Collections.emptySet;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
 /**
  * This class tests the actions that are set by the workflow executor
@@ -58,7 +57,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
  */
 public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
 
-    public static final String MASTER = "master";
     private MockNode root;
     private MockAccessManagedSession session;
     private MockNode handle;
@@ -90,7 +88,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
      */
     @Test
     public void editing_master() throws WorkflowException, RepositoryException {
-        String branchId = MASTER;
+        String branchId = MASTER_BRANCH_ID;
         final DocumentHandle data = EasyMock.createNiceMock(DocumentHandle.class);
         expect(data.getDocuments()).andStubReturn(variantsMap);
         expect(data.getHandle()).andStubReturn(handle);
@@ -157,10 +155,10 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getBranches()).andStubReturn(emptySet());
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(false);
+        expect(data.isLiveAvailable()).andStubReturn(false);
         expect(data.isAnyBranchLiveAvailable()).andStubReturn(false);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
-        expect(data.isModified(branchId)).andStubReturn(false);
+        expect(data.isPreviewAvailable()).andStubReturn(true);
+        expect(data.isModified()).andStubReturn(false);
         replay(data);
 
 
@@ -176,7 +174,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .relPath("document-1")
                 .state(HippoStdNodeType.UNPUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
         final Map<String, ?> expectedActions = HintsBuilder.build()
@@ -223,17 +221,17 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(false);
+        expect(data.isLiveAvailable()).andStubReturn(false);
         expect(data.isAnyBranchLiveAvailable()).andStubReturn(false);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
-        expect(data.isModified(branchId)).andStubReturn(false);
+        expect(data.isPreviewAvailable()).andStubReturn(true);
+        expect(data.isModified()).andStubReturn(false);
         replay(data);
 
         new DocumentVariantBuilder(session, handle, variantsMap)
                 .relPath("document-1")
                 .state(HippoStdNodeType.UNPUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
 
@@ -283,10 +281,10 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(false);
+        expect(data.isLiveAvailable()).andStubReturn(false);
         expect(data.isAnyBranchLiveAvailable()).andStubReturn(false);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
-        expect(data.isModified(branchId)).andStubReturn(false);
+        expect(data.isPreviewAvailable()).andStubReturn(true);
+        expect(data.isModified()).andStubReturn(false);
         replay(data);
 
         new DocumentVariantBuilder(session, handle, variantsMap)
@@ -348,10 +346,10 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(true);
+        expect(data.isLiveAvailable()).andStubReturn(true);
         expect(data.isAnyBranchLiveAvailable()).andStubReturn(true);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
-        expect(data.isModified(branchId)).andStubReturn(false);
+        expect(data.isPreviewAvailable()).andStubReturn(true);
+        expect(data.isModified()).andStubReturn(false);
         replay(data);
 
 
@@ -359,14 +357,14 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .relPath("document-1")
                 .state(HippoStdNodeType.PUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
         new DocumentVariantBuilder(session, handle, variantsMap)
                 .relPath("document-1")
                 .state(HippoStdNodeType.UNPUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
 
@@ -420,24 +418,24 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getBranches()).andStubReturn(Collections.singleton(branchId));
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
-        expect(data.isLiveAvailable(branchId)).andStubReturn(true);
+        expect(data.isLiveAvailable()).andStubReturn(true);
         expect(data.isAnyBranchLiveAvailable()).andStubReturn(true);
-        expect(data.isPreviewAvailable(branchId)).andStubReturn(true);
-        expect(data.isModified(branchId)).andStubReturn(true);
+        expect(data.isPreviewAvailable()).andStubReturn(true);
+        expect(data.isModified()).andStubReturn(true);
         replay(data);
 
         new DocumentVariantBuilder(session, handle, variantsMap)
                 .relPath("document-1")
                 .state(HippoStdNodeType.PUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
         new DocumentVariantBuilder(session, handle, variantsMap)
                 .relPath("document-1")
                 .state(HippoStdNodeType.UNPUBLISHED)
                 .permissions("hippo:author")
-                .branchId(MASTER)
+                .branchId(MASTER_BRANCH_ID)
                 .add();
 
         final Map<String, ?> expectedActions = HintsBuilder.build()

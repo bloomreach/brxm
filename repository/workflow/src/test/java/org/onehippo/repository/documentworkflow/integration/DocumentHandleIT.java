@@ -76,17 +76,16 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
     @Test
     public void is_modified_if_there_is_only_unpublished() throws WorkflowException {
         documentHandle.initialize();
-        Assertions.assertThat(documentHandle.isModified(MASTER_BRANCH_ID)).isTrue();
+        Assertions.assertThat(documentHandle.isModified()).isTrue();
     }
 
     @Test
     public void is_not_modified_if_unpublished_equals_published() throws WorkflowException, RepositoryException, RemoteException {
 
-        final String branchId = MASTER_BRANCH_ID;
-        getDocumentWorkflow(handle).publishBranch(branchId);
+        getDocumentWorkflow(handle).publishBranch(MASTER_BRANCH_ID);
 
         documentHandle.initialize();
-        Assertions.assertThat(documentHandle.isModified(branchId)).isFalse();
+        Assertions.assertThat(documentHandle.isModified()).isFalse();
     }
 
     @Test
@@ -97,7 +96,7 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
         getDocumentWorkflow(handle).depublishBranch(branchId);
 
         documentHandle.initialize();
-        Assertions.assertThat(documentHandle.isModified(branchId)).isTrue();
+        Assertions.assertThat(documentHandle.isModified()).isTrue();
     }
 
 
@@ -110,7 +109,7 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
         getDocumentWorkflow(handle).checkoutBranch(MASTER_BRANCH_ID);
 
         documentHandle.initialize();
-        Assertions.assertThat(documentHandle.isModified(branchId)).isTrue();
+        Assertions.assertThat(documentHandle.isModified()).isTrue();
 
         getDocumentWorkflow(handle).publishBranch(branchId);
     }
@@ -124,8 +123,29 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
         getDocumentWorkflow(handle).checkoutBranch(MASTER_BRANCH_ID);
         getDocumentWorkflow(handle).publishBranch(branchId);
 
-        documentHandle.initialize();
-        Assertions.assertThat(documentHandle.isModified(branchId)).isFalse();
+        documentHandle.initialize(branchId);
+        Assertions.assertThat(documentHandle.isModified()).isFalse();
+    }
+
+    @Test
+    public void master_not_modified_if_branch_gets_modified() throws WorkflowException, RepositoryException, RemoteException {
+
+        documentHandle.initialize(MASTER_BRANCH_ID);
+        Assertions.assertThat(documentHandle.isModified()).isTrue();
+        getDocumentWorkflow(handle).publish();
+        Assertions.assertThat(documentHandle.isModified()).isFalse();
+
+        final String branchId = "foo";
+        final String branchName = "Foo";
+        getDocumentWorkflow(handle).branch(branchId, branchName);
+        getDocumentWorkflow(handle).obtainEditableInstance(branchId);
+        getDocumentWorkflow(handle).commitEditableInstance();
+
+        documentHandle.initialize(MASTER_BRANCH_ID);
+        Assertions.assertThat(documentHandle.isModified()).isFalse();
+
+        documentHandle.initialize(branchId);
+        Assertions.assertThat(documentHandle.isModified()).isTrue();
     }
 }
 

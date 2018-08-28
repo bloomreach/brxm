@@ -52,15 +52,15 @@
     // true if draft exists and not currently editor or edited by current user
     def boolean isEditable() { !holder or editor }
     // true if published version (can be frozen node) for branchId exists
-    def boolean isLive() { workflowData.isLiveAvailable(branchId) }
+    def boolean isLive() { workflowData.isLiveAvailable() }
     // true if there is any branch (including 'master') live
     def boolean isAnyBranchLive()  { workflowData.isAnyBranchLiveAvailable() }
     // true if unpublished version (can be frozen node) for branchId exists
-    def boolean isPreview() { workflowData.isPreviewAvailable(branchId) }
+    def boolean isPreview() { workflowData.isPreviewAvailable() }
     // true if either unpublished or published variant exits with availability 'preview'
     def boolean isPreviewAvailable() { live or preview }
     // true if unpublished variant exists and no published variant exists or they have a different lastModified
-    def boolean isModified() { workflowData.isModified(branchId) }
+    def boolean isModified() { workflowData.isModified() }
     // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
     def getContainingFolder() { workflowData.handle.parent }
