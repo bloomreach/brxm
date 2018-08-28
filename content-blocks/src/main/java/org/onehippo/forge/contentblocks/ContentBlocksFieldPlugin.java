@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -340,6 +340,22 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         remove.add(removeIcon);
 
         final int itemIndex = item.getIndex();
+
+        // up to top arrow button
+        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                onMoveItemToTop(model);
+                redraw();
+            }
+        };
+        upToTopLink.setVisible(canReorderItems());
+        upToTopLink.setEnabled(itemIndex > 0);
+        controls.add(upToTopLink);
+
+        final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+        upToTopLink.add(upToTopIcon);
+
         // up arrow button
         MarkupContainer upLink = new AjaxLink("up") {
             @Override
@@ -378,6 +394,22 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         downLink.add(downIcon);
+
+        // down to bottom arrow button
+        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                onMoveItemToBottom(model);
+                redraw();
+            }
+        };
+
+        downToBottomLink.setVisible(canReorderItems());
+        downToBottomLink.setEnabled(itemIndex < provider.size() - 1);
+        controls.add(downToBottomLink);
+
+        final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+        downToBottomLink.add(downToBottomIcon);
 
         fragment.add(controls);
         item.add(fragment);
