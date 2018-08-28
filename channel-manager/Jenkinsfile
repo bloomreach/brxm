@@ -14,4 +14,6 @@
  * limitations under the License.
  */
 
-cmsPipeline()
+// mavenGoals specified to get the cprops code in the maven repository (for the benefit of the HAP for example)
+// not to be merged back to the release branch
+cmsPipeline( mavenGoals: "clean deploy" )
