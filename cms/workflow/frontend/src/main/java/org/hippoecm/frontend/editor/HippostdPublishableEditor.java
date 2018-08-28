@@ -30,6 +30,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
