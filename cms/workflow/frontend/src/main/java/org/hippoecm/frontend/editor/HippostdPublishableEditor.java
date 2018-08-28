@@ -58,7 +58,6 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,11 +88,92 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
+    public static final String UNABLE_TO_VALIDATE_THE_DOCUMENT = "Unable to validate the document";
 
     private BranchIdModel branchIdModel;
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
+
+    // CMS-10723 Made WorkflowState package-private to be able to unit test
+    static class WorkflowState {
+        private IModel<Node> draft;
+        private IModel<Node> unpublished;
+        private IModel<Node> published;
+        private boolean isHolder;
+        private String user;
+        private Optional<BranchHandle> branchHandle = Optional.empty();
+
+        public WorkflowState() {
+        }
+
+        public WorkflowState(final Node handle, final String branchId) {
+            try {
+                if (branchId != null) {
+                    branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
+                }
+            } catch (WorkflowException e) {
+                log.warn(e.getMessage(), e);
+            }
+        }
+
+        void process(final Node child) throws RepositoryException {
+            if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
+                final String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                switch (state) {
+                    case HippoStdNodeType.UNPUBLISHED:
+                        if (unpublished != null) {
+                            this.unpublished.detach();
+                        }
+                        this.unpublished = new JcrNodeModel(branchHandle.map(BranchHandle::getUnpublished).orElse(child));
+                        break;
+                    case HippoStdNodeType.PUBLISHED:
+                        if (published != null) {
+                            this.published.detach();
+                        }
+                        // if there is no published for the branch we fallback to master published and if there is
+                        // no master published we just use child
+                        this.published = new JcrNodeModel(branchHandle
+                                .map(BranchHandle::getPublished)
+                                .orElseGet(() -> branchHandle.map(BranchHandle::getPublishedMaster).orElse(child))
+                        );
+                        break;
+                    case HippoStdNodeType.DRAFT:
+                        if (this.draft != null) {
+                            this.draft.detach();
+                        }
+                        draft = new JcrNodeModel(branchHandle.map(BranchHandle::getDraft).orElse(child));
+                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
+                                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
+                            isHolder = true;
+                        }
+                        break;
+                }
+            }
+        }
+
+        void setUser(final String user) {
+            this.user = user;
+        }
+
+        /* For testing purposes */
+        void setDraft(final IModel<Node> draft) {
+            this.draft = draft;
+        }
+
+        void setUnpublished(final IModel<Node> unpublished) {
+            this.unpublished = unpublished;
+        }
+
+        void setPublished(final IModel<Node> published) {
+            this.published = published;
+        }
+
+        void setHolder(final boolean holder) {
+            isHolder = holder;
+        }
+
+    }
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
@@ -207,17 +287,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException ex) {
             throw new EditorException("Error locating editor model", ex);
         }
-        final WorkflowState state;
-        if (isDocumentWorkflow()) {
-            String branchId = null;
-            if (branchIdModel != null) {
-                branchId = branchIdModel.getBranchId();
-            }
-            state = getWorkflowState(node, branchId);
-        } else {
-            state = getWorkflowState(node);
-        }
-
+        final WorkflowState state = getWorkflowState(node, branchIdModel==null?null:branchIdModel.getBranchId());
         switch (getMode()) {
             case EDIT:
                 if (state.draft == null || !state.isHolder) {
@@ -254,7 +324,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 if (!compareToVersion && (state.unpublished == null || state.published == null)) {
                     throw new EditorException("Can only compare when both unpublished and published are present");
                 }
-                Stream.of(state.published, state.draft).forEach(m -> detachVariant(m));
+                Stream.of(state.published, state.draft).forEach(this::detachVariant);
                 return state.unpublished;
         }
     }
@@ -275,19 +345,18 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             branchId = branchIdModel.getBranchId();
         }
         final WorkflowState state = getWorkflowState(node, branchId);
-        switch (getMode()) {
-            case EDIT:
-                throw new EditorException("Base model is not supported in edit mode");
-            default:
-                if (state.published != null) {
-                    Stream.of(state.unpublished, state.draft).forEach(v -> detachVariant(v));
-                    return state.published;
-                }
-                if (state.unpublished != null) {
-                    Stream.of(state.published, state.draft).forEach(v -> detachVariant(v));
-                    return state.unpublished;
-                }
-                return super.getBaseModel();
+        if (getMode() == Mode.EDIT) {
+            throw new EditorException("Base model is not supported in edit mode");
+        } else {
+            if (state.published != null) {
+                Stream.of(state.unpublished, state.draft).forEach(this::detachVariant);
+                return state.published;
+            }
+            if (state.unpublished != null) {
+                Stream.of(state.published, state.draft).forEach(this::detachVariant);
+                return state.unpublished;
+            }
+            return super.getBaseModel();
         }
     }
 
@@ -300,7 +369,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     public void setMode(final Mode mode) throws EditorException {
-        final IModel<Node> editorModel = getEditorModel();
+        editorModel = getEditorModel();
         if (mode != getMode() && editorModel != null) {
             try {
                 final EditableWorkflow workflow = getEditableWorkflow();
@@ -401,21 +470,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return manager.getWorkflow("editing", handleNode);
     }
 
-    private boolean isDocumentWorkflow()  {
-        try {
-            return getWorkflow() instanceof DocumentWorkflow;
-        } catch (RepositoryException e) {
-            log.warn("Cannot determine if workflow is a document workflow", e);
-        }
-        return false;
-    }
-
     public boolean isValid() throws EditorException {
         if (isValid == null) {
             try {
                 validate();
             } catch (final ValidationException e) {
-                throw new EditorException("Unable to validate the document", e);
+                throw new EditorException(UNABLE_TO_VALIDATE_THE_DOCUMENT, e);
             }
         }
         return isValid;
@@ -455,7 +515,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Unable to save the document", e);
         } catch (final ValidationException e) {
             log.error("Unable to validate the document {}: {}", docPath, e.getMessage());
-            throw new EditorException("Unable to validate the document", e);
+            throw new EditorException(UNABLE_TO_VALIDATE_THE_DOCUMENT, e);
         }
 
     }
@@ -473,20 +533,18 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             final NodeIterator docs = handleNode.getNodes(handleNode.getName());
             if (docs.hasNext()) {
                 final Node sibling = docs.nextNode();
-                if (sibling.isSame(docNode)) {
-                    if (!docs.hasNext()) {
-                        final Document folder = new Document(handleNode.getParent());
-                        final Workflow workflow = manager.getWorkflow("internal", folder);
-                        if (workflow instanceof FolderWorkflow) {
-                            ((FolderWorkflow) workflow).delete(new Document(docNode));
-                        } else {
-                            log.warn("cannot delete document which is not contained in a folder");
-                        }
-
-                        setMode(Mode.EDIT);
-                        modified = false;
-                        return;
+                if (sibling.isSame(docNode) && !docs.hasNext()) {
+                    final Document folder = new Document(handleNode.getParent());
+                    final Workflow workflow = manager.getWorkflow("internal", folder);
+                    if (workflow instanceof FolderWorkflow) {
+                        ((FolderWorkflow) workflow).delete(new Document(docNode));
+                    } else {
+                        log.warn("cannot delete document which is not contained in a folder");
                     }
+
+                    setMode(Mode.EDIT);
+                    modified = false;
+                    return;
                 }
             } else {
                 log.warn("No documents found under handle of edited document");
@@ -530,7 +588,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throw new EditorException("Unable to save the document", e);
         } catch (final ValidationException e) {
             log.error("Unable to validate the document {}: {}", docPath, e.getMessage());
-            throw new EditorException("Unable to validate the document", e);
+            throw new EditorException(UNABLE_TO_VALIDATE_THE_DOCUMENT, e);
         }
     }
 
@@ -547,17 +605,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             final NodeIterator docs = handleNode.getNodes(handleNode.getName());
             if (docs.hasNext()) {
                 final Node sibling = docs.nextNode();
-                if (sibling.isSame(docNode)) {
-                    if (!docs.hasNext() && getMode() == Mode.EDIT) {
-                        final Document folder = new Document(handleNode.getParent());
-                        final Workflow workflow = manager.getWorkflow("internal", folder);
-                        if (workflow instanceof FolderWorkflow) {
-                            ((FolderWorkflow) workflow).delete(new Document(docNode));
-                        } else {
-                            log.warn("cannot delete document which is not contained in a folder");
-                        }
-                        return;
+                if (sibling.isSame(docNode) && (!docs.hasNext() && getMode() == Mode.EDIT)) {
+                    final Document folder = new Document(handleNode.getParent());
+                    final Workflow workflow = manager.getWorkflow("internal", folder);
+                    if (workflow instanceof FolderWorkflow) {
+                        ((FolderWorkflow) workflow).delete(new Document(docNode));
+                    } else {
+                        log.warn("cannot delete document which is not contained in a folder");
                     }
+                    return;
                 }
             } else {
                 log.warn("No documents found under handle of edited document");
@@ -698,84 +754,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return new DocumentUsageEvent(name, model, "publishable-editor");
     }
 
-    // CMS-10723 Made WorkflowState package-private to be able to unit test
-    static class WorkflowState {
-        private IModel<Node> draft;
-        private IModel<Node> unpublished;
-        private IModel<Node> published;
-        private boolean isHolder;
-        private String user;
-        private Optional<BranchHandle> branchHandle = Optional.empty();
 
-        public WorkflowState() {
-        }
-
-        public WorkflowState(final Node handle, final String branchId) {
-            try {
-                if (branchId != null) {
-                    branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
-                }
-            } catch (WorkflowException e) {
-                log.warn(e.getMessage(), e);
-            }
-        }
-
-        void process(final Node child) throws RepositoryException {
-            if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-                final String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                switch (state) {
-                    case HippoStdNodeType.UNPUBLISHED:
-                        if (unpublished != null) {
-                            this.unpublished.detach();
-                        }
-                        this.unpublished = new JcrNodeModel(branchHandle.map(BranchHandle::getUnpublished).orElse(child));
-                        break;
-                    case HippoStdNodeType.PUBLISHED:
-                        if (published != null) {
-                            this.published.detach();
-                        }
-                        // if there is no published for the branch we fallback to master published and if there is
-                        // no master published we just use child
-                        this.published = new JcrNodeModel(branchHandle
-                                .map(BranchHandle::getPublished)
-                                .orElseGet(() -> branchHandle.map(BranchHandle::getPublishedMaster).orElse(child))
-                        );
-                        break;
-                    case HippoStdNodeType.DRAFT:
-                        if (this.draft != null) {
-                            this.draft.detach();
-                        }
-                        draft = new JcrNodeModel(branchHandle.map(BranchHandle::getDraft).orElse(child));
-                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
-                            isHolder = true;
-                        }
-                        break;
-                }
-            }
-        }
-
-        void setUser(final String user) {
-            this.user = user;
-        }
-
-        /* For testing purposes */
-        void setDraft(final IModel<Node> draft) {
-            this.draft = draft;
-        }
-
-        void setUnpublished(final IModel<Node> unpublished) {
-            this.unpublished = unpublished;
-        }
-
-        void setPublished(final IModel<Node> published) {
-            this.published = published;
-        }
-
-        void setHolder(final boolean holder) {
-            isHolder = holder;
-        }
-
-    }
 
 }
