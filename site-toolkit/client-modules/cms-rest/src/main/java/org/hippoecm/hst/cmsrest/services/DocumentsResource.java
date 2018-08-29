@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -32,13 +33,20 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.hippoecm.hst.rest.beans.ChannelDocumentDataset;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+
 public class DocumentsResource extends BaseResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
+
+    private static final String ATTRIBUTE_SESSION_CONTEXT_ACTIVE_BRANCH_ID = "com.onehippo.cms7.services.wpm.WpmConstants.active_session_context_project_id";
 
     private HstLinkCreator hstLinkCreator;
     // default no context augmenters
@@ -53,10 +61,22 @@ public class DocumentsResource extends BaseResource implements DocumentService {
     }
 
     public ChannelDocumentDataset getChannels(String uuid) {
+        return getChannels(uuid, MASTER_BRANCH_ID);
+    }
 
+    @Override
+    public ChannelDocumentDataset getChannels(final String uuid, final String branchId) {
         final ChannelDocumentDataset dataset = new ChannelDocumentDataset();
 
         HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (!MASTER_BRANCH_ID.equals(branchId)) {
+            // use a specific branch to find the right channel documents (this attribute is used in downstream projects)
+            // to select a specific branch from CompositeHstSiteImpl
+            // TODO in version 13 for hst-platform we need to come up with something else since then there will be no
+            // TODO request context (possibly)
+            requestContext.setAttribute(RENDER_BRANCH_ID, branchId);
+        }
 
         documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
 
@@ -114,6 +134,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
 
         dataset.setChannelDocuments(channelDocuments);
         return dataset;
+
     }
 
     public String getUrl(final String uuid, final String type) {

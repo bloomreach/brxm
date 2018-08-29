@@ -45,6 +45,11 @@ public interface DocumentService {
     @Produces(MediaType.APPLICATION_JSON)
     ChannelDocumentDataset getChannels(@PathParam("uuid") String uuid);
 
+    @GET
+    @Path("/{uuid}/{branchId}/channels/")
+    @Produces(MediaType.APPLICATION_JSON)
+    ChannelDocumentDataset getChannels(@PathParam("uuid") String uuid, @PathParam("branchId") String branchId);
+
     /**
      * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
      * When the type parameter is null or empty, the value 'live' is used. Note that this method thus returns a fully qualified
