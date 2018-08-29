@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
@@ -42,13 +41,12 @@ public final class ContextPayloadUtils {
     /**
      * Returns the branchId from the given context payload if present and the MASTER branch id otherwise.
      *
-     * @param contextPayload the context payload from the http request
+     * @param contextPayload the context payload from the http request which is not allowed to be null
      * @return branchId
      */
     public static String getBranchId(Map<String, Serializable> contextPayload) {
-        return Optional.ofNullable(contextPayload)
-                .map(m -> (String) m.getOrDefault(ATTRIBUTE_SESSION_CONTEXT_ACTIVE_BRANCH_ID, null))
-                .orElse(MASTER_BRANCH_ID);
+        return (String) contextPayload.getOrDefault(ATTRIBUTE_SESSION_CONTEXT_ACTIVE_BRANCH_ID, MASTER_BRANCH_ID);
+
     }
 
 }
