@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -230,6 +230,21 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
         controls.add(remove);
 
+        boolean isFirst = (model.getIndex() == 0);
+        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                onMoveItemToTop(model);
+                redraw();
+            }
+        };
+        upToTopLink.setVisible(canReorderItems());
+        upToTopLink.setEnabled(!isFirst);
+        controls.add(upToTopLink);
+
+        final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+        upToTopLink.add(upToTopIcon);
+
         MarkupContainer upLink = new AjaxLink("up") {
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -237,7 +252,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
                 hasChangedPropValueOrder = true;
             }
         };
-        boolean isFirst = (model.getIndex() == 0);
         if (!canReorderItems()) {
             upLink.setVisible(false);
         }
@@ -267,6 +281,20 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         downLink.add(downIcon);
 
         controls.add(downLink);
+
+        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                onMoveItemToBottom(model);
+                redraw();
+            }
+        };
+        downToBottomLink.setVisible(canReorderItems());
+        downToBottomLink.setEnabled(!isLast);
+        controls.add(downToBottomLink);
+
+        final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+        downToBottomLink.add(downToBottomIcon);
 
         item.add(fragment);
     }
