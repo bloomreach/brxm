@@ -46,6 +46,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -64,6 +65,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
 
 @SuppressWarnings({"deprecation", "serial"})
@@ -147,13 +149,21 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             return new EmptyPanel("channels");
         }
 
+        final String branchId;
+        final BranchIdModel branchIdModel = new BranchIdModel(getPluginContext(), documentUuid);
+        if (branchIdModel == null) {
+            branchId = MASTER_BRANCH_ID;
+        } else {
+            branchId = branchIdModel.getBranchId();
+        }
+
         // a rest proxy can only return ChannelDocument for the webapp the proxy belongs to. Hence we need to
         // invoke all rest proxies to get all available channel documents
         List<Callable<List<ChannelDocument>>> restProxyJobs = new ArrayList<>();
 
         for (final Map.Entry<String, IRestProxyService> entry : liveRestProxyServices.entrySet()) {
             final DocumentService documentService = entry.getValue().createSecureRestProxy(DocumentService.class);
-            restProxyJobs.add(() -> documentService.getChannels(documentUuid).getChannelDocuments());
+            restProxyJobs.add(() -> documentService.getChannels(documentUuid, branchId).getChannelDocuments());
         }
 
         final List<ChannelDocument> combinedChannelDocuments = new ArrayList<>();
