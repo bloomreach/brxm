@@ -705,12 +705,6 @@
             <!-- there is not yet a published variant or it is master: really publish the preview -->
             <if cond="!unpublished.isBranch(branchIdToUse)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
-              <if cond="editing">
-                <!-- the other branch is being edited : In case it gets saved afterward it would replace the preview again
-                     HOWEVER if the draft is discarded, we don't want to loose the preview data!!! Hence we need to version
-                     the preview first to be sure before we do a checkout! -->
-                <hippo:version variant="unpublished"/>
-              </if>
               <hippo:version variant="unpublished"/>
               <hippo:checkoutBranch variant="unpublished" branchId="branchIdToUse"/>
             </if>
