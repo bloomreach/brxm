@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link org.hippoecm.frontend.model.PropertyValueProvider}
@@ -228,4 +228,67 @@ public class PropertyValueProviderTest extends PluginTest {
         pvp.addNew();
         assertTrue(session.hasPendingChanges());
     }
+    
+    @Test
+    public void canMoveItemToTop() throws RepositoryException {
+        Node test = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
+        Value[] values = new Value[] { createValue("aap1"), createValue("aap2"), createValue("aap3"), createValue("aap4") };
+        test.setProperty("frontendtest:value", values);
+        session.save();
+
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:value");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:value", new JavaTypeDescriptor("string",
+                "String", null));
+        field.setMultiple(true);
+
+        PropertyValueProvider pvp = new PropertyValueProvider(field, field.getTypeDescriptor(), propModel.getItemModel());
+        
+        Iterator<JcrPropertyValueModel> iterator = pvp.iterator(0, 4);
+        iterator.next();
+        iterator.next();
+        JcrPropertyValueModel pvm = iterator.next(); // "aap3"
+
+        pvp.moveToTop(pvm);
+
+        assertTrue(session.hasPendingChanges());
+        
+        pvp.refresh(); // to force reloading items from the session
+
+        iterator = pvp.iterator(0, 4);
+        pvm = iterator.next();
+        assertEquals("aap3", pvm.getObject());
+    }
+
+    @Test
+    public void canMoveItemToBottom() throws RepositoryException {
+        Node test = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
+        Value[] values = new Value[] { createValue("aap1"), createValue("aap2"), createValue("aap3"), createValue("aap4") };
+        test.setProperty("frontendtest:value", values);
+        session.save();
+
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:value");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:value", new JavaTypeDescriptor("string",
+                "String", null));
+        field.setMultiple(true);
+
+        PropertyValueProvider pvp = new PropertyValueProvider(field, field.getTypeDescriptor(), propModel.getItemModel());
+        
+        Iterator<JcrPropertyValueModel> iterator = pvp.iterator(0, 4);
+        iterator.next();
+        JcrPropertyValueModel pvm = iterator.next(); // "aap2"
+
+        pvp.moveToBottom(pvm);
+
+        assertTrue(session.hasPendingChanges());
+        
+        pvp.refresh(); // to force reloading items from the session
+
+        iterator = pvp.iterator(0, 4);
+        iterator.next();
+        iterator.next();
+        iterator.next();
+        pvm = iterator.next();
+        assertEquals("aap2", pvm.getObject());
+    }
+
 }

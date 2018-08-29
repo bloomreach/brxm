@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.jcr.Item;
@@ -159,6 +160,55 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
             predecessor.detach();
         }
         log.warn("could not find {}", model);
+    }
+    
+    @Override
+    public void moveToTop(final JcrNodeModel model) {
+        load();
+        try {
+            final JcrNodeModel firstElement = elements.getFirst();
+            if (model.equals(firstElement)) {
+                return;
+            }
+            final Node parent = (Node) getItemModel().getObject();
+            final String currentNodePath = model.getNode().getName()
+                    + (model.getNode().getIndex() > 1 ? "[" + model.getNode().getIndex() + "]" : "");
+            final String firstNodePath = firstElement.getNode().getName();
+            parent.orderBefore(currentNodePath, firstNodePath);
+        } catch (NoSuchElementException e) {
+            log.warn("No node found to order before for {}", model);
+        } catch (RepositoryException e) {
+            log.error("Unable to move child to top of the list", e);
+        }
+    }
+
+    @Override
+    public void moveToBottom(final JcrNodeModel model) {
+        load();
+        try {
+            final JcrNodeModel lastElement = elements.getLast();
+            if (model.equals(lastElement)) {
+                return;
+            }
+            final Node parent = (Node) getItemModel().getObject();
+
+            // step 1: move current node to one before last
+            final String lastNodePath = lastElement.getNode().getName()
+                    + "[" + (lastElement.getNode().getIndex()) + "]";;
+            final String currentNodePath = model.getNode().getName()
+                    + (model.getNode().getIndex() > 1 ? "[" + model.getNode().getIndex() + "]" : "");
+            parent.orderBefore(currentNodePath, lastNodePath);
+            
+            // step 2: move the last node before the one-before-last node
+            final String oneBeforeLastNodePath = model.getNode().getName() 
+                    + "[" + (lastElement.getNode().getIndex() - 1) + "]";
+            parent.orderBefore(lastNodePath, oneBeforeLastNodePath);
+            
+        } catch (NoSuchElementException e) {
+            log.warn("No node found to order after for {}", model);
+        } catch (RepositoryException e) {
+            log.error("Unable to move child to bottom of the list", e);
+        }
     }
 
     @Override
