@@ -17,9 +17,10 @@
 package org.onehippo.repository.documentworkflow;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -29,6 +30,7 @@ import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.scxml.MockWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -62,7 +64,7 @@ public class DocumentHandleTest extends BaseDocumentWorkflowTest {
     public void initDocumentHandle() throws Exception {
 
         // create handle with publication request
-        MockNode handle = MockNode.root().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handle = MockNode.root().addNode("test", NT_HANDLE);
         addRequest(handle, HippoStdPubWfNodeType.PUBLISH, true);
         DocumentHandleWorkflowContext workflowContext = new DocumentHandleWorkflowContext("test", new MockWorkflowContext("testuser"));
         DocumentHandle dh = new DocumentHandle(handle);
@@ -100,5 +102,28 @@ public class DocumentHandleTest extends BaseDocumentWorkflowTest {
         assertNotNull(getUnpublished(dh));
         assertNotNull(getPublished(dh));
         assertEquals(draftVariant, getDraft(dh).getNode());
+    }
+
+    @Test
+    public void testGetBranchHandle_inherits_branchId_from_document_handle() throws RepositoryException, WorkflowException {
+
+        final Node handleNode = MockNode.root().addNode("document", NT_HANDLE);
+        final DocumentHandle documentHandle = new DocumentHandle(handleNode);
+
+        documentHandle.initialize("foo");
+        Assertions.assertThat(documentHandle.getBranchId())
+                .isEqualTo("foo");
+        Assertions.assertThat(documentHandle.getBranchHandle().getBranchId())
+                .isEqualTo(documentHandle.getBranchId());
+    }
+
+    @Test
+    public void testGetBranchHandle_requires_initialization_of_document_handle() throws RepositoryException {
+
+        final Node handleNode = MockNode.root().addNode("document", NT_HANDLE);
+        final DocumentHandle documentHandle = new DocumentHandle(handleNode);
+
+        Assertions.assertThatThrownBy(documentHandle::getBranchHandle)
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 }

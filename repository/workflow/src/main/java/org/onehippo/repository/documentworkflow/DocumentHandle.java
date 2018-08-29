@@ -33,6 +33,7 @@ import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -60,12 +61,13 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private boolean requestPending = false;
     private boolean initialized;
 
-    public DocumentHandle(Node handle) throws WorkflowException {
+    public DocumentHandle(Node handle) {
         this.handle = handle;
     }
 
     /**
      * Provide hook for extension
+     *
      * @param node
      * @return
      * @throws RepositoryException
@@ -76,6 +78,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     /**
      * Provide hook for extension
+     *
      * @param node
      * @return
      * @throws RepositoryException
@@ -99,7 +102,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             reset();
         }
         try {
-            if (branchId == null ) {
+            if (branchId == null) {
                 this.branchId = MASTER_BRANCH_ID;
             } else {
                 this.branchId = branchId;
@@ -108,8 +111,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             initializeDocumentBranches();
             initializeRequestStatus();
             initialized = true;
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             reset();
             throw new WorkflowException("DocumentHandle initialization failed", e);
         }
@@ -117,8 +119,9 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     /**
      * Provide hook for extension
-     *
+     * <p>
      * This implementation calls {@link #createDocumentVariant(Node)}
+     *
      * @throws RepositoryException
      */
     protected void initializeDocumentVariants() throws RepositoryException {
@@ -134,8 +137,9 @@ public class DocumentHandle implements SCXMLWorkflowData {
 
     /**
      * Provide hook for extension
-     *
+     * <p>
      * This implementation calls {@link #createRequest(Node)}
+     *
      * @throws RepositoryException
      */
     protected void initializeRequestStatus() throws RepositoryException {
@@ -144,11 +148,10 @@ public class DocumentHandle implements SCXMLWorkflowData {
             if (request != null) {
                 if (request.isWorkflowRequest()) {
                     requests.put(request.getIdentity(), request);
-                    if (!HippoStdPubWfNodeType.REJECTED.equals(((WorkflowRequest)request).getType())) {
+                    if (!HippoStdPubWfNodeType.REJECTED.equals(((WorkflowRequest) request).getType())) {
                         requestPending = true;
                     }
-                }
-                else if (request.isScheduledRequest()) {
+                } else if (request.isScheduledRequest()) {
                     requests.put(request.getIdentity(), request);
                     requestPending = true;
                 }
@@ -200,8 +203,8 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return branches.size() == 1 && branches.contains(MASTER_BRANCH_ID);
     }
 
-    public boolean isLiveAvailable() throws WorkflowException {
-        return new BranchHandleImpl(branchId, this).isLiveAvailable();
+    public boolean isLiveAvailable() {
+        return getBranchHandle().isLiveAvailable();
     }
 
     public boolean isAnyBranchLiveAvailable() throws WorkflowException {
@@ -216,12 +219,12 @@ public class DocumentHandle implements SCXMLWorkflowData {
         }
     }
 
-    public boolean isPreviewAvailable() throws WorkflowException {
-        return new BranchHandleImpl(branchId, this).isPreviewAvailable();
+    public boolean isPreviewAvailable() {
+        return getBranchHandle().isPreviewAvailable();
     }
 
-    public boolean isModified() throws WorkflowException {
-        return new BranchHandleImpl(branchId, this).isModified();
+    public boolean isModified() {
+        return getBranchHandle().isModified();
     }
 
     public String getBranchId() {
@@ -238,6 +241,18 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return count > 1;
     }
 
+    /**
+     * Returns a branch handle with the same branch id as this document handle was initialized with.
+     *
+     * @return branch handle with same branch id as this handle
+     * @throws UnsupportedOperationException if the document handle is not initialized.
+     */
+    public BranchHandle getBranchHandle() {
+        if (isInitialized()) {
+            return new BranchHandleImpl(branchId, this);
+        }
+        throw new UnsupportedOperationException("document handle not initialized, please initialize it before calling this method");
+    }
 
     private void initializeDocumentBranches() throws RepositoryException {
 
