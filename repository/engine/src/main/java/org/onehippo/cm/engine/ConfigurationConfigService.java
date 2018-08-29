@@ -71,6 +71,7 @@ import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherService;
 import org.onehippo.repository.util.NodeTypeUtils;
@@ -124,7 +125,9 @@ public class ConfigurationConfigService {
         if (!webfileBundles.isEmpty()) {
 
             final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
-            final List<String> watchedModules = collectWatchedWebfileModules(webFilesWatcherService);
+            final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
+            final List<String> watchedModules = autoReloadService != null && autoReloadService.isEnabled() ?
+                    collectWatchedWebfileModules(webFilesWatcherService) :Collections.emptyList();
 
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
