@@ -193,7 +193,6 @@ describe('HstComponentService', () => {
     it('uses the HstService to get the properties of a component', () => {
       HstComponentService.getProperties('id', 'variant');
       expect(HstService.doGet).toHaveBeenCalledWith('id', 'variant', 'test-locale');
-      $rootScope.$digest();
     });
 
     it('URI-encodes the variant name', () => {
