@@ -21,6 +21,9 @@ describe('PageStructureService', () => {
   let PageStructureService;
   let PageMetaDataService;
   let ChannelService;
+  let CmsService;
+  let ConfigService;
+  let EditComponentService;
   let HstService;
   let MarkupService;
   let HippoIframeService;
@@ -44,6 +47,9 @@ describe('PageStructureService', () => {
       _PageStructureService_,
       _PageMetaDataService_,
       _ChannelService_,
+      _CmsService_,
+      _ConfigService_,
+      _EditComponentService_,
       _HstService_,
       _MarkupService_,
       _HippoIframeService_,
@@ -58,6 +64,9 @@ describe('PageStructureService', () => {
       PageStructureService = _PageStructureService_;
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
+      ConfigService = _ConfigService_;
+      EditComponentService = _EditComponentService_;
       HstService = _HstService_;
       MarkupService = _MarkupService_;
       HippoIframeService = _HippoIframeService_;
@@ -482,7 +491,7 @@ describe('PageStructureService', () => {
     expect(container.getId()).toEqual('container-no-markup');
   });
 
-  it('triggers an event to show the component properties dialog', () => {
+  it('triggers an event to show the component properties dialog if Relevance is present', () => {
     const componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified']);
     componentElement.getId.and.returnValue('testId');
     componentElement.getLabel.and.returnValue('testLabel');
@@ -502,6 +511,8 @@ describe('PageStructureService', () => {
 
     spyOn(MaskService, 'mask');
     spyOn($window.APP_TO_CMS, 'publish');
+
+    ConfigService.relevancePresent = true;
 
     PageStructureService.showComponentProperties(componentElement);
 
@@ -524,6 +535,19 @@ describe('PageStructureService', () => {
         testMetaData: 'foo',
       },
     });
+  });
+
+  it('opens a side panel to edit component properties if Relevance is not present', () => {
+    const componentElement = jasmine.createSpyObj(['getId']);
+    componentElement.getId.and.returnValue('testId');
+
+    spyOn(EditComponentService, 'startEditing');
+    spyOn(CmsService, 'reportUsageStatistic');
+
+    PageStructureService.showComponentProperties(componentElement);
+
+    expect(EditComponentService.startEditing).toHaveBeenCalledWith('testId');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditComponent');
   });
 
   it('ignores erroneous calls to showComponentProperties', () => {
