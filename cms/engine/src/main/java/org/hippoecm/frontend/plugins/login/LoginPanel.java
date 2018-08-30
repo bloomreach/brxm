@@ -183,7 +183,7 @@ public class LoginPanel extends Panel {
 
             addLabelledComponent(new Label("password-label", new ResourceModel("password-label")));
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
-            passwordTextField.setResetPassword(false);
+            passwordTextField.setResetPassword(true);
 
             final String defaultLocale = locales.get(0);
 
