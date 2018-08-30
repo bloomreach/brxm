@@ -17,12 +17,13 @@
 const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
 
 class HstComponentService {
-  constructor($q, ChannelService, CmsService, HstService) {
+  constructor($q, ChannelService, CmsService, ConfigService, HstService) {
     'ngInject';
 
     this.$q = $q;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.HstService = HstService;
 
     this.pathPickedHandler = angular.noop;
@@ -69,6 +70,13 @@ class HstComponentService {
 
     return this.HstService.doPutForm(params, componentId, encodedVariant)
       .then(() => this.ChannelService.recordOwnChange());
+  }
+
+  getProperties(componentId, componentVariant) {
+    // The component variant can contain special characters (@, [, ", etc.). Since it is used as a path element
+    // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
+    const encodedVariant = encodeURIComponent(componentVariant);
+    return this.HstService.doGet(componentId, encodedVariant, this.ConfigService.locale);
   }
 }
 
