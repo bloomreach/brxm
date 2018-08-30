@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import componentEditorService from './componentEditor.service';
-import componentEditorComponent from "./componentEditor.component";
 
-const componentEditorModule = angular
-  .module('hippo-cm.channel.componentEditor', [])
-  .component('componentEditor', componentEditorComponent)
-  .service('ComponentEditor', componentEditorService);
+class ComponentEditorCtrl {
+  constructor() {
+    'ngInject';
+  }
 
-export default componentEditorModule.name;
+}
+
+export default ComponentEditorCtrl;

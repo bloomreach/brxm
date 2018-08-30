@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import componentEditorService from './componentEditor.service';
-import componentEditorComponent from "./componentEditor.component";
 
-const componentEditorModule = angular
-  .module('hippo-cm.channel.componentEditor', [])
-  .component('componentEditor', componentEditorComponent)
-  .service('ComponentEditor', componentEditorService);
+import './componentEditor.scss';
+import controller from './componentEditor.controller';
+import template from './componentEditor.html';
 
-export default componentEditorModule.name;
+const componentEditorComponent = {
+  controller,
+  template,
+  bindings: {
+    allowSave: '<',
+    closeLabel: '@?',
+    loading: '=',
+    onClose: '&',
+    onSave: '&',
+  },
+};
+
+export default componentEditorComponent;

@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import componentEditorService from './componentEditor.service';
-import componentEditorComponent from "./componentEditor.component";
-
-const componentEditorModule = angular
-  .module('hippo-cm.channel.componentEditor', [])
-  .component('componentEditor', componentEditorComponent)
-  .service('ComponentEditor', componentEditorService);
-
-export default componentEditorModule.name;
+@import 'variables';
