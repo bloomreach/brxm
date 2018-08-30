@@ -239,10 +239,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return Mode.VIEW;
     }
 
-    static WorkflowState getWorkflowState(final Node handleNode) throws EditorException {
-        return getWorkflowState(handleNode, null);
-    }
-
     static WorkflowState getWorkflowState(final Node handleNode, final String branchId) throws EditorException {
         final WorkflowState wfState = new WorkflowState(handleNode, branchId);
         try {
@@ -398,6 +394,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
+
+    public void setBranchIdModel(final BranchIdModel branchIdModel) {
+        this.branchIdModel = branchIdModel;
+    }
+
     private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
             String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
@@ -406,6 +407,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                     if (isFalse((Boolean) workflow.hints(branchId).get("obtainEditableInstance"))) {
                         return false;
                     }
+
                     workflow.obtainEditableInstance(branchId);
                     break;
                 case VIEW:

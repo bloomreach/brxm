@@ -22,12 +22,16 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.TestEditorContext;
 import org.hippoecm.frontend.TestEditorContext.CloseFilter;
 import org.hippoecm.frontend.TestEditorContext.Preview;
+import org.hippoecm.frontend.editor.HippostdPublishableEditor;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -37,6 +41,7 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
 
@@ -172,9 +177,31 @@ public class EditorFactoryTest extends PluginTest {
         final IEditor<Node> editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel("/test/content/document"),
                 Mode.VIEW, PARAMETERS);
 
+
+        initializeBranchIdModel(editor);
+
         editor.setMode(Mode.EDIT);
         assertThat(getPreviews().size(), is(equalTo(0)));
         assertThat(getEditors().size(), is(equalTo(1)));
+    }
+
+    /**
+     * Before the editor is created the BranchIdModel has already been created.
+     * This method initializes such a BranchIdModel.
+     * @param editor
+     */
+    private void initializeBranchIdModel(final IEditor<Node> editor) {
+        if (editor instanceof HippostdPublishableEditor){
+            HippostdPublishableEditor hippostdPublishableEditor = (HippostdPublishableEditor) editor;
+            initializeBranchIdModel(hippostdPublishableEditor);
+        }
+    }
+
+    private void initializeBranchIdModel(final HippostdPublishableEditor hippostdPublishableEditor) {
+        final BranchIdModel branchIdModel = new BranchIdModel();
+        branchIdModel.setBranchIdModelReference(new ModelReference<>("", new Model<>()));
+        branchIdModel.setBranchInfo(DocumentVariant.MASTER_BRANCH_ID, "core");
+        hippostdPublishableEditor.setBranchIdModel(branchIdModel);
     }
 
     @Test
