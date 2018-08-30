@@ -39,6 +39,7 @@
   "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
   "DELETE": "Delete",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
+  "DELETE_COMPONENT": "Delete Component",
   "DOCUMENT_ADDED_TO_PROJECT": "Document added to project '{{name}}'",
   "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project to be able to edit it here.",
   "DOCUMENT_CHANGED_TOOLTIP": "A previous version is live\n(click to view changes)",
