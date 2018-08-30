@@ -92,6 +92,7 @@ function mockHost() {
       confirm: window.confirm.bind(window),
       getComputedStyle: window.getComputedStyle.bind(window),
       navigator: window.navigator,
+      dispatchEvent: window.dispatchEvent.bind(window),
     };
 
     $window.APP_CONFIG = {

@@ -16,14 +16,17 @@
 
 import './sidePanel.scss';
 
+const FULL_SCREEN_ANIMATION_DURATION = 600;
 class SidePanelService {
-  constructor($document, $mdSidenav, $q, $timeout, ChannelService, CmsService, HippoIframeService) {
+  constructor($document, $mdSidenav, $q, $timeout, $window, ChannelService, CmsService, HippoIframeService) {
     'ngInject';
 
     this.$document = $document;
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
     this.$timeout = $timeout;
+    this.$window = $window;
+
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.HippoIframeService = HippoIframeService;
@@ -107,6 +110,12 @@ class SidePanelService {
       this.ChannelService.setToolbarDisplayed(!fullScreen);
       panel.fullScreen = fullScreen;
     }
+
+    // Trigger hiding/showing pagination handles of md-tabs.
+    // It needs to wait until the full-screen animation is done before it can be triggered.
+    this.$timeout(() => {
+      this.$window.dispatchEvent(new Event('resize'));
+    }, FULL_SCREEN_ANIMATION_DURATION);
   }
 }
 
