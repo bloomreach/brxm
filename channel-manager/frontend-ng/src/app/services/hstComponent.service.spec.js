@@ -22,6 +22,7 @@ describe('HstComponentService', () => {
   let $rootScope;
   let $window;
   let ChannelService;
+  let ConfigService;
   let HstComponentService;
   let HstService;
 
@@ -37,10 +38,11 @@ describe('HstComponentService', () => {
   });
 
   beforeEach(() => {
-    inject((_$q_, _$rootScope_, _ChannelService_, _HstService_, _HstComponentService_) => {
+    inject((_$q_, _$rootScope_, _ChannelService_, _ConfigService_, _HstService_, _HstComponentService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
       HstService = _HstService_;
       HstComponentService = _HstComponentService_;
     });
@@ -62,7 +64,7 @@ describe('HstComponentService', () => {
       expect(HstComponentService.pathPickedHandler).toBe(angular.noop);
     });
 
-    it('resets the pathPickedHandler after a succesfull callback', () => {
+    it('resets the pathPickedHandler after a successful callback', () => {
       HstComponentService.pathPickedHandler = () => {};
 
       $window.CMS_TO_APP.publish('path-picked', 'random-id');
@@ -179,6 +181,24 @@ describe('HstComponentService', () => {
 
       HstComponentService.setParameter('id', '@variant', 'name', 'value');
       expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', '%40variant');
+    });
+  });
+
+  describe('getProperties', () => {
+    beforeEach(() => {
+      spyOn(HstService, 'doGet').and.returnValue($q.resolve());
+      ConfigService.locale = 'test-locale';
+    });
+
+    it('uses the HstService to get the properties of a component', () => {
+      HstComponentService.getProperties('id', 'variant');
+      expect(HstService.doGet).toHaveBeenCalledWith('id', 'variant', 'test-locale');
+      $rootScope.$digest();
+    });
+
+    it('URI-encodes the variant name', () => {
+      HstComponentService.getProperties('id', '@variant');
+      expect(HstService.doGet).toHaveBeenCalledWith('id', '%40variant', 'test-locale');
     });
   });
 });
