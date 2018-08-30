@@ -276,7 +276,7 @@ class PageStructureService {
         page: this.PageMetaDataService.get(),
       });
     } else {
-      this.EditComponentService.startEditing();
+      this.EditComponentService.startEditing(componentElement.getId());
       this.CmsService.reportUsageStatistic('CMSChannelsEditComponent');
     }
   }

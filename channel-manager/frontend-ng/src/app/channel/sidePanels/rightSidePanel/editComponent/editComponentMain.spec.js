@@ -15,15 +15,15 @@
  */
 
 describe('EditComponentMainCtrl', () => {
-  let $q;
-  let $scope;
-  let CmsService;
-  let HippoIframeService;
-  let RightSidePanelService;
-
-  let $ctrl;
-
-  beforeEach(() => {
-    angular.mock.module('hippo-cm');
-  });
+  // let $q;
+  // let $scope;
+  // let CmsService;
+  // let HippoIframeService;
+  // let RightSidePanelService;
+  //
+  // let $ctrl;
+  //
+  // beforeEach(() => {
+  //   angular.mock.module('hippo-cm');
+  // });
 });

@@ -159,7 +159,10 @@ public class ChannelEditor extends ExtPanel {
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
         }
-        getUuid(variantsPath).ifPresent(uuid -> { this.variantsUuid = uuid; relevancePresent = true; });
+        getUuid(variantsPath).ifPresent(uuid -> { 
+            this.variantsUuid = uuid; 
+            this.relevancePresent = true;
+        });
         Optional.of(config).ifPresent(
                 (c -> getUuid(c.getString("projectsPath"))
                         .ifPresent(uuid -> this.projectsEnabled = true))
