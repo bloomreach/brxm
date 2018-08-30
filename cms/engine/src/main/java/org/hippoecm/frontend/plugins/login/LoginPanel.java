@@ -95,8 +95,7 @@ public class LoginPanel extends Panel {
 
         if (userSession.getAuthorizedAppCounter() == 0) {
             log.debug("Invalidating user session to make sure a new session id is created");
-            userSession.invalidateNow();
-            userSession = PluginUserSession.get();
+            userSession.replaceSession();
         } else {
             final String alreadyAuthorizedUser = userSession.getUserName();
             if (alreadyAuthorizedUser.equals(username) || isDevMode()) {
@@ -104,8 +103,7 @@ public class LoginPanel extends Panel {
                         "should not invalidate the user session.");
             } else {
                 log.info("Invalidating http session because attempt to login to different app with different user name");
-                userSession.invalidateNow();
-                userSession = PluginUserSession.get();
+                userSession.replaceSession();
             }
         }
 
