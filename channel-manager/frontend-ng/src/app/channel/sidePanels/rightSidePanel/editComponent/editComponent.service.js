@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 class EditComponentService {
-  constructor($state, $transitions, $translate, CmsService, ContentEditor, RightSidePanelService) {
+  constructor($state, $transitions, $translate, CmsService, ComponentEditor, RightSidePanelService) {
     'ngInject';
 
     this.$state = $state;
     this.$translate = $translate;
-    this.ContentEditor = ContentEditor;
+    this.ComponentEditor = ComponentEditor;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
       { entering: '**.edit-component' },
-      transition => this._loadComponent(transition.params().documentId),
+      transition => this._loadComponent(transition.params().componentId),
     );
     $transitions.onBefore(
       { from: '**.edit-component', to: 'hippo-cm' },
@@ -38,11 +38,11 @@ class EditComponentService {
 
   _stopEditingComponent(componentId) {
     console.log(`TODO: implement EditComponentService._stopEditingComponent -- ${componentId}`);
-    // if (this.$state.$current.name === 'hippo-cm.channel.edit-component'
-    //   && this.ContentEditor.getDocumentId() === documentId) {
-    //   this.ContentEditor.kill();
-    //   this.stopEditing();
-    // }
+    if (this.$state.$current.name === 'hippo-cm.channel.edit-component'
+    /* && this.ContentEditor.getDocumentId() === documentId */) {
+      // this.ContentEditor.kill();
+      this.stopEditing();
+    }
   }
 
   startEditing(componentId) {
@@ -57,12 +57,12 @@ class EditComponentService {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
     console.log(`TODO: implement EditComponentService._loadComponent -- ${componentId}`);
-    // this.ContentEditor.open(documentId)
-    //   .then(() => {
-    //     this.documentId = documentId;
-    //     this._showDocumentTitle();
-    //     this.RightSidePanelService.stopLoading();
-    //   });
+    this.ComponentEditor.open(componentId)
+      .then(() => {
+        this.componentId = componentId;
+        this._showDocumentTitle();
+        this.RightSidePanelService.stopLoading();
+      });
   }
 
   _showDefaultTitle() {
@@ -72,7 +72,7 @@ class EditComponentService {
 
   _showDocumentTitle() {
     // when there's no document, the error's messageParams contain a 'displayName' property
-    const document = this.ContentEditor.getDocument() || this.ContentEditor.getError().messageParams;
+    // const document = this.ContentEditor.getDocument() || this.ContentEditor.getError().messageParams;
     const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
     this.RightSidePanelService.setTitle(documentTitle);
   }
