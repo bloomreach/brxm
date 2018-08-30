@@ -15,14 +15,14 @@
  */
 
 describe('EditComponentService', () => {
-  let $q;
-  let $rootScope;
-  let $state;
-  let $translate;
-  let $window;
-
-  beforeEach(() => {
-    angular.mock.module('hippo-cm');
-  });
+  // let $q;
+  // let $rootScope;
+  // let $state;
+  // let $translate;
+  // let $window;
+  //
+  // beforeEach(() => {
+  //   angular.mock.module('hippo-cm');
+  // });
 });
 

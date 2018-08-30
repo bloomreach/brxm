@@ -36,8 +36,8 @@ class EditComponentService {
     });
   }
 
-  _stopEditingComponent(documentId) {
-    console.log('TODO: implement EditComponentService._stopEditingComponent');
+  _stopEditingComponent(componentId) {
+    console.log(`TODO: implement EditComponentService._stopEditingComponent -- ${componentId}`);
     // if (this.$state.$current.name === 'hippo-cm.channel.edit-component'
     //   && this.ContentEditor.getDocumentId() === documentId) {
     //   this.ContentEditor.kill();
@@ -53,10 +53,10 @@ class EditComponentService {
     this.$state.go('^');
   }
 
-  _loadComponent(documentId) {
+  _loadComponent(componentId) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    console.log('TODO: implement EditComponentService._loadComponent');
+    console.log(`TODO: implement EditComponentService._loadComponent -- ${componentId}`);
     // this.ContentEditor.open(documentId)
     //   .then(() => {
     //     this.documentId = documentId;

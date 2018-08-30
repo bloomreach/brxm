@@ -254,9 +254,9 @@ class PageStructureService {
       return;
     }
 
-    this.MaskService.mask();
-
     if (this.ConfigService.relevancePresent) {
+      this.MaskService.mask();
+
       const channel = this.ChannelService.getChannel();
 
       this.CmsService.publish('show-component-properties', {
@@ -276,7 +276,7 @@ class PageStructureService {
         page: this.PageMetaDataService.get(),
       });
     } else {
-      this.EditComponentService.startEditing();
+      this.EditComponentService.startEditing(componentElement.getId());
       this.CmsService.reportUsageStatistic('CMSChannelsEditComponent');
     }
   }
