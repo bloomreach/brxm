@@ -18,7 +18,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.serializer;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
@@ -27,7 +26,6 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 
 public enum AnnotationType {
     Color(Color.class),
-    DocumentLink(DocumentLink.class),
     DropDownList(DropDownList.class),
     FieldGroup(FieldGroup.class),
     FieldGroupList(FieldGroupList.class),

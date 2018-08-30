@@ -24,6 +24,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
@@ -41,6 +42,12 @@ public abstract class AbstractJaxrsSpringTestCase
     protected final static Logger log = LoggerFactory.getLogger(AbstractJaxrsSpringTestCase.class);
     
     protected ComponentManager componentManager;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -132,63 +131,6 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
         contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestJcrPathRelative.class.getName());
         contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-jcrpath-relative"});
-        contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
-        session.save();
-
-        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
-        Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
-
-        final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
-        assertEquals("contact", hstLink.getPath());
-    }
-
-
-    @SuppressWarnings("ALL")
-    public static interface TestDocumentLinkAbsoluteI {
-        @Parameter(name = "myproject-picked-news-documentlink-absolute", displayName = "Document Location")
-        @DocumentLink(docLocation = "/content", docType = "unittestproject:newspage")
-        String getDocumentLocation();
-    }
-
-    @ParametersInfo(type = TestDocumentLinkAbsoluteI.class)
-    public static class TestDocumentLinkAbsolute extends GenericHstComponent { }
-
-
-    @Test
-    public void document_linked_via_component_documentLink_absolute_and_not_with_sitemap_content_path() throws Exception {
-        // add hst component class to the contactpage:
-        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
-        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestDocumentLinkAbsolute.class.getName());
-        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-documentlink-absolute"});
-        contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_LOC});
-        session.save();
-
-        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
-        Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
-
-        final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
-        assertEquals("contact", hstLink.getPath());
-    }
-
-
-
-    @SuppressWarnings("ALL")
-    public static interface TestDocumentLinkRelativeI {
-        @Parameter(name = "myproject-picked-news-documentlink-relative", displayName = "Document Location")
-        @DocumentLink(docLocation = "/content", docType = "unittestproject:newspage")
-        String getDocumentLocation();
-    }
-
-    @ParametersInfo(type = TestDocumentLinkRelativeI.class)
-    public static class TestDocumentLinkRelative extends GenericHstComponent { }
-
-
-    @Test
-    public void document_linked_via_component_documentLink_relative_and_not_with_sitemap_content_path() throws Exception {
-        // add hst component class to the contactpage:
-        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
-        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestDocumentLinkRelative.class.getName());
-        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-documentlink-relative"});
         contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME});
         session.save();
 
@@ -400,42 +342,6 @@ public class HstLinkRewritingComponentPickedIT extends AbstractHstLinkRewritingI
         assertEquals("news/News1.html", allLinks.get(1).getPath());
         assertEquals("alsonews/news2/News1.html", allLinks.get(2).getPath());
 
-    }
-
-    @Test
-    public void multiple_documents_linked_via_variants_all_result_in_same_link() throws Exception {
-
-        createTmpDoc(TMPDOC_NAME2);
-
-        // add hst component class to the contactpage:
-        Node contactPage = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/contactpage");
-        contactPage.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, TestDocumentLinkRelative.class.getName());
-
-        contactPage.setProperty("hst:parameternames", new String[]{"myproject-picked-news-documentlink-relative",
-                                                                   "myproject-picked-news-documentlink-relative"});
-
-        contactPage.setProperty("hst:parametervalues", new String[]{TMPDOC_NAME,
-                                                                    TMPDOC_NAME2});
-
-        contactPage.setProperty("hst:parameternameprefixes", new String[]{"",
-                                                                    "professional"});
-        session.save();
-
-        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
-
-        {
-            // the default variant
-            Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC);
-            final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
-            assertEquals("contact", hstLink.getPath());
-        }
-
-        {
-            // the professional variant
-            Node tmpDoc = requestContext.getSession().getNode(TMPDOC_LOC2);
-            final HstLink hstLink = linkCreator.create(tmpDoc, requestContext);
-            assertEquals("contact", hstLink.getPath());
-        }
     }
 
     @Test

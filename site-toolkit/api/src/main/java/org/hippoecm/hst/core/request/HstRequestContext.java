@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentFactory;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
@@ -421,5 +422,25 @@ public interface HstRequestContext extends ModelContributable {
      * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
     public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
+
+    /**
+     * Return a non-null unmodifiable map of {@link HeadContributable} objects keyed by their contributor names.
+     * @return a non-null unmodifiable map of {@link HeadContributable} objects keyed by their contributor names
+     */
+    public Map<String, HeadContributable> getHeadContributableMap();
+
+    /**
+     * Return {@link HeadContributable} object by the {@code name} if found. null if not found.
+     * @param name the name of the logical head contributor.
+     * @return {@link HeadContributable} object by the {@code name} if found. null if not found
+     */
+    public HeadContributable getHeadContributable(String name);
+
+    /**
+     * Set a {@link HeadContributable} object by the {@code name}.
+     * @param name the name of the logical head contributor.
+     * @param headContributable {@link HeadContributable} object
+     */
+    public void setHeadContributable(String name, HeadContributable headContributable);
 
 }

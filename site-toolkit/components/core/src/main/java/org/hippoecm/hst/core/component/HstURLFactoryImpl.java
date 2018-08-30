@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.component;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.container.HstContainerURLProviderImpl;
-import org.hippoecm.hst.core.container.HstNavigationalStateCodec;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -31,7 +30,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
     protected boolean referenceNamespaceIgnored;
     protected String urlNamespacePrefix;
     protected String parameterNameComponentSeparator;
-    protected HstNavigationalStateCodec navigationalStateCodec;
 
     protected HstContainerURLProvider containerURLProvider;
 
@@ -41,10 +39,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
     
     public void setParameterNameComponentSeparator(String parameterNameComponentSeparator) {
         this.parameterNameComponentSeparator = parameterNameComponentSeparator;
-    }
-    
-    public void setNavigationalStateCodec(HstNavigationalStateCodec navigationalStateCodec) {
-        this.navigationalStateCodec = navigationalStateCodec;
     }
     
     public void setReferenceNamespaceIgnored(boolean referenceNamespaceIgnored) {
@@ -61,7 +55,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
             HstContainerURLProviderImpl provider = new HstContainerURLProviderImpl();
             provider.setUrlNamespacePrefix(urlNamespacePrefix);
             provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
-            provider.setNavigationalStateCodec(navigationalStateCodec);
             containerURLProvider = provider;
         }
         return containerURLProvider;

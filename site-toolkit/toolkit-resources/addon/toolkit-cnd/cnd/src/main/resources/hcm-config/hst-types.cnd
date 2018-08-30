@@ -51,6 +51,12 @@
 - hst:lastmodifiedby (string)
 + * (hst:template)
 
+// page level generic metadata mixin
+[hst:metadata] mixin
+// Metadata names
+- hst:metanames (string) multiple
+// Metadata values
+- hst:metavalues (string) multiple
 
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
 - hst:template (string)

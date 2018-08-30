@@ -43,6 +43,7 @@ import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
@@ -62,6 +63,12 @@ public class AbstractFullRequestCycleTest {
     protected static ObjectMapper mapper = new ObjectMapper();
 
     protected Filter filter;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

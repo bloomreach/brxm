@@ -38,6 +38,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -54,7 +55,13 @@ public class TestLazyMultiplePoolingRepository {
     private SimpleCredentials disposableWikiCreds = new SimpleCredentials("admin@wiki.onehippo.org;disposable", "admin".toCharArray());
     private SimpleCredentials disposableWiki2Creds = new SimpleCredentials("admin@wiki2.onehippo.org;disposable", "admin".toCharArray());
     private MultipleRepository multipleRepository;
-    
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
+
     @Before
     public void setUp() {
         basicPoolConfigMap.put("repositoryAddress", "");

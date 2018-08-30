@@ -23,9 +23,18 @@ import org.hippoecm.hst.content.beans.*;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.junit.BeforeClass;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractBeanTestCase extends RepositoryTestCase {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
+
 
     protected ObjectConverter getObjectConverter() {
         return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);

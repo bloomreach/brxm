@@ -501,8 +501,8 @@ public class HstServletResponseState implements HstResponseState {
                 @Override
                 public boolean isReady() {
                     // NOTE: The Servlet 3.1 feature that has non-blocking read and write capability is not applicable
-                    //       to synchronous HstComponent aggregation. So, this output stream is always ready as non-blocking as well.
-                    return true;
+                    //       to synchronous HstComponent aggregation. So, this output stream is never ready for non-blocking IO.
+                    return false;
                 }
 
                 @Override

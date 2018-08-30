@@ -260,7 +260,9 @@ public class MountResource extends AbstractConfigResource {
                 if (branchOf.equals(liveConfigurationNodeName)) {
                     log.debug("Preview config for branch '{}' does not exist, creating it now", configurationNodeName);
                     final String branchConfigurationPath = configurationNode.getPath();
-                    createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                    if (!session.nodeExists(branchConfigurationPath + "-preview")) {
+                        createPreviewConfiguration(branchConfigurationPath, requestContext, true);
+                    }
                 }
             }
 
@@ -415,35 +417,6 @@ public class MountResource extends AbstractConfigResource {
             resetSession();
             return logAndReturnServerError(e);
         }
-    }
-
-
-    /**
-     * Creates a document in the repository using the WorkFlowManager The post parameters should contain the 'path',
-     * 'docType' and 'name' of the document.
-     *
-     * @param params The POST parameters
-     * @return response JSON with the status of the result
-     */
-    @POST
-    @Path("/create/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createDocument(MultivaluedMap<String, String> params) {
-
-        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        try {
-            final Mount editingMount = getPageComposerContextService().getEditingMount();
-            String canonicalContentPath = editingMount.getContentPath();
-            WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
-                    getObjectConverter(requestContext));
-            workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
-        } catch (RepositoryException | ObjectBeanPersistenceException e) {
-            log.warn("Exception happened while trying to create the document " + e, e);
-            return error("Exception happened while trying to create the document " + e);
-        }
-
-        log.info("Successfully created a document");
-        return ok("Successfully created a document", null);
     }
 
     /**

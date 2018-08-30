@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -54,7 +52,7 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(16, properties.size());
+        assertEquals(15, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -63,55 +61,50 @@ public class ParametersInfoProcessorTest {
         assertEquals("colorfield", colorProperty.getType());
         assertEquals("blue", colorProperty.getDefaultValue());
 
-        ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
-        assertEquals("/content", docLocProperty.getDocLocation());
-        assertEquals("documentcombobox", docLocProperty.getType());
-        assertEquals("hst:testdocument", docLocProperty.getDocType());
-
-        ContainerItemComponentPropertyRepresentation imageProperty = properties.get(2);
+        ContainerItemComponentPropertyRepresentation imageProperty = properties.get(1);
         assertEquals("textfield", imageProperty.getType());
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
 
-        ContainerItemComponentPropertyRepresentation dateProperty = properties.get(3);
+        ContainerItemComponentPropertyRepresentation dateProperty = properties.get(2);
         assertEquals("datefield", dateProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation booleanProperty = properties.get(4);
+        ContainerItemComponentPropertyRepresentation booleanProperty = properties.get(3);
         assertEquals("checkbox", booleanProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation booleanClassProperty = properties.get(5);
+        ContainerItemComponentPropertyRepresentation booleanClassProperty = properties.get(4);
         assertEquals("checkbox", booleanClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation intProperty = properties.get(6);
+        ContainerItemComponentPropertyRepresentation intProperty = properties.get(5);
         assertEquals("numberfield", intProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation integerClassProperty = properties.get(7);
+        ContainerItemComponentPropertyRepresentation integerClassProperty = properties.get(6);
         assertEquals("numberfield", integerClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation longProperty = properties.get(8);
+        ContainerItemComponentPropertyRepresentation longProperty = properties.get(7);
         assertEquals("numberfield", longProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation longClassProperty = properties.get(9);
+        ContainerItemComponentPropertyRepresentation longClassProperty = properties.get(8);
         assertEquals("numberfield", longClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation shortProperty = properties.get(10);
+        ContainerItemComponentPropertyRepresentation shortProperty = properties.get(9);
         assertEquals("numberfield", shortProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(11);
+        ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(10);
         assertEquals("numberfield", shortClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation jcrPathProperty = properties.get(12);
+        ContainerItemComponentPropertyRepresentation jcrPathProperty = properties.get(11);
         assertEquals("linkpicker", jcrPathProperty.getType());
         assertEquals("cms-pickers/documents", jcrPathProperty.getPickerConfiguration());
         assertEquals("/content/documents/subdir/foo", jcrPathProperty.getPickerInitialPath());
         assertEquals(currentMountCanonicalContentPath, jcrPathProperty.getPickerRootPath());
 
-        ContainerItemComponentPropertyRepresentation relativeJcrPathProperty = properties.get(13);
+        ContainerItemComponentPropertyRepresentation relativeJcrPathProperty = properties.get(12);
         assertEquals("linkpicker", relativeJcrPathProperty.getType());
         assertEquals("cms-pickers/mycustompicker", relativeJcrPathProperty.getPickerConfiguration());
         assertEquals("subdir/foo", relativeJcrPathProperty.getPickerInitialPath());
         assertEquals(currentMountCanonicalContentPath, relativeJcrPathProperty.getPickerRootPath());
 
-        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(14);
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(13);
         assertEquals("combo", dropDownProperty.getType());
         final String values[] = dropDownProperty.getDropDownListValues();
         assertEquals(values.length, 3);
@@ -122,7 +115,7 @@ public class ParametersInfoProcessorTest {
         String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
 
-        final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(15);
+        final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(14);
         assertTrue(hideInChannelManagerProperty.isHiddenInChannelManager());
 
     }
@@ -133,12 +126,12 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(16, properties.size());
+        assertEquals(15, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(14);
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(13);
         assertEquals("combo", dropDownProperty.getType());
 
         String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
@@ -165,12 +158,12 @@ public class ParametersInfoProcessorTest {
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
 
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
-        assertEquals(16, properties.size());
+        assertEquals(15, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        final ContainerItemComponentPropertyRepresentation representation = properties.get(14);
+        final ContainerItemComponentPropertyRepresentation representation = properties.get(13);
         final String[] displayValues = representation.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
         assertEquals("Waarde 1", displayValues[0]);
@@ -179,27 +172,27 @@ public class ParametersInfoProcessorTest {
     }
 
 
-    static interface a extends b, c {
+    interface a extends b, c {
     }
 
-    static interface b extends d, e {
+    interface b extends d, e {
     }
 
-    static interface d {
+    interface d {
     }
 
-    static interface e extends h {
+    interface e extends h {
     }
 
-    static interface h {
+    interface h {
     }
 
-    static interface c extends f, g {
+    interface c extends f, g {
     }
 
-    static interface f {
+    interface f {
     }
-    static interface g {
+    interface g {
     }
 
     /**
@@ -237,9 +230,9 @@ public class ParametersInfoProcessorTest {
 
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
 
-        // NewstyleSubContainer has 2 properties and NewstyleContainer which is extends has 16 properties, BUT
-        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 16 + 1
-        assertEquals(17, properties.size());
+        // NewstyleSubContainer has 2 properties and NewstyleContainer which it extends has 15 properties, BUT
+        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 15 + 1
+        assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -249,20 +242,13 @@ public class ParametersInfoProcessorTest {
         // value from NewstyleSubInterface_nl.properties should be shown
         assertEquals(representation1.getLabel(), "zwart sub");
 
-        final ContainerItemComponentPropertyRepresentation representation2 = properties.get(1);
-        // missing in NewstyleSubInterface_nl.properties and missing in NewstyleInterface.properties
-        // but in NewstyleInterface there is a displayname, namely:
-        // @Parameter(name = "01-documentLocation", displayName = "Document Location")
-        assertEquals(representation2.getLabel(), "Document Location");
-
-
-        final ContainerItemComponentPropertyRepresentation representation3 = properties.get(2);
+        final ContainerItemComponentPropertyRepresentation representation3 = properties.get(1);
         // missing in NewstyleSubInterface_nl.properties but defined in NewstyleInterface.properties
         // @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
         assertEquals(representation3.getLabel(), "Plaatje");
 
 
-        final ContainerItemComponentPropertyRepresentation representation14 = properties.get(14);
+        final ContainerItemComponentPropertyRepresentation representation14 = properties.get(13);
         // NewstyleSubInterface_nl.properties does not have dropdown values but NewstyleInterface.properties
         // has them, so should be taken from there
         final String[] displayValues = representation14.getDropDownListDisplayValues();
@@ -271,54 +257,38 @@ public class ParametersInfoProcessorTest {
         assertEquals("Waarde 2", displayValues[1]);
         assertEquals("value3", displayValues[2]);
 
-
-        final ContainerItemComponentPropertyRepresentation representation15 = properties.get(16);
+        final ContainerItemComponentPropertyRepresentation representation15 = properties.get(15);
         // Present in NewstyleSubInterface_nl.properties
         // @Parameter(name = "16-subboolean")
         assertEquals(representation15.getLabel(),"Sub Boolean NL");
     }
 
-
-
     /**
-     * Below, we have two broken combinations: 
+     * Below, we have a broken situation: 
      * @Color annotation is not allowed to return a int
-     * @DocumentLink is not allowed to return a Date
      */
-    static interface InvalidReturnTypeAnnotationCombinationInterface {
+    interface InvalidReturnTypeAnnotationInterface {
         @Parameter(name="00-color", defaultValue = "blue")
         @Color
         int getColor();
-
-        @Parameter(name="01-documentLocation")
-        @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
-        Date getDocumentLocation();
     }
 
-    @ParametersInfo(type=InvalidReturnTypeAnnotationCombinationInterface.class)
-    static class InvalidReturnTypeAnnotationCombination {
+    @ParametersInfo(type= InvalidReturnTypeAnnotationInterface.class)
+    static class InvalidReturnTypeAnnotation {
     
     }
     
     @Test
-    public void testInvalidReturnTypeAnnotationCombination() {
-        ParametersInfo parameterInfo = InvalidReturnTypeAnnotationCombination.class.getAnnotation(ParametersInfo.class);
+    public void testInvalidReturnTypeAnnotation() {
+        ParametersInfo parameterInfo = InvalidReturnTypeAnnotation.class.getAnnotation(ParametersInfo.class);
         // the getProperties below are expected to log some warnings
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
-        assertEquals(2, properties.size());
+        assertEquals(1, properties.size());
 
-        // sort properties alphabetically by name to ensure a deterministic order
-        Collections.sort(properties, new PropertyComparator());
-
-        // Since the @Color is not compatible with returnType int and @DocumentLink not with returnType Date, 
-        // we expext that ParameterType#getType(...) defaults back to getType 'numberfield' for 00-color
-        // and to datefield for 01-documentLocation
+        // Since the @Color is not compatible with returnType int  
+        // we expect that ParameterType#getType(...) defaults back to getType 'numberfield' for 00-color
         ContainerItemComponentPropertyRepresentation colorProperty = properties.get(0);
         assertEquals("numberfield", colorProperty.getType());
-        
-        ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
-        assertEquals("datefield", docLocProperty.getType());
-
     }
 
     @ParametersInfo(type=FieldGroupInterface.class)
@@ -336,7 +306,7 @@ public class ParametersInfoProcessorTest {
     }
 
     @FieldGroupList({})
-    static interface EmptyFieldGroupListInterface {
+    interface EmptyFieldGroupListInterface {
         @Parameter(name = "one")
         String getOne();
     }
@@ -356,7 +326,7 @@ public class ParametersInfoProcessorTest {
     @FieldGroupList({
             @FieldGroup({"two", "one"})
     })
-    static interface FieldGroupWithoutTitleInterface {
+    interface FieldGroupWithoutTitleInterface {
         @Parameter(name = "one")
         String getOne();
 
@@ -383,7 +353,7 @@ public class ParametersInfoProcessorTest {
                     value = {"parameter"}
             )
     })
-    static interface FieldGroupWithUntranslatedTitleInterface {
+    interface FieldGroupWithUntranslatedTitleInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -403,7 +373,7 @@ public class ParametersInfoProcessorTest {
     @FieldGroupList({
             @FieldGroup({"nosuchparameter"})
     })
-    static interface FieldGroupWithUnknownParameterInterface {
+    interface FieldGroupWithUnknownParameterInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -428,7 +398,7 @@ public class ParametersInfoProcessorTest {
                     value = {"parameter"}
             )
     })
-    static interface FieldGroupWithDuplicateParameterInterface {
+    interface FieldGroupWithDuplicateParameterInterface {
         @Parameter(name = "parameter")
         String getParameter();
     }
@@ -451,7 +421,7 @@ public class ParametersInfoProcessorTest {
                     value = {"one", "two"}
             )
     })
-    static interface FieldGroupWithSubsetOfParametersInterface {
+    interface FieldGroupWithSubsetOfParametersInterface {
         @Parameter(name = "one")
         String getOne();
 
@@ -486,7 +456,7 @@ public class ParametersInfoProcessorTest {
                 value = {"d3"}
             )
     })
-    static interface FieldGroupInheritedInterfaceD {
+    interface FieldGroupInheritedInterfaceD {
         @Parameter(name = "d1")
         String getD1();
 
@@ -500,7 +470,7 @@ public class ParametersInfoProcessorTest {
         String getD4();
     }
 
-    static interface FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedInterfaceC {
         @Parameter(name = "c1")
         String getC1();
 
@@ -518,7 +488,7 @@ public class ParametersInfoProcessorTest {
                     value = {"b2", "d3"}
             )
     })
-    static interface FieldGroupInheritedInterfaceB extends FieldGroupInheritedInterfaceD {
+    interface FieldGroupInheritedInterfaceB extends FieldGroupInheritedInterfaceD {
         @Parameter(name = "b1")
         String getB1();
 
@@ -540,7 +510,7 @@ public class ParametersInfoProcessorTest {
             )
 
     })
-    static interface FieldGroupInheritedInterfaceA extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedInterfaceA extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 
@@ -584,7 +554,7 @@ public class ParametersInfoProcessorTest {
                     value = {"a2", "a3"}
             )
     })
-    static interface FieldGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 
@@ -626,7 +596,7 @@ public class ParametersInfoProcessorTest {
                     value = {"a2", "a3"}
             )
     })
-    static interface FieldEmptyGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+    interface FieldEmptyGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
         @Parameter(name = "a1")
         String getA1();
 

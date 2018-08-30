@@ -78,20 +78,6 @@
       <artifactId>cxf-rt-rs-security-cors</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-search-service-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-search-service-jcr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-search-service-commons</artifactId>
-    </dependency>
-
-
     <!-- Test dependencies -->
 
     <dependency>

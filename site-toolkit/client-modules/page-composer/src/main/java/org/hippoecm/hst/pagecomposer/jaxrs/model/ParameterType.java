@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,16 +23,21 @@ import java.util.Date;
 import java.util.HashSet;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * For now, the supported UI xtypes (used for rendering the UI view) are <ul> <li>textfield</li>
- * <li>numberfield</li> <li>checkbox</li> <li>datefield</li> <li>colorfield : see also {@link Color}</li> <li>combo
- * : see also {@link DocumentLink}</li> </ul> The ParameterType.UNKNOWN will result in xtype "textfield"
+ * For now, the supported UI xtypes (used for rendering the UI view) are
+ * <ul>
+ *     <li>textfield</li>
+ *     <li>numberfield</li>
+ *     <li>checkbox</li>
+ *     <li>datefield</li>
+ *     <li>colorfield : see also {@link Color}</li>
+ * </ul>
+ * ParameterType.UNKNOWN will result in xtype "textfield"
  */
 public enum ParameterType {
 
@@ -43,7 +48,6 @@ public enum ParameterType {
     BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null),
     DATE("datefield", new Class[]{Date.class, Calendar.class}, null),
     COLOR("colorfield", new Class[]{String.class}, Color.class),
-    DOCUMENT("documentcombobox", new Class[]{String.class}, DocumentLink.class),
     JCR_PATH("linkpicker", new Class[]{String.class}, JcrPath.class),
     UNKNOWN("textfield", null, null);
 

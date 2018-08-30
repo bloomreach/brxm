@@ -22,8 +22,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GoogleAnalyticsAccountIdTag extends TagSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(GoogleAnalyticsAccountIdTag.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -66,11 +70,11 @@ public class GoogleAnalyticsAccountIdTag extends TagSupport {
                 }
             }
 
-            if (accountId == null || "".equals(accountId)) {
-                throw new JspException("No Google Analytics Account ID.");
-            }
-
-            pageContext.getOut().write(String.format(GA_ACCOUNT_ID_SCRIPT_TEMPLATE, accountId));
+			if (accountId != null && !"".equals(accountId)) {
+				pageContext.getOut().write(String.format(GA_ACCOUNT_ID_SCRIPT_TEMPLATE, accountId));
+			} else {
+				log.warn("Google Analytics Account ID is not set!");
+			}
         }
         catch (IOException e) {
             throw new JspException("IOException while trying to write script tag", e);

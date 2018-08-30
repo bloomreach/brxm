@@ -25,7 +25,6 @@ import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 
 public class AbstractContainerURLProviderIT extends AbstractTestConfigurations {
 

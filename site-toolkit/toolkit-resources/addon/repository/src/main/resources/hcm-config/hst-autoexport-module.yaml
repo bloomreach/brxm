@@ -3,25 +3,25 @@ definitions:
     /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
         autoexport:excluded:
           operation: add
-          value: ['/hst:hst/hst:configurations/*-preview', '/hst:hst/hst:configurations/*-preview/**']
+          value: ['/hst:*/hst:configurations/*-preview', '/hst:*/hst:configurations/*-preview/**']
         autoexport:filteruuidpaths:
           operation: add
-          value: ['/hst:hst']
+          value: ['/hst:*']
         autoexport:injectresidualchildnodecategory:
           operation: add
-          value: ['**/hst:workspace/**[hst:containercomponent]: content',
-            '**/hst:workspace/**[hst:sitemenu]: content',
-            '**/hst:workspace/hst:abstractpages: content',
-            '**/hst:workspace/hst:channel: content',
-            '**/hst:workspace/hst:components: content',
-            '**/hst:workspace/hst:pages: content',
-            '**/hst:workspace/hst:sitemap: content',
-            '**/hst:workspace/hst:templates: content',
-            '/hst:hst/hst:hosts/**[hst:virtualhostgroup]: content',
-            '/hst:hst/hst:hosts/**[hst:virtualhost]: content',
-            '/hst:hst/hst:hosts/**[hst:mount]: content']
+          value: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content',
+            '/hst:*/**/hst:workspace/**[hst:sitemenu]: content',
+            '/hst:*/**/hst:workspace/hst:abstractpages: content',
+            '/hst:*/**/hst:workspace/hst:channel: content',
+            '/hst:*/**/hst:workspace/hst:components: content',
+            '/hst:*/**/hst:workspace/hst:pages: content',
+            '/hst:*/**/hst:workspace/hst:sitemap: content',
+            '/hst:*/**/hst:workspace/hst:templates: content',
+            '/hst:*/hst:hosts/**[hst:virtualhostgroup]: content',
+            '/hst:*/hst:hosts/**[hst:virtualhost]: content',
+            '/hst:*/hst:hosts/**[hst:mount]: content']
         autoexport:overrideresidualchildnodecategory:
           operation: add
-          value: ['/hst:hst/hst:configurations: config',
-            '/hst:hst/hst:hosts: config',
-            '/hst:hst/hst:hosts/**: config']
+          value: ['/hst:*/hst:configurations: config',
+            '/hst:*/hst:hosts: config',
+            '/hst:*/hst:hosts/**: config']

@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
@@ -33,6 +35,12 @@ public abstract class AbstractSessionPoolSpringTestCase
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractSessionPoolSpringTestCase.class);
     protected AbstractRefreshableConfigApplicationContext applicationContext;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
 
     @Before
     public void setUp() throws Exception {

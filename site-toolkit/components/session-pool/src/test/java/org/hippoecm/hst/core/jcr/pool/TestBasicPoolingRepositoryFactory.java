@@ -34,11 +34,18 @@ import javax.naming.spi.ObjectFactory;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestBasicPoolingRepositoryFactory {
     
     private Map<String, String> basicPoolConfigMap = new HashMap<String, String>();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
     
     @Before
     public void setUp() {

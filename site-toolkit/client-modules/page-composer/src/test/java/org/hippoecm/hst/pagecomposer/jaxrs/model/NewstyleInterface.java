@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,15 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.util.Date;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 interface NewstyleInterface {
-    @Parameter(name = "00-color", defaultValue = "blue")
+    @Parameter(name = "01-color", defaultValue = "blue")
     @Color
     String getColor();
-
-    @Parameter(name = "01-documentLocation", displayName = "Document Location")
-    @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
-    String getDocumentLocation();
 
     @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
     @ImageSetPath

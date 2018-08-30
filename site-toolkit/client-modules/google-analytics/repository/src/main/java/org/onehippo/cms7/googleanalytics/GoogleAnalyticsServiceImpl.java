@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,12 +66,12 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
                 Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED | Event.NODE_ADDED | Event.NODE_REMOVED,
                 CONFIG_NODE_PATH, true, null, null, false
         );
-        HippoServiceRegistry.registerService(this, GoogleAnalyticsService.class);
+        HippoServiceRegistry.register(this, GoogleAnalyticsService.class);
     }
 
     @Override
     public void shutdown() {
-        HippoServiceRegistry.unregisterService(this, GoogleAnalyticsService.class);
+        HippoServiceRegistry.unregister(this, GoogleAnalyticsService.class);
     }
 
     @Override

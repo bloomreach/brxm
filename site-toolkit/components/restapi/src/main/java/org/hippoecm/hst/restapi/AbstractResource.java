@@ -22,8 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.core.Response;
 
-import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
-import org.onehippo.cms7.services.search.service.SearchService;
 import org.slf4j.Logger;
 
 public abstract class AbstractResource {
@@ -81,9 +79,4 @@ public abstract class AbstractResource {
         return Response.status(status).entity(new Error(status, description)).build();
     }
 
-    public SearchService getSearchService(final ResourceContext context) throws RepositoryException {
-        final HippoJcrSearchService searchService = new HippoJcrSearchService();
-        searchService.setSession(context.getRequestContext().getSession());
-        return searchService;
-    }
 }

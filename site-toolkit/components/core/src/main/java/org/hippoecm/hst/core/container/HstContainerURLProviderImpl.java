@@ -72,8 +72,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
     protected String parameterNameComponentSeparator = ":";
 
-    protected HstNavigationalStateCodec navigationalStateCodec;
-
     public void setUrlNamespacePrefix(String urlNamespacePrefix) {
         this.urlNamespacePrefix = urlNamespacePrefix;
         urlNamespacedTypeParamName = urlNamespacePrefix + "type";
@@ -91,14 +89,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
     public String getParameterNameComponentSeparator() {
         return this.parameterNameComponentSeparator;
-    }
-
-    public void setNavigationalStateCodec(HstNavigationalStateCodec navigationalStateCodec) {
-        this.navigationalStateCodec = navigationalStateCodec;
-    }
-
-    public HstNavigationalStateCodec getNavigationalStateCodec() {
-        return this.navigationalStateCodec;
     }
 
     public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath, Map<String, String []> queryParams) {

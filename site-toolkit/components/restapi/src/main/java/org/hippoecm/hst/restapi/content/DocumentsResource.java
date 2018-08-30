@@ -30,7 +30,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -40,25 +39,26 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.restapi.AbstractResource;
 import org.hippoecm.hst.restapi.NodeVisitor;
 import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.search.query.AndClause;
-import org.onehippo.cms7.services.search.query.Query;
-import org.onehippo.cms7.services.search.query.QueryUtils;
-import org.onehippo.cms7.services.search.result.QueryResult;
-import org.onehippo.cms7.services.search.service.SearchService;
-import org.onehippo.cms7.services.search.service.SearchServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and;
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
 import static org.hippoecm.hst.restapi.content.DocumentsResource.SortOrder.DESCENDING;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
@@ -216,32 +216,27 @@ public class DocumentsResource extends AbstractResource {
             final List<SortOrder> parsedSortOrders = getSortOrder(sortOrder);
             checkOrderParameters(parsedOrderBys, parsedSortOrders);
 
-            final String availability;
-            if (preview) {
-                availability = "preview";
-            } else {
-                availability = "live";
-            }
-            final SearchService searchService = getSearchService(context);
-            AndClause andClause = searchService.createQuery()
-                    .from(RequestContextProvider.get()
-                            .getResolvedMount()
-                            .getMount()
-                            .getContentPath())
-                    .ofType(parsedNodeType)
-                    .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
-                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            final HippoBean searchScope = requestContext.getSiteContentBaseBean();
 
-            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders).offsetBy(offset)
-                    .limitTo(max);
+            final HstQueryBuilder queryBuilder = HstQueryBuilder.create(searchScope)
+                    .ofTypes(parsedNodeType)
+                    .where(and(
+                            constraint(".").contains(parsedQuery)
+                    ))
+                    .offset(offset)
+                    .limit(max);
 
-            final QueryResult queryResult = searchService.search(query);
+            final HstQuery hstQuery = addOrdering(queryBuilder, parsedOrderBys, parsedSortOrders).build();
+            // execute the query
+            HstQueryResult hstQueryResult = hstQuery.execute();
+
             final SearchResult result = new SearchResult();
-            result.populateFromDocument(offset, max, queryResult, context);
+            result.populateFromDocument(offset, max, hstQueryResult, context);
 
             return Response.status(200).entity(result).build();
 
-        } catch (SearchServiceException sse) {
+        } catch (QueryException sse) {
             logException("Exception while fetching documents", sse);
             if (sse.getCause() instanceof InvalidQueryException) {
                 return buildErrorResponse(400, sse.toString());
@@ -256,21 +251,21 @@ public class DocumentsResource extends AbstractResource {
         }
     }
 
-    private Query addOrdering(final AndClause andClause, final List<String> orderBys, final List<SortOrder> sortOrders) {
-        Query query = andClause;
+    private HstQueryBuilder addOrdering(final HstQueryBuilder builder, final List<String> orderBys, final List<SortOrder> sortOrders) {
+        HstQueryBuilder result = builder;
         for (int i = 0; i < orderBys.size(); i++) {
             final String orderBy = orderBys.get(i);
             final SortOrder sortOrder = sortOrders.get(i);
             switch (sortOrder) {
                 case DESCENDING:
                 case DESC:
-                    query = query.orderBy(orderBy).descending();
+                    result = result.orderByDescending(orderBy);
                     break;
                 default:
-                    query = query.orderBy(orderBy);
+                    result = result.orderByAscending(orderBy);
             }
         }
-        return query;
+        return builder;
     }
 
     @GET

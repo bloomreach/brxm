@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.util.function.Predicate;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -46,7 +45,7 @@ public class DocumentParamsScanner {
     /**
      * Returns the document paths for <code>componentConfiguration</code> including its descendant
      * {@link HstComponentConfiguration}s. A document path is an method from the {@link ParametersInfo} that is
-     * either annotated with {@link JcrPath} or {@link DocumentLink}. The <code>componentConfiguration</code> java
+     * annotated with {@link JcrPath}. The <code>componentConfiguration</code> java
      * class will be loaded by the provided <code>classLoader</code>
      *
      * @param componentConfiguration the root {@link HstComponentConfiguration} for which all document paths will be
@@ -110,11 +109,10 @@ public class DocumentParamsScanner {
 
     /**
      * @param config the {@link HstComponentConfiguration} for which we need to return the parameter names
-     * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
-     * annotation
-     * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
+     * @return {@link java.util.Set} of parameter names that have a {@link JcrPath} annotation
+     * present. Returns empty set if an exception occurs (for example <code>componentClassName</code> cannot be
      * instantiated) or no
-     * {@link ParametersInfo} is present on <code>componentClassName</code>
+     * {@link ParametersInfo} is present on <code>componentClassName</code>.
      */
     public static Set<String> getNames(final HstComponentConfiguration config,
                                        final ClassLoader classLoader) {
@@ -125,8 +123,7 @@ public class DocumentParamsScanner {
 
     /**
      * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
-     * @return {@link java.util.Set} of parameter names that have either {@link JcrPath} or {@link DocumentLink}
-     * annotation
+     * @return {@link java.util.Set} of parameter names that have a {@link JcrPath} annotation
      * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
      * instantiated) or no
      * {@link ParametersInfo} is present on <code>componentClassName</code>
@@ -169,8 +166,7 @@ public class DocumentParamsScanner {
         parameterNames = new HashSet<>();
 
         for (Method method : parametersInfoType.getMethods()) {
-            if (method.isAnnotationPresent(Parameter.class) &&
-                    (method.isAnnotationPresent(JcrPath.class) || method.isAnnotationPresent(DocumentLink.class))) {
+            if (method.isAnnotationPresent(Parameter.class) && method.isAnnotationPresent(JcrPath.class)) {
                 Parameter parameter = method.getAnnotation(Parameter.class);
                 parameterNames.add(parameter.name());
             }

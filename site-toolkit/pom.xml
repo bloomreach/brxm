@@ -67,7 +67,6 @@
 
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-codec.version>1.10</commons-codec.version>
     <commons-pool.version>1.5.7</commons-pool.version>
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-io.version>2.5</commons-io.version>
@@ -79,7 +78,7 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.jackrabbit.version>2.16.1-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.2-h2</hippo.jackrabbit.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
@@ -90,7 +89,7 @@
     <hippo.services.contenttype.version>13.0.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.testutils.version>13.0.0-SNAPSHOT</hippo.testutils.version>
 
-    <sf.htmlcleaner.version>2.21</sf.htmlcleaner.version>
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <stax2-api.version>3.1.4</stax2-api.version>
     <woodstox.version>4.4.1</woodstox.version>
@@ -264,12 +263,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>${commons-codec.version}</version>
       </dependency>
 
       <dependency>

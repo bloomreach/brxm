@@ -226,6 +226,7 @@
               <repo.config>file:${project.basedir}/conf/repository.xml</repo.config>
               <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
               <java.rmi.server.hostname>localhost</java.rmi.server.hostname>
+              <use.hcm.sites>false</use.hcm.sites>
             </systemProperties>
             <zipUrlInstaller>
               <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
