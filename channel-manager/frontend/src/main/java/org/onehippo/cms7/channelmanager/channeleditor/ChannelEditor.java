@@ -107,6 +107,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private Boolean relevancePresent;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private final String ckeditorUrl;
 
     @ExtProperty
@@ -155,7 +159,7 @@ public class ChannelEditor extends ExtPanel {
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
         }
-        getUuid(variantsPath).ifPresent(uuid -> this.variantsUuid = uuid);
+        getUuid(variantsPath).ifPresent(uuid -> { this.variantsUuid = uuid; relevancePresent = true; });
         Optional.of(config).ifPresent(
                 (c -> getUuid(c.getString("projectsPath"))
                         .ifPresent(uuid -> this.projectsEnabled = true))

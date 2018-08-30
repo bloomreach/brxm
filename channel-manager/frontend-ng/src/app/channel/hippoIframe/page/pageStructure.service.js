@@ -27,6 +27,8 @@ class PageStructureService {
     $q,
     ChannelService,
     CmsService,
+    ConfigService,
+    EditComponentService,
     FeedbackService,
     HippoIframeService,
     HstCommentsProcessorService,
@@ -42,6 +44,8 @@ class PageStructureService {
     this.$q = $q;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
+    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
@@ -252,24 +256,29 @@ class PageStructureService {
 
     this.MaskService.mask();
 
-    const channel = this.ChannelService.getChannel();
+    if (this.ConfigService.relevancePresent) {
+      const channel = this.ChannelService.getChannel();
 
-    this.CmsService.publish('show-component-properties', {
-      channel: {
-        contextPath: channel.contextPath,
-        mountId: channel.mountId,
-      },
-      component: {
-        id: componentElement.getId(),
-        label: componentElement.getLabel(),
-        lastModified: componentElement.getLastModified(),
-      },
-      container: {
-        isDisabled: componentElement.container.isDisabled(),
-        isInherited: componentElement.container.isInherited(),
-      },
-      page: this.PageMetaDataService.get(),
-    });
+      this.CmsService.publish('show-component-properties', {
+        channel: {
+          contextPath: channel.contextPath,
+          mountId: channel.mountId,
+        },
+        component: {
+          id: componentElement.getId(),
+          label: componentElement.getLabel(),
+          lastModified: componentElement.getLastModified(),
+        },
+        container: {
+          isDisabled: componentElement.container.isDisabled(),
+          isInherited: componentElement.container.isInherited(),
+        },
+        page: this.PageMetaDataService.get(),
+      });
+    } else {
+      this.EditComponentService.startEditing();
+      this.CmsService.reportUsageStatistic('CMSChannelsEditComponent');
+    }
   }
 
   printParsedElements() {
