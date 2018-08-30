@@ -22,13 +22,17 @@ const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
 };
 
 class EditContentToolsCtrl {
-  constructor($q, CmsService, ContentEditor, EditContentService) {
+  constructor($q, CmsService, ContentEditor, EditComponentService) {
     'ngInject';
 
     this.$q = $q;
     this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
-    this.EditContentService = EditContentService;
+    this.EditComponentService = EditComponentService;
+  }
+
+  close() {
+    this.EditComponentService.stopEditing();
   }
 
   isDisabled() {

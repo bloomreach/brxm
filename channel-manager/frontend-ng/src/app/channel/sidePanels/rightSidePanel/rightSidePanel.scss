@@ -70,6 +70,10 @@ right-side-panel {
       border-top: 1px solid $grey-200;
     }
 
+    md-icon {
+      color: $text-dim;
+    }
+
     md-icon[md-svg-icon] {
       color: $grey-900;
       opacity: .87;

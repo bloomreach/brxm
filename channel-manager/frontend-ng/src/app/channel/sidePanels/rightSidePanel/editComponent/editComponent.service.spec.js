@@ -15,14 +15,25 @@
  */
 
 describe('EditComponentService', () => {
-  // let $q;
-  // let $rootScope;
-  // let $state;
-  // let $translate;
-  // let $window;
-  //
-  // beforeEach(() => {
-  //   angular.mock.module('hippo-cm');
-  // });
+  let $state;
+  let EditComponentService;
+
+  beforeEach(() => {
+    angular.mock.module('hippo-cm');
+
+    inject((
+      _$state_,
+      _EditComponentService_,
+    ) => {
+      $state = _$state_;
+      EditComponentService = _EditComponentService_;
+    });
+  });
+
+  it('transitions to the parent state when editing is stopped', () => {
+    spyOn($state, 'go');
+    EditComponentService.stopEditing();
+    expect($state.go).toHaveBeenCalledWith('^');
+  });
 });
 
