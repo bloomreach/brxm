@@ -30,7 +30,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -53,6 +52,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.branch.BranchHandle;
@@ -63,8 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 
 /**
  * An editor that takes a hippo:handle for its JcrNodeModel and displays one of the variants.
@@ -97,7 +98,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             throws EditorException {
         super(manager, context, config, model, getMode(model));
         try {
-            branchIdModel = new BranchIdModel(context, getDocumentWorkflow().getNode().getIdentifier());
+            branchIdModel = new BranchIdModel(context, model.getObject().getIdentifier());
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
@@ -653,13 +654,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     public void refresh() {
         final IModel<Node> handle = getModel();
 
-        // verify that the handle exists
-        if (handle.getObject() == null) {
-            try {
+        try {
+            if (handle.getObject() == null || isBranchDeleted(handle.getObject())) {
                 close();
-            } catch (final EditorException ex) {
-                log.error("Could not close editor for removed handle");
             }
+        } catch (EditorException e) {
+            log.error("Could not close editor for removed handle or deleted branch");
             return;
         }
 
@@ -681,6 +681,20 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             } catch (final EditorException ex2) {
                 log.error("Could not close editor for empty handle");
             }
+        }
+    }
+
+    private boolean isBranchDeleted(Node handle) throws EditorException {
+        final String branchId = branchIdModel.getBranchId();
+        if (branchId.equals(DocumentVariant.MASTER_BRANCH_ID)) {
+            // The master branch can never be deleted, so we can immediately return false.
+            return false;
+        }
+        try {
+            final String[] existingBranches = getMultipleStringProperty(handle, HIPPO_BRANCHES_PROPERTY, new String[0]);
+            return Stream.of(existingBranches).noneMatch(existingBranchId -> existingBranchId.equals(branchId));
+        } catch (RepositoryException e) {
+            throw new EditorException(e);
         }
     }
 
