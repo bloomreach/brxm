@@ -13,4 +13,33 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<div>this is editComponentMain.html</div>
+
+<md-content flex="grow"
+            layout="column"
+            class="rightSidePanel-content">
+  <div>this is editComponentMain.html</div>
+</md-content>
+
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex>
+      <md-button class="qa-deletecomponent large-label"
+                 ng-click="$ctrl.deleteComponent()">
+        {{ ::'DELETE_COMPONENT' | translate }}
+      </md-button>
+    </span>
+
+    <md-button class="qa-discard"
+               ng-click="$ctrl.discard()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'DISCARD' | translate }}
+    </md-button>
+
+    <md-button class="qa-save"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
+  </div>
+</md-toolbar>

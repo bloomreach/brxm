@@ -56,6 +56,10 @@ class EditComponentMainCtrl {
     });
   }
 
+  discard() {
+    console.log('TODO: implement EditComponentMainCtrl.discard');
+  }
+
   save() {
     this.HippoIframeService.reload();
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
@@ -71,6 +75,14 @@ class EditComponentMainCtrl {
   //   this.ContentEditor.close();
   //   this.EditContentService.stopEditing();
   // }
+
+  deleteComponent() {
+    console.log('TODO: implement EditComponentMainCtrl.deleteComponent');
+  }
+
+  isSaveAllowed() {
+    return false;
+  }
 
   uiCanExit() {
     return this._confirmExit()
