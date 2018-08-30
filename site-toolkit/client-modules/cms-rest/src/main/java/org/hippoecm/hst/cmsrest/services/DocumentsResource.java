@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -33,8 +32,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.DocumentService;
 import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.hippoecm.hst.rest.beans.ChannelDocumentDataset;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +42,6 @@ import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BR
 public class DocumentsResource extends BaseResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
-
-    private static final String ATTRIBUTE_SESSION_CONTEXT_ACTIVE_BRANCH_ID = "com.onehippo.cms7.services.wpm.WpmConstants.active_session_context_project_id";
 
     private HstLinkCreator hstLinkCreator;
     // default no context augmenters
@@ -78,7 +73,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             requestContext.setAttribute(RENDER_BRANCH_ID, branchId);
         }
 
-        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
+        documentContextAugmenters.forEach(dca -> dca.apply(requestContext, uuid));
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
@@ -98,7 +93,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             }
 
             if (!channelFilter.apply(channel)) {
-                log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
+                log.info("Skipping channel '{}' because filtered out by channel filters", channel);
                 continue;
             }
 
