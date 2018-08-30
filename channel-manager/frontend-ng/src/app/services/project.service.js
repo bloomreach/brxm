@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-const masterId = 'master';
 class ProjectService {
   constructor(
     $http,
@@ -34,13 +33,11 @@ class ProjectService {
     this.beforeChangeListeners = [];
     this.afterChangeListeners = [];
     this.projects = [];
-    this.selectedProject = {
-      id: masterId,
-    };
-  }
+    this.masterId = 'master';
 
-  static get masterId() {
-    return masterId;
+    this.selectedProject = {
+      id: this.masterId,
+    };
   }
 
   load(mountId, projectId) {
@@ -49,7 +46,7 @@ class ProjectService {
   }
 
   isBranch() {
-    return this.selectedProject.id !== masterId;
+    return this.selectedProject.id !== this.masterId;
   }
 
   updateSelectedProject(projectId) {
@@ -178,10 +175,10 @@ class ProjectService {
       .then(result => result.data)
       .then((projects) => {
         this.projects = projects.sort((p1, p2) => {
-          if (p1.id === masterId) {
+          if (p1.id === this.masterId) {
             return -1;
           }
-          if (p2.id === masterId) {
+          if (p2.id === this.masterId) {
             return 1;
           }
           return p1.name.toLowerCase() <= p2.name.toLowerCase() ? -1 : 1;
@@ -190,7 +187,7 @@ class ProjectService {
   }
 
   _activateProject(projectId) {
-    if (projectId === masterId) {
+    if (projectId === this.masterId) {
       return this._activateCore();
     }
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
