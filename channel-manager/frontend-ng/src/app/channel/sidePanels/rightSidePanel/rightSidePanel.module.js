@@ -16,6 +16,7 @@
 
 import rightSidePanelComponent from './rightSidePanel.component';
 import rightSidePanelService from './rightSidePanel.service';
+import componentEditorModule from './editComponent/componentEditor/componentEditor.module';
 import contentEditorModule from './contentEditor/contentEditor.module';
 import editContentModule from './editContent/editContent.module';
 import editComponentModule from './editComponent/editComponent.module';
@@ -24,6 +25,7 @@ import createContentModule from './createContent/createContent.module';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
+    componentEditorModule,
     contentEditorModule,
     editComponentModule,
     editContentModule,
