@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-import './channel.scss';
-
 class ChannelCtrl {
   constructor(
     $log,
     $rootScope,
     $translate,
-    ChannelActionsService,
+    ChannelMenuService,
     ChannelService,
     CmsService,
     ConfigService,
     FeedbackService,
     HippoIframeService,
     OverlayService,
-    PageActionsService,
+    PageMenuService,
     PageMetaDataService,
     ProjectService,
     SidePanelService,
@@ -38,14 +36,14 @@ class ChannelCtrl {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
-    this.ChannelActionsService = ChannelActionsService;
+    this.ChannelMenuService = ChannelMenuService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
-    this.PageActionsService = PageActionsService;
+    this.PageMenuService = PageMenuService;
     this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
@@ -53,8 +51,8 @@ class ChannelCtrl {
     this.projectsEnabled = ConfigService.projectsEnabled;
 
     this.menus = [
-      ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
-      PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
+      ChannelMenuService.getMenu(subPage => this.showSubpage(subPage)),
+      PageMenuService.getMenu(subPage => this.showSubpage(subPage)),
     ];
   }
 
@@ -172,6 +170,10 @@ class ChannelCtrl {
 
   isToolbarDisplayed() {
     return this.ChannelService.isToolbarDisplayed;
+  }
+
+  isSidePanelFullScreen(side) {
+    return this.SidePanelService.isFullScreen(side);
   }
 }
 

@@ -23,7 +23,6 @@ class resizeHandleController {
   }
 
   $onInit() {
-    this.maxWidth = $('body').width() / 2;
     this.add = this.handlePosition === 'left';
     this.handle.addClass(this.handlePosition === 'left' ? 'left' : 'right');
     this._registerEvents(this.element);
@@ -31,6 +30,8 @@ class resizeHandleController {
 
   _registerEvents(manipulatedElement) {
     this.handle.on('mousedown', (mouseDownEvent) => {
+      this.maxWidth = Math.floor($('body').width() / 2);
+
       const initialX = mouseDownEvent.pageX;
       const initialWidth = manipulatedElement.width();
 

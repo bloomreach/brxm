@@ -16,6 +16,7 @@
 
 class Step2Controller {
   constructor(
+    $scope,
     $translate,
     ContentEditor,
     ContentService,
@@ -27,6 +28,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$scope = $scope;
     this.$translate = $translate;
     this.ContentEditor = ContentEditor;
     this.ContentService = ContentService;
@@ -40,6 +42,18 @@ class Step2Controller {
   $onInit() {
     this.documentIsSaved = false;
     this.switchingEditor = false;
+
+    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        this.RightSidePanelService.startLoading();
+      } else {
+        this.RightSidePanelService.stopLoading();
+      }
+    });
   }
 
   allMandatoryFieldsShown() {
@@ -53,20 +67,15 @@ class Step2Controller {
     this.close();
   }
 
-  save() {
-    this.RightSidePanelService.startLoading();
-    this.ContentEditor.save()
-      .then(() => {
-        this.documentIsSaved = true;
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-      })
-      .then(() => this.ContentEditor.discardChanges())
+  onSave() {
+    this.documentIsSaved = true;
+    this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+    this.ContentEditor.discardChanges()
       .then(() => this.Step2Service.saveComponentParameter())
       .then(() => {
         this.CreateContentService.finish(this.ContentEditor.getDocumentId());
       })
       .finally(() => {
-        this.RightSidePanelService.stopLoading();
         this.CmsService.reportUsageStatistic('CreateContent2Done');
       });
   }

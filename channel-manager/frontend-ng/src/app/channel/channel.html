@@ -74,65 +74,68 @@
               layout="row"
               flex>
     <left-side-panel is-configuration-locked="$ctrl.isConfigurationLocked()"
+                     ng-hide="$ctrl.isSidePanelFullScreen('right')"
                      components-visible="$ctrl.isComponentsOverlayDisplayed">
     </left-side-panel>
 
     <hippo-iframe flex
+                  ng-class="{ 'locked-width': $ctrl.isSidePanelFullScreen('right') }"
                   ng-show="$ctrl.isChannelLoaded()"
                   show-components-overlay="$ctrl.isComponentsOverlayDisplayed"
                   show-content-overlay="$ctrl.isContentOverlayDisplayed"
                   on-edit-menu="$ctrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel ng-show="$ctrl.isChannelLoaded()">
+    <right-side-panel ng-class="{ 'side-panel-full-screen': $ctrl.isSidePanelFullScreen('right') }"
+                      ng-show="$ctrl.isChannelLoaded()">
     </right-side-panel>
   </md-content>
 </div>
 
-<page-properties layout="column"
-                 flex
+<page-properties flex
+                 layout="column"
                  ng-if="$ctrl.currentSubpage == 'page-properties'"
                  on-done="$ctrl.hideSubpage()">
 </page-properties>
 
-<page-copy layout="column"
-           flex
+<page-copy flex
+           layout="column"
            ng-if="$ctrl.currentSubpage == 'page-copy'"
            on-done="$ctrl.hideSubpage()">
 </page-copy>
 
-<page-move layout="column"
-           flex
+<page-move flex
+           layout="column"
            ng-if="$ctrl.currentSubpage == 'page-move'"
            on-done="$ctrl.hideSubpage()">
 </page-move>
 
-<page-new layout="column"
-          flex
+<page-new flex
+          layout="column"
           ng-if="$ctrl.currentSubpage == 'page-new'"
           on-done="$ctrl.hideSubpage()">
 </page-new>
 
-<channel-settings layout="column"
-                  flex
+<channel-settings flex
+                  layout="column"
                   ng-if="$ctrl.currentSubpage == 'channel-settings'"
                   on-done="$ctrl.hideSubpage()"
-                  on-success="$ctrl.onSubpageSuccess(key, params)"
-                  on-error="$ctrl.onSubpageError(key, params)">
+                  on-error="$ctrl.onSubpageError(key, params)"
+                  on-success="$ctrl.onSubpageSuccess(key, params)">
 </channel-settings>
 
-<change-management layout="column"
-                   flex
+<change-management flex
+                   layout="column"
                    ng-if="$ctrl.currentSubpage == 'manage-changes'"
                    on-done="$ctrl.hideSubpage()">
 </change-management>
 
-<site-menu-editor layout="column"
-             flex
-             ng-if="$ctrl.currentSubpage == 'site-menu-editor'"
-             menu-uuid="{{$ctrl.menuUuid}}"
-             on-done="$ctrl.hideSubpage()"
-             on-error="$ctrl.onSubpageError(key, params)">
+<site-menu-editor flex
+                  layout="column"
+                  menu-uuid="{{$ctrl.menuUuid}}"
+                  ng-if="$ctrl.currentSubpage == 'site-menu-editor'"
+                  on-done="$ctrl.hideSubpage()"
+                  on-error="$ctrl.onSubpageError(key, params)">
 </site-menu-editor>
 
 <mask state="$ctrl.isComponentsOverlayDisplayed"></mask>

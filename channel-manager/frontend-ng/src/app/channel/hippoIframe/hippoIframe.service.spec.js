@@ -18,6 +18,7 @@ describe('HippoIframeService', () => {
   let $log;
   let $rootScope;
   let $window;
+  let hippoIframe;
   let iframe;
   let ChannelService;
   let ConfigService;
@@ -60,8 +61,9 @@ describe('HippoIframeService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
+    hippoIframe = $j('hippo-iframe');
     iframe = $j('#testIframe');
-    HippoIframeService.initialize(iframe);
+    HippoIframeService.initialize(hippoIframe, iframe);
   });
 
   function loadIframeFixture(callback) {
@@ -241,6 +243,14 @@ describe('HippoIframeService', () => {
     spyOn(iframe, 'attr');
     HippoIframeService.load('/not/target');
     expect(iframe.attr).toHaveBeenCalledWith('src', '/test/url');
+  });
+
+  it('set the CSS variable --locked-width when invoking lockWidth()', () => {
+    spyOn(hippoIframe, 'outerWidth').and.returnValue(250);
+
+    HippoIframeService.lockWidth();
+
+    expect(hippoIframe[0].style.getPropertyValue('--locked-width')).toBe('250px');
   });
 
   describe('dev mode', () => {

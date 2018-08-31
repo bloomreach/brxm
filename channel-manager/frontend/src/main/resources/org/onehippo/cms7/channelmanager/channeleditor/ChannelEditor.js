@@ -66,13 +66,18 @@
     loadChannel: function() {
       this._destroyComponentPropertiesWindow();
       if (this.channelId) {
-        this._getContextPath(this.channelId).when(function (contextPath) {
-          this.hostToIFrame.publish('load-channel', this.channelId, contextPath, this.branchId, this.initialPath);
+        this._getContextPath(this.channelId)
+          .when(function (contextPath) {
+            var branchedChannelId = this._getBranchedChannelId(this.channelId, this.branchId);
+            this.hostToIFrame.publish('load-channel', branchedChannelId, contextPath, this.branchId, this.initialPath);
 
-          // reset the state; the state in the app is leading. When loadChannel is called again,
-          // we'll send a reload-channel event instead that reloads the current app state.
-          this.initChannel(null, null, null);
-        }.bind(this));
+            // reset the state; the state in the app is leading. When loadChannel is called again,
+            // we'll send a reload-channel event instead that reloads the current app state.
+            this.initChannel(null, null, null);
+          }.bind(this))
+          .otherwise(function () {
+            console.error('Cannot determine context path of channel "' + this.channelId + '"');
+          }.bind(this));
       } else {
         this.hostToIFrame.publish('reload-channel');
       }
@@ -80,8 +85,16 @@
 
     _getContextPath: function(channelId) {
       return new Hippo.Future(function (success, fail) {
+        if (this.initialConfig.contextPaths.length === 1) {
+          // return the only choice
+          success(this.initialConfig.contextPaths[0]);
+        }
         this.channelStoreFuture.when(function (config) {
           var channelRecord = config.store.getById(channelId);
+          if (!channelRecord) {
+            // try the preview version of the channel
+            channelRecord = config.store.getById(channelId + '-preview');
+          }
           if (channelRecord) {
             success(channelRecord.json.contextPath);
           } else {
@@ -89,6 +102,16 @@
           }
         }.bind(this));
       }.bind(this));
+    },
+
+    _getBranchedChannelId: function(channelId, branchId) {
+      if (branchId === 'master') {
+        return channelId;
+      }
+      if (channelId.endsWith('-preview')) {
+        return channelId.replace(/-preview$/, '-' + branchId + '-preview');
+      }
+      return channelId + '-' + branchId;
     },
 
     /**
@@ -114,16 +137,6 @@
 
     _renderComponent: function(componentId, propertiesMap) {
       this.hostToIFrame.publish('render-component', componentId, propertiesMap);
-    },
-
-    _renderInitialComponentState: function(componentId) {
-      // don't pass any properties so the persisted properties are used
-      this._renderComponent(componentId);
-    },
-
-    _onComponentChanged: function (componentId) {
-      this._renderInitialComponentState(componentId);
-      this._syncChannel();
     },
 
     _closeDialogAndNotifyReloadPage: function(data) {
@@ -175,7 +188,7 @@
           variantDeleted: this._syncChannel,
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
-          componentChanged: this._onComponentChanged,
+          componentChanged: this._syncChannel,
           loadFailed: this._closeDialogAndNotifyReloadPage,
           componentLocked: this._closeDialogAndNotifyReloadPage,
           hide: function() {

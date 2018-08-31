@@ -76,7 +76,7 @@
                         id: 'name',
                         allowBlank: false,
                         validator: function(value) {
-                            return !me.endsWith(value, me.ILLEGAL_CHANNEL_SUFFIX);
+                            return !(me.endsWith(value, me.ILLEGAL_CHANNEL_SUFFIX));
                         }
                     },
                     {

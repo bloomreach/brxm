@@ -21,10 +21,10 @@
             md-component-id="right-side-panel"
             md-disable-backdrop>
 
-  <resize-handle element="$ctrl.$element"
+  <resize-handle element="$ctrl.sideNavElement"
                  on-resize="$ctrl.onResize(newWidth)"
                  min-width="440"
-                 ng-if="!$ctrl.isFullWidth"
+                 ng-if="!$ctrl.isFullScreen()"
                  handle-position="left">
   </resize-handle>
 
@@ -39,6 +39,7 @@
         </div>
         {{ $ctrl.getTitle() }}
       </md-truncate>
+      
       <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
                  aria-label="{{ ::'FULL_WIDTH' | translate }}"
                  ng-click="$ctrl.setFullWidth(true)"
@@ -46,11 +47,11 @@
                  title="{{ ::'FULL_WIDTH' | translate }}">
         <md-icon md-svg-icon="maximize-sidepanel"></md-icon>
       </md-button>
-      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-                 aria-label="{{ ::'RESTORE_WIDTH' | translate }}"
-                 ng-click="$ctrl.setFullWidth(false)"
-                 ng-show="$ctrl.isFullWidth"
-                 title="{{ ::'RESTORE_WIDTH' | translate }}">
+      <md-button class="md-icon-button btn-normal-screen qa-rightsidepanel-normal-screen"
+                 aria-label="{{ ::'NORMAL_SIZE' | translate }}"
+                 ng-click="$ctrl.setFullScreen(false)"
+                 ng-show="$ctrl.isFullScreen()"
+                 title="{{ ::'NORMAL_SIZE' | translate }}">
         <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
       </md-button>
 

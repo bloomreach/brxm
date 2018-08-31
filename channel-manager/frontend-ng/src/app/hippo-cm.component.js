@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './hippo-cm.scss';
 import controller from './hippo-cm.controller';
 import template from './hippo-cm.html';
 

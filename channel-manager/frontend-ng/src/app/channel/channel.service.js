@@ -63,7 +63,6 @@ class ChannelService {
       .then(projectId => this.HstService.getChannel(channelId, contextPath)
         .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))
-          .then(() => this._getPreviewChannel(channel))
           .then(previewChannel => this._loadProject(channel, projectId)
             .then(() => this._setChannel(previewChannel)),
           ),
@@ -79,6 +78,7 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
       return this.HstService
         .doPost(null, channel.mountId, 'edit')
+        .then(() => this._getPreviewChannel(channel))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
           this.FeedbackService.showError('ERROR_ENTER_EDIT');

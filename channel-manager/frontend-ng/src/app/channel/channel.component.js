@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './channel.scss';
 import controller from './channel.controller';
 import template from './channel.html';
 

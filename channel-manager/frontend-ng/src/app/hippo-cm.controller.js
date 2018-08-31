@@ -16,6 +16,7 @@
 
 class HippoCmCtrl {
   constructor(
+    $q,
     $rootScope,
     $state,
     $timeout,
@@ -27,6 +28,7 @@ class HippoCmCtrl {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$timeout = $timeout;
@@ -79,7 +81,12 @@ class HippoCmCtrl {
 
   _initializeChannel(channelId, contextPath, branchId, initialPath) {
     this.ChannelService.initializeChannel(channelId, contextPath, branchId)
-      .then(() => this.$state.go('hippo-cm.channel'))
+      .then(() => {
+        if (!this.$state.includes('hippo-cm.channel')) {
+          return this.$state.go('hippo-cm.channel');
+        }
+        return this.$q.resolve();
+      })
       .then(() => this.HippoIframeService.initializePath(initialPath));
   }
 
