@@ -48,32 +48,38 @@ class ComponentEditorService {
   }
 
   _groupProperties(response) {
+    const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
     const groups = [];
+    if (!response.properties[0]) {
+      return groups;
+    }
     let currentGroup = {};
-    // TODO: check if there are any properties at all
-    let currentGroupLabel = response.properties[0].groupLabel;
+    let currentGroupLabel = response.properties[0].groupLabel || defaultGroupTitle;
     let currentGroupFields = [];
 
-    // TODO: filter out properties 'hiddenInChannelManager'
     // TODO: do not add empty groups
     // TODO: use default group name if name is blank
 
     response.properties.forEach((property) => {
-      if (property.groupLabel !== currentGroupLabel) {
+      if (property.hiddenInChannelManager) {
+        return;
+      }
+      const thisGroupLabel = property.groupLabel || defaultGroupTitle;
+      if (thisGroupLabel !== currentGroupLabel) {
         // store current group
+        // TODO: deal with duplicate group names
         currentGroup.label = currentGroupLabel;
         currentGroup.fields = currentGroupFields;
         groups.push(currentGroup);
         // clean up for next group
         currentGroup = {};
         currentGroupFields = [];
-        currentGroupLabel = property.groupLabel;
-      } else {
-        currentGroupFields.push(property);
-      }
+        currentGroupLabel = thisGroupLabel;
+      } 
+      currentGroupFields.push(property);
     });
 
-    // finally store last group
+    // store last group
     currentGroup.label = currentGroupLabel;
     currentGroup.fields = currentGroupFields;
     groups.push(currentGroup);

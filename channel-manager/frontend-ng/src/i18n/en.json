@@ -37,6 +37,7 @@
   "CREATE_DOCUMENT_LOCKED": "Cannot create document (component is locked)",
   "CREATE_NEW_CONTENT": "Create new content",
   "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
+  "DEFAULT_PROPERTY_GROUP_TITLE": "Property group",
   "DELETE": "Delete",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
   "DELETE_COMPONENT": "Delete Component",
