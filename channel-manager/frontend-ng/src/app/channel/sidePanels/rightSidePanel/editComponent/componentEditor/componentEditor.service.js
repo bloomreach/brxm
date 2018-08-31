@@ -27,16 +27,26 @@ class ComponentEditorService {
     this.HstComponentService = HstComponentService;
   }
 
-  open(componentId) {
+  open({ channel, component, container, page }) {
     this.close();
-    return this._loadComponent(componentId);
+
+    return this.HstComponentService.getProperties(component.id, component.variant)
+      .then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
+      .catch(response => this._onLoadFailure(response));
   }
 
-  _loadComponent(componentId) {
-    this.componentId = componentId;
+  _onLoadSuccess(channel, component, container, page, properties) {
+    this.channel = channel;
+    this.component = component;
+    this.container = container;
+    this.page = page;
+    this.properties = properties;
 
-    return this.HstComponentService.getProperties(componentId, 'hippo-default')
-      .catch(response => this._onLoadFailure(response));
+    console.log('Channel', this.channel);
+    console.log('Component', this.component);
+    console.log('Component properties', this.properties);
+    console.log('Container', this.container);
+    console.log('Page', this.page);
   }
 
   _onLoadFailure(response) {
@@ -65,15 +75,27 @@ class ComponentEditorService {
     }
   }
 
+  getComponentName() {
+    if (this.component) {
+      return this.component.label;
+    }
+    if (this.error && this.error.messageParams) {
+      return this.error.messageParams.displayName;
+    }
+    return undefined;
+  }
+
   close() {
-    delete this.componentId;
     this._clearData();
     delete this.error;
-    delete this.killed;
   }
 
   _clearData() {
-    delete this.documentDirty;
+    delete this.channel;
+    delete this.component;
+    delete this.container;
+    delete this.page;
+    delete this.properties;
   }
 }
 

@@ -116,6 +116,7 @@ class CreateContentService {
   }
 
   _showStep1Title() {
+    this.RightSidePanelService.clearContext();
     const title = this.$translate.instant('CREATE_CONTENT');
     this.RightSidePanelService.setTitle(title);
   }

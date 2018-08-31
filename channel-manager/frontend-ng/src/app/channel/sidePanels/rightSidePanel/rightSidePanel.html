@@ -30,12 +30,15 @@
 
   <md-toolbar class="right-side-panel-top-toolbar">
     <div class="md-toolbar-tools">
-      <h1 class="md-title text-truncate" title="{{ $ctrl.getTitle() }}">
+      <md-truncate class="md-title"
+                   flex
+                   title="{{ $ctrl.getTooltip() }}">
+        <div class="right-side-panel-context"
+             ng-if="$ctrl.getContext()">
+          {{ $ctrl.getContext() }}
+        </div>
         {{ $ctrl.getTitle() }}
-      </h1>
-
-      <span flex></span>
-
+      </md-truncate>
       <md-button class="md-icon-button btn-full-screen qa-rightsidepanel-full-screen"
                  aria-label="{{ ::'FULL_SIZE' | translate }}"
                  ng-click="$ctrl.setFullScreen(true)"
