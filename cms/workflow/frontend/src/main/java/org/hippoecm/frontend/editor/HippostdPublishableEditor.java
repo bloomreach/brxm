@@ -706,7 +706,13 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
         // verify that a document exists, i.e. the document has not been deleted
         try {
-            final Mode newMode = getMode(handle);
+            Mode newMode;
+            if (branchIdModel.isDefined()){
+                newMode = getMode(handle, branchIdModel.getBranchId());
+            }
+            else{
+                newMode = getMode(handle, MASTER_BRANCH_ID);
+            }
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {
