@@ -32,6 +32,8 @@ import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+
 /**
  * Default {@link RequestInfoCacheKeyFragmentCreator} which takes all parts of the request to create a cachekey with.
  */
@@ -62,6 +64,9 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
         requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
         requestInfo.append(request.getRequestURI()).append(delim);
         requestInfo.append(StringUtils.defaultString(request.getQueryString())).append(delim);
+        if (requestContext.getAttribute(RENDER_BRANCH_ID) != null) {
+            requestInfo.append((String)requestContext.getAttribute(RENDER_BRANCH_ID)).append(delim);
+        }
 
         // AFter an internal HST FORWARD, all the above parts are the same because same http request,
         // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo
