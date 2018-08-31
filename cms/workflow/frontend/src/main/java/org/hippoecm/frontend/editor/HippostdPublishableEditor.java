@@ -438,9 +438,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final EditableWorkflow workflow = getEditableWorkflow();
-                // TODO make branch hints aware?
-                final Map<String, Serializable> hints = workflow.hints();
-                if (hints.containsKey("checkModified") && Boolean.TRUE.equals(hints.get("checkModified"))) {
+                String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
+                final Map<String, Serializable> hints = workflow.hints(branchId);
+                if (Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = workflow.isModified();
                     return modified;
                 } else {
