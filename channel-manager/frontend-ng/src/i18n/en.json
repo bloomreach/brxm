@@ -8,6 +8,7 @@
   "CHANGE_DOCUMENT_NAME": "Change document name",
   "CLOSE": "Close",
   "COLLAPSE": "Collapse",
+  "COMPONENT": "Component",
   "CONFIRM_DELETE_CHANNEL_MESSAGE": "You cannot undo this action.",
   "CONFIRM_DELETE_CHANNEL_TITLE": "Delete channel '{{channel}}'?",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
