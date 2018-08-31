@@ -491,33 +491,8 @@ describe('PageStructureService', () => {
     expect(container.getId()).toEqual('container-no-markup');
   });
 
-  it('triggers an event to show the component properties dialog if Relevance is present', () => {
-    const componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified']);
-    componentElement.getId.and.returnValue('testId');
-    componentElement.getLabel.and.returnValue('testLabel');
-    componentElement.getLastModified.and.returnValue(12345);
-    componentElement.container = jasmine.createSpyObj(['isDisabled', 'isInherited']);
-    componentElement.container.isDisabled.and.returnValue(true);
-    componentElement.container.isInherited.and.returnValue(false);
-
-    spyOn(ChannelService, 'getChannel').and.returnValue({
-      contextPath: '/testContextPath',
-      mountId: 'testMountId',
-    });
-
-    spyOn(PageMetaDataService, 'get').and.returnValue({
-      testMetaData: 'foo',
-    });
-
-    spyOn(MaskService, 'mask');
-    spyOn($window.APP_TO_CMS, 'publish');
-
-    ConfigService.relevancePresent = true;
-
-    PageStructureService.showComponentProperties(componentElement);
-
-    expect(MaskService.mask).toHaveBeenCalled();
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
+  describe('editing component properties', () => {
+    const testData = {
       channel: {
         contextPath: '/testContextPath',
         mountId: 'testMountId',
@@ -526,6 +501,7 @@ describe('PageStructureService', () => {
         id: 'testId',
         label: 'testLabel',
         lastModified: 12345,
+        variant: 'testVariant',
       },
       container: {
         isDisabled: true,
@@ -534,40 +510,64 @@ describe('PageStructureService', () => {
       page: {
         testMetaData: 'foo',
       },
+    };
+    let componentElement;
+
+    beforeEach(() => {
+      componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
+      componentElement.getId.and.returnValue(testData.component.id);
+      componentElement.getLabel.and.returnValue(testData.component.label);
+      componentElement.getLastModified.and.returnValue(testData.component.lastModified);
+      componentElement.getRenderVariant.and.returnValue(testData.component.variant);
+      componentElement.container = jasmine.createSpyObj(['isDisabled', 'isInherited']);
+      componentElement.container.isDisabled.and.returnValue(testData.container.isDisabled);
+      componentElement.container.isInherited.and.returnValue(testData.container.isInherited);
+
+      spyOn(ChannelService, 'getChannel').and.returnValue(testData.channel);
+      spyOn(PageMetaDataService, 'get').and.returnValue(testData.page);
     });
-  });
 
-  it('opens a side panel to edit component properties if Relevance is not present', () => {
-    const componentElement = jasmine.createSpyObj(['getId']);
-    componentElement.getId.and.returnValue('testId');
+    it('triggers an event to show the component properties dialog if Relevance is present', () => {
+      spyOn(MaskService, 'mask');
+      spyOn($window.APP_TO_CMS, 'publish');
 
-    spyOn(EditComponentService, 'startEditing');
-    spyOn(CmsService, 'reportUsageStatistic');
+      ConfigService.relevancePresent = true;
 
-    PageStructureService.showComponentProperties(componentElement);
+      PageStructureService.showComponentProperties(componentElement);
 
-    expect(EditComponentService.startEditing).toHaveBeenCalledWith('testId');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditComponent');
-  });
+      expect(MaskService.mask).toHaveBeenCalled();
+      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', testData);
+    });
 
-  it('ignores erroneous calls to showComponentProperties', () => {
-    spyOn($log, 'warn');
-    spyOn(MaskService, 'mask');
-    spyOn($window.APP_TO_CMS, 'publish');
+    it('opens a side panel to edit component properties if Relevance is not present', () => {
+      spyOn(EditComponentService, 'startEditing');
+      spyOn(CmsService, 'reportUsageStatistic');
 
-    PageStructureService.showComponentProperties(undefined);
+      PageStructureService.showComponentProperties(componentElement);
 
-    expect($log.warn).toHaveBeenCalled();
-    expect(MaskService.mask).not.toHaveBeenCalled();
-    expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
-  });
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith(testData);
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditComponent');
+    });
 
-  it('removes the mask when the component properties dialog is closed', () => {
-    spyOn(MaskService, 'unmask');
+    it('ignores erroneous calls to showComponentProperties', () => {
+      spyOn($log, 'warn');
+      spyOn(MaskService, 'mask');
+      spyOn($window.APP_TO_CMS, 'publish');
 
-    $window.CMS_TO_APP.publish('hide-component-properties');
+      PageStructureService.showComponentProperties(undefined);
 
-    expect(MaskService.unmask).toHaveBeenCalled();
+      expect($log.warn).toHaveBeenCalled();
+      expect(MaskService.mask).not.toHaveBeenCalled();
+      expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
+    });
+
+    it('removes the mask when the component properties dialog is closed', () => {
+      spyOn(MaskService, 'unmask');
+
+      $window.CMS_TO_APP.publish('hide-component-properties');
+
+      expect(MaskService.unmask).toHaveBeenCalled();
+    });
   });
 
   it('shows the default error message when failed to add a new component from catalog', () => {

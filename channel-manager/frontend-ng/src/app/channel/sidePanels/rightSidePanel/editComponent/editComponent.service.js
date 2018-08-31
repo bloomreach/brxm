@@ -24,7 +24,7 @@ class EditComponentService {
 
     $transitions.onEnter(
       { entering: '**.edit-component' },
-      transition => this._loadComponent(transition.params().componentId),
+      transition => this._loadComponent(transition.params().properties),
     );
     $transitions.onBefore(
       { from: '**.edit-component', to: 'hippo-cm' },
@@ -45,36 +45,40 @@ class EditComponentService {
     }
   }
 
-  startEditing(componentId) {
-    this.$state.go('hippo-cm.channel.edit-component', { componentId });
+  startEditing(properties) {
+    this.$state.go('hippo-cm.channel.edit-component', { properties });
   }
 
   stopEditing() {
     this.$state.go('^');
   }
 
-  _loadComponent(componentId) {
+  _loadComponent(properties) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    console.log(`TODO: implement EditComponentService._loadComponent -- ${componentId}`);
-    this.ComponentEditor.open(componentId)
+
+    this.ComponentEditor.open(properties)
       .then(() => {
-        this.componentId = componentId;
-        this._showDocumentTitle();
+        this.componentId = properties.component.id;
+        this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
-      });
+      })
+      .catch(e => console.error('Failed to load component', properties, e));
   }
 
   _showDefaultTitle() {
-    const defaultTitle = this.$translate.instant('EDIT_CONTENT');
-    this.RightSidePanelService.setTitle(defaultTitle);
+    this.RightSidePanelService.clearContext();
+
+    const componentLabel = this.$translate.instant('COMPONENT');
+    this.RightSidePanelService.setTitle(componentLabel);
   }
 
-  _showDocumentTitle() {
-    // when there's no document, the error's messageParams contain a 'displayName' property
-    // const document = this.ContentEditor.getDocument() || this.ContentEditor.getError().messageParams;
-    const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
-    this.RightSidePanelService.setTitle(documentTitle);
+  _showComponentTitle() {
+    const componentLabel = this.$translate.instant('COMPONENT');
+    this.RightSidePanelService.setContext(componentLabel);
+
+    const componentName = this.ComponentEditor.getComponentName();
+    this.RightSidePanelService.setTitle(componentName);
   }
 
   _onCloseChannel() {
