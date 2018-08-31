@@ -124,6 +124,6 @@ public class DocumentHandleTest extends BaseDocumentWorkflowTest {
         final DocumentHandle documentHandle = new DocumentHandle(handleNode);
 
         Assertions.assertThatThrownBy(documentHandle::getBranchHandle)
-                .isInstanceOf(UnsupportedOperationException.class);
+                .isInstanceOf(IllegalStateException.class);
     }
 }

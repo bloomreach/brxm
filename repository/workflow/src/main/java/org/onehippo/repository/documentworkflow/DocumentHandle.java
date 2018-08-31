@@ -245,13 +245,13 @@ public class DocumentHandle implements SCXMLWorkflowData {
      * Returns a branch handle with the same branch id as this document handle was initialized with.
      *
      * @return branch handle with same branch id as this handle
-     * @throws UnsupportedOperationException if the document handle is not initialized.
+     * @throws IllegalStateException if the document handle is not initialized.
      */
     public BranchHandle getBranchHandle() {
         if (isInitialized()) {
             return new BranchHandleImpl(branchId, this);
         }
-        throw new UnsupportedOperationException("document handle not initialized, please initialize it before calling this method");
+        throw new IllegalStateException("document handle not initialized, please initialize it before calling this method");
     }
 
     private void initializeDocumentBranches() throws RepositoryException {
