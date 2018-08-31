@@ -69,10 +69,10 @@
     <!-- PROPERTIES_MARKER -->
 
     <!--***START temporary override of versions*** -->
-    <hippo.configuration-management.version>13.0.0-msdts-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.repository.version>13.0.0-msdts-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>13.0.0-msdts-SNAPSHOT</hippo.services.version>
-    <essentials.version>13.0.0-msdts-SNAPSHOT</essentials.version>
+    <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
+    <essentials.version>13.0.0-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
     <!-- Uncomment line below when temporary overrides will be removed -->
