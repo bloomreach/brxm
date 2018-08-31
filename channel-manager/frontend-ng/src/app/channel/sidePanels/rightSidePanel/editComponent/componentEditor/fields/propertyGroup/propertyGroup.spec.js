@@ -13,14 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import componentEditorService from './componentEditor.service';
-import componentEditorComponent from './componentEditor.component';
-import propertyGroupComponent from './fields/propertyGroup/propertyGroup.component';
 
-const componentEditorModule = angular
-  .module('hippo-cm.channel.componentEditor', [])
-  .component('componentEditor', componentEditorComponent)
-  .component('propertyGroup', propertyGroupComponent)
-  .service('ComponentEditor', componentEditorService);
-
-export default componentEditorModule.name;
+describe('PropertyGroup', () => {
+});
