@@ -32,11 +32,53 @@ class ComponentEditorService {
     return this._loadComponent(componentId);
   }
 
+  getPropertyGroups() {
+    return this.propertyGroups;
+  }
+
   _loadComponent(componentId) {
     this.componentId = componentId;
 
     return this.HstComponentService.getProperties(componentId, 'hippo-default')
+      .then((properties) => {
+        this.propertyGroups = this._groupProperties(properties);
+        return this.propertyGroups;
+      })
       .catch(response => this._onLoadFailure(response));
+  }
+
+  _groupProperties(response) {
+    const groups = [];
+    let currentGroup = {};
+    // TODO: check if there are any properties at all
+    let currentGroupLabel = response.properties[0].groupLabel;
+    let currentGroupFields = [];
+
+    // TODO: filter out properties 'hiddenInChannelManager'
+    // TODO: do not add empty groups
+    // TODO: use default group name if name is blank
+
+    response.properties.forEach((property) => {
+      if (property.groupLabel !== currentGroupLabel) {
+        // store current group
+        currentGroup.label = currentGroupLabel;
+        currentGroup.fields = currentGroupFields;
+        groups.push(currentGroup);
+        // clean up for next group
+        currentGroup = {};
+        currentGroupFields = [];
+        currentGroupLabel = property.groupLabel;
+      } else {
+        currentGroupFields.push(property);
+      }
+    });
+
+    // finally store last group
+    currentGroup.label = currentGroupLabel;
+    currentGroup.fields = currentGroupFields;
+    groups.push(currentGroup);
+
+    return groups;
   }
 
   _onLoadFailure(response) {
@@ -65,6 +107,14 @@ class ComponentEditorService {
     }
   }
 
+  isDataDirty() {
+    return this.dataDirty;
+  }
+
+  markDataDirty() {
+    this.dataDirty = true;
+  }
+
   close() {
     delete this.componentId;
     this._clearData();
@@ -73,7 +123,7 @@ class ComponentEditorService {
   }
 
   _clearData() {
-    delete this.documentDirty;
+    delete this.dataDirty;
   }
 }
 

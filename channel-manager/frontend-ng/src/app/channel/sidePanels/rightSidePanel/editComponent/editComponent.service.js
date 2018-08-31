@@ -56,7 +56,6 @@ class EditComponentService {
   _loadComponent(componentId) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-    console.log(`TODO: implement EditComponentService._loadComponent -- ${componentId}`);
     this.ComponentEditor.open(componentId)
       .then(() => {
         this.componentId = componentId;

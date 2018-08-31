@@ -15,10 +15,28 @@
  */
 
 class ComponentEditorCtrl {
-  constructor() {
+  constructor($scope, ComponentEditor) {
     'ngInject';
+
+    this.$scope = $scope;
+    this.ComponentEditor = ComponentEditor;
   }
 
+  $onInit() {
+    this._monitorDirty();
+  }
+
+  _monitorDirty() {
+    this.$scope.$watch('$ctrl.form.$dirty', (dirty) => {
+      if (dirty) {
+        this.ComponentEditor.markDataDirty();
+      }
+    });
+  }
+
+  getPropertyGroups() {
+    return this.ComponentEditor.getPropertyGroups();
+  }
 }
 
 export default ComponentEditorCtrl;
