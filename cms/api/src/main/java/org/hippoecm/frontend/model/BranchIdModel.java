@@ -125,6 +125,6 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
 
 
     public boolean isDefined() {
-        return UNDEFINED_BRANCH_INFO.equals(getBranchInfo());
+        return !UNDEFINED_BRANCH_INFO.equals(getBranchInfo());
     }
 }
