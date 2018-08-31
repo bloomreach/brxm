@@ -60,6 +60,7 @@
     // true if either unpublished or published variant exits with availability 'preview'
     def boolean isPreviewAvailable() { live or preview }
     // true if unpublished variant exists and no published variant exists or they have a different lastModified
+    // note this 'modified' is a different one than hippo:isModified since this one compares whether the draft has changes
     def boolean isModified() { workflowData.isModified() }
     // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
@@ -81,7 +82,7 @@
         <hippo:feedback key="isLive" value="live"/>
         <hippo:feedback key="previewAvailable" value="previewAvailable"/>
         <!-- enable the checkModified operation if both draft and unpublished variants exists -->
-        <hippo:action action="checkModified" enabledExpr="draft and unpublished"/>
+        <hippo:action action="checkModified" enabledExpr="draft and unpublished and branches.contains(branchId)"/>
       </onentry>
 
       <!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is
