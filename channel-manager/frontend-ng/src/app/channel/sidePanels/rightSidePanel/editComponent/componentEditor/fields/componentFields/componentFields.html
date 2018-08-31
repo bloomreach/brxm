@@ -17,10 +17,6 @@
      ng-repeat="componentField in $ctrl.fields track by $index"
      ng-switch="::componentField.type">
 
-  <div ng-switch-when="textfield">
-    {{componentField.name}} <- show textbox field here !
-  </div>
-
   <div ng-switch-default>
     {{componentField.name}} - type to be implemented: {{ ::componentField.type }}
   </div>
