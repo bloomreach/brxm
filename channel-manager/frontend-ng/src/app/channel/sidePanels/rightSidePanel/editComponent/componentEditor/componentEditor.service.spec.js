@@ -120,13 +120,15 @@ describe('ComponentEditorService', () => {
       const properties = [
         { groupLabel: 'Group', hiddenInChannelManager: true },
         { groupLabel: 'Group', hiddenInChannelManager: true },
+        { groupLabel: 'Group1', hiddenInChannelManager: false },
       ];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
 
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups().length).toBe(0);
+      expect(ComponentEditor.getPropertyGroups().length).toBe(1);
+      expect(ComponentEditor.getPropertyGroups()[0].label).toBe('Group1');
     });
 
     it('uses the default group label for properties without label', () => {
