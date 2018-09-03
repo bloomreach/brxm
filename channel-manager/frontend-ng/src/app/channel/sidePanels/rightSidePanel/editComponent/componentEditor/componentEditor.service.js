@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const ERROR_MAP = {};
 
 class ComponentEditorService {
   constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService) {
@@ -52,23 +51,23 @@ class ComponentEditorService {
     console.log('Container', this.container);
     console.log('Page', this.page);
 
-    // this.propertyGroups = this._groupProperties(properties);
+    this.propertyGroups = this._groupProperties(this.properties);
   }
 
-  _groupProperties(response) {
+  _groupProperties(properties) {
     const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
     const groups = [];
-    if (!response.properties[0]) {
+    if (!properties[0]) {
       return groups;
     }
     let currentGroup = {};
-    let currentGroupLabel = response.properties[0].groupLabel || defaultGroupTitle;
+    let currentGroupLabel = properties[0].groupLabel || defaultGroupTitle;
     let currentGroupFields = [];
 
     // TODO: do not add empty groups
     // TODO: use default group name if name is blank
 
-    response.properties.forEach((property) => {
+    properties.forEach((property) => {
       if (property.hiddenInChannelManager) {
         return;
       }
@@ -97,28 +96,8 @@ class ComponentEditorService {
 
   _onLoadFailure(response) {
     this._clearData();
-
-    let errorKey;
-    let params = null;
-
-    if (this._isErrorInfo(response.data)) {
-      const errorInfo = response.data;
-      errorKey = errorInfo.reason;
-      params = this._extractErrorParams(errorInfo);
-
-      if (errorInfo.params) {
-        this.publicationState = errorInfo.params.publicationState;
-      }
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
-    } else {
-      errorKey = 'UNAVAILABLE';
-    }
-
-    this.error = ERROR_MAP[errorKey];
-    if (params) {
-      this.error.messageParams = params;
-    }
+    console.log('TODO: implement ComponentEditorService._onLoadFailure');
+    console.log(`Failure for: ${response}`);
   }
 
   getComponentName() {
