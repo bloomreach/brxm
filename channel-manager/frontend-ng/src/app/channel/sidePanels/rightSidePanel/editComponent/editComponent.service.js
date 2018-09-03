@@ -56,7 +56,6 @@ class EditComponentService {
   _loadComponent(properties) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
-
     this.ComponentEditor.open(properties)
       .then(() => {
         this.componentId = properties.component.id;

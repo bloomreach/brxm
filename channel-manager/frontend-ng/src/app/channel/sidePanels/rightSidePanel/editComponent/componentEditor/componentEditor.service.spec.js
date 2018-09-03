@@ -77,6 +77,9 @@ describe('ComponentEditorService', () => {
 
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
+      const properties = ['propertyData'];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
       ComponentEditor.open(testData);
       $rootScope.$digest();
 

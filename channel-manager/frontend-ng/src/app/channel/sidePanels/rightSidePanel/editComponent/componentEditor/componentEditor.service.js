@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const ERROR_MAP = {};
 
 class ComponentEditorService {
   constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService) {
@@ -35,6 +34,10 @@ class ComponentEditorService {
       .catch(response => this._onLoadFailure(response));
   }
 
+  getPropertyGroups() {
+    return this.propertyGroups;
+  }
+
   _onLoadSuccess(channel, component, container, page, properties) {
     this.channel = channel;
     this.component = component;
@@ -47,32 +50,54 @@ class ComponentEditorService {
     console.log('Component properties', this.properties);
     console.log('Container', this.container);
     console.log('Page', this.page);
+
+    this.propertyGroups = this._groupProperties(this.properties);
+  }
+
+  _groupProperties(properties) {
+    const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
+    const groups = [];
+    if (!properties[0]) {
+      return groups;
+    }
+    let currentGroup = {};
+    let currentGroupLabel = properties[0].groupLabel || defaultGroupTitle;
+    let currentGroupFields = [];
+
+    // TODO: do not add empty groups
+    // TODO: use default group name if name is blank
+
+    properties.forEach((property) => {
+      if (property.hiddenInChannelManager) {
+        return;
+      }
+      const thisGroupLabel = property.groupLabel || defaultGroupTitle;
+      if (thisGroupLabel !== currentGroupLabel) {
+        // store current group
+        // TODO: deal with duplicate group names
+        currentGroup.label = currentGroupLabel;
+        currentGroup.fields = currentGroupFields;
+        groups.push(currentGroup);
+        // clean up for next group
+        currentGroup = {};
+        currentGroupFields = [];
+        currentGroupLabel = thisGroupLabel;
+      }
+      currentGroupFields.push(property);
+    });
+
+    // store last group
+    currentGroup.label = currentGroupLabel;
+    currentGroup.fields = currentGroupFields;
+    groups.push(currentGroup);
+
+    return groups;
   }
 
   _onLoadFailure(response) {
     this._clearData();
-
-    let errorKey;
-    let params = null;
-
-    if (this._isErrorInfo(response.data)) {
-      const errorInfo = response.data;
-      errorKey = errorInfo.reason;
-      params = this._extractErrorParams(errorInfo);
-
-      if (errorInfo.params) {
-        this.publicationState = errorInfo.params.publicationState;
-      }
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
-    } else {
-      errorKey = 'UNAVAILABLE';
-    }
-
-    this.error = ERROR_MAP[errorKey];
-    if (params) {
-      this.error.messageParams = params;
-    }
+    console.log('TODO: implement ComponentEditorService._onLoadFailure');
+    console.log(`Failure for: ${response}`);
   }
 
   getComponentName() {
@@ -83,6 +108,14 @@ class ComponentEditorService {
       return this.error.messageParams.displayName;
     }
     return undefined;
+  }
+
+  isDataDirty() {
+    return this.dataDirty;
+  }
+
+  markDataDirty() {
+    this.dataDirty = true;
   }
 
   close() {
@@ -96,6 +129,7 @@ class ComponentEditorService {
     delete this.container;
     delete this.page;
     delete this.properties;
+    delete this.dataDirty;
   }
 }
 
