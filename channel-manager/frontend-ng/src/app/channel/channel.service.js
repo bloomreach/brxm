@@ -59,23 +59,21 @@ class ChannelService {
    * @returns {*}
    */
   initializeChannel(channelId, contextPath, branchId) {
-    return this.$q.when(branchId || this.ProjectService.selectedProject.id)
-      .then(projectId => this.HstService.getChannel(channelId, contextPath)
-        .then(channel => this.SessionService.initialize(channel)
-          .then(() => this._ensurePreviewHstConfigExists(channel))
-          .then(previewChannel => this._loadProject(channel, projectId)
-            .then(() => this._setChannel(previewChannel)),
-          ),
-        )
-        .catch((error) => {
-          if (this.hasChannel()) {
-            // restore the session for the previous channel, but still reject the promise chain
-            return this.SessionService.initialize(this.channel)
-              .then(() => this.$q.reject(error));
-          }
-          return this.$q.reject(error);
-        }),
-      );
+    return this.HstService.getChannel(channelId, contextPath)
+      .then(channel => this.SessionService.initialize(channel)
+        .then(() => this._ensurePreviewHstConfigExists(channel))
+        .then(previewChannel => this._loadProject(channel, branchId || this.ProjectService.selectedProject.id)
+          .then(() => this._setChannel(previewChannel)),
+        ),
+      )
+      .catch((error) => {
+        if (this.hasChannel()) {
+          // restore the session for the previous channel, but still reject the promise chain
+          return this.SessionService.initialize(this.channel)
+            .then(() => this.$q.reject(error));
+        }
+        return this.$q.reject(error);
+      });
   }
 
   _ensurePreviewHstConfigExists(channel) {
