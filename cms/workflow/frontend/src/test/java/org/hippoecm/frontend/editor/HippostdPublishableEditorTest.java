@@ -69,18 +69,18 @@ public class HippostdPublishableEditorTest extends PluginTest {
         setupMocks();
     }
 
-    private void initializeBranchIdModel(final HippostdPublishableEditor hippostdPublishableEditor) {
-        final BranchIdModel branchIdModel = new BranchIdModel();
-        branchIdModel.setBranchIdModelReference(new ModelReference<>("", new Model<>()));
-        branchIdModel.setBranchInfo(DocumentVariant.MASTER_BRANCH_ID, "core");
-        hippostdPublishableEditor.setBranchIdModel(branchIdModel);
+    private void initializeBranchIdModel(String uuid) {
+        final BranchIdModel branchIdModel = new BranchIdModel(context, uuid);
+        branchIdModel.setInitialBranchInfo("master","core");
+
     }
 
     private void setupMocks() throws RepositoryException {
         PowerMock.mockStatic(AbstractCmsEditor.class);
         PowerMock.mockStatic(HippostdPublishableEditor.class);
 
-        createDocument("document");
+        final String uuid = createDocument("document");
+        initializeBranchIdModel(uuid);
 
         model = new JcrNodeModel("/test/content/document");
         expect(AbstractCmsEditor.getMyName(anyObject())).andReturn("bah");
@@ -105,10 +105,12 @@ public class HippostdPublishableEditorTest extends PluginTest {
         super.tearDown();
     }
 
-    private void createDocument(final String name) throws RepositoryException {
+    private String createDocument(final String name) throws RepositoryException {
         final Map<String, String> pars = new MiniMap<>(1);
         pars.put("name", name);
         build(session, mount("/test/content", instantiate(CMS_TEST_DOCUMENT, pars)));
+        final Node node = session.getNode("/test/content/" + name);
+        return node.getIdentifier();
     }
 
     @Test(expected = EditorException.class)
@@ -118,7 +120,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
+
         editor.getEditorModel();
     }
 
@@ -133,7 +135,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
 
         final IModel<Node> editorModel = editor.getEditorModel();
         verify(HippostdPublishableEditor.class);
@@ -150,7 +151,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
 
         final IModel<Node> editorModel = editor.getEditorModel();
         verify(HippostdPublishableEditor.class);
@@ -168,7 +168,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
 
         final IModel<Node> editorModel = editor.getEditorModel();
         verify(HippostdPublishableEditor.class);
@@ -187,7 +186,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
 
         final IModel<Node> editorModel = editor.getEditorModel();
         verify(HippostdPublishableEditor.class);
@@ -201,7 +199,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
         editor.getEditorModel();
     }
 
@@ -223,7 +220,6 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        initializeBranchIdModel(editor);
 
         final IModel<Node> editorModel = editor.getEditorModel();
         verify(HippostdPublishableEditor.class);

@@ -30,7 +30,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -180,6 +179,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         super(manager, context, config, model, getMode(model));
         try {
             branchIdModel = new BranchIdModel(context, model.getObject().getIdentifier());
+            if (!branchIdModel.isDefined()){
+                throw new IllegalStateException("BranchIdModel is undefined, please make sure to initialize the branchIdModel before creating the editor");
+            }
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
@@ -438,7 +440,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final EditableWorkflow workflow = getEditableWorkflow();
-                String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
+                String branchId = branchIdModel.getBranchId();
                 final Map<String, Serializable> hints = workflow.hints(branchId);
                 if (Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = workflow.isModified();
@@ -706,13 +708,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
         // verify that a document exists, i.e. the document has not been deleted
         try {
-            Mode newMode;
-            if (branchIdModel.isDefined()){
-                newMode = getMode(handle, branchIdModel.getBranchId());
-            }
-            else{
-                newMode = getMode(handle, MASTER_BRANCH_ID);
-            }
+            final Mode newMode = getMode(handle, branchIdModel.getBranchId());
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {
