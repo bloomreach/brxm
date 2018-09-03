@@ -30,8 +30,8 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
 
-    this.beforeChangeListeners = [];
-    this.afterChangeListeners = [];
+    this.beforeChangeListeners = new Map();
+    this.afterChangeListeners = new Map();
     this.projects = [];
     this.masterId = 'master';
 
@@ -58,12 +58,12 @@ class ProjectService {
     return this.$q.resolve();
   }
 
-  beforeChange(cb) {
-    this.beforeChangeListeners.push(cb);
+  beforeChange(id, cb) {
+    this.beforeChangeListeners.set(id, cb);
   }
 
-  afterChange(cb) {
-    this.afterChangeListeners.push(cb);
+  afterChange(id, cb) {
+    this.afterChangeListeners.set(id, cb);
   }
 
   associateWithProject(documentId) {
@@ -85,7 +85,9 @@ class ProjectService {
   }
 
   _callListeners(listeners) {
-    const promises = listeners.map(listener => listener());
+    const promises = Array.from(listeners.values())
+      .map(listener => listener());
+
     return this.$q.all(promises);
   }
 

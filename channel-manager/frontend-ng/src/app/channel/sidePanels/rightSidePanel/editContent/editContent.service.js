@@ -51,7 +51,7 @@ class EditContentService {
       this._stopEditingDocument(documentId);
     });
 
-    ProjectService.beforeChange(() => this._beforeSwitchProject());
+    ProjectService.beforeChange('editContent', () => this._beforeSwitchProject());
   }
 
   _isEditingDocument() {

@@ -45,7 +45,7 @@ class HippoIframeService {
 
     // Reloads the current page when the project changes so new data will be shown.
     // When another project became active the page reload will trigger a channel switch.
-    this.ProjectService.afterChange(() => this.reload());
+    this.ProjectService.afterChange('iframeReload', () => this.reload());
   }
 
   initializePath(channelRelativePath) {
