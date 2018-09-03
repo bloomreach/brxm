@@ -67,13 +67,13 @@ class ChannelService {
             .then(() => this._setChannel(previewChannel)),
           ),
         )
-        .catch(() => {
+        .catch((error) => {
           if (this.hasChannel()) {
             // restore the session for the previous channel, but still reject the promise chain
-            this.SessionService.initialize(this.channel)
-              .then(() => this.$q.reject());
+            return this.SessionService.initialize(this.channel)
+              .then(() => this.$q.reject(error));
           }
-          return this.$q.reject();
+          return this.$q.reject(error);
         }),
       );
   }
