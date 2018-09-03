@@ -73,9 +73,9 @@ class ComponentEditorService {
       }
     });
 
-    return Array.from(groups).map((group) => ({
+    return Array.from(groups).map(group => ({
       label: group[0],
-      fields: group[1]
+      fields: group[1],
     }));
   }
 
