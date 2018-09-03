@@ -34,8 +34,16 @@ class ComponentEditorService {
       .catch(response => this._onLoadFailure(response));
   }
 
+  getTemplateChooser() {
+    return this.templateProperty;
+  }
+
   getPropertyGroups() {
     return this.propertyGroups;
+  }
+
+  getProperties() {
+    return this.singleProperties;
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
@@ -65,13 +73,27 @@ class ComponentEditorService {
       if (property.hiddenInChannelManager) {
         return;
       }
-      const thisGroupLabel = property.groupLabel || defaultGroupTitle;
+      let thisGroupLabel = property.groupLabel;
+      if (thisGroupLabel === '') {
+        thisGroupLabel = defaultGroupTitle;
+      }
       if (groups.has(thisGroupLabel)) {
         groups.get(thisGroupLabel).push(property);
       } else {
         groups.set(thisGroupLabel, [property]);
       }
     });
+
+    const firstGroup = groups.entries().next();
+    if (firstGroup.value[1][0].name === 'org.hippoecm.hst.core.component.template') {
+      this.templateProperty = [firstGroup.value[1][0]];
+      groups.delete(firstGroup.value[0]);
+    }
+
+    if (groups.has(null)) {
+      this.singleProperties = groups.get(null);
+      groups.delete(null);
+    }
 
     return Array.from(groups).map(group => ({
       label: group[0],
@@ -114,6 +136,8 @@ class ComponentEditorService {
     delete this.container;
     delete this.page;
     delete this.properties;
+    delete this.templateProperty;
+    delete this.singleProperties;
     delete this.dataDirty;
   }
 }
