@@ -23,11 +23,11 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-public class TemplateQueryUtils {
+public class DocumentTemplateQueryUtils {
 
-    static NodeIterator executeQuery(final Session session, final Node templateQueryNode) throws RepositoryException {
-        final String statement = templateQueryNode.getProperty("jcr:statement").getString();
-        final String language =  templateQueryNode.getProperty("jcr:language").getString();
+    static NodeIterator executeQuery(final Session session, final Node documentTemplateQueryNode) throws RepositoryException {
+        final String statement = documentTemplateQueryNode.getProperty("jcr:statement").getString();
+        final String language =  documentTemplateQueryNode.getProperty("jcr:language").getString();
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery(statement, language);
         final QueryResult queryResult = query.execute();

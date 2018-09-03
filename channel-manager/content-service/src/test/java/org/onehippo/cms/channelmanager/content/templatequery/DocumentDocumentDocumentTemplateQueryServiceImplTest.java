@@ -56,12 +56,12 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({TemplateQueryServiceImpl.class, TemplateQueryUtils.class, LocalizationUtils.class})
-public class TemplateQueryServiceImplTest {
+@PrepareForTest({DocumentTemplateQueryServiceImpl.class, DocumentTemplateQueryUtils.class, LocalizationUtils.class})
+public class DocumentDocumentDocumentTemplateQueryServiceImplTest {
 
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
 
-    private final TemplateQueryService templateQueryService = TemplateQueryService.get();
+    private final DocumentTemplateQueryService documentTemplateQueryService = DocumentTemplateQueryService.get();
     private MockNode root;
 
     @Before
@@ -69,7 +69,7 @@ public class TemplateQueryServiceImplTest {
         root = MockNode.root();
 
         PowerMock.mockStatic(LocalizationUtils.class);
-        PowerMock.mockStatic(TemplateQueryUtils.class);
+        PowerMock.mockStatic(DocumentTemplateQueryUtils.class);
     }
 
     @Test
@@ -79,10 +79,10 @@ public class TemplateQueryServiceImplTest {
         final Locale locale = new Locale("en");
 
         try {
-            templateQueryService.getTemplateQuery(id, session, locale);
+            documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (InternalServerErrorException e) {
-            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "templateQuery", "new-document");
+            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "documentTemplateQuery", "new-document");
         }
     }
 
@@ -97,10 +97,10 @@ public class TemplateQueryServiceImplTest {
         replayAll(session);
 
         try {
-            templateQueryService.getTemplateQuery(id, session, locale);
+            documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (InternalServerErrorException e) {
-            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "templateQuery", "new-document");
+            assertErrorPayload(e, TEMPLATE_QUERY_NOT_FOUND, "documentTemplateQuery", "new-document");
         }
 
         verifyAll();
@@ -117,10 +117,10 @@ public class TemplateQueryServiceImplTest {
         replayAll(session);
 
         try {
-            templateQueryService.getTemplateQuery(id, session, locale);
+            documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
             fail("No exception");
         } catch (final InternalServerErrorException e) {
-            assertErrorPayload(e, INVALID_TEMPLATE_QUERY, "templateQuery", "new-document");
+            assertErrorPayload(e, INVALID_TEMPLATE_QUERY, "documentTemplateQuery", "new-document");
         }
 
         verifyAll();
@@ -144,8 +144,8 @@ public class TemplateQueryServiceImplTest {
 
         replayAll(session);
 
-        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
-        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        final DocumentTemplateQuery documentTemplateQuery = documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = documentTemplateQuery.getDocumentTypes();
         assertEquals(2, documentTypes.size());
 
         final DocumentTypeInfo info1 = documentTypes.get(0);
@@ -177,8 +177,8 @@ public class TemplateQueryServiceImplTest {
 
         replayAll(session);
 
-        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
-        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        final DocumentTemplateQuery documentTemplateQuery = documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = documentTemplateQuery.getDocumentTypes();
         assertEquals(2, documentTypes.size());
 
         final DocumentTypeInfo info1 = documentTypes.get(0);
@@ -206,8 +206,8 @@ public class TemplateQueryServiceImplTest {
         expectTemplateQuery(session, id).andReturn(mockNodes);
 
         replayAll(session);
-        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
-        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        final DocumentTemplateQuery documentTemplateQuery = documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = documentTemplateQuery.getDocumentTypes();
         assertTrue(documentTypes.isEmpty());
 
         verifyAll();
@@ -223,8 +223,8 @@ public class TemplateQueryServiceImplTest {
 
         replayAll(session);
 
-        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
-        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        final DocumentTemplateQuery documentTemplateQuery = documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = documentTemplateQuery.getDocumentTypes();
         assertEquals(3, documentTypes.size());
 
         assertEquals("peach", documentTypes.get(0).getDisplayName());
@@ -248,8 +248,8 @@ public class TemplateQueryServiceImplTest {
 
         replayAll(session);
 
-        final TemplateQuery templateQuery = templateQueryService.getTemplateQuery(id, session, locale);
-        final List<DocumentTypeInfo> documentTypes = templateQuery.getDocumentTypes();
+        final DocumentTemplateQuery documentTemplateQuery = documentTemplateQueryService.getDocumentTemplateQuery(id, session, locale);
+        final List<DocumentTypeInfo> documentTypes = documentTemplateQuery.getDocumentTypes();
         assertEquals(3, documentTypes.size());
 
         assertEquals("peach", documentTypes.get(0).getDisplayName());
@@ -284,19 +284,19 @@ public class TemplateQueryServiceImplTest {
 
     private static MockNode expectTemplateQueryNode(final Session session, final String nodeName, final String nodeType)
             throws RepositoryException {
-        final String templateQueryPath = TEMPLATES_PATH + "/" + nodeName;
-        final MockNode templateQueryNode = new MockNode(nodeName, nodeType);
+        final String documentTemplateQueryPath = TEMPLATES_PATH + "/" + nodeName;
+        final MockNode documentTemplateQueryNode = new MockNode(nodeName, nodeType);
 
-        expect(session.nodeExists(templateQueryPath)).andReturn(true);
-        expect(session.getNode(templateQueryPath)).andReturn(templateQueryNode);
+        expect(session.nodeExists(documentTemplateQueryPath)).andReturn(true);
+        expect(session.getNode(documentTemplateQueryPath)).andReturn(documentTemplateQueryNode);
 
-        return templateQueryNode;
+        return documentTemplateQueryNode;
     }
 
     private static IExpectationSetters<NodeIterator> expectTemplateQuery(final Session session, final String nodeName)
             throws RepositoryException {
-        final Node templateQueryNode = expectTemplateQueryNode(session, nodeName, "nt:query");
-        return expect(TemplateQueryUtils.executeQuery(session, templateQueryNode));
+        final Node documentTemplateQueryNode = expectTemplateQueryNode(session, nodeName, "nt:query");
+        return expect(DocumentTemplateQueryUtils.executeQuery(session, documentTemplateQueryNode));
     }
 
     private static void expectLocalizedDisplayName(final Locale locale, final String nodeName,

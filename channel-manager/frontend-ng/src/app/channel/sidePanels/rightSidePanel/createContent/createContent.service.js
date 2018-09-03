@@ -81,10 +81,10 @@ class CreateContentService {
   }
 
   _validateStep1(config) {
-    if (config && config.templateQuery) {
+    if (config && config.documentTemplateQuery) {
       return true;
     }
-    this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+    this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
     return false;
   }
 
@@ -109,7 +109,7 @@ class CreateContentService {
 
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
-    return this.Step1Service.open(config.templateQuery, config.rootPath, config.defaultPath)
+    return this.Step1Service.open(config.documentTemplateQuery, config.rootPath, config.defaultPath)
       .then(() => {
         this.RightSidePanelService.stopLoading();
       });

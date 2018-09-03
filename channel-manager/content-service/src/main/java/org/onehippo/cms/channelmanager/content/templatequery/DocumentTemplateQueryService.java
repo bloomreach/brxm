@@ -21,11 +21,11 @@ import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
-public interface TemplateQueryService {
+public interface DocumentTemplateQueryService {
 
-    static TemplateQueryService get() {
-        return TemplateQueryServiceImpl.getInstance();
+    static DocumentTemplateQueryService get() {
+        return DocumentTemplateQueryServiceImpl.getInstance();
     }
 
-    TemplateQuery getTemplateQuery(String id, Session session, Locale locale) throws ErrorWithPayloadException;
+    DocumentTemplateQuery getDocumentTemplateQuery(String id, Session session, Locale locale) throws ErrorWithPayloadException;
 }

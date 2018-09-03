@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 
-public class TemplateQuery {
+public class DocumentTemplateQuery {
 
     private final List<DocumentTypeInfo> documentTypes;
 
-    public TemplateQuery(final List<DocumentTypeInfo> documentTypes) {
+    public DocumentTemplateQuery(final List<DocumentTypeInfo> documentTypes) {
         this.documentTypes= documentTypes;
     }
 
