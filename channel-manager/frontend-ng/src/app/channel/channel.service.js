@@ -128,6 +128,7 @@ class ChannelService {
 
   clearChannel() {
     this.channel = {};
+    this.ProjectService.afterChangeListeners.delete('iframeReload');
 
     if (!this.isToolbarDisplayed) {
       this.setToolbarDisplayed(true);

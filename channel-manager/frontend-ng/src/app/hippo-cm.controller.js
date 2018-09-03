@@ -51,6 +51,7 @@ class HippoCmCtrl {
     this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
       this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, branchId, initialPath));
     });
+
     this.CmsService.subscribe('reload-channel', () => {
       this.$rootScope.$apply(() => this._reloadChannel());
     });
