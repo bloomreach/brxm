@@ -15,15 +15,30 @@
  */
 
 describe('EditComponentToolsCtrl', () => {
-  // let $q;
-  // let $rootScope;
-  // let CmsService;
-  // let ComponentEditor;
-  // let EditComponentService;
-  //
-  // let $ctrl;
-  //
-  // beforeEach(() => {
-  //   angular.mock.module('hippo-cm');
-  // });
+  let $rootScope;
+  let EditComponentService;
+
+  let $ctrl;
+
+  beforeEach(() => {
+    angular.mock.module('hippo-cm');
+
+    inject(($controller, _$q_, _$rootScope_) => {
+      $rootScope = _$rootScope_;
+
+      EditComponentService = jasmine.createSpyObj('EditComponentService', ['stopEditing']);
+
+      const $scope = $rootScope.$new();
+      $ctrl = $controller('editComponentToolsCtrl', {
+        $scope,
+        EditComponentService,
+      });
+    });
+  });
+
+  it('stops editing when closed', () => {
+    $ctrl.close();
+
+    expect(EditComponentService.stopEditing).toHaveBeenCalled();
+  });
 });

@@ -254,29 +254,30 @@ class PageStructureService {
       return;
     }
 
+    const channel = this.ChannelService.getChannel();
+    const properties = {
+      channel: {
+        contextPath: channel.contextPath,
+        mountId: channel.mountId,
+      },
+      component: {
+        id: componentElement.getId(),
+        label: componentElement.getLabel(),
+        lastModified: componentElement.getLastModified(),
+        variant: componentElement.getRenderVariant(),
+      },
+      container: {
+        isDisabled: componentElement.container.isDisabled(),
+        isInherited: componentElement.container.isInherited(),
+      },
+      page: this.PageMetaDataService.get(),
+    };
+
     if (this.ConfigService.relevancePresent) {
       this.MaskService.mask();
-
-      const channel = this.ChannelService.getChannel();
-
-      this.CmsService.publish('show-component-properties', {
-        channel: {
-          contextPath: channel.contextPath,
-          mountId: channel.mountId,
-        },
-        component: {
-          id: componentElement.getId(),
-          label: componentElement.getLabel(),
-          lastModified: componentElement.getLastModified(),
-        },
-        container: {
-          isDisabled: componentElement.container.isDisabled(),
-          isInherited: componentElement.container.isInherited(),
-        },
-        page: this.PageMetaDataService.get(),
-      });
+      this.CmsService.publish('show-component-properties', properties);
     } else {
-      this.EditComponentService.startEditing(componentElement.getId());
+      this.EditComponentService.startEditing(properties);
       this.CmsService.reportUsageStatistic('CMSChannelsEditComponent');
     }
   }

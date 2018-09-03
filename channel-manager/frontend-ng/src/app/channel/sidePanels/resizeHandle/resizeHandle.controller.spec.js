@@ -17,6 +17,7 @@
 describe('resizeHandle component', () => {
   let $componentController;
   let $ctrl;
+  let $window;
 
   let mockHandleElement;
   let mockSidePanelElement;
@@ -30,8 +31,9 @@ describe('resizeHandle component', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_) => {
+    inject((_$componentController_, _$window_) => {
       $componentController = _$componentController_;
+      $window = _$window_;
     });
 
     jasmine.getFixtures().load('channel/sidePanels/resizeHandle/resizeHandle.controller.fixture.html');
@@ -184,6 +186,19 @@ describe('resizeHandle component', () => {
 
       const events = $._data(mask[0], 'events');
       expect(events).toBeUndefined();
+    });
+
+    it('triggers a window resize event', () => {
+      spyOn($window, 'dispatchEvent');
+      const resizeEvent = new Event('resize');
+
+      mockHandleElement.trigger('mousedown');
+      const mask = $('.resize-handle-mask');
+      mask.trigger('mouseup');
+
+      const mostRecentEvent = $window.dispatchEvent.calls.mostRecent().args[0];
+      expect(mostRecentEvent).toEqual(resizeEvent);
+      expect(mostRecentEvent.type).toEqual(resizeEvent.type);
     });
   });
 

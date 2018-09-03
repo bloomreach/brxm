@@ -15,10 +15,11 @@
  */
 
 class resizeHandleController {
-  constructor($element) {
+  constructor($element, $window) {
     'ngInject';
 
     this.handle = $element;
+    this.$window = $window;
   }
 
   $onInit() {
@@ -53,6 +54,8 @@ class resizeHandleController {
         mask.off('mousemove');
         mask.off('mouseup');
         mask.remove();
+        // Trigger hiding/showing pagination handles of md-tabs
+        this.$window.dispatchEvent(new Event('resize'));
       });
 
       mask.show();

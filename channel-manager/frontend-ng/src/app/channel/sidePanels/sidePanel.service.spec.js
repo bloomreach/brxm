@@ -18,6 +18,8 @@ describe('SidePanelService', () => {
   let $mdSidenav;
   let $q;
   let $rootScope;
+  let $timeout;
+  let $window;
   let ChannelService;
   let CmsService;
   let HippoIframeService;
@@ -42,9 +44,11 @@ describe('SidePanelService', () => {
       $provide.value('HippoIframeService', HippoIframeService);
     });
 
-    inject((_$q_, _$rootScope_, _ChannelService_, _CmsService_, _SidePanelService_) => {
+    inject((_$q_, _$rootScope_, _$timeout_, _$window_, _ChannelService_, _CmsService_, _SidePanelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
+      $window = _$window_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       SidePanelService = _SidePanelService_;
@@ -171,8 +175,8 @@ describe('SidePanelService', () => {
     expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
   });
 
-  describe('side-panel full-screen behavior', () => {
-    it('does not throw an error and returns falsy if side-panel has not been initialized yet', () => {
+  describe('un-initialized side-panel full-screen behavior', () => {
+    it('does not throw an error and returns falsy', () => {
       try {
         expect(SidePanelService.isFullScreen('left')).toBeFalsy();
         SidePanelService.setFullScreen('left', true);
@@ -181,10 +185,14 @@ describe('SidePanelService', () => {
         fail(e);
       }
     });
+  });
+
+  describe('side-panel full-screen behavior', () => {
+    beforeEach(() => {
+      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    });
 
     it('stores the full-screen state of the side-panels', () => {
-      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
-
       SidePanelService.setFullScreen('left', true);
       expect(SidePanelService.isFullScreen('left')).toBe(true);
 
@@ -195,7 +203,6 @@ describe('SidePanelService', () => {
     it('reports usage statistics when a side-panel goes fullscreen', () => {
       spyOn(CmsService, 'reportUsageStatistic');
 
-      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
       SidePanelService.setFullScreen('left', true);
 
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen', { side: 'left' });
@@ -209,7 +216,6 @@ describe('SidePanelService', () => {
     it('hides the toolbar when going fullscreen', () => {
       spyOn(ChannelService, 'setToolbarDisplayed');
 
-      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
       SidePanelService.setFullScreen('left', true);
 
       expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(false);
@@ -220,10 +226,32 @@ describe('SidePanelService', () => {
     });
 
     it('locks the hippo-iframe width when going fullscreen', () => {
-      SidePanelService.initialize('left', sidePanelElement, sideNavElement);
       SidePanelService.setFullScreen('left', true);
 
       expect(HippoIframeService.lockWidth).toHaveBeenCalled();
+    });
+
+    describe('updating the UI of the tabs after the full-screen/normal-screen animation finishes', () => {
+      const resizeEvent = new Event('resize');
+      beforeEach(() => spyOn($window, 'dispatchEvent'));
+
+      it('triggers a window resize event after the full-screen animation finishes', () => {
+        SidePanelService.setFullScreen('left', true);
+        $timeout.flush();
+
+        const mostRecentEvent = $window.dispatchEvent.calls.mostRecent().args[0];
+        expect(mostRecentEvent).toEqual(resizeEvent);
+        expect(mostRecentEvent.type).toEqual(resizeEvent.type);
+      });
+
+      it('triggers a window resize event after the normal-screen animation finishes', () => {
+        SidePanelService.setFullScreen('left', false);
+        $timeout.flush();
+
+        const mostRecentEvent = $window.dispatchEvent.calls.mostRecent().args[0];
+        expect(mostRecentEvent).toEqual(resizeEvent);
+        expect(mostRecentEvent.type).toEqual(resizeEvent.type);
+      });
     });
   });
 });

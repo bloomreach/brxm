@@ -23,7 +23,7 @@ function config($stateProvider) {
   $stateProvider.state({
     name: 'hippo-cm.channel.edit-component',
     params: {
-      componentId: '',
+      properties: {},
     },
     views: {
       main: {

@@ -48,10 +48,10 @@ right-side-panel {
     display: flex;
   }
 
-  .text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .right-side-panel-context {
+    color: $text-dim;
+    font-size: 12px;
+    font-weight: normal;
   }
 }
 
@@ -68,6 +68,10 @@ right-side-panel {
 
     &:last-child {
       border-top: 1px solid $grey-200;
+    }
+
+    md-icon {
+      color: $text-dim;
     }
 
     md-icon[md-svg-icon] {
