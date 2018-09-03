@@ -17,8 +17,32 @@
      ng-repeat="componentField in $ctrl.fields track by $index"
      ng-switch="::componentField.type">
 
+  <div ng-switch-when="textfield">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
+  <div ng-switch-when="checkbox">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
+  <div ng-switch-when="numberfield">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
+  <div ng-switch-when="combo">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
+  <div ng-switch-when="datefield">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
+  <div ng-switch-when="linkpicker">
+    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+  </div>
+
   <div ng-switch-default>
-    {{componentField.name}} - type to be implemented: {{ ::componentField.type }}
+    {{componentField.name}} - UNKNOWN TYPE: {{ ::componentField.type }}
   </div>
   
 </div>
