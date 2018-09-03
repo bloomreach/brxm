@@ -98,11 +98,7 @@ class ProjectService {
 
   _selectProject(projectId) {
     this.selectedProject = this.projects.find(project => project.id === projectId);
-    return this._setProjectInHST();
-  }
-
-  _setProjectInHST() {
-    return this._activateProject(this.selectedProject.id);
+    return this._setProjectInHST(this.selectedProject.id);
   }
 
   isContentOverlayEnabled() {
@@ -188,7 +184,7 @@ class ProjectService {
       });
   }
 
-  _activateProject(projectId) {
+  _setProjectInHST(projectId) {
     if (projectId === this.masterId) {
       return this._activateCore();
     }
