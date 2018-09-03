@@ -142,14 +142,14 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
 
       expect(ComponentEditor.getPropertyGroups()[0].label).toBe('DEFAULT_PROPERTY_GROUP_TITLE');
-      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(2);
+      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(1);
     });
 
     it('puts all the fields with the same label in one group', () => {
       const properties = [
         { groupLabel: '' },
         { groupLabel: 'Group' },
-        { groupLabel: null },
+        { groupLabel: '' },
         { groupLabel: 'Group' },
       ];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
@@ -158,6 +158,37 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
 
       expect(ComponentEditor.getPropertyGroups().length).toBe(2);
+      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(2);
+      expect(ComponentEditor.getPropertyGroups()[1].fields.length).toBe(2);
+    });
+
+    it('does not treat the template chooser as a property group and returns it from its own getter', () => {
+      const properties = [
+        { name: 'org.hippoecm.hst.core.component.template' },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups().length).toBe(0);
+      expect(ComponentEditor.getTemplateChooser().length).toBe(1);
+    });
+
+    it('does return properties with a null group label as single properties', () => {
+      const properties = [
+        { groupLabel: null },
+        { groupLabel: 'Group' },
+        { groupLabel: 'Group2' },
+        { groupLabel: null },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups().length).toBe(2);
+      expect(ComponentEditor.getProperties().length).toBe(2);
     });
   });
 });

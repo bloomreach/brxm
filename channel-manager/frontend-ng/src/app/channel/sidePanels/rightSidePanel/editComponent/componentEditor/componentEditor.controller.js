@@ -37,6 +37,14 @@ class ComponentEditorCtrl {
   getPropertyGroups() {
     return this.ComponentEditor.getPropertyGroups();
   }
+
+  getTemplateChooser() {
+    return this.ComponentEditor.getTemplateChooser();
+  }
+
+  getProperties() {
+    return this.ComponentEditor.getProperties();
+  }
 }
 
 export default ComponentEditorCtrl;
