@@ -55,43 +55,28 @@ class ComponentEditorService {
   }
 
   _groupProperties(properties) {
-    const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
-    const groups = [];
     if (!properties[0]) {
-      return groups;
+      return [];
     }
-    let currentGroup = {};
-    let currentGroupLabel = properties[0].groupLabel || defaultGroupTitle;
-    let currentGroupFields = [];
 
-    // TODO: do not add empty groups
-    // TODO: use default group name if name is blank
-
+    const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
+    const groups = new Map();
     properties.forEach((property) => {
       if (property.hiddenInChannelManager) {
         return;
       }
       const thisGroupLabel = property.groupLabel || defaultGroupTitle;
-      if (thisGroupLabel !== currentGroupLabel) {
-        // store current group
-        // TODO: deal with duplicate group names
-        currentGroup.label = currentGroupLabel;
-        currentGroup.fields = currentGroupFields;
-        groups.push(currentGroup);
-        // clean up for next group
-        currentGroup = {};
-        currentGroupFields = [];
-        currentGroupLabel = thisGroupLabel;
+      if (groups.has(thisGroupLabel)) {
+        groups.get(thisGroupLabel).push(property);
+      } else {
+        groups.set(thisGroupLabel, [property]);
       }
-      currentGroupFields.push(property);
     });
 
-    // store last group
-    currentGroup.label = currentGroupLabel;
-    currentGroup.fields = currentGroupFields;
-    groups.push(currentGroup);
-
-    return groups;
+    return Array.from(groups).map((group) => ({
+      label: group[0],
+      fields: group[1]
+    }));
   }
 
   _onLoadFailure(response) {
