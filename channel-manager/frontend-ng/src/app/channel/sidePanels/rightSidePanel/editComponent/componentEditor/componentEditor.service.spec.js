@@ -90,4 +90,72 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.getComponentName()).toBeUndefined();
     });
   });
+
+  describe('ordering properties into groups', () => {
+    it('does not create a group when there are no properties', () => {
+      const properties = [];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups().length).toBe(0);
+    });
+
+    it('does not include a property that must be hidden', () => {
+      const properties = [
+        { name: 'hidden', hiddenInChannelManager: true },
+        { name: 'visible', hiddenInChannelManager: false },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(1);
+      expect(ComponentEditor.getPropertyGroups()[0].fields[0].name).toBe('visible');
+    });
+
+    it('does not create a group if it only has hidden properties', () => {
+      const properties = [
+        { groupLabel: 'Group', hiddenInChannelManager: true },
+        { groupLabel: 'Group', hiddenInChannelManager: true },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups().length).toBe(0);
+    });
+
+    it('uses the default group label for properties without label', () => {
+      const properties = [
+        { groupLabel: '' },
+        { groupLabel: null },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups()[0].label).toBe('DEFAULT_PROPERTY_GROUP_TITLE');
+      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(2);
+    });
+
+    it('puts all the fields with the same label in one group', () => {
+      const properties = [
+        { groupLabel: '' },
+        { groupLabel: 'Group' },
+        { groupLabel: null },
+        { groupLabel: 'Group' },
+      ];
+      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(ComponentEditor.getPropertyGroups().length).toBe(2);
+    });
+  });
 });
