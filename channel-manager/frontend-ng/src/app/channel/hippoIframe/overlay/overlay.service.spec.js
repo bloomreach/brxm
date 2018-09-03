@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-describe('OverlayService', () => {
+fdescribe('OverlayService', () => {
   let $iframe;
   let $q;
   let $rootScope;
@@ -558,7 +558,7 @@ describe('OverlayService', () => {
       createContentButton.click();
 
       const config = CreateContentService.start.calls.mostRecent().args[0];
-      expect(config.templateQuery).toBe('manage-content-template-query');
+      expect(config.documentTemplateQuery).toBe('manage-content-document-template-query');
 
       done();
     });
@@ -699,7 +699,7 @@ describe('OverlayService', () => {
     it('returns correct configuration out of config object', () => {
       const config = { // each property should be filled with the method that will extract the data from the HST comment
         documentUuid: true,
-        templateQuery: true,
+        documentTemplateQuery: true,
         parameterName: true,
       };
       const buttons = OverlayService._getButtons(config);
@@ -709,7 +709,7 @@ describe('OverlayService', () => {
     });
 
     describe('_initManageContentConfig', () => {
-      function mockManageContentConfig(uuid = false, templateQuery = false, parameterName = false, locked = false) {
+      function mockManageContentConfig(uuid = false, documentTemplateQuery = false, parameterName = false, locked = false) {
         const enclosing = {
           isLocked: () => locked,
         };
@@ -720,7 +720,7 @@ describe('OverlayService', () => {
           getParameterValue: () => null,
           getPickerConfig: () => null,
           getRootPath: () => null,
-          getTemplateQuery: () => templateQuery,
+          getDocumentTemplateQuery: () => documentTemplateQuery,
           getUuid: () => uuid,
           isParameterValueRelativePath: () => false,
         };
@@ -730,7 +730,7 @@ describe('OverlayService', () => {
       it('does not filter out config properties when channel is editable', () => {
         const config = mockManageContentConfig(true, true, true);
         expect(config.documentUuid).toBe(true);
-        expect(config.templateQuery).toBe(true);
+        expect(config.documentTemplateQuery).toBe(true);
         expect(config.parameterName).toBe(true);
       });
 
@@ -744,12 +744,12 @@ describe('OverlayService', () => {
           expect(config.parameterName).not.toBeDefined();
         });
 
-        it('filters out property templateQuery when documentUuid is set', () => {
+        it('filters out property documentTemplateQuery when documentUuid is set', () => {
           let config = mockManageContentConfig(false, true);
-          expect(config.templateQuery).toBeDefined();
+          expect(config.documentTemplateQuery).toBeDefined();
 
           config = mockManageContentConfig(true, true);
-          expect(config.templateQuery).not.toBeDefined();
+          expect(config.documentTemplateQuery).not.toBeDefined();
         });
 
         it('filters all properties when parameterName is set but documentId is not', () => {
@@ -757,9 +757,9 @@ describe('OverlayService', () => {
           expect(config).toEqual({});
         });
 
-        it('does not filter templateQuery when parameterName and documentId are not set', () => {
+        it('does not filter documentTemplateQuery when parameterName and documentId are not set', () => {
           const config = mockManageContentConfig(false, true);
-          expect(config.templateQuery).toBe(true);
+          expect(config.documentTemplateQuery).toBe(true);
         });
       });
     });
@@ -984,7 +984,7 @@ describe('OverlayService', () => {
       it('Scenario 1', () => {
         const config = {
           documentUuid: true,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: false,
         };
 
@@ -996,7 +996,7 @@ describe('OverlayService', () => {
       it('Scenario 2', () => {
         const config = {
           documentUuid: false,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: false,
         };
 
@@ -1008,7 +1008,7 @@ describe('OverlayService', () => {
       it('Scenario 3', () => {
         const config = {
           documentUuid: true,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: false,
         };
 
@@ -1021,7 +1021,7 @@ describe('OverlayService', () => {
       it('Scenario 4', () => {
         const config = {
           documentUuid: true,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: true,
         };
 
@@ -1034,7 +1034,7 @@ describe('OverlayService', () => {
       it('Scenario 5', () => {
         const config = {
           documentUuid: false,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: true,
         };
 
@@ -1047,7 +1047,7 @@ describe('OverlayService', () => {
       it('Scenario 6', () => {
         const config = {
           documentUuid: true,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: true,
         };
 
@@ -1061,7 +1061,7 @@ describe('OverlayService', () => {
       it('Scenario 7', () => {
         const config = {
           documentUuid: false,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: true,
         };
 

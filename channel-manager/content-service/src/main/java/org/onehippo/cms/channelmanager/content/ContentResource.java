@@ -25,7 +25,6 @@ import java.util.function.Function;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -48,7 +47,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
-import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
+import org.onehippo.cms.channelmanager.content.templatequery.DocumentTemplateQueryService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
@@ -138,10 +137,10 @@ public class ContentResource {
     }
 
     @GET
-    @Path("templatequery/{documentId}")
-    public Response getTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documenttemplatequery/{documentId}")
+    public Response getDocumentTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
+                (session, locale) -> DocumentTemplateQueryService.get().getDocumentTemplateQuery(id, session, locale));
     }
 
     @GET

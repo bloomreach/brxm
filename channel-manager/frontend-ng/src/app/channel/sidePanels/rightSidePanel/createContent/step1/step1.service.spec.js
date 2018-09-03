@@ -42,7 +42,7 @@ describe('Step1Service', () => {
     expect(Step1Service.url).toBeUndefined();
     expect(Step1Service.locale).toBeUndefined();
     expect(Step1Service.rootPath).toBeUndefined();
-    expect(Step1Service.templateQuery).toBeUndefined();
+    expect(Step1Service.documentTemplateQuery).toBeUndefined();
   }
 
   beforeEach(() => {
@@ -80,7 +80,7 @@ describe('Step1Service', () => {
     Step1Service.locale = 'locale';
     Step1Service.rootPath = 'rootPath';
     Step1Service.defaultPath = 'defaultPath';
-    Step1Service.templateQuery = 'templateQuery';
+    Step1Service.documentTemplateQuery = 'documentTemplateQuery';
     Step1Service.stop();
     expectReset();
   });
@@ -90,7 +90,7 @@ describe('Step1Service', () => {
       Step1Service.open('tpl-query', '/root/path', 'default/path');
       expect(Step1Service.defaultPath).toBe('default/path');
       expect(Step1Service.rootPath).toBe('/root/path');
-      expect(Step1Service.templateQuery).toBe('tpl-query');
+      expect(Step1Service.documentTemplateQuery).toBe('tpl-query');
     });
 
     it('resets the values before storing new values', () => {
@@ -98,16 +98,16 @@ describe('Step1Service', () => {
       Step1Service.name = 'name';
 
       Step1Service.open('tpl-query2', '/root/path2');
-      expect(Step1Service.templateQuery).toBe('tpl-query2');
+      expect(Step1Service.documentTemplateQuery).toBe('tpl-query2');
       expect(Step1Service.rootPath).toBe('/root/path2');
       expect(Step1Service.defaultPath).toBeUndefined();
       expect(Step1Service.name).toBeUndefined();
     });
 
-    describe('loading document types by template-query', () => {
-      it('executes a backend call to /templatequery/{template-query}', () => {
+    describe('loading document types by document-template-query', () => {
+      it('executes a backend call to /documenttemplatequery/{document-template-query}', () => {
         Step1Service.open('tpl-query');
-        expect(ContentService._send).toHaveBeenCalledWith('GET', ['templatequery', 'tpl-query'], null, true);
+        expect(ContentService._send).toHaveBeenCalledWith('GET', ['documenttemplatequery', 'tpl-query'], null, true);
       });
 
       it('stores the document types returned by the backend', () => {
@@ -166,7 +166,7 @@ describe('Step1Service', () => {
     it('executes a "documents" backend call to create a document', (done) => {
       Step1Service.name = 'test-name';
       Step1Service.url = 'test-url';
-      Step1Service.templateQuery = 'test-tpl-query';
+      Step1Service.documentTemplateQuery = 'test-tpl-query';
       Step1Service.documentType = 'test-doctype';
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
@@ -175,7 +175,7 @@ describe('Step1Service', () => {
       expect(ContentService._send).toHaveBeenCalledWith('POST', ['documents'], {
         name: 'test-name',
         slug: 'test-url',
-        templateQuery: 'test-tpl-query',
+        documentTemplateQuery: 'test-tpl-query',
         documentTypeId: 'test-doctype',
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',

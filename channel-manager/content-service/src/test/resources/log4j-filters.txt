@@ -71,7 +71,7 @@ Failed to determine locale of folder 'null', assuming no locale
 Failed to set display name of node '/test' to 'Test
 Property 'name' cannot be empty
 Property 'slug' cannot be empty
-Property 'templateQuery' cannot be empty
+Property 'documentTemplateQuery' cannot be empty
 Property 'documentTypeId' cannot be empty
 Property 'rootPath' cannot be empty
 Failed to add document 'breaking-news' of type 'project:newsdocument' to folder '/content/documents/channel/news' using template query 'new-news-document'
