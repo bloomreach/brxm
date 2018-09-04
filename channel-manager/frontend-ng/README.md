@@ -43,7 +43,7 @@ Mind that if the Webpack dev server has not been started, users see an empty CM 
 ### Install project dependencies
 Run the commands below in the project root directory.
 
-    npm install
+    npm ci
 
 # Useful commands
 ## When starting gulp tasks through npm
