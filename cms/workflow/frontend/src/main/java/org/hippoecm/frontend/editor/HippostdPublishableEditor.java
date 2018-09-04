@@ -108,9 +108,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
         public WorkflowState(final Node handle, final String branchId) {
             try {
-                if (branchId != null) {
-                    branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
-                }
+                branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
             } catch (WorkflowException e) {
                 log.warn(e.getMessage(), e);
             }
@@ -179,16 +177,13 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         super(manager, context, config, model, getMode(model));
         try {
             branchIdModel = new BranchIdModel(context, model.getObject().getIdentifier());
-            if (!branchIdModel.isDefined()){
-                throw new IllegalStateException("BranchIdModel is undefined, please make sure to initialize the branchIdModel before creating the editor");
-            }
         } catch (RepositoryException e) {
             log.warn(e.getMessage(), e);
         }
     }
 
     static Mode getMode(final IModel<Node> nodeModel) throws EditorException {
-        return getMode(nodeModel, null);
+        return getMode(nodeModel, MASTER_BRANCH_ID);
     }
 
     static Mode getMode(final IModel<Node> nodeModel, final String branchId) throws EditorException {
@@ -285,7 +280,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException ex) {
             throw new EditorException("Error locating editor model", ex);
         }
-        final WorkflowState state = getWorkflowState(node, branchIdModel==null?null:branchIdModel.getBranchId());
+        final WorkflowState state = getWorkflowState(node, branchIdModel.getBranchId());
         switch (getMode()) {
             case EDIT:
                 if (state.draft == null || !state.isHolder) {
@@ -337,12 +332,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         } catch (final RepositoryException ex) {
             throw new EditorException("Error locating base revision", ex);
         }
-
-        String branchId = null;
-        if (branchIdModel != null) {
-            branchId = branchIdModel.getBranchId();
-        }
-        final WorkflowState state = getWorkflowState(node, branchId);
+        final WorkflowState state = getWorkflowState(node, branchIdModel.getBranchId());
         if (getMode() == Mode.EDIT) {
             throw new EditorException("Base model is not supported in edit mode");
         } else {
@@ -396,20 +386,14 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
     }
 
-
-    public void setBranchIdModel(final BranchIdModel branchIdModel) {
-        this.branchIdModel = branchIdModel;
-    }
-
     private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
         if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
-            String branchId = branchIdModel != null ? branchIdModel.getBranchId() : MASTER_BRANCH_ID;
+            String branchId = branchIdModel.getBranchId();
             switch (mode) {
                 case EDIT:
                     if (isFalse((Boolean) workflow.hints(branchId).get("obtainEditableInstance"))) {
                         return false;
                     }
-
                     workflow.obtainEditableInstance(branchId);
                     break;
                 case VIEW:
@@ -440,8 +424,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 return session.pendingChanges(documentNode, JcrConstants.NT_BASE, true).hasNext();
             } else {
                 final EditableWorkflow workflow = getEditableWorkflow();
-                String branchId = branchIdModel.getBranchId();
-                final Map<String, Serializable> hints = workflow.hints(branchId);
+                final Map<String, Serializable> hints = workflow.hints(branchIdModel.getBranchId());
                 if (Boolean.TRUE.equals(hints.get("checkModified"))) {
                     modified = workflow.isModified();
                     return modified;
@@ -505,11 +488,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 final EditableWorkflow workflow = getEditableWorkflow();
                 workflow.commitEditableInstance();
                 session.getJcrSession().refresh(true);
-                if (branchIdModel != null) {
-                    workflow.obtainEditableInstance(branchIdModel.getBranchId());
-                } else {
-                    workflow.obtainEditableInstance();
-                }
+                workflow.obtainEditableInstance(branchIdModel.getBranchId());
                 modified = false;
             } else {
                 throw new EditorException("The document is not valid");
