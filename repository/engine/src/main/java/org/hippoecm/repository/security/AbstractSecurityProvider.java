@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
+import org.hippoecm.repository.security.user.HippoUserManager;
 
 public abstract class AbstractSecurityProvider implements SecurityProvider {
 
@@ -52,6 +53,27 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
 
     public GroupManager getGroupManager(Session session) throws RepositoryException {
         return groupManager;
+    }
+
+    public void synchronizeOnLogin(String userId) throws RepositoryException {
+        // The sync blocks are synchronized because the underlying
+        // methods can share the same jcr session and the jcr session is
+        // not thread safe. This is a "best effort" solution as the usrMgr
+        // and the groupMgr could also share the same session but generally
+        // do not operate on the same nodes.
+
+        HippoUserManager userMgr = (HippoUserManager) getUserManager();
+        synchronized(userMgr) {
+            userMgr.syncUserInfo(userId);
+            userMgr.updateLastLogin(userId);
+            userMgr.saveUsers();
+        }
+
+        GroupManager groupMgr = getGroupManager();
+        synchronized(groupMgr) {
+            groupMgr.syncMemberships(userMgr.getUser(userId));
+            groupMgr.saveGroups();
+        }
     }
 
 }

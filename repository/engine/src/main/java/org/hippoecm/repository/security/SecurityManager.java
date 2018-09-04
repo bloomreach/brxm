@@ -313,7 +313,6 @@ public class SecurityManager implements HippoSecurityManager {
             creds.setAttribute("providerId", providerId);
             
             HippoUserManager userMgr = (HippoUserManager)providers.get(providerId).getUserManager();
-            GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
             // Check if user is active
             if (!userMgr.isActive(userId)) {
@@ -329,22 +328,7 @@ public class SecurityManager implements HippoSecurityManager {
                 return AuthenticationStatus.SUCCEEDED;
             }
 
-            // The sync blocks are synchronized because the underlying
-            // methods can share the same jcr session and the jcr session is
-            // not thread safe. This is a "best effort" solution as the usrMgr
-            // and the groupMgr could also share the same session but generally
-            // do not operate on the same nodes.
-
-            synchronized(userMgr) {
-                userMgr.syncUserInfo(userId);
-                userMgr.updateLastLogin(userId);
-                userMgr.saveUsers();
-            }
-
-            synchronized(groupMgr) {
-                groupMgr.syncMemberships(userMgr.getUser(userId));
-                groupMgr.saveGroups();
-            }
+            providers.get(providerId).synchronizeOnLogin(userId);
 
             return AuthenticationStatus.SUCCEEDED;
         } catch (RepositoryException e) {
