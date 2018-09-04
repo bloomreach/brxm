@@ -1,0 +1,19 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set($hyphen = '-')
+#set($empty = '')
+definitions:
+  config:
+    /hippo:configuration:
+      /hippo:frontend:
+        /cms:
+          /cms-services:
+            /hst${rootArtifactId.replace($hyphen,$empty).substring(0,1).toUpperCase()}${rootArtifactId.replace($hyphen,$empty).substring(1)}RestService:
+              .meta:order-before: channelDocumentUrlService
+              jcr:primaryType: frontend:plugin
+              context.path: /${rootArtifactId.replace($hyphen,$empty)}
+              ping.service.uri: /sites/_isAlive
+              plugin.class: org.hippoecm.frontend.service.restproxy.RestProxyServicePlugin
+              rest.uri: http://127.0.0.1/${rootArtifactId.replace($hyphen,$empty)}/_cmsrest
+              service.id: hst.rest.proxy.service

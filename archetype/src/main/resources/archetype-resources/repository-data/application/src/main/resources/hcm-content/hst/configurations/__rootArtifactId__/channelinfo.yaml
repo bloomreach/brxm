@@ -1,2 +1,0 @@
-/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace/hst:channel/hst:channelinfo:
-  jcr:primaryType: hst:channelinfo

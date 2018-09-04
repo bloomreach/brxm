@@ -14,53 +14,10 @@
   <description>${projectName} CMS</description>
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-repository-dependencies</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>${rootArtifactId}-cms-dependencies</artifactId>
+      <version>${project.version}</version>
       <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-cms-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-cms-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-repository</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-repository-data-application</artifactId>
-      <version>${dollar}{project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-repository-data-webfiles</artifactId>
-      <version>${dollar}{project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-gallerypicker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
     </dependency>
   </dependencies>
   <build>

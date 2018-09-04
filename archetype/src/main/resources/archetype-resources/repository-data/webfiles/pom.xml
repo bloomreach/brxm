@@ -13,12 +13,11 @@
   <artifactId>${artifactId}-repository-data-webfiles</artifactId>
 
   <dependencies>
-    <!-- ARCHE-555 Add dependency on the site war for IntelliJ bean-definition code completion in ftl files -->
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-site</artifactId>
+      <artifactId>${rootArtifactId}-components</artifactId>
       <version>${dollar}{project.version}</version>
-      <type>war</type>
+      <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency>

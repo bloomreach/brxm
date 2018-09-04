@@ -4,4 +4,6 @@
 #set($hyphen = '-')
 #set($empty = '')
 definitions:
-  webfilebundle: ${rootArtifactId.replace($hyphen,$empty)}
+  config:
+    /hst:hst/hst:hosts:
+        hst:defaultcontextpath: /${rootArtifactId.replace($hyphen,$empty)}

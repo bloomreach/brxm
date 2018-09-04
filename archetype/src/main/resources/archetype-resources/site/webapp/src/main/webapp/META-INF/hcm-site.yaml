@@ -3,5 +3,5 @@
 #set( $symbol_escape = '\' )
 #set($hyphen = '-')
 #set($empty = '')
-definitions:
-  webfilebundle: ${rootArtifactId.replace($hyphen,$empty)}
+name: ${rootArtifactId.replace($hyphen,$empty)}
+hstRoot: /hst:${rootArtifactId.replace($hyphen,$empty)}

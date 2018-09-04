@@ -1,0 +1,69 @@
+#set( $dollar = '$' )
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}-site</artifactId>
+    <version>${version}</version>
+  </parent>
+  <artifactId>${artifactId}-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>${projectName} Site Webapp</name>
+  <description>${projectName} Site Webapp</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-repository-data-site</artifactId>
+      <version>${dollar}{project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${rootArtifactId}-repository-data-webfiles</artifactId>
+      <version>${dollar}{project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactId}-components</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-hcm-site</artifactId>
+      <version>${dollar}{hippo.hst.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <finalName>site</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <configuration>
+          <configuration>
+            <type>runtime</type>
+          </configuration>
+          <container>
+            <type>remote</type>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

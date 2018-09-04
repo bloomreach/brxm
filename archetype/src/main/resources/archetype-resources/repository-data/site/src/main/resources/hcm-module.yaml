@@ -3,4 +3,4 @@ group:
   <!-- GROUP_AFTER -->
 project: ${artifactId}
 module:
-  name: ${artifactId}-repository-data-application
+  name: ${artifactId}-repository-data-site

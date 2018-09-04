@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archetype-descriptor 
-  xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" 
+<archetype-descriptor
+  xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
   name="Hippo Project"
@@ -10,6 +10,7 @@
       <defaultValue>org.example</defaultValue>
     </requiredProperty>
     <requiredProperty key="artifactId">
+      <validationRegex><![CDATA[^[a-zA-Z0-9]+$]]></validationRegex>
       <defaultValue>myhippoproject</defaultValue>
     </requiredProperty>
     <requiredProperty key="version">
@@ -79,6 +80,21 @@
         <include>pom.xml</include>
       </includes>
     </fileSet>
+    <!-- repository-data-site module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/site/src/main/resources</directory>
+      <includes>
+        <include>**/*.yaml</include>
+        <include>**/*.cnd</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/site</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
     <!-- repository-data-content module -->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>repository-data/development/src/main/resources</directory>
@@ -95,14 +111,14 @@
       </includes>
     </fileSet>
     <!-- repository-data-webfiles module -->
+    <!--<fileSet filtered="true" encoding="UTF-8">-->
+      <!--<directory>repository-data/webfiles/src/main/resources</directory>-->
+      <!--<includes>-->
+        <!--<include>**/*.yaml</include>-->
+      <!--</includes>-->
+    <!--</fileSet>-->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>repository-data/webfiles/src/main/resources</directory>
-      <includes>
-        <include>**/*.yaml</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="false" encoding="UTF-8">
-      <directory>repository-data/webfiles/src/main/resources/site</directory>
       <includes>
         <include>**/**</include>
       </includes>
@@ -153,24 +169,57 @@
         <include>pom.xml</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>cms-dependencies</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+
     <!-- site module -->
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
-      <directory>site/src/main/java</directory>
+      <directory>site/components/src/main/java</directory>
       <includes>
         <include>**/*.java</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>site/webapp/src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
       <!-- packaged part -->
-      <directory>site/src/main/resources</directory>
+      <directory>site/components/src/main/resources</directory>
+      <includes>
+        <include>componentsinfo/**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <!-- packaged part -->
+      <directory>site/webapp/src/main/resources</directory>
       <includes>
         <include>componentsinfo/**/*.properties</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <!-- non packaged part -->
-      <directory>site/src/main/resources</directory>
+      <directory>site/components/src/main/resources</directory>
+      <includes>
+        <include>**/*.properties</include>
+        <include>**/*.xml</include>
+      </includes>
+      <excludes>
+        <exclude>componentsinfo/**/*.properties</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <!-- non packaged part -->
+      <directory>site/webapp/src/main/resources</directory>
       <includes>
         <include>**/*.properties</include>
         <include>**/*.xml</include>
@@ -181,7 +230,7 @@
     </fileSet>
 
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>site/src/main/webapp</directory>
+      <directory>site/webapp/src/main/webapp</directory>
       <excludes>
         <exclude>**/WEB-INF/jsp/errorpages/*.jsp</exclude>
       </excludes>
@@ -191,42 +240,71 @@
         <include>**/*.jspf</include>
         <include>**/*.tag</include>
         <include>**/*.xml</include>
+        <include>**/*.yaml</include>
         <include>**/*.properties</include>
         <include>**/*.psml</include>
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
-      <directory>site</directory>
+      <directory>site/webapp</directory>
       <includes>
         <include>build.properties-sample</include>
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
-      <directory>site/src/main/webapp</directory>
+      <directory>site/webapp/src/main/webapp</directory>
       <includes>
         <include>**/WEB-INF/jsp/errorpages/*.jsp</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>site/src/test/resources</directory>
+      <directory>site/components/src/test/resources</directory>
+      <includes>
+        <include>**/*.properties</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>site/webapp/src/test/resources</directory>
       <includes>
         <include>**/*.properties</include>
         <include>**/*.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
-      <directory>site/src/test/java</directory>
+      <directory>site/components/src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>site/webapp/src/test/java</directory>
       <includes>
         <include>**/*.java</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
+      <directory>site/components</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>site/webapp</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+
+    <fileSet filtered="true" encoding="UTF-8">
       <directory>site</directory>
       <includes>
         <include>pom.xml</include>
       </includes>
     </fileSet>
+
     <!-- essentials-->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>essentials</directory>

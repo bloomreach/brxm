@@ -16,6 +16,7 @@
   <modules>
     <module>application</module>
     <module>development</module>
+    <module>site</module>
     <module>webfiles</module>
   </modules>
 

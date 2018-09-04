@@ -1,4 +1,9 @@
-#set( $dollar = '$' )
+#set($dollar = '$')
+#set($symbol_pound = '#')
+#set($symbol_dollar = '$')
+#set($symbol_escape = '\')
+#set($hyphen = '-')
+#set($empty = '')
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -61,9 +66,12 @@
 
   <properties>
 
+    <!-- PROPERTIES_MARKER -->
+
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
+    <!-- Uncomment line below when temporary overrides will be removed -->
     <essentials.version>13.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
@@ -214,6 +222,7 @@
         </property>
       </activation>
       <modules>
+        <module>cms-dependencies</module>
         <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
@@ -262,10 +271,10 @@
                   <location>${dollar}{project.basedir}/cms/target/cms.war</location>
                 </deployable>
                 <deployable>
-                  <location>${dollar}{project.basedir}/site/target/site.war</location>
+                  <location>${dollar}{project.basedir}/site/webapp/target/site.war</location>
                   <type>war</type>
                   <properties>
-                    <context>/site</context>
+                    <context>/${rootArtifactId.replace($hyphen,$empty)}</context>
                   </properties>
                 </deployable>
                 <deployable>

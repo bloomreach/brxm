@@ -17,4 +17,4 @@ definitions:
           .meta:residual-child-node-category: content
           jcr:primaryType: hst:mount
           hst:homepage: root
-          hst:mountpoint: /hst:hst/hst:sites/${rootArtifactId.replace($hyphen,$empty)}
+          hst:mountpoint: /hst:${rootArtifactId.replace($hyphen,$empty)}/hst:sites/${rootArtifactId.replace($hyphen,$empty)}

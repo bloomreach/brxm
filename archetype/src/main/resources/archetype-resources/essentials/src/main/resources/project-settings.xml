@@ -6,6 +6,8 @@
   <selectedBeansPackage>${package}.beans</selectedBeansPackage>
   <selectedComponentsPackage>${package}.components</selectedComponentsPackage>
   <selectedRestPackage>${package}.rest</selectedRestPackage>
+  <hstRoot>/hst:${rootArtifactId.replace($hyphen,$empty)}</hstRoot>
+  <webfileBundleName>${rootArtifactId.replace($hyphen,$empty)}</webfileBundleName>
   <setupDone>false</setupDone>
   <useSamples>true</useSamples>
   <extraTemplates>true</extraTemplates>
