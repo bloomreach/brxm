@@ -102,15 +102,18 @@ public class EditorFactoryTest extends PluginTest {
         super.tearDown();
     }
 
-    private void createDocument(final String name) throws RepositoryException {
+    private String createDocument(final String name) throws RepositoryException {
         final Map<String, String> pars = new MiniMap(1);
         pars.put("name", name);
         build(session, mount("/test/content", instantiate(CMS_TEST_DOCUMENT, pars)));
+        final Node node = session.getNode("/test/content/" + name);
+        return node.getIdentifier();
     }
 
     @Test
     public void testReviewedActionsEditing() throws Exception {
-        createDocument("document");
+        final String identifier = createDocument("document");
+        initializeBranchIdModel(identifier);
 
         final HippostdEditorFactoryPlugin factory = new HippostdEditorFactoryPlugin(context, config);
         final IEditor<Node> editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel("/test/content/document"),
@@ -131,7 +134,8 @@ public class EditorFactoryTest extends PluginTest {
 
     @Test
     public void testEditPublished() throws Exception {
-        createDocument("document");
+        final String identifier = createDocument("document");
+        initializeBranchIdModel(identifier);
 
         final Node unpublished = session.getRootNode().getNode("test/content/document/document");
         unpublished.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
@@ -169,7 +173,8 @@ public class EditorFactoryTest extends PluginTest {
         final Node category = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
         category.orderBefore("publishable", category.getNodes().nextNode().getName());
 
-        createDocument("document");
+        final String identifier = createDocument("document");
+        initializeBranchIdModel(identifier);
 
         session.save();
 
@@ -178,35 +183,27 @@ public class EditorFactoryTest extends PluginTest {
                 Mode.VIEW, PARAMETERS);
 
 
-        initializeBranchIdModel(editor);
 
         editor.setMode(Mode.EDIT);
         assertThat(getPreviews().size(), is(equalTo(0)));
         assertThat(getEditors().size(), is(equalTo(1)));
     }
 
+
     /**
      * Before the editor is created the BranchIdModel has already been created.
      * This method initializes such a BranchIdModel.
-     * @param editor
+     * @param identifier
      */
-    private void initializeBranchIdModel(final IEditor<Node> editor) {
-        if (editor instanceof HippostdPublishableEditor){
-            HippostdPublishableEditor hippostdPublishableEditor = (HippostdPublishableEditor) editor;
-            initializeBranchIdModel(hippostdPublishableEditor);
-        }
-    }
-
-    private void initializeBranchIdModel(final HippostdPublishableEditor hippostdPublishableEditor) {
-        final BranchIdModel branchIdModel = new BranchIdModel();
-        branchIdModel.setBranchIdModelReference(new ModelReference<>("", new Model<>()));
-        branchIdModel.setBranchInfo(DocumentVariant.MASTER_BRANCH_ID, "core");
-        hippostdPublishableEditor.setBranchIdModel(branchIdModel);
+    private void initializeBranchIdModel(final String identifier) {
+        final BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
+        branchIdModel.setInitialBranchInfo("master","core");
     }
 
     @Test
     public void testVersionedPublishableDocument() throws Exception {
         createDocument("document");
+
         session.save();
 
         final Node handle = root.getNode("test/content/document");
@@ -215,6 +212,7 @@ public class EditorFactoryTest extends PluginTest {
 
         final Node copy = ((HippoSession) handle.getSession()).copy(handle.getNode("document"), handle.getPath() + "/document");
         copy.setProperty("hippostd:state", "unpublished");
+        initializeBranchIdModel(docVersion.getIdentifier());
         session.save();
 
         final HippostdEditorFactoryPlugin factory = new HippostdEditorFactoryPlugin(context, config);
@@ -240,6 +238,10 @@ public class EditorFactoryTest extends PluginTest {
                 "jcr:mixinTypes", "hippostd:publishable",
                 "hippostd:state", "published",
         });
+
+        final Node node = session.getNode("/test/document");
+        final String identifier = node.getIdentifier();
+        initializeBranchIdModel(identifier);
 
         final HippostdEditorFactoryPlugin factory = new HippostdEditorFactoryPlugin(context, config);
         final JcrNodeModel model = new JcrNodeModel("/test/document");
