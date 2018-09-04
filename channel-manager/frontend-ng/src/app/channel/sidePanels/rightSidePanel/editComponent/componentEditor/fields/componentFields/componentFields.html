@@ -22,9 +22,18 @@
   </div>
 
   <div ng-switch-when="checkbox">
-    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+    <md-checkbox ng-model="componentField.value"
+                 ng-true-value="'on'"
+                 ng-false-value="'off'"
+                 ng-change="$ctrl.valueChanged()"
+                 class="md-primary"
+                 name="{{::componentField.name}}"
+                 ng-focus="$ctrl.focusPrimitive($event)"
+                 ng-blur="$ctrl.blurPrimitive($event)">
+      {{ ::componentField.label }}
+    </md-checkbox>
   </div>
-
+  
   <div ng-switch-when="numberfield">
     {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
   </div>

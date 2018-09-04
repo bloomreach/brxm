@@ -23,6 +23,18 @@ class ComponentFieldsCtrl {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
     this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
+
+  valueChanged() {
+    console.log('TODO: implement ComponentFieldsCtrl.valueChanged');
+  }
+
+  focusPrimitive() {
+    this.hasFocus = true;
+  }
+
+  blurPrimitive() {
+    delete this.hasFocus;
+  }
 }
 
 export default ComponentFieldsCtrl;
