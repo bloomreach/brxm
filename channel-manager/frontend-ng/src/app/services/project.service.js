@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-const masterId = 'master';
 class ProjectService {
   constructor(
     $http,
@@ -31,16 +30,14 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
 
-    this.beforeChangeListeners = [];
-    this.afterChangeListeners = [];
+    this.beforeChangeListeners = new Map();
+    this.afterChangeListeners = new Map();
     this.projects = [];
-    this.selectedProject = {
-      id: masterId,
-    };
-  }
+    this.masterId = 'master';
 
-  static get masterId() {
-    return masterId;
+    this.selectedProject = {
+      id: this.masterId,
+    };
   }
 
   load(mountId, projectId) {
@@ -49,7 +46,7 @@ class ProjectService {
   }
 
   isBranch() {
-    return this.selectedProject.id !== masterId;
+    return this.selectedProject.id !== this.masterId;
   }
 
   updateSelectedProject(projectId) {
@@ -61,12 +58,12 @@ class ProjectService {
     return this.$q.resolve();
   }
 
-  beforeChange(cb) {
-    this.beforeChangeListeners.push(cb);
+  beforeChange(id, cb) {
+    this.beforeChangeListeners.set(id, cb);
   }
 
-  afterChange(cb) {
-    this.afterChangeListeners.push(cb);
+  afterChange(id, cb) {
+    this.afterChangeListeners.set(id, cb);
   }
 
   associateWithProject(documentId) {
@@ -88,7 +85,9 @@ class ProjectService {
   }
 
   _callListeners(listeners) {
-    const promises = listeners.map(listener => listener());
+    const promises = Array.from(listeners.values())
+      .map(listener => listener());
+
     return this.$q.all(promises);
   }
 
@@ -99,11 +98,7 @@ class ProjectService {
 
   _selectProject(projectId) {
     this.selectedProject = this.projects.find(project => project.id === projectId);
-    return this._setProjectInHST();
-  }
-
-  _setProjectInHST() {
-    return this._activateProject(this.selectedProject.id);
+    return this._setProjectInHST(this.selectedProject.id);
   }
 
   isContentOverlayEnabled() {
@@ -178,10 +173,10 @@ class ProjectService {
       .then(result => result.data)
       .then((projects) => {
         this.projects = projects.sort((p1, p2) => {
-          if (p1.id === masterId) {
+          if (p1.id === this.masterId) {
             return -1;
           }
-          if (p2.id === masterId) {
+          if (p2.id === this.masterId) {
             return 1;
           }
           return p1.name.toLowerCase() <= p2.name.toLowerCase() ? -1 : 1;
@@ -189,8 +184,8 @@ class ProjectService {
       });
   }
 
-  _activateProject(projectId) {
-    if (projectId === masterId) {
+  _setProjectInHST(projectId) {
+    if (projectId === this.masterId) {
       return this._activateCore();
     }
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
