@@ -79,8 +79,8 @@ public class HippostdPublishableEditorTest extends PluginTest {
         PowerMock.mockStatic(AbstractCmsEditor.class);
         PowerMock.mockStatic(HippostdPublishableEditor.class);
 
-        final String uuid = createDocument("document");
-        initializeBranchIdModel(uuid);
+        final String identifier = createDocument("document");
+        initializeBranchIdModel(identifier);
 
         model = new JcrNodeModel("/test/content/document");
         expect(AbstractCmsEditor.getMyName(anyObject())).andReturn("bah");
