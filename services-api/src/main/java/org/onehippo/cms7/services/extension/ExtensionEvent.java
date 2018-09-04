@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,25 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services;
+package org.onehippo.cms7.services.extension;
+
+import org.onehippo.cms7.event.HippoEvent;
 
 /**
- * The Service Registration represents a service with its context.
- * Services that are obtained in this way, e.g. because they were registered as extensions with the whiteboard pattern,
- * must be invoked with the context classloader set to the classloader in this registration object.
+ * Registration info for a Hippo CMS extension.
  */
-public class HippoServiceRegistration {
+public class ExtensionEvent extends HippoEvent<ExtensionEvent> {
 
     private final ClassLoader classLoader;
-    private final Object service;
+    private final String hstRoot;
 
-    HippoServiceRegistration(final ClassLoader classLoader, final Object service) {
+    public ExtensionEvent(final String application, final String hstRoot, final ClassLoader classLoader) {
+        super(application);
+        this.hstRoot = hstRoot;
         this.classLoader = classLoader;
-        this.service = service;
     }
 
-    public Object getService() {
-        return service;
+    public String getExtensionName() {
+        return (String) getValues().get("application");
+    }
+
+    public String getHstRoot() {
+        return hstRoot;
     }
 
     public ClassLoader getClassLoader() {

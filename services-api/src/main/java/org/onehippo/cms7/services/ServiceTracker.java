@@ -13,15 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.webfiles.watch;
+package org.onehippo.cms7.services;
 
-import java.nio.file.Path;
-import java.util.List;
-
-public interface WebFilesWatcherService {
+/**
+ * A ServiceTracker interface implementation can be used to get notified when a service object is (un)registered
+ * in a {@link WhiteboardServiceRegistry}.
+ * @param <T> The type of the service object to be tracked
+ */
+public interface ServiceTracker<T> {
+    /**
+     * Invoked when a service object is registered.
+     * @param serviceHolder the service object holder
+     */
+    void serviceRegistered(ServiceHolder<T> serviceHolder);
 
     /**
-     * @return List of webfile module directories
+     * Invoked when a service object is unregistered.
+     * @param serviceHolder the service object holder
      */
-    List<Path> getWebFilesDirectories();
+    void serviceUnregistered(ServiceHolder<T> serviceHolder);
 }
