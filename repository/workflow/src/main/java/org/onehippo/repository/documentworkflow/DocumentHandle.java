@@ -281,22 +281,27 @@ public class DocumentHandle implements SCXMLWorkflowData {
             }
 
             final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
-            final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
+            try {
+                final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
 
-            if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
-                // master branch present
-                branches.add(MASTER_BRANCH_ID);
-            }
+                if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+                    // master branch present
+                    branches.add(MASTER_BRANCH_ID);
+                }
 
-            for (String label : versionHistory.getVersionLabels()) {
-                if (label.endsWith("-" + UNPUBLISHED.getState())) {
-                    final Version version = versionHistory.getVersionByLabel(label);
-                    final Node frozenNode = version.getFrozenNode();
-                    if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
-                        // found a real branch instead of a label for a non-branch
-                        branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                for (String label : versionHistory.getVersionLabels()) {
+                    if (label.endsWith("-" + UNPUBLISHED.getState())) {
+                        final Version version = versionHistory.getVersionByLabel(label);
+                        final Node frozenNode = version.getFrozenNode();
+                        if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
+                            // found a real branch instead of a label for a non-branch
+                            branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                        }
                     }
                 }
+            } catch (RepositoryException e) {
+                log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
+                        "been saved.", e);
             }
 
         }

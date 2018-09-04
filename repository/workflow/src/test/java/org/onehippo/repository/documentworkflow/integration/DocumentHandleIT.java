@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -133,6 +134,10 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
         documentHandle.initialize(MASTER_BRANCH_ID);
         Assertions.assertThat(documentHandle.isModified()).isTrue();
         getDocumentWorkflow(handle).publish();
+
+        // reinitialize since handle has changed
+        documentHandle.initialize(MASTER_BRANCH_ID);
+
         Assertions.assertThat(documentHandle.isModified()).isFalse();
 
         final String branchId = "foo";
@@ -141,6 +146,7 @@ public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
         getDocumentWorkflow(handle).obtainEditableInstance(branchId);
         getDocumentWorkflow(handle).commitEditableInstance();
 
+        // reinitialize since handle has changed
         documentHandle.initialize(MASTER_BRANCH_ID);
         Assertions.assertThat(documentHandle.isModified()).isFalse();
 

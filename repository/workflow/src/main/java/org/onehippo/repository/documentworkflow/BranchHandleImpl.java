@@ -119,13 +119,15 @@ public class BranchHandleImpl implements BranchHandle {
 
     private Optional<DocumentVariant> getVariant(WorkflowUtils.Variant variant) {
         final DocumentVariant documentVariant = getDocumentVariant(variant);
-        if (documentVariant == null || !isBranch(documentVariant)) {
-            return getFrozenVariant(variant, getDocumentVariant(UNPUBLISHED));
+        if (documentVariant == null) {
+            // no point to go look in version history if the request variant does not live below the handle and
+            // for a draft we never need to go to version history
+            return Optional.empty();
         }
         if (isBranch(documentVariant)) {
             return Optional.of(documentVariant);
         } else {
-            return Optional.empty();
+            return getFrozenVariant(variant, getDocumentVariant(UNPUBLISHED));
         }
     }
 
@@ -161,8 +163,14 @@ public class BranchHandleImpl implements BranchHandle {
         if (!unpublished.getNode().isNodeType(JcrConstants.MIX_VERSIONABLE)) {
             return null;
         }
-        final VersionManager versionManager = unpublished.getNode().getSession().getWorkspace().getVersionManager();
-        return versionManager.getVersionHistory(unpublished.getNode().getPath());
+        try {
+            final VersionManager versionManager = unpublished.getNode().getSession().getWorkspace().getVersionManager();
+            return versionManager.getVersionHistory(unpublished.getNode().getPath());
+        } catch (RepositoryException e) {
+            log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
+                    "been saved.", e);
+            return null;
+        }
     }
 
     private boolean isModified(final DocumentVariant unpublished, final DocumentVariant published) {

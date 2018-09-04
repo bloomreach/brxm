@@ -18,28 +18,41 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
-import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
 import static org.onehippo.repository.util.JcrConstants.NT_VERSION;
 
@@ -128,6 +141,41 @@ public class BranchHandleImplIT extends AbstractDocumentWorkflowIntegrationTest 
         }
 
     }
+
+    @Test
+    public void unpersisted_branch_handle_does_not_log_warning_or_info_related_to_versioning_when_not_yet_persisted() throws Exception {
+        final Node test = handle.getParent();
+        final Node unpersistedHandle = test.addNode("foo", NT_HANDLE);
+        final Node foo = unpersistedHandle.addNode("foo", NT_DOCUMENT);
+        foo.addMixin(HIPPOSTDPUBWF_DOCUMENT);
+        foo.addMixin(MIX_VERSIONABLE);
+        foo.addMixin(NT_RELAXED);
+        foo.setProperty(HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        foo.setProperty(HIPPOSTDPUBWF_CREATED_BY, "testuser");
+        foo.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        foo.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
+        foo.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
+        foo.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
+
+        final DocumentHandle documentHandle = new DocumentHandle(unpersistedHandle);
+        documentHandle.initialize();
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(BranchHandleImpl.class).build()) {
+
+            documentHandle.getBranchHandle().isModified();
+            
+            Assertions.assertThat(interceptor.messages().filter(s -> s.contains("Cannot get frozen node of document")))
+                    .as("Unexpected log message")
+                    .isEmpty();
+
+
+            Assertions.assertThat(interceptor.messages().filter(s -> s.contains("Could not get version history")))
+                    .as("Unexpected log message")
+                    .isEmpty();
+        }
+
+    }
+
 
     private String getParentNodeType(final Node published) throws RepositoryException {
         return published.getParent().getPrimaryNodeType().getName();
