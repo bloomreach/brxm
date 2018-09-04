@@ -26,6 +26,7 @@ import javax.jcr.version.VersionHistory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -263,7 +264,7 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
     }
 
     @Test
-    public void restore_branch_bar_version_over_branch_foo_when_master_isunpublished() throws Exception {
+    public void restore_branch_bar_version_over_branch_foo_when_master_is_unpublished() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         final Node unpublished = createBranchFooAndModifyMasterUnpublished(workflow);
         workflow.branch("bar", "Bar");
@@ -290,5 +291,60 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
 
         final Version masterVersion = versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
         assertEquals("title Master", masterVersion.getFrozenNode().getProperty("title").getString());
+    }
+
+    @Test
+    public void restore_branch_after_document_has_been_renamed() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
+        assertEquals("document", handle.getName());
+        for (Node variant : new NodeIterable(handle.getNodes())) {
+            assertEquals("document", variant.getName());
+        }
+
+        workflow.branch("foo", "Foo");
+
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+        // branch foo is now the unpublished
+
+        workflow.rename("doc");
+
+        assertEquals("doc", handle.getName());
+        for (Node variant : new NodeIterable(handle.getNodes())) {
+            assertEquals("doc", variant.getName());
+        }
+
+        try {
+            workflow.hints();
+            fail("After rename, workflow is expected to be terminated");
+        } catch (WorkflowException e) {
+            assertEquals("Workflow documentworkflow already terminated", e.getMessage());
+        }
+
+        workflow = getDocumentWorkflow(handle);
+
+        workflow.checkoutBranch("foo");
+
+        assertEquals("doc", handle.getName());
+        for (Node variant : new NodeIterable(handle.getNodes())) {
+            assertEquals("doc", variant.getName());
+        }
+
+        workflow.rename("doc2");
+
+        workflow = getDocumentWorkflow(handle);
+        workflow.checkoutBranch(MASTER_BRANCH_ID);
+
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
+
+        final Version fooVersion = versionHistory.getVersionByLabel("foo-unpublished");
+
+        workflow.restoreVersionToBranch(fooVersion, "foo");
+
+        assertEquals("doc2", handle.getName());
+        for (Node variant : new NodeIterable(handle.getNodes())) {
+            assertEquals("doc2", variant.getName());
+        }
     }
 }

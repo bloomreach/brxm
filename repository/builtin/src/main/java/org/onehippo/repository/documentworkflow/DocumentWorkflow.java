@@ -453,8 +453,8 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
 
     /**
      * <p>
-     *     Restores the {@core version} to the unpublished variant for branch with id {@core branchId}. If the current
-     *     unpublished variant is not for {@code branchId}, first the branch for {@core branchId} will be checked out
+     *     Restores the {@code version} to the unpublished variant for branch with id {@code branchId}. If the current
+     *     unpublished variant is not for {@code branchId}, first the branch for {@code branchId} will be checked out
      * </p>
      * @param version the {@link Version} to restore
      * @param branchId the id of the branch to restore to
@@ -571,7 +571,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *     Removes the branch for {@code branchId} if it exists and throws a {@link WorkflowException} if it doesn't exist.
      * </p>
      * <p>
-     *     Removing a branch is possible even when another branch is being edited, unless the branch for {@core branchId}
+     *     Removing a branch is possible even when another branch is being edited, unless the branch for {@code branchId}
      *     is being edited.
      * </p>
      * <p>
