@@ -34,16 +34,8 @@ class ComponentEditorService {
       .catch(response => this._onLoadFailure(response));
   }
 
-  getTemplateChooser() {
-    return this.templateProperty;
-  }
-
   getPropertyGroups() {
     return this.propertyGroups;
-  }
-
-  getProperties() {
-    return this.singleProperties;
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
@@ -67,37 +59,30 @@ class ComponentEditorService {
       return [];
     }
 
-    const defaultGroupTitle = this.$translate.instant('DEFAULT_PROPERTY_GROUP_TITLE');
+    const defaultGroupLabel = this.$translate.instant('DEFAULT_PROPERTY_GROUP_LABEL');
     const groups = new Map();
-    properties.forEach((property) => {
-      if (property.hiddenInChannelManager) {
-        return;
-      }
-      let thisGroupLabel = property.groupLabel;
-      if (thisGroupLabel === '') {
-        thisGroupLabel = defaultGroupTitle;
-      }
-      if (groups.has(thisGroupLabel)) {
-        groups.get(thisGroupLabel).push(property);
-      } else {
-        groups.set(thisGroupLabel, [property]);
-      }
-    });
+    properties
+      .filter(property => !property.hiddenInChannelManager)
+      .forEach((property) => {
+        if (property.name === 'org.hippoecm.hst.core.component.template') {
+          property.groupLabel = 'org.hippoecm.hst.core.component.template';
+        }
 
-    const firstGroup = groups.entries().next();
-    if (firstGroup.value[1][0].name === 'org.hippoecm.hst.core.component.template') {
-      this.templateProperty = [firstGroup.value[1][0]];
-      groups.delete(firstGroup.value[0]);
-    }
+        const groupLabel = property.groupLabel === ''
+          ? defaultGroupLabel
+          : property.groupLabel;
 
-    if (groups.has(null)) {
-      this.singleProperties = groups.get(null);
-      groups.delete(null);
-    }
+        if (groups.has(groupLabel)) {
+          groups.get(groupLabel).push(property);
+        } else {
+          groups.set(groupLabel, [property]);
+        }
+      });
 
     return Array.from(groups).map(group => ({
-      label: group[0],
+      collapse: group[0] !== null && group[0] !== 'org.hippoecm.hst.core.component.template',
       fields: group[1],
+      label: group[0],
     }));
   }
 
@@ -136,8 +121,7 @@ class ComponentEditorService {
     delete this.container;
     delete this.page;
     delete this.properties;
-    delete this.templateProperty;
-    delete this.singleProperties;
+    delete this.propertyGroups;
     delete this.dataDirty;
   }
 }

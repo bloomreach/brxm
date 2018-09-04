@@ -92,6 +92,12 @@ describe('ComponentEditorService', () => {
   });
 
   describe('ordering properties into groups', () => {
+    function expectGroup(group, label, length, collapse = true) {
+      expect(group.label).toBe(label);
+      expect(group.fields.length).toBe(length);
+      expect(group.collapse).toBe(collapse);
+    }
+
     it('does not create a group when there are no properties', () => {
       const properties = [];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
@@ -105,15 +111,16 @@ describe('ComponentEditorService', () => {
     it('does not include a property that must be hidden', () => {
       const properties = [
         { name: 'hidden', hiddenInChannelManager: true },
-        { name: 'visible', hiddenInChannelManager: false },
+        { name: 'visible', hiddenInChannelManager: false, groupLabel: 'Group' },
       ];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
 
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(1);
-      expect(ComponentEditor.getPropertyGroups()[0].fields[0].name).toBe('visible');
+      const groups = ComponentEditor.getPropertyGroups();
+      expectGroup(groups[0], 'Group', 1);
+      expect(groups[0].fields[0].name).toBe('visible');
     });
 
     it('does not create a group if it only has hidden properties', () => {
@@ -127,11 +134,12 @@ describe('ComponentEditorService', () => {
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups().length).toBe(1);
-      expect(ComponentEditor.getPropertyGroups()[0].label).toBe('Group1');
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups.length).toBe(1);
+      expectGroup(groups[0], 'Group1', 1);
     });
 
-    it('uses the default group label for properties without label', () => {
+    it('uses the default group label for properties with an empty string label', () => {
       const properties = [
         { groupLabel: '' },
         { groupLabel: null },
@@ -141,41 +149,46 @@ describe('ComponentEditorService', () => {
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups()[0].label).toBe('DEFAULT_PROPERTY_GROUP_TITLE');
-      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(1);
+      const groups = ComponentEditor.getPropertyGroups();
+      expectGroup(groups[0], 'DEFAULT_PROPERTY_GROUP_LABEL', 1);
     });
 
     it('puts all the fields with the same label in one group', () => {
       const properties = [
         { groupLabel: '' },
         { groupLabel: 'Group' },
+        { groupLabel: null },
         { groupLabel: '' },
         { groupLabel: 'Group' },
+        { groupLabel: null },
       ];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
 
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups().length).toBe(2);
-      expect(ComponentEditor.getPropertyGroups()[0].fields.length).toBe(2);
-      expect(ComponentEditor.getPropertyGroups()[1].fields.length).toBe(2);
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups.length).toBe(3);
+      expectGroup(groups[0], 'DEFAULT_PROPERTY_GROUP_LABEL', 2);
+      expectGroup(groups[1], 'Group', 2);
+      expectGroup(groups[2], null, 2, false);
     });
 
-    it('does not treat the template chooser as a property group and returns it from its own getter', () => {
+    it('adds the template chooser property into a non-collapsible group with label "org.hippoecm.hst.core.component.template"', () => {
       const properties = [
-        { name: 'org.hippoecm.hst.core.component.template' },
+        { name: 'org.hippoecm.hst.core.component.template', groupLabel: 'Group' },
       ];
       HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
 
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups().length).toBe(0);
-      expect(ComponentEditor.getTemplateChooser().length).toBe(1);
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups.length).toBe(1);
+      expectGroup(groups[0], 'org.hippoecm.hst.core.component.template', 1, false);
     });
 
-    it('does return properties with a null group label as single properties', () => {
+    it('adds properties with a null group label into a non-collapsible group', () => {
       const properties = [
         { groupLabel: null },
         { groupLabel: 'Group' },
@@ -187,8 +200,9 @@ describe('ComponentEditorService', () => {
       ComponentEditor.open(testData);
       $rootScope.$digest();
 
-      expect(ComponentEditor.getPropertyGroups().length).toBe(2);
-      expect(ComponentEditor.getProperties().length).toBe(2);
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups.length).toBe(3);
+      expectGroup(groups[0], null, 2, false);
     });
   });
 });
