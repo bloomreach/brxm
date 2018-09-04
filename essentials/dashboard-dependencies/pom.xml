@@ -24,7 +24,7 @@
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>dependencies</name>
+  <name>Hippo Essentials Dashboard Dependencies</name>
   <artifactId>hippo-essentials-dashboard-dependencies</artifactId>
   <packaging>pom</packaging>
 

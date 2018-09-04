@@ -2,7 +2,7 @@
   "id": "listPlugin",
   "name": "List",
   "icon": "/essentials/feature/images/list-plugin-icon.png",
-  "introduction": "This feature installs a new drag-and-drop component in the component library in the Channel Manager: 'Generic List'. With this component, you can add paginated lists to your project. You will need to edit the page rendering templates (JSP or FreeMarker) to use this feature.",
+  "introduction": "This feature installs a new drag-and-drop component in the component library in the Channel Manager: 'Generic List'. With this component, you can add paginated lists to your project. You will need to edit the page rendering templates (FreeMarker) to use this feature.",
   "imageUrls": [
     "/essentials/feature/images/screenshots/genericlist01.png"
   ],

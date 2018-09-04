@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hippo-essentials-dashboard</artifactId>
   <packaging>war</packaging>
-  <name>Hippo Essentials plugins dashboard</name>
+  <name>Hippo Essentials Plugins Dashboard</name>
   <description>Hippo Essentials plugins dashboard</description>
 
   <properties>

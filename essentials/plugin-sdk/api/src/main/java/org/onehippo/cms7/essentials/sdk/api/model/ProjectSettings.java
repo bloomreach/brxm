@@ -112,11 +112,6 @@ public interface ProjectSettings {
     String getSelectedComponentsPackage();
 
     /**
-     * The templating language used primarily by the project. Supported are 'jsp' and 'freemarker'.
-     */
-    String getTemplateLanguage();
-
-    /**
      * Flag indicating that, unless specified otherwise, when installing a plugin, samples also should be installed
      * (if available in the plugin).
      */

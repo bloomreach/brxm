@@ -7,9 +7,10 @@
   "introduction": "Commerce Search Box with auto suggestions",
   "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. Also, you need a BloomReach Personalization license in order to use this component.",
   "id": "commerce-search-box",
+  "installWithParameters": false,
   "packageFile" : "/META-INF/commerce-search-box_instructions.xml",
   "type": "feature",
-  "icon" : "/essentials/images/commerce-search-box.png",
+  "icon" : "/essentials/feature/commerce-search-box/icon.png",
   "categories": {
     "license": [
       "enterprise"

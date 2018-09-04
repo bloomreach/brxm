@@ -38,7 +38,6 @@ public class ProjectSettingsBean implements ProjectSettings {
     private String selectedComponentsPackage;
     private String selectedRestPackage;
 
-    private String templateLanguage;
     private boolean useSamples;
     private boolean enterprise;
     private boolean confirmParams;
@@ -243,15 +242,6 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setHstHcmDependenciesAlias(final String hstHcmDependenciesAlias) {
         this.hstHcmDependenciesAlias = hstHcmDependenciesAlias;
-    }
-
-    @Override
-    public String getTemplateLanguage() {
-        return templateLanguage;
-    }
-
-    public void setTemplateLanguage(final String templateLanguage) {
-        this.templateLanguage = templateLanguage;
     }
 
     @Override

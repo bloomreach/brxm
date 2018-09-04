@@ -45,17 +45,6 @@
     <xml action="copy" source="hst/page-prototype/page-prototype-definition.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:prototypepages"/>
     <file action="copy" binary="true" source="images/simple-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.png"/>
     <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
-  </instructionSet>
-
-  <!-- HST TEMPLATES -->
-  <instructionSet group="jsp">
-    <xml action="copy" source="hst/template-content-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
-    <file action="copy" source="jsp/contentpage-main.jsp" target="{{jspRoot}}/hstdefault/contentpage-main.jsp"/>
-    <xml action="copy" source="hst/template-content-list-jsp.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/hstdefault/contentlist-main-contentlist.jsp"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
     <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main.ftl"/>

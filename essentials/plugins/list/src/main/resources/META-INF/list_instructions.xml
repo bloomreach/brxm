@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
-  <instructionSet group="jsp">
-    <file action="copy" source="jsp/list-component.jsp" target="{{jspRoot}}/hstdefault/list-component.jsp"/>
-    <xml action="copy" source="xml/hst/templates/list-component-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
+  <instructionSet>
     <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-component.ftl"/>
     <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/catalog/list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -42,11 +39,6 @@
     <file action="copy"
           source="freemarker/list-component_nl.properties"
           target="{{freemarkerRoot}}/hstdefault/list-component_nl.properties"/>
-  </instructionSet>
-
-  <instructionSet>
-    <xml action="copy" source="xml/hst/catalog/list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
   </instructionSet>
 
 </instructions>

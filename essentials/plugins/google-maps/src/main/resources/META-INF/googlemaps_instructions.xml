@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,24 +17,13 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
-  <!--
-    //############################################
-    // GOOGLE MAPS COMPONENT
-    //############################################
 
-  -->
-  <instructionSet group="jsp">
-    <file action="copy" source="jsp/essentials-googlemaps.jsp" target="{{jspRoot}}/hstdefault/essentials-googlemaps.jsp"/>
-    <xml action="copy" source="hst/googlemaps-template-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-  <instructionSet group="freemarker">
-    <freemarker action="copy" source="freemarker/essentials-googlemaps.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-googlemaps.ftl"/>
-    <xml action="copy" source="hst/googlemaps-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
   <instructionSet>
     <xml action="copy" source="hst/catalog/googlemaps-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/googlemaps.png" target="{{imagesRoot}}/essentials/catalog-component-icons/googlemaps.png"/>
     <file action="copy" binary="true" source="js/essentials-google-maps.js" target="{{webfilesJsRoot}}/essentials-google-maps.js"/>
+    <freemarker action="copy" source="freemarker/essentials-googlemaps.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-googlemaps.ftl"/>
+    <xml action="copy" source="hst/googlemaps-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
 </instructions>

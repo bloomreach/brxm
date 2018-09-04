@@ -24,14 +24,7 @@
     <translations source="/json/translations/newsdocument-translations.json"/>
   </instructionSet>
 
-  <instructionSet group="jsp">
-    <file action="copy" source="jsp/newslist-main-newslist.jsp" target="{{jspRoot}}/hstdefault/newslist-main-newslist.jsp"/>
-    <file action="copy" source="jsp/newspage-main.jsp" target="{{jspRoot}}/hstdefault/newspage-main.jsp"/>
-    <xml action="copy" source="xml/hst/templates/news-main-content-jsp.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="xml/hst/templates/newslist-main-newslist-jsp.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
-  </instructionSet>
-
-  <instructionSet group="freemarker">
+  <instructionSet>
     <freemarker action="copy" source="freemarker/newslist-main-newslist.ftl" target="{{freemarkerRoot}}/hstdefault/newslist-main-newslist.ftl"/>
     <freemarker action="copy" source="freemarker/newspage-main.ftl" target="{{freemarkerRoot}}/hstdefault/newspage-main.ftl"/>
     <xml action="copy" source="xml/hst/templates/news-main-content-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
