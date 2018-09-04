@@ -12,31 +12,33 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 
-<div class="field field-bordered qa-compound"
+<div layout="column"
+     layout-align="start"
+     layout-margin
+     class="qa-property-group"
      ng-class="{'has-focused-field': $ctrl.hasFocus}"
      collapse>
 
-  <h5 layout
+  <div layout
       layout-align="start center"
-      class="collapse-toggle field-title"
+      layout-margin
+      layout-fill
+      class="collapse-toggle md-caption"
       ng-click="collapse.toggle()">
     <md-icon class="collapse-icon"
              ng-class="{'collapsed': collapse.isCollapsed}"
              md-font-icon="mdi-chevron-down">
     </md-icon>
 
-    <span>
+    <span layout-fill>
       {{ $ctrl.group.label }}
     </span>
+  </div>
 
-  </h5>
+  <component-fields class="collapse-element" fields="$ctrl.group.fields"></component-fields>
 
-  <component-fields class="collapse-element" fields="$ctrl.group.fields" >
-    
-  </component-fields>
-  
 <!--
   <document-fields class="collapse-element"
                    name="::$ctrl.name"
