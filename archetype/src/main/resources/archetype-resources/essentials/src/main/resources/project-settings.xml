@@ -9,7 +9,6 @@
   <hstRoot>/hst:${rootArtifactId.replace($hyphen,$empty)}</hstRoot>
   <webfileBundleName>${rootArtifactId.replace($hyphen,$empty)}</webfileBundleName>
   <setupDone>false</setupDone>
-  <templateLanguage>freemarker</templateLanguage>
   <useSamples>true</useSamples>
   <extraTemplates>true</extraTemplates>
 </project>
