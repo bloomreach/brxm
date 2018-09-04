@@ -9,8 +9,8 @@
     "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=5.7.1"
+    "node": "8",
+    "npm": "6"
   },
   "scripts": {
     "build": "webpack --env.prod",
