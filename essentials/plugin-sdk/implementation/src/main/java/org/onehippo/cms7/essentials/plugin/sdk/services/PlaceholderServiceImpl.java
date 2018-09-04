@@ -59,6 +59,9 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         addDatePlaceholders(data);
         addFileSystemPlaceholders(data);
 
+        //hst
+        data.put(HST_ROOT, settings.getHstRoot());
+
         // project namespace
         data.put(NAMESPACE, settings.getProjectNamespace());
 
@@ -110,11 +113,11 @@ public class PlaceholderServiceImpl implements PlaceholderService {
     }
 
     private void addFileSystemPlaceholders(final Map<String, Object> data) {
-        final Path siteWebRoot = projectService.getWebApplicationRootPathForModule(Module.SITE);
-        final Path siteResourcesRoot = projectService.getResourcesRootPathForModule(Module.SITE);
+        final Path siteWebRoot = projectService.getWebApplicationRootPathForModule(Module.SITE_WEBAPP);
+        final Path siteResourcesRoot = projectService.getResourcesRootPathForModule(Module.SITE_COMPONENTS);
         final Path cmsWebRoot = projectService.getWebApplicationRootPathForModule(Module.CMS);
         final Path webFilesResourcesRoot = projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_WEB_FILES);
-        final Path webFilesRoot = webFilesResourcesRoot.resolve("site");
+        final Path webFilesRoot = webFilesResourcesRoot.resolve(settingsService.getSettings().getWebfileBundleName());
 
         // project
         data.put(PROJECT_ROOT, projectService.getBasePathForModule(Module.PROJECT));

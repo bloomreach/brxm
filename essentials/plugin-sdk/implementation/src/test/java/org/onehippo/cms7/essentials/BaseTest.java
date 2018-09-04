@@ -49,7 +49,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 public abstract class BaseTest {
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
 
-    static final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+    protected static final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
 
     private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
     private static final String TEST_PROJECT_PACKAGE = "org.onehippo.cms7.essentials.dashboard.test";
@@ -63,7 +63,7 @@ public abstract class BaseTest {
     }
 
     @Inject protected AutowireCapableBeanFactory injector;
-    @Inject private TestSettings.Service settingsService;
+    @Inject protected TestSettings.Service settingsService;
 
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
@@ -133,6 +133,14 @@ public abstract class BaseTest {
                 final File siteFolder = new File(basePath + File.separator + "site");
                 if (!siteFolder.exists()) {
                     siteFolder.mkdir();
+                }
+                final File siteComponentsFolder = new File(basePath + File.separator + "site" + basePath + File.separator + "components");
+                if (!siteComponentsFolder.exists()) {
+                    siteComponentsFolder.mkdir();
+                }
+                final File siteWebappFolder = new File(basePath + File.separator + "site" + basePath + File.separator + "webapp");
+                if (!siteWebappFolder.exists()) {
+                    siteWebappFolder.mkdir();
                 }
                 final File essentialsFolder = new File(basePath + File.separator + "essentials");
                 if (!essentialsFolder.exists()) {

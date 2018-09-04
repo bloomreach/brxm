@@ -19,10 +19,10 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
-    <xml action="copy" source="instructions/xml/hst/image-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="instructions/xml/hst/image-component-catalog.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/images/image.png" target="{{imagesRoot}}/essentials/catalog-component-icons/image.png"/>
     <freemarker action="copy" source="instructions/freemarker/image-component.ftl" target="{{freemarkerRoot}}/hstdefault/image-component.ftl"/>
-    <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/image-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">

@@ -26,26 +26,26 @@
     <file action="copy" source="instructions/java/FaqItem.txt" target="{{beansFolder}}/FaqItem.java"/>
     <file action="copy" source="instructions/java/FaqList.txt" target="{{beansFolder}}/FaqList.java"/>
     <file action="copy" source="instructions/images/faq.png" binary="true" target="{{imagesRoot}}/essentials/catalog-component-icons/faq.png"/>
-    <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="instructions/hst/faq-component-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-item.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-item-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-list.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/folderoptions/new-faq-list-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
-    <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
-    <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/hst/faq-menu-item.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    <xml action="copy" source="instructions/hst/faq-sitemap-item.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
     <!-- HST pages-->
-    <xml action="copy" source="instructions/hst/faqlist-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="instructions/hst/faq-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/hst/faqlist-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/hst/faq-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- workspace-->
-    <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/hst/faqlist-workspace.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- translations -->
     <translations source="/instructions/json/translations/faqtypes-translations.json" />
     <translations source="/instructions/json/translations/faqtemplates-translations.json" />
   </instructionSet>
 
   <instructionSet>
-    <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/hst/faq-faq-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/hst/faq-list-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
     <freemarker action="copy" source="instructions/freemarker/faq-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/faq-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/faqlist-main.ftl" target="{{freemarkerRoot}}/hstdefault/faqlist-main.ftl"/>
   </instructionSet>
@@ -63,7 +63,7 @@
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <xml action="copy" source="instructions/hst/faqlist-workspace-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers/faqlist/main"/>
+    <xml action="copy" source="instructions/hst/faqlist-workspace-content.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers/faqlist/main"/>
     <xml action="copy" source="instructions/xml/faq-sample.xml" target="/content/documents/{{namespace}}"/>
   </instructionSet>
 </instructions>

@@ -421,7 +421,7 @@ public class SelectionResource {
     }
 
     private File getSpringFile() {
-        return projectService.getResourcesRootPathForModule(Module.SITE)
+        return projectService.getResourcesRootPathForModule(Module.SITE_COMPONENTS)
                 .resolve("META-INF").resolve("hst-assembly").resolve("overrides").resolve("valueListManager.xml").toFile();
     }
 }

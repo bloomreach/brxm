@@ -21,7 +21,7 @@
   <instructionSet>
     <cnd documentType="video" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="instructions/xml/namespace/video-namespace.xml" target="/hippo:namespaces/{{namespace}}"/>
-    <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/images/video.png" target="{{imagesRoot}}/essentials/catalog-component-icons/video.png"/>
     <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
@@ -29,7 +29,7 @@
     <translations source="/instructions/json/translations/videotypes-translations.json" />
     <translations source="/instructions/json/translations/videotemplates-translations.json" />
     <freemarker action="copy" source="instructions/freemarker/video-component.ftl" target="{{freemarkerRoot}}/hstdefault/video-component.ftl"/>
-    <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/video-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">

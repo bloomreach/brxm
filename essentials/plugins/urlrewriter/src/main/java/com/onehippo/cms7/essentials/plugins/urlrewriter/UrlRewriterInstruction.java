@@ -38,7 +38,7 @@ public class UrlRewriterInstruction implements Instruction {
     private static final String FILTER_NAME = "RewriteFilter";
     private static final List<String> URL_PATTERNS = Collections.singletonList("/*");
     private static final List<WebXmlService.Dispatcher> DISPATCHERS = Arrays.asList(WebXmlService.Dispatcher.REQUEST, WebXmlService.Dispatcher.FORWARD);
-    private static final Module MODULE = Module.SITE;
+    private static final Module MODULE = Module.SITE_WEBAPP;
     private static final Map<String, String> initParams = new HashMap<>();
 
     static {

@@ -35,18 +35,18 @@
 
   <!-- HST CONFIG-->
   <instructionSet>
-    <xml action="copy" source="hst/workspace/contentlist.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="hst/workspace/contentpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="hst/content-sitemap.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="hst/content-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="hst/content-list-page.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="hst/menu/content-menu-item.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
-    <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <xml action="copy" source="hst/page-prototype/page-prototype-definition.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:prototypepages"/>
+    <xml action="copy" source="hst/workspace/contentlist.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/workspace/contentpage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="hst/content-sitemap.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="hst/content-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="hst/content-list-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="hst/menu/content-menu-item.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/page-prototype/page-prototype-definition.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:prototypepages"/>
     <file action="copy" binary="true" source="images/simple-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.png"/>
     <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
-    <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="hst/template-content-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/template-content-list-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
     <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main.ftl"/>
     <freemarker action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/hstdefault/contentlist-main-contentlist.ftl"/>
   </instructionSet>

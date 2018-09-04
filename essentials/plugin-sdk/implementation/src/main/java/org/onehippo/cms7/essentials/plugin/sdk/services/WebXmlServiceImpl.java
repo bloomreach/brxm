@@ -54,7 +54,7 @@ public class WebXmlServiceImpl implements WebXmlService {
 
     @Override
     public boolean addHstBeanClassPattern(final String pattern) {
-        return update(Module.SITE, doc -> {
+        return update(Module.SITE_WEBAPP, doc -> {
             Element contextParameter = contextParameterFor(HST_BEANS_ANNOTATED_CLASSES, doc);
             if (contextParameter != null) {
                 final Element parameterValue = (Element) contextParameter.selectSingleNode("./*[name()='param-value']");

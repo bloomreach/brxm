@@ -19,11 +19,11 @@
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
 
   <instructionSet>
-    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support" targetPom="site"/>
-    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support-repository" targetPom="cms"/>
-    <xml action="copy" source="instructions/seo-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support" targetPom="site-components"/>
+    <mavenDependency groupId="org.onehippo.cms7" artifactId="hippo-plugin-seo-support-repository" targetPom="cms-dependencies"/>
+    <xml action="copy" source="instructions/seo-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="instructions/seo.png" target="{{imagesRoot}}/essentials/catalog-component-icons/seo.png"/>
-    <xml action="copy" source="instructions/template-seo-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="instructions/template-seo-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
     <freemarker action="copy" source="instructions/seo.ftl" target="{{freemarkerRoot}}/hstdefault/seo.ftl"/>
   </instructionSet>
 

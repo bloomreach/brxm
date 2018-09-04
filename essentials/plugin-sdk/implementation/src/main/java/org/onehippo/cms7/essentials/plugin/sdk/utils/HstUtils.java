@@ -16,19 +16,9 @@
 
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.query.InvalidQueryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
@@ -52,7 +42,8 @@ public final class HstUtils {
         final Session session = jcrService.createSession();
 
         try {
-            final Node configurations = session.getNode("/hst:hst/hst:configurations");
+            final String nodePath = String.format("%s/hst:configurations", settingsService.getSettings().getHstRoot());
+            final Node configurations = session.getNode(nodePath);
             if (configurations.hasNode(preview)) {
                 configurations.getNode(preview).remove();
             }

@@ -21,14 +21,16 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 
 import com.google.common.base.Strings;
 
 @XmlRootElement(name = "project")
 public class ProjectSettingsBean implements ProjectSettings {
 
+    public static final String DEFAULT_HST_ROOT = "/hst:hst";
+    public static final String DEFAULT_BUNDLE_NAME = "site";
     private String projectNamespace;
 
     private String selectedBeansPackage;
@@ -42,12 +44,20 @@ public class ProjectSettingsBean implements ProjectSettings {
     private boolean extraTemplates;
 
     private String siteModule;
+    private String siteComponentsSubModule;
+    private String siteWebappSubModule;
     private String cmsModule;
+    private String cmsDependenciesModule;
     private String repositoryDataModule;
     private String applicationSubModule;
     private String developmentSubModule;
     private String webfilesSubModule;
     private String beansFolder;
+
+    private String hstRoot;
+    private String webfileBundleName;
+
+    private String hstHcmDependenciesAlias;
 
     private boolean setupDone;
     private Set<String> pluginRepositories = new HashSet<>();
@@ -74,6 +84,24 @@ public class ProjectSettingsBean implements ProjectSettings {
     }
 
     @Override
+    public String getSiteComponentsSubModule() {
+        return siteComponentsSubModule;
+    }
+
+    public void setSiteComponentsSubModule(final String siteComponentsSubModule) {
+        this.siteComponentsSubModule = siteComponentsSubModule;
+    }
+
+    @Override
+    public String getSiteWebappSubModule() {
+        return siteWebappSubModule;
+    }
+
+    public void setSiteWebappSubModule(final String siteWebappSubModule) {
+        this.siteWebappSubModule = siteWebappSubModule;
+    }
+
+    @Override
     public String getCmsModule() {
         if (Strings.isNullOrEmpty(cmsModule)) {
             return Module.CMS.getName();
@@ -83,6 +111,18 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setCmsModule(final String cmsModule) {
         this.cmsModule = cmsModule;
+    }
+
+    @Override
+    public String getCmsDependenciesModule() {
+        if (Strings.isNullOrEmpty(cmsDependenciesModule)) {
+            return Module.CMS_DEPENDENCIES.getName();
+        }
+        return cmsDependenciesModule;
+    }
+
+    public void setCmsDependenciesModule(final String cmsDependenciesModule) {
+        this.cmsDependenciesModule = cmsDependenciesModule;
     }
 
     @Override
@@ -107,6 +147,24 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setApplicationSubModule(final String applicationSubModule) {
         this.applicationSubModule = applicationSubModule;
+    }
+
+    @Override
+    public String getHstRoot() {
+        return Strings.isNullOrEmpty(hstRoot) ? DEFAULT_HST_ROOT : hstRoot;
+    }
+
+    public void setHstRoot(final String hstRoot) {
+        this.hstRoot = hstRoot;
+    }
+
+    @Override
+    public String getWebfileBundleName() {
+        return Strings.isNullOrEmpty(webfileBundleName) ? DEFAULT_BUNDLE_NAME : webfileBundleName;
+    }
+
+    public void setWebfileBundleName(final String webfileBundleName) {
+        this.webfileBundleName = webfileBundleName;
     }
 
     @Override
@@ -176,6 +234,14 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setSelectedProjectPackage(final String selectedProjectPackage) {
         this.selectedProjectPackage = selectedProjectPackage;
+    }
+
+    public String getHstHcmDependenciesAlias() {
+        return hstHcmDependenciesAlias;
+    }
+
+    public void setHstHcmDependenciesAlias(final String hstHcmDependenciesAlias) {
+        this.hstHcmDependenciesAlias = hstHcmDependenciesAlias;
     }
 
     @Override

@@ -32,8 +32,8 @@ import org.onehippo.cms7.essentials.ResourceModifyingTest;
 import org.onehippo.cms7.essentials.TestSettings;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
-import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.cms7.essentials.sdk.api.model.Module;
+import org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -46,7 +46,10 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     static {
         projectSettings.setSiteModule("test-site");
+        projectSettings.setSiteWebappSubModule("test-site/test-site-webapp");
+        projectSettings.setSiteComponentsSubModule("test-site/test-site-components");
         projectSettings.setCmsModule("test-cms");
+        projectSettings.setCmsDependenciesModule("test-cms-depedencies");
         projectSettings.setRepositoryDataModule("test-repository-data");
         projectSettings.setApplicationSubModule("test-application");
         projectSettings.setDevelopmentSubModule("test-development");
@@ -77,8 +80,12 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
     @Test
     public void get_base_path() {
         assertEquals(projectRoot, projectService.getBasePathForModule(Module.PROJECT));
-        assertEquals(projectRoot.resolve("test-site"), projectService.getBasePathForModule(Module.SITE));
+        final Path siteRoot = projectRoot.resolve("test-site");
+        assertEquals(siteRoot, projectService.getBasePathForModule(Module.SITE));
+        assertEquals(siteRoot.resolve("test-site-components"), projectService.getBasePathForModule(Module.SITE_COMPONENTS));
+        assertEquals(siteRoot.resolve("test-site-webapp"), projectService.getBasePathForModule(Module.SITE_WEBAPP));
         assertEquals(projectRoot.resolve("test-cms"), projectService.getBasePathForModule(Module.CMS));
+        assertEquals(projectRoot.resolve("test-cms-depedencies"), projectService.getBasePathForModule(Module.CMS_DEPENDENCIES));
         assertEquals(projectRoot.resolve("test-essentials"), projectService.getBasePathForModule(Module.ESSENTIALS));
 
         final Path repositoryDataRoot = projectRoot.resolve("test-repository-data");
@@ -124,7 +131,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void get_beans_root_path() {
-        assertEquals(projectRoot.resolve("test-site").resolve("src").resolve("main").resolve("java"),
+        assertEquals(projectRoot.resolve("test-site").resolve("test-site-components").resolve("src").resolve("main").resolve("java"),
                 projectService.getBeansRootPath());
 
         final ProjectSettingsBean settings = new ProjectSettingsBean();
@@ -136,7 +143,7 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void get_beans_package_path() {
-        assertEquals(projectRoot.resolve("test-site").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("bean"),
+        assertEquals(projectRoot.resolve("test-site").resolve("test-site-components").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("bean"),
                 projectService.getBeansPackagePath());
 
         final ProjectSettingsBean settings = new ProjectSettingsBean();
@@ -150,13 +157,13 @@ public class ProjectServiceImplTest extends ResourceModifyingTest {
 
     @Test
     public void get_rest_package_path() {
-        assertEquals(projectRoot.resolve("test-site").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("rest"),
+        assertEquals(projectRoot.resolve("test-site").resolve("test-site-components").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("rest"),
                 projectService.getRestPackagePath());
     }
 
     @Test
     public void get_components_package_path() {
-        assertEquals(projectRoot.resolve("test-site").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("component"),
+        assertEquals(projectRoot.resolve("test-site").resolve("test-site-components").resolve("src").resolve("main").resolve("java").resolve("com").resolve("test").resolve("component"),
                 projectService.getComponentsPackagePath());
     }
 

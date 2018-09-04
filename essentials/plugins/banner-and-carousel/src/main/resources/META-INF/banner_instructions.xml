@@ -44,8 +44,8 @@
   <instructionSet>
     <freemarker action="copy" source="freemarker/essentials-carousel.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-carousel.ftl"/>
     <freemarker action="copy" source="freemarker/essentials-banner.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-banner.ftl"/>
-    <xml action="copy" source="hst/carousel-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="hst/banner-template-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/carousel-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="hst/banner-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
@@ -61,8 +61,8 @@
   </instructionSet>
 
   <instructionSet>
-    <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/banner.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/banner.png"/>
     <file action="copy" binary="true" source="images/carousel.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/carousel.png"/>
   </instructionSet>

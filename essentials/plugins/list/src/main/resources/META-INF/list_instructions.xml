@@ -21,8 +21,8 @@
 
   <instructionSet>
     <freemarker action="copy" source="freemarker/list-component.ftl" target="{{freemarkerRoot}}/hstdefault/list-component.ftl"/>
-    <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
-    <xml action="copy" source="xml/hst/catalog/list.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" source="xml/hst/templates/list-component-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+    <xml action="copy" source="xml/hst/catalog/list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
   </instructionSet>
 

@@ -25,7 +25,7 @@
   -->
 
   <instructionSet>
-    <mavenDependency targetPom="site" groupId="org.onehippo.cms7" artifactId="hippo-essentials-components-hst" scope="provided"/>
+    <mavenDependency targetPom="site-components" groupId="org.onehippo.cms7" artifactId="hippo-essentials-components-hst" scope="provided"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-resource-bundle.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-untranslated-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <translations source="/instructions/json/translations/skeletontemplates-translations.json"/>
@@ -50,11 +50,11 @@
     <freemarker action="copy" source="instructions/freemarker/homepage-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/pagenotfound-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/pagenotfound-main.ftl"/>
 
-    <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/base-footer-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-layout-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-top-menu-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/base-footer-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/homepage-main-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+    <xml action="copy" source="instructions/xml/hst/templates/pagenotfound-main-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 
   <!--
@@ -66,20 +66,20 @@
   <instructionSet>
     <!-- always overwrite 404 page-->
     <file action="copy" overwrite="true" source="instructions/jsp/ErrorPage404.jsp" target="{{jspRoot}}/errorpages/ErrorPage404.jsp"/>
-    <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
-    <xml action="copy" source="instructions/xml/hst/workspace/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/base.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/homepage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
+    <xml action="copy" source="instructions/xml/hst/workspace/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:containers"/>
     <!-- common -->
-    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="instructions/xml/hst/sitemap/any.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="instructions/xml/hst/sitemap/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
-    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/root.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/any.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/sitemap/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <xml action="copy" source="instructions/xml/hst/menu/main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
 
-    <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:abstractpages"/>
-    <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
-    <xml action="copy" source="instructions/xml/hst/pages/pagenotfound.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/base.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:abstractpages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/homepage.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+    <xml action="copy" source="instructions/xml/hst/pages/pagenotfound.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
     <!-- default-->
-    <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="/hst:hst/hst:configurations/hst:default/hst:catalog"/>
+    <xml action="copy" source="instructions/xml/hst/catalog/essentials-catalog.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog"/>
     <file action="copy" source="instructions/xml/spring/hippo-essentials-spring.xml" target="{{siteResources}}/META-INF/hst-assembly/overrides/hippo-essentials-spring.xml"/>
   </instructionSet>
 

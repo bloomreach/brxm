@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   Copyright 2018 Hippo B.V. (http://www.onehippo.com)
 
@@ -15,22 +16,27 @@
   limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>hippo-essentials-plugin-sdk</artifactId>
-    <groupId>org.onehippo.cms7</groupId>
-    <version>13.0.0-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>hippo-essentials-plugin-sdk-test</artifactId>
-  <name>Hippo Essentials Plugin SDK Test</name>
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-essentials-plugins</artifactId>
+    <version>13.0.0-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Essentials BloomReach Cloud</name>
+  <description>Hippo Essentials BloomReach Cloud</description>
+  <artifactId>hippo-essentials-plugin-bloomreach-cloud</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
 
 </project>

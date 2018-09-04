@@ -22,12 +22,16 @@ public enum Module {
 
     INVALID(null),
     SITE("site"),
+    SITE_COMPONENTS("site-components"),
+    SITE_WEBAPP("site-webapp"),
     CMS("cms"),
+    CMS_DEPENDENCIES("cms-dependencies"),
     REPOSITORY_DATA("repository-data"),
     REPOSITORY_DATA_WEB_FILES("webfiles"),
     REPOSITORY_DATA_APPLICATION("application"),
     REPOSITORY_DATA_DEVELOPMENT("development"),
     ESSENTIALS("essentials"),
+    HCM_HST_DEPENDENCIES("hcm-hst-dependencies"),
     PROJECT("project");
 
     private final String name;
@@ -55,8 +59,14 @@ public enum Module {
         }
         if (type.equals(SITE.name)) {
             return SITE;
+        } else if (type.equals(SITE_COMPONENTS.name)) {
+            return SITE_COMPONENTS;
+        } else if (type.equals(SITE_WEBAPP.name)) {
+            return SITE_WEBAPP;
         } else if (type.equals(CMS.name)) {
             return CMS;
+        } else if (type.equals(CMS_DEPENDENCIES.name)) {
+            return CMS_DEPENDENCIES;
         } else if (type.equals(REPOSITORY_DATA.name)) {
             return REPOSITORY_DATA;
         } else if (type.equals(PROJECT.name)) {
@@ -69,6 +79,8 @@ public enum Module {
             return REPOSITORY_DATA_WEB_FILES;
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
+        } else if (type.equals(HCM_HST_DEPENDENCIES.name)) {
+            return HCM_HST_DEPENDENCIES;
         }
         return Module.INVALID;
 
