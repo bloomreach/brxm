@@ -33,10 +33,6 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     private static final Pair<String,String> UNDEFINED_BRANCH_INFO = new ImmutablePair<>("undefined", "undefined");
     private static final  Logger log = LoggerFactory.getLogger(BranchIdModel.class);
 
-    public void setBranchIdModelReference(final IModelReference<Pair<String, String>> branchIdModelReference) {
-        this.branchIdModelReference = branchIdModelReference;
-    }
-
     private IModelReference<Pair<String, String>> branchIdModelReference;
 
     public BranchIdModel() {
@@ -64,11 +60,11 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     }
 
     public String getBranchId() {
-        return isDefined()?getBranchInfo().getLeft():DocumentVariant.MASTER_BRANCH_ID;
+        return isDefined() ? getBranchInfo().getLeft() : DocumentVariant.MASTER_BRANCH_ID;
     }
 
     public String getBranchName() {
-        return isDefined()?getBranchInfo().getRight():"core";
+        return isDefined() ? getBranchInfo().getRight() : "core";
     }
 
     public Pair<String,String> getBranchInfo() {
