@@ -35,7 +35,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -46,11 +45,14 @@ import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -183,7 +185,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		mountNode.getSession().save();
 		// load the model first ones to make sure async model is really async
 		hstManager.getVirtualHosts();
-		EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+		final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+		final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
 
 		try {
 			final int synchronousJobCount = 1000;
@@ -244,7 +247,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 		assertTrue(channels.size() == 2);
 		final Channel existingChannel = channels.values().iterator().next();
-		final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+		final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+		final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
 		try {
 			final int jobCount = 1000;
 			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);

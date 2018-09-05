@@ -21,4 +21,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml" />
 
+  <import resource="classpath:/org/hippoecm/hst/test-context.xml"/>
+
+
 </beans>

@@ -110,7 +110,8 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
         requestContext.matchingFinished();
         HstURLFactory hstURLFactory = getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
-        requestContext.setSiteMapMatcher(siteMapMatcher);
+        //TODO SS: re-evaluate this
+//        requestContext.setSiteMapMatcher(requestContext.getSiteMapMatcher());
         return requestContext;
     }
 

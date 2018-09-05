@@ -15,16 +15,14 @@
  */
 package org.hippoecm.hst.platform.configuration.cache;
 
-import java.util.Arrays;
-
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
-import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
-import org.hippoecm.hst.platform.configuration.cache.HstEventsDispatcher;
-import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.model.InvalidationMonitor;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
+import static org.joor.Reflect.on;
 
 public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfigurations {
 
@@ -38,12 +36,18 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        this.hstNodeLoadingCache = new HstNodeLoadingCache(getRepository(), getAdminCredentials(), "/hst:hst");
-        this.hstConfigurationLoadingCache = new HstConfigurationLoadingCache(hstNodeLoadingCache,
-                "/hst:hst/" + NODENAME_HST_CONFIGURATIONS + "/");
 
-        hstEventsCollector = new HstEventsCollector("/hst:hst");
-        hstEventsDispatcher = new HstEventsDispatcher(hstEventsCollector, Arrays.asList(hstConfigurationLoadingCache, hstNodeLoadingCache));
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final PlatformHstModel hstModel = (PlatformHstModel) provider.getHstModel();
+
+        this.hstNodeLoadingCache = on(hstModel).field("hstNodeLoadingCache").get();
+        this.hstConfigurationLoadingCache = on(hstModel).field("hstConfigurationLoadingCache").get();
+
+        final InvalidationMonitor invalidationMonitor = on(hstModel).field("invalidationMonitor").get();
+
+        hstEventsDispatcher = on(invalidationMonitor).field("hstEventsDispatcher").get();
+
+        hstEventsCollector = on(hstEventsDispatcher).field("hstEventsCollector").get();
 
         // HSTTWO-4354 TODO replace since hstEventsCollector and hstEventsDispatcher and hstModelMutex most likely won't be spring
         // wired any more

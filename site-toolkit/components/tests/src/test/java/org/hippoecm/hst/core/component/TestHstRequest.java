@@ -62,6 +62,7 @@ public class TestHstRequest extends AbstractSpringTestCase {
         
         this.servletRequest = getComponent(HttpServletRequest.class.getName());
         PropertiesConfiguration configuration = new PropertiesConfiguration();
+        configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
         configuration.setProperty(HstRequestImpl.CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY, "COM.iiibbbmmm., com.sssuuunnn.");
         ContainerConfiguration containerConfiguration = new ContainerConfigurationImpl(configuration);
         this.requestContext = new HstRequestContextImpl(null);

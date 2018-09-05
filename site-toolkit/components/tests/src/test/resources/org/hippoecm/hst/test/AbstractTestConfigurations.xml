@@ -38,6 +38,8 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml" />
 
+  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.configuration.site.DelegatingHstSiteProvider"/>
+
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>

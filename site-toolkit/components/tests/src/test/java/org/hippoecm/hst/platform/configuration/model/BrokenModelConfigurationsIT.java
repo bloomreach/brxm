@@ -16,48 +16,16 @@
 package org.hippoecm.hst.platform.configuration.model;
 
 
-import java.util.Map;
-
-import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.query.QueryResult;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
-import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
-import org.hippoecm.hst.platform.configuration.hosting.MountService;
-import org.hippoecm.hst.platform.configuration.hosting.VirtualHostService;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.platform.configuration.site.HstSiteService;
-import org.hippoecm.hst.platform.configuration.sitemap.HstNoopSiteMap;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-import org.onehippo.cms7.services.hst.Channel;
-import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 // TODO HSTTWO-4355 This IT test needs to be completely redone in a different way
 public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
@@ -73,7 +41,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
     }
 
     @Override

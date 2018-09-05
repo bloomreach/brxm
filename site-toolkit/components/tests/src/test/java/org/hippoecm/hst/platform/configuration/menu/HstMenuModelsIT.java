@@ -34,6 +34,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -66,7 +68,9 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+//        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
     }
 
     @Override
@@ -116,7 +120,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         final Node mainMenuNode = session.getNodeByIdentifier(mainUnitTestProjectMenuIdentifier);
         mainMenuNode.remove();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         {
@@ -136,6 +140,14 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
     }
 
+    private void saveSession() throws RepositoryException {
+        session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
+    }
+
     @Test
     public void test_menu_in_workspace() throws Exception {
         // start with moving shared menu from 'unittestcommon' to hst:workspace of 'unittestcommon'
@@ -144,7 +156,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
@@ -173,7 +185,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         JcrUtils.copy(session,
                 "/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/footer");
-        session.save();
+        saveSession();
         // unittestproject sitemenu 'footer' should now be loaded from 'hst:workspace' but 'main' not from workspace
         {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
@@ -218,7 +230,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // start with moving shared menu from 'unittestcommon' to hst:workspace of 'unittestcommon'
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer");
-        session.save();
+        saveSession();
 
         // nothing changed to own unittestproject sitemenu : BECAUSE IT HAS OWN sitemenus IT DOES NOT INHERIT FROM 'common workspace' the
         // 'footer; item
@@ -257,7 +269,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
@@ -282,7 +294,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // unittestproject should now use the hst:workspace menu only
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemenus").remove();
         pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         // unittestproject sitemenu should now be loaded from 'unittestproject/hst:workspace'
@@ -309,7 +321,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus").remove();
         pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         {
@@ -335,7 +347,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         // reloading and them fetching menu again should result in exact same menu as before
@@ -356,7 +368,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
     public void menu_from_workspace_by_default_not_inherited_unless_explicitly_inherited() throws Exception {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer");
-        session.save();
+        saveSession();
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -381,9 +393,10 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:sitemenus/footer",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -423,7 +436,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
             // make sure a change triggers a reload!
             session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer").addNode("newItem", NODETYPE_HST_SITEMENUITEM);
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -440,7 +453,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
             session.removeItem("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemenus/footer/newItem");
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
         }
     }
@@ -473,7 +486,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        session.save();
+        saveSession();
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -493,8 +506,9 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        session.save();
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        saveSession();
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
 
         {
@@ -511,7 +525,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
     private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
         final Node hstConfigNode = session.getNode(hstConfigurationPath);
         hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
-        session.save();
+        saveSession();
     }
 
     private String getLocalhostRootMountId() throws RepositoryException {

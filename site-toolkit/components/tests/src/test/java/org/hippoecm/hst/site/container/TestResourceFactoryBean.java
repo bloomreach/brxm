@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ResourceLoaderAware;
@@ -30,7 +31,7 @@ import org.springframework.core.io.Resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
+@Ignore
 public class TestResourceFactoryBean {
 
     private ClassPathXmlApplicationContext appContext;

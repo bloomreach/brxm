@@ -27,6 +27,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
@@ -55,7 +57,15 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         createHstConfigBackup(session);
         movePagesInheritedPagesToProject(session);
         testComponent = addTestComponent();
+        saveSession();
+    }
+
+    private void saveSession() throws RepositoryException {
         session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
     }
 
     private void movePagesInheritedPagesToProject(final Session session) throws RepositoryException {
@@ -109,7 +119,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         canonicalContainer.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.vBox");
         Node canonicalComponentItem = canonicalContainer.addNode("item", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         canonicalComponentItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
-        session.save();
+        saveSession();
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -135,7 +145,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     @Test(expected = ConstraintViolationException.class)
     public void reference_component_property_mandatory_on_containercomponentreference() throws Exception {
         testComponent.addNode("containerRef", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE);
-        session.save();
+        saveSession();
     }
 
     @Test
@@ -162,7 +172,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         */
         Node canonicalContainerReference = parent.addNode(containerReferenceNodeName, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE);
         canonicalContainerReference.setProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT, reference);
-        session.save();
+        saveSession();
     }
 
     @Test
@@ -273,7 +283,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
         // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
@@ -296,7 +307,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
 
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1", "name2"});
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1", "value2"});
-            session.save();
+            saveSession();
 
             // trigger reload
             invalidator.eventPaths(canonicalJcrPath);
@@ -337,7 +348,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         addComponentReference(testComponent, "localcontainer", "myReferenceableContainer");
 
         // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
@@ -357,7 +369,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
     private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
         final Node hstConfigNode = session.getNode(hstConfigurationPath);
         hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
-        session.save();
+        saveSession();
     }
 
     @Test
@@ -393,7 +405,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // from unittestproject remove the 'pages' and 'sitemap' it has itself
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:pages").remove();
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:sitemap").remove();
-        session.save();
+        saveSession();
     }
 
 
@@ -487,7 +499,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // in 'unittestsubproject' to be from 'unittestproject' instead of from 'unittestcommon'
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject/hst:workspace", "../unittestproject"});
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestsubproject");
         final VirtualHosts vhostsNew = hstSitesManager.getVirtualHosts();
         {
@@ -536,9 +549,10 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // now trigger a change in the inherited component from workspace. This should trigger a reload
         final Node componentItem = session.getNodeByIdentifier(itemUUID);
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
-        session.save();
+        saveSession();
         // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         invalidator.eventPaths(componentItem.getPath());
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -570,7 +584,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         final Node workspace = session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace");
         workspace.addNode("hst:pages");
         session.move(testComponent.getParent().getPath(), "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
-        session.save();
+        saveSession();
         assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
 
     }
@@ -687,7 +701,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         componentItem.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1"});
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1"});
-        session.save();
+        saveSession();
         //hstSitesManager.invalidate();
         return highestAncestorPath;
     }

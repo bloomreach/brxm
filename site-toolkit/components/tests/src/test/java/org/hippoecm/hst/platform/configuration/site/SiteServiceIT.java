@@ -21,23 +21,21 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.base.Optional;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.CompositeHstSite;
-import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.platform.configuration.site.DelegatingHstSiteProvider;
-import org.hippoecm.hst.platform.configuration.site.HstSiteService;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -48,6 +46,8 @@ import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.google.common.base.Optional;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
@@ -72,7 +72,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         hstManager = getComponent(HstManager.class.getName());
     }
 
@@ -159,8 +160,9 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                 session.getNode(configPath + "-preview/hst:channel").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
             }
             String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
-            invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+            saveSession(session);
+            final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+            invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
             invalidator.eventPaths(pathsToBeChanged);
 
             {
@@ -435,7 +437,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "unittestproject");
         branchNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
-        session.save();
+        saveSession(session);
     }
 
     @Test
@@ -446,7 +448,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             Node branchNode = session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000");
             branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "nonexisting");
-            session.save();
+            saveSession(session);
             assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000"));
         } finally {
             restoreHstConfigBackup(session);
@@ -466,7 +468,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // since the branch is a branchof 'unittestproject', it should start with the name 'unittestproject-' and is
             // thus incorrect like this and hence won't be loaded
             createBranch(session, name, branchId);
-            session.save();
+            saveSession(session);
             Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get(name);
             assertEquals("unittestproject", branch.getBranchOf());
             assertEquals(branchId, branch.getBranchId());
@@ -494,7 +496,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                     "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
             Node mount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
             mount.setProperty(MOUNT_PROPERTY_MOUNTPOINT, "/hst:hst/hst:sites/unittestproject-branchid-000");
-            session.save();
+            saveSession(session);
             // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null because
             // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
             // nonetheless because the mount can have valid child mounts
@@ -518,7 +520,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
                     "/hst:hst/hst:configurations/unittestproject-preview");
-            session.save();
+            saveSession(session);
             assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-preview"));
             assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
         } finally {
@@ -538,7 +540,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // preview branch extends from the live branch
             session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                     new String[]{"../unittestproject-branchid-000"});
-            session.save();
+            saveSession(session);
             assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
         } finally {
             restoreHstConfigBackup(session);
@@ -556,7 +558,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
-            session.save();
+            saveSession(session);
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
@@ -594,7 +596,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
-            session.save();
+            saveSession(session);
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
             Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000");
@@ -623,4 +625,11 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         }
     }
 
+    private void saveSession(final Session session) throws RepositoryException {
+        session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
+    }
 }

@@ -33,6 +33,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -102,7 +104,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
@@ -129,7 +131,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -168,7 +170,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
 
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
@@ -198,7 +200,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/news");
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -231,7 +233,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/home");
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -249,7 +251,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace").addNode("hst:sitemap");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
@@ -276,9 +278,10 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -318,7 +321,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -331,7 +334,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
         }
     }
@@ -364,7 +367,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        session.save();
+        saveSession();
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -384,8 +387,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        session.save();
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        saveSession();
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
 
         {
@@ -402,7 +406,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
     private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
         final Node hstConfigNode = session.getNode(hstConfigurationPath);
         hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
-        session.save();
+        saveSession();
     }
 
     private String getLocalhostRootMountId() throws RepositoryException {
@@ -426,9 +430,10 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
+        saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
         mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
@@ -451,13 +456,21 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         final Node news = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news");
         news.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         news.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertTrue(siteMap.getSiteMapItem("news").isMarkedDeleted());
         assertTrue(siteMap.getSiteMapItem("news").getChild("_default_").isMarkedDeleted());
+    }
+
+    private void saveSession() throws RepositoryException {
+        session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
     }
 
     @Test
@@ -469,11 +482,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
         // ${foo} is a property lookup from the mount
         anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
-        session.save();
-
+        saveSession();
         HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
                 .getSiteMap().getSiteMapItem("_any_.GIF");
-
         assertEquals("bar", siteMapItem.getParameter("lux"));
     }
 
@@ -490,7 +501,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
         // ${foo} is a property lookup from the mount
         anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
-        session.save();
+        saveSession();
 
         HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
                 .getSiteMap().getSiteMapItem("_any_.GIF");

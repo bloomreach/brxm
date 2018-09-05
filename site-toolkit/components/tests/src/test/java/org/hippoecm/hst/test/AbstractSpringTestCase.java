@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +39,10 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -46,6 +52,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
@@ -71,7 +78,7 @@ public abstract class AbstractSpringTestCase
 {
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
-    protected ComponentManager componentManager;
+    protected SpringComponentManager componentManager;
 
     protected final MockServletContext servletContext = new MockServletContext();
 
@@ -99,24 +106,39 @@ public abstract class AbstractSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        componentManager = new SpringComponentManager(getContainerConfiguration());
+
+        final Configuration containerConfiguration = getContainerConfiguration();
+        containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
+        componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
 
         servletContext.setContextPath("/site");
         ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
 
+        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions()
+                .stream().filter(m -> m.getName().equals("org.hippoecm.hst.platform")).collect(Collectors.toList());
+        if (!addonModuleDefinitions.isEmpty()) {
+            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+        }
+
         componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.registerHstModel("/site", this.getClass().getClassLoader(), componentManager, true);
+
     }
 
     @After
     public void tearDown() throws Exception {
-        this.componentManager.stop();
-        this.componentManager.close();
         ServletContextRegistry.unregister(servletContext);
-        HstServices.setComponentManager(null);
+        if (componentManager != null) {
+            this.componentManager.stop();
+            this.componentManager.close();
+            HstServices.setComponentManager(null);
+        }
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();
     }

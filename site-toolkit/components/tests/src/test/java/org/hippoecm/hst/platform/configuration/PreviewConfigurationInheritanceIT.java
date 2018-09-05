@@ -21,10 +21,12 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -50,7 +52,8 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
     public void setUp() throws Exception {
         super.setUp();
         this.hstManager = getComponent(HstManager.class.getName());
-        this.invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
 
         this.session = createSession();
         createHstConfigBackup(session);

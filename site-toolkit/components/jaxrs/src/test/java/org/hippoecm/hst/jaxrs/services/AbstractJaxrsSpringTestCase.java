@@ -17,9 +17,9 @@ package org.hippoecm.hst.jaxrs.services;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
@@ -28,7 +28,6 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
 
 /**
  * <p>
@@ -51,7 +50,9 @@ public abstract class AbstractJaxrsSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        componentManager = new SpringComponentManager(getContainerConfiguration());
+        final Configuration containerConfiguration = getContainerConfiguration();
+        containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
+        componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
@@ -59,6 +60,9 @@ public abstract class AbstractJaxrsSpringTestCase
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+
+        final HstModelRegistry modelRegistry = componentManager.getComponent(HstModelRegistry.class);
+        modelRegistry.registerHstModel("/site", this.getClass().getClassLoader(), componentManager, true);
     }
 
     @After

@@ -16,9 +16,7 @@
 package org.hippoecm.hst.platform.model;
 
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.onehippo.cms7.services.SingletonService;
 
-@SingletonService
 public interface HstModelRegistry {
 
     HstModel registerHstModel(String contextPath, ClassLoader websiteClassLoader,

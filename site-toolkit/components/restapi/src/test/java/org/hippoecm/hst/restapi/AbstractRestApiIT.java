@@ -33,6 +33,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
@@ -40,6 +41,7 @@ import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -61,7 +63,9 @@ public class AbstractRestApiIT {
 
     @Before
     public void setUp() throws Exception {
-        componentManager = new SpringComponentManager(new PropertiesConfiguration());
+        final PropertiesConfiguration configuration = new PropertiesConfiguration();
+        configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
+        componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
 
         servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/onehippo/**/*.class");
@@ -79,6 +83,10 @@ public class AbstractRestApiIT {
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
         filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.registerHstModel("/site", this.getClass().getClassLoader(), componentManager, true);
+
     }
 
     @After

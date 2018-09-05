@@ -27,11 +27,13 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -39,6 +41,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -264,6 +267,10 @@ public class MatchHostAndUrlIT extends AbstractTestConfigurations {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Session session = createSession();
         createHstConfigBackup(session);
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        final HstModel hstModel = modelRegistry.getHstModel("/site");
+
         // because hst:hosts contains hst:defaultcontextpath = /site we first need to remove that property
         session.getNode("/hst:hst/hst:hosts").getProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH).remove();
         session.save();

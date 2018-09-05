@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.platform.api;
 
-import org.onehippo.cms7.services.SingletonService;
-
-@SingletonService
 public interface PlatformServices {
 
     BlueprintService getBlueprintService();

@@ -30,6 +30,8 @@ import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -84,7 +86,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
     public void test_unittestproject_pages_without_workspace_pages() throws Exception {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestproject/hst:pages");
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
@@ -102,7 +104,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
@@ -125,7 +127,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/standarddetail",
                 "/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail");
 
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -160,7 +162,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         JcrUtils.copy(session,"/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/standarddetail",
                 "/hst:hst/hst:configurations/unittestproject/hst:pages/standarddetail");
 
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -189,7 +191,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace");
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
-        session.save();
+        saveSession();
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
@@ -218,9 +220,10 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
+        saveSession();
 
         invalidator.eventPaths(pathsToBeChanged);
         {
@@ -261,7 +264,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -274,7 +277,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-            session.save();
+            saveSession();
             invalidator.eventPaths(pathsToBeChanged);
         }
     }
@@ -303,7 +306,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
-        session.save();
+        saveSession();
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -323,8 +326,9 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        session.save();
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        saveSession();
         invalidator.eventPaths(new String[] {"/hst:hst/hst:configurations/unittestproject"});
 
         {
@@ -341,7 +345,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
     private void setWorkspaceInheritance(final String hstConfigurationPath, final String[] inheritsFrom) throws RepositoryException {
         final Node hstConfigNode = session.getNode(hstConfigurationPath);
         hstConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, inheritsFrom);
-        session.save();
+        saveSession();
     }
 
     private String getLocalhostRootMountId() throws RepositoryException {
@@ -357,7 +361,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         final Node standardBody = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/standardoverview/body");
         standardBody.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         standardBody.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -368,5 +372,13 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         assertTrue(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body").isMarkedDeleted());
         assertFalse(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview").isMarkedDeleted());
 
+    }
+
+    private void saveSession() throws RepositoryException {
+        session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
     }
 }

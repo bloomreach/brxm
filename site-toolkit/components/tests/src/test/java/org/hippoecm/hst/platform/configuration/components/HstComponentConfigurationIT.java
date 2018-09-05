@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.configuration.components;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -64,7 +65,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         contactPage.setProperty("hst:parameternames", new String[]{"foo","foo"});
         contactPage.setProperty("hst:parametervalues", new String[]{"bar", "lux"});
         contactPage.setProperty("hst:parameternameprefixes", new String[]{"", "professional"});
-        session.save();
+        saveSession();
 
         ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
@@ -85,5 +86,13 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         assertEquals("bar", localParameters.get("foo"));
         assertEquals("lux", localParameters.get(prefixedParameterName));
 
+    }
+
+    private void saveSession() throws RepositoryException {
+        session.save();
+        //TODO SS: Clarify what could be the cause of failures without delay
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {}
     }
 }

@@ -22,15 +22,17 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
+import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -187,7 +189,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:pages", "hst:pages");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
 
         session.save();
@@ -288,7 +291,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node defaultComponents = session.getNode("/hst:hst/hst:configurations/hst:default/hst:components");
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
@@ -318,7 +322,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         Node defaultSitemap = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap");
         defaultSitemap.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:sitemapitem");
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+//        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
@@ -366,7 +370,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node commonCatalog = configurationsNode.addNode("hst:catalog", "hst:catalog");
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);

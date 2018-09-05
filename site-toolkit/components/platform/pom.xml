@@ -58,6 +58,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>

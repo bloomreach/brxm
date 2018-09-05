@@ -31,6 +31,17 @@
     </property>
   </bean>
 
+  <bean id="org.hippoecm.hst.configuration.hosting.HstModelRegistry" class="org.hippoecm.hst.platform.model.HstModelRegistryImpl" init-method="init" destroy-method="stop">
+    <property name="repository" ref="javax.jcr.Repository.delegating" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+  </bean>
+
+  <bean id="org.hippoecm.hst.platform.api.PlatformServices" class="org.hippoecm.hst.platform.services.PlatformServicesImpl"
+        init-method="init" destroy-method="stop">
+    <property name="hstModelRegistry" ref="org.hippoecm.hst.configuration.hosting.HstModelRegistry"/>
+    <property name="previewDecorator" ref="org.hippoecm.hst.core.internal.PreviewDecorator"/>
+  </bean>
+
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml" />

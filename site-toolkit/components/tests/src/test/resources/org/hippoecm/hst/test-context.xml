@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
+
+  <!-- Default properties. The following properties can be overriden by external properties. e.g., hst-config.properties -->
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+    <property name="location" value="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties" />
+  </bean>
+
+  <bean id="hstJmvEnabledUsers" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <property name="sourceSet">
+      <set>
+        <value>${default.repository.user.name}</value>
+        <value>${preview.repository.user.name}</value>
+        <value>${writable.repository.user.name}</value>
+        <value>${hstconfigreader.repository.user.name}</value>
+      </set>
+    </property>
+  </bean>
+
+  <bean id="containerConfiguration" class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+    <property name="targetObject">
+      <bean id="componentManagerFacade" class="org.hippoecm.hst.site.container.ComponentManagerFacade" />
+    </property>
+    <property name="propertyPath" value="containerConfiguration" />
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <value>/unittestcontent/gallery/</value>
+        <value>/unittestcontent/assets/</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.internal.PreviewDecorator" class="org.hippoecm.hst.site.request.PreviewDecoratorImpl"/>
+
+  <!-- Delegating repository to the raw hippo repository -->
+  <bean id="javax.jcr.Repository.delegating" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
+  <!-- hstconfigreader cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.hstconfigreader.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
+    <property name="userId" value="${hstconfigreader.repository.user.name}"/>
+    <property name="password" value="${hstconfigreader.repository.password}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+  </bean>
+
+</beans>

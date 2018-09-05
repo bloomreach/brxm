@@ -24,8 +24,10 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
 
@@ -38,8 +40,12 @@ public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
         super.setUp();
         this.objectConverter = getObjectConverter();
         // TODO link creator cannot be fetched via spring component any more
-        this.linkCreator = getComponent(HstLinkCreator.class.getName());
+        this.linkCreator = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site").getHstLinkCreator();
         this.hstManager = getComponent(HstManager.class.getName());
+        //TODO SS: review this
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.registerHstModel("/site2", this.getClass().getClassLoader(), componentManager, true);
+
     }
 
     protected Session createAdminSession() throws RepositoryException {

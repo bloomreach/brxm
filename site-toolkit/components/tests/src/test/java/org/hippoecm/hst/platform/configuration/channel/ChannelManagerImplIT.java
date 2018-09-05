@@ -31,7 +31,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
@@ -45,7 +44,8 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -104,8 +104,12 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         requestContext.setSession(session);
         ModifiableRequestContextProvider.set(requestContext);
 
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final PlatformHstModel hstModel = (PlatformHstModel) provider.getHstModel();
+        invalidator = hstModel.getEventPathsInvalidator();
+
+        channelMngr = (ChannelManagerImpl) hstModel.getChannelManager();
+
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
         final VirtualHost dummyHost = virtualHosts.getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
@@ -125,15 +129,13 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
     @Test
     public void createUniqueChannelName() throws RepositoryException, ChannelException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-
-        assertEquals("test", manager.createUniqueHstConfigurationName("test", session));
-        assertEquals("name-with-spaces", manager.createUniqueHstConfigurationName("Name with Spaces", session));
-        assertEquals("special-characters--and---and", manager.createUniqueHstConfigurationName("Special Characters: % and / and []", session));
+        assertEquals("test", channelMngr.createUniqueHstConfigurationName("test", session));
+        assertEquals("name-with-spaces", channelMngr.createUniqueHstConfigurationName("Name with Spaces", session));
+        assertEquals("special-characters--and---and", channelMngr.createUniqueHstConfigurationName("Special Characters: % and / and []", session));
         assertEquals("'unittestproject' already exists as an hst:site node in the default unit test content, so the new channel ID should get a suffix",
-                "unittestproject-1", manager.createUniqueHstConfigurationName("unittestproject", session));
+                "unittestproject-1", channelMngr.createUniqueHstConfigurationName("unittestproject", session));
         assertEquals("'unittestcommon' already exists as an hst:configuration node in the default unit test content, so the new channel name should get a suffix",
-                "unittestcommon-1", manager.createUniqueHstConfigurationName("unittestcommon", session));
+                "unittestcommon-1", channelMngr.createUniqueHstConfigurationName("unittestcommon", session));
     }
 
     @Test
@@ -479,7 +481,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
     @Test(expected = ChannelException.class)
     public void ancestorMountsMustExist() throws Exception {
-        final ChannelManagerImpl channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+
+        final ChannelManagerImpl channelMngr = this.channelMngr;
         final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
         List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
@@ -694,7 +697,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
         resetDummyHostOnRequestContext();
 
-        final ChannelManagerImpl channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final ChannelManagerImpl channelMngr = this.channelMngr;
         final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
         Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp2").getPrototypeChannel();
