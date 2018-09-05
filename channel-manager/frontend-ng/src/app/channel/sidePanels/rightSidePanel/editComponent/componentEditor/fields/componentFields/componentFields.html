@@ -34,7 +34,15 @@
   </div>
 
   <div ng-switch-when="datefield">
-    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+    <date-field
+      field-type="{ type: 'DATE_ONLY' }"
+      ng-model="componentField.value"
+      ng-change="$ctrl.valueChanged()"
+      class="md-primary"
+      name="::componentField.name"
+      ng-focus="$ctrl.focusPrimitive($event)"
+      ng-blur="$ctrl.blurPrimitive($event)">
+    </date-field>
   </div>
 
   <div ng-switch-when="linkpicker">
