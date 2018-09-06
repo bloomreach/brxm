@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -25,10 +27,15 @@ public class WebFileUtils {
     public static final String DEFAULT_BUNDLE_NAME = "site";
 
     public static String getBundleName(HstRequestContext requestContext) {
-        String bundleName = requestContext.getResolvedMount().getMount().getContextPath();
-        if (bundleName == null || bundleName.length() == 0) {
-            bundleName = DEFAULT_BUNDLE_NAME;
-        } else if (bundleName.startsWith("/")) {
+        final Mount reqMount = requestContext.getResolvedMount().getMount();
+        String bundleName = reqMount.getContextPath();
+        if (StringUtils.isEmpty(bundleName)) {
+            //If webfile bundle name is null, use context path of parent mount as webfile bundle name
+            //TODO SS: This code will be removed as hst platform changes are integrated
+            bundleName = reqMount.getParent() != null ? reqMount.getParent().getContextPath() : DEFAULT_BUNDLE_NAME;
+        }
+
+        if (bundleName.startsWith("/")) {
             bundleName = bundleName.substring(1);
         }
         return bundleName;
