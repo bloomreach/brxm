@@ -17,9 +17,17 @@
      ng-repeat="componentField in $ctrl.fields track by $index"
      ng-switch="::componentField.type">
 
-  <div ng-switch-when="textfield">
-    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
-  </div>
+  <md-input-container ng-switch-when="textfield"
+                      class="md-block qa-component-field component-field-type-{{ ::componentField.type }}">
+    <label>{{ ::componentField.label }}</label>
+    <input aria-label="{{ ::componentField.label }}"
+           name="{{ ::componentField.name }}"
+           ng-model="componentField.value"
+           ng-change="$ctrl.valueChanged()"
+           ng-required="::componentField.required"
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)">
+  </md-input-container>
 
   <div ng-switch-when="checkbox">
     {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}

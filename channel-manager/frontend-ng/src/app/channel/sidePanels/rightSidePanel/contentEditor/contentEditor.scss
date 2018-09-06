@@ -18,6 +18,10 @@
 content-editor {
   min-height: 0;
 
+  .hippo-hint-icon {
+    margin: 0 4px;
+  }
+
   .feedback > :last-child {
     margin-bottom: 0;
   }

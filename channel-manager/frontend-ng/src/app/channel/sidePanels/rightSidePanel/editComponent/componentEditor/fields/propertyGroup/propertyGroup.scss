@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-import './propertyGroup.scss';
-import template from './propertyGroup.html';
-import controller from './propertyGroup.controller';
-
-const propertyGroupComponent = {
-  bindings: {
-    name: '<',
-    group: '<',
-    onFieldFocus: '&',
-    onFieldBlur: '&',
-  },
-  controller,
-  require: {
-    form: '^^form',
-  },
-  template,
-};
-
-export default propertyGroupComponent;
+property-group {
+  display: block;
+}
