@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.service;
 
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -156,19 +157,17 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
 
         try {
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                final BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
+            final BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
+            branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
+
+            final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
+            if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
                 final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
-                        .orElseGet(() ->
-                                getDocumentVariantNode(node, PUBLISHED)
-                                        .orElse(null));
-                if (variant == null) {
-                    // A handle without variants should never exist, but just in case ...
-                    branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
-                } else {
-                    final String initialBranchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-                    final String initialBranchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
-                    branchIdModel.setInitialBranchInfo(initialBranchId, initialBranchName);
+                        .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
+                if (variant != null) {
+                    final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                    final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
+                    branchIdModel.setBranchInfo(branchId, branchName);
                 }
             }
         } catch (RepositoryException e) {
