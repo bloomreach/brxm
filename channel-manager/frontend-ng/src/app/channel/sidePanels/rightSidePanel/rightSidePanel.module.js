@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-import rightSidePanelComponent from './rightSidePanel.component';
-import rightSidePanelService from './rightSidePanel.service';
+import collapseDirective from './collapse/collapse.directive';
 import componentEditorModule from './editComponent/componentEditor/componentEditor.module';
 import contentEditorModule from './contentEditor/contentEditor.module';
-import editContentModule from './editContent/editContent.module';
-import editComponentModule from './editComponent/editComponent.module';
-import resizeHandleModule from '../resizeHandle/resizeHandle.module';
 import createContentModule from './createContent/createContent.module';
+import editComponentModule from './editComponent/editComponent.module';
+import editContentModule from './editContent/editContent.module';
+import resizeHandleModule from '../resizeHandle/resizeHandle.module';
+import rightSidePanelComponent from './rightSidePanel.component';
+import rightSidePanelService from './rightSidePanel.service';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
     componentEditorModule,
     contentEditorModule,
+    createContentModule,
     editComponentModule,
     editContentModule,
     resizeHandleModule,
-    createContentModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
+  .directive('collapse', collapseDirective)
   .service('RightSidePanelService', rightSidePanelService);
 
 export default rightSidePanelModule.name;
