@@ -14,25 +14,23 @@
   limitations under the License.
 -->
 
-<div layout="column"
+<div class="qa-property-group"
+     collapse
+     layout="column"
      layout-align="start"
      layout-margin
-     class="qa-property-group"
-     ng-class="{'has-focused-field': $ctrl.hasFocus}"
-     collapse>
+     ng-class="{'has-focused-field': $ctrl.hasFocus}">
 
-  <div layout
-      layout-align="start center"
-      layout-margin
-      layout-fill
-      class="collapse-toggle md-caption"
-      ng-click="collapse.toggle()">
-      class="collapse-toggle field-title"
-      ng-click="collapse.toggle()"
-      ng-if="$ctrl.group.collapse">
+  <div class="collapse-toggle md-caption"
+       layout
+       layout-align="start center"
+       layout-fill
+       layout-margin
+       ng-click="collapse.toggle()"
+       ng-if="$ctrl.group.collapse">
     <md-icon class="collapse-icon"
-             ng-class="{'collapsed': collapse.isCollapsed}"
-             md-font-icon="mdi-chevron-down">
+             md-font-icon="mdi-chevron-down"
+             ng-class="{'collapsed': collapse.isCollapsed}">
     </md-icon>
 
     <span layout-fill>
@@ -41,14 +39,4 @@
   </div>
 
   <component-fields class="collapse-element" fields="$ctrl.group.fields"></component-fields>
-
-<!--
-  <document-fields class="collapse-element"
-                   name="::$ctrl.name"
-                   field-types="::$ctrl.fieldType.fields"
-                   field-values="$ctrl.fieldValues"
-                   on-field-focus="$ctrl.focusCompound()"
-                   on-field-blur="$ctrl.blurCompound()">
-  </document-fields>
--->
 </div>
