@@ -25,7 +25,7 @@ describe('DateField', () => {
   const fieldValue = { value: '2015-08-24T06:53:00.000Z' };
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.fields.dateField');
 
     inject((_$componentController_) => {
       $componentController = _$componentController_;
