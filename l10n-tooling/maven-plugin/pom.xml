@@ -46,12 +46,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms.l10n</groupId>
-      <artifactId>translations-yaml-converter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>${javax.jcr.version}</version>
