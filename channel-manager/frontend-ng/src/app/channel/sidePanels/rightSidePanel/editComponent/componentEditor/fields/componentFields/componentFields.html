@@ -34,7 +34,17 @@
   </div>
 
   <div ng-switch-when="numberfield">
-    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
+    <md-input-container class="md-block">
+      <label>{{ ::componentField.label }}</label>
+      <input type="text"
+             ng-model="componentField.value"
+             ng-change="$ctrl.valueChanged()"
+             class="md-primary"
+             name="{{::componentField.name}}"
+             ng-focus="$ctrl.focusPrimitive($event)"
+             ng-blur="$ctrl.blurPrimitive($event)"
+             ng-pattern="/^-?[0-9]\d*(\.\d+)?$/"/>
+    </md-input-container>
   </div>
 
   <div ng-switch-when="combo">
