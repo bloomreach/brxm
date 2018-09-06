@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import collapseDirective from './collapse/collapse.directive';
 import contentEditorModule from './contentEditor/contentEditor.module';
 import createContentModule from './createContent/createContent.module';
 import editComponentModule from './editComponent/editComponent.module';
@@ -33,6 +34,7 @@ const rightSidePanelModule = angular
     resizeHandleModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)
+  .directive('collapse', collapseDirective)
   .service('RightSidePanelService', rightSidePanelService);
 
 export default rightSidePanelModule.name;

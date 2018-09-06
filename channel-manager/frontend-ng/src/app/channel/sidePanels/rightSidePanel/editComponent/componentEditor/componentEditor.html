@@ -16,21 +16,7 @@
 
 <form name="$ctrl.form"
       class="form-dense-layout">
-  <div>
-    <component-fields class="collapse-element" fields="$ctrl.getTemplateChooser()" >
-
-    </component-fields>
-  </div>
-  
   <property-group class="top-level"
                   ng-repeat="propertyGroup in $ctrl.getPropertyGroups() track by propertyGroup.label"
-                  group="propertyGroup">
-  </property-group>
-  
-  <br/>
-  <div>
-    <component-fields class="collapse-element" fields="$ctrl.getProperties()" >
-  
-    </component-fields>
-  </div>
+                  group="propertyGroup" />
 </form>

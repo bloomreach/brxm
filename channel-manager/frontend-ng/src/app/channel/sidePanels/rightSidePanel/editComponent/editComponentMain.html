@@ -14,15 +14,15 @@
   ~ limitations under the License.
   -->
 
-<md-content flex="grow"
-            layout="column"
-            class="rightSidePanel-content">
-  
-  <component-editor>
-
-  </component-editor>
-
-</md-content>
+<md-tabs flex="grow"
+         layout="column"
+         md-border-bottom>
+  <md-tab label="{{ ::'RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES' | translate }}">
+    <md-tab-body>
+      <component-editor />
+    </md-tab-body>
+  </md-tab>
+</md-tabs>
 
 <md-toolbar>
   <div class="md-toolbar-tools">

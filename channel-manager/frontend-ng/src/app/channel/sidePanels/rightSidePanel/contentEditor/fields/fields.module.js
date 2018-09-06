@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import './fields.scss';
-
 import choiceFieldComponent from './choiceField/choiceField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
-import collapse from './collapse/collapse.directive';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
 import nodeLinkComponent from './nodeLink/nodeLink.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
+
+import './fields.scss';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.rightSidePanel.contentEditor.fields', [
@@ -36,7 +35,6 @@ const fieldsModule = angular
   .component('imageLink', imageLinkComponent)
   .component('nodeLink', nodeLinkComponent)
   .component('primitiveField', primitiveFieldComponent)
-  .directive('collapse', collapse)
   .service('FieldService', fieldService);
 
 export default fieldsModule.name;
