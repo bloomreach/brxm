@@ -205,4 +205,27 @@ describe('ComponentEditorService', () => {
       expectGroup(groups[0], null, 2, false);
     });
   });
+
+  it('uses the defaultValue if it is defined/not-null/not-empty and the property value is null', () => {
+    const properties = [
+      { value: null },
+      { value: null, defaultValue: null },
+      { value: null, defaultValue: '' },
+      { value: null, defaultValue: 'defaultValue' },
+      { value: '', defaultValue: 'defaultValue' },
+      { value: false, defaultValue: true },
+    ];
+    HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+
+    ComponentEditor.open(testData);
+    $rootScope.$digest();
+
+    const fields = ComponentEditor.getPropertyGroups()[0].fields;
+    expect(fields[0].value).toBe(null);
+    expect(fields[1].value).toBe(null);
+    expect(fields[2].value).toBe(null);
+    expect(fields[3].value).toBe('defaultValue');
+    expect(fields[4].value).toBe('');
+    expect(fields[5].value).toBe(false);
+  });
 });

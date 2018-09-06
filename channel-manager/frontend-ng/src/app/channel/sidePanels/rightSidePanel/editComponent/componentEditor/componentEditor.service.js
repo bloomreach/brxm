@@ -65,6 +65,12 @@ class ComponentEditorService {
     const groups = new Map();
     properties
       .filter(property => !property.hiddenInChannelManager)
+      .map((property) => {
+        if (property.value === null && property.defaultValue) {
+          property.value = property.defaultValue;
+        }
+        return property;
+      })
       .forEach((property) => {
         if (property.name === TEMPLATE_PICKER) {
           property.groupLabel = TEMPLATE_PICKER;
