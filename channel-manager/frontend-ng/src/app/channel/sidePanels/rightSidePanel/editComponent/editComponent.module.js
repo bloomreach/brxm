@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import config from './editComponent.config';
-import editComponentService from './editComponent.service';
+import componentEditorModule from './componentEditor/componentEditor.module';
+import editComponentConfig from './editComponent.config';
 import editComponentMainCtrl from './editComponentMain.controller';
+import editComponentService from './editComponent.service';
 import editComponentToolsCtrl from './editComponentTools.controller';
 
 const editComponentModule = angular
-  .module('hippo-cm.channel.rightSidePanel.editComponentModule', [])
-  .config(config)
+  .module('hippo-cm.channel.rightSidePanel.editComponentModule', [
+    componentEditorModule,
+  ])
+  .config(editComponentConfig)
   .service('EditComponentService', editComponentService)
   .controller('editComponentMainCtrl', editComponentMainCtrl)
   .controller('editComponentToolsCtrl', editComponentToolsCtrl);

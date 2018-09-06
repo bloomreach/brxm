@@ -29,7 +29,7 @@ describe('imageLinkController', () => {
   const $element = angular.element('<div></div>');
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.fieldsModule');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
     inject((_$componentController_, _$rootScope_, _$timeout_, _CmsService_) => {
       $componentController = _$componentController_;

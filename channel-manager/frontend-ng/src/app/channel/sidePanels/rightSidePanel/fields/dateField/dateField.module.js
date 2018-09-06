@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ckeditorComponent from './ckeditor.component';
-import ckeditorService from './ckeditor.service';
-import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.module';
+import dateFieldComponent from './dateField.component';
 
-const ckeditorModule = angular
-  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields.ckeditor', [
-    SharedSpaceToolbarModule,
-  ])
-  .component('ckeditor', ckeditorComponent)
-  .service('CKEditorService', ckeditorService);
+const dateFieldModule = angular
+  .module('hippo-cm.channel.rightSidePanel.fields.dateField', [])
+  .component('dateField', dateFieldComponent);
 
-export default ckeditorModule.name;
+export default dateFieldModule.name;

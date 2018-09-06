@@ -17,7 +17,6 @@
 import choiceFieldComponent from './choiceField/choiceField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
 import compoundFieldComponent from './compoundField/compoundField.component';
-import dateFieldModule from './dateField/dateField.module';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
@@ -27,9 +26,8 @@ import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import './fields.scss';
 
 const fieldsModule = angular
-  .module('hippo-cm.channel.fieldsModule', [
+  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields', [
     ckeditorModule,
-    dateFieldModule,
   ])
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)

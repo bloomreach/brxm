@@ -15,22 +15,22 @@
  */
 
 import collapseDirective from './collapse/collapse.directive';
-import componentEditorModule from './editComponent/componentEditor/componentEditor.module';
 import contentEditorModule from './contentEditor/contentEditor.module';
 import createContentModule from './createContent/createContent.module';
 import editComponentModule from './editComponent/editComponent.module';
 import editContentModule from './editContent/editContent.module';
+import fieldsModule from './fields/fields.module';
 import resizeHandleModule from '../resizeHandle/resizeHandle.module';
 import rightSidePanelComponent from './rightSidePanel.component';
 import rightSidePanelService from './rightSidePanel.service';
 
 const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [
-    componentEditorModule,
+  .module('hippo-cm.channel.rightSidePanel', [
     contentEditorModule,
     createContentModule,
     editComponentModule,
     editContentModule,
+    fieldsModule,
     resizeHandleModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)

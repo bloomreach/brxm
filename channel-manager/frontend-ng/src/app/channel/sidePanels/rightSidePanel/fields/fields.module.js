@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import dateFieldComponent from './dateField.component';
 
-const dateFieldModule = angular
-  .module('hippo-cm.channel.fieldsModule.dateField', [])
-  .component('dateField', dateFieldComponent);
+import dateFieldModule from './dateField/dateField.module';
 
-export default dateFieldModule.name;
+const fieldsModule = angular
+  .module('hippo-cm.channel.rightSidePanel.fields', [
+    dateFieldModule,
+  ]);
+
+export default fieldsModule.name;
