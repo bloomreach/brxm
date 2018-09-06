@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
+
 class ComponentEditorService {
   constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService) {
     'ngInject';
@@ -64,8 +66,8 @@ class ComponentEditorService {
     properties
       .filter(property => !property.hiddenInChannelManager)
       .forEach((property) => {
-        if (property.name === 'org.hippoecm.hst.core.component.template') {
-          property.groupLabel = 'org.hippoecm.hst.core.component.template';
+        if (property.name === TEMPLATE_PICKER) {
+          property.groupLabel = TEMPLATE_PICKER;
         }
 
         const groupLabel = property.groupLabel === ''
@@ -80,7 +82,7 @@ class ComponentEditorService {
       });
 
     return Array.from(groups).map(group => ({
-      collapse: group[0] !== null && group[0] !== 'org.hippoecm.hst.core.component.template',
+      collapse: group[0] !== null && group[0] !== TEMPLATE_PICKER,
       fields: group[1],
       label: group[0],
     }));
