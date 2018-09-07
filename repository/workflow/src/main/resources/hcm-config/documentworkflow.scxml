@@ -585,10 +585,10 @@
 
           <if cond="unpublished.isBranch(branchId)">
             <!-- return the same DocumentVariant object we already had -->
-            <script>
-              workflowContext.setResult(unpublished);
-            </script>
-          <else/>
+            <hippo:result value="unpublished"/>
+
+            <else/>
+
             <hippo:version variant="unpublished"/>
             <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
           </if>
