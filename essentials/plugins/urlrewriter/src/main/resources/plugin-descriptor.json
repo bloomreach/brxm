@@ -27,8 +27,7 @@
   },
   "pluginDependencies": [
     {
-      "pluginId": "enterpriseProject",
-      "minInstallStateForBoarding": "installing"
+      "pluginId": "enterpriseProject"
     }
   ]
 }

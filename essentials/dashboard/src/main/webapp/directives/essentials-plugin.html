@@ -30,15 +30,15 @@
             </div>
           </div>
         </div>
-        <div class="col-xs-6 text-right">
-          <button class="btn btn-primary"
-                  ng-show="isDiscovered()"
+        <div ng-switch="plugin.installState" class="col-xs-6 text-right">
+          <button ng-switch-when="discovered" class="btn btn-primary"
                   ng-disabled="installButtonDisabled"
-                  ng-click="installPlugin()">Install {{plugin.type}}
+                  ng-click="installPlugin()">Install feature
           </button>
-          <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
-          <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
-          <a ng-show="isPending()" class="btn btn-default">Installation Pending</a>
+          <a ng-switch-when="installationPending" class="btn btn-default">Installation Pending</a>
+          <a ng-switch-when="awaitingUserInput" class="btn btn-danger" href="#/features/{{plugin.id}}">Control Installation</a>
+          <a ng-switch-when="installing" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+          <a ng-switch-default class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
         </div>
       </div>
     </div>
@@ -77,8 +77,8 @@
             <div uib-slide ng-repeat="slide in slides track by $index" index="$index">
               <img ng-src="{{slide.image}}">
               <div class="carousel-caption"></div>
-            </div uib-slide>
-          </div uib-carousel>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -77,14 +77,13 @@ public class InstallStateMachineTest {
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(true, true, true, null);
+        final PluginData pluginData = new PluginData(true, true, null);
         installService.pluginData.put(id, pluginData);
 
-        assertTrue(stateMachine.tryBoarding(id, pluginSet, PARAMS, feedback));
+        assertTrue(stateMachine.installWithDependencies(id, pluginSet, PARAMS, feedback));
 
         assertEquals(InstallState.INSTALLING, plugin.getState());
         assertEquals(InstallState.INSTALLING, pluginData.persistedState);
-        assertTrue(feedback == pluginData.boardingFeedback);
         assertTrue(PARAMS == pluginData.installParameters);
         assertEquals(1, feedback.getFeedbackMessages().size());
         assertEquals("Plugin 'Test Plugin' has been installed successfully, but requires a restart.",
@@ -103,26 +102,24 @@ public class InstallStateMachineTest {
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(false, true, true, null);
+        final PluginData pluginData = new PluginData(false, true, null);
         installService.pluginData.put(id, pluginData);
 
-        // stage 1: boarding
-        assertTrue(stateMachine.tryBoarding(id, pluginSet, PARAMS, feedback));
+        // stage 1: block for user input
+        assertTrue(stateMachine.installWithDependencies(id, pluginSet, PARAMS, feedback));
 
-        assertEquals(InstallState.ONBOARD, plugin.getState());
-        assertEquals(InstallState.ONBOARD, pluginData.persistedState);
-        assertTrue(feedback == pluginData.boardingFeedback);
+        assertEquals(InstallState.AWAITING_USER_INPUT, plugin.getState());
+        assertEquals(InstallState.AWAITING_USER_INPUT, pluginData.persistedState);
         assertNull(pluginData.installParameters);
         assertEquals(1, feedback.getFeedbackMessages().size());
-        assertEquals("The installation of plugin 'Test Plugin' has been prepared.",
+        assertEquals("Plugin 'Test Plugin' requires user input for installation.",
                 feedback.getFeedbackMessages().get(0).getMessage());
 
         // stage 2: installation
-        assertTrue(stateMachine.tryInstallation(id, pluginSet, PARAMS, feedback));
+        assertTrue(stateMachine.installWithParameters(id, pluginSet, PARAMS, feedback));
 
         assertEquals(InstallState.INSTALLED, plugin.getState());
         assertEquals(InstallState.INSTALLED, pluginData.persistedState);
-        assertTrue(feedback == pluginData.boardingFeedback);
         assertTrue(PARAMS == pluginData.installParameters);
         assertEquals(2, feedback.getFeedbackMessages().size());
         assertEquals("Plugin 'Test Plugin' has been installed successfully.",
@@ -130,88 +127,46 @@ public class InstallStateMachineTest {
     }
 
     @Test
-    public void double_rebuild() {
+    public void install_with_rebuild() {
         final String id = "test";
         final UserFeedback feedback = new UserFeedback();
         final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setId(id);
         plugin.setName("Test Plugin");
         plugin.setState(InstallState.DISCOVERED);
-        plugin.setDependencies(Collections.singletonList(new MavenDependency.WithModule())); // trigger rebuild during boarding
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(true, true, true, null);
+        final PluginData pluginData = new PluginData(true, true, null);
         installService.pluginData.put(id, pluginData);
 
-        // stage 1: boarding
-        assertTrue(stateMachine.tryBoarding(id, pluginSet, PARAMS, feedback));
+        // stage 1: installation
+        assertTrue(stateMachine.installWithDependencies(id, pluginSet, PARAMS, feedback));
 
-        assertEquals(InstallState.BOARDING, plugin.getState());
-        assertEquals(InstallState.BOARDING, pluginData.persistedState);
-        assertTrue(feedback == pluginData.boardingFeedback);
-        assertNull(pluginData.installParameters);
+        assertEquals(InstallState.INSTALLING, plugin.getState());
+        assertEquals(InstallState.INSTALLING, pluginData.persistedState);
+        assertTrue(PARAMS == pluginData.installParameters);
         assertEquals(1, feedback.getFeedbackMessages().size());
-        assertEquals("The installation of plugin 'Test Plugin' has been prepared, but requires a restart.",
+        assertEquals("Plugin 'Test Plugin' has been installed successfully, but requires a restart.",
                 feedback.getFeedbackMessages().get(0).getMessage());
 
         // restart without rebuild
+        pluginData.installParameters = null;
         stateMachine.signalRestart(pluginSet, PARAMS, feedback);
 
-        assertEquals(InstallState.BOARDING, plugin.getState());
-        assertEquals(InstallState.BOARDING, pluginData.persistedState);
+        assertEquals(InstallState.INSTALLING, plugin.getState());
+        assertEquals(InstallState.INSTALLING, pluginData.persistedState);
         assertNull(pluginData.installParameters);
         assertEquals(1, feedback.getFeedbackMessages().size());
 
-        // rebuild and restart for the first time
-        pluginData.warState = InstallState.BOARDING;
-        stateMachine.signalRestart(pluginSet, PARAMS, feedback);
-
-        assertEquals(InstallState.INSTALLING, plugin.getState());
-        assertEquals(InstallState.INSTALLING, pluginData.persistedState);
-        assertTrue(PARAMS == pluginData.installParameters);
-        assertEquals(2, feedback.getFeedbackMessages().size());
-        assertEquals("Plugin 'Test Plugin' has been installed successfully, but requires a restart.",
-                feedback.getFeedbackMessages().get(1).getMessage());
-
-        // restart without rebuild
-        stateMachine.signalRestart(pluginSet, PARAMS, feedback);
-
-        assertEquals(InstallState.INSTALLING, plugin.getState());
-        assertEquals(InstallState.INSTALLING, pluginData.persistedState);
-        assertTrue(PARAMS == pluginData.installParameters);
-        assertEquals(2, feedback.getFeedbackMessages().size());
-
-        // rebuild and restart for the second time
+        // rebuild and restart
         pluginData.warState = InstallState.INSTALLING;
-        pluginData.installParameters = null;
         stateMachine.signalRestart(pluginSet, PARAMS, feedback);
 
         assertEquals(InstallState.INSTALLED, plugin.getState());
         assertEquals(InstallState.INSTALLED, pluginData.persistedState);
         assertNull(pluginData.installParameters);
-        assertEquals(2, feedback.getFeedbackMessages().size());
-    }
-
-    @Test
-    public void boarding_fails() {
-        final String id = "test";
-        final UserFeedback feedback = new UserFeedback();
-        final PluginDescriptor plugin = new PluginDescriptor();
-        plugin.setId(id);
-        plugin.setName("Test Plugin");
-        plugin.setState(InstallState.DISCOVERED);
-
-        final PluginSet pluginSet = new PluginSet();
-        pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(true, false, true, null);
-        installService.pluginData.put(id, pluginData);
-
-        assertTrue(stateMachine.tryBoarding(id, pluginSet, null, feedback));
-        assertEquals(InstallState.DISCOVERED, plugin.getState());
-        assertNull(pluginData.persistedState);
-        assertTrue(feedback == pluginData.boardingFeedback);
-        assertEquals(0, feedback.getFeedbackMessages().size());
+        assertEquals(1, feedback.getFeedbackMessages().size());
     }
 
     @Test
@@ -221,39 +176,33 @@ public class InstallStateMachineTest {
         final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setId(id);
         plugin.setName("Test Plugin");
-        plugin.setState(InstallState.ONBOARD);
+        plugin.setState(InstallState.DISCOVERED);
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(true, true, false, null);
+        final PluginData pluginData = new PluginData(true, false, null);
         installService.pluginData.put(id, pluginData);
 
-        assertTrue(stateMachine.tryInstallation(id, pluginSet, PARAMS, feedback));
-        assertEquals(InstallState.ONBOARD, plugin.getState());
+        assertTrue(stateMachine.installWithDependencies(id, pluginSet, PARAMS, feedback));
+        assertEquals(InstallState.DISCOVERED, plugin.getState());
         assertNull(pluginData.persistedState);
         assertTrue(PARAMS == pluginData.installParameters);
         assertEquals(0, feedback.getFeedbackMessages().size());
     }
 
     @Test
-    public void installation_fails_after_restart() {
+    public void installation_in_wrong_state() {
         final String id = "test";
         final UserFeedback feedback = new UserFeedback();
         final PluginDescriptor plugin = new PluginDescriptor();
         plugin.setId(id);
         plugin.setName("Test Plugin");
-        plugin.setState(InstallState.BOARDING);
+        plugin.setState(InstallState.DISCOVERED);
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
-        final PluginData pluginData = new PluginData(true, true, false, InstallState.BOARDING);
-        installService.pluginData.put(id, pluginData);
 
-        stateMachine.signalRestart(pluginSet, PARAMS, feedback);
-        assertEquals(InstallState.ONBOARD, plugin.getState());
-        assertEquals(InstallState.ONBOARD, pluginData.persistedState);
-        assertTrue(PARAMS == pluginData.installParameters);
-        assertEquals(0, feedback.getFeedbackMessages().size());
+        assertFalse(stateMachine.installWithParameters(id, pluginSet, PARAMS, feedback));
     }
 
     @Test
@@ -262,11 +211,11 @@ public class InstallStateMachineTest {
         final UserFeedback feedback = new UserFeedback();
         final PluginSet pluginSet = new PluginSet();
 
-        assertFalse(stateMachine.tryBoarding(id, pluginSet, null, feedback));
+        assertFalse(stateMachine.installWithDependencies(id, pluginSet, null, feedback));
         assertEquals(1, feedback.getFeedbackMessages().size());
         assertEquals("Failed to locate plugin with ID 'test'.", feedback.getFeedbackMessages().get(0).getMessage());
 
-        assertFalse(stateMachine.tryInstallation(id, pluginSet, null, feedback));
+        assertFalse(stateMachine.installWithParameters(id, pluginSet, null, feedback));
         assertEquals(2, feedback.getFeedbackMessages().size());
         assertEquals("Failed to locate plugin with ID 'test'.", feedback.getFeedbackMessages().get(1).getMessage());
     }
@@ -284,11 +233,11 @@ public class InstallStateMachineTest {
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
 
-        assertFalse(stateMachine.tryBoarding(id, pluginSet, null, feedback));
+        assertFalse(stateMachine.installWithDependencies(id, pluginSet, null, feedback));
         assertEquals(1, feedback.getFeedbackMessages().size());
         assertEquals("Failed to locate plugin with ID 'unknown'.", feedback.getFeedbackMessages().get(0).getMessage());
 
-        assertFalse(stateMachine.tryInstallation(id, pluginSet, null, feedback));
+        assertFalse(stateMachine.installWithParameters(id, pluginSet, null, feedback));
         assertEquals(2, feedback.getFeedbackMessages().size());
         assertEquals("Failed to locate plugin with ID 'unknown'.", feedback.getFeedbackMessages().get(1).getMessage());
     }
@@ -306,9 +255,9 @@ public class InstallStateMachineTest {
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin);
 
-        // during boarding
+        // with default parameters
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(InstallStateMachine.class).build()) {
-            assertFalse(stateMachine.tryBoarding(id, pluginSet, null, feedback));
+            assertFalse(stateMachine.installWithDependencies(id, pluginSet, null, feedback));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Dependency chain for cyclic plugin dependency is: 'Test Plugin' -> 'Test Plugin'.")));
         }
@@ -316,9 +265,9 @@ public class InstallStateMachineTest {
         assertEquals("Plugin 'Test Plugin' has cyclic dependency, unable to install. Check back-end logs.",
                 feedback.getFeedbackMessages().get(0).getMessage());
 
-        // during installation
+        // with user input
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(InstallStateMachine.class).build()) {
-            assertFalse(stateMachine.tryInstallation(id, pluginSet, null, feedback));
+            assertFalse(stateMachine.installWithParameters(id, pluginSet, null, feedback));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Dependency chain for cyclic plugin dependency is: 'Test Plugin' -> 'Test Plugin'.")));
         }
@@ -350,9 +299,8 @@ public class InstallStateMachineTest {
         pluginSet.add(plugin1);
         pluginSet.add(plugin2);
 
-        // during boarding
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(InstallStateMachine.class).build()) {
-            assertFalse(stateMachine.tryBoarding(id1, pluginSet, null, feedback));
+            assertFalse(stateMachine.installWithDependencies(id1, pluginSet, null, feedback));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Dependency chain for cyclic plugin dependency is: 'Test Plugin 1' -> 'Test Plugin 2' -> 'Test Plugin 1'.")));
         }
@@ -395,9 +343,8 @@ public class InstallStateMachineTest {
         pluginSet.add(plugin2);
         pluginSet.add(plugin3);
 
-        // during boarding
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(InstallStateMachine.class).build()) {
-            assertFalse(stateMachine.tryBoarding(id1, pluginSet, null, feedback));
+            assertFalse(stateMachine.installWithDependencies(id1, pluginSet, null, feedback));
             assertTrue(interceptor.messages().anyMatch(m -> m.contains(
                     "Dependency chain for cyclic plugin dependency is: 'Test Plugin 1' -> 'Test Plugin 2' -> 'Test Plugin 3' -> 'Test Plugin 1'.")));
         }
@@ -426,31 +373,27 @@ public class InstallStateMachineTest {
         plugin2.setId(id2);
         plugin2.setName("Test Plugin 2");
         plugin2.setState(InstallState.DISCOVERED);
-        plugin2.setRepositories(Collections.singletonList(new MavenRepository.WithModule()));
 
         final PluginSet pluginSet = new PluginSet();
         pluginSet.add(plugin1);
         pluginSet.add(plugin2);
 
-        final PluginData data1 = new PluginData(true, true, true, null);
+        final PluginData data1 = new PluginData(true, true, null);
         installService.pluginData.put(id1, data1);
-        final PluginData data2 = new PluginData(true, true, true, null);
+        final PluginData data2 = new PluginData(true, true, null);
         installService.pluginData.put(id2, data2);
 
-        // stage 1, installation of dependent plugin is triggered, and stalls in BOARDING state.
-        //          installation of requested plugin advances through boarding phase and stops in INSTALLATION_PENDING,
-        //          waiting for dependent plugin.
+        // stage 1, installation of dependent plugin is triggered, and stalls in INSTALLING state.
+        //          installation of requested plugin waits in INSTALLATION_PENDING, waiting for dependent plugin.
         final UserFeedback feedback1 = new UserFeedback();
-        assertTrue(stateMachine.tryBoarding(id1, pluginSet, PARAMS, feedback1));
+        assertTrue(stateMachine.installWithDependencies(id1, pluginSet, PARAMS, feedback1));
         assertEquals(InstallState.INSTALLATION_PENDING, plugin1.getState());
-        assertEquals(InstallState.BOARDING, plugin2.getState());
-        assertTrue(feedback1 == data1.boardingFeedback);
-        assertTrue(feedback1 == data2.boardingFeedback);
+        assertEquals(InstallState.INSTALLING, plugin2.getState());
         assertNull(data1.installParameters);
-        assertNull(data2.installParameters);
+        assertTrue(PARAMS == data2.installParameters);
         assertEquals(3, feedback1.getFeedbackMessages().size());
         assertEquals("Installing dependent plugin 'Test Plugin 2'...", feedback1.getFeedbackMessages().get(0).getMessage());
-        assertEquals("The installation of plugin 'Test Plugin 2' has been prepared, but requires a restart.",
+        assertEquals("Plugin 'Test Plugin 2' has been installed successfully, but requires a restart.",
                 feedback1.getFeedbackMessages().get(1).getMessage());
         assertEquals("Installation of plugin 'Test Plugin 1' is waiting for the installation of dependent plugin(s) 'Test Plugin 2'.",
                 feedback1.getFeedbackMessages().get(2).getMessage());
@@ -461,35 +404,19 @@ public class InstallStateMachineTest {
         stateMachine.signalRestart(pluginSet, PARAMS, feedback2);
         // installation of dependent plugin advances into INSTALLING state, requested plugin remains in pending state,
         // waiting for full installation of the dependency
-        assertEquals(InstallState.INSTALLATION_PENDING, plugin1.getState());
-        assertEquals(InstallState.INSTALLING, plugin2.getState());
-        assertNull(data1.installParameters);
-        assertTrue(PARAMS == data2.installParameters);
-        assertEquals(2, feedback2.getFeedbackMessages().size());
-        assertEquals("Plugin 'Test Plugin 2' has been installed successfully, but requires a restart.",
-                feedback2.getFeedbackMessages().get(0).getMessage());
-        assertEquals("Installation of plugin 'Test Plugin 1' is waiting for the installation of dependent plugin(s) 'Test Plugin 2'.",
-                feedback2.getFeedbackMessages().get(1).getMessage());
-
-        // stage 3, simulate another rebuild and restart
-        data2.warState = plugin2.getState();
-        final UserFeedback feedback3 = new UserFeedback();
-        stateMachine.signalRestart(pluginSet, PARAMS, feedback3);
-        // installation of dependent plugin is completed. Installation of requested plugin can commence, and, since it
-        // doesn't require a rebuild, it also completes.
         assertEquals(InstallState.INSTALLED, plugin1.getState());
         assertEquals(InstallState.INSTALLED, plugin2.getState());
         assertTrue(PARAMS == data1.installParameters);
         assertTrue(PARAMS == data2.installParameters);
-        assertEquals(1, feedback3.getFeedbackMessages().size());
+        assertEquals(1, feedback2.getFeedbackMessages().size());
         assertEquals("Plugin 'Test Plugin 1' has been installed successfully.",
-                feedback3.getFeedbackMessages().get(0).getMessage());
+                feedback2.getFeedbackMessages().get(0).getMessage());
     }
 
     @Test
     public void cascading_dependency() {
-        // plugin1's boarding depends on plugin2 being installing,
-        // while that plugin's installation depends on plugin3 being onBoard.
+        // plugin1's installation depends on plugin2 being installed,
+        // while plugin2's installation depends on plugin3 being installing.
         // no plugin requires a rebuild+restart, but plugin2 requires installation parameters.
         final String id1 = "test1";
         final String id2 = "test2";
@@ -497,10 +424,10 @@ public class InstallStateMachineTest {
 
         final PluginDescriptor.Dependency dependsOn2 = new PluginDescriptor.Dependency();
         dependsOn2.setPluginId(id2);
-        dependsOn2.setMinInstallStateForBoarding(InstallState.INSTALLING.toString());
+        dependsOn2.setMinInstallStateForInstalling(InstallState.INSTALLING.toString());
         final PluginDescriptor.Dependency dependsOn3 = new PluginDescriptor.Dependency();
         dependsOn3.setPluginId(id3);
-        dependsOn3.setMinInstallStateForInstalling(InstallState.ONBOARD.toString());
+        dependsOn3.setMinInstallStateForInstalling(InstallState.INSTALLED.toString());
 
         final PluginDescriptor plugin1 = new PluginDescriptor();
         plugin1.setId(id1);
@@ -527,46 +454,46 @@ public class InstallStateMachineTest {
         pluginSet.add(plugin2);
         pluginSet.add(plugin3);
 
-        final PluginData data1 = new PluginData(true, true, true, null);
+        final PluginData data1 = new PluginData(true, true, null);
         installService.pluginData.put(id1, data1);
-        final PluginData data2 = new PluginData(false, true, true, null);
+        final PluginData data2 = new PluginData(false, true, null);
         installService.pluginData.put(id2, data2);
-        final PluginData data3 = new PluginData(true, true, true, null);
+        final PluginData data3 = new PluginData(true, true, null);
         installService.pluginData.put(id3, data3);
 
         final UserFeedback feedback1 = new UserFeedback();
-        assertTrue(stateMachine.tryBoarding(id1, pluginSet, PARAMS, feedback1));
-        assertEquals(InstallState.BOARDING_PENDING, plugin1.getState());
-        assertEquals(InstallState.ONBOARD, plugin2.getState());
-        assertEquals(InstallState.DISCOVERED, plugin3.getState());
-        assertEquals(3, feedback1.getFeedbackMessages().size());
+        assertTrue(stateMachine.installWithDependencies(id1, pluginSet, PARAMS, feedback1));
+        assertEquals(InstallState.INSTALLATION_PENDING, plugin1.getState());
+        assertEquals(InstallState.AWAITING_USER_INPUT, plugin2.getState());
+        assertEquals(InstallState.INSTALLED, plugin3.getState());
+        assertEquals(5, feedback1.getFeedbackMessages().size());
         assertEquals("Installing dependent plugin 'Test Plugin 2'...",
                 feedback1.getFeedbackMessages().get(0).getMessage());
-        assertEquals("The installation of plugin 'Test Plugin 2' has been prepared.",
+        assertEquals("Installing dependent plugin 'Test Plugin 3'...",
                 feedback1.getFeedbackMessages().get(1).getMessage());
-        assertEquals("Boarding of plugin 'Test Plugin 1' is waiting for the installation of dependent plugin(s) 'Test Plugin 2'.",
+        assertEquals("Plugin 'Test Plugin 3' has been installed successfully.",
                 feedback1.getFeedbackMessages().get(2).getMessage());
+        assertEquals("Plugin 'Test Plugin 2' requires user input for installation.",
+                feedback1.getFeedbackMessages().get(3).getMessage());
+        assertEquals("Installation of plugin 'Test Plugin 1' is waiting for the installation of dependent plugin(s) 'Test Plugin 2'.",
+                feedback1.getFeedbackMessages().get(4).getMessage());
 
         // we need to explicitly trigger the installation of plugin2
         final UserFeedback feedback2 = new UserFeedback();
-        assertTrue(stateMachine.tryInstallation(id2, pluginSet, PARAMS, feedback2));
+        assertTrue(stateMachine.installWithParameters(id2, pluginSet, PARAMS, feedback2));
         assertEquals(InstallState.INSTALLED, plugin1.getState());
         assertEquals(InstallState.INSTALLED, plugin2.getState());
         assertEquals(InstallState.INSTALLED, plugin3.getState());
-        assertEquals(4, feedback2.getFeedbackMessages().size());
-        assertEquals("Installing dependent plugin 'Test Plugin 3'...",
-                feedback2.getFeedbackMessages().get(0).getMessage());
-        assertEquals("Plugin 'Test Plugin 3' has been installed successfully.",
-                feedback2.getFeedbackMessages().get(1).getMessage());
+        assertEquals(2, feedback2.getFeedbackMessages().size());
         assertEquals("Plugin 'Test Plugin 2' has been installed successfully.",
-                feedback2.getFeedbackMessages().get(2).getMessage());
+                feedback2.getFeedbackMessages().get(0).getMessage());
         assertEquals("Plugin 'Test Plugin 1' has been installed successfully.",
-                feedback2.getFeedbackMessages().get(3).getMessage());
+                feedback2.getFeedbackMessages().get(1).getMessage());
     }
 
     @Test
     public void empty_dependency() {
-        // this is a little contrived: if a dependency specifies no minimal state for both boarding and installation
+        // this is a little contrived: if a dependency specifies no minimal state for installation,
         // it effectively gets not installed.
 
         final String id1 = "test1";
@@ -593,17 +520,15 @@ public class InstallStateMachineTest {
         pluginSet.add(plugin1);
         pluginSet.add(plugin2);
 
-        final PluginData data1 = new PluginData(true, true, true, null);
+        final PluginData data1 = new PluginData(true, true, null);
         installService.pluginData.put(id1, data1);
-        final PluginData data2 = new PluginData(true, true, true, null);
+        final PluginData data2 = new PluginData(true, true, null);
         installService.pluginData.put(id2, data2);
 
         final UserFeedback feedback = new UserFeedback();
-        assertTrue(stateMachine.tryBoarding(id1, pluginSet, PARAMS, feedback));
+        assertTrue(stateMachine.installWithDependencies(id1, pluginSet, PARAMS, feedback));
         assertEquals(InstallState.INSTALLED, plugin1.getState());
         assertEquals(InstallState.DISCOVERED, plugin2.getState());
-        assertTrue(feedback == data1.boardingFeedback);
-        assertNull(data2.boardingFeedback);
         assertTrue(PARAMS == data1.installParameters);
         assertNull(data2.installParameters);
         assertEquals(1, feedback.getFeedbackMessages().size());
@@ -616,7 +541,7 @@ public class InstallStateMachineTest {
         Map<String, PluginData> pluginData = new HashMap<>();
 
         public TestInstallService() {
-            super(null, null, null, null, null, null, null);
+            super(null, null, null, null, null);
         }
 
         @Override
@@ -634,14 +559,7 @@ public class InstallStateMachineTest {
         @Override
         public boolean canAutoInstall(final PluginDescriptor plugin) {
             final PluginData data = pluginData.get(plugin.getId());
-            return data.persistedState == InstallState.ONBOARD && data.canAutoInstall;
-        }
-
-        @Override
-        public boolean board(final PluginDescriptor plugin, final UserFeedback feedback) {
-            final PluginData data = pluginData.get(plugin.getId());
-            data.boardingFeedback = feedback;
-            return data.boardingResult;
+            return data.canAutoInstall;
         }
 
         @Override
@@ -654,16 +572,13 @@ public class InstallStateMachineTest {
 
     private static class PluginData {
         boolean canAutoInstall = true;
-        boolean boardingResult = true;
         boolean installationResult = true;
         InstallState warState = InstallState.DISCOVERED;
         InstallState persistedState;
-        UserFeedback boardingFeedback;
         Map<String, Object> installParameters;
 
-        PluginData(boolean canAutoInstall, boolean boardingResult, boolean installationResult, InstallState warState) {
+        PluginData(boolean canAutoInstall, boolean installationResult, InstallState warState) {
             this.canAutoInstall = canAutoInstall;
-            this.boardingResult = boardingResult;
             this.installationResult = installationResult;
             this.warState = warState;
         }

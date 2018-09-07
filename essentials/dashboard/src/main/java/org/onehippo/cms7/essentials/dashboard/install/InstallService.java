@@ -17,12 +17,9 @@
 package org.onehippo.cms7.essentials.dashboard.install;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -37,15 +34,9 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.InstallState;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenRepository;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenDependencyService;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenRepositoryService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
-import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -59,21 +50,16 @@ public class InstallService {
     private final JcrService jcrService;
     private final SettingsService settingsService;
     private final RebuildServiceImpl rebuildService;
-    private final MavenDependencyService dependencyService;
-    private final MavenRepositoryService repositoryService;
     private final PluginFileService pluginFileService;
     private final AutowireCapableBeanFactory injector;
 
     @Inject
     public InstallService(final JcrService jcrService, final SettingsService settingsService,
-                          final RebuildServiceImpl rebuildService, final MavenDependencyService dependencyService,
-                          final MavenRepositoryService repositoryService, final PluginFileService pluginFileService,
+                          final RebuildServiceImpl rebuildService, final PluginFileService pluginFileService,
                           final AutowireCapableBeanFactory injector) {
         this.jcrService = jcrService;
         this.settingsService = settingsService;
         this.rebuildService = rebuildService;
-        this.dependencyService = dependencyService;
-        this.repositoryService = repositoryService;
         this.pluginFileService = pluginFileService;
         this.injector = injector;
     }
@@ -96,10 +82,10 @@ public class InstallService {
                 systemInfo.incrementInstalledFeatures();
             }
             if (!isTool) {
-                if (installState == InstallState.BOARDING || installState == InstallState.INSTALLING) {
+                if (installState == InstallState.INSTALLING) {
                     systemInfo.addRebuildPlugin(descriptor);
                     systemInfo.setNeedsRebuild(true);
-                } else if (installState == InstallState.ONBOARD) {
+                } else if (installState == InstallState.AWAITING_USER_INPUT) {
                     systemInfo.incrementConfigurablePlugins();
                 }
             }
@@ -116,13 +102,8 @@ public class InstallService {
         }
     }
 
-    public boolean board(final PluginDescriptor plugin, final UserFeedback feedback) {
-        return installRepositories(plugin, feedback) && installDependencies(plugin, feedback);
-    }
-
     public boolean canAutoInstall(final PluginDescriptor plugin) {
-        return plugin.getState() == InstallState.ONBOARD
-                && StringUtils.hasText(plugin.getPackageFile())  // TODO: is this still needed? packageFile is the only current mechanism for triggering actions during the installation.
+        return StringUtils.hasText(plugin.getPackageFile())  // TODO: is this still needed? packageFile is the only current mechanism for triggering actions during the installation.
                 && (!plugin.isInstallWithParameters() || !settingsService.getSettings().isConfirmParams());
     }
 
@@ -183,44 +164,6 @@ public class InstallService {
             document.setInstallationState(state.toString());
             pluginFileService.write(fileName, document);
         }
-    }
-
-    private boolean installRepositories(final PluginDescriptor plugin, final UserFeedback feedback) {
-        final List<String> failedRepositoryUrls = new ArrayList<>();
-
-        for (MavenRepository.WithModule repository : plugin.getRepositories()) {
-            if (!repositoryService.addRepository(Module.pomForName(repository.getTargetPom()), repository)) {
-                failedRepositoryUrls.add(repository.getUrl());
-            }
-        }
-
-        if (!failedRepositoryUrls.isEmpty()) {
-            final String urls = failedRepositoryUrls.stream().collect(Collectors.joining(", "));
-            final String message = String.format("Failed to install plugin '%s': These repositories failed to install: %s.",
-                    plugin.getName(), urls);
-            feedback.addError(message);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean installDependencies(final PluginDescriptor plugin, final UserFeedback feedback) {
-        final List<String> failedDependencies = new ArrayList<>();
-
-        for (MavenDependency.WithModule dependency : plugin.getDependencies()) {
-            if (!dependencyService.addDependency(Module.pomForName(dependency.getTargetPom()), dependency)) {
-                failedDependencies.add(String.format("%s:%s", dependency.getGroupId(), dependency.getArtifactId()));
-            }
-        }
-
-        if (!failedDependencies.isEmpty()) {
-            final String deps = failedDependencies.stream().collect(Collectors.joining(", "));
-            final String message = String.format("Failed to install plugin '%s': These dependencies failed to install: %s.",
-                    plugin.getName(), deps);
-            feedback.addError(message);
-            return false;
-        }
-        return true;
     }
 
     public DefaultInstructionPackage makeInstructionPackageInstance(final PluginDescriptor plugin) {

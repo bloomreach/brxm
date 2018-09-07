@@ -301,14 +301,8 @@
             };
             this.install = function(id, params) {
                 var plugin = this.getPlugin(id);
-                if (plugin.installState === 'discovered') {
-                    return $http.post(baseUrl + '/' + id + '/install').then(loadPlugins);
-                }
-                if (plugin.installState === 'onBoard') {
-                    return $http.post(baseUrl + '/' + id + '/setup', params).then(loadPlugins);
-                }
-                $log.warn('Trying to install plugin ' + id + ', but unsuitable state ' + plugin.installState + '.');
-                return $q.resolve();
+                var postedParams = (plugin.installState === 'awaitingUserInput') ? params : {};
+                return $http.post(baseUrl + '/' + id + '/install', postedParams).then(loadPlugins);
             };
             this.autoSetup = function() {
                 return $http.post(baseUrl + '/autosetup').then(loadPlugins, loadPlugins);

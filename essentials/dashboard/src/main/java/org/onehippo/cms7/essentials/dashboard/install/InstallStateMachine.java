@@ -60,11 +60,11 @@ public class InstallStateMachine {
         // first promote all transient install states
         pluginSet.getPlugins().forEach(this::promote);
 
-        // then check if plugins can tryBoarding through the state machine
+        // then check if plugins can install through the state machine
         pluginSet.getPlugins().forEach(plugin -> {
-            if (plugin.getState() != InstallState.DISCOVERED) {
+            if (plugin.getState() == InstallState.INSTALLATION_PENDING) {
                 parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, plugin);
-                tryBoarding(plugin, pluginSet, parameters, feedback, new ArrayList<>());
+                installWithDependencies(plugin, pluginSet, parameters, feedback, new ArrayList<>());
             }
         });
     }
@@ -76,10 +76,6 @@ public class InstallStateMachine {
         final InstallState state = plugin.getState();
         if (state == installService.readInstallStateFromWar(plugin)) {
             switch (state) {
-                case BOARDING:
-                    plugin.setState(InstallState.ONBOARD);
-                    installService.storeInstallStateToFileSystem(plugin);
-                    break;
                 case INSTALLING:
                     plugin.setState(InstallState.INSTALLED);
                     installService.storeInstallStateToFileSystem(plugin);
@@ -89,7 +85,7 @@ public class InstallStateMachine {
     }
 
     /**
-     * Try advancing the specified plugin through the boarding phase of the state machine, as far as possible.
+     * Try advancing the specified plugin through the installation state machine, as far as possible.
      *
      * @param id         ID of the plugin to be advanced through the installation state machine
      * @param pluginSet  set of available plugins, for validation and dependency mechanism
@@ -97,19 +93,23 @@ public class InstallStateMachine {
      * @param feedback   for signalling relevant messages to the user
      * @return           false if the input cannot be validated, true otherwise
      */
-    public boolean tryBoarding(final String id, final PluginSet pluginSet, final Map<String, Object> parameters,
-                               final UserFeedback feedback) {
+    public boolean installWithDependencies(final String id, final PluginSet pluginSet,
+                                           final Map<String, Object> parameters, final UserFeedback feedback) {
 
         if (!validatePlugin(id, pluginSet, feedback, new LinkedHashMap<>())) {
             return false;
         }
 
-        tryBoarding(pluginSet.getPlugin(id), pluginSet, parameters, feedback, new ArrayList<>());
+        installWithDependencies(pluginSet.getPlugin(id), pluginSet, parameters, feedback, new ArrayList<>());
+
+        // Above installation may have unlocked the pending installation of upstream plugins.
+        // Check if anything more needs to happen by faking a restart.
+        signalRestart(pluginSet, parameters, feedback);
         return true;
     }
 
     /**
-     * Try advancing the specified plugin through the installation phase of the state machine, as far as possible.
+     * Try advancing the specified plugin through the installation state machine, as far as possible.
      *
      * @param id         ID of the plugin to be advanced through the installation state machine
      * @param pluginSet  set of available plugins, for validation and dependency mechanism
@@ -117,17 +117,23 @@ public class InstallStateMachine {
      * @param feedback   for signalling relevant messages to the user
      * @return           false if the input cannot be validated, true otherwise
      */
-    public boolean tryInstallation(final String id, final PluginSet pluginSet, final Map<String, Object> parameters,
-                                   final UserFeedback feedback) {
+    public boolean installWithParameters(final String id, final PluginSet pluginSet,
+                                         final Map<String, Object> parameters, final UserFeedback feedback) {
 
         if (!validatePlugin(id, pluginSet, feedback, new LinkedHashMap<>())) {
             return false;
         }
 
-        tryInstallation(pluginSet.getPlugin(id), pluginSet, parameters, feedback, new ArrayList<>());
+        final PluginDescriptor plugin = pluginSet.getPlugin(id);
+        if (plugin.getState() != InstallState.AWAITING_USER_INPUT) {
+            feedback.addError("Failed to install plugin '" + plugin.getName() + "': Plugin is in unexpected state '" + plugin.getState() + "'.");
+            return false;
+        }
 
-        // Above installation may have unlocked the pending boarding or installation of upstream plugins.
-        // Check is anything more needs to happen by faking a restart.
+        installWithParameters(plugin, parameters, feedback);
+
+        // Above installation may have unlocked the pending installation of upstream plugins.
+        // Check if anything more needs to happen by faking a restart.
         signalRestart(pluginSet, parameters, feedback);
         return true;
     }
@@ -175,99 +181,39 @@ public class InstallStateMachine {
     }
 
     /**
-     * Called after validation of the plugin against the pluginSet. Try to 'board' the plugin, using the supplied
-     * installation parameters, collecting relevant user feedback as well as what dependent plugins limit the
-     * boarding of this plugin.
+     * Called after validation of the plugin against the pluginSet. Try to install the plugin, using the supplied
+     * default installation parameters, collecting relevant user feedback as well as what dependent plugins limit
+     * the installation of this plugin.
      *
      * This method is part of a multi-method recursion mechanism:
      *
-     *      tryBoarding -> board -> advanceDependencies -> tryBoarding
-     *      tryBoarding -> tryInstallation -> install -> advanceDependencies -> tryBoarding
+     *      installWithDependencies -> advanceDependencies -> installWithDependencies
      */
-    private void tryBoarding(final PluginDescriptor plugin, final PluginSet pluginSet, final Map<String, Object> parameters,
-                             final UserFeedback feedback, final List<PluginDescriptor> limitingPlugins) {
-        boolean boardingHappened = false;
-
+    private void installWithDependencies(final PluginDescriptor plugin, final PluginSet pluginSet,
+                                         final Map<String, Object> parameters, final UserFeedback feedback,
+                                         final List<PluginDescriptor> limitingPlugins) {
         switch (plugin.getState()) {
             case DISCOVERED:
-            case BOARDING_PENDING:
-                board(plugin, pluginSet, parameters, feedback, limitingPlugins);
-                if (plugin.getState() != InstallState.ONBOARD) {
-                    return;
+            case INSTALLATION_PENDING:
+                if (!advanceDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins)) {
+                    break;
                 }
-                boardingHappened = true;
 
-                // FALL-THROUGH!
-
-            case ONBOARD:
                 if (!installService.canAutoInstall(plugin)) {
-                    if (boardingHappened) {
-                        // Let the user know that the boarding phase was successful, even though the process has stopped.
-                        final String message = String.format("The installation of plugin '%s' has been prepared.",
-                                plugin.getName());
-                        feedback.addSuccess(message);
-                    }
-                    return;
+                    plugin.setState(InstallState.AWAITING_USER_INPUT);
+                    installService.storeInstallStateToFileSystem(plugin);
+                    final String message = String.format("Plugin '%s' requires user input for installation.", plugin.getName());
+                    feedback.addSuccess(message);
+                    break;
                 }
 
-                // FALL-THROUGH!
-
-            case INSTALLATION_PENDING:
-                tryInstallation(plugin, pluginSet, parameters, feedback, limitingPlugins);
+                installWithParameters(plugin, parameters, feedback);
                 break;
         }
     }
 
-    /**
-     * Called after validation of the plugin against the pluginSet. Try to 'install' the plugin, using the supplied
-     * installation parameters, collecting relevant user feedback as well as whatdependent plugins limit the
-     * installation of this plugin.
-     */
-    private void tryInstallation(final PluginDescriptor plugin, final PluginSet pluginSet, final Map<String, Object> parameters,
-                                 final UserFeedback feedback, final List<PluginDescriptor> limitingPlugins) {
-        switch (plugin.getState()) {
-            case ONBOARD:
-            case INSTALLATION_PENDING:
-                install(plugin, pluginSet, parameters, feedback, limitingPlugins);
-                break;
-        }
-    }
-
-    /**
-     * Advance the plugin installation through the "boarding" phase, by (1) making sure all dependent plugins
-     * allow the boarding of this plugin, (2) attempting to board this plugin and (3) updating the plugin state.
-     */
-    private void board(final PluginDescriptor plugin, final PluginSet pluginSet, final Map<String, Object> parameters,
-                          final UserFeedback feedback, final List<PluginDescriptor> limitingPlugins) {
-
-        if (!advanceDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins, InstallState.ONBOARD)) {
-            return;
-        }
-
-        if (!installService.board(plugin, feedback)) {
-            return;
-        }
-
-        final boolean isPackaged = plugin.getDependencies().isEmpty() && plugin.getRepositories().isEmpty();
-        if (!isPackaged) {
-            final String message = String.format("The installation of plugin '%s' has been prepared, " +
-                    "but requires a restart.", plugin.getName());
-            feedback.addSuccess(message);
-        }
-        plugin.setState(isPackaged ? InstallState.ONBOARD : InstallState.BOARDING);
-        installService.storeInstallStateToFileSystem(plugin);
-    }
-
-    /**
-     * Advance the plugin installation through the "installation" phase, by (1) making sure all dependent plugins
-     * allow the installation of this plugin, (2) attempting to install this plugin and (3) updating the plugin state.
-     */
-    private void install(final PluginDescriptor plugin, final PluginSet pluginSet, final Map<String, Object> parameters,
-                         final UserFeedback feedback, final List<PluginDescriptor> limitingPlugins) {
-
-        if (!advanceDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins, InstallState.INSTALLED)) {
-            return;
-        }
+    private void installWithParameters(final PluginDescriptor plugin, final Map<String, Object> parameters,
+                                       final UserFeedback feedback) {
 
         if (!installService.install(plugin, parameters)) {
             return;
@@ -287,35 +233,37 @@ public class InstallStateMachine {
     }
 
     /**
-     * Shared logic to check if all dependencies of te plugin allow the plugin to tryBoarding into the specified
-     * target state. If at least one (potentially nested) dependency prevents the plugin from advancing, the plugin
-     * enters a dedicated "pending" state, remembering the desire to tryBoarding for a later point in time.
+     * Check if all dependencies of the plugin allow the plugin to be installed.
+     * If at least one (potentially nested) dependency prevents the plugin from advancing, the plugin
+     * enters a dedicated "pending" state, remembering the desire to be installed for a later point in time.
      */
     private boolean advanceDependencies(final PluginDescriptor plugin, final PluginSet pluginSet,
                                         final Map<String, Object> parameters, final UserFeedback feedback,
-                                        final List<PluginDescriptor> limitingPlugins, final InstallState targetState) {
+                                        final List<PluginDescriptor> limitingPlugins) {
         final List<PluginDescriptor.Dependency> dependencies = plugin.getPluginDependencies();
         if (dependencies != null) {
             for (PluginDescriptor.Dependency dependency : dependencies) {
                 final String depId = dependency.getPluginId();
                 final PluginDescriptor p = pluginSet.getPlugin(depId);
-                if (mustAdvanceDependency(dependency, p, targetState)) {
+                if (mustAdvanceDependency(dependency, p)) {
                     if (p.getState() == InstallState.DISCOVERED) {
                         final String message = String.format("Installing dependent plugin '%s'...", p.getName());
                         feedback.addSuccess(message);
                     }
-                    tryBoarding(p, pluginSet, parameters, feedback, limitingPlugins);
+                    installWithDependencies(p, pluginSet, parameters, feedback, limitingPlugins);
                 }
-                if (mustAdvanceDependency(dependency, p, targetState)) {
+                if (mustAdvanceDependency(dependency, p)) {
                     limitingPlugins.add(p); // dependency is still in a state that keeps this plugin from advancing
                 }
             }
         }
 
         if (!limitingPlugins.isEmpty()) {
-            plugin.setState(makePendingState(targetState));
-            installService.storeInstallStateToFileSystem(plugin);
-            addPendingFeedback(feedback, plugin, limitingPlugins, targetState);
+            if (plugin.getState() != InstallState.INSTALLATION_PENDING) {
+                plugin.setState(InstallState.INSTALLATION_PENDING);
+                installService.storeInstallStateToFileSystem(plugin);
+                addPendingFeedback(feedback, plugin, limitingPlugins);
+            }
             return false;
         }
 
@@ -323,23 +271,16 @@ public class InstallStateMachine {
     }
 
     private boolean mustAdvanceDependency(final PluginDescriptor.Dependency dependency,
-                                          final PluginDescriptor plugin, final InstallState targetState) {
-        final InstallState testState = targetState == InstallState.ONBOARD
-                ? dependency.getMinStateForBoarding()
-                : dependency.getMinStateForInstalling();
+                                          final PluginDescriptor plugin) {
+        final InstallState testState = dependency.getMinStateForInstalling();
         return testState != null && plugin.getState().compareTo(testState) < 0;
     }
 
-    private InstallState makePendingState(final InstallState targetState) {
-        return targetState == InstallState.ONBOARD ? InstallState.BOARDING_PENDING : InstallState.INSTALLATION_PENDING;
-    }
-
     private void addPendingFeedback(final UserFeedback feedback, final PluginDescriptor plugin,
-                                    final List<PluginDescriptor> limitingPlugins, final InstallState targetState) {
+                                    final List<PluginDescriptor> limitingPlugins) {
         final String deps = limitingPlugins.stream().map(PluginDescriptor::getName).collect(Collectors.joining("', '"));
-        final String activity = targetState == InstallState.ONBOARD ? "Boarding" : "Installation";
-        final String message = String.format("%s of plugin '%s' is waiting for the installation of dependent plugin(s) '%s'.",
-                activity, plugin.getName(), deps);
+        final String message = String.format("Installation of plugin '%s' is waiting for the installation of dependent plugin(s) '%s'.",
+                plugin.getName(), deps);
         feedback.addSuccess(message);
     }
 }
