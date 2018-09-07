@@ -674,40 +674,37 @@
     <state id="publish-branch">
       <onentry>
         <!-- if there is no branch id, we will use master -->
-        <hippo:action action="publishBranch" enabledExpr="!!unpublished and branches.contains(branchId?: 'master') and modified"/>
+        <hippo:action action="publishBranch" enabledExpr="!!unpublished and branches.contains(branchId) and modified"/>
       </onentry>
       <!-- the initial no-publish-branch state is used and active to indicate publish-branch operations are
        currently not allowed or possible -->
       <state id="no-publish-branch">
         <!-- event-less transition to 'can-publish-branch' state -->
-        <transition target="can-publish-branch" cond="!!unpublished and branches.contains(branchId?: 'master') and modified"/>
+        <transition target="can-publish-branch" cond="!!unpublished and branches.contains(branchId) and modified"/>
       </state>
       <state id="can-publish-branch">
 
         <transition event="publishBranch">
 
-          <!-- if there is no branch id, we will use master -->
-          <cs:var name="branchIdToUse" expr="branchId?: 'master'"/>
-
-          <if cond="anyBranchLive and !'master'.equals(branchIdToUse)">
+          <if cond="anyBranchLive and !'master'.equals(branchId)">
             <!-- there is a published variant, we only publish to version history -->
-            <if cond="unpublished.isBranch(branchIdToUse)">
+            <if cond="unpublished.isBranch(branchId)">
               <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
               <hippo:version variant="unpublished" trigger="publication"/>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
-              <hippo:label unpublished="unpublished" addLabel="branchIdToUse + '-published'" onLabel="branchIdToUse + '-unpublished'"/>
+              <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
             </if>
 
           </if>
 
-          <if cond="!anyBranchLive or 'master'.equals(branchIdToUse)">
+          <if cond="!anyBranchLive or 'master'.equals(branchId)">
 
             <!-- there is not yet a published variant or it is master: really publish the preview -->
-            <if cond="!unpublished.isBranch(branchIdToUse)">
+            <if cond="!unpublished.isBranch(branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="branchIdToUse"/>
+              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
             </if>
 
             <!-- copy the content of the unpublished variant to the published variant -->
@@ -732,9 +729,6 @@
 
       <state id="can-depublish-branch">
         <transition event="depublishBranch">
-
-          <!-- if there is no branch id, we will use master -->
-          <cs:var name="branchId" expr="branchId?: 'master'"/>
 
           <if cond="!!unpublished">
             <!-- there is already an unpublished version -->
