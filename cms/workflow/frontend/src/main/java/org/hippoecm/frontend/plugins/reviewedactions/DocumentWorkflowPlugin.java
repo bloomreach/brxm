@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -224,7 +225,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 String nodeName = getNodeNameCodec(document, folder).encode(name);
 
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.copy(new Document(folder), nodeName);
+                final BranchIdModel branchIdModel = new BranchIdModel(context, getWorkflow().getNode().getIdentifier());
+                workflow.copy(new Document(folder), nodeName, branchIdModel.getBranchId());
 
                 JcrNodeModel resultModel = new JcrNodeModel(folder.getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
