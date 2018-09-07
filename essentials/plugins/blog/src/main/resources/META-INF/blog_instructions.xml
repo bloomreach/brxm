@@ -40,6 +40,8 @@
     <file action="copy" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
     <file action="copy" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>
     <file action="copy" source="java/Account.txt" target="{{beansFolder}}/Account.java"/>
+    
+    <xml action="copy" source="xml/eventbus/eventbus-config.xml" target="/hippo:configuration/hippo:modules"/>
   </instructionSet>
 
   <!--
