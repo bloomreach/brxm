@@ -741,11 +741,8 @@
               means we need to unpublish this one BUT if it turns out there is ANY other
               branch (including Master) live in version history, we need to publish that branch!! Master has
               precedence to become the live variant (although in general it already always is) -->
-              <!-- TODO cs:var -->
-              <!--<cs:var name="originalUnpublishedBranchId" expr="unpublished.branchId"/>-->
-              <script>
-                var originalUnpublishedBranchId = unpublished.getBranchId();
-              </script>
+
+              <cs:var name="originalUnpublishedBranchId" expr="unpublished.branchId" />
 
               <!-- first version the existing unpublished since it might get replaced (and can be even another branch ) -->
               <hippo:version variant="unpublished"/>
