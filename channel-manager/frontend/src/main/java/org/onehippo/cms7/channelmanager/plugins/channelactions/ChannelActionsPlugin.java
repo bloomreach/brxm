@@ -89,7 +89,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                        if (Boolean.TRUE.equals(workflow.hints().get("previewAvailable"))) {
+                        final String branchId = new BranchIdModel(getPluginContext(), node.getIdentifier()).getBranchId();
+                        if (Boolean.TRUE.equals(workflow.hints(branchId).get("previewAvailable"))) {
                             addMenuDescription(model);
                         }
                     }
