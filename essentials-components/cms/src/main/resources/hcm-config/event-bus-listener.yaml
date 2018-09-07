@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:modules/essentials-eventbus-listener:
-      jcr:primaryType: hipposys:module
-      hipposys:className: org.onehippo.cms7.essentials.components.cms.modules.BlogListenerModule
-      /hippo:moduleconfig:
-        jcr:primaryType: nt:unstructured
-        jcr:mixinTypes: ['mix:lockable']
-        projectNamespace: essentials

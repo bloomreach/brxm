@@ -1,5 +1,0 @@
-group: hippo-cms
-project:
-    name: hippo-essentials-components
-    after: hippo-repository
-module: hippo-essentials-components-cms
