@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -70,13 +71,11 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
     private final DocumentCollectionModel collectionModel;
     private final DocumentModelService documentService;
     private final BrowserSections sections;
-    private final IPluginContext context;
     private FolderModelService folderService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
-        documentService = new DocumentModelService(config);
+        documentService = new DocumentModelService(config, context);
         documentService.init(context);
-        this.context = context;
 
         collectionModel = new DocumentCollectionModel(null);
 
@@ -144,34 +143,8 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      */
     public void browse(final IModel<Node> model) {
         final IModel<Node> document = getHandleOrFolder(model);
-        final Node node = document.getObject();
-        if (node == null) {
+        if (document.getObject() == null) {
             return;
-        }
-
-        String identifier = "unknown-identifier";
-        try {
-            identifier = node.getIdentifier();
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
-
-        try {
-            final BranchIdModel branchIdModel = new BranchIdModel(context, identifier);
-            branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
-
-            final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
-            if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
-                final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
-                        .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
-                if (variant != null) {
-                    final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-                    final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
-                    branchIdModel.setBranchInfo(branchId, branchName);
-                }
-            }
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
         }
 
         Match closestMatch = null;
@@ -275,12 +248,16 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
 
     private class DocumentModelService extends ModelReference<Node> {
 
-        DocumentModelService(final IPluginConfig config) {
+
+        private final IPluginContext context;
+
+        DocumentModelService(final IPluginConfig config, final IPluginContext context) {
             super(config.getString("model.document"), new JcrNodeModel((Node) null));
+            this.context = context;
         }
 
         public void updateModel(final IModel<Node> model) {
-            super.setModel(model);
+            super.setModel(updateModelForFrozenNodeWithCurrentBranchId(model));
         }
 
         @Override
@@ -291,9 +268,72 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             if (model.getObject() == null) {
                 updateModel(model);
             } else {
-                browse(model);
+                browse(updateModelForFrozenNodeWithCurrentBranchId(model));
             }
         }
+
+
+        private IModel<Node> updateModelForFrozenNodeWithCurrentBranchId(final IModel<Node> model) {
+            final Node node = model.getObject();
+            if (node == null){
+                return model;
+            }
+            try {
+                final Node handle = getHandle(node);
+                final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
+                if (!branchIdModel.isDefined()) {
+                    log.debug("Initializing branch id model for identifier:{}", handle.getIdentifier());
+                    branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
+                    final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
+                    if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
+                        final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
+                                .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
+                        if (variant != null) {
+                            final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                            final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
+                            branchIdModel.setBranchInfo(branchId, branchName);
+                        }
+                    }
+                }
+                final String currentBranchId = branchIdModel.getBranchId();
+                log.debug("Current branch id:{}", currentBranchId);
+                if (isFrozenNode(node)) {
+                    final DocumentVariant documentVariant = new DocumentVariant(node);
+                    final String frozenBranchId = documentVariant.getBranchId();
+                    log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
+                    if (currentBranchId.equals(frozenBranchId)) {
+                        log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
+                                        " the current branch id: {}, updating the documentModel with the associated handle."
+                                , currentBranchId);
+                        return new JcrNodeModel(handle);
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage(), e);
+            }
+            return model;
+        }
+
+        private Node getHandle(final Node node) throws RepositoryException {
+            return isFrozenNode(node) ? getVersionHandle(node) : node;
+        }
+
+        private Node getVersionHandle(final Node frozenNode) {
+            try {
+                final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
+                final Node variant = frozenNode.getSession().getNodeByIdentifier(uuid);
+                return variant.getParent();
+            } catch (final RepositoryException e) {
+               log.warn(e.getMessage(), e);
+               return frozenNode;
+            }
+        }
+
+        private boolean isFrozenNode(final Node node) throws RepositoryException {
+            return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
+        }
+
+
     }
 
     private class FolderModelService extends ModelReference<Node> {
