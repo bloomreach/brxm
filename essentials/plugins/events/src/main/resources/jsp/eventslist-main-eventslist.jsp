@@ -24,7 +24,7 @@
       </article>
     </c:forEach>
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+      <hst:manageContent documentTemplateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
     <c:if test="${requestScope.cparam.showPagination}">
       <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
@@ -36,7 +36,7 @@
   <div>
     <img src="<hst:link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+      <hst:manageContent documentTemplateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
   </div>
 </c:if>

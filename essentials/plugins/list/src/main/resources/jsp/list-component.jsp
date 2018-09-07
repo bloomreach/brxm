@@ -23,7 +23,7 @@
       </article>
     </c:forEach>
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-document"/>
+      <hst:manageContent documentTemplateQuery="new-document"/>
     </div>
     <c:if test="${requestScope.cparam.showPagination}">
       <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>

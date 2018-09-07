@@ -21,7 +21,7 @@
       </c:when>
       <c:when test="${requestScope.editMode}">
         <figure style="position: relative">
-          <hst:manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+          <hst:manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
           <img src="<hst:link path='/images/essentials/catalog-component-icons/banner.png'/>">  Selected document "${document.node.path}" is not of the correct type, please select or create a Banner document.
         </figure>
       </c:when>
@@ -31,7 +31,7 @@
 <c:if test="${requestScope.editMode && (requestScope.document eq null)}">
   <div>
     <figure style="position: relative">
-      <hst:manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+      <hst:manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
       <img src="<hst:link path='/images/essentials/catalog-component-icons/banner.png'/>"> Select or create a Banner document
     </figure>
   </div>

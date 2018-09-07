@@ -22,6 +22,6 @@
 <c:if test="${requestScope.editMode && empty requestScope.document}">
   <div class="has-edit-button">
     <img src="<hst:link path='/images/essentials/catalog-component-icons/simple-content.png'/>"> Click to edit Simple Content
-    <hst:manageContent templateQuery="new-content-document" parameterName="document" rootPath="content"/>
+    <hst:manageContent documentTemplateQuery="new-content-document" parameterName="document" rootPath="content"/>
   </div>
 </c:if>

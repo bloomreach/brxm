@@ -18,7 +18,7 @@
   </a>
   <#elseif editMode>
     <figure style="position: relative">
-      <@hst.manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+      <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
       <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Selected document "${document.node.path}" is not of the correct type, please select or create a Banner document.
     </figure>
   </#if>
@@ -26,7 +26,7 @@
 <#elseif editMode>
 <div>
   <figure style="position: relative">
-    <@hst.manageContent templateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
+    <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
   </figure>
 </div>
