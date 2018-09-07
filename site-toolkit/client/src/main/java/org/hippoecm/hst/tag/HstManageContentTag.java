@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DEFAULT_PATH;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE_MANAGE_CONTENT_LINK;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_NAME;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE_IS_RELATIVE_PATH;
@@ -61,7 +63,6 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAG
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_ROOT_PATH;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PICKER_SELECTABLE_NODE_TYPES;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_ROOT_PATH;
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_TEMPLATE_QUERY;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_UUID;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_COMPONENT_WINDOW;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
@@ -76,7 +77,7 @@ public class HstManageContentTag extends TagSupport {
     private static final Logger log = LoggerFactory.getLogger(HstManageContentTag.class);
 
     private HippoBean hippoBean;
-    private String templateQuery;
+    private String documentTemplateQuery;
     private String parameterName;
     private String rootPath;
     private String defaultPath;
@@ -90,11 +91,21 @@ public class HstManageContentTag extends TagSupport {
     }
 
     public void setTemplateQuery(final String templateQuery) {
-        if (StringUtils.isBlank(templateQuery)) {
-            log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
-                    + " Expected the name of a template query instead.", getComponentRenderPath(), templateQuery);
+        log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
+                + "This attribute is deprecated since 12.6, use documentTemplateQuery instead.",
+                getComponentRenderPath(), documentTemplateQuery);
+
+        if (StringUtils.isNotBlank(templateQuery)) {
+            setDocumentTemplateQuery(templateQuery);
         }
-        this.templateQuery = templateQuery;
+    }
+    
+    public void setDocumentTemplateQuery(final String documentTemplateQuery) {
+        if (StringUtils.isBlank(documentTemplateQuery)) {
+            log.warn("The documentTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
+                    + " Expected the name of a template query instead.", getComponentRenderPath(), documentTemplateQuery);
+        }
+        this.documentTemplateQuery = documentTemplateQuery;
     }
 
     public void setParameterName(final String parameterName) {
@@ -135,7 +146,7 @@ public class HstManageContentTag extends TagSupport {
 
             write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
             processHippoBean();
-            processTemplateQuery();
+            processDocumentTemplateQuery();
             processParameterName();
             processPaths();
 
@@ -177,8 +188,8 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private void checkMandatoryParameters() throws SkipManageContentTagException {
-        if (templateQuery == null && hippoBean == null && parameterName == null) {
-            throw new SkipManageContentTagException("Skipping manageContent tag because neither 'templateQuery', " +
+        if (documentTemplateQuery == null && hippoBean == null && parameterName == null) {
+            throw new SkipManageContentTagException("Skipping manageContent tag because neither 'documentTemplateQuery', " +
                     "'hippobean' or 'parameterName' attribute specified.");
         }
     }
@@ -248,8 +259,8 @@ public class HstManageContentTag extends TagSupport {
         }
     }
 
-    private void processTemplateQuery() {
-        write(MANAGE_CONTENT_TEMPLATE_QUERY, templateQuery);
+    private void processDocumentTemplateQuery() {
+        write(MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY, documentTemplateQuery);
     }
 
     private void processParameterName() {
