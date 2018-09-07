@@ -64,7 +64,7 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
                 workflow.restoreVersionToBranch(version, "non-existing-branch");
                 fail("Expected workflow exception");
             } catch (WorkflowException e) {
-                assertEquals("Cannot restore version to branch 'non-existing-branch' since it doesn't exist", e.getMessage());
+                assertEquals("Cannot invoke workflow documentworkflow action restoreVersionToBranch: action not allowed or undefined", e.getMessage());
             }
         }
 

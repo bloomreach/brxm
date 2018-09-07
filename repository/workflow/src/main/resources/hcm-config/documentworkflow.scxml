@@ -154,8 +154,6 @@
            by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
         <!-- copy/update draft unless user already is holder (editing) -->
-        <hippo:workflowException cond="!branches.contains(branchId)"
-                                 errorExpr="'Cannot obtain editable instance for branch \'' + branchId + '\' since it doesn\'t exist'"/>
 
         <if cond="!editor">
           <if cond="!!unpublished">
@@ -469,7 +467,7 @@
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
-            <hippo:action action="restoreVersionToBranch" enabledExpr="true"/>
+            <hippo:action action="restoreVersionToBranch" enabledExpr="branches.contains(branchId)"/>
           </if>
         </onentry>
 
@@ -497,9 +495,6 @@
         </transition>
 
         <transition event="restoreVersionToBranch">
-
-          <hippo:workflowException cond="!branches.contains(branchId)"
-                                   errorExpr="'Cannot restore version to branch \'' + branchId + '\' since it doesn\'t exist'"/>
 
           <!-- to avoid potentially loosing unpublished changes, first version -->
           <hippo:version variant="unpublished"/>
@@ -587,9 +582,6 @@
       <!-- the checking-out state becomes active when an unpublished document variant exists -->
       <state id="can-checkout-branch">
         <transition event="checkoutBranch">
-
-          <hippo:workflowException cond="!branches.contains(branchId)"
-                                   errorExpr="'Branch \'' + branchId + '\' cannot be checked out because it doesn\'t exist'"/>
 
           <if cond="unpublished.isBranch(branchId)">
             <!-- return the same DocumentVariant object we already had -->
@@ -777,9 +769,6 @@
               <hippo:configVariant variant="published" availabilities=""/>
               <!-- create an extra version of the current unpublished (possibly modified?) -->
               <hippo:version variant="unpublished"/>
-            <else/>
-              <!-- should never come here since 'branchId' branch exists and there is only a published version -->
-              <hippo:workflowException errorExpr="'Cannot depublish branch \'' + branchId + '\' since there is not a published version for it'"/>
             </if>
           </if>
 
