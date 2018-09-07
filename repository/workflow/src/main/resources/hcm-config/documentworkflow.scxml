@@ -866,7 +866,7 @@
       <!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) -->
       <state id="no-copy">
         <!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) -->
-        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor')"/>
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor') and branches.contains(branchId)"/>
       </state>
 
       <!-- the state copyable is only active for users which are editor (granted hippo:editor) -->
@@ -878,6 +878,16 @@
 
         <!-- target-less transition to copy the document to the event payload provided parameters destination and name -->
         <transition event="copy">
+          <if cond="!!unpublished">
+            <!-- unpublished document exists -->
+            <!-- make sure the unpublished is the right branch -->
+            <if cond="!unpublished.isBranch(branchId)">
+              <!-- current unpublished is not the one to copy. First checkin current unpublished and then checkout
+              the request copy branch -->
+              <hippo:version variant="unpublished"/>
+              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+            </if>
+          </if>
           <hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>
         </transition>
 

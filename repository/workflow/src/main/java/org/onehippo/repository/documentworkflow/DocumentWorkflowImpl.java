@@ -287,6 +287,12 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public void copy(final Document destination, final String newName, final String branchId) throws WorkflowException {
+        triggerAction(DocumentWorkflowAction.copy()
+                .addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName).addEventPayload(BRANCH_ID, branchId));
+    }
+
+    @Override
     public void move(final Document destination, final String newName) throws WorkflowException {
         triggerAction(DocumentWorkflowAction.move().addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName));
     }

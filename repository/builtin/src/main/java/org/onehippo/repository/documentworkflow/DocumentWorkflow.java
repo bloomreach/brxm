@@ -221,10 +221,17 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * @see #copy(Document, String, String) copy(destination, newName, branchId) where branchId will be 'master'
+     */
+    void copy(Document destination, String newName)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Copy this document to a specific target document folder with a new name
      *
      * @param destination the target document folder
      * @param newName the name for the copied document
+     * @param branchId the branch to copy
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
@@ -233,8 +240,8 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    void copy(Document destination, String newName)
-            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    void copy(Document destination, String newName, String branchId)
+            throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Move this document to a specific target document folder with a new name
