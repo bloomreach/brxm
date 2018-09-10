@@ -94,7 +94,7 @@ describe('pathLinkController', () => {
       spyOn($ctrl, '_focusSelectButton');
     });
 
-    it('does not handle "path-picked" event', () => {
+    it('does not handle "path-picked" event if field name does not match', () => {
       $ctrl._onPathPicked('SomeField');
       expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
     });
@@ -112,7 +112,7 @@ describe('pathLinkController', () => {
       spyOn($ctrl, '_focusSelectButton');
     });
 
-    it('does not handle "path-canceled" event', () => {
+    it('does not handle "path-canceled" event if field name does not match', () => {
       $ctrl._onPathCanceled('SomeField');
       expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
     });
