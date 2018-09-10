@@ -69,6 +69,17 @@ describe('pathLinkController', () => {
     });
   });
 
+  describe('$onDestroy', () => {
+    it('unsubscribes the "path-picked" and "path-canceled" event listeners', () => {
+      spyOn(CmsService, 'unsubscribe');
+
+      $ctrl.$onDestroy();
+      $scope.$apply();
+      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function), jasmine.any(Object));
+      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-canceled', jasmine.any(Function), jasmine.any(Object));
+    });
+  });
+
   describe('openLinkPicker', () => {
     it('opens the picker by publishing the "show-path-picker" event', () => {
       spyOn(CmsService, 'publish');
