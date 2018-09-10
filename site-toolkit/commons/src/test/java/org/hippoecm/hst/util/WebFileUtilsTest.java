@@ -44,7 +44,9 @@ public class WebFileUtilsTest {
 
         expect(context.getResolvedMount()).andReturn(resolvedMount);
         expect(resolvedMount.getMount()).andReturn(mount);
-        replay(context, resolvedMount);
+        expect(mount.getContextPath()).andReturn(null);
+        expect(mount.getParent()).andReturn(null);
+        replay(context, resolvedMount, mount);
     }
 
     @Test
