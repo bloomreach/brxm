@@ -8,8 +8,8 @@
     "build": "grunt build"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=5"
+    "node": "8",
+    "npm": "6"
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "3.7.0",
