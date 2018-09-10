@@ -225,8 +225,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 String nodeName = getNodeNameCodec(document, folder).encode(name);
 
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                final BranchIdModel branchIdModel = new BranchIdModel(context, getWorkflow().getNode().getIdentifier());
-                workflow.copy(new Document(folder), nodeName, branchIdModel.getBranchId());
+                workflow.copy(new Document(folder), nodeName, getBranchIdModel().getBranchId());
 
                 JcrNodeModel resultModel = new JcrNodeModel(folder.getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
