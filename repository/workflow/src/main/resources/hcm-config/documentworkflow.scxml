@@ -65,6 +65,20 @@
     // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
     def getContainingFolder() { workflowData.handle.parent }
+
+    // true if the branch from  from DocumentHandle is 'master'
+    def boolean isMaster() {
+       branches.contains('master') and 'master'.equals(branchId)
+    }
+
+    // true if the branch from  from DocumentHandle is NOT 'master'
+    def boolean isNotMaster() {
+       !'master'.equals(branchId)
+    }
+    // true if the branch from  from DocumentHandle exists
+    def boolean isBranchExists() {
+       branches.contains(branchId)
+    }
   </script>
 
   <!-- the initial no-document state is used to prevent entering the handle state if there is no document -->
@@ -82,7 +96,7 @@
         <hippo:feedback key="isLive" value="live"/>
         <hippo:feedback key="previewAvailable" value="previewAvailable"/>
         <!-- enable the checkModified operation if both draft and unpublished variants exists -->
-        <hippo:action action="checkModified" enabledExpr="draft and unpublished and branches.contains(branchId)"/>
+        <hippo:action action="checkModified" enabledExpr="draft and unpublished and branchExists"/>
       </onentry>
 
       <!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is
@@ -107,7 +121,7 @@
         <transition target="editing"  cond="editing"/>
         <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
                     doesn't exist yet or isn't edited -->
-        <transition target="editable" cond="!requestPending or !'master'.equals(branchId)"/>
+        <transition target="editable" cond="!requestPending or notMaster"/>
       </state>
 
       <!-- editing state becomes active when the draft variant is currently edited -->
@@ -138,7 +152,7 @@
             <hippo:action action="unlock" enabledExpr="false"/>
           </if>
           <!-- enable the operation to start editing -->
-          <hippo:action action="obtainEditableInstance" enabledExpr="branches.contains(branchId)"/>
+          <hippo:action action="obtainEditableInstance" enabledExpr="branchExists"/>
         </onentry>
       </state>
 
@@ -338,14 +352,14 @@
           </if>
         </onentry>
         <!-- event-less transition to publishable state if not currently editing and the document is modified -->
-        <transition target="publishable" cond="!editing and modified and branches.contains('master') and 'master'.equals(branchId)"/>
+        <transition target="publishable" cond="!editing and modified and master"/>
       </state>
 
       <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
 
-          <if cond="(!requestPending or user=='workflowuser') and branches.contains('master') and 'master'.equals(branchId) and modified">
+          <if cond="(!requestPending or user=='workflowuser') and master and modified">
             <!-- if unpublished is a master version and no request pending OR invoked by the 'workflowuser'
             user (scheduled workflow jobs daemon): enable request publication operation -->
             <hippo:action action="requestPublication" enabledExpr="true"/>
@@ -396,13 +410,13 @@
           </if>
         </onentry>
         <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
-        <transition target="depublishable" cond="!editing and live and branches.contains('master') and 'master'.equals(branchId)"/>
+        <transition target="depublishable" cond="!editing and live and master"/>
       </state>
 
       <!-- state depublishable is active when the  document is live and not currently edited -->
       <state id="depublishable">
         <onentry>
-          <if cond="(!requestPending or user=='workflowuser') and branches.contains('master') and 'master'.equals(branchId)">
+          <if cond="(!requestPending or user=='workflowuser') and master">
             <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
                  enable request depublication operation -->
             <hippo:action action="requestDepublication" enabledExpr="true"/>
@@ -467,7 +481,7 @@
             <hippo:action action="version" enabledExpr="true"/>
             <hippo:action action="restoreVersion" enabledExpr="true"/>
             <hippo:action action="versionRestoreTo" enabledExpr="true"/>
-            <hippo:action action="restoreVersionToBranch" enabledExpr="branches.contains(branchId)"/>
+            <hippo:action action="restoreVersionToBranch" enabledExpr="branchExists"/>
           </if>
         </onentry>
 
@@ -516,7 +530,7 @@
         <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
         <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
-        <hippo:action action="getBranch" enabledExpr="!onlyMaster and branches.contains(branchId)"/>
+        <hippo:action action="getBranch" enabledExpr="!onlyMaster and branchExists"/>
       </onentry>
 
       <!-- target-less transition to report a list of available branches of the document -->
@@ -544,7 +558,7 @@
         <!-- target-less transition to create a new branch for the current unpublished variant -->
         <transition event="branch">
 
-          <hippo:workflowException cond="branches.contains(branchId)"
+          <hippo:workflowException cond="branchExists"
                                    errorExpr="'Branch \'' + branchId + '\' already exists'"/>
 
           <if cond="!unpublished and !!published">
@@ -569,14 +583,14 @@
 
     <state id="checking-out-branch">
       <onentry>
-        <hippo:action action="checkoutBranch" enabledExpr="!editing and !!unpublished and !onlyMaster and branches.contains(branchId)"/>
+        <hippo:action action="checkoutBranch" enabledExpr="!editing and !!unpublished and !onlyMaster and branchExists"/>
       </onentry>
       <!-- the initial no-branching state is used and active to indicate checking-out operations are currently not
            allowed or possible because there is no unpublished document variant yet -->
       <state id="no-checkout-branch">
         <!-- event-less transition to 'can-checkout-branch' state when an unpublished document variant exists
              and not being edited -->
-        <transition target="can-checkout-branch" cond="!editing and !!unpublished and !onlyMaster and branches.contains(branchId)"/>
+        <transition target="can-checkout-branch" cond="!editing and !!unpublished and !onlyMaster and branchExists"/>
       </state>
       <!-- the checking-out state becomes active when an unpublished document variant exists -->
       <state id="can-checkout-branch">
@@ -597,13 +611,13 @@
     </state>
     <state id="remove-branch">
       <onentry>
-        <hippo:action action="removeBranch" enabledExpr="!live and !editingCurrentBranch and branches.contains(branchId) and !'master'.equals(branchId)"/>
+        <hippo:action action="removeBranch" enabledExpr="!live and !editingCurrentBranch and branchExists and notMaster"/>
       </onentry>
       <!-- the initial no-remove-branch state is used and active to indicate remove-branch operations are currently not
            allowed or possible because there is no unpublished document variant yet -->
       <state id="no-remove-branch">
         <!-- event-less transition to 'can-remove-branch' state when an unpublished document variant exists -->
-        <transition target="can-remove-branch" cond="!live and !editingCurrentBranch and branches.contains(branchId) and !'master'.equals(branchId)"/>
+        <transition target="can-remove-branch" cond="!live and !editingCurrentBranch and branchExists and notMaster"/>
       </state>
       <!-- the can-remove-branch state becomes active when an unpublished document variant exists -->
       <state id="can-remove-branch">
@@ -622,13 +636,13 @@
     </state>
     <state id="reintegrate-branch">
       <onentry>
-        <hippo:action action="reintegrateBranch" enabledExpr="!!unpublished and branches.contains(branchId) and !'master'.equals(branchId)"/>
+        <hippo:action action="reintegrateBranch" enabledExpr="!!unpublished and branchExists and notMaster"/>
       </onentry>
       <!-- the initial no-reintegrate-branch state is used and active to indicate reintegrate-branch operations are
          currently not allowed or possible -->
       <state id="no-reintegrate-branch">
         <!-- event-less transition to 'can-reintegrate-branch' state -->
-        <transition target="can-reintegrate-branch" cond="!!unpublished and branches.contains(branchId) and !'master'.equals(branchId)"/>
+        <transition target="can-reintegrate-branch" cond="!!unpublished and branchExists and notMaster"/>
       </state>
       <state id="can-reintegrate-branch">
         <transition event="reintegrateBranch">
@@ -663,19 +677,19 @@
     <state id="publish-branch">
       <onentry>
         <!-- if there is no branch id, we will use master -->
-        <hippo:action action="publishBranch" enabledExpr="!!unpublished and branches.contains(branchId) and modified"/>
+        <hippo:action action="publishBranch" enabledExpr="!!unpublished and branchExists and modified"/>
       </onentry>
       <!-- the initial no-publish-branch state is used and active to indicate publish-branch operations are
        currently not allowed or possible -->
       <state id="no-publish-branch">
         <!-- event-less transition to 'can-publish-branch' state -->
-        <transition target="can-publish-branch" cond="!!unpublished and branches.contains(branchId) and modified"/>
+        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified"/>
       </state>
       <state id="can-publish-branch">
 
         <transition event="publishBranch">
 
-          <if cond="anyBranchLive and !'master'.equals(branchId)">
+          <if cond="anyBranchLive and notMaster">
             <!-- there is a published variant, we only publish to version history -->
             <if cond="unpublished.isBranch(branchId)">
               <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
@@ -687,7 +701,7 @@
 
           </if>
 
-          <if cond="!anyBranchLive or 'master'.equals(branchId)">
+          <if cond="!anyBranchLive or master">
 
             <!-- there is not yet a published variant or it is master: really publish the preview -->
             <if cond="!unpublished.isBranch(branchId)">
@@ -709,11 +723,11 @@
 
     <state id="depublish-branch">
       <onentry>
-        <hippo:action action="depublishBranch" enabledExpr="live and branches.contains(branchId)"/>
+        <hippo:action action="depublishBranch" enabledExpr="live and branchExists"/>
       </onentry>
       <state id="no-depublish-branch">
         <!-- event-less transition to 'can-depublish-branch' state -->
-        <transition target="can-depublish-branch" cond="live and branches.contains(branchId)"/>
+        <transition target="can-depublish-branch" cond="live and branchExists"/>
       </state>
 
       <state id="can-depublish-branch">
@@ -843,7 +857,7 @@
       <!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) -->
       <state id="no-copy">
         <!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) -->
-        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor') and branches.contains(branchId)"/>
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor') and branchExists"/>
       </state>
 
       <!-- the state copyable is only active for users which are editor (granted hippo:editor) -->
