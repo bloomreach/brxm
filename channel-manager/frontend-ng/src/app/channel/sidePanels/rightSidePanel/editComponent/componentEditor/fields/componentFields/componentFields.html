@@ -74,6 +74,18 @@
       ng-blur="$ctrl.blurPrimitive($event)">
     </date-field>
 
+    <path-link
+      ng-switch-when="linkpicker"
+      config="::componentField.pickerConfig"
+      aria-label="{{ ::componentField.label }}"
+      display-name="::componentField.displayValue"
+      name="{{ ::componentField.name }}"
+      ng-model="componentField.value"
+      ng-change="$ctrl.valueChanged()"
+      ng-focus="$ctrl.focusPrimitive($event)"
+      ng-blur="$ctrl.blurPrimitive($event)">
+    </path-link>
+
     <div ng-switch-default>
       {{componentField.name}} - UNKNOWN TYPE: {{ ::componentField.type }}
     </div>
