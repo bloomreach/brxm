@@ -31,6 +31,12 @@ describe('ComponentEditorService', () => {
     page: 'page',
   };
 
+  function openComponentEditor(properties) {
+    HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+    ComponentEditor.open(testData);
+    $rootScope.$digest();
+  }
+
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
@@ -62,10 +68,7 @@ describe('ComponentEditorService', () => {
 
     it('stores the editor data', () => {
       const properties = ['propertyData'];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      openComponentEditor(properties);
 
       expect(ComponentEditor.channel).toBe(testData.channel);
       expect(ComponentEditor.component).toBe(testData.component);
@@ -77,11 +80,7 @@ describe('ComponentEditorService', () => {
 
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
-      const properties = ['propertyData'];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      openComponentEditor(['propertyData']);
 
       expect(ComponentEditor.getComponentName()).toBe('componentLabel');
     });
@@ -99,11 +98,7 @@ describe('ComponentEditorService', () => {
     }
 
     it('does not create a group when there are no properties', () => {
-      const properties = [];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      openComponentEditor([]);
 
       expect(ComponentEditor.getPropertyGroups().length).toBe(0);
     });
@@ -113,10 +108,7 @@ describe('ComponentEditorService', () => {
         { name: 'hidden', hiddenInChannelManager: true },
         { name: 'visible', hiddenInChannelManager: false, groupLabel: 'Group' },
       ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      openComponentEditor(properties);
 
       const groups = ComponentEditor.getPropertyGroups();
       expectGroup(groups[0], 'Group', 1);
@@ -124,15 +116,11 @@ describe('ComponentEditorService', () => {
     });
 
     it('does not create a group if it only has hidden properties', () => {
-      const properties = [
+      openComponentEditor([
         { groupLabel: 'Group', hiddenInChannelManager: true },
         { groupLabel: 'Group', hiddenInChannelManager: true },
         { groupLabel: 'Group1', hiddenInChannelManager: false },
-      ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      ]);
 
       const groups = ComponentEditor.getPropertyGroups();
       expect(groups.length).toBe(1);
@@ -140,32 +128,24 @@ describe('ComponentEditorService', () => {
     });
 
     it('uses the default group label for properties with an empty string label', () => {
-      const properties = [
+      openComponentEditor([
         { groupLabel: '' },
         { groupLabel: null },
-      ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      ]);
 
       const groups = ComponentEditor.getPropertyGroups();
       expectGroup(groups[0], 'DEFAULT_PROPERTY_GROUP_LABEL', 1);
     });
 
     it('puts all the fields with the same label in one group', () => {
-      const properties = [
+      openComponentEditor([
         { groupLabel: '' },
         { groupLabel: 'Group' },
         { groupLabel: null },
         { groupLabel: '' },
         { groupLabel: 'Group' },
         { groupLabel: null },
-      ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      ]);
 
       const groups = ComponentEditor.getPropertyGroups();
       expect(groups.length).toBe(3);
@@ -175,13 +155,9 @@ describe('ComponentEditorService', () => {
     });
 
     it('adds the template chooser property into a non-collapsible group with label "org.hippoecm.hst.core.component.template"', () => {
-      const properties = [
+      openComponentEditor([
         { name: 'org.hippoecm.hst.core.component.template', groupLabel: 'Group' },
-      ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      ]);
 
       const groups = ComponentEditor.getPropertyGroups();
       expect(groups.length).toBe(1);
@@ -189,43 +165,80 @@ describe('ComponentEditorService', () => {
     });
 
     it('adds properties with a null group label into a non-collapsible group', () => {
-      const properties = [
+      openComponentEditor([
         { groupLabel: null },
         { groupLabel: 'Group' },
         { groupLabel: 'Group2' },
         { groupLabel: null },
-      ];
-      HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
-
-      ComponentEditor.open(testData);
-      $rootScope.$digest();
+      ]);
 
       const groups = ComponentEditor.getPropertyGroups();
       expect(groups.length).toBe(3);
       expectGroup(groups[0], null, 2, false);
     });
+
+    it('uses the property\'s defaultValue if it is defined/not-null/not-empty and the property value is null', () => {
+      openComponentEditor([
+        { value: null },
+        { value: null, defaultValue: null },
+        { value: null, defaultValue: '' },
+        { value: null, defaultValue: 'defaultValue' },
+        { value: '', defaultValue: 'defaultValue' },
+        { value: false, defaultValue: true },
+      ]);
+
+      const fields = ComponentEditor.getPropertyGroups()[0].fields;
+      expect(fields[0].value).toBe(null);
+      expect(fields[1].value).toBe(null);
+      expect(fields[2].value).toBe(null);
+      expect(fields[3].value).toBe('defaultValue');
+      expect(fields[4].value).toBe('');
+      expect(fields[5].value).toBe(false);
+    });
   });
 
-  it('uses the defaultValue if it is defined/not-null/not-empty and the property value is null', () => {
-    const properties = [
-      { value: null },
-      { value: null, defaultValue: null },
-      { value: null, defaultValue: '' },
-      { value: null, defaultValue: 'defaultValue' },
-      { value: '', defaultValue: 'defaultValue' },
-      { value: false, defaultValue: true },
-    ];
-    HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
+  describe('normalizing properties', () => {
+    const linkPickerProperty = {
+      type: 'linkpicker',
+      pickerConfiguration: 'pickerConfiguration',
+      pickerRemembersLastVisited: 'pickerRemembersLastVisited',
+      pickerInitialPath: 'pickerInitialPath',
+      pickerPathIsRelative: 'pickerPathIsRelative',
+      pickerRootPath: 'pickerRootPath',
+      pickerSelectableNodeTypes: 'pickerSelectableNodeTypes',
+    };
 
-    ComponentEditor.open(testData);
-    $rootScope.$digest();
+    it('extracts the link picker config if property type is "linkpicker"', () => {
+      openComponentEditor([
+        linkPickerProperty,
+        Object.assign({}, linkPickerProperty, { type: 'imagepicker' }),
+      ]);
 
-    const fields = ComponentEditor.getPropertyGroups()[0].fields;
-    expect(fields[0].value).toBe(null);
-    expect(fields[1].value).toBe(null);
-    expect(fields[2].value).toBe(null);
-    expect(fields[3].value).toBe('defaultValue');
-    expect(fields[4].value).toBe('');
-    expect(fields[5].value).toBe(false);
+      const group = ComponentEditor.getPropertyGroups()[0];
+      const linkPickerField = group.fields[0];
+
+      expect(linkPickerField.pickerConfig).toBeDefined();
+      expect(linkPickerField.pickerConfig.linkpicker).toBeDefined();
+      expect(linkPickerField.pickerConfig.linkpicker.configuration).toBe('pickerConfiguration');
+      expect(linkPickerField.pickerConfig.linkpicker.remembersLastVisited).toBe('pickerRemembersLastVisited');
+      expect(linkPickerField.pickerConfig.linkpicker.initialPath).toBe('pickerInitialPath');
+      expect(linkPickerField.pickerConfig.linkpicker.isRelativePath).toBe('pickerPathIsRelative');
+      expect(linkPickerField.pickerConfig.linkpicker.rootPath).toBe('pickerRootPath');
+      expect(linkPickerField.pickerConfig.linkpicker.selectableNodeTypes).toBe('pickerSelectableNodeTypes');
+
+      const imagePickerField = group.fields[1];
+
+      expect(imagePickerField.pickerConfig).not.toBeDefined();
+    });
+
+    it('marks the property as a "path-picker" if property type is "linkpicker"', () => {
+      openComponentEditor([
+        linkPickerProperty,
+      ]);
+
+      const group = ComponentEditor.getPropertyGroups()[0];
+      const linkPickerField = group.fields[0];
+      expect(linkPickerField.pickerConfig.linkpicker.isPathPicker).toBe(true);
+    });
   });
 });

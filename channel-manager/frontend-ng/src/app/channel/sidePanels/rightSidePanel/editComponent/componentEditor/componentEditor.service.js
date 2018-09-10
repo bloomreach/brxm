@@ -56,44 +56,6 @@ class ComponentEditorService {
     this.propertyGroups = this._groupProperties(this.properties);
   }
 
-  _groupProperties(properties) {
-    if (!properties[0]) {
-      return [];
-    }
-
-    const defaultGroupLabel = this.$translate.instant('DEFAULT_PROPERTY_GROUP_LABEL');
-    const groups = new Map();
-    properties
-      .filter(property => !property.hiddenInChannelManager)
-      .map((property) => {
-        if (property.value === null && property.defaultValue) {
-          property.value = property.defaultValue;
-        }
-        return property;
-      })
-      .forEach((property) => {
-        if (property.name === TEMPLATE_PICKER) {
-          property.groupLabel = TEMPLATE_PICKER;
-        }
-
-        const groupLabel = property.groupLabel === ''
-          ? defaultGroupLabel
-          : property.groupLabel;
-
-        if (groups.has(groupLabel)) {
-          groups.get(groupLabel).push(property);
-        } else {
-          groups.set(groupLabel, [property]);
-        }
-      });
-
-    return Array.from(groups).map(group => ({
-      collapse: group[0] !== null && group[0] !== TEMPLATE_PICKER,
-      fields: group[1],
-      label: group[0],
-    }));
-  }
-
   _onLoadFailure(response) {
     this._clearData();
     console.log('TODO: implement ComponentEditorService._onLoadFailure');
@@ -130,6 +92,44 @@ class ComponentEditorService {
         isPathPicker: true,
       },
     };
+  }
+
+  _groupProperties(properties) {
+    if (!properties[0]) {
+      return [];
+    }
+
+    const defaultGroupLabel = this.$translate.instant('DEFAULT_PROPERTY_GROUP_LABEL');
+    const groups = new Map();
+    properties
+      .filter(property => !property.hiddenInChannelManager)
+      .map((property) => {
+        if (property.value === null && property.defaultValue) {
+          property.value = property.defaultValue;
+        }
+        return property;
+      })
+      .forEach((property) => {
+        if (property.name === TEMPLATE_PICKER) {
+          property.groupLabel = TEMPLATE_PICKER;
+        }
+
+        const groupLabel = property.groupLabel === ''
+          ? defaultGroupLabel
+          : property.groupLabel;
+
+        if (groups.has(groupLabel)) {
+          groups.get(groupLabel).push(property);
+        } else {
+          groups.set(groupLabel, [property]);
+        }
+      });
+
+    return Array.from(groups).map(group => ({
+      collapse: group[0] !== null && group[0] !== TEMPLATE_PICKER,
+      fields: group[1],
+      label: group[0],
+    }));
   }
 
   getComponentName() {
