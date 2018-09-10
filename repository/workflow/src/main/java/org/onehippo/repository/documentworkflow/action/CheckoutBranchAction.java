@@ -18,6 +18,7 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.CheckoutBranchTask;
 
 /**
@@ -75,7 +76,8 @@ public class CheckoutBranchAction extends AbstractDocumentTaskAction<CheckoutBra
     protected void initTask(CheckoutBranchTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setVariant(eval(getVariant()));
-        task.setBranchId(eval(getBranchId()));
+        final String branchIdArgument = eval(getBranchId());
+        task.setBranchId(branchIdArgument == null ? ((DocumentHandle) getSCXMLWorkflowData()).getBranchId() : branchIdArgument);
         task.setStateLabel(eval(getStateLabel()));
         task.setForceReplace(eval(getForceReplace()));
     }

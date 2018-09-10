@@ -163,7 +163,7 @@
               <!-- current unpublished is not for the branch to restore to. First checkin old branch and then checkout
               the request branch -->
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+              <hippo:checkoutBranch variant="unpublished"/>
             </if>
             <!-- copy it to draft first, unless we're already editor -->
             <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
@@ -501,7 +501,7 @@
 
           <if cond="!unpublished.isBranch(branchId)">
               <!-- current unpublished is not for the branch to restore to. First checkout the branch -->
-            <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+            <hippo:checkoutBranch variant="unpublished"/>
           </if>
           <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
           <hippo:restoreVersionByVersion version="_event.data?.version" target="unpublished" />
@@ -527,8 +527,7 @@
       <!-- target-less transition to get a branch -->
       <transition event="getBranch">
 
-        <hippo:getBranch branchId="branchId" state="_event.data?.state"
-                            unpublished="unpublished" published="published" draft="draft"/>
+        <hippo:getBranch state="_event.data?.state" unpublished="unpublished" published="published" draft="draft"/>
       </transition>
 
       <!-- the initial no-branchable state is used and active to indicate branchable operations are currently not
@@ -561,7 +560,7 @@
             <!-- branching is always done from 'master' -->
             <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
           </if>
-          <hippo:branch variant="unpublished" branchId="branchId" branchName="_event.data?.branchName"/>
+          <hippo:branch variant="unpublished" branchName="_event.data?.branchName"/>
         </transition>
 
       </state>
@@ -590,7 +589,7 @@
             <else/>
 
             <hippo:version variant="unpublished"/>
-            <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+            <hippo:checkoutBranch variant="unpublished"/>
           </if>
         </transition>
 
@@ -616,8 +615,7 @@
             <hippo:checkoutBranch variant="unpublished" branchId="'*'" stateLabel="'unpublished'"/>
           </if>
 
-          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
-                              branchId="branchId"/>
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"/>
         </transition>
       </state>
 
@@ -643,11 +641,10 @@
 
           <hippo:setPreReintegrationLabels unpublished="unpublished"/>
 
-          <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+          <hippo:checkoutBranch variant="unpublished"/>
 
           <!-- during reintegration we need to remove the branch for the variants that belong to the branch -->
-          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"
-                              branchId="branchId"/>
+          <hippo:removeBranch unpublished="unpublished" published="published" draft="draft"/>
 
           <!-- for reintegrate, always publish. Checking modified we do not do -->
           <if cond="_event.data?.publish">
@@ -696,7 +693,7 @@
             <if cond="!unpublished.isBranch(branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+              <hippo:checkoutBranch variant="unpublished"/>
             </if>
 
             <!-- copy the content of the unpublished variant to the published variant -->
@@ -865,7 +862,7 @@
               <!-- current unpublished is not the one to copy. First checkin current unpublished and then checkout
               the request copy branch -->
               <hippo:version variant="unpublished"/>
-              <hippo:checkoutBranch variant="unpublished" branchId="branchId"/>
+              <hippo:checkoutBranch variant="unpublished"/>
             </if>
           </if>
           <hippo:copyDocument destinationExpr="_event.data?.destination" newNameExpr="_event.data?.name"/>

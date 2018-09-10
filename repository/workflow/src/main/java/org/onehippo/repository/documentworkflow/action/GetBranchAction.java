@@ -18,21 +18,12 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.GetBranchTask;
 
 public class GetBranchAction extends AbstractDocumentTaskAction<GetBranchTask> {
 
     private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    public String getBranchId() {
-        return getParameter("branchIdExpr");
-    }
-
-    @SuppressWarnings("unused")
-    public void setBranchId(String branchIdExpr) {
-        setParameter("branchIdExpr", branchIdExpr);
-    }
 
     @SuppressWarnings("unused")
     public String getState() {
@@ -80,7 +71,7 @@ public class GetBranchAction extends AbstractDocumentTaskAction<GetBranchTask> {
     @Override
     protected void initTask(GetBranchTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setBranchId(eval(getBranchId()));
+        task.setBranchId(((DocumentHandle) getSCXMLWorkflowData()).getBranchId());
         task.setState(eval(getState()));
         task.setUnpublished(eval(getUnpublished()));
         task.setPublished(eval(getPublished()));
