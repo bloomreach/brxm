@@ -45,7 +45,7 @@
     def getHolder() { draft?.holder }
     // true if draft exists and currently being edited
     def boolean isEditing() { !!holder }
-    // true if draft exists and edited by current user
+    // true if draft exists and branch from DocumentHandle currently being edited
     def boolean isEditingCurrentBranch() { !!holder and draft.isBranch(branchId)}
     // true if draft exists and edited by current user
     def boolean isEditor() { holder == user }
