@@ -75,7 +75,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>ci</commandlineArgs>
             </configuration>
           </execution>
           <execution>

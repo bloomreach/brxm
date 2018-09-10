@@ -8,8 +8,8 @@
     "start": "grunt server"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=5"
+    "node": "8",
+    "npm": "6"
   },
   "dependencies": {
     "angular": "1.5.11",
