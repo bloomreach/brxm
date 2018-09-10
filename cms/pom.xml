@@ -118,7 +118,7 @@
       of commons-fileupload in api/pom.xml can be removed.
     -->
     <wicket.version>7.10.0</wicket.version>
-    <wicket-extjs.version>0.26.0-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
     <httpclient.version>4.5.5</httpclient.version>
 
