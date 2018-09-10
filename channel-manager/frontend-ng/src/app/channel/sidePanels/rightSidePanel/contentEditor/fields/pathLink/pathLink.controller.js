@@ -36,11 +36,11 @@ class PathLinkController extends NodeLinkController {
   }
 
   openLinkPicker() {
-    this.CmsService.publish('show-path-picker', this.$scope.$ctrl.name, this.ngModel.$modelValue, this.config.linkpicker);
+    this.CmsService.publish('show-path-picker', this.name, this.ngModel.$modelValue, this.config.linkpicker);
   }
 
   _onPathPicked(field, path, displayValue) {
-    if (field !== this.$scope.$ctrl.name) {
+    if (field !== this.name) {
       return;
     }
 
@@ -55,7 +55,7 @@ class PathLinkController extends NodeLinkController {
   }
 
   _onPathCanceled(field) {
-    if (field !== this.$scope.$ctrl.name) {
+    if (field !== this.name) {
       return;
     }
 
