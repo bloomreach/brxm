@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import template from '../nodeLink/nodeLink.html';
-import nodeLinkComponent from '../nodeLink/nodeLink.component';
 import controller from './pathLink.controller';
+import nodeLinkComponent from '../nodeLink/nodeLink.component';
+import template from '../nodeLink/nodeLink.html';
 import './pathLink.scss';
 
 const pathLinkComponent = Object.assign(
