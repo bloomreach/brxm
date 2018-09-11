@@ -96,7 +96,7 @@
         <hippo:feedback key="isLive" value="live"/>
         <hippo:feedback key="previewAvailable" value="previewAvailable"/>
         <!-- enable the checkModified operation if both draft and unpublished variants exists -->
-        <hippo:action action="checkModified" enabledExpr="draft and unpublished and branchExists"/>
+        <hippo:action action="checkModified" enabledExpr="!!draft and !!unpublished and branchExists"/>
       </onentry>
 
       <!-- target-less transition on event checkModified to compare the draft and unpublished variants which result is

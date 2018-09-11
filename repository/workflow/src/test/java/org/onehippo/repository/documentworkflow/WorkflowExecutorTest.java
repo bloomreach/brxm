@@ -23,10 +23,14 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import org.easymock.EasyMock;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -105,7 +109,6 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .branchId(branchId)
                 .add();
 
-
         final Map<String, ?> expectedActions = HintsBuilder.build()
                 .branch(false)
                 .checkModified(false)
@@ -152,7 +155,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
         expect(data.getDocuments()).andStubReturn(variantsMap);
         expect(data.getHandle()).andStubReturn(handle);
 
-        expect(data.getBranches()).andStubReturn(emptySet());
+        expect(data.getBranches()).andStubReturn(ImmutableSet.of(branchId, MASTER_BRANCH_ID));
         expect(data.getBranchId()).andStubReturn(branchId);
         expect(data.isOnlyMaster()).andStubReturn(false);
         expect(data.isLiveAvailable()).andStubReturn(false);
@@ -177,6 +180,10 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .branchId(MASTER_BRANCH_ID)
                 .add();
 
+
+        Utilities.dump(handle);
+
+
         final Map<String, ?> expectedActions = HintsBuilder.build()
                 .branch(false)
                 .checkModified(true)
@@ -184,12 +191,12 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .commitEditableInstance(true)
                 .depublishBranch(false)
                 .disposeEditableInstance(true)
-                .getBranch(false)
+                .getBranch(true)
                 .listBranches()
                 .listVersions()
                 .obtainEditableInstance(true)
                 .publishBranch(false)
-                .reintegrateBranch(false)
+                .reintegrateBranch(true)
                 .removeBranch(false)
                 .requestDelete(false)
                 .requestDepublication(false)
