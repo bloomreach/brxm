@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-describe('PropertyGroup', () => {
+describe('ComponentFields', () => {
 });
