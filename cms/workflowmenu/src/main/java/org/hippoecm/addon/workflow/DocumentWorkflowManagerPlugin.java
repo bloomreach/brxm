@@ -15,6 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,12 +41,14 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
+import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_MIXIN_TYPES;
 
 public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
 
@@ -135,27 +138,14 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
         try {
             final Node handle = getHandle(node);
             final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
-            if (!branchIdModel.isDefined()) {
-                log.debug("Initializing branch id model for identifier:{}", handle.getIdentifier());
-                branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
-                final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
-                if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
-                    final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
-                            .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
-                    if (variant != null) {
-                        final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-                        final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
-                        branchIdModel.setBranchInfo(branchId, branchName);
-                    }
-                }
-            }
             final String currentBranchId = branchIdModel.getBranchId();
             log.debug("Current branch id:{}", currentBranchId);
             if (isFrozenNode(node)) {
                 final DocumentVariant documentVariant = new DocumentVariant(node);
                 final String frozenBranchId = documentVariant.getBranchId();
                 log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
-                if (currentBranchId.equals(frozenBranchId)) {
+                final String[] multipleStringProperty = JcrUtils.getMultipleStringProperty(node, JCR_FROZEN_MIXIN_TYPES, new String[]{});
+                if (branchIdModel.isDefined() && Arrays.stream(multipleStringProperty).anyMatch(mixin -> HIPPO_MIXIN_BRANCH_INFO.equals(mixin)) && currentBranchId.equals(frozenBranchId)) {
                     log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
                                     " the current branch id: {}, updating the documentModel with the associated handle."
                             , currentBranchId);
