@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,14 @@ package org.hippoecm.addon.workflow;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -31,18 +34,40 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.util.JcrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 
 public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowManagerPlugin.class);
+    public static final String NO_MODEL_CONFIGURED = "No model configured";
 
-    private final IModelReference modelReference;
+    private IModelReference modelReference;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
     private boolean updateMenu = true;
 
     public DocumentWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        this.context = context;
+        this.config = config;
+        updateModelOnDocumentModelChange();
+        onModelChanged();
+    }
 
+    private void updateModelOnDocumentModelChange() {
         if (config.getString(RenderService.MODEL_ID) != null) {
             modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
             if (modelReference != null) {
@@ -62,10 +87,8 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
             }
         } else {
             modelReference = null;
-            log.warn("No model configured");
+            log.warn(NO_MODEL_CONFIGURED);
         }
-
-        onModelChanged();
     }
 
     @Override
@@ -90,7 +113,7 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
                             Node handle = node.getParent();
                             nodeSet.add(handle);
                         } else {
-                            nodeSet.add(node);
+                            nodeSet.add(updateModelForFrozenNodeWithCurrentBranchId(node));
                         }
                     }
                 }
@@ -106,6 +129,62 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
             }
         }
         super.render(target);
+    }
+
+    private Node updateModelForFrozenNodeWithCurrentBranchId(final Node node) {
+        try {
+            final Node handle = getHandle(node);
+            final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
+            if (!branchIdModel.isDefined()) {
+                log.debug("Initializing branch id model for identifier:{}", handle.getIdentifier());
+                branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
+                final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
+                if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
+                    final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
+                            .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
+                    if (variant != null) {
+                        final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                        final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
+                        branchIdModel.setBranchInfo(branchId, branchName);
+                    }
+                }
+            }
+            final String currentBranchId = branchIdModel.getBranchId();
+            log.debug("Current branch id:{}", currentBranchId);
+            if (isFrozenNode(node)) {
+                final DocumentVariant documentVariant = new DocumentVariant(node);
+                final String frozenBranchId = documentVariant.getBranchId();
+                log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
+                if (currentBranchId.equals(frozenBranchId)) {
+                    log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
+                                    " the current branch id: {}, updating the documentModel with the associated handle."
+                            , currentBranchId);
+                    return handle;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn(e.getMessage(), e);
+        }
+        return node;
+    }
+
+    private Node getHandle(final Node node) throws RepositoryException {
+        return isFrozenNode(node) ? getVersionHandle(node) : node;
+    }
+
+    private Node getVersionHandle(final Node frozenNode) {
+        try {
+            final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
+            final Node variant = frozenNode.getSession().getNodeByIdentifier(uuid);
+            return variant.getParent();
+        } catch (final RepositoryException e) {
+            log.warn(e.getMessage(), e);
+            return frozenNode;
+        }
+    }
+
+    private boolean isFrozenNode(final Node node) throws RepositoryException {
+        return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
     }
 
 }
