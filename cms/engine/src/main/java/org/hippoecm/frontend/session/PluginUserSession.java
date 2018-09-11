@@ -78,6 +78,7 @@ public class PluginUserSession extends UserSession {
     private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
     private transient Session fallbackSession;
+    private boolean skipFallbackSessionLogout;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
@@ -468,8 +469,17 @@ public class PluginUserSession extends UserSession {
     }
 
     @Override
+    public void replaceSession() {
+        skipFallbackSessionLogout = true;
+        super.replaceSession();
+    }
+
+    @Override
     public void onInvalidate() {
-        resetFallbackSession();
+        if (!skipFallbackSessionLogout) {
+            resetFallbackSession();
+        }
+        skipFallbackSessionLogout = false;
         releaseJcrSession();
         JcrObservationManager.getInstance().cleanupListeners(this);
 
