@@ -527,7 +527,6 @@
     <state id="branching">
 
       <onentry>
-        <hippo:branchFeedback unpublished="unpublished" published="published" draft="draft"/>
         <hippo:action action="branch" enabledExpr="!editing and (!!unpublished or !!published) and branches.contains('master')"/>
         <hippo:action action="listBranches" enabledExpr="true"/>
         <hippo:action action="getBranch" enabledExpr="!onlyMaster and branchExists"/>
