@@ -23,7 +23,7 @@
       </article>
     </#list>
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-document"/>
+      <@hst.manageContent documentTemplateQuery="new-document"/>
     </div>
   </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->

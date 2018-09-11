@@ -69,7 +69,7 @@
         <#if editMode && freeItems?? && freeItems?has_content>
           <div>
             <#list freeItems as number>
-              <div class="has-new-content-button item-button"><@hst.manageContent templateQuery="new-banner-document" parameterName="document${number}" rootPath="banners"/></div>
+              <div class="has-new-content-button item-button"><@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document${number}" rootPath="banners"/></div>
             </#list>
           </div>
         </#if>
@@ -120,6 +120,6 @@
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
   </div>
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-banner-document" parameterName="document1" rootPath="banners"/>
+    <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document1" rootPath="banners"/>
   </div>
 </#if>

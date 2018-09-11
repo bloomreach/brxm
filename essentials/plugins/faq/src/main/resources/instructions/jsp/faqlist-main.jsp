@@ -27,6 +27,6 @@
   <div class="has-edit-button">
     <img src="<hst:link path='/images/essentials/catalog-component-icons/faq.png'/>"> Click to edit FAQ
       <%-- add faq list document --%>
-    <hst:manageContent templateQuery="new-faq-list" parameterName="document" rootPath="faq"/>
+    <hst:manageContent documentTemplateQuery="new-faq-list" parameterName="document" rootPath="faq"/>
   </div>
 </c:if>

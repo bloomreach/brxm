@@ -21,7 +21,7 @@
       </article>
     </c:forEach>
     <div class="has-new-content-button">
-      <hst:manageContent templateQuery="new-blog-document" rootPath="blog" defaultPath="${currentYear}/${currentMonth}"/>
+      <hst:manageContent documentTemplateQuery="new-blog-document" rootPath="blog" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
     <c:if test="${requestScope.cparam.showPagination}">
       <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>

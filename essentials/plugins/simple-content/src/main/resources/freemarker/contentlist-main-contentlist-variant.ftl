@@ -24,7 +24,7 @@
     </div>
   </#list>
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-content-document" rootPath="content"/>
+    <@hst.manageContent documentTemplateQuery="new-content-document" rootPath="content"/>
   </div>
   <#if cparam.showPagination>
     <#include "../../include/pagination.ftl">
@@ -35,7 +35,7 @@
 <div>
   <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Content list
   <div class="has-new-content-button">
-    <@hst.manageContent templateQuery="new-content-document" rootPath="content"/>
+    <@hst.manageContent documentTemplateQuery="new-content-document" rootPath="content"/>
   </div>
 </div>
 </#if>

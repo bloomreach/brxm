@@ -40,6 +40,6 @@
 <#elseif editMode>
   <div class="has-edit-button">
     <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
-    <@hst.manageContent templateQuery="new-faq-item" parameterName="document" rootPath="faq"/>
+    <@hst.manageContent documentTemplateQuery="new-faq-item" parameterName="document" rootPath="faq"/>
   </div>
 </#if>
