@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ public class NewDocumentInfo {
 
     private String name;
     private String slug;
-    private String templateQuery;
+    private String documentTemplateQuery;
     private String documentTypeId;
     private String rootPath;
     private String defaultPath;
@@ -40,12 +40,12 @@ public class NewDocumentInfo {
         this.slug = slug;
     }
 
-    public String getTemplateQuery() {
-        return templateQuery;
+    public String getDocumentTemplateQuery() {
+        return documentTemplateQuery;
     }
 
-    public void setTemplateQuery(final String templateQuery) {
-        this.templateQuery = templateQuery;
+    public void setDocumentTemplateQuery(final String documentTemplateQuery) {
+        this.documentTemplateQuery = documentTemplateQuery;
     }
 
     public String getDocumentTypeId() {

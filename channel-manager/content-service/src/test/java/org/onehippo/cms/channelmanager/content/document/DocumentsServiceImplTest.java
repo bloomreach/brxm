@@ -127,7 +127,7 @@ public class DocumentsServiceImplTest {
         info = new NewDocumentInfo();
         info.setName("Breaking News"); // the name needs to be display-name-encoded by the backend
         info.setSlug("breaking news"); // the slug needs to be URI-encoded by the backend, e.g. to "breaking-news"
-        info.setTemplateQuery("new-news-document");
+        info.setDocumentTemplateQuery("new-news-document");
         info.setDocumentTypeId("project:newsdocument");
         info.setRootPath("/content/documents/channel/news");
     }
@@ -1462,8 +1462,8 @@ public class DocumentsServiceImplTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutTemplateQuery() throws Exception {
-        info.setTemplateQuery("");
+    public void createDocumentWithoutDocumentTemplateQuery() throws Exception {
+        info.setDocumentTemplateQuery("");
         documentsService.createDocument(info, session, locale);
     }
 

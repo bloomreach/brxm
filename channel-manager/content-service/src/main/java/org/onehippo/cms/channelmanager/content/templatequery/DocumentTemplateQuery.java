@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,19 @@
  */
 package org.onehippo.cms.channelmanager.content.templatequery;
 
-import java.util.Locale;
+import java.util.List;
 
-import javax.jcr.Session;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+public class DocumentTemplateQuery {
 
-public interface TemplateQueryService {
+    private final List<DocumentTypeInfo> documentTypes;
 
-    static TemplateQueryService get() {
-        return TemplateQueryServiceImpl.getInstance();
+    public DocumentTemplateQuery(final List<DocumentTypeInfo> documentTypes) {
+        this.documentTypes= documentTypes;
     }
 
-    TemplateQuery getTemplateQuery(String id, Session session, Locale locale) throws ErrorWithPayloadException;
+    public List<DocumentTypeInfo> getDocumentTypes() {
+        return documentTypes;
+    }
 }
