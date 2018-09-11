@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -50,9 +49,9 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DEFAULT_PATH;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE_MANAGE_CONTENT_LINK;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DEFAULT_PATH;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_NAME;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE;
@@ -90,6 +89,10 @@ public class HstManageContentTag extends TagSupport {
         this.hippoBean = hippoBean;
     }
 
+    /**
+     * @deprecated This method is deprecated since 12.6, use {@link #setDocumentTemplateQuery} instead.
+     */
+    @Deprecated
     public void setTemplateQuery(final String templateQuery) {
         log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
                 + "This attribute is deprecated since 12.6, use documentTemplateQuery instead.",
@@ -99,7 +102,7 @@ public class HstManageContentTag extends TagSupport {
             setDocumentTemplateQuery(templateQuery);
         }
     }
-    
+
     public void setDocumentTemplateQuery(final String documentTemplateQuery) {
         if (StringUtils.isBlank(documentTemplateQuery)) {
             log.warn("The documentTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."

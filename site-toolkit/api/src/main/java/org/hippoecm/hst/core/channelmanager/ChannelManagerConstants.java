@@ -55,7 +55,9 @@ public interface ChannelManagerConstants {
     String MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY = "documentTemplateQuery";
     String MANAGE_CONTENT_UUID = "uuid";
 
-    //MANAGE_CONTENT_TEMPLATE_QUERY is deprecated since 12.6, use MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY instead
+    /**
+     * @deprecated MANAGE_CONTENT_TEMPLATE_QUERY is deprecated since 12.6, use MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY instead
+     */
     @Deprecated
     String MANAGE_CONTENT_TEMPLATE_QUERY = "templateQuery";
 }
