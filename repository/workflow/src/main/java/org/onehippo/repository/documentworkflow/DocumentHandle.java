@@ -28,6 +28,7 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
@@ -280,28 +282,32 @@ public class DocumentHandle implements SCXMLWorkflowData {
                 return;
             }
 
-            final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
-            try {
-                final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
+            // first check the handle for being of nodetype NT_HIPPO_VERSION_INFO for performance: Otherwise, skip
+            // version history
+            if (unpublished.getParent().isNodeType(NT_HIPPO_VERSION_INFO)) {
+                final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
+                try {
+                    final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
 
-                if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
-                    // master branch present
-                    branches.add(MASTER_BRANCH_ID);
-                }
+                    if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+                        // master branch present
+                        branches.add(MASTER_BRANCH_ID);
+                    }
 
-                for (String label : versionHistory.getVersionLabels()) {
-                    if (label.endsWith("-" + UNPUBLISHED.getState())) {
-                        final Version version = versionHistory.getVersionByLabel(label);
-                        final Node frozenNode = version.getFrozenNode();
-                        if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
-                            // found a real branch instead of a label for a non-branch
-                            branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                    for (String label : versionHistory.getVersionLabels()) {
+                        if (label.endsWith("-" + UNPUBLISHED.getState())) {
+                            final Version version = versionHistory.getVersionByLabel(label);
+                            final Node frozenNode = version.getFrozenNode();
+                            if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
+                                // found a real branch instead of a label for a non-branch
+                                branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                            }
                         }
                     }
+                } catch (RepositoryException e) {
+                    log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
+                            "been saved.", e);
                 }
-            } catch (RepositoryException e) {
-                log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
-                        "been saved.", e);
             }
 
         }
