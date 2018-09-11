@@ -805,7 +805,7 @@ public class HstManageContentTagTest {
             tag.setTemplateQuery("new-newsdocument");
             tag.doEndTag();
 
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template 'webfile:/freemarker/test.ftl' is set to 'null'.This attribute is deprecated since 12.6, use documentTemplateQuery instead.");
+            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template 'webfile:/freemarker/test.ftl' is set to 'null'. This attribute is deprecated since 12.6, use documentTemplateQuery instead.");
         }
     }
 
