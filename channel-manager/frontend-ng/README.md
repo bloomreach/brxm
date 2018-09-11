@@ -1,6 +1,5 @@
 # Prerequisites
 * [Chrome](https://google.chrome.com)
-* [Node 8](https://nodejs.org) and [NPM 5](https://www.npmjs.com)
 * [gulp-cli](https://github.com/gulpjs/gulp-cli) (optional)
 
 The Hippo Build uses [Gulp.js](https://gulpjs.com) for frontend task automation.
@@ -43,7 +42,7 @@ Mind that if the Webpack dev server has not been started, users see an empty CM 
 ### Install project dependencies
 Run the commands below in the project root directory.
 
-    npm install
+    npm ci
 
 # Useful commands
 ## When starting gulp tasks through npm
