@@ -53,50 +53,50 @@ public class HintsInspectorImplTest {
     public void canObtainEditableDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canObtainEditableDocument(hints));
+        assertFalse(hintsInspector.canObtainEditableDocument("master", hints));
 
         hints.put("obtainEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canObtainEditableDocument(hints));
+        assertFalse(hintsInspector.canObtainEditableDocument("master", hints));
 
         hints.put("obtainEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canObtainEditableDocument(hints));
+        assertTrue(hintsInspector.canObtainEditableDocument("master", hints));
     }
 
     @Test
     public void canUpdateDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canUpdateDocument(hints));
+        assertFalse(hintsInspector.canUpdateDocument("master", hints));
 
         hints.put("commitEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canUpdateDocument(hints));
+        assertFalse(hintsInspector.canUpdateDocument("master", hints));
 
         hints.put("commitEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canUpdateDocument(hints));
+        assertTrue(hintsInspector.canUpdateDocument("master", hints));
     }
 
     @Test
     public void canUpdateDocumentWithException() {
-        assertFalse(hintsInspector.canUpdateDocument(emptyMap()));
+        assertFalse(hintsInspector.canUpdateDocument("master", emptyMap()));
     }
 
     @Test
     public void canDisposeEditableDocument() {
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.canDisposeEditableDocument(hints));
+        assertFalse(hintsInspector.canDisposeEditableDocument("master", hints));
 
         hints.put("disposeEditableInstance", Boolean.FALSE);
-        assertFalse(hintsInspector.canDisposeEditableDocument(hints));
+        assertFalse(hintsInspector.canDisposeEditableDocument("master", hints));
 
         hints.put("disposeEditableInstance", Boolean.TRUE);
-        assertTrue(hintsInspector.canDisposeEditableDocument(hints));
+        assertTrue(hintsInspector.canDisposeEditableDocument("master", hints));
     }
 
     @Test
     public void determineEditingFailureWithException() throws Exception {
         final Session session = createMock(Session.class);
-        assertFalse(hintsInspector.determineEditingFailure(emptyMap(), session).isPresent());
+        assertFalse(hintsInspector.determineEditingFailure("master", emptyMap(), session).isPresent());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class HintsInspectorImplTest {
         final Session session = createMock(Session.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
-        assertFalse(hintsInspector.determineEditingFailure(hints, session).isPresent());
+        assertFalse(hintsInspector.determineEditingFailure("master", hints, session).isPresent());
 
     }
 
@@ -114,7 +114,7 @@ public class HintsInspectorImplTest {
         final Map<String, Serializable> hints = new HashMap<>();
         hints.put("requests", (Serializable) Collections.EMPTY_MAP);
 
-        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
         if (errorInfoOptional.isPresent()) {
             final ErrorInfo errorInfo = errorInfoOptional.get();
@@ -138,7 +138,7 @@ public class HintsInspectorImplTest {
         requests.put("request-node-id", (Serializable) request);
         request.put("cancelRequest", Boolean.TRUE);
 
-        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
         if (errorInfoOptional.isPresent()) {
             final ErrorInfo errorInfo = errorInfoOptional.get();
@@ -162,7 +162,7 @@ public class HintsInspectorImplTest {
         requests.put("request-node-id", (Serializable) request);
         request.put("cancelRequest", Boolean.TRUE);
 
-        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
         if (errorInfoOptional.isPresent()) {
             final ErrorInfo errorInfo = errorInfoOptional.get();
@@ -189,7 +189,7 @@ public class HintsInspectorImplTest {
         expect(user.getLastName()).andReturn(" Doe ");
         replayAll();
 
-        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
         if (errorInfoOptional.isPresent()) {
             final ErrorInfo errorInfo = errorInfoOptional.get();
@@ -213,7 +213,7 @@ public class HintsInspectorImplTest {
         expect(workspace.getSecurityService()).andThrow(new RepositoryException());
         replayAll();
 
-        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure(hints, session);
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
         assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
         if (errorInfoOptional.isPresent()) {
             final ErrorInfo errorInfo = errorInfoOptional.get();

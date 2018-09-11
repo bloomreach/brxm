@@ -93,7 +93,7 @@ public class WorkflowServiceImplTest {
         replayAll();
 
         try {
-            workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+            workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.WORKFLOW_ACTION_NOT_IMPLEMENTED));
@@ -120,7 +120,7 @@ public class WorkflowServiceImplTest {
         replayAll();
 
         try {
-            workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+            workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
@@ -148,7 +148,7 @@ public class WorkflowServiceImplTest {
 
         replayAll();
 
-        workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+        workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
 
         verifyAll();
     }
@@ -172,7 +172,7 @@ public class WorkflowServiceImplTest {
 
         replayAll();
 
-        workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+        workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
 
         verifyAll();
     }
@@ -197,7 +197,7 @@ public class WorkflowServiceImplTest {
         replayAll();
 
         try {
-            workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+            workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.NO_REQUEST_PENDING));
@@ -229,7 +229,7 @@ public class WorkflowServiceImplTest {
         replayAll();
 
         try {
-            workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+            workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(ErrorInfo.Reason.MULTIPLE_REQUESTS));
@@ -265,7 +265,7 @@ public class WorkflowServiceImplTest {
 
         replayAll();
 
-        workflowService.executeDocumentWorkflowAction(uuid, action, session, emptyMap());
+        workflowService.executeDocumentWorkflowAction(uuid, action, session, "master");
 
         verifyAll();
     }

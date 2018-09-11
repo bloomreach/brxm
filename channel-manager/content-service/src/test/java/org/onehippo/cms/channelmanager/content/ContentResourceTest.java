@@ -169,7 +169,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andReturn(testDocument);
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -185,7 +185,7 @@ public class ContentResourceTest extends CXFTest {
     public void obtainEditableDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andThrow(new ForbiddenException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andThrow(new ForbiddenException());
         replay(documentsService);
 
         when()
@@ -198,7 +198,7 @@ public class ContentResourceTest extends CXFTest {
     public void obtainEditableDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, emptyMap())).andThrow(new NotFoundException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -213,7 +213,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq(emptyMap()))).andReturn(testDocument);
+        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq("master"))).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -232,7 +232,7 @@ public class ContentResourceTest extends CXFTest {
     public void discardChanges() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, "master");
         expectLastCall();
         replay(documentsService);
 
@@ -246,7 +246,7 @@ public class ContentResourceTest extends CXFTest {
     public void discardChangesNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, "master");
         expectLastCall().andThrow(new NotFoundException());
         replay(documentsService);
 
@@ -260,7 +260,7 @@ public class ContentResourceTest extends CXFTest {
     public void discardChangesBadRequest() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, "master");
         expectLastCall().andThrow(new BadRequestException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
         replay(documentsService);
 
@@ -275,7 +275,7 @@ public class ContentResourceTest extends CXFTest {
     public void discardChangesServerError() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        documentsService.discardEditableDocument(requestedUuid, userSession, locale, emptyMap());
+        documentsService.discardEditableDocument(requestedUuid, userSession, locale, "master");
         expectLastCall().andThrow(new InternalServerErrorException());
         replay(documentsService);
 
@@ -358,7 +358,7 @@ public class ContentResourceTest extends CXFTest {
     public void executeDocumentWorkflowAction() throws Exception {
         final String documentId = "uuid";
 
-        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, "master");
         expectLastCall();
 
         replay(workflowService);
@@ -373,7 +373,7 @@ public class ContentResourceTest extends CXFTest {
     public void executeDocumentWorkflowActionAndDocumentNotFound() throws Exception {
         final String documentId = "uuid";
 
-        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, emptyMap());
+        workflowService.executeDocumentWorkflowAction(documentId, "publish", userSession, "master");
         expectLastCall().andThrow(new NotFoundException());
 
         replay(workflowService);

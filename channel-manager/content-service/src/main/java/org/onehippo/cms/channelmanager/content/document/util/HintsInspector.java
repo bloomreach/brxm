@@ -30,42 +30,47 @@ public interface HintsInspector {
      * Check if a document draft can be branched, given its workflow hints, returns an empty optional if it can and an
      * optional containing the error info otherwise.
      *
+     * @param branchId branch id for which to perform the check
      * @param hints workflow hints
      * @return empty optional if a branch can be created for the document.
      */
-    Optional<ErrorInfo> canBranchDocument(Map<String, Serializable> hints, Set<String> existingBranches);
+    Optional<ErrorInfo> canBranchDocument(String branchId, Map<String, Serializable> hints, Set<String> existingBranches);
 
     /**
-     * Check if a document draft can be created, given its workflow hints.
+     * Check if a document draft can be created, given its workflow hints and branchId.
      *
+     * @param branchId branch id for which to perform the check
      * @param hints workflow hints
      * @return true if a draft can be created for the document.
      */
-    boolean canObtainEditableDocument(Map<String, Serializable> hints);
+    boolean canObtainEditableDocument(String branchId, Map<String, Serializable> hints);
 
     /**
-     * Check if a document can be updated, given its workflow hints.
+     * Check if a document can be updated, given its workflow hints and branchId.
      *
+     * @param branchId branch id for which to perform the check
      * @param hints workflow hints
      * @return true if document can be updated, false otherwise
      */
-    boolean canUpdateDocument(Map<String, Serializable> hints);
+    boolean canUpdateDocument(String branchId, Map<String, Serializable> hints);
 
     /**
-     * Check if a document can be updated, given its workflow hints.
+     * Check if a document can be updated, given its workflow hints and branchId.
      *
+     * @param branchId branch id for which to perform the check
      * @param hints workflow hints
      * @return true if document can be updated, false otherwise
      */
-    boolean canDisposeEditableDocument(Map<String, Serializable> hints);
+    boolean canDisposeEditableDocument(String branchId, Map<String, Serializable> hints);
 
     /**
-     * Determine the reason why editing failed for the present workflow hints.
+     * Determine the reason why editing failed for the present workflow hints and branchId.
      *
+     * @param branchId branch id
      * @param hints   workflow hints
      * @param session current user's JCR session
      * @return Specific reason or nothing (unknown), wrapped in an Optional
      */
-    Optional<ErrorInfo> determineEditingFailure(Map<String, Serializable> hints, Session session);
+    Optional<ErrorInfo> determineEditingFailure(String branchId, Map<String, Serializable> hints, Session session);
 
 }

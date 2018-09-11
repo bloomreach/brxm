@@ -26,6 +26,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -45,10 +46,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     public void executeDocumentWorkflowAction(final String uuid, final String action, final Session session,
-                                              final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+                                              final String branchId) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
-        final Map<String, Serializable> hints = EditingUtils.getHints(documentWorkflow, contextPayload);
+        final Map<String, Serializable> hints = HintsUtils.getHints(documentWorkflow, branchId);
 
         if (isRequestPendingAction(action)) {
             final Node requestNode = getRequestNode(handle);

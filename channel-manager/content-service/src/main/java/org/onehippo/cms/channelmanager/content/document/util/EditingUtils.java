@@ -18,7 +18,6 @@ package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,8 +32,6 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cms.channelmanager.content.document.ContextPayloadUtils.getBranchId;
 
 /**
  * EditingUtils provides utility methods for dealing with the workflow of a document.
@@ -55,30 +52,6 @@ public class EditingUtils {
     private static final String HINT_RENAME = "rename";
 
     private EditingUtils() {
-    }
-
-    /**
-     * Gets the hints from the workflow, taking into account the branchId present in the context payload.
-     * The hints that are returned can then be passed to the other methods of this class. Please note that the hints
-     * are valid until a workflow action has been executed. After execution of a workflow action the hints should be
-     * recomputed because the state of the involved nodes usually changes.
-     *
-     * @param workflow       a workflow
-     * @param contextPayload the context payload
-     * @return hints
-     */
-    public static Map<String, Serializable> getHints(EditableWorkflow workflow, Map<String, Serializable> contextPayload) {
-        final Map<String, Serializable> hints = new HashMap<>();
-        if (contextPayload != null) {
-            hints.putAll(contextPayload);
-        }
-        final String branchId = getBranchId(contextPayload);
-        try {
-            hints.putAll(workflow.hints(branchId));
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed reading hints from workflow", e);
-        }
-        return hints;
     }
 
     /**

@@ -48,27 +48,27 @@ public class HintsInspectorImpl implements HintsInspector {
     private static final ErrorInfo NOT_BRANCHEABLE = new ErrorInfo(ErrorInfo.Reason.NOT_BRANCHEABLE);
 
     @Override
-    public Optional<ErrorInfo> canBranchDocument(final Map<String, Serializable> hints, Set<String> existingBranches) {
+    public Optional<ErrorInfo> canBranchDocument(final String branchId, final Map<String, Serializable> hints, Set<String> existingBranches) {
         return Optional.of(NOT_BRANCHEABLE);
     }
 
     @Override
-    public boolean canObtainEditableDocument(Map<String, Serializable> hints) {
+    public boolean canObtainEditableDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canUpdateDocument(Map<String, Serializable> hints) {
+    public boolean canUpdateDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canDisposeEditableDocument(Map<String, Serializable> hints) {
+    public boolean canDisposeEditableDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
     @Override
-    public Optional<ErrorInfo> determineEditingFailure(final Map<String, Serializable> hints, final Session session) {
+    public Optional<ErrorInfo> determineEditingFailure(final String branchId, final Map<String, Serializable> hints, final Session session) {
         if (hints.containsKey(HINT_IN_USE_BY)) {
             final Map<String, Serializable> params = new HashMap<>();
             final String userId = (String) hints.get(HINT_IN_USE_BY);
