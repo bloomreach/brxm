@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.service;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -47,12 +48,14 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
+import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_MIXIN_TYPES;
 
 /**
  * An implementation of IBrowseService that also exposes the document model service.
@@ -301,7 +304,8 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                     final DocumentVariant documentVariant = new DocumentVariant(node);
                     final String frozenBranchId = documentVariant.getBranchId();
                     log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
-                    if (currentBranchId.equals(frozenBranchId)) {
+                    final String[] multipleStringProperty = JcrUtils.getMultipleStringProperty(node, JCR_FROZEN_MIXIN_TYPES, new String[]{});
+                    if (branchIdModel.isDefined() && Arrays.stream(multipleStringProperty).anyMatch(mixin -> HIPPO_MIXIN_BRANCH_INFO.equals(mixin)) && currentBranchId.equals(frozenBranchId)) {
                         log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
                                         " the current branch id: {}, updating the documentModel with the associated handle."
                                 , currentBranchId);
