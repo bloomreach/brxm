@@ -13,85 +13,86 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="field-wrapper"
-     ng-repeat="componentField in $ctrl.fields track by $index"
-     ng-switch="::componentField.type">
+<md-input-container
+  ng-repeat="componentField in $ctrl.fields track by $index"
+  ng-switch="::componentField.type"
+  class="md-block qa-component-field component-field-type-{{ ::componentField.type }}">
 
-  <md-input-container ng-switch-when="textfield"
-                      class="md-block qa-component-field component-field-type-{{ ::componentField.type }}">
-    <label>{{ ::componentField.label }}</label>
-    <input aria-label="{{ ::componentField.label }}"
-           name="{{ ::componentField.name }}"
-           ng-model="componentField.value"
-           ng-change="$ctrl.valueChanged()"
-           ng-required="::componentField.required"
-           ng-focus="$ctrl.focusPrimitive($event)"
-           ng-blur="$ctrl.blurPrimitive($event)">
-  </md-input-container>
+  <label ng-if="componentField.type !== 'checkbox'">{{ ::componentField.label }}</label>
+
+  <input
+    ng-switch-when="textfield"
+    aria-label="{{ ::componentField.label }}"
+    name="{{ ::componentField.name }}"
+    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-change="$ctrl.valueChanged()"
+    ng-focus="$ctrl.focusPrimitive($event)"
+    ng-model="componentField.value"
+    ng-required="::componentField.required"/>
 
   <div ng-switch-when="checkbox">
-    <md-checkbox ng-model="componentField.value"
-                 ng-true-value="'on'"
-                 ng-false-value="'off'"
-                 ng-change="$ctrl.valueChanged()"
-                 class="md-primary"
-                 name="{{ ::componentField.name }}"
-                 ng-focus="$ctrl.focusPrimitive($event)"
-                 ng-blur="$ctrl.blurPrimitive($event)">
+    <md-checkbox
+      class="md-primary"
+      name="{{ ::componentField.name }}"
+      ng-blur="$ctrl.blurPrimitive($event)"
+      ng-change="$ctrl.valueChanged()"
+      ng-false-value="'off'"
+      ng-focus="$ctrl.focusPrimitive($event)"
+      ng-model="componentField.value"
+      ng-true-value="'on'">
       {{ ::componentField.label }}
     </md-checkbox>
   </div>
-  
-  <div ng-switch-when="numberfield">
-    <md-input-container class="md-block">
-      <label>{{ ::componentField.label }}</label>
-      <input type="text"
-             ng-model="componentField.value"
-             ng-change="$ctrl.valueChanged()"
-             class="md-primary"
-             name="{{ ::componentField.name }}"
-             ng-focus="$ctrl.focusPrimitive($event)"
-             ng-blur="$ctrl.blurPrimitive($event)"
-             ng-pattern="/^-?[0-9]\d*(\.\d+)?$/"/>
-    </md-input-container>
-  </div>
 
-  <div ng-switch-when="combo">
-    <md-input-container class="md-block">
-      <label>{{ ::componentField.label }}</label>
-      <md-select aria-label="{{ ::componentField.name }}"
-                 name="{{ ::componentField.name }}"
-                 ng-change="$ctrl.valueChanged()"
-                 ng-model="componentField.value"
-                 ng-required="::componentField.required">
-        <md-option ng-repeat="dropDownValue in componentField.dropDownListValues"
-                   value="{{ dropDownValue }}">{{ componentField.dropDownListDisplayValues[$index] }}
-        </md-option>
-      </md-select>
-    </md-input-container>
-  </div>
+  <input
+    ng-switch-when="numberfield"
+    class="md-primary"
+    name="{{ ::componentField.name }}"
+    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-change="$ctrl.valueChanged()"
+    ng-focus="$ctrl.focusPrimitive($event)"
+    ng-model="componentField.value"
+    ng-pattern="/^-?[0-9]\d*(\.\d+)?$/"
+    type="text"/>
 
-  <div ng-switch-when="datefield">
-    <md-input-container>
-      <label>{{ ::componentField.label }}</label>
-      <date-field
-        field-type="{ type: 'DATE_ONLY' }"
-        ng-model="componentField.value"
-        ng-change="$ctrl.valueChanged()"
-        class="md-primary"
-        name="::componentField.name"
-        ng-focus="$ctrl.focusPrimitive($event)"
-        ng-blur="$ctrl.blurPrimitive($event)">
-      </date-field>
-    </md-input-container>
-  </div>
+  <md-select
+    ng-switch-when="combo"
+    aria-label="{{ ::componentField.name }}"
+    name="{{ ::componentField.name }}"
+    ng-change="$ctrl.valueChanged()"
+    ng-model="componentField.value"
+    ng-required="::componentField.required">
+    <md-option 
+      ng-repeat="dropDownValue in componentField.dropDownListValues"
+      value="{{ dropDownValue }}">
+      {{ componentField.dropDownListDisplayValues[$index] }}
+    </md-option>
+  </md-select>
 
-  <div ng-switch-when="linkpicker">
-    {{componentField.name}} - [{{ ::componentField.type }}] - {{ ::componentField.value }}
-  </div>
+  <date-field
+    ng-switch-when="datefield"
+    class="md-primary"
+    field-type="{ type: 'DATE_ONLY' }"
+    name="::componentField.name"
+    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-change="$ctrl.valueChanged()"
+    ng-focus="$ctrl.focusPrimitive($event)"
+    ng-model="componentField.value">
+  </date-field>
+
+  <path-link
+    ng-switch-when="linkpicker"
+    aria-label="{{ ::componentField.label }}"
+    config="::componentField.pickerConfig"
+    display-name="::componentField.displayValue"
+    name="{{ ::componentField.name }}"
+    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-change="$ctrl.valueChanged()"
+    ng-focus="$ctrl.focusPrimitive($event)"
+    ng-model="componentField.value">
+  </path-link>
 
   <div ng-switch-default>
     {{componentField.name}} - UNKNOWN TYPE: {{ ::componentField.type }}
   </div>
-
-</div>
+</md-input-container>

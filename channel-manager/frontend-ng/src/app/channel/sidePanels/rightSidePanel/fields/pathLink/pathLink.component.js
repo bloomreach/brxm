@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import dateFieldModule from './dateField/dateField.module';
-import nodeLinkComponent from './nodeLink/nodeLink.component';
-import pathLinkComponent from './pathLink/pathLink.component';
+import controller from './pathLink.controller';
+import nodeLinkComponent from '../nodeLink/nodeLink.component';
+import template from '../nodeLink/nodeLink.html';
+import './pathLink.scss';
 
-const fieldsModule = angular
-  .module('hippo-cm.channel.rightSidePanel.fields', [
-    dateFieldModule,
-  ])
-  .component('nodeLink', nodeLinkComponent)
-  .component('pathLink', pathLinkComponent);
+const pathLinkComponent = Object.assign(
+  {},
+  nodeLinkComponent,
+  { controller, template },
+);
 
-export default fieldsModule.name;
+export default pathLinkComponent;

@@ -20,7 +20,6 @@ import compoundFieldComponent from './compoundField/compoundField.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
-import nodeLinkComponent from './nodeLink/nodeLink.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 
 import './fields.scss';
@@ -33,7 +32,6 @@ const fieldsModule = angular
   .component('compoundField', compoundFieldComponent)
   .component('documentFields', documentFieldsComponent)
   .component('imageLink', imageLinkComponent)
-  .component('nodeLink', nodeLinkComponent)
   .component('primitiveField', primitiveFieldComponent)
   .service('FieldService', fieldService);
 

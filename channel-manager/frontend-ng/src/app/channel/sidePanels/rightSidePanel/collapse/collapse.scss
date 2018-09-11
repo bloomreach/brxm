@@ -32,10 +32,10 @@
 
 .collapse-element {
   display: block;
-  overflow: hidden;
   transition: height $swift-ease-out;
 
   &.collapsed {
+    overflow: hidden;
     transition: height $swift-ease-in;
   }
 }

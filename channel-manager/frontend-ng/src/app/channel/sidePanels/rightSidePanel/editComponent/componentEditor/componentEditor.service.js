@@ -45,7 +45,7 @@ class ComponentEditorService {
     this.component = component;
     this.container = container;
     this.page = page;
-    this.properties = properties;
+    this.properties = this._normalizeProperties(properties);
 
     console.log('Channel', this.channel);
     console.log('Component', this.component);
@@ -54,6 +54,44 @@ class ComponentEditorService {
     console.log('Page', this.page);
 
     this.propertyGroups = this._groupProperties(this.properties);
+  }
+
+  _onLoadFailure(response) {
+    this._clearData();
+    console.log('TODO: implement ComponentEditorService._onLoadFailure');
+    console.log(`Failure for: ${response}`);
+  }
+
+  /**
+   * Normalize properties data
+   * @param {Array} properties
+   */
+  _normalizeProperties(properties) {
+    properties.forEach((property) => {
+      if (property.type === 'linkpicker') {
+        property.pickerConfig = this._getPickerConfig(property);
+      }
+    });
+
+    return properties;
+  }
+
+  /**
+   * Extract config data from the property entity
+   * @param {Object} property Component property entity
+   */
+  _getPickerConfig(property) {
+    return {
+      linkpicker: {
+        configuration: property.pickerConfiguration,
+        remembersLastVisited: property.pickerRemembersLastVisited,
+        initialPath: property.pickerInitialPath,
+        isRelativePath: property.pickerPathIsRelative,
+        rootPath: property.pickerRootPath,
+        selectableNodeTypes: property.pickerSelectableNodeTypes,
+        isPathPicker: true,
+      },
+    };
   }
 
   _groupProperties(properties) {
@@ -92,12 +130,6 @@ class ComponentEditorService {
       fields: group[1],
       label: group[0],
     }));
-  }
-
-  _onLoadFailure(response) {
-    this._clearData();
-    console.log('TODO: implement ComponentEditorService._onLoadFailure');
-    console.log(`Failure for: ${response}`);
   }
 
   getComponentName() {
