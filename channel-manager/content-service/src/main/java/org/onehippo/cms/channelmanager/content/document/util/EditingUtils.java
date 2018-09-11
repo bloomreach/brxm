@@ -27,11 +27,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
-import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,102 +57,91 @@ public class EditingUtils {
     /**
      * Check if a workflow indicates that editing of a document can be started.
      *
-     * @param workflow workflow for the current user on a specific document
+     * @param hints
      * @return true/false.
      */
-    public static boolean canObtainEditableDocument(final EditableWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_OBTAIN_EDITABLE_INSTANCE);
+    public static boolean canObtainEditableDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_OBTAIN_EDITABLE_INSTANCE, hints);
     }
 
     /**
      * Check if a document can be updated, given its workflow.
      *
-     * @param workflow editable workflow of a document
+     * @param hints
      * @return true if document can be updated, false otherwise
      */
-    public static boolean canUpdateDocument(final EditableWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
+    public static boolean canUpdateDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_COMMIT_EDITABLE_INSTANCE, hints);
     }
 
     /**
      * Check if a document can be disposed of, given its workflow.
      *
-     * @param workflow editable workflow of a document
+     * @param hints
      * @return true if document can be disposed of, false otherwise
      */
-    public static boolean canDisposeEditableDocument(final EditableWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
+    public static boolean canDisposeEditableDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_DISPOSE_EDITABLE_INSTANCE, hints);
     }
 
     /**
      * Check if document can be archived (i.e. moved to the attic and stripped of all its data), given its workflow.
      *
-     * @param workflow workflow of the document
+     * @param hints
      * @return true if the document can be archived, false otherwise
      */
-    public static boolean canArchiveDocument(final DocumentWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_DELETE);
+    public static boolean canArchiveDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_DELETE, hints);
     }
 
     /**
      * Check if a document can be erased from a folder, i.e. permanently deleted without any archiving in the attic.
      *
-     * @param workflow workflow of the folder
+     * @param hints
      * @return true if the document can be erased, false otherwise
      */
-    public static boolean canEraseDocument(final FolderWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_DELETE);
+    public static boolean canEraseDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_DELETE, hints);
     }
 
     /**
      * Check if document can be renamed (i.e. change its URL name), given its workflow.
      *
-     * @param workflow workflow of the document
+     * @param hints
      * @return true if the document can be renamed, false otherwise
      */
-    public static boolean canRenameDocument(final DocumentWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_RENAME);
+    public static boolean canRenameDocument(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_RENAME, hints);
     }
 
     /**
      * Check if a document has a 'preview' variant.
      *
-     * @param workflow the workflow of the document
+     * @param hints
      * @return true if the document has a 'preview' variant, false otherwise.
      */
-    public static boolean hasPreview(final DocumentWorkflow workflow) {
-        return isActionAvailable(workflow, HINT_PREVIEW_AVAILABLE);
+    public static boolean hasPreview(final Map<String, Serializable> hints) {
+        return isActionAvailable(HINT_PREVIEW_AVAILABLE, hints);
     }
 
     /**
      * Check a workflow to see if an action is available.
      *
-     * @param workflow the workflow to check
-     * @param action   name of the action to check for
+     * @param action name of the action to check for
+     * @param hints
      * @return true if the action is present as a workflow hint and its value is true
      */
-    public static boolean isActionAvailable(final Workflow workflow, final String action) {
-        try {
-            final Map<String, Serializable> hints = workflow.hints();
-            return isHintActionTrue(hints, action);
-        } catch (RemoteException | RepositoryException | WorkflowException e) {
-            log.warn("Failed reading hints from workflow", e);
-        }
-        return false;
+    public static boolean isActionAvailable(final String action, final Map<String, Serializable> hints) {
+        return isHintActionTrue(hints, action);
     }
 
-    public static boolean isRequestActionAvailable(final Workflow workflow, final String action, final String requestIdentifier) {
-        try {
-            final Map<String, Serializable> hints = workflow.hints();
-            if (hints.containsKey("requests")) {
-                final Map requestsMap = (Map) hints.get("requests");
-                if (requestsMap.containsKey(requestIdentifier)) {
-                    final Map requestHints = (Map) requestsMap.get(requestIdentifier);
-                    return isHintActionTrue(requestHints, action);
-                }
+    public static boolean isRequestActionAvailable(final String action, final String requestIdentifier, final Map<String, Serializable> hints) {
+        if (hints.containsKey("requests")) {
+            final Map requestsMap = (Map) hints.get("requests");
+            if (requestsMap.containsKey(requestIdentifier)) {
+                final Map requestHints = (Map) requestsMap.get(requestIdentifier);
+                return isHintActionTrue(requestHints, action);
             }
-        } catch (ClassCastException | RemoteException | RepositoryException | WorkflowException e) {
-            log.warn("Failed reading hints from workflow", e);
         }
         return false;
     }
@@ -168,12 +154,11 @@ public class EditingUtils {
      * @return true if the hints map contains the action and its value is true
      */
     public static boolean isHintActionTrue(final Map<String, Serializable> hints, final String action) {
-        try {
-            return hints.containsKey(action) && ((Boolean) hints.get(action));
-        } catch (ClassCastException e) {
-            log.warn("Hint '{}' not stored as Boolean", action, e);
+        final Serializable value = hints.get(action);
+        if (!(value instanceof Boolean)) {
+            log.warn("Value of hint action '{}' is expected to be boolean but it was '{}'", action, value);
         }
-        return false;
+        return Boolean.TRUE.equals(value);
     }
 
     /**
@@ -184,12 +169,11 @@ public class EditingUtils {
      * @return true if the hints map contains the action and its value is false
      */
     public static boolean isHintActionFalse(final Map<String, Serializable> hints, final String action) {
-        try {
-            return hints.containsKey(action) && !((Boolean) hints.get(action));
-        } catch (ClassCastException e) {
-            log.warn("Hint '{}' not stored as Boolean", action, e);
+        final Serializable value = hints.get(action);
+        if (!(value instanceof Boolean)) {
+            log.warn("Value of hint action '{}' is expected to be boolean but it was '{}'", action, value);
         }
-        return false;
+        return Boolean.FALSE.equals(value);
     }
 
     /**

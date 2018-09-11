@@ -179,14 +179,14 @@ public class ContentResource {
     public Response updateDocumentNames(@PathParam("documentId") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateDocumentNames(id, document, session));
+                (session, locale) -> documentService.updateDocumentNames(id, document, session, getPayload(servletRequest)));
     }
 
     @DELETE
     @Path("documents/{documentId}")
     public Response deleteDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.deleteDocument(id, session, locale);
+            documentService.deleteDocument(id, session, locale, getPayload(servletRequest));
             return null;
         });
     }

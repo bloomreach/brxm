@@ -15,11 +15,15 @@
  */
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.easymock.Mock;
+import org.easymock.MockType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecService;
 import org.hippoecm.repository.api.StringCodecService.Encoding;
@@ -52,6 +56,9 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({ContentWorkflowUtils.class, DocumentUtils.class, EditingUtils.class, HippoServiceRegistry.class})
 public class DocumentNameUtilsTest {
+
+    @Mock(type = MockType.NICE)
+    private Map<String, Serializable> hints;
 
     @Before
     public void setUp() {
@@ -155,14 +162,14 @@ public class DocumentNameUtilsTest {
         final Node handle = createHandle("test", "Test");
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
-        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canRenameDocument(eq(hints))).andReturn(true);
 
         workflow.rename("New name");
         expectLastCall().andThrow(new RepositoryException());
 
         replayAll();
 
-        DocumentNameUtils.setUrlName(handle, "New name");
+        DocumentNameUtils.setUrlName(handle, "New name", hints);
     }
 
     @Test
@@ -170,14 +177,14 @@ public class DocumentNameUtilsTest {
         final Node handle = createHandle("test", "Test");
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
-        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canRenameDocument(eq(hints))).andReturn(true);
 
         workflow.rename("New name");
         expectLastCall();
 
         replayAll();
 
-        DocumentNameUtils.setUrlName(handle, "New name");
+        DocumentNameUtils.setUrlName(handle, "New name", hints);
 
         verifyAll();
     }
@@ -187,12 +194,12 @@ public class DocumentNameUtilsTest {
         final Node handle = createHandle("test", "Test");
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(workflow);
-        expect(EditingUtils.canRenameDocument(eq(workflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canRenameDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(true);
 
         replayAll();
 
-        DocumentNameUtils.setUrlName(handle, "New name");
+        DocumentNameUtils.setUrlName(handle, "New name", hints);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -201,8 +208,8 @@ public class DocumentNameUtilsTest {
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final DefaultWorkflow defaultWorkflow = createMock(DefaultWorkflow.class);
         expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(documentWorkflow);
-        expect(EditingUtils.canRenameDocument(eq(documentWorkflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.canRenameDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(defaultWorkflow);
 
         defaultWorkflow.rename(eq("New name"));
@@ -210,7 +217,7 @@ public class DocumentNameUtilsTest {
 
         replayAll();
 
-        DocumentNameUtils.setUrlName(handle, "New name");
+        DocumentNameUtils.setUrlName(handle, "New name", hints);
     }
 
     @Test
@@ -219,15 +226,15 @@ public class DocumentNameUtilsTest {
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final DefaultWorkflow defaultWorkflow = createMock(DefaultWorkflow.class);
         expect(ContentWorkflowUtils.getDocumentWorkflow(eq(handle))).andReturn(documentWorkflow);
-        expect(EditingUtils.canRenameDocument(eq(documentWorkflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.canRenameDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(ContentWorkflowUtils.getDefaultWorkflow(eq(handle))).andReturn(defaultWorkflow);
 
         defaultWorkflow.rename(eq("New name"));
         expectLastCall();
         replayAll();
 
-        DocumentNameUtils.setUrlName(handle, "New name");
+        DocumentNameUtils.setUrlName(handle, "New name", hints);
 
         verifyAll();
     }

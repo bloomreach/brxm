@@ -143,7 +143,7 @@ public interface DocumentsService {
      *                 be pending.
      * @throws ErrorWithPayloadException if the display name and/or URL name already exists, or changing the names fails.
      */
-    Document updateDocumentNames(String uuid, Document document, Session session) throws ErrorWithPayloadException;
+    Document updateDocumentNames(String uuid, Document document, Session session, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 
     /**
      * Deletes a document
@@ -152,7 +152,8 @@ public interface DocumentsService {
      * @param session user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
      *                be pending.
      * @param locale  Locale of the CMS user
+     * @param contextPayload the context payload from the Cms session context
      * @throws ErrorWithPayloadException If deleting the document failed
      */
-    void deleteDocument(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
+    void deleteDocument(String uuid, Session session, Locale locale, Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
 }

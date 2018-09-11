@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -70,12 +72,12 @@ public class DocumentNameUtils {
         }
     }
 
-    public static void setUrlName(final Node handle, final String urlName) throws ForbiddenException, InternalServerErrorException, MethodNotAllowed {
+    public static void setUrlName(final Node handle, final String urlName, final Map<String, Serializable> hints) throws ForbiddenException, InternalServerErrorException, MethodNotAllowed {
         final DocumentWorkflow documentWorkflow = ContentWorkflowUtils.getDocumentWorkflow(handle);
 
-        if (EditingUtils.canRenameDocument(documentWorkflow)) {
+        if (EditingUtils.canRenameDocument(hints)) {
             renameDocument(handle, urlName, documentWorkflow);
-        } else if (EditingUtils.hasPreview(documentWorkflow)) {
+        } else if (EditingUtils.hasPreview(hints)) {
             log.warn("Cannot change the URL name of document '{}': it already has a preview variant",
                     JcrUtils.getNodePathQuietly(handle));
             throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));

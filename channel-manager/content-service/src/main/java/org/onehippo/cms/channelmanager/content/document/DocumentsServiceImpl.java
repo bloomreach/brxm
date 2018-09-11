@@ -44,8 +44,8 @@ import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
-import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -403,7 +403,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document updateDocumentNames(final String uuid, final Document document, final Session session) throws ErrorWithPayloadException {
+    public Document updateDocumentNames(final String uuid, final Document document, final Session session, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
         final String displayName = checkNotEmpty("displayName", document.getDisplayName());
         final String urlName = checkNotEmpty("urlName", document.getUrlName());
 
@@ -429,8 +429,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         if (changeUrlName) {
+            final Map<String, Serializable> hints = getHints(getEditableWorkflow(handle), contextPayload);
             log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
-            DocumentNameUtils.setUrlName(handle, newUrlName);
+            DocumentNameUtils.setUrlName(handle, newUrlName, hints);
             document.setUrlName(newUrlName);
         }
 
@@ -444,19 +445,20 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDocument(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
+    public void deleteDocument(final String uuid, final Session session, final Locale locale, final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
 
+        final Map<String, Serializable> hints = getHints(documentWorkflow, contextPayload);
         // Try to archive the document (i.e. move to the attic) so there's still a pointer into the version history
-        if (EditingUtils.canArchiveDocument(documentWorkflow)) {
+        if (EditingUtils.canArchiveDocument(hints)) {
             archiveDocument(uuid, documentWorkflow);
             return;
         }
 
         // Archiving not possible: the document can be published, a request can be pending etc. Only case left to check:
         // is the document a draft that was just created? (in which case it won't have a 'preview' variant yet)
-        if (EditingUtils.hasPreview(documentWorkflow)) {
+        if (EditingUtils.hasPreview(hints)) {
             log.warn("Forbidden to erase document '{}': it already has a preview variant", uuid);
             throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ERROR));
         }
@@ -465,7 +467,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node folder = FolderUtils.getFolder(handle);
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
-        if (EditingUtils.canEraseDocument(folderWorkflow)) {
+        if (EditingUtils.canEraseDocument(hints)) {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
             log.warn("Forbidden to erase document '{}': not allowed by the workflow of folder '{}'",

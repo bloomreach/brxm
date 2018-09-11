@@ -29,6 +29,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.easymock.Mock;
+import org.easymock.MockType;
+import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -78,6 +81,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -1725,14 +1729,14 @@ public class DocumentsServiceImplTest {
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutDisplayName() throws Exception {
         final Document document = new Document();
-        documentsService.updateDocumentNames("uuid", document, session);
+        documentsService.updateDocumentNames("uuid", document, session, new HashMap<>());
     }
 
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutUrlName() throws Exception {
         final Document document = new Document();
         document.setDisplayName("Breaking News");
-        documentsService.updateDocumentNames("uuid", document, session);
+        documentsService.updateDocumentNames("uuid", document, session, new HashMap<>());
     }
 
     @Test(expected = BadRequestException.class)
@@ -1743,7 +1747,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.updateDocumentNames(uuid, document, session);
+        documentsService.updateDocumentNames(uuid, document, session, new HashMap<>());
     }
 
     @Test
@@ -1801,12 +1805,17 @@ public class DocumentsServiceImplTest {
         expect(DocumentNameUtils.encodeDisplayName(eq(displayName), eq(folderLocale))).andReturn(encodedDisplayName);
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn(encodedDisplayName);
 
-        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName), anyObject());
         expectLastCall();
+
+        final EditableWorkflow editingWorkflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        expect(editingWorkflow.hints("master")).andReturn(hints);
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("editing"), eq(EditableWorkflow.class))).andReturn(Optional.of(editingWorkflow));
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, new HashMap<>());
         assertThat(result.getDisplayName(), equalTo(displayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -1879,7 +1888,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, new HashMap<>());
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(urlName));
 
@@ -1914,15 +1923,20 @@ public class DocumentsServiceImplTest {
         expect(DocumentNameUtils.getDisplayName(eq(handle))).andReturn("Breaking News (encoded)");
         expect(FolderUtils.nodeWithDisplayNameExists(eq(folder), eq(encodedDisplayName))).andReturn(false);
 
-        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName));
+        DocumentNameUtils.setUrlName(eq(handle), eq(encodedUrlName), anyObject());
         expectLastCall();
 
         DocumentNameUtils.setDisplayName(eq(handle), eq(encodedDisplayName));
         expectLastCall();
 
+        final EditableWorkflow editingWorkflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        expect(editingWorkflow.hints("master")).andReturn(hints);
+        expect(WorkflowUtils.getWorkflow(eq(handle), eq("editing"), eq(EditableWorkflow.class))).andReturn(Optional.of(editingWorkflow));
+
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session);
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, new HashMap<>());
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -1971,7 +1985,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale);
+        documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
     }
 
     @Test
@@ -1987,7 +2001,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDocument(uuid, session, locale);
+            documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2002,11 +2016,13 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        expect(workflow.hints("master")).andReturn(hints);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canArchiveDocument(anyObject())).andReturn(true);
 
         workflow.delete();
         expectLastCall().andThrow(new WorkflowException("meh"));
@@ -2014,7 +2030,8 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDocument(uuid, session, locale);
+            hints.put(DocumentWorkflowAction.delete().getAction(), true);
+            documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
         } finally {
             verifyAll();
         }
@@ -2025,18 +2042,22 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        expect(workflow.hints("master")).andReturn(hints);
 
+        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andStubReturn(Optional.of(workflow));
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canArchiveDocument(anyObject())).andReturn(true);
 
         workflow.delete();
         expectLastCall();
 
+
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale);
+        documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
 
         verifyAll();
     }
@@ -2046,16 +2067,18 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        expect(workflow.hints("master")).andReturn(hints);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(true);
+        expect(EditingUtils.canArchiveDocument(anyObject())).andReturn(false);
+        expect(EditingUtils.hasPreview(anyObject())).andReturn(true);
 
         replayAll(workflow);
 
-        documentsService.deleteDocument(uuid, session, locale);
+        documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
 
         verifyAll();
     }
@@ -2066,12 +2089,14 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node folder = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(workflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
-        expect(EditingUtils.canArchiveDocument(eq(workflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(workflow))).andReturn(false);
+        expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(eq(folder))).andReturn(Optional.empty());
@@ -2079,7 +2104,7 @@ public class DocumentsServiceImplTest {
         replayAll(workflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale);
+            documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2096,22 +2121,24 @@ public class DocumentsServiceImplTest {
         final Node folder = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(false);
+        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(false);
         expect(JcrUtils.getNodeNameQuietly(handle)).andReturn("document");
         expect(JcrUtils.getNodePathQuietly(folder)).andReturn("/path/to/folder");
 
         replayAll(documentWorkflow, folderWorkflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale);
+            documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
         } finally {
             verifyAll();
         }
@@ -2124,15 +2151,17 @@ public class DocumentsServiceImplTest {
         final Node folder = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
+        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(true);
 
         final String handleName = "document";
         expect(handle.getName()).andReturn(handleName);
@@ -2143,7 +2172,8 @@ public class DocumentsServiceImplTest {
         replayAll(documentWorkflow, handle, folderWorkflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale);
+            hints.put(DocumentWorkflowAction.delete().getAction(), true);
+            documentsService.deleteDocument(uuid, session, locale, new HashMap<>());
         } finally {
             verifyAll();
         }
@@ -2156,15 +2186,17 @@ public class DocumentsServiceImplTest {
         final Node folder = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.canArchiveDocument(eq(documentWorkflow))).andReturn(false);
-        expect(EditingUtils.hasPreview(eq(documentWorkflow))).andReturn(false);
+        expect(EditingUtils.canArchiveDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
+        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(true);
 
         final String handleName = "document";
         expect(handle.getName()).andReturn(handleName);
@@ -2174,7 +2206,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(documentWorkflow, handle, folderWorkflow);
 
-        documentsService.deleteDocument(uuid, session, locale);
+        documentsService.deleteDocument(uuid, session, locale, hints);
 
         verifyAll();
     }
@@ -2194,21 +2226,21 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(anyObject(), anyObject(), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
 
-        final Map<String, Serializable> contextPayload = new HashMap<>();
-        contextPayload.put("some-key", "some value");
-        expect(hintsInspector.canObtainEditableDocument(contextPayload)).andReturn(false);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("some-key", "some value");
+        expect(hintsInspector.canObtainEditableDocument(hints)).andReturn(false);
 
-        final Optional<ErrorInfo> errorInfo = Optional.of(new ErrorInfo(Reason.INVALID_DATA, contextPayload));
-        expect(hintsInspector.determineEditingFailure(contextPayload, session)).andReturn(errorInfo);
+        final Optional<ErrorInfo> errorInfo = Optional.of(new ErrorInfo(Reason.INVALID_DATA, hints));
+        expect(hintsInspector.determineEditingFailure(hints, session)).andReturn(errorInfo);
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, contextPayload);
+            documentsService.obtainEditableDocument(uuid, session, locale, hints);
         } catch (ForbiddenException e) {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
-            assertThat(payload.getParams(), is(contextPayload));
+            assertThat(payload.getParams(), is(hints));
             assertThat(payload.getParams().get("displayName"), equalTo("Display Name"));
             assertThat(payload.getParams().get("publicationState"), equalTo(PublicationState.UNKNOWN));
         }
@@ -2231,7 +2263,7 @@ public class DocumentsServiceImplTest {
 
     private void assertUpdateDocumentNamesFails(final String uuid, final Document document, final Reason reason) throws ErrorWithPayloadException {
         try {
-            documentsService.updateDocumentNames(uuid, document, session);
+            documentsService.updateDocumentNames(uuid, document, session, null);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();

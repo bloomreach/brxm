@@ -15,12 +15,17 @@
  */
 package org.onehippo.cms.channelmanager.content.workflows;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 
+import org.easymock.Mock;
+import org.easymock.MockType;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
@@ -56,6 +61,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 })
 public class WorkflowServiceImplTest {
 
+
     private WorkflowServiceImpl workflowService;
     private Session session;
 
@@ -76,11 +82,13 @@ public class WorkflowServiceImplTest {
 
         final Node handle = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.isActionAvailable(eq(documentWorkflow), eq(action))).andReturn(true);
+        expect(EditingUtils.isActionAvailable(eq(action), eq(hints))).andReturn(true);
 
         replayAll();
 
@@ -101,11 +109,13 @@ public class WorkflowServiceImplTest {
 
         final Node handle = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.isActionAvailable(eq(documentWorkflow), eq(action))).andReturn(false);
+        expect(EditingUtils.isActionAvailable(eq(action), eq(hints))).andReturn(false);
 
         replayAll();
 
@@ -126,11 +136,13 @@ public class WorkflowServiceImplTest {
 
         final Node handle = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.isActionAvailable(eq(documentWorkflow), eq(action))).andReturn(true);
+        expect(EditingUtils.isActionAvailable(eq(action), eq(hints))).andReturn(true);
 
         documentWorkflow.publish();
 
@@ -148,11 +160,13 @@ public class WorkflowServiceImplTest {
 
         final Node handle = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.isActionAvailable(eq(documentWorkflow), eq(action))).andReturn(true);
+        expect(EditingUtils.isActionAvailable(eq(action), eq(hints))).andReturn(true);
 
         documentWorkflow.requestPublication();
 
@@ -171,7 +185,9 @@ public class WorkflowServiceImplTest {
         final Node handle = createMock(Node.class);
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final NodeIterator nodeIterator = createMock(NodeIterator.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
@@ -199,7 +215,9 @@ public class WorkflowServiceImplTest {
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final NodeIterator nodeIterator = createMock(NodeIterator.class);
         final Node requestNode = createMock(Node.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
@@ -230,11 +248,13 @@ public class WorkflowServiceImplTest {
         final DocumentWorkflow documentWorkflow = createMock(DocumentWorkflow.class);
         final NodeIterator nodeIterator = createMock(NodeIterator.class);
         final Node requestNode = createMock(Node.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
+        expect(documentWorkflow.hints("master")).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
-        expect(EditingUtils.isRequestActionAvailable(eq(documentWorkflow), eq(action), eq(requestUUID))).andReturn(true);
+        expect(EditingUtils.isRequestActionAvailable(eq(action), eq(requestUUID), eq(hints))).andReturn(true);
         expect(requestNode.getIdentifier()).andReturn(requestUUID).times(2);
         expect(handle.getNodes("hippo:request")).andReturn(nodeIterator);
         expect(nodeIterator.hasNext()).andReturn(true);
