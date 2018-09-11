@@ -725,7 +725,7 @@
     </attribute>
     <attribute>
       <description>Template query to use for creating new documents.</description>
-      <name>templateQuery</name>
+      <name>documentTemplateQuery</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
