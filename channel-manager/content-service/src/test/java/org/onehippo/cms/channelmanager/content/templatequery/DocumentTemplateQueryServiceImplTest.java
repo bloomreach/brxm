@@ -57,7 +57,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({DocumentTemplateQueryServiceImpl.class, DocumentTemplateQueryUtils.class, LocalizationUtils.class})
-public class DocumentDocumentDocumentTemplateQueryServiceImplTest {
+public class DocumentTemplateQueryServiceImplTest {
 
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
 
