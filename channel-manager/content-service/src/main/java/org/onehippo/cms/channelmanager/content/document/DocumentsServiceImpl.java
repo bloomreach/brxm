@@ -141,7 +141,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-        final Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(workflow, contextPayload);
         final Set<String> existingBranches = getExistingBranches(workflow);
 
         final Optional<ForbiddenException> forbiddenException = hintsInspector.canBranchDocument(hints, existingBranches)
@@ -193,7 +193,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
 
-        Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        Map<String, Serializable> hints = EditingUtils.getHints(workflow, contextPayload);
         if (!hintsInspector.canObtainEditableDocument(hints)) {
             throw hintsInspector
                     .determineEditingFailure(hints, session)
@@ -227,7 +227,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         // For master documents we must use the hints that were retrieved before the editable instance was obtained
         // from the workflow, see the class level javadoc.
         if (!getBranchId(contextPayload).equals(MASTER_BRANCH_ID)) {
-            hints = getHints(workflow, contextPayload);
+            hints = EditingUtils.getHints(workflow, contextPayload);
         }
         document.getInfo().setCanPublish(isHintActionTrue(hints, HINT_PUBLISH));
         document.getInfo().setCanRequestPublication(isHintActionTrue(hints, HINT_REQUEST_PUBLICATION));
@@ -243,7 +243,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
-        final Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(workflow, contextPayload);
         if (!hintsInspector.canUpdateDocument(hints)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(hints, session));
         }
@@ -271,12 +271,12 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(getHints(workflow, contextPayload), session));
+            throw new InternalServerErrorException(errorInfoFromHintsOrNoHolder(EditingUtils.getHints(workflow, contextPayload), session));
         }
 
         // Get the workflow hints before obtaining an editable instance again, see the class level javadoc.
         final DocumentWorkflow newWorkflow = getDocumentWorkflow(handle);
-        final Map<String, Serializable> newHints = getHints(newWorkflow, contextPayload);
+        final Map<String, Serializable> newHints = EditingUtils.getHints(newWorkflow, contextPayload);
 
         final String branchId = ContextPayloadUtils.getBranchId(contextPayload);
         final Node newDraftNode = EditingUtils.getEditableDocumentNode(workflow, branchId, session).orElseThrow(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
@@ -299,7 +299,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
-        final Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(workflow, contextPayload);
         if (!hintsInspector.canUpdateDocument(hints)) {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(hints, session));
         }
@@ -327,7 +327,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
 
-        final Map<String, Serializable> hints = getHints(workflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(workflow, contextPayload);
         if (!hintsInspector.canDisposeEditableDocument(hints)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
         }
@@ -429,7 +429,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         if (changeUrlName) {
-            final Map<String, Serializable> hints = getHints(getEditableWorkflow(handle), contextPayload);
+            final Map<String, Serializable> hints = EditingUtils.getHints(getEditableWorkflow(handle), contextPayload);
             log.info("Changing URL name of '{}' to '{}'", handlePath, newUrlName);
             DocumentNameUtils.setUrlName(handle, newUrlName, hints);
             document.setUrlName(newUrlName);
@@ -449,7 +449,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
 
-        final Map<String, Serializable> hints = getHints(documentWorkflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(documentWorkflow, contextPayload);
         // Try to archive the document (i.e. move to the attic) so there's still a pointer into the version history
         if (EditingUtils.canArchiveDocument(hints)) {
             archiveDocument(uuid, documentWorkflow);
@@ -562,17 +562,4 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
 
-    private Map<String, Serializable> getHints(EditableWorkflow workflow, Map<String, Serializable> contextPayload) {
-        final Map<String, Serializable> hints = new HashMap<>();
-        if (contextPayload != null) {
-            hints.putAll(contextPayload);
-        }
-        final String branchId = getBranchId(contextPayload);
-        try {
-            hints.putAll(workflow.hints(branchId));
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed reading hints from workflow", e);
-        }
-        return hints;
-    }
 }

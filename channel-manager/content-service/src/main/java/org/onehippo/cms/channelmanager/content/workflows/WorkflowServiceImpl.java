@@ -17,7 +17,6 @@ package org.onehippo.cms.channelmanager.content.workflows;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -26,7 +25,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
@@ -38,7 +36,6 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms.channelmanager.content.document.ContextPayloadUtils.getBranchId;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.DocumentHandleUtils.getHandle;
 
@@ -51,7 +48,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                                               final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
-        final Map<String, Serializable> hints = getHints(documentWorkflow, contextPayload);
+        final Map<String, Serializable> hints = EditingUtils.getHints(documentWorkflow, contextPayload);
 
         if (isRequestPendingAction(action)) {
             final Node requestNode = getRequestNode(handle);
@@ -150,18 +147,4 @@ public class WorkflowServiceImpl implements WorkflowService {
         }
     }
 
-
-    private static Map<String, Serializable> getHints(EditableWorkflow workflow, Map<String, Serializable> contextPayload) {
-        final Map<String, Serializable> hints = new HashMap<>();
-        if (contextPayload != null) {
-            hints.putAll(contextPayload);
-        }
-        final String branchId = getBranchId(contextPayload);
-        try {
-            hints.putAll(workflow.hints(branchId));
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed reading hints from workflow", e);
-        }
-        return hints;
-    }
 }
