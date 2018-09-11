@@ -95,7 +95,7 @@ public class HstManageContentTag extends TagSupport {
     @Deprecated
     public void setTemplateQuery(final String templateQuery) {
         log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
-                + "This attribute is deprecated since 12.6, use documentTemplateQuery instead.",
+                + " This attribute is deprecated since 12.6, use documentTemplateQuery instead.",
                 getComponentRenderPath(), documentTemplateQuery);
 
         if (StringUtils.isNotBlank(templateQuery)) {
