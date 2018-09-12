@@ -20,11 +20,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestHandler;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -51,6 +54,8 @@ public class LinkPickerDialog extends Dialog<String> {
 
     public LinkPickerDialog(final IPluginContext context, final IPluginConfig config, final IModel<String> model) {
         super(model);
+        setSize(DialogConstants.LARGE);
+        setResizable(true);
 
         this.context = context;
         this.config = config;
@@ -153,6 +158,15 @@ public class LinkPickerDialog extends Dialog<String> {
             saveNode(selectedModel.getObject());
         } else {
             error("No node selected");
+        }
+    }
+
+    @Override
+    public void onEvent(IEvent<?> event) {
+        super.onEvent(event);
+        if (event.getPayload() instanceof AjaxRequestHandler) {
+            AjaxRequestHandler handler = (AjaxRequestHandler) event.getPayload();
+            handler.appendJavaScript("Wicket.Window.prototype.restoreDatatableHeight();");
         }
     }
 
