@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -254,8 +254,10 @@ public abstract class AbstractUserManager implements HippoUserManager {
         }
         if (isCaseSensitive()) {
             return rawUserId.trim();
-        } else {
+        } else if (isUserIdLowerCase()) {
             return rawUserId.trim().toLowerCase();
+        } else {
+            return rawUserId.trim().toUpperCase();
         }
     }
 
@@ -407,12 +409,6 @@ public abstract class AbstractUserManager implements HippoUserManager {
      * @see ManagerContext
      */
     public abstract void initManager(ManagerContext context) throws RepositoryException;
-
-    /**
-     * Checks if the backend is case aware (ie, ldap usually isn't, the internal provider is)
-     * @return
-     */
-    public abstract boolean isCaseSensitive();
 
     /**
      * Get the node type for new user nodes
