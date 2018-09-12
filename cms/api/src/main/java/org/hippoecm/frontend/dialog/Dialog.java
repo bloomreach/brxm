@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
 
     private ScriptAction<ModelType> cancelAction;
     private ScriptAction<ModelType> closeAction;
+    private boolean resizable = false;
 
     public Dialog() {
         this(null);
@@ -70,13 +71,12 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
     @Override
     public IValueMap getProperties() {
         if (properties == null) {
+            final Map<String, Object> map = new LinkedHashMap<>(size);
             if (StringUtils.isNotEmpty(cssClass)) {
-                final Map<String, Object> map = new LinkedHashMap<>(size);
                 map.put("css-class-name", cssClass);
-                properties = new ValueMap(map).makeImmutable();
-            } else {
-                properties = size;
             }
+            map.put("resizable", resizable);
+            properties = new ValueMap(map).makeImmutable();
         }
         return properties;
     }
@@ -108,6 +108,10 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
 
     protected void setCloseAction(final ScriptAction<ModelType> closeAction) {
         this.closeAction = closeAction;
+    }
+
+    protected void setResizable(boolean resizable) {
+        this.resizable = resizable;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,10 +20,24 @@
  *  - Added fullscreen support
  *  - Register for a HippoAjax cleanup callback
  *  - Custom getMarkup impl that does not contain a form element
+ *  - Added resizable support
  */
 (function () {
     "use strict";
-    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean, oldShow;
+    var region, pickerList, pickerListDetails, pickerListDatatable,
+    minimumDialogWidth, minimumDialogHeight, deltaWidth, deltaHeight, defaultExpansion = 1, oppositeExpansion = -1,
+    oldWindowInitialize, oldWindowBindInit, oldWindowBindClean, oldShow,
+    oldOnResizeBottomRight, oldOnResizeBottomLeft, oldOnResizeBottom, oldOnResizeLeft, oldOnResizeRight,
+    oldOnResizeTopRight, oldOnResizeTopLeft, oldOnResizeTop;
+
+    oldOnResizeBottomRight = Wicket.Window.prototype.onResizeBottomRight;
+	oldOnResizeBottomLeft = Wicket.Window.prototype.onResizeBottomLeft;
+	oldOnResizeBottom = Wicket.Window.prototype.onResizeBottom;
+	oldOnResizeLeft = Wicket.Window.prototype.onResizeLeft;
+	oldOnResizeRight = Wicket.Window.prototype.onResizeRight;
+	oldOnResizeTopRight = Wicket.Window.prototype.onResizeTopRight;
+	oldOnResizeTopLeft = Wicket.Window.prototype.onResizeTopLeft;
+	oldOnResizeTop = Wicket.Window.prototype.onResizeTop;
 
     oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
@@ -60,6 +74,103 @@
 
             this.resizing();
         }
+    };
+
+    Wicket.Window.prototype.onResizeLeft = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, 0, oldOnResizeLeft, oppositeExpansion, defaultExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.onResizeTop = function(object, deltaX, deltaY) {
+        this.resize(object, 0, deltaY, oldOnResizeTop, defaultExpansion, oppositeExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.onResizeRight = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, 0, oldOnResizeRight, defaultExpansion, defaultExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.onResizeBottom = function(object, deltaX, deltaY) {
+        this.resize(object, 0, deltaY, oldOnResizeBottom, defaultExpansion, defaultExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.onResizeTopLeft = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, deltaY, oldOnResizeTopLeft, oppositeExpansion, oppositeExpansion);
+		return this.res;
+	};
+
+	Wicket.Window.prototype.onResizeTopRight = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, deltaY, oldOnResizeTopRight, defaultExpansion, oppositeExpansion);
+		return this.res;
+	};
+
+    Wicket.Window.prototype.onResizeBottomRight = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, deltaY, oldOnResizeBottomRight, defaultExpansion, defaultExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.onResizeBottomLeft = function(object, deltaX, deltaY) {
+        this.resize(object, deltaX, deltaY, oldOnResizeBottomLeft, oppositeExpansion, defaultExpansion);
+        return this.res;
+    };
+
+    Wicket.Window.prototype.resize = function(object, deltaX, deltaY, method, widthExpansion, heightExpansion) {
+        this.calculateDimensions(widthExpansion * deltaX, heightExpansion * deltaY);
+        method.apply(this, [object, widthExpansion * deltaWidth, heightExpansion * deltaHeight]);
+        this.readComponents();
+        this.resizePickerList();
+        this.resizePickerListDatatable();
+    };
+
+    Wicket.Window.prototype.getInitialDimensions = function() {
+        minimumDialogHeight = Wicket.Window.current.settings.height;
+        minimumDialogWidth = Wicket.Window.current.settings.width;
+    };
+
+    Wicket.Window.prototype.calculateDimensions = function(deltaX, deltaY) {
+        deltaHeight = (Wicket.Window.current.height + deltaY < minimumDialogHeight) ? 0 : deltaY;
+        deltaWidth = (Wicket.Window.current.width + deltaX < minimumDialogWidth) ? 0 : deltaX;
+    };
+
+    Wicket.Window.prototype.readComponents = function() {
+        YAHOO.util.Dom.getElementBy(function(el) {
+            pickerListDatatable = YAHOO.hippo.WidgetManager.getWidget(el.id);
+        }, 'table', Wicket.Window.current.right);
+        if (pickerListDatatable != null) {
+            pickerListDetails = YAHOO.util.Dom.getAncestorBy(pickerListDatatable.el, function(node) {
+                return YAHOO.lang.isValue(node.className) && node.className === 'hippo-picker-list-details';
+            });
+            pickerList = pickerListDetails.parentElement;
+            region = YAHOO.util.Dom.getRegion(pickerListDetails);
+        }
+    };
+
+    Wicket.Window.prototype.resizePickerList = function() {
+        if (pickerList != null && pickerListDetails != null) {
+            pickerList.style.height = pickerList.clientHeight + deltaHeight + 'px';
+            pickerListDetails.style.height = pickerListDetails.clientHeight + deltaHeight + 'px';
+        }
+    };
+
+    Wicket.Window.prototype.resizePickerListDatatable = function() {
+        if (region != null && pickerListDatatable != null) {
+            pickerListDatatable.resize({
+                wrap: {
+                    w: region.width,
+                    h: region.height
+                }
+            });
+        }
+    };
+
+    Wicket.Window.prototype.restoreDatatableHeight = function() {
+        this.readComponents();
+        if (pickerList != null && pickerListDetails != null) {
+            pickerListDetails.style.height = pickerList.clientHeight + 'px';
+        }
+        this.resizePickerListDatatable();
     };
 
     oldWindowBindInit = Wicket.Window.prototype.bindInit;
@@ -99,6 +210,7 @@
       if (this.settings.titleTooltip !== null) {
         this.captionText.setAttribute('title', this.settings.titleTooltip);
       }
+      this.getInitialDimensions();
     };
 
     Wicket.Window.prototype.toggleFullscreen = function() {
