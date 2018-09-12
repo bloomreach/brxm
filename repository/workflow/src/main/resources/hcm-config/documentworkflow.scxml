@@ -60,7 +60,7 @@
     // true if either unpublished or published variant exits with availability 'preview'
     def boolean isPreviewAvailable() { live or preview }
     // true if unpublished variant exists and no published variant exists or they have a different lastModified
-    // note this 'modified' is a different one than hippo:isModified since this one compares whether the draft has changes
+    // note this 'modified' is a different one than hippo:isModified since hippo:isModified compares whether the draft has changes
     def boolean isModified() { workflowData.isModified() }
     // true if there is an outstanding workflow request
     def boolean isRequestPending() { workflowData.requestPending }
