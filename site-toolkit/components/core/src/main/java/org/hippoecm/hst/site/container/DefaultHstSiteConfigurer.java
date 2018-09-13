@@ -281,11 +281,11 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             // TODO HSTTWO-4355 the platform webapp always needs to be initialized first since it
             // TODO HSTTWO-4355 registers the HstModelRegistry : We need a cleaner logic here below instead of the thread
             // TODO sleep
-//            while (HippoServiceRegistry.getService(HstModelRegistry.class) == null) {
-//                // sleep until the platform webapp has initialized and registered the HstModelRegistry
-//                log.info("Waiting until platform webapp has initialized");
-//                Thread.sleep(100);
-//            }
+            while (HippoServiceRegistry.getService(HstModelRegistry.class) == null) {
+                // sleep until the platform webapp has initialized and registered the HstModelRegistry
+                log.info("Waiting until platform webapp has initialized");
+                Thread.sleep(100);
+            }
 
             final SpringComponentManager finalComponentManager = componentManager;
 
