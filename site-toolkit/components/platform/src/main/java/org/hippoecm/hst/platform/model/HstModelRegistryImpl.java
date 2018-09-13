@@ -145,7 +145,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
         final HstModel model = models.get(contextPath);
         if (model == null) {
-            throw new IllegalArgumentException(String.format("No HstModel present for context '{}'", contextPath));
+            throw new IllegalArgumentException(String.format("No HstModel present for context '%s'.", contextPath));
         }
         return model;
 
