@@ -120,8 +120,8 @@ public class DocumentWorkflowCheckoutBranchTest extends AbstractDocumentWorkflow
         assertTrue(preview.isNodeType(HIPPO_MIXIN_BRANCH_INFO));
         assertEquals("foo", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
 
-        // as a result of the checkout of 'foo' we exect a checkin of master
-        assertEquals(numberOfVersions + 2, versionHistory.getAllVersions().getSize());
+        // Although checkout of 'foo' we do not expect a checkin of master since master did not change
+        assertEquals(numberOfVersions + 1, versionHistory.getAllVersions().getSize());
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.obtainEditableInstance("foo");

@@ -116,7 +116,7 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
             @Override
             public void execute() throws Exception {
                 assertFalse("Document still live after depublication", isLive());
-                assertFalse("Depublication did not create a new version", oldVersion.isSame(getBaseVersion()));
+                assertTrue("Depublication should not create a version", oldVersion.isSame(getBaseVersion()));
                 assertFalse("Still a request pending", containsRequest());
             }
         }, 10);

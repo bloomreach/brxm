@@ -22,11 +22,15 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -78,34 +82,64 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
 
         workflow.version();
 
-        final Node unpublishedMaster = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
-        unpublishedMaster.setProperty("title", "title Master");
+        workflow.obtainEditableInstance();
+        final Node draftMaster = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draftMaster.setProperty("title", "title Master");
         session.save();
+        workflow.commitEditableInstance();
+
+        final Node unpublishedMaster = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublishedMaster.getPath());
+
+        long numberVersions = versionHistory.getAllVersions().getSize();
+
         final Version version = versionHistory
                 .getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
+
+        assertFalse(version.getFrozenNode().hasProperty("title"));
 
         workflow.restoreVersionToBranch(version, MASTER_BRANCH_ID);
 
         final Version versionAgain = versionHistory
                 .getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
 
-        assertFalse(version.isSame(versionAgain));
-        assertEquals("title Master", versionAgain.getFrozenNode().getProperty("title").getString());
+        assertEquals("Since there were changes in unpublished, two extra versions are expected: the changed " +
+                        "unpublished and the new version for 'master-unpublished'",
+                numberVersions + 2, versionHistory.getAllVersions().getSize());
+
+        assertFalse("The unpublished label should point to a new version",
+                version.isSame(versionAgain));
+
+        workflow.restoreVersionToBranch(version, MASTER_BRANCH_ID);
+
+        final Version versionAgain2 = versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
+        assertEquals("Since unpublished did not have changes, it should not result in two extra versions but just 1",
+                numberVersions + 3, versionHistory.getAllVersions().getSize());
+
+        assertFalse(versionAgain2.isSame(versionAgain));
+
     }
 
     @Test
-    public void restore_master_version_to_master_unpublished() throws Exception {
+    public void restore_master_version_to_changed_master_unpublished() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+
         final Node unpublishedMaster = createBranchFooAndModifyMasterUnpublished(workflow);
 
-        unpublishedMaster.setProperty("title", "title Master again");
-        session.save();
-
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublishedMaster.getPath());
+
+        final long numberOfRevs = versionHistory.getAllVersions().getSize();
+
         final Version version = versionHistory
                 .getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED);
+
+        workflow.obtainEditableInstance();
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draft.setProperty("title", "title Master again");
+        session.save();
+        workflow.commitEditableInstance();
+
 
         workflow.restoreVersionToBranch(version, MASTER_BRANCH_ID);
 
@@ -114,16 +148,14 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
 
         assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
-        assertEquals("Expected that before restore the unpublished got versioned",
-                "title Master again", versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED).getFrozenNode()
-                        .getProperty("title").getString());
+        assertEquals("Expected that before restore the unpublished got versioned since there were changes, hence" +
+                        " 2 new versions expected",
+                numberOfRevs + 2, versionHistory.getAllVersions().getSize());
 
     }
 
     private Node createBranchFooAndModifyMasterUnpublished(final DocumentWorkflow workflow) throws WorkflowException, RepositoryException, RemoteException {
         workflow.branch("foo", "Foo");
-
-        workflow.checkoutBranch(MASTER_BRANCH_ID);
 
         workflow.obtainEditableInstance();
         final Node unpublishedMaster = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
@@ -147,8 +179,9 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
         // unpublished master
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublishedMaster.getPath());
-        final Version version = versionHistory.getVersionByLabel("foo-unpublished");
+        final long numberOfRevs = versionHistory.getAllVersions().getSize();
 
+        final Version version = versionHistory.getVersionByLabel("foo-unpublished");
 
         final String[] mixins = JcrUtils.getMultipleStringProperty(version.getFrozenNode(), "jcr:frozenMixinTypes", new String[]{});
 
@@ -164,9 +197,9 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
 
         assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
-        assertEquals("Expected that before restore the unpublished got versioned",
-                "title Master", versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED).getFrozenNode()
-                        .getProperty("title").getString());
+        assertEquals("Expected that before restore the unpublished did not get versioned since did not change after " +
+                        " being versioned already, hence only 1 extra revision",
+                numberOfRevs + 1, versionHistory.getAllVersions().getSize());
 
     }
 
@@ -215,14 +248,17 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
     public void restore_branch_foo_version_to_branch_foo_unpublished() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         final Node unpublished = createBranchFooAndModifyMasterUnpublished(workflow);
-        workflow.checkoutBranch("foo");
-        // branch foo is now the unpublished
 
-        unpublished.setProperty("title", "title Foo");
+        workflow.obtainEditableInstance("foo");
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get();
+        draft.setProperty("title", "title Foo");
         session.save();
+        workflow.commitEditableInstance();
 
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
+        long numberVersions = versionHistory.getAllVersions().getSize();
 
-        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
         final Version fooVersion = versionHistory.getVersionByLabel("foo-unpublished");
 
         workflow.restoreVersionToBranch(fooVersion, "foo");
@@ -236,9 +272,11 @@ public class DocumentWorkflowRestoreVersionToBranchTest extends AbstractDocument
 
         final Version fooVersionNew = versionHistory.getVersionByLabel("foo-unpublished");
 
-        assertFalse("Expected a new version of 'foo' branch because of the restore", fooVersionNew.isSame(fooVersion));
+        assertFalse("Expected 'foo-unpublished' to point to new version", fooVersionNew.isSame(fooVersion));
 
-        assertTrue("The versioned foo should have the property 'title'",fooVersionNew.getFrozenNode().hasProperty("title"));
+        assertEquals("Expected two extra versions because 'foo-unpublished' has changes",
+                numberVersions + 2, versionHistory.getAllVersions().getSize());
+
     }
 
     @Test

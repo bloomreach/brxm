@@ -79,6 +79,13 @@
     def boolean isBranchExists() {
        branches.contains(branchId)
     }
+
+    // true if the current unpublished variant below the handle is modified wrt its version history. Note that this
+    // compares always the current unpublished variant its branch and not the branch for #getBranchId().
+    // If there is no unpublished, this returns false
+    def boolean isCurrentUnpublishedVersioned() {
+       workflowData.isCurrentUnpublishedVersioned(unpublished)
+    }
   </script>
 
   <!-- the initial no-document state is used to prevent entering the handle state if there is no document -->
@@ -174,9 +181,11 @@
             <!-- unpublished document exists -->
             <!-- make sure the unpublished is the right branch -->
             <if cond="!unpublished.isBranch(branchId)">
-              <!-- current unpublished is not for the branch to restore to. First checkin old branch and then checkout
-              the request branch -->
-              <hippo:version variant="unpublished"/>
+              <!-- current unpublished is not for the branch to restore to. First check in old branch if changed and
+              then checkout the request branch -->
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
               <hippo:checkoutBranch variant="unpublished"/>
             </if>
             <!-- copy it to draft first, unless we're already editor -->
@@ -510,8 +519,10 @@
 
         <transition event="restoreVersionToBranch">
 
-          <!-- to avoid potentially loosing unpublished changes, first version -->
-          <hippo:version variant="unpublished"/>
+          <!-- to avoid potentially loosing unpublished changes, first version if needed-->
+          <if cond="!currentUnpublishedVersioned">
+            <hippo:version variant="unpublished"/>
+          </if>
 
           <if cond="!unpublished.isBranch(branchId)">
               <!-- current unpublished is not for the branch to restore to. First checkout the branch -->
@@ -519,6 +530,10 @@
           </if>
           <!-- current unpublished is now for right branch, do a version restore and set the branch info again -->
           <hippo:restoreVersionByVersion version="_event.data?.version" target="unpublished" />
+
+          <!-- after the restore, the newly restored unpublished variant for branch 'x' needs to be versioned to make
+               sure that the 'x-unpublished' label points to the right version -->
+          <hippo:version variant="unpublished"/>
         </transition>
       </state>
 
@@ -567,7 +582,9 @@
             <hippo:configVariant variant="published" availabilities="live"/>
           </if>
 
-          <hippo:version variant="unpublished"/>
+          <if cond="!currentUnpublishedVersioned">
+            <hippo:version variant="unpublished"/>
+          </if>
 
           <if cond="!unpublished.master">
             <!-- branching is always done from 'master' -->
@@ -599,9 +616,11 @@
             <!-- return the same DocumentVariant object we already had -->
             <hippo:result value="unpublished"/>
 
-            <else/>
+          <else/>
 
-            <hippo:version variant="unpublished"/>
+            <if cond="!currentUnpublishedVersioned">
+              <hippo:version variant="unpublished"/>
+            </if>
             <hippo:checkoutBranch variant="unpublished"/>
           </if>
         </transition>
@@ -691,8 +710,13 @@
           <if cond="anyBranchLive and notMaster">
             <!-- there is a published variant, we only publish to version history -->
             <if cond="unpublished.isBranch(branchId)">
-              <!-- do a version checkin of the unpublished and mark with both unpublished and published for branchId -->
-              <hippo:version variant="unpublished" trigger="publication"/>
+              <!-- do a version checkin if needed of the unpublished and mark with both unpublished and published for branchId -->
+              <if cond="!currentUnpublishedVersioned">
+                 <hippo:version variant="unpublished" trigger="publication"/>
+              <else/>
+                 <!-- the unpublished is the same as the unpublished in version history: only add the published label -->
+                 <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
+              </if>
             <else/>
               <!-- current unpublished is for other branch : Only 'publish' in version history by setting ${branchId}-published label -->
               <hippo:label unpublished="unpublished" addLabel="branchId + '-published'" onLabel="branchId + '-unpublished'"/>
@@ -705,7 +729,9 @@
             <!-- there is not yet a published variant or it is master: really publish the preview -->
             <if cond="!unpublished.isBranch(branchId)">
               <!-- the unpublished version is not for the branch to publish. First checkout the branch -->
-              <hippo:version variant="unpublished"/>
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
               <hippo:checkoutBranch variant="unpublished"/>
             </if>
 
@@ -747,7 +773,9 @@
               <cs:var name="originalUnpublishedBranchId" expr="unpublished.branchId" />
 
               <!-- first version the existing unpublished since it might get replaced (and can be even another branch ) -->
-              <hippo:version variant="unpublished"/>
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
 
               <!-- take the live variant offline -->
               <hippo:configVariant variant="published" availabilities=""/>
@@ -777,7 +805,7 @@
               <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
               <!-- remove all availabilities from the published variant -->
               <hippo:configVariant variant="published" availabilities=""/>
-              <!-- create an extra version of the current unpublished (possibly modified?) -->
+              <!-- create a first version of the current unpublished variant to be able to restore to later -->
               <hippo:version variant="unpublished"/>
             </if>
           </if>

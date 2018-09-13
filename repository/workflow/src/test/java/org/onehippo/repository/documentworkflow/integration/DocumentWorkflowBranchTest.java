@@ -167,6 +167,8 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
     @Test
     public void branch_document_to_other_branch_results_in_extra_version() throws Exception {
         final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+
         {
             final DocumentWorkflow workflow = getDocumentWorkflow(handle);
             workflow.branch("foo bar", "Foo Bar");
@@ -183,9 +185,8 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertEquals("bar lux", preview.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
         assertEquals("Bar Lux", preview.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString());
 
-        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertEquals("After two times branching, we expect 4 versions due to extra master checkout",
-                4L, versionHistory.getAllVersions().getSize());
+        assertEquals("After two times branching, we expect 3 versions",
+                3L, versionHistory.getAllVersions().getSize());
 
         assertEquals("We expect the 'foo bar-unpublished' to be added as label since 'bar lux' branch was branched " +
                         "after 'foo bar",2, versionHistory.getVersionLabels().length);

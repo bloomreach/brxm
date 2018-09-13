@@ -28,7 +28,6 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.JcrUtils;
@@ -36,7 +35,6 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowData;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +45,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 /**
  * DocumentHandle provides the {@link SCXMLWorkflowData} backing model object for the DocumentWorkflow SCXML state machine.
@@ -225,8 +224,42 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return getBranchHandle().isPreviewAvailable();
     }
 
+    /**
+     * @return {@code true} if the preview for {@link #getBranchId()} has a different last modified timestamp than
+     * the live or when there is no live
+     */
     public boolean isModified() {
         return getBranchHandle().isModified();
+    }
+
+    /**
+     * @return {@code true} if the preview for the currently unpublished variant for branch 'x' is different than
+     * the last unpublished revision for branch 'x'. Comparison is done on last modified timestamp. If the last modified
+     * is the same, no new version is needed. If there is no version history, the current unpublished is not versioned
+     */
+    public boolean isCurrentUnpublishedVersioned(final DocumentVariant unpublished) throws WorkflowException {
+        if (unpublished == null) {
+            return false;
+        }
+        try {
+            final Node node = unpublished.getNode();
+            if (!node.isNodeType(MIX_VERSIONABLE)) {
+                return false;
+            }
+            final VersionHistory versionHistory = node.getSession().getWorkspace().getVersionManager().getVersionHistory(node.getPath());
+
+            final String label = unpublished.getBranchId() + "-unpublished";
+            if (!versionHistory.hasVersionLabel(label)) {
+                return false;
+            }
+
+            final Node frozenNode = versionHistory.getVersionByLabel(label).getFrozenNode();
+            return unpublished.getLastModified().equals(new DocumentVariant(frozenNode).getLastModified());
+        } catch (RepositoryException e) {
+            log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
+                    "been saved.", e);
+            return false;
+        }
     }
 
     public String getBranchId() {
@@ -278,7 +311,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             } else {
                 branches.add(MASTER_BRANCH_ID);
             }
-            if (!unpublished.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            if (!unpublished.isNodeType(MIX_VERSIONABLE)) {
                 return;
             }
 

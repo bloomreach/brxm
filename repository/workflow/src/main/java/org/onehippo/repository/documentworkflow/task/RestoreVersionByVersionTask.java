@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.Version;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
@@ -31,6 +32,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 public class RestoreVersionByVersionTask extends AbstractDocumentTask {
 
@@ -62,11 +64,13 @@ public class RestoreVersionByVersionTask extends AbstractDocumentTask {
             targetNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_ID, branchId);
             targetNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchName);
+
         } else {
 
             doRestore(workflowSession, targetNode);
             JcrUtils.ensureIsCheckedOut(targetNode);
 
+            // restore can have made the target node of type HIPPO_MIXIN_BRANCH_INFO : remove this info again
             if (targetNode.isNodeType(HIPPO_MIXIN_BRANCH_INFO)) {
 
                 // restore resulted in branch info but the original target didn't have branch info, hence remove it
@@ -74,6 +78,7 @@ public class RestoreVersionByVersionTask extends AbstractDocumentTask {
                 targetNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).remove();
                 targetNode.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
             }
+
         }
 
         return new Document(targetNode);
