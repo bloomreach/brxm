@@ -20,71 +20,140 @@
        xmlns:cs="http://commons.apache.org/scxml">
 
   <script>
-    def getScxmlId() { workflowContext.scxmlId }
+    def getScxmlId() {
+      workflowContext.scxmlId
+    }
+
     // draft variant property method
-    def getDraft() { workflowData.documents['draft'] }
+    def getDraft() {
+      workflowData.documents['draft']
+    }
+
     // unpublished variant property method
-    def getUnpublished() { workflowData.documents['unpublished'] }
+    def getUnpublished() {
+      workflowData.documents['unpublished']
+    }
+
     // published variant property method
-    def getPublished() { workflowData.documents['published'] }
+    def getPublished() {
+      workflowData.documents['published']
+    }
+
     // branches property method
-    def getBranches() { workflowData.branches }
+    def getBranches() {
+      workflowData.branches
+    }
+
     // only master available
-    def boolean isOnlyMaster() { workflowData.onlyMaster }
+    def boolean isOnlyMaster() {
+      workflowData.onlyMaster
+    }
+
     // current branchId for the action feedback or triggered action
-    def getBranchId() { workflowData.branchId }
+    def getBranchId() {
+      workflowData.branchId
+    }
+
     // current user property method
-    def getUser() { workflowContext.user }
+    def getUser() {
+      workflowContext.user
+    }
+
     // current requests map property method
-    def getRequests() { workflowData.requests }
+    def getRequests() {
+      workflowData.requests
+    }
+
     // returns the variant for copying and checking copy access privileges
-    def getCopySource() { published ?: unpublished ?: null }
+    def getCopySource() {
+      published ?: unpublished ?: null
+    }
+
     // returns the variant for deleting and checking delete privileges
-    def getDeleteSource() { unpublished ?: published ?: draft }
+    def getDeleteSource() {
+      unpublished ?: published ?: draft
+    }
+
     // returns the current draft holder (editor) if defined (and draft exists)
-    def getHolder() { draft?.holder }
+    def getHolder() {
+      draft?.holder
+    }
+
     // true if draft exists and currently being edited
-    def boolean isEditing() { !!holder }
+    def boolean isEditing() {
+      !!holder
+    }
+
     // true if draft exists and branch from DocumentHandle currently being edited
-    def boolean isEditingCurrentBranch() { !!holder and draft.isBranch(branchId)}
+    def boolean isEditingCurrentBranch() {
+      !!holder and draft.isBranch(branchId)
+    }
+
     // true if draft exists and edited by current user
-    def boolean isEditor() { holder == user }
+    def boolean isEditor() {
+      holder == user
+    }
+
     // true if draft exists and not currently editor or edited by current user
-    def boolean isEditable() { !holder or editor }
+    def boolean isEditable() {
+      !holder or editor
+    }
+
     // true if published version (can be frozen node) for branchId exists
-    def boolean isLive() { workflowData.isLiveAvailable() }
+    def boolean isLive() {
+      workflowData.isLiveAvailable()
+    }
+
     // true if there is any branch (including 'master') live
-    def boolean isAnyBranchLive()  { workflowData.isAnyBranchLiveAvailable() }
+    def boolean isAnyBranchLive()  {
+      workflowData.isAnyBranchLiveAvailable()
+    }
+
     // true if unpublished version (can be frozen node) for branchId exists
-    def boolean isPreview() { workflowData.isPreviewAvailable() }
+    def boolean isPreview() {
+      workflowData.isPreviewAvailable()
+    }
+
     // true if either unpublished or published variant exits with availability 'preview'
-    def boolean isPreviewAvailable() { live or preview }
+    def boolean isPreviewAvailable() {
+      live or preview
+    }
+
     // true if unpublished variant exists and no published variant exists or they have a different lastModified
     // note this 'modified' is a different one than hippo:isModified since hippo:isModified compares whether the draft has changes
-    def boolean isModified() { workflowData.isModified() }
+    def boolean isModified() {
+      workflowData.isModified()
+    }
+
     // true if there is an outstanding workflow request
-    def boolean isRequestPending() { workflowData.requestPending }
-    def getContainingFolder() { workflowData.handle.parent }
+    def boolean isRequestPending() {
+      workflowData.requestPending
+    }
+
+    def getContainingFolder() {
+      workflowData.handle.parent
+    }
 
     // true if the branch from  from DocumentHandle is 'master'
     def boolean isMaster() {
-       branches.contains('master') and 'master'.equals(branchId)
+      branches.contains('master') and 'master'.equals(branchId)
     }
 
     // true if the branch from  from DocumentHandle is NOT 'master'
     def boolean isNotMaster() {
-       !'master'.equals(branchId)
+      !'master'.equals(branchId)
     }
+
     // true if the branch from  from DocumentHandle exists
     def boolean isBranchExists() {
-       branches.contains(branchId)
+      branches.contains(branchId)
     }
 
     // true if the current unpublished variant below the handle is modified wrt its version history. Note that this
     // compares always the current unpublished variant its branch and not the branch for #getBranchId().
     // If there is no unpublished, this returns false
     def boolean isCurrentUnpublishedVersioned() {
-       workflowData.isCurrentUnpublishedVersioned(unpublished)
+      workflowData.isCurrentUnpublishedVersioned(unpublished)
     }
   </script>
 
