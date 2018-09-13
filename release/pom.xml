@@ -1050,11 +1050,16 @@
                     <artifactId>hippo-services-autoreload</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
-		  <dependency>
+                  <dependency>
                     <groupId>org.onehippo.cms7.hst</groupId>
                     <artifactId>hst-api</artifactId>
                     <classpath>shared</classpath>
-		  </dependency>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-platform-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
                 </dependencies>
               </container>
             </configuration>
