@@ -11,10 +11,3 @@ definitions:
       /ajaxPopupService:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.service.popup.AjaxPopupService
-      /hstRestProxyService:
-        jcr:primaryType: frontend:plugin
-        context.path: /site
-        ping.service.uri: /sites/_isAlive
-        plugin.class: org.hippoecm.frontend.service.restproxy.RestProxyServicePlugin
-        rest.uri: http://127.0.0.1/site/_cmsrest
-        service.id: hst.rest.proxy.service
