@@ -69,7 +69,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         try {
             return doMigrate(session, configurationModel, autoExportEnabled);
         } catch (RepositoryException e) {
-            throw  new MigrationException(String.format("Migrator '{}' failed.",
+            throw  new MigrationException(String.format("Migrator '%s' failed.",
                     this.getClass().getName()), e);
         }
     }
@@ -83,7 +83,7 @@ public abstract class HstChannelMigratorToV12 implements ConfigurationMigrator {
         if (configurationModel != null) {
             final boolean success = preemptiveInitializeHstNodeType(session, configurationModel);
             if (!success) {
-                throw new MigrationException(String.format("Could not preemptively reload HST node types for migrator '{}'",
+                throw new MigrationException(String.format("Could not preemptively reload HST node types for migrator '%s'",
                         this.getClass().getName()));
             }
         }

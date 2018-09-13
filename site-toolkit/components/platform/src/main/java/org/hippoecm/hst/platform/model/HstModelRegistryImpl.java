@@ -85,17 +85,17 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
             final String rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
             if (rootPath == null) {
-                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since missing 'hst.configuration.rootPath' property", contextPath));
+                throw new ModelRegistrationException(String.format("Cannot register model for context '%s' since missing 'hst.configuration.rootPath' property", contextPath));
             }
             if (!session.nodeExists(rootPath)) {
-                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since 'hst.configuration.rootPath' points to nonexisting " +
-                        "jcr node '{}'", contextPath, rootPath));
+                throw new ModelRegistrationException(String.format("Cannot register model for context '%s' since 'hst.configuration.rootPath' points to nonexisting " +
+                        "jcr node '%s'", contextPath, rootPath));
             }
 
             final Node hstHstNode = session.getNode(rootPath);
             if (!hstHstNode.isNodeType(NODETYPE_HST_HST)) {
-                throw new ModelRegistrationException(String.format("Cannot register model for context '{}' since 'hst.configuration.rootPath' points to " +
-                        "jcr node that is not of type '{}'", contextPath, NODETYPE_HST_HST));
+                throw new ModelRegistrationException(String.format("Cannot register model for context '%s' since 'hst.configuration.rootPath' points to " +
+                        "jcr node that is not of type '%s'", contextPath, NODETYPE_HST_HST));
             }
 
             final HstNodeLoadingCache hstNodeLoadingCache = new HstNodeLoadingCache(repository, credentials, hstHstNode.getPath());
@@ -129,7 +129,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         // TODO which stops the component manager as well...shouldn't we do that here?
         final HstModelImpl remove = models.remove(contextPath);
         if (remove == null) {
-            throw new ModelRegistrationException(String.format("Could not remove HstModel for '{}' since no such model present", contextPath));
+            throw new ModelRegistrationException(String.format("Could not remove HstModel for '%s' since no such model present", contextPath));
         } else {
             try {
                 remove.destroy();

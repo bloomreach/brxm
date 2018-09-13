@@ -51,7 +51,7 @@ public class PageModelApiMount implements ContextualizableMount {
     public PageModelApiMount(final String name, final Mount parent, final HstNodeLoadingCache hstNodeLoadingCache,
                              final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
         if (StringUtils.isEmpty(name) || name.contains("/")) {
-            throw new ModelLoadingException(String.format("Name '{}' is illegal for page model api pipeline", name));
+            throw new ModelLoadingException(String.format("Name '%s' is illegal for page model api pipeline", name));
         }
         this.name = name;
         this.parent = parent;

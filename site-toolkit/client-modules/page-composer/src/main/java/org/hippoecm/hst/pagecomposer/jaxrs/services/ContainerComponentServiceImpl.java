@@ -194,7 +194,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
         if (!childNode.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
-            final String msg = String.format("Expected a move of a node of type '{}' but was '{}'.", NODETYPE_HST_CONTAINERITEMCOMPONENT,
+            final String msg = String.format("Expected a move of a node of type '%s' but was '%s'.", NODETYPE_HST_CONTAINERITEMCOMPONENT,
                     childNode.getPrimaryNodeType().getName());
             throw new IllegalArgumentException(msg);
         }
