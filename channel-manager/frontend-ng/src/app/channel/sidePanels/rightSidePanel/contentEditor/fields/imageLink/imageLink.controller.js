@@ -15,11 +15,12 @@
  */
 
 class ImageLinkController {
-  constructor($scope, $element, CmsService) {
+  constructor($element, $scope, $timeout, CmsService) {
     'ngInject';
 
-    this.$scope = $scope;
     this.$element = $element;
+    this.$scope = $scope;
+    this.$timeout = $timeout;
     this.CmsService = CmsService;
   }
 
@@ -30,15 +31,55 @@ class ImageLinkController {
     // All other buttons will be pushed by the default thumbnail width only.
     this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.isRequired ? ' *' : '') : '';
 
-    // focus the label element of the first image when cancelling the picker and no image has been selected yet
-    this.labelElement = this.$element.parent().parent().find('md-input-container:first-of-type .field-title');
+    if (this.index === 0) {
+      this.$scope.$on('primitive-field:focus', ($event, focusEvent) => this.onFocusFromParent(focusEvent));
+    }
+  }
+
+  onFocusFromParent(focusEvent) {
+    // Don't let the click event bubble through the label as it can trigger an
+    // unexpected click on the input element
+    focusEvent.preventDefault();
+
+    if (this.ngModel.$modelValue === '') {
+      this.openImagePicker();
+    } else {
+      this._focusClearButton();
+    }
+  }
+
+  setFocus() {
+    if (this._hasImage()) {
+      this._focusClearButton();
+    } else {
+      this._focusSelectButton();
+    }
+  }
+
+  // set "buttonHasFocus" to false after a short timeout to prevent the bottom-border styling
+  // of the image picker to flicker while tabbing; it *can* trigger a blur event, followed by
+  // a immediate focus event, in which case the blue bottom border will be removed and added
+  // again, resulting in annoying flickering of the UI.
+  onBlurButton($event) {
+    this.blurPromise = this.$timeout(() => {
+      this.buttonHasFocus = false;
+    }, 10);
+    this.onBlur($event);
+  }
+
+  onFocusButton($event) {
+    if (this.blurPromise) {
+      this.$timeout.cancel(this.blurPromise);
+    }
+    this.buttonHasFocus = true;
+    this.onFocus($event);
   }
 
   openImagePicker() {
     const uuid = this.ngModel.$modelValue;
     this.CmsService.publish('show-image-picker', this.config.imagepicker, { uuid },
       image => this._onImagePicked(image),
-      () => this._onImagePickCancelled(),
+      () => this.setFocus(),
     );
   }
 
@@ -47,7 +88,7 @@ class ImageLinkController {
       // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during rendering.
       // Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
       if (this.imagePicked) {
-        this._focusImageElement();
+        this._focusClearButton();
       }
       this.imagePicked = true;
       this.url = image.url;
@@ -55,21 +96,16 @@ class ImageLinkController {
     });
   }
 
-  _onImagePickCancelled() {
-    // focus either the img or, if not present, the select button so pressing ESC again closes the right side-panel
-    if (this._hasImageElement()) {
-      this._focusImageElement();
-    } else {
-      this.labelElement.focus();
-    }
-  }
-
-  _hasImageElement() {
+  _hasImage() {
     return this.$element.find('img').length > 0;
   }
 
-  _focusImageElement() {
-    this.$element.find('img').focus();
+  _focusClearButton() {
+    this.$element.find('.hippo-imagelink-clear').focus();
+  }
+
+  _focusSelectButton() {
+    this.$element.find('.hippo-imagelink-select').focus();
   }
 
   clearPickedImage() {
@@ -78,7 +114,8 @@ class ImageLinkController {
     this.imagePicked = false;
     this.url = '';
     this.ngModel.$setViewValue('');
-    this.labelElement.focus();
+
+    this._focusSelectButton();
   }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,16 +217,42 @@ describe('CKEditor Component', () => {
     expect(ngModel.$setViewValue).not.toHaveBeenCalled();
   });
 
-  it('calls the onFocus handler when focused', () => {
+  it('calls the onFocus handler within $scope.$apply() when focused', () => {
     init();
+    spyOn($scope, '$apply');
+
     const onEditorFocus = getEventListener('focus');
     onEditorFocus();
+
+    expect($scope.$apply).toHaveBeenCalled();
+    expect($ctrl.onFocus).not.toHaveBeenCalled();
+
+    // call the function provided to $scope.$apply
+    $scope.$apply.calls.mostRecent().args[0]();
+
     expect($ctrl.onFocus).toHaveBeenCalledWith({
       $event: {
         target: jasmine.any(Object),
         customFocus: jasmine.any(Function),
       },
     });
+  });
+
+  it('calls the onBlur handler within $scope.$apply() when blurred', () => {
+    init();
+    const $event = {};
+    spyOn($scope, '$apply');
+
+    const onEditorBlur = getEventListener('blur');
+    onEditorBlur($event);
+
+    expect($scope.$apply).toHaveBeenCalled();
+    expect($ctrl.onFocus).not.toHaveBeenCalled();
+
+    // call the function provided to $scope.$apply
+    $scope.$apply.calls.mostRecent().args[0]();
+
+    expect($ctrl.onBlur).toHaveBeenCalledWith({ $event });
   });
 
   it('destroys the editor once the scope is destroyed', () => {

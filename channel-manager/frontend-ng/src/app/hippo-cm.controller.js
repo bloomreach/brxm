@@ -15,11 +15,28 @@
  */
 
 class HippoCmCtrl {
-  constructor($state, BrowserService) {
+  constructor(
+    $q,
+    $rootScope,
+    $state,
+    $timeout,
+    BrowserService,
+    ChannelService,
+    CmsService,
+    ConfigService,
+    HippoIframeService,
+  ) {
     'ngInject';
 
+    this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$state = $state;
+    this.$timeout = $timeout;
     this.BrowserService = BrowserService;
+    this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
+    this.HippoIframeService = HippoIframeService;
   }
 
   $onInit() {
@@ -29,6 +46,70 @@ class HippoCmCtrl {
     // add ie11 class for ie11 specific hacks
     if (this.BrowserService.isIE()) {
       $('body').addClass('ie11');
+    }
+
+    this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
+      this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, branchId, initialPath));
+    });
+    this.CmsService.subscribe('reload-channel', () => {
+      this.$rootScope.$apply(() => this._reloadChannel());
+    });
+
+    // Reload current channel
+    this.CmsService.subscribe('channel-changed-in-extjs', () => {
+      this.$rootScope.$apply(() => this.ChannelService.reload());
+    });
+
+    if (this.ConfigService.isDevMode()) {
+      this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
+        this.$rootScope.$apply(() => this._storeAppState(channelId, contextPath, branchId, initialPath));
+      });
+      this._restoreAppState();
+    }
+  }
+
+  _loadChannel(channelId, contextPath, branchId, initialPath) {
+    if (!this.ChannelService.matchesChannel(channelId)) {
+      this._initializeChannel(channelId, contextPath, branchId, initialPath);
+    } else {
+      this.HippoIframeService.initializePath(initialPath);
+    }
+  }
+
+  _initializeChannel(channelId, contextPath, branchId, initialPath) {
+    this.ChannelService.initializeChannel(channelId, contextPath, branchId)
+      .then(() => {
+        if (!this.$state.includes('hippo-cm.channel')) {
+          return this.$state.go('hippo-cm.channel');
+        }
+        return this.$q.resolve();
+      })
+      .then(() => this.HippoIframeService.initializePath(initialPath));
+  }
+
+  _reloadChannel() {
+    this.ChannelService.reload()
+      .then(() => this.HippoIframeService.reload());
+  }
+
+  _storeAppState(channelId, contextPath, branchId, initialPath) {
+    sessionStorage.channelId = channelId;
+    sessionStorage.channelContext = contextPath;
+    sessionStorage.channelBranch = branchId;
+    sessionStorage.channelPath = initialPath;
+  }
+
+  _restoreAppState() {
+    if (sessionStorage.channelId) {
+      // wait 100 ms to give Chrome enough time to fetch styles, otherwise it'll display huge SVG icons
+      this.$timeout(() => {
+        this._initializeChannel(
+          sessionStorage.channelId,
+          sessionStorage.channelContext,
+          sessionStorage.channelBranch,
+          sessionStorage.channelPath,
+        );
+      }, 100);
     }
   }
 }

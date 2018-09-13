@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ describe('HstService', () => {
   const hostname = 'test.host.name';
   const mountId = '1234';
   const handshakeUrl = `${contextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
+  const channel = { contextPath, hostname, mountId };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -38,6 +39,7 @@ describe('HstService', () => {
       cmsUser: 'testUser',
       contextPath,
       getCmsContextPath: () => contextPath,
+      contextPaths: [contextPath, '/anotherContextPath'],
       rootUuid,
     };
 
@@ -57,8 +59,8 @@ describe('HstService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  it('exists', () => {
-    expect(hstService).toBeDefined();
+  it('initializes the context path', () => {
+    expect(hstService.contextPath).toBe(contextPath);
   });
 
   it('prefixes all API urls with the context path and api url prefix', () => {
@@ -141,7 +143,19 @@ describe('HstService', () => {
 
   it('constructs a valid handshake url when initializing a channel session', () => {
     $httpBackend.expectGET(handshakeUrl).respond(200);
-    hstService.initializeSession(hostname, mountId);
+    hstService.initializeSession(channel);
+    $httpBackend.flush();
+  });
+
+  it('uses the new context path after it has been changed', () => {
+    $httpBackend.expectGET('/testContextPath/testApiUrlPrefix/1234./test').respond(200);
+    hstService.doGet('1234', 'test');
+    $httpBackend.flush();
+
+    hstService.contextPath = '/newContextPath';
+
+    $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
+    hstService.doGet('1234', 'test');
     $httpBackend.flush();
   });
 
@@ -149,7 +163,7 @@ describe('HstService', () => {
     it('resolves a promise', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname, mountId).then(promiseSpy);
+      hstService.initializeSession(channel).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalled();
     });
@@ -160,7 +174,7 @@ describe('HstService', () => {
         canWrite: true,
       };
       $httpBackend.expectGET(handshakeUrl).respond(200, { data: privileges });
-      hstService.initializeSession(hostname, mountId).then(promiseSpy);
+      hstService.initializeSession(channel).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(privileges);
     });
@@ -168,7 +182,7 @@ describe('HstService', () => {
     it('resolves with null if response data parameter is missing', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
-      hstService.initializeSession(hostname, mountId).then(promiseSpy);
+      hstService.initializeSession(channel).then(promiseSpy);
       $httpBackend.flush();
       expect(promiseSpy).toHaveBeenCalledWith(null);
     });
@@ -178,7 +192,7 @@ describe('HstService', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
     $httpBackend.expectGET(handshakeUrl).respond(500);
     hstService
-      .initializeSession(hostname, mountId)
+      .initializeSession(channel)
       .catch(catchSpy);
 
     $httpBackend.flush();
@@ -194,7 +208,7 @@ describe('HstService', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
 
     $httpBackend.expectGET(url).respond(200, channelA);
-    hstService.getChannel('channelA')
+    hstService.getChannel('channelA', contextPath)
       .then(catchSpy);
 
     $httpBackend.flush();
@@ -211,7 +225,7 @@ describe('HstService', () => {
     const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
     $httpBackend.expectGET(url).respond(500);
     hstService
-      .getChannel('test')
+      .getChannel('test', contextPath)
       .catch(catchSpy);
 
     $httpBackend.flush();
@@ -305,6 +319,11 @@ describe('HstService', () => {
 
     $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/uuid./one`).respond(200);
     hstService.doGet('uuid', undefined, 'one');
+    $httpBackend.flush();
+
+    delete hstService.contextPath;
+    $httpBackend.expectGET(`${apiUrlPrefix}/uuid./`).respond(200);
+    hstService.doGet('uuid');
     $httpBackend.flush();
 
     delete ConfigServiceMock.apiUrlPrefix;

@@ -78,10 +78,7 @@ class CKEditorController {
 
       // CKEditor has been replaced and instance is ready
       this.editor.on('instanceReady', () => {
-        this.editableElement = this.$element.find('.cke_editable');
-        this.editableElement.on('blur', ($event) => { this.blurEvent = $event; });
-        this.editor.on('blur', () => this.onEditorBlur(this.blurEvent));
-
+        this.editor.on('blur', $event => this.onEditorBlur($event));
         this.editor.on('dialogShow', () => {
           this.SharedSpaceToolbarService.isToolbarPinned = true;
         });
@@ -133,13 +130,13 @@ class CKEditorController {
   onEditorFocus() {
     this.$scope.$apply(() => {
       this.textAreaElement.addClass('focused');
-    });
 
-    this.onFocus({
-      $event: {
-        target: this.$element.find('.cke_editable'),
-        customFocus: () => this.editor.focus(),
-      },
+      this.onFocus({
+        $event: {
+          target: this.$element.find('.cke_editable'),
+          customFocus: () => this.editor.focus(),
+        },
+      });
     });
 
     if (!this.SharedSpaceToolbarService.isToolbarVisible) {
@@ -151,7 +148,9 @@ class CKEditorController {
   }
 
   onEditorBlur($event) {
-    this.onBlur({ $event });
+    this.$scope.$apply(() => {
+      this.onBlur({ $event });
+    });
 
     const relatedTarget = angular.element($event.relatedTarget);
     if (!this.FieldService.shouldPreserveFocus(relatedTarget) && this.SharedSpaceToolbarService.isToolbarPinned === false) {
@@ -164,7 +163,7 @@ class CKEditorController {
   _openLinkPicker(selectedLink) {
     this.SharedSpaceToolbarService.isToolbarPinned = true;
     const linkPickerConfig = this.config.hippopicker.internalLink;
-    this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
+    this.CmsService.publish('show-rich-text-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
       this.editor.execCommand('insertInternalLink', link);
       this.SharedSpaceToolbarService.isToolbarPinned = false;
     }, () => {
@@ -177,7 +176,7 @@ class CKEditorController {
   _openImageVariantPicker(selectedImage) {
     const imagePickerConfig = this.config.hippopicker.image;
     this.SharedSpaceToolbarService.isToolbarPinned = true;
-    this.CmsService.publish('show-image-variant-picker', this.id, imagePickerConfig, selectedImage, (image) => {
+    this.CmsService.publish('show-rich-text-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
       // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
       // runs at the same level; two directories up from the angular app. Because of this we need to prepend
       // all internal images with a prefix as shown below.

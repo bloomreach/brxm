@@ -20,40 +20,48 @@ describe('RightSidePanel', () => {
   let $rootScope;
   let $state;
   let $timeout;
-  let ChannelService;
-  let CmsService;
+  let $transitions;
   let RightSidePanelService;
   let SidePanelService;
 
   let $ctrl;
   let $scope;
   let $element;
+  let sideNavElement;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _ChannelService_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $timeout = _$timeout_;
-      ChannelService = _ChannelService_;
+      $transitions = _$transitions_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
-    CmsService = jasmine.createSpyObj('CmsService', ['reportUsageStatistic']);
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen']);
+
+    $element = angular.element('<div></div>');
+    sideNavElement = angular.element('<div class="right-side-panel"></div>');
+    $element.append(sideNavElement);
 
     $scope = $rootScope.$new();
-    $element = angular.element('<div></div>');
     $ctrl = $componentController('rightSidePanel', {
       $element,
       $scope,
-      CmsService,
       SidePanelService,
     });
     $rootScope.$digest();
+  });
+
+  it('initializes the right side panel with the side panel service upon $postLink', () => {
+    $ctrl.$onInit();
+    $ctrl.$postLink();
+
+    expect(SidePanelService.initialize).toHaveBeenCalledWith('right', $element, sideNavElement);
   });
 
   it('knows the loading state', () => {
@@ -73,25 +81,19 @@ describe('RightSidePanel', () => {
     expect($ctrl.getTitle()).toEqual('');
   });
 
-  it('sets full width mode on and off', () => {
-    $ctrl.setFullWidth(true);
-    expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
-    expect($ctrl.isFullWidth).toBe(true);
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
+  it('sets full screen mode on and off', () => {
+    $ctrl.setFullScreen(true);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', true);
 
-    CmsService.reportUsageStatistic.calls.reset();
-
-    $ctrl.setFullWidth(false);
-    expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
-    expect($ctrl.isFullWidth).toBe(false);
-    expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
+    $ctrl.setFullScreen(false);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
   });
 
   it('updates local storage on resize', () => {
     $ctrl.onResize(800);
 
     expect($ctrl.lastSavedWidth).toBe('800px');
-    expect($ctrl.localStorageService.get('rightSidePanelWidth')).toBe('800px');
+    expect($ctrl.localStorageService.get('channelManager.sidePanel.right.width')).toBe('800px');
   });
 
   it('detects ESC keypress', () => {
@@ -117,15 +119,23 @@ describe('RightSidePanel', () => {
 
     $ctrl.$onInit();
 
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
     expect($ctrl.lastSavedWidth).toBe('800px');
 
     $ctrl.localStorageService.get.and.callFake(() => null);
 
     $ctrl.$onInit();
 
-    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('channelManager.sidePanel.right.width');
     expect($ctrl.lastSavedWidth).toBe('440px');
+  });
+
+  it('sets the last saved width on the sideNavElement', () => {
+    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
+
+    $ctrl.$onInit();
+
+    expect(sideNavElement.css('width')).toBe('800px');
   });
 
   it('knows when it is locked open', () => {
@@ -139,35 +149,59 @@ describe('RightSidePanel', () => {
   });
 
   it('opens the panel when transitioning to state "hippo-cm.channel.*"', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue('800px');
     $ctrl.$onInit();
-    SidePanelService.open.and.returnValue($q.resolve());
 
-    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
-    expect($element.hasClass('sidepanel-open')).toBe(true);
-    expect($element.css('width')).toBe('800px');
-    expect($element.css('max-width')).toBe('800px');
+    expect(SidePanelService.open).toHaveBeenCalledWith('right');
   });
 
   it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
-    spyOn(ChannelService, 'setToolbarDisplayed');
     SidePanelService.open.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
-    ChannelService.isToolbarDisplayed = false;
 
     $ctrl.$onInit();
 
-    $state.go('hippo-cm.channel.edit-content', { channelId: 'channelId', documentId: 'docId' });
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
     $state.go('hippo-cm.channel');
     $rootScope.$digest();
 
-    expect($element.hasClass('sidepanel-open')).toBe(false);
-    expect($element.css('max-width')).toBe('0px');
-    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
-    expect($element.hasClass('fullwidth')).toBe(false);
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
+    expect($element.hasClass('side-panel-open')).toBe(false);
+    expect($element.hasClass('full-screen')).toBe(false);
+    expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
+  });
+
+  describe('focus handling', () => {
+    let mdSidenav;
+
+    beforeEach(() => {
+      $ctrl.$onInit();
+
+      mdSidenav = jasmine.createSpyObj('mdSidenav', ['focus']);
+      spyOn($element, 'find').and.returnValue(mdSidenav);
+
+      $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
+      $rootScope.$digest();
+    });
+
+    it('focuses the sidepanel again when transitioning to the parent state fails (e.g. because a confirmation dialog is cancelled)', () => {
+      $transitions.onBefore({ to: 'hippo-cm.channel' }, () => false);
+      $state.go('hippo-cm.channel');
+      $rootScope.$digest();
+    });
+
+    it('focuses the sidepanel again when transitioning to a sibling state fails (e.g. because a confirmation dialog is cancelled)', () => {
+      $transitions.onBefore({ to: 'hippo-cm.channel.edit-content' }, () => false);
+      $state.go('hippo-cm.channel.edit-content', { documentId: 'docId2' });
+      $rootScope.$digest();
+    });
+
+    afterEach(() => {
+      expect(mdSidenav.focus).toHaveBeenCalled();
+    });
   });
 });

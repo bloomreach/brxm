@@ -20,11 +20,14 @@ import java.util.List;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
@@ -41,23 +44,33 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public static final String EVENT_CMSCHANNELS_DEACTIVATED = "CMSChannels-deactivated";
 
     private final RootPanel rootPanel;
+    private final boolean siteIsUp;
     private final List<IRenderService> childServices = new LinkedList<>();
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config, EVENT_ID);
 
-        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
-        if (wfConfig != null) {
-            WireframeSettings wfSettings = new WireframeSettings(wfConfig);
-            add(new WireframeBehavior(wfSettings));
+        // FIXME: CHANNELMGR-2079: How to check siteIsUp now??
+        siteIsUp = true;
+
+        if (siteIsUp) {
+            IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+            if (wfConfig != null) {
+                WireframeSettings wfSettings = new WireframeSettings(wfConfig);
+                add(new WireframeBehavior(wfSettings));
+            }
+
+            rootPanel = new RootPanel(context, config, "channel-root", EVENT_ID);
+            add(rootPanel);
+
+            final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
+            context.registerService(this, channelManagerServiceId);
+        } else {
+            rootPanel = null;
+            final Fragment errorFragment= new Fragment("channel-root", "error-fragment", this);
+            errorFragment.add(new ErrorMessagePanel("error-panel", new ResourceModel("site.is.down.message")));
+            add(errorFragment);
         }
-
-        rootPanel = new RootPanel(context, config, "channel-root", EVENT_ID);
-        add(rootPanel);
-
-        final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
-        context.registerService(this, channelManagerServiceId);
-
     }
 
     @Override
@@ -111,9 +124,10 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     @Override
     public void viewChannel(final String channelId, final String channelPath, final String branchId) {
-        rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
-        rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_EDITOR);
-        focus(null);
+        if (siteIsUp) {
+            rootPanel.activateCard(RootPanel.CardId.CHANNEL_EDITOR);
+            rootPanel.getChannelEditor().viewChannel(channelId, channelPath, branchId);
+            focus(null);
+        }
     }
-
 }

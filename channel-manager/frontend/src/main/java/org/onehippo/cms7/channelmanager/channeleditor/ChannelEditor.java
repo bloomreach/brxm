@@ -42,6 +42,10 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.channelmanager.channeleditor.pickers.ImagePicker;
+import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
+import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
+import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,10 +119,12 @@ public class ChannelEditor extends ExtPanel {
 
     private ExtStoreFuture<Object> channelStoreFuture;
 
-    private final RichTextLinkPicker linkPicker;
-    private final RichTextImageVariantPicker imageVariantPicker;
-    private final ImagePicker imagePicker;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
+
+    private final LinkPicker linkPicker;
+    private final ImagePicker imagePicker;
+    private final RichTextLinkPicker richTextLinkPicker;
+    private final RichTextImageVariantPicker richTextImagePicker;
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
                          final ExtStoreFuture<Object> channelStoreFuture, final String[] contextPaths) {
@@ -155,17 +161,23 @@ public class ChannelEditor extends ExtPanel {
                         .ifPresent(uuid -> this.projectsEnabled = true))
         );
 
-        addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
-        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
+        final String channelEditorId = getMarkupId();
 
-        linkPicker = new RichTextLinkPicker(context, getMarkupId());
+        addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
+        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, channelEditorId));
+
+
+        imagePicker = new ImagePicker(context, channelEditorId);
+        add(imagePicker.getBehavior());
+
+        linkPicker = new LinkPicker(context, channelEditorId);
         add(linkPicker.getBehavior());
 
-        imageVariantPicker = new RichTextImageVariantPicker(context, getMarkupId());
-        add(imageVariantPicker.getBehavior());
+        richTextLinkPicker = new RichTextLinkPicker(context, channelEditorId);
+        add(richTextLinkPicker.getBehavior());
 
-        imagePicker = new ImagePicker(context, getMarkupId());
-        add(imagePicker.getBehavior());
+        richTextImagePicker = new RichTextImageVariantPicker(context, channelEditorId);
+        add(richTextImagePicker.getBehavior());
     }
 
     @Override
@@ -191,10 +203,11 @@ public class ChannelEditor extends ExtPanel {
     @Override
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
-        properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
+        properties.put("channelStoreFuture", new JSONIdentifier(channelStoreFuture.getJsObjectId()));
+        properties.put("imagePickerWicketUrl", imagePicker.getBehavior().getCallbackUrl().toString());
         properties.put("linkPickerWicketUrl", linkPicker.getBehavior().getCallbackUrl().toString());
-        properties.put("imageVariantPickerWicketUrl", this.imageVariantPicker.getBehavior().getCallbackUrl().toString());
-        properties.put("imagePickerWicketUrl", this.imagePicker.getBehavior().getCallbackUrl().toString());
+        properties.put("richTextImagePickerWicketUrl", richTextImagePicker.getBehavior().getCallbackUrl().toString());
+        properties.put("richTextLinkPickerWicketUrl", richTextLinkPicker.getBehavior().getCallbackUrl().toString());
     }
 
     @Override
@@ -212,9 +225,10 @@ public class ChannelEditor extends ExtPanel {
     public void viewChannel(final String channelId, final String initialPath, final String branchId) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s', '%s');",
+            final String loadChannelScript = String.format("Ext.getCmp('%s').initChannel('%s', '%s', '%s');",
                     getMarkupId(), channelId, initialPath, branchId);
             target.appendJavaScript(loadChannelScript);
+            // N.B. actually loading the channel is triggered by the activation of the ChannelManagerPerspective
         }
     }
 
@@ -240,9 +254,10 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void detachModels() {
         super.detachModels();
-        linkPicker.detach();
-        imageVariantPicker.detach();
         imagePicker.detach();
+        linkPicker.detach();
+        richTextLinkPicker.detach();
+        richTextImagePicker.detach();
     }
 
     /**
@@ -269,11 +284,6 @@ public class ChannelEditor extends ExtPanel {
                     final IEditorManager editorManager = (IEditorManager) service;
                     editorManager.unregisterOpenListener(EDITOR_OPEN_LISTENER);
                 }
-            }
-
-            @Override
-            public void updateService(final IClusterable service, final String name) {
-
             }
         }, editorManagerServiceId);
     }
