@@ -304,8 +304,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                     final DocumentVariant documentVariant = new DocumentVariant(node);
                     final String frozenBranchId = documentVariant.getBranchId();
                     log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
-                    final String[] multipleStringProperty = JcrUtils.getMultipleStringProperty(node, JCR_FROZEN_MIXIN_TYPES, new String[]{});
-                    if (branchIdModel.isDefined() && Arrays.stream(multipleStringProperty).anyMatch(mixin -> HIPPO_MIXIN_BRANCH_INFO.equals(mixin)) && currentBranchId.equals(frozenBranchId)) {
+                    if (branchIdModel.isDefined() && currentBranchId.equals(frozenBranchId)) {
                         log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
                                         " the current branch id: {}, updating the documentModel with the associated handle."
                                 , currentBranchId);

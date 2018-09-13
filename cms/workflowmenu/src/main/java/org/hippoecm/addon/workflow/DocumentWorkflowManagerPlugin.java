@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
- *
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -40,6 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_MIXIN_TYPES;
 
 public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
@@ -49,21 +57,25 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
     public static final String NO_MODEL_CONFIGURED = "No model configured";
 
     private IModelReference modelReference;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
     private boolean updateMenu = true;
 
     public DocumentWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        this.context = context;
+        this.config = config;
         updateModelOnDocumentModelChange();
         onModelChanged();
     }
 
     private void updateModelOnDocumentModelChange() {
-        if (getPluginConfig().getString(RenderService.MODEL_ID) != null) {
-            modelReference = getPluginContext().getService(getPluginConfig().getString(RenderService.MODEL_ID), IModelReference.class);
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
             if (modelReference != null) {
                 //updateModel(modelReference.getModel());
-                getPluginContext().registerService(new IObserver<IModelReference>() {
+                context.registerService(new IObserver<IModelReference>() {
 
                     private static final long serialVersionUID = 1L;
 
@@ -125,15 +137,14 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
     private Node updateModelForFrozenNodeWithCurrentBranchId(final Node node) {
         try {
             final Node handle = getHandle(node);
-            final BranchIdModel branchIdModel = new BranchIdModel(getPluginContext(), handle.getIdentifier());
+            final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
             final String currentBranchId = branchIdModel.getBranchId();
             log.debug("Current branch id:{}", currentBranchId);
             if (isFrozenNode(node)) {
                 final DocumentVariant documentVariant = new DocumentVariant(node);
                 final String frozenBranchId = documentVariant.getBranchId();
                 log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
-                final String[] multipleStringProperty = JcrUtils.getMultipleStringProperty(node, JCR_FROZEN_MIXIN_TYPES, new String[]{});
-                if (branchIdModel.isDefined() && Arrays.stream(multipleStringProperty).anyMatch(mixin -> HIPPO_MIXIN_BRANCH_INFO.equals(mixin)) && currentBranchId.equals(frozenBranchId)) {
+                if (branchIdModel.isDefined() && currentBranchId.equals(frozenBranchId)) {
                     log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
                                     " the current branch id: {}, updating the documentModel with the associated handle."
                             , currentBranchId);
