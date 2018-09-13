@@ -175,7 +175,7 @@ public class BranchHandleImpl implements BranchHandle {
 
     private boolean isModified(final DocumentVariant unpublished, final DocumentVariant published) {
         try {
-            return unpublished.getLastModified().after(published.getLastModified());
+            return !unpublished.getLastModified().equals(published.getLastModified());
         } catch (RepositoryException e) {
             log.error("Cannot determine if document {} is modified, returning false", unpublished.getIdentity(), e);
             return false;
