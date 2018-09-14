@@ -587,7 +587,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                                     "renderer '{}' is never flushed to a parent component. This might be" +
                                     " waste you are not aware of. If it is on purpose, for example because the component does only some" +
                                     " processing that does not involve direct response contribution, you can mark the component with '{} = true'.",
-                            RequestContextProvider.get().getServletRequest(), childWindow.getComponent().getComponentConfiguration().getCanonicalPath(),
+                            RequestContextProvider.get().getServletRequest(), (childWindow.getComponent() != null) ? childWindow.getComponent().getComponentConfiguration().getCanonicalPath() : null,
                             getRenderer(childWindow, childResponseImpl), COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE);
                 } else {
                     // there is a window with a renderer but the content is never included in its ancestor component apart from some
@@ -596,7 +596,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                                     "Its renderer '{}' is never flushed to a parent component. This component might be waste." +
                                     " If it is on purpose, for example because the component does only some" +
                                     " processing that does not involve direct response contribution, you can mark the component with '{} = true'.",
-                            RequestContextProvider.get().getServletRequest(), childWindow.getComponent().getComponentConfiguration().getCanonicalPath(),
+                            RequestContextProvider.get().getServletRequest(), (childWindow.getComponent() != null) ? childWindow.getComponent().getComponentConfiguration().getCanonicalPath() : null,
                             getRenderer(childWindow, childResponseImpl), COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE);
                 }
             }

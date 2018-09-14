@@ -388,7 +388,9 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param model the {@link MetadataContributable} model instance where the parameter map should be contributed to
      */
     private void addParametersInfoMetadata(HstComponentWindow window, HstRequest hstRequest, MetadataContributable model) {
-        final ComponentConfiguration compConfig = window.getComponent().getComponentConfiguration();
+        final ComponentConfiguration compConfig = (window.getComponent() != null)
+                ? window.getComponent().getComponentConfiguration()
+                : null;
 
         if (compConfig == null) {
             return;

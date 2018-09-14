@@ -89,24 +89,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 }
 
                 window.addComponentExcpetion(e);
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             } catch (Exception e) {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
 
                 window.addComponentExcpetion(new HstComponentException(e));
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -132,24 +122,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 }
 
                 window.addComponentExcpetion(e);
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             } catch (Exception e) {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
 
                 window.addComponentExcpetion(new HstComponentException(e));
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -175,24 +155,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 }
 
                 window.addComponentExcpetion(e);
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             } catch (Exception e) {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
 
                 window.addComponentExcpetion(new HstComponentException(e));
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -257,12 +227,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
 
             window.addComponentExcpetion(e);
-
-            if (log.isDebugEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-            }
+            logComponentException(window, e);
         } catch (Exception e) {
             if (this.exceptionThrowable) {
                 throw new HstComponentException(e);
@@ -282,11 +247,12 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
     private void logComponentException(final HstComponentWindow window, final Exception e) {
         if (log.isDebugEnabled()) {
-            log.warn("Component exception caught on window " + window.getName() + " with component " +
-                    window.getComponentName() + ": " + e.toString(), e);
+            log.warn("Component exception caught on window {} with component {}", window.getName(),
+                    window.getComponentName(), e);
         } else if (log.isWarnEnabled()) {
-            log.warn("Component exception caught on window '{}' with component '{}': {} at {}",
-                    window.getName(), window.getComponentName(), e.toString(), getFirstStackTraceElement(e));
+            // log with the meaningful stack trace element which is the second (index of 1) after this method call most likely.
+            log.warn("Component exception caught on window {} with component {}: {} at {}", window.getName(),
+                    window.getComponentName(), e.toString(), getIndexedOrFirstStackTraceElement(e, 1));
         }
     }
 
@@ -305,24 +271,14 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 }
 
                 window.addComponentExcpetion(e);
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             } catch (Exception e) {
                 if (this.exceptionThrowable) {
                     throw new HstComponentException(e);
                 }
 
                 window.addComponentExcpetion(new HstComponentException(e));
-
-                if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + e, e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
-                }
+                logComponentException(window, e);
             }
         } else {
             window.addComponentExcpetion(new HstComponentException("The component is not available."));
@@ -333,7 +289,6 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         HstRequest hstRequest = (HstRequest) servletRequest;
         HstResponse hstResponse = (HstResponse) servletResponse;
         HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
-        HstComponent component = window.getComponent();
         boolean namedDispatching = false;
         String dispatchUrl = ((HstResourceResponseImpl) hstResponse).getServeResourcePath();
 
@@ -353,7 +308,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         if (dispatchUrl == null) {
             log.info("Skipping #invokeServeResource() as the component doesn't have @hst:resourcetemplate "
                     + "property, associated with a servlet or template. Component window: {}, component "
-                    + "class: {}.", window.getName(), component.getClass().getName());
+                    + "class: {}.", window.getName(), window.getComponentName());
             return;
         }
 
@@ -370,7 +325,6 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
 
             window.addComponentExcpetion(e);
-
             logComponentException(window, e);
         } catch (Exception e) {
             if (this.exceptionThrowable) {
@@ -378,12 +332,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             }
 
             window.addComponentExcpetion(new HstComponentException(e));
-
-            if (log.isDebugEnabled()) {
-                log.warn("Component exception caught: " + e, e);
-            } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught: {} at {}", e, getFirstStackTraceElement(e));
-            }
+            logComponentException(window, e);
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest);
         }
@@ -412,7 +361,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                     servletRequest.setAttribute(DISPATCH_URI_PROTOCOL, FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL);
                     dispatchUrl = dispatchUrl.substring(FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL.length());
 
-                    if (!dispatchUrl.startsWith("/")) {
+                    if (!dispatchUrl.startsWith("/") && window.getComponent() != null) {
                         String resolvedDispatchUrl = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/") + "/" + dispatchUrl;
 
                         log.debug("Relative classpath dispatch URL '{}' has been resolved to '{}'", dispatchUrl, resolvedDispatchUrl);
@@ -491,10 +440,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         servletRequest.removeAttribute(ContainerConstants.HST_COMPONENT_WINDOW);
     }
 
-    private StackTraceElement getFirstStackTraceElement(final Throwable th) {
+    private StackTraceElement getIndexedOrFirstStackTraceElement(final Throwable th, final int index) {
         StackTraceElement[] stackTraceElements = th.getStackTrace();
+        final int len = (stackTraceElements != null) ? stackTraceElements.length : 0;
 
-        if (stackTraceElements != null && stackTraceElements.length != 0) {
+        if (len > index) {
+            return stackTraceElements[index];
+        } else if (len != 0) {
             return stackTraceElements[0];
         }
 

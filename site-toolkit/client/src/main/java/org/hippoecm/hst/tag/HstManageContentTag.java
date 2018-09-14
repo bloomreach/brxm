@@ -171,6 +171,11 @@ public class HstManageContentTag extends TagSupport {
 
         final HstComponentWindow window = (HstComponentWindow) pageContext.getRequest().getAttribute(HST_COMPONENT_WINDOW);
         final HstComponent component = window.getComponent();
+
+        if (component == null) {
+            return null;
+        }
+
         final ComponentConfiguration componentConfig = component.getComponentConfiguration();
         final ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(component, componentConfig);
         return ParametersInfoUtils.getParameterAnnotation(paramsInfo, parameterName, JcrPath.class);
