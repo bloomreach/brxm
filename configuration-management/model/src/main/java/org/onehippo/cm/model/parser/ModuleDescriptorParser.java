@@ -36,7 +36,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         super(explicitSequencing);
     }
 
-    public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
+    public ModuleImpl parse(final InputStream inputStream, final String location, final String hcmSiteName) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
         final Map<String, Node> rootNodeMap =
                 asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
@@ -45,20 +45,20 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
         final Node moduleNode = rootNodeMap.get(MODULE_KEY);
 
-        final GroupImpl groupImpl = constructGroup(groupNode);
+        final GroupImpl groupImpl = constructGroup(groupNode, hcmSiteName);
         final ProjectImpl project = constructProject(projectNode, groupImpl);
 
-        return constructModule(moduleNode, project);
+        return constructModule(moduleNode, project, hcmSiteName);
     }
 
-    protected GroupImpl constructGroup(final Node src) throws ParserException {
+    protected GroupImpl constructGroup(final Node src, final String hcmSiteName) throws ParserException {
 
         if (src instanceof ScalarNode) {
-            return new GroupImpl(asStringScalar(src));
+            return new GroupImpl(asStringScalar(src), hcmSiteName);
         } else {
             final Map<String, Node> groupMap = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(groupMap.get(NAME_KEY));
-            final GroupImpl group = new GroupImpl(name);
+            final GroupImpl group = new GroupImpl(name, hcmSiteName);
             group.addAfter(asSingleOrSetOfStrScalars(groupMap.get(AFTER_KEY)));
             return group;
         }
@@ -76,15 +76,15 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
+    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent, final String hcmSiteName) throws ParserException {
         ModuleImpl module;
         if (src instanceof ScalarNode) {
-            module = parent.addModule(asStringScalar(src));
+            module = parent.addModule(asStringScalar(src), hcmSiteName);
         } else {
             final Map<String, Node> map =
                     asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(map.get(NAME_KEY));
-            module = parent.addModule(name);
+            module = parent.addModule(name,  hcmSiteName);
             module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
         }
 

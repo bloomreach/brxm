@@ -25,6 +25,12 @@ import java.util.List;
 public interface Group extends OrderableByName {
 
     /**
+     * @return the name of the HCM site to which this group belongs, or null if this is part of the core model
+     * @see Module#getHcmSiteName()
+     */
+    String getHcmSiteName();
+
+    /**
      * @return The immutable list of {@link Project}s currently in this Group.
      */
     List<? extends Project> getProjects();

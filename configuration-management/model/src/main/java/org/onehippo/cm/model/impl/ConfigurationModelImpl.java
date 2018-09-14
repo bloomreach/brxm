@@ -54,7 +54,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final OrderableByNameListSorter<Group> groupSorter = new OrderableByNameListSorter<>(Group.class);
 
-    private final Map<String, GroupImpl> groupMap = new HashMap<>();
+    private final List<GroupImpl> buildingGroups = new ArrayList<>();
     private final List<GroupImpl> groups = new ArrayList<>();
     private final List<GroupImpl> sortedGroups = Collections.unmodifiableList(groups);
 
@@ -186,10 +186,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return this, for chaining
      */
     public ConfigurationModelImpl addGroup(final GroupImpl group) {
-        if (!groupMap.containsKey(group.getName())) {
-            groupMap.put(group.getName(), new GroupImpl(group.getName()));
+        if (!buildingGroups.contains(group)) {
+            buildingGroups.add(new GroupImpl(group.getName(), group.getHcmSiteName()));
         }
-        final GroupImpl consolidatedGroup = groupMap.get(group.getName());
+        final GroupImpl consolidatedGroup = buildingGroups.get(buildingGroups.indexOf(group));
         consolidatedGroup.addAfter(group.getAfter());
         for (ProjectImpl project : group.getProjects()) {
             final ProjectImpl consolidatedProject = consolidatedGroup.getOrAddProject(project.getName());
@@ -215,10 +215,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // this duplicates much of the logic of addGroup(),
         // but it's necessary to avoid grabbing undesired sibling modules
         final GroupImpl group = module.getProject().getGroup();
-        if (!groupMap.containsKey(group.getName())) {
-            groupMap.put(group.getName(), new GroupImpl(group.getName()));
+        if (!buildingGroups.contains(group)) {
+            buildingGroups.add(new GroupImpl(group.getName(), group.getHcmSiteName()));
         }
-        final GroupImpl consolidatedGroup = groupMap.get(group.getName());
+        final GroupImpl consolidatedGroup = buildingGroups.get(buildingGroups.indexOf(group));;
         consolidatedGroup.addAfter(group.getAfter());
 
         final ProjectImpl project = module.getProject();
@@ -249,7 +249,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     public ConfigurationModelImpl buildModel() {
         replacements.clear();
         groups.clear();
-        groups.addAll(groupMap.values());
+        groups.addAll(buildingGroups);
         groupSorter.sort(groups);
         groups.forEach(GroupImpl::sortProjects);
         return this;

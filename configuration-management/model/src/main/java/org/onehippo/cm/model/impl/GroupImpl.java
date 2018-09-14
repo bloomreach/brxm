@@ -33,6 +33,9 @@ public class GroupImpl implements Group {
 
     private final String name;
 
+    // Non-final because of annoying code-flow problem in ModuleReader.readReplacement()
+    private String hcmSiteName;
+
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
@@ -40,21 +43,33 @@ public class GroupImpl implements Group {
     private final List<ProjectImpl> projects = Collections.unmodifiableList(modifiableProjects);
     private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
-    public GroupImpl(final String name) {
+    public GroupImpl(final String name, final String hcmSiteName) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
         }
         this.name = name;
+        this.hcmSiteName = hcmSiteName;
     }
 
-    public GroupImpl(final String name, final String... after) {
-        this(name);
+    public GroupImpl(final String name, final String hcmSiteName, final String... after) {
+        this(name, hcmSiteName);
         Collections.addAll(modifiableAfter, after);
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getHcmSiteName() {
+        return hcmSiteName;
+    }
+
+    // Exists only because of annoying code-flow problem in ModuleReader.readReplacement()
+    // Should not be used for any other purpose!
+    public void setHcmSiteName(final String hcmSiteName) {
+        this.hcmSiteName = hcmSiteName;
     }
 
     @Override
@@ -93,7 +108,9 @@ public class GroupImpl implements Group {
             return true;
         }
         if (other instanceof Group) {
-            return this.getName().equals(((Group)other).getName());
+            final Group otherGroup = (Group) other;
+            return this.getName().equals(otherGroup.getName())
+                    && Objects.equals(getHcmSiteName(), otherGroup.getHcmSiteName());
         }
         return false;
     }
@@ -101,12 +118,13 @@ public class GroupImpl implements Group {
     // hashCode() and equals() should be consistent!
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(name, hcmSiteName);
     }
 
     @Override
     public String toString() {
         return "GroupImpl{" +
+                "hcmSiteName='" + ((hcmSiteName==null)?"core":hcmSiteName) + '\'' +
                 "name='" + name + '\'' +
                 '}';
     }
