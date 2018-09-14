@@ -36,6 +36,10 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         super(explicitSequencing);
     }
 
+    public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
+        return parse(inputStream, location, null);
+    }
+
     public ModuleImpl parse(final InputStream inputStream, final String location, final String hcmSiteName) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
         final Map<String, Node> rootNodeMap =

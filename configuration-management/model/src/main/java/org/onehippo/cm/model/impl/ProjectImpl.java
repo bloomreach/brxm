@@ -94,6 +94,11 @@ public class ProjectImpl implements Project {
         }
     }
 
+    public ModuleImpl addModule(final String name) {
+        return addModule(name, null);
+    }
+
+
     public ModuleImpl addModule(final String name, final String hcmSiteName) {
         verifyNewModule(name);
         final ModuleImpl module = new ModuleImpl(name, this, hcmSiteName);

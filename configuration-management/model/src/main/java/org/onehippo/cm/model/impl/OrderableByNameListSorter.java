@@ -77,8 +77,8 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
         final Map<String, U> map = new TreeMap<>(getComparator());
 
         for (U o : orderables) {
-            if (map.put(o.getName(), o) != null) {
-                throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o.getName()));
+            if (map.containsValue(o)) {
+                throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o));
             }
         }
         final LinkedHashMap<String, U> sorted = new LinkedHashMap<>(orderables.size());

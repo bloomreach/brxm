@@ -43,6 +43,10 @@ public class GroupImpl implements Group {
     private final List<ProjectImpl> projects = Collections.unmodifiableList(modifiableProjects);
     private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
+    public GroupImpl(final String name) {
+        this(name, null);
+    }
+
     public GroupImpl(final String name, final String hcmSiteName) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");

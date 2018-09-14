@@ -110,6 +110,10 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private Set<String> removedConfigResources = new HashSet<>();
     private Set<String> removedContentResources = new HashSet<>();
 
+    public ModuleImpl(final String name, final ProjectImpl project) {
+        this(name, project, null);
+    }
+
     public ModuleImpl(final String name, final ProjectImpl project, final String hcmSiteName) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");

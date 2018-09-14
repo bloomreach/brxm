@@ -511,7 +511,7 @@ public class ConfigurationModelImplTest {
     @Test
     public void assert_insertion_order_for_webfile_bundles_over_modules() throws Exception {
         final GroupImpl c1 = new GroupImpl("c1");
-        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1", null);
 
         final String yaml1 = "definitions:\n"
                 + "  webfilebundle:\n"
@@ -520,7 +520,7 @@ public class ConfigurationModelImplTest {
         ModelTestUtils.loadYAMLString(yaml1, m1);
 
         final GroupImpl c2 = new GroupImpl("c2");
-        final ModuleImpl m2 = c2.addProject("p2").addModule("m2");
+        final ModuleImpl m2 = c2.addProject("p2").addModule("m2", null);
 
         final String yaml2 = "definitions:\n"
                 + "  webfilebundle:\n"
