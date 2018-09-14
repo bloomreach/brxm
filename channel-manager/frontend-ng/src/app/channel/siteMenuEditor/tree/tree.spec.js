@@ -66,12 +66,12 @@ describe('The tree rendered by the tree directive', () => {
     $scope.items = items || $j.extend(true, {}, defaultItems);
 
     const $element = angular.element(
-      `<div hippo-tree items="items" options="options" selected-item="selectedItem">
-        <a data-ng-click="hippoTree.toggle(this)">{{ item.title }}</a>
-      </div>`);
+      `<hippo-tree items="items" options="options" selected-item="selectedItem">
+        <a data-ng-click="toggle(); hippoTree.toggle(item)">{{ item.title }}</a>
+      </hippo-tree>`);
     $compile($element)($scope);
     $scope.$digest();
-    const tree = $element.find('div.angular-ui-tree > ol.angular-ui-tree-nodes');
+    const tree = $element.find('div.angular-ui-tree > hippo-tree-nodes > ol.angular-ui-tree-nodes');
     const ctrl = $element.controller('hippoTree');
 
     return { tree, ctrl };
@@ -89,7 +89,7 @@ describe('The tree rendered by the tree directive', () => {
 
   it('should contain a first item with subitems', () => {
     const { tree } = createTreeAndController();
-    expect(tree.children('li').eq(0).children('ol').children('li').length).toEqual(3);
+    expect(tree.find('> li:eq(0) > hippo-tree-nodes > ol > li').length).toEqual(3);
   });
 
   it('should contain 2 leaf nodes at root level', () => {
