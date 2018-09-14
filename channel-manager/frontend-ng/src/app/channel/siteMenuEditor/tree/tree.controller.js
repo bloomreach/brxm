@@ -29,9 +29,7 @@ class HippoTreeCtrl {
     });
   }
 
-  toggle(itemEl) {
-    const item = itemEl.$modelValue;
-    itemEl.toggle();
+  toggle(item) {
     item.collapsed = !item.collapsed;
 
     // when collapsing an item with a selected (grand)child, select the item itself
@@ -45,9 +43,6 @@ class HippoTreeCtrl {
   }
 
   selectItem(item) {
-    if (!item) {
-      item = this.$modelValue;
-    }
     this.selectedItem = item;
 
     if (angular.isFunction(this.options.selectItem)) {
@@ -62,8 +57,7 @@ class HippoTreeCtrl {
     return true;
   }
 
-  isEmpty(itemEl) {
-    const item = itemEl.$modelValue;
+  isEmpty(item) {
     return !item.items.length;
   }
 
