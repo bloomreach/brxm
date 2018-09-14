@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import template from './itemsRenderer.html';
 
-function itemsRendererDirective() {
-  'ngInject';
+import template from './nodes.template.html';
 
-  return {
-    template,
-    restrict: 'A',
-  };
-}
+const treeNodesComponent = {
+  require: {
+    hippoTree: '^^hippoTree',
+  },
+  bindings: {
+    items: '=',
+  },
+  template,
+};
 
-export default itemsRendererDirective;
+export default treeNodesComponent;
