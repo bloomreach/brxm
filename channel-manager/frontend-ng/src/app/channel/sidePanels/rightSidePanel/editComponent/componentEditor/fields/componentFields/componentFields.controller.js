@@ -15,8 +15,11 @@
  */
 
 class ComponentFieldsCtrl {
-  constructor() {
+  constructor($scope, ComponentEditor) {
     'ngInject';
+
+    this.$scope = $scope;
+    this.ComponentEditor = ComponentEditor;
   }
 
   $onInit() {
@@ -25,7 +28,7 @@ class ComponentFieldsCtrl {
   }
 
   valueChanged() {
-    console.log('TODO: implement ComponentFieldsCtrl.valueChanged');
+    this.ComponentEditor.valueChanged();
   }
 
   focusPrimitive() {

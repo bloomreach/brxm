@@ -19,6 +19,7 @@ describe('ComponentEditorService', () => {
   let $rootScope;
   let ComponentEditor;
   let HstComponentService;
+  let PageStructureService;
 
   const testData = {
     channel: 'channel',
@@ -40,11 +41,12 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _ComponentEditor_, _HstComponentService_) => {
+    inject((_$q_, _$rootScope_, _ComponentEditor_, _HstComponentService_, _PageStructureService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ComponentEditor = _ComponentEditor_;
       HstComponentService = _HstComponentService_;
+      PageStructureService = _PageStructureService_;
     });
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
@@ -239,6 +241,26 @@ describe('ComponentEditorService', () => {
       const group = ComponentEditor.getPropertyGroups()[0];
       const linkPickerField = group.fields[0];
       expect(linkPickerField.pickerConfig.linkpicker.isPathPicker).toBe(true);
+    });
+  });
+
+  describe('valueChanged', () => {
+    it('transforms the "properties" data and passes it to the PageStructureService to render the component', () => {
+      spyOn(PageStructureService, 'renderComponent');
+      const properties = [
+        { name: 'a', value: 'value-a' },
+        { name: 'b', value: 'value-b' },
+        { name: 'c', value: 'value-c', hiddenInChannelManager: true },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.valueChanged();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+        a: 'value-a',
+        b: 'value-b',
+        c: 'value-c',
+      });
     });
   });
 });

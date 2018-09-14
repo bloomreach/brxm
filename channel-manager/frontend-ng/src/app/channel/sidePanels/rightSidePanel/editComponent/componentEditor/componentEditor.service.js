@@ -17,7 +17,7 @@
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
 class ComponentEditorService {
-  constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService) {
+  constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService, PageStructureService) {
     'ngInject';
 
     this.$q = $q;
@@ -26,6 +26,7 @@ class ComponentEditorService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
+    this.PageStructureService = PageStructureService;
   }
 
   open({ channel, component, container, page }) {
@@ -144,6 +145,12 @@ class ComponentEditorService {
 
   isDataDirty() {
     return this.dataDirty;
+  }
+
+  valueChanged() {
+    const formData = {};
+    this.properties.forEach((property) => { formData[property.name] = property.value; });
+    this.PageStructureService.renderComponent(this.component.id, formData);
   }
 
   markDataDirty() {
