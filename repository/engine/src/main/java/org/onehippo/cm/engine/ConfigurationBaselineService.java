@@ -66,7 +66,6 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.plugin.dom.exception.InvalidStateException;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -393,7 +392,7 @@ public class ConfigurationBaselineService {
         else {
             // a descriptor must exist, or this isn't a valid baseline
             // TODO: support generating a descriptor at runtime?
-            throw new InvalidStateException("Module descriptor does not exist for module: "+module.getFullName());
+            throw new IllegalStateException("Module descriptor does not exist for module: "+module.getFullName());
         }
 
         // if this Module has an actions file...
