@@ -25,6 +25,7 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -44,6 +45,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -63,7 +65,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         assertTrue((Boolean)workflow.hints().get("branch"));
 
         // when there is only a live version, branching is still possible (and will create a preview first)
-        final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         toBecomeLive.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
         toBecomeLive.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
         toBecomeLive.removeMixin(MIX_VERSIONABLE);
@@ -89,7 +91,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
     @Test
     public void branch_when_there_is_a_preview() throws Exception {
 
-        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         assertTrue("Expected preview only below handle",preview.isSame(handle.getNode(handle.getName())));
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
@@ -152,7 +154,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
 
     @Test
     public void branch_when_there_is_only_live_creates_preview_then_versions_it_and_then_creates_branch() throws Exception {
-        final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node toBecomeLive = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         toBecomeLive.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.PUBLISHED);
         toBecomeLive.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
         toBecomeLive.removeMixin(MIX_VERSIONABLE);
@@ -161,12 +163,12 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         // The actual branching!
         final Document branch = workflow.branch("foo bar", "Foo Bar");
 
-        branchAssertions(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get(), branch);
+        branchAssertions(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get(), branch);
     }
 
     @Test
     public void branch_document_to_other_branch_results_in_extra_version() throws Exception {
-        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
 
         {
@@ -209,60 +211,109 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
     }
 
     @Test
-    public void branch_document_to_existing_branch_is_not_allowed() throws Exception {
-        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            final Document branch = workflow.branch("foo bar", "Foo Bar");
-            assertTrue(preview.isSame(branch.getNode(session)));
-        }
+    public void branch_to_existing_branch_results_in_existing_branch_returned_and_placed_in_unpublished() throws Exception {
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
-        assertFalse(versionHistory.hasVersionLabel("foo bar-unpublished"));
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            workflow.checkoutBranch(MASTER_BRANCH_ID);
+        assertEquals("no master version yet",
+                1L, versionHistory.getAllVersions().getSize());
 
-            assertEquals(3L, versionHistory.getAllVersions().getSize());
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        final Document branch = workflow.branch("foo", "Foo");
+        final Node unpublished = branch.getNode(session);
+        Assertions.assertThat(unpublished.isSame(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get()))
+                .isTrue();
 
-            try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-                workflow.branch("foo bar", "Foo Bar");
-                fail("Branch already exists so exception expected");
-            } catch (WorkflowException e) {
-                assertEquals("Branch 'foo bar' already exists",
-                        e.getMessage());
-                assertEquals("Branching to branch for which the preview already exists should not result in an extra version",
-                        3L, versionHistory.getAllVersions().getSize());
-            }
-        }
+        Assertions.assertThat(unpublished.isNodeType(HIPPO_MIXIN_BRANCH_INFO))
+                .isTrue();
+
+        assertEquals("master version expected",
+                2L, versionHistory.getAllVersions().getSize());
+
+        final Document branchAgain = workflow.branch("foo", "Foo");
+
+        final Node unpublishedAgain = branchAgain.getNode(session);
+        Assertions.assertThat(unpublishedAgain.isSame(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get()))
+                .isTrue();
+
+        assertEquals("No extra version expected since 'foo' was already the unpublished variant",
+                2L, versionHistory.getAllVersions().getSize());
+
+        // branch to 'bar'
+        workflow.branch("bar", "Bar");
+
+        assertEquals("Foo version expected",
+                3L, versionHistory.getAllVersions().getSize());
+
+        final Document fooBranch = workflow.branch("foo", "Foo");
+
+        assertEquals("Extra version expected although 'foo' already existed but 'bar' should be versioned",
+                4L, versionHistory.getAllVersions().getSize());
+
+        Assertions.assertThat(fooBranch.getNode(session).getProperty(HIPPO_PROPERTY_BRANCH_ID).getString())
+                .as("Expected 'foo' has become the unpublished")
+                .isEqualTo("foo");
+
+        workflow.branch("bar", "Bar");
+        assertEquals("No extra version expected since 'bar' and 'foo' already exist and there were no changes",
+                4L, versionHistory.getAllVersions().getSize());
+
+        workflow.branch("foo", "Foo");
+        assertEquals("No extra version expected since 'bar' and 'foo' already exist and there were no changes",
+                4L, versionHistory.getAllVersions().getSize());
+
+        // now modify 'foo' : Then a branch to 'bar' results in a checkout of 'bar' which should version the changed 'foo'
+        workflow.obtainEditableInstance("foo");
+        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT).get().setProperty("title", "bar");
+        session.save();
+        workflow.commitEditableInstance();
+
+        final Document barBranch = workflow.branch("bar", "bar");
+        assertEquals("Extra version expected since 'foo' had changes and got replaced by 'bar'",
+                5L, versionHistory.getAllVersions().getSize());
+
+        Assertions.assertThat(barBranch.getNode(session).getProperty(HIPPO_PROPERTY_BRANCH_ID).getString())
+                .as("Expected 'bar' has become the unpublished")
+                .isEqualTo("bar");
+
     }
 
     @Test
-    public void branch_to_master_is_in_general_not_needed() throws Exception {
+    public void branch_to_id_that_already_exists_does_not_result_in_a_change() throws Exception {
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        workflow.branch("foo", "Foo");
+        workflow.branch("foo", "FooAgain");
+        Assertions.assertThat(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get().getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString())
+                .as("Name expected still to be Foo since branch already existed")
+                .isEqualTo("Foo");
+    }
 
-        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+
+    @Test
+    public void branch_to_master_if_unpublished_is_already_master() throws Exception {
+
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
         assertFalse("no master version yet", versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
 
-        {
-            final DocumentWorkflow workflow = getDocumentWorkflow(handle);
-            try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
-                workflow.branch(MASTER_BRANCH_ID, null);
-                fail("Branching master is in general not needed and should not be possible when preview is for master");
-            } catch (WorkflowException e) {
-                assertEquals("Branch 'master' already exists",
-                        e.getMessage());
-                assertEquals("Branching to master is not allowed and should not have created version",
-                        1L, versionHistory.getAllVersions().getSize());
-                assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
-            }
-        }
+        assertEquals("no master version yet",
+                1L, versionHistory.getAllVersions().getSize());
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+
+        final DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        final Document branch = workflow.branch(MASTER_BRANCH_ID, null);
+        assertTrue(branch.getNode(session).isSame(WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get()));
+
+        assertEquals("Branching to master if unpublished is already master should be NOOP",
+                1L, versionHistory.getAllVersions().getSize());
+        assertFalse(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+
     }
 
     @Test
     public void missing_master_branch_in_version_history_is_possible_and_makes_further_branching_impossible()
             throws Exception {
 
-        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
         // set a property for 'master' version
         preview.setProperty("title", "Master title");
         session.save();
@@ -337,7 +388,7 @@ public class DocumentWorkflowBranchTest extends AbstractDocumentWorkflowIntegrat
         session.save();
         workflow.commitEditableInstance();
 
-        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        final Node unpublished = WorkflowUtils.getDocumentVariantNode(handle, UNPUBLISHED).get();
 
         final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(unpublished.getPath());
 

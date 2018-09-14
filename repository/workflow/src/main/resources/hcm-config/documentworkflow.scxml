@@ -641,9 +641,6 @@
         <!-- target-less transition to create a new branch for the current unpublished variant -->
         <transition event="branch">
 
-          <hippo:workflowException cond="branchExists"
-                                   errorExpr="'Branch \'' + branchId + '\' already exists'"/>
-
           <if cond="!unpublished and !!published">
             <!-- if no unpublished variant exists yet, copy it from the published variant -->
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
@@ -651,15 +648,35 @@
             <hippo:configVariant variant="published" availabilities="live"/>
           </if>
 
-          <if cond="!currentUnpublishedVersioned">
-            <hippo:version variant="unpublished"/>
+          <if cond="branchExists">
+            <!-- branch exists, only make sure it is the current unpublished is for the branch -->
+            <if cond="unpublished.isBranch(branchId)">
+
+              <hippo:result value="unpublished"/>
+            <else/>
+
+              <if cond="!currentUnpublishedVersioned">
+                <hippo:version variant="unpublished"/>
+              </if>
+
+              <hippo:checkoutBranch variant="unpublished"/>
+              <hippo:result value="unpublished"/>
+
+            </if>
+          <else/>
+
+            <if cond="!currentUnpublishedVersioned">
+              <hippo:version variant="unpublished"/>
+            </if>
+
+            <if cond="!unpublished.master">
+              <!-- branching is always done from 'master' -->
+              <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
+            </if>
+            <hippo:branch variant="unpublished" branchName="_event.data?.branchName"/>
+
           </if>
 
-          <if cond="!unpublished.master">
-            <!-- branching is always done from 'master' -->
-            <hippo:checkoutBranch variant="unpublished" branchId="'master'"/>
-          </if>
-          <hippo:branch variant="unpublished" branchName="_event.data?.branchName"/>
         </transition>
 
       </state>
