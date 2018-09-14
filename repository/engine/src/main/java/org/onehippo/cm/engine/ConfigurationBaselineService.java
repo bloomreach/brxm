@@ -66,6 +66,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.plugin.dom.exception.InvalidStateException;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -318,7 +319,7 @@ public class ConfigurationBaselineService {
                     source.markUnchanged();
                 }
 
-                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
+                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode, module.getHcmSiteName());
                 reloadedModule.setHcmSiteName(module.getHcmSiteName());
                 reloadedModule.setHstRoot(module.getHstRoot());
                 parseSources(singletonList(reloadedModule));
@@ -390,12 +391,9 @@ public class ConfigurationBaselineService {
             storeString(is, descriptorNode, HCM_YAML);
         }
         else {
-            // if descriptor doesn't exist,
-            // TODO: throw an appropriate exception if this is to be forbidden, once demo config is reorganized
-            String dummyDescriptor = module.compileDummyDescriptor();
-
-            // write that back to the YAML property and digest it
-            storeString(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, HCM_YAML);
+            // a descriptor must exist, or this isn't a valid baseline
+            // TODO: support generating a descriptor at runtime?
+            throw new InvalidStateException("Module descriptor does not exist for module: "+module.getFullName());
         }
 
         // if this Module has an actions file...
@@ -685,7 +683,7 @@ public class ConfigurationBaselineService {
 
                 // make sure we load core modules, in addition to specified HCM Sites
                 // First phase: load and parse core module descriptors
-                final List<ModuleImpl> modules = parseDescriptors(baselineNode);
+                final List<ModuleImpl> modules = parseDescriptors(baselineNode, null);
 
                 if (isNotEmpty(hcmSites)) {
                     final Node hcmSiteCatalogNode = baselineNode.getNode(HCM_SITES);
@@ -693,9 +691,8 @@ public class ConfigurationBaselineService {
                         final Node hcmSiteNode = eni.nextNode();
                         final String hcmSiteName = hcmSiteNode.getName();
                         final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
-                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode);
+                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode, hcmSiteName);
                         hcmSiteModules.forEach(module -> {
-                            module.setHcmSiteName(hcmSiteName);
                             module.setHstRoot(JcrPaths.getPath(hstRoot));
                         });
                         modules.addAll(hcmSiteModules);
@@ -730,14 +727,14 @@ public class ConfigurationBaselineService {
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected List<ModuleImpl> parseDescriptors(final Node baselineNode)
+    protected List<ModuleImpl> parseDescriptors(final Node baselineNode, final String hcmSiteName)
             throws RepositoryException, ParserException {
         // groups accumulator
         final List<ModuleImpl> modules = new ArrayList<>();
 
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            final ModuleImpl module = loadModuleDescriptor(moduleNode);
+            final ModuleImpl module = loadModuleDescriptor(moduleNode, hcmSiteName);
             modules.add(module);
         }
 
@@ -747,12 +744,12 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Helper for {@link #parseDescriptors(Node)} -- loads one module descriptor from a given module baseline node.
+     * Helper for {@link #parseDescriptors(Node,String)} -- loads one module descriptor from a given module baseline node.
      * @param moduleNode the JCR node where the baseline for a module has been previously stored
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected ModuleImpl loadModuleDescriptor(final Node moduleNode) throws RepositoryException, ParserException {
+    protected ModuleImpl loadModuleDescriptor(final Node moduleNode, final String hcmSiteName) throws RepositoryException, ParserException {
         final ModuleImpl module;
 
         Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
@@ -763,7 +760,7 @@ public class ConfigurationBaselineService {
             // parse descriptor with ModuleDescriptorParser
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
-                    .parse(is, moduleNode.getPath());
+                    .parse(is, moduleNode.getPath(), hcmSiteName);
 
             // TODO: determine and set actual HCM Site name
 
