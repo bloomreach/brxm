@@ -22,11 +22,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.util.tester.TagTester;
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -40,10 +40,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WorkflowManagerPluginTest extends PluginTest {
@@ -104,17 +101,17 @@ public class WorkflowManagerPluginTest extends PluginTest {
         {
             Map<String, String> params = new HashMap<>();
             params.put("name", "plugin-test");
-            build(session, mount("/hippo:configuration/hippo:workflows", instantiate(category, params)));
+            build(mount("/hippo:configuration/hippo:workflows", instantiate(category, params)), session);
         }
 
         {
             Map<String, String> params = new HashMap<>();
             params.put("name", "versioning-test");
-            build(session, mount("/hippo:configuration/hippo:workflows", instantiate(category, params)));
+            build(mount("/hippo:configuration/hippo:workflows", instantiate(category, params)), session);
         }
 
         session.getRootNode().addNode("test");
-        build(session, mount("/test", content));
+        build(mount("/test", content), session);
         session.save();
     }
 
@@ -151,7 +148,8 @@ public class WorkflowManagerPluginTest extends PluginTest {
         config.put("workflow.version.categories", new String[]{"versioning-test"});
 
         final Node docNode = session.getNode("/test/folder/doc/doc");
-        final Version checkin = docNode.checkin();
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        final Version checkin = versionManager.checkpoint(docNode.getPath());
 
         DocumentWorkflowManagerPlugin manager = new DocumentWorkflowManagerPlugin(context, config);
         manager.setModel(new JcrNodeModel(checkin.getFrozenNode()));
@@ -166,90 +164,5 @@ public class WorkflowManagerPluginTest extends PluginTest {
         assertTrue(workflow instanceof TestWorkflow);
     }
 
-    @Test
-    public void when_branchIdIsNotDefined_documentWorkflowManagerUsesHandleDocumentWorkflowForVersioning() throws RepositoryException {
-        final JavaPluginConfig config = new JavaPluginConfig();
-        config.put("wicket.id", "service.root");
-        config.put("workflow.categories", new String[]{"plugin-test"});
-        config.put("workflow.version.categories", new String[]{"versioning-test"});
 
-        final Node docNode = session.getNode("/test/folder/doc/doc");
-        docNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_ID,"q");
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME,"q");
-        session.save();
-        final Version checkin = docNode.checkin();
-
-        DocumentWorkflowManagerPlugin manager = new DocumentWorkflowManagerPlugin(context, config);
-        manager.setModel(new JcrNodeModel(checkin.getFrozenNode()));
-        tester.startPage(home);
-
-        TestWorkflowPlugin plugin = context.getService("workflow.plugin", TestWorkflowPlugin.class);
-        assertEquals("versioning-test", plugin.getCategory());
-
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) plugin.getModel();
-        WorkflowDescriptor descriptor = model.getObject();
-        Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(descriptor);
-        assertTrue(workflow instanceof TestWorkflow);
-    }
-
-    @Test
-    public void when_branchIdIsDefined_and_frozenNodeBranchIdMatches_documentWorkflowManagerUsesHandleDocumentWorkflowForPlugin() throws RepositoryException {
-        final JavaPluginConfig config = new JavaPluginConfig();
-        config.put("wicket.id", "service.root");
-        config.put("workflow.categories", new String[]{"plugin-test"});
-        config.put("workflow.version.categories", new String[]{"versioning-test"});
-
-        final Node docNode = session.getNode("/test/folder/doc/doc");
-        docNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_ID,"q");
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME,"q");
-        session.save();
-        final Version checkin = docNode.checkin();
-
-        BranchIdModel branchIdModel = new BranchIdModel(context,docNode.getParent().getIdentifier());
-        branchIdModel.setInitialBranchInfo("q","q");
-
-        DocumentWorkflowManagerPlugin manager = new DocumentWorkflowManagerPlugin(context, config);
-        manager.setModel(new JcrNodeModel(checkin.getFrozenNode()));
-        tester.startPage(home);
-
-        TestWorkflowPlugin plugin = context.getService("workflow.plugin", TestWorkflowPlugin.class);
-        assertEquals("plugin-test", plugin.getCategory());
-
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) plugin.getModel();
-        WorkflowDescriptor descriptor = model.getObject();
-        Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(descriptor);
-        assertTrue(workflow instanceof TestWorkflow);
-    }
-
-    @Test
-    public void when_branchIdIsDefined_and_frozenNodeBranchIdDoenNotMatch_documentWorkflowManagerUsesHandleDocumentWorkflowForVersioning() throws RepositoryException {
-        final JavaPluginConfig config = new JavaPluginConfig();
-        config.put("wicket.id", "service.root");
-        config.put("workflow.categories", new String[]{"plugin-test"});
-        config.put("workflow.version.categories", new String[]{"versioning-test"});
-
-        final Node docNode = session.getNode("/test/folder/doc/doc");
-        docNode.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_ID,"q");
-        docNode.setProperty(HIPPO_PROPERTY_BRANCH_NAME,"q");
-        session.save();
-        final Version checkin = docNode.checkin();
-
-        BranchIdModel branchIdModel = new BranchIdModel(context,docNode.getParent().getIdentifier());
-        branchIdModel.setInitialBranchInfo("p","p");
-
-        DocumentWorkflowManagerPlugin manager = new DocumentWorkflowManagerPlugin(context, config);
-        manager.setModel(new JcrNodeModel(checkin.getFrozenNode()));
-        tester.startPage(home);
-
-        TestWorkflowPlugin plugin = context.getService("workflow.plugin", TestWorkflowPlugin.class);
-        assertEquals("versioning-test", plugin.getCategory());
-
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) plugin.getModel();
-        WorkflowDescriptor descriptor = model.getObject();
-        Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(descriptor);
-        assertTrue(workflow instanceof TestWorkflow);
-    }
 }
