@@ -22,6 +22,7 @@ class ContainerService {
     CmsService,
     DialogService,
     DragDropService,
+    EditComponentService,
     FeedbackService,
     HippoIframeService,
     PageStructureService,
@@ -35,6 +36,7 @@ class ContainerService {
     this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.DragDropService = DragDropService;
+    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
@@ -88,7 +90,7 @@ class ContainerService {
     }
     this._confirmDelete(component).then(
       this._doDelete(componentId),
-      () => this.PageStructureService.showComponentProperties(component),
+      () => this.EditComponentService.startEditing(component),
     );
   }
 

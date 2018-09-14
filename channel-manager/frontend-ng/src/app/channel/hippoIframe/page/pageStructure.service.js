@@ -26,36 +26,26 @@ class PageStructureService {
     $log,
     $q,
     ChannelService,
-    CmsService,
-    ConfigService,
-    EditComponentService,
     FeedbackService,
     HippoIframeService,
     HstCommentsProcessorService,
     HstService,
     MarkupService,
-    MaskService,
     PageMetaDataService,
   ) {
     'ngInject';
 
-    // Injected
     this.$log = $log;
     this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
-    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.HstService = HstService;
     this.MarkupService = MarkupService;
-    this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
 
     this.changeListeners = [];
-    this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
     this.clearParsedElements();
   }
 
@@ -246,40 +236,6 @@ class PageStructureService {
 
   getContainerByIframeElement(containerIFrameElement) {
     return this.containers.find(container => container.getBoxElement().is(containerIFrameElement));
-  }
-
-  showComponentProperties(componentElement) {
-    if (!componentElement) {
-      this.$log.warn('Problem opening the component properties dialog: no component provided.');
-      return;
-    }
-
-    const channel = this.ChannelService.getChannel();
-    const properties = {
-      channel: {
-        contextPath: channel.contextPath,
-        mountId: channel.mountId,
-      },
-      component: {
-        id: componentElement.getId(),
-        label: componentElement.getLabel(),
-        lastModified: componentElement.getLastModified(),
-        variant: componentElement.getRenderVariant(),
-      },
-      container: {
-        isDisabled: componentElement.container.isDisabled(),
-        isInherited: componentElement.container.isInherited(),
-      },
-      page: this.PageMetaDataService.get(),
-    };
-
-    if (this.ConfigService.relevancePresent) {
-      this.MaskService.mask();
-      this.CmsService.publish('show-component-properties', properties);
-    } else {
-      this.EditComponentService.startEditing(properties);
-      this.CmsService.reportUsageStatistic('CMSChannelsEditComponent');
-    }
   }
 
   printParsedElements() {
