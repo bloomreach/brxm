@@ -21,7 +21,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
 <html>
 
   <head>
-    <title>Hippo Repository Browser</title>
+    <title>BloomReach Repository Browser</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
         * {font-family: tahoma, arial, helvetica, sans-serif;}
