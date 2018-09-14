@@ -30,7 +30,7 @@
             <md-option ng-value="option" ng-repeat="option in picker.pickerTypes">{{ option.name }}</md-option>
           </md-select>
         </md-subheader>
-        <div hippo-tree
+        <hippo-tree
              ng-if="picker.items.length > 0"
              class="hippo-tree has-styling"
              data-items="picker.items"
@@ -39,16 +39,16 @@
              data-draggable="false">
           <a class="hippo-tree-item-toggle"
              data-nodrag stop-propagation
-             ng-click="hippoTree.toggle(this)"
+             ng-click="toggle(); hippoTree.toggle(item)"
              data-ng-if="item.expandable">
-            <md-icon md-font-icon="{{ collapsed ? 'mdi-menu-right' : 'mdi-menu-down' }}"></md-icon>
+            <md-icon md-font-icon="{{ item.collapsed ? 'mdi-menu-right' : 'mdi-menu-down' }}"></md-icon>
           </a>
           <span class="spacer" data-ng-if="!item.expandable"></span>
           <span class="angular-ui-tree-title-wrapper">
             <md-icon md-svg-icon="{{item.collapsed || !item.expandable ? 'folder-closed' : 'folder-open'}}"></md-icon>
             <span class="angular-ui-tree-title">{{ item.displayName }}</span>
           </span>
-        </div>
+        </hippo-tree>
         <div class="empty-tree" ng-if="picker.items.length === 0">{{ 'PICKER_EMPTY_TREE' | translate }}</div>
       </section>
 
