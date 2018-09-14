@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -32,22 +31,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin {
 
+    private static final String NO_MODEL_CONFIGURED = "No model configured";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowManagerPlugin.class);
-    public static final String NO_MODEL_CONFIGURED = "No model configured";
 
     private IModelReference modelReference;
+    private boolean updateMenu = true;
     private final IPluginContext context;
     private final IPluginConfig config;
 
-    private boolean updateMenu = true;
+
 
     public DocumentWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -103,7 +101,7 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
                             Node handle = node.getParent();
                             nodeSet.add(handle);
                         } else {
-                            nodeSet.add(updateModelForFrozenNodeWithCurrentBranchId(node));
+                            nodeSet.add(node);
                         }
                     }
                 }
@@ -121,46 +119,5 @@ public class DocumentWorkflowManagerPlugin extends AbstractWorkflowManagerPlugin
         super.render(target);
     }
 
-    private Node updateModelForFrozenNodeWithCurrentBranchId(final Node node) {
-        try {
-            final Node handle = getHandle(node);
-            final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
-            final String currentBranchId = branchIdModel.getBranchId();
-            log.debug("Current branch id:{}", currentBranchId);
-            if (isFrozenNode(node)) {
-                final DocumentVariant documentVariant = new DocumentVariant(node);
-                final String frozenBranchId = documentVariant.getBranchId();
-                log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
-                if (branchIdModel.isDefined() && currentBranchId.equals(frozenBranchId)) {
-                    log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
-                                    " the current branch id: {}, updating the documentModel with the associated handle."
-                            , currentBranchId);
-                    return handle;
-                }
-            }
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
-        return node;
-    }
-
-    private Node getHandle(final Node node) throws RepositoryException {
-        return isFrozenNode(node) ? getVersionHandle(node) : node;
-    }
-
-    private Node getVersionHandle(final Node frozenNode) {
-        try {
-            final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
-            final Node variant = frozenNode.getSession().getNodeByIdentifier(uuid);
-            return variant.getParent();
-        } catch (final RepositoryException e) {
-            log.warn(e.getMessage(), e);
-            return frozenNode;
-        }
-    }
-
-    private boolean isFrozenNode(final Node node) throws RepositoryException {
-        return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
-    }
 
 }
