@@ -20,7 +20,7 @@
 </subpage-toolbar>
 
 <subpage-content layout="row" class="qa-site-menu-editor" flex>
-  <div hippo-tree
+  <hippo-tree
        ng-if="$ctrl.items.length > 0"
        class="expansion-panel"
        data-items="$ctrl.items"
@@ -40,20 +40,22 @@
               <div layout="row" layout-align="start center">
                 <md-button type="button"
                            class="md-icon-button"
-                           ng-click="hippoTree.toggle(this)"
-                           ng-if="!hippoTree.isEmpty(this)"
+                           ng-click="toggle(); hippoTree.toggle(item)"
+                           ng-if="!hippoTree.isEmpty(item)"
                            aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
                   <md-icon class="mdi-18" md-font-icon="{{ collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
                 </md-button>
-                <div ng-class="{'empty-tree-item': hippoTree.isEmpty(this)}">{{ item.title }}</div>
+                <div ng-class="{'empty-tree-item': hippoTree.isEmpty(item)}">{{ item.title }}</div>
               </div>
               <div>
                 <md-button type="button"
                            class="md-icon-button"
                            aria-label="{{ ::'EDIT' | translate }}"
-                           ng-click="$ctrl.toggleEditState(item)">
+                           ng-click="$ctrl.toggleEditState(item)"
+                           data-nodrag
+                           stop-propagation>
                   <md-icon class="mdi-18"
                            md-font-icon="{{ $ctrl.editingItem.id === item.id ? 'mdi-chevron-up' : 'mdi-chevron-down' }}">
                   </md-icon>
@@ -162,7 +164,7 @@
         </div>
       </md-card>
     </form>
-  </div>
+  </hippo-tree>
   <div class="empty-tree" ng-if="$ctrl.items.length === 0">{{ ::'SUBPAGE_MENU_EDITOR_EMPTY_MENU' | translate }}</div>
   <div class="fab-space-holder"></div>
   <md-button class="md-fab md-fab-bottom-right md-accent qa-menu-item-add"
