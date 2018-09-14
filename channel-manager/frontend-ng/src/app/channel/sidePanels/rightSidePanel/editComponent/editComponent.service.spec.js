@@ -51,7 +51,7 @@ describe('EditComponentService', () => {
   };
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'open']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);

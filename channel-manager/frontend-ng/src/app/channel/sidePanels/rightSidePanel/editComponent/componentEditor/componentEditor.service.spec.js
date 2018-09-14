@@ -39,7 +39,7 @@ describe('ComponentEditorService', () => {
   }
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
 
     inject((_$q_, _$rootScope_, _ComponentEditor_, _HstComponentService_, _PageStructureService_) => {
       $q = _$q_;

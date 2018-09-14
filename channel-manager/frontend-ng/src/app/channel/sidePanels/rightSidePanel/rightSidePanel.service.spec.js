@@ -19,7 +19,7 @@ describe('RightSidePanelService', () => {
   let RightSidePanelService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel');
 
     inject((_$timeout_, _RightSidePanelService_) => {
       $timeout = _$timeout_;

@@ -21,7 +21,7 @@ import editComponentService from './editComponent.service';
 import editComponentToolsCtrl from './editComponentTools.controller';
 
 const editComponentModule = angular
-  .module('hippo-cm.channel.rightSidePanel.editComponentModule', [
+  .module('hippo-cm.channel.rightSidePanel.editComponent', [
     componentEditorModule,
   ])
   .config(editComponentConfig)

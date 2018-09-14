@@ -25,7 +25,7 @@ describe('pathLinkController', () => {
   const $element = angular.element('<div></div>');
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.fields');
 
     inject((_$componentController_, _$rootScope_, _CmsService_) => {
       $componentController = _$componentController_;
