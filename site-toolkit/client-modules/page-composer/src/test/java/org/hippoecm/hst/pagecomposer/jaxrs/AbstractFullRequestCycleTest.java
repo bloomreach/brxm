@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -55,11 +56,16 @@ import org.springframework.mock.web.MockServletContext;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class AbstractFullRequestCycleTest {
 
     protected SpringComponentManager componentManager;
-    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
     protected static ObjectMapper mapper = new ObjectMapper();
 
     protected Filter filter;
@@ -78,10 +84,8 @@ public class AbstractFullRequestCycleTest {
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
-
-        componentManager.setServletContext(servletContext);
+        HippoWebappContextRegistry.get().register(webappContext);
+        componentManager.setServletContext(webappContext.getServletContext());
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
@@ -109,7 +113,7 @@ public class AbstractFullRequestCycleTest {
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
 

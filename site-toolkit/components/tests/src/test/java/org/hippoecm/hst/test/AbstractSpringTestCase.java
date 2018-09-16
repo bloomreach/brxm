@@ -53,7 +53,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ import org.springframework.mock.web.MockServletContext;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
  * <p>
@@ -80,7 +82,11 @@ public abstract class AbstractSpringTestCase
     protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
     protected SpringComponentManager componentManager;
 
-    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
 
     @BeforeClass
     public static void clearRepository() {
@@ -112,8 +118,7 @@ public abstract class AbstractSpringTestCase
         componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
+        HippoWebappContextRegistry.get().register(webappContext);
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions()
                 .stream().filter(m -> m.getName().equals("org.hippoecm.hst.platform")).collect(Collectors.toList());
@@ -121,7 +126,7 @@ public abstract class AbstractSpringTestCase
             componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
         }
 
-        componentManager.setServletContext(servletContext);
+        componentManager.setServletContext(webappContext.getServletContext());
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
@@ -133,7 +138,7 @@ public abstract class AbstractSpringTestCase
 
     @After
     public void tearDown() throws Exception {
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         if (componentManager != null) {
             this.componentManager.stop();
             this.componentManager.close();

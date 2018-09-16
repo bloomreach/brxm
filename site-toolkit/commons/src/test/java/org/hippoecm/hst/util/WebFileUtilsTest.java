@@ -49,6 +49,9 @@ public class WebFileUtilsTest {
 
     @Test
     public void testGetBundleName_returns_default_when_mount_has_no_contextpath() {
+        expect(mount.getContextPath()).andReturn(null);
+        expect(mount.getParent()).andReturn(null);
+        replay(mount);
         assertThat(getBundleName(context), is(WebFileUtils.DEFAULT_BUNDLE_NAME));
     }
 

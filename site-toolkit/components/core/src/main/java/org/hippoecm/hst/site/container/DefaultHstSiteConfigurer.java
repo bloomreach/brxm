@@ -47,7 +47,6 @@ import org.hippoecm.hst.util.ServletConfigUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ProxiedServiceHolder;
 import org.onehippo.cms7.services.ProxiedServiceTracker;
-import org.onehippo.cms7.services.ServletContextRegistry;
 import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,10 +182,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         if (getServletContext() == null) {
             throw new ContainerException("No ServletContext available.");
         }
-
-        ServletContextRegistry.register(getServletContext(), ServletContextRegistry.WebAppType.HST);
-        log.debug("Registered servlet context '{}' at {}",
-                getServletContext().getContextPath(), ServletContextRegistry.class.getName());
 
         // If the forceful re-initialization option is not turned on
         // and the component manager were initialized in other web application,
@@ -328,10 +323,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     public synchronized void destroy() {
         log.info("Shutting down!");
         HippoServiceRegistry.removeTracker(tracker, RepositoryService.class);
-        ServletContextRegistry.unregister(getServletContext());
         HippoServiceRegistry.getService(HstModelRegistry.class).unregisterHstModel(getServletContext().getContextPath());
-        log.debug("Unregistered servlet context '{}' from {}",
-                getServletContext().getContextPath(), ServletContextRegistry.class.getName());
         destroyHstSiteConfigurationChangesCheckerThread();
 
         ComponentManager componentManager = HstServices.getComponentManager();

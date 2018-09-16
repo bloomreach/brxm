@@ -58,10 +58,13 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class AbstractPageComposerTest {
 
@@ -73,7 +76,11 @@ public class AbstractPageComposerTest {
     protected HippoSession session;
     protected Object hstModelMutex;
     protected PreviewDecorator previewDecorator;
-    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -86,10 +93,8 @@ public class AbstractPageComposerTest {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
-
-        componentManager.setServletContext(servletContext);
+        HippoWebappContextRegistry.get().register(webappContext);
+        componentManager.setServletContext(webappContext.getServletContext());
 
         final List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
@@ -122,7 +127,7 @@ public class AbstractPageComposerTest {
         session.logout();
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
 
