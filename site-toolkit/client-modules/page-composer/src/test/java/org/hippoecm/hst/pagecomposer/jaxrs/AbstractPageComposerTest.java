@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,11 +60,13 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class AbstractPageComposerTest {
 
@@ -77,7 +79,11 @@ public class AbstractPageComposerTest {
     protected Object hstModelMutex;
     protected MountDecorator mountDecorator;
     private HstConfigurationEventListener listener;
-    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -90,10 +96,8 @@ public class AbstractPageComposerTest {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
-
-        componentManager.setServletContext(servletContext);
+        HippoWebappContextRegistry.get().register(webappContext);
+        componentManager.setServletContext(webappContext.getServletContext());
 
         final List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
@@ -138,7 +142,7 @@ public class AbstractPageComposerTest {
         session.logout();
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
 

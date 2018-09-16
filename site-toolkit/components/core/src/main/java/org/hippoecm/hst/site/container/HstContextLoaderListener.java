@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.io.Serializable;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,9 @@ import org.slf4j.LoggerFactory;
  * </CODE></PRE>
  *
  * <P>
- * This listener simply invokes {@link DefaultHstSiteConfigurer} to load HST Context and initialize the container.
+ * This listener first {@link HippoWebappContextRegistry#register(HippoWebappContext) registers a HippoWebappContext}
+ * of type {@link HippoWebappContext.Type#SITE}, and then invokes {@link DefaultHstSiteConfigurer} to load HST Context
+ * and initialize the container.
  * Please be referred to {@link DefaultHstSiteConfigurer} to see how it finds and loads configurations in detail.
  * </P>
  */
@@ -46,6 +50,7 @@ public class HstContextLoaderListener implements ServletContextListener, Seriali
 
     private static Logger log = LoggerFactory.getLogger(HstContextLoaderListener.class);
 
+    private HippoWebappContext webappContext;
     private HstSiteConfigurer siteConfigurer;
 
     public HstContextLoaderListener() {
@@ -54,6 +59,8 @@ public class HstContextLoaderListener implements ServletContextListener, Seriali
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
+            webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, sce.getServletContext());
+            HippoWebappContextRegistry.get().register(webappContext);
             siteConfigurer = new DefaultHstSiteConfigurer();
             ((DefaultHstSiteConfigurer) siteConfigurer).setServletContext(sce.getServletContext());
             siteConfigurer.initialize();
@@ -64,6 +71,7 @@ public class HstContextLoaderListener implements ServletContextListener, Seriali
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        HippoWebappContextRegistry.get().unregister(webappContext);
         if (siteConfigurer != null) {
             try {
                 siteConfigurer.destroy();

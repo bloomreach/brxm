@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,17 +35,28 @@ import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public abstract class AbstractCmsRestTest {
 
     protected SpringComponentManager componentManager;
     protected HstManager hstManager;
 
-    private MockServletContext servletContext;
-    private MockServletContext servletContext2;
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
+    protected HippoWebappContext webappContext2 = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site2";
+        }
+    });
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -57,14 +68,9 @@ public abstract class AbstractCmsRestTest {
     public void setUp() throws Exception {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
-        servletContext = new MockServletContext();
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
-
-        servletContext2 = new MockServletContext();
-        servletContext2.setContextPath("/site2");
-        ServletContextRegistry.register(servletContext2, ServletContextRegistry.WebAppType.HST);
-        componentManager.setServletContext(servletContext2);
+        HippoWebappContextRegistry.get().register(webappContext);
+        HippoWebappContextRegistry.get().register(webappContext2);
+        componentManager.setServletContext(webappContext2.getServletContext());
 
         final List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
@@ -81,8 +87,8 @@ public abstract class AbstractCmsRestTest {
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
-        ServletContextRegistry.unregister(servletContext2);
+        HippoWebappContextRegistry.get().unregister(webappContext);
+        HippoWebappContextRegistry.get().unregister(webappContext2);
         HstServices.setComponentManager(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();

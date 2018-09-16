@@ -30,7 +30,8 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,13 +161,13 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
      * Map<String, LocationMapTreeItem> children
      */
     private ClassLoader getClassLoader(final String contextPath) {
-        final ServletContext context = ServletContextRegistry.getContext(contextPath);
-        if (context == null) {
+        final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+        if (webappContext == null) {
             log.warn("Cannot populate LocationMapTreeComponentDocuments because cannot find a ClassLoader for contextPath '{}'",
                     contextPath);
             return null;
         }
-        return context.getClassLoader();
+        return webappContext.getServletContext().getClassLoader();
     }
 
 

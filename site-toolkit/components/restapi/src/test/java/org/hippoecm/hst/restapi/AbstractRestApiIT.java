@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,6 +52,7 @@ public class AbstractRestApiIT {
 
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
     protected Filter filter;
 
     @BeforeClass
@@ -66,7 +68,7 @@ public class AbstractRestApiIT {
 
         servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/onehippo/**/*.class");
         servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
+        HippoWebappContextRegistry.get().register(webappContext);
 
         componentManager.setServletContext(servletContext);
 
@@ -86,7 +88,7 @@ public class AbstractRestApiIT {
 
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
 

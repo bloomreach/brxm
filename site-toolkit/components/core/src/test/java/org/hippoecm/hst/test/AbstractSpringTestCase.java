@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ import org.springframework.mock.web.MockServletContext;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
  * <p>
@@ -73,7 +75,11 @@ public abstract class AbstractSpringTestCase
     protected final static Logger log = LoggerFactory.getLogger(AbstractSpringTestCase.class);
     protected ComponentManager componentManager;
 
-    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
 
     @BeforeClass
     public static void clearRepository() {
@@ -102,10 +108,9 @@ public abstract class AbstractSpringTestCase
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.setContextPath("/site");
-        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
+        HippoWebappContextRegistry.get().register(webappContext);
 
-        componentManager.setServletContext(servletContext);
+        componentManager.setServletContext(webappContext.getServletContext());
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
@@ -115,7 +120,7 @@ public abstract class AbstractSpringTestCase
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
-        ServletContextRegistry.unregister(servletContext);
+        HippoWebappContextRegistry.get().unregister(webappContext);
         HstServices.setComponentManager(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();

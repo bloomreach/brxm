@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,10 +39,13 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.junit.Before;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
  * <p>
@@ -66,8 +69,8 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
         this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
 
-        if (ServletContextRegistry.getContext("/site2") == null) {
-            ServletContextRegistry.register(new MockServletContext() {
+        if (HippoWebappContextRegistry.get().getContext("/site2") == null) {
+            HippoWebappContextRegistry.get().register(new HippoWebappContext(SITE, new MockServletContext() {
                 public String getContextPath() {
                     return "/site2";
                 }
@@ -75,7 +78,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
                 public ClassLoader getClassLoader() {
                     return AbstractBeanTestCase.class.getClassLoader();
                 }
-            }, ServletContextRegistry.WebAppType.HST);
+            }));
         }
     }
 
