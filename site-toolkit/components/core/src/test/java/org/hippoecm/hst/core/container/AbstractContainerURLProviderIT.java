@@ -69,7 +69,7 @@ public class AbstractContainerURLProviderIT extends AbstractTestConfigurations {
     }
 
     protected MockHttpServletRequest mockRequest() {
-        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        MockHttpServletRequest request = new MockHttpServletRequest(webappContext.getServletContext());
         request.setScheme("http");
         request.setServerName("preview.myproject.hippoecm.org");
         request.setServerPort(8080);
