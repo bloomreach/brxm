@@ -905,13 +905,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     @SuppressWarnings("unchecked")
     public void serviceRegistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
 
-        if (USE_HCM_SITES_MODE == false) {
-            throw new UnsupportedOperationException(String.format("HCM Site registration is forbidden " +
-                    "for legacy projects using old structure. " +
-                    "Change '%s' property to 'true'", USE_HCM_SITES_PROPERTY));
-        }
-
-        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE && USE_HCM_SITES_MODE) {
             final ServletContext servletContext = serviceHolder.getServiceObject().getServletContext();
             final Map<String, String> hcmSiteConfig;
             try (final InputStream hcmSiteIs = servletContext.getResourceAsStream(HCM_SITE_DESCRIPTOR_LOCATION)) {
@@ -950,7 +944,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     @Override
     public void serviceUnregistered(final ServiceHolder<HippoWebappContext> serviceHolder) {
-        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE) {
+        if (serviceHolder.getServiceObject().getType() == HippoWebappContext.Type.SITE && USE_HCM_SITES_MODE) {
             final String contextPath = serviceHolder.getServiceObject().getServletContext().getContextPath();
             try {
                 lockManager.lock();
