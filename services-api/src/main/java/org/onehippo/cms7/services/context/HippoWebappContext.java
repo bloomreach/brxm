@@ -23,7 +23,7 @@ public final class HippoWebappContext {
         PLATFORM,
         CMS,
         SITE,
-        UNKNOWN
+        OTHER
     };
 
     private final Type type;

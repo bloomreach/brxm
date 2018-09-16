@@ -15,13 +15,17 @@
  */
 package org.onehippo.cms7.services.context;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.onehippo.cms7.services.HippoServiceException;
-import org.onehippo.cms7.services.ServiceHolder;
 import org.onehippo.cms7.services.WhiteboardServiceRegistry;
 
 public class HippoWebappContextRegistry extends WhiteboardServiceRegistry<HippoWebappContext> {
 
     private static final HippoWebappContextRegistry INSTANCE = new HippoWebappContextRegistry();
+
+    private static Map<String, HippoWebappContext> contextMap = new ConcurrentHashMap<>();
 
     private HippoWebappContextRegistry() {
     }
@@ -33,12 +37,22 @@ public class HippoWebappContextRegistry extends WhiteboardServiceRegistry<HippoW
     @Override
     public synchronized void register(final HippoWebappContext serviceObject) throws HippoServiceException {
         String contextPath = serviceObject.getServletContext().getContextPath();
-        for (ServiceHolder<HippoWebappContext> holder: getEntriesList()) {
-            if (contextPath.equals(holder.getServiceObject().getServletContext().getContextPath())) {
-                throw new HippoServiceException(
-                        String.format("HippoWebappContext with context path %s is already registered", contextPath));
-            }
+        if (contextMap.containsKey(contextPath)) {
+            throw new HippoServiceException(
+                    String.format("HippoWebappContext with context path %s is already registered", contextPath));
         }
         super.register(serviceObject);
+        contextMap.put(contextPath, serviceObject);
+    }
+
+    @Override
+    public synchronized boolean unregister(final HippoWebappContext serviceObject) {
+        final boolean removed = super.unregister(serviceObject);
+        contextMap.remove(serviceObject.getServletContext().getContextPath());
+        return removed;
+    }
+
+    public HippoWebappContext getContext(final String contextPath) {
+        return contextMap.get(contextPath);
     }
 }
