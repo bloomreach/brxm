@@ -26,8 +26,10 @@ import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ArrayUtils.removeElement;
@@ -40,6 +42,19 @@ import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 
+/**
+ * <p>
+ *     Removes the branch for this {@link DocumentHandle#getBranchId()} for this workflow invocation. If the
+ *     branchId is equal to {@link DocumentVariant#MASTER_BRANCH_ID} a {@link WorkflowException} is thrown since the master
+ *     branch is not allowed to be removed
+ * </p>
+ * <p>
+ *     Removing a branch 'x' removes the branch info for 'x' from all variants below the handle if the variant is for
+ *     branch 'x', it removes the branch 'x' label info from version history if present and it removes the branch 'x'
+ *     from the {@link HippoNodeType#HIPPO_BRANCHES_PROPERTY} on the handle node
+ * </p>
+ *
+ */
 public class RemoveBranchTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;

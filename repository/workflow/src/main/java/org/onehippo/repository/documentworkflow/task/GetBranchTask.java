@@ -21,6 +21,8 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.action.GetBranchAction;
 
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
@@ -28,6 +30,13 @@ import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
+/**
+ *  <p>
+ *     Returns a {@link org.hippoecm.repository.standardworkflow.DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
+ *     The {@link javax.jcr.Node} backing the {@link org.hippoecm.repository.standardworkflow.DocumentVariant} can be a
+ *     frozen node. This {@link GetBranchAction} is idempotent and does not change any state
+ * </p>
+ */
 public class GetBranchTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;

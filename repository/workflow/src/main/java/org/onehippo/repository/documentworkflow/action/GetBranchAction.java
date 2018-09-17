@@ -21,6 +21,14 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.GetBranchTask;
 
+/**
+ * <p>
+ *     Returns a {@link org.hippoecm.repository.standardworkflow.DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
+ *     The {@link javax.jcr.Node} backing the {@link org.hippoecm.repository.standardworkflow.DocumentVariant} can be a
+ *     frozen node. This {@link GetBranchAction} is idempotent and does not change any state
+ * </p>
+ *
+ */
 public class GetBranchAction extends AbstractDocumentTaskAction<GetBranchTask> {
 
     private static final long serialVersionUID = 1L;

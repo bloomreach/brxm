@@ -18,8 +18,16 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.ListBranchesTask;
+import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 
+/**
+ * <p>
+ *    Returns the available branches available via {@link DocumentHandle#getBranches()} and sets this on the
+ *    {@link SCXMLWorkflowContext}. This action is idempotent
+ * </p>
+ */
 public class ListBranchesAction extends AbstractDocumentTaskAction<ListBranchesTask> {
 
     private static final long serialVersionUID = 1L;

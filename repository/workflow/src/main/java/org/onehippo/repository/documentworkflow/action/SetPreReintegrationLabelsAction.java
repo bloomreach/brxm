@@ -20,6 +20,12 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.SetPreReintegrationLabelsTask;
 
+/**
+ * <p>
+ *     Sets pre-reintegration-labels in version history
+ * </p>
+ * @see SetPreReintegrationLabelsTask see SetPreReintegrationLabelsTask for more info
+ */
 public class SetPreReintegrationLabelsAction extends AbstractDocumentTaskAction<SetPreReintegrationLabelsTask> {
 
     private static final long serialVersionUID = 1L;

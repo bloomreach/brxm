@@ -34,6 +34,14 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
+/**
+ * <p>
+ *  Restores the supplied {@link javax.jcr.version.Version} to backing node of the supplied target. The branch of the
+ *  target node will be kept as is before the restore: For example if the target node is for branch 'foo', and the branch
+ *  for the version to be restored is 'master', then after the restore, the target node will still be for branch 'foo'
+ * </p>
+ */
+
 public class RestoreVersionByVersionTask extends AbstractDocumentTask {
 
     private Version version;

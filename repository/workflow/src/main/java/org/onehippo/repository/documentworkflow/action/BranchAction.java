@@ -21,6 +21,14 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.BranchTask;
 
+/**
+ * <p>
+ *  Branches the supplied variant to the branch {@link DocumentHandle#getBranchId()}. The supplied variant should be the
+ *  variant for the unpublished variant below the handle.
+ *
+ * </p>
+ * @see BranchTask See BranchTask for more details
+ */
 public class BranchAction extends AbstractDocumentTaskAction<BranchTask> {
 
     private static final long serialVersionUID = 1L;

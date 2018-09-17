@@ -30,6 +30,11 @@ import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
+/**
+ * Sets pre-reintegration-labels in version history. The purpose of this is that when a branch, say, 'foo', gets
+ * reintegrated, that an editor/author can trace back what the versions were for the
+ * {@link DocumentVariant#MASTER_BRANCH_ID} branch before the reintegration took place
+ */
 public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;

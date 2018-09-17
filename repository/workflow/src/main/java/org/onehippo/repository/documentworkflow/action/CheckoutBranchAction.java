@@ -16,14 +16,23 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import javax.jcr.Node;
+
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
+import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.CheckoutBranchTask;
 
 /**
- *
+ * <p>
+ *     For the supplied {@link #setVariant(String)}, checks out the branch supplied via {@link #setBranchId(String)},
+ *     which has the result that the unpublished variant below the handle gets replaced if needed with a the right branch
+ *     from version history. The {@link Node} backing the supplied {@link #setVariant(String)} is expected to be the unpublished
+ *     variant below the handle
+ *     For details about the stateLabel and forceReplace, see {@link CheckoutBranchTask}
  * </p>
+ * @see CheckoutBranchTask See CheckoutBranchTask for details
  */
 public class CheckoutBranchAction extends AbstractDocumentTaskAction<CheckoutBranchTask> {
 

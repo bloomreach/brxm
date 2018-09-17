@@ -27,6 +27,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,15 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
+/**
+ * <p>
+ *     branches the supplied {@link DocumentVariant} to the supplied {@link #setBranchId(String)}. The {@link Node}
+ *     backing the {@link DocumentVariant} must be versionable and is expected to be the unpublished variant below the
+ *     handle.
+ * </p>
+ */
 public class BranchTask extends AbstractDocumentTask {
 
     static final Logger log = LoggerFactory.getLogger(BranchTask.class);
@@ -78,6 +87,9 @@ public class BranchTask extends AbstractDocumentTask {
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
         final Node targetNode = getVariant().getNode(workflowSession);
 
+        if (!targetNode.isNodeType(MIX_VERSIONABLE)) {
+            throw new WorkflowException("Provided variant to branch should be a mix:versionable node");
+        }
         final String targetLabel = branchId + "-unpublished";
 
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();

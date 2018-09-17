@@ -20,6 +20,11 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.RestoreVersionByVersionTask;
 
+/**
+ * Restores the supplied {@link javax.jcr.version.Version} to backing node of the supplied target
+ *
+ * @see RestoreVersionByVersionTask See RestoreVersionByVersionTask for details
+ */
 public class RestoreVersionByVersionAction extends AbstractDocumentTaskAction<RestoreVersionByVersionTask> {
 
     private static final long serialVersionUID = 1L;

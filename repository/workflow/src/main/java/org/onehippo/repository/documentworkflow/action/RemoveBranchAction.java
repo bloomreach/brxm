@@ -22,9 +22,10 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.RemoveBranchTask;
 
 /**
- *
- * </p>
+ * Removes the branch for this {@link DocumentHandle#getBranchId()} for this workflow invocation
+ * @see RemoveBranchTask see RemoveBranchTask for more info
  */
+
 public class RemoveBranchAction extends AbstractDocumentTaskAction<RemoveBranchTask> {
 
     private static final long serialVersionUID = 1L;

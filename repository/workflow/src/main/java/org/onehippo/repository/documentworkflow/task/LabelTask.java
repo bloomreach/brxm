@@ -28,7 +28,12 @@ import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * <p>
+ *     Adds or removes a label to version history. When adding a label, it is mandatory to supply on which label it
+ *     should be added via {@link #setOnLabel(String)}.
+ * </p>
+ */
 public class LabelTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;

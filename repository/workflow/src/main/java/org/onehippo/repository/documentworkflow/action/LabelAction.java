@@ -21,8 +21,11 @@ import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.LabelTask;
 
 /**
- *
+ * <p>
+ *     Adds or removes a label to version history. When adding a label, it is mandatory to supply on which label it
+ *     should be added via {@link #setOnLabel(String)}.
  * </p>
+ * @see LabelTask for more details
  */
 public class LabelAction extends AbstractDocumentTaskAction<LabelTask> {
 

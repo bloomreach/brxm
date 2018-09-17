@@ -37,6 +37,26 @@ import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
 
+/**
+ * <p>
+ *     For the supplied {@link #setVariant(DocumentVariant)}, checks out the branch supplied via {@link #setBranchId(String)},
+ *     which has the result that the unpublished variant below the handle gets replaced if needed with a the right branch
+ *     from version history. The {@link Node} backing the supplied {@link DocumentVariant} is expected to be the unpublished
+ *     variant below the handle
+ * </p>
+ * <p>
+ *     If the supplied branchId is equal to {@link #ANY}, the {@link DocumentVariant#MASTER_BRANCH_ID} is checked out or
+ *     if that one is missing, the oldest branch is checked out. If branchId is equal to {@link #ANY}, it is mandatory
+ *     that a {@link #setStateLabel(String)} is provided : Then from version history, depending on the stateLabel, the
+ *     unpublished or published will be checked out.
+ * </p>
+ * <p>
+ *     If the current unpublished variant below the handle
+ *     is already for the branch to checkout, this {@link CheckoutBranchTask} will do nothing UNLESS {@code forceReplace}
+ *     is {@code true} : In that case, even if the current unpublished variant below the handle is already for the branch
+ *     to checkout, the checkout is still done.
+ * </p>
+ */
 public class CheckoutBranchTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
@@ -126,9 +146,9 @@ public class CheckoutBranchTask extends AbstractDocumentTask {
         }
         final VersionManager versionManager = workflowSession.getWorkspace().getVersionManager();
         final VersionHistory versionHistory = versionManager.getVersionHistory(targetNode.getPath());
-        if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED)) {
+        if (versionHistory.hasVersionLabel(MASTER_BRANCH_ID +"-" + stateLabel)) {
             // master has precedence
-            versionManager.restore(versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_PUBLISHED), false);
+            versionManager.restore(versionHistory.getVersionByLabel(MASTER_BRANCH_ID +"-" + stateLabel), false);
             // after restore, make sure the preview gets checked out
             return returnDocument(targetNode);
         }
