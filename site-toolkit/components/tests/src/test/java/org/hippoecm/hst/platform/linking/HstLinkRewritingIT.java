@@ -123,6 +123,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
             newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
             session.save();
+            Thread.sleep(100);
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
@@ -798,6 +799,8 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         // point the _index_ sitemap item to ${parent}/${3} : ${3} is not resolvable
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${3}");
+        session.getNode("/hst:site2/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${3}");
         session.save();
         Thread.sleep(100);
         try {
@@ -863,6 +866,8 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         // the pathInfo /aboutfolder/aboutsubfolder to point to document /aboutfolder/aboutsubfolder/aboutsubfolder
         // (note we created the document 'aboutsubfolder' below folder 'aboutsubfolder' to prove this
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
+        session.getNode("/hst:site2/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
                 .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
         session.save();
         Thread.sleep(100);

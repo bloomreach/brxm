@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -35,6 +36,8 @@ import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingEx
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_HST;
@@ -135,6 +138,10 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     @Override
     public HstModel getHstModel(final String contextPath) {
         return models.get(contextPath);
+    }
+
+    public List<HstModel> getHstModels() {
+        return ImmutableList.copyOf(models.values());
     }
 
     public PlatformHstModel getPlatformHstModel(final String contextPath) {

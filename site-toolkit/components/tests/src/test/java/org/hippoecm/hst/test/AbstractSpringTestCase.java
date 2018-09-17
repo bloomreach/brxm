@@ -121,7 +121,7 @@ public abstract class AbstractSpringTestCase
         HippoWebappContextRegistry.get().register(webappContext);
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions()
-                .stream().filter(m -> m.getName().equals("org.hippoecm.hst.platform")).collect(Collectors.toList());
+                .stream().filter(m -> m.getName().equals("org.hippoecm.hst.platform.test")).collect(Collectors.toList());
         if (!addonModuleDefinitions.isEmpty()) {
             componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
         }

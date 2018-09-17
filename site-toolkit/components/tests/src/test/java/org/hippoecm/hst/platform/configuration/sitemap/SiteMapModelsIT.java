@@ -35,6 +35,9 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsDispatcher;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.InvalidationMonitor;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -46,6 +49,7 @@ import org.junit.Test;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
+import static org.joor.Reflect.on;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -56,6 +60,8 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private Session session;
+    private PlatformHstModel hstModel;
+    private EventPathsInvalidator invalidator;
 
     @Override
     @Before
@@ -64,6 +70,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        hstModel = (PlatformHstModel) provider.getHstModel();
+        invalidator = hstModel.getEventPathsInvalidator();
     }
 
     @Override
@@ -466,11 +475,13 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
     }
 
     private void saveSession() throws RepositoryException {
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        //TODO SS: Clarify what could be the cause of failures without delay
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {}
+        invalidator.eventPaths(pathsToBeChanged);
+//        //TODO SS: Clarify what could be the cause of failures without delay
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException ex) {}
     }
 
     @Test

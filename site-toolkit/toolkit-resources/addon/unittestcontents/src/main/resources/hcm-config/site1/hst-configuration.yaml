@@ -9,9 +9,9 @@ definitions:
       /unittestsubproject:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../unittestcommon]
-      /intranettestproject:
-        jcr:primaryType: hst:configuration
-        hst:inheritsfrom: [../unittestproject]
+#      /intranettestproject:
+#        jcr:primaryType: hst:configuration
+#        hst:inheritsfrom: [../unittestproject]
       /global:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../unittestcommon]

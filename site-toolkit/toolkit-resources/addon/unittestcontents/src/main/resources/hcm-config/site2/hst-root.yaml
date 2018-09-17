@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hst:site2:
+      jcr:primaryType: hst:hst
+      /hst:configurations:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:configurations
+        /hst:default:
+          jcr:primaryType: hst:configuration
+          /hst:pages:
+            jcr:primaryType: hst:pages
+          /hst:components:
+            .meta:ignore-reordered-children: true
+            jcr:primaryType: hst:components
+          /hst:templates:
+            jcr:primaryType: hst:templates
+          /hst:sitemenus:
+            jcr:primaryType: hst:sitemenus
+          /hst:sitemapitemhandlers:
+            jcr:primaryType: hst:sitemapitemhandlers
+          /hst:catalog:
+            jcr:primaryType: hst:catalog
+      /hst:blueprints:
+        jcr:primaryType: hst:blueprints
+      /hst:hosts:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:virtualhosts
+        hst:defaultcontextpath: /site
+      /hst:sites:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:sites

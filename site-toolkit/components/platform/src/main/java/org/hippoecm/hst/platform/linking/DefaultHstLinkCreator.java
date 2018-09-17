@@ -21,14 +21,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -44,10 +48,13 @@ import org.hippoecm.hst.core.linking.RewriteContextException;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -882,20 +889,27 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          */
         private List<Mount> findAllCandidateMounts(final Mount rewriteMount, final String rewritePath,
                                                    final String hostGroupName, final String type) {
-            final List<Mount> candidateMounts = new ArrayList<>();
-            List<Mount> mountsForHostGroup;
-            if (hostGroupName == null) {
-                mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts()
-                        .getMountsByHostGroup(rewriteMount.getVirtualHost().getHostGroupName());
-            } else {
-                mountsForHostGroup = rewriteMount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);
-                if(mountsForHostGroup == null || mountsForHostGroup.isEmpty()) {
-                    log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
-                    return Collections.emptyList();
-                }
+
+            final VirtualHost virtualHost = rewriteMount.getVirtualHost();
+            final VirtualHosts virtualHosts = virtualHost.getVirtualHosts();
+
+            final String hostGroup = hostGroupName == null ? virtualHost.getHostGroupName() : hostGroupName;
+            final List<Mount> mountsForHostGroup = new ArrayList<>(virtualHosts.getMountsByHostGroup(hostGroup));
+
+            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            assert hstModelRegistry != null;
+            final List<HstModel> hstModels = hstModelRegistry.getHstModels()
+                    .stream().filter(m -> m.getHstLinkCreator() != DefaultHstLinkCreator.this)
+                    .collect(Collectors.toList());
+
+            hstModels.stream().map(hstModel -> hstModel.getVirtualHosts().getMountsByHostGroup(hostGroup)).forEach(mountsForHostGroup::addAll);
+
+            if (CollectionUtils.isEmpty(mountsForHostGroup)) {
+                log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
+                return Collections.emptyList();
             }
 
-                /*
+            /*
                  * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
                  * choose the candicate mounts as follows:
                  *
@@ -906,6 +920,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                  *
                  */
 
+            final List<Mount> candidateMounts = new ArrayList<>();
             for (Mount candidateMount : mountsForHostGroup) {
 
                 if(!candidateMount.isMapped()) {

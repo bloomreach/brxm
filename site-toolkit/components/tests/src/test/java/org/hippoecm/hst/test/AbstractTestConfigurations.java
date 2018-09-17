@@ -39,6 +39,13 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
             JcrUtils.copy(session, "/hst:hst", "/hst-backup");
             session.save();
         }
+
+        if (session.nodeExists("/hst:site2")) {
+            if (!session.nodeExists("/hst-backup2")) {
+                JcrUtils.copy(session, "/hst:site2", "/hst-backup2");
+                session.save();
+            }
+        }
     }
 
     protected void restoreHstConfigBackup(Session session) throws RepositoryException {
@@ -48,6 +55,15 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
             }
             JcrUtils.copy(session, "/hst-backup", "/hst:hst");
             session.removeItem("/hst-backup");
+            session.save();
+        }
+
+        if (session.nodeExists("/hst-backup2")) {
+            if (session.nodeExists("/hst:site2")) {
+                session.removeItem("/hst:site2");
+            }
+            JcrUtils.copy(session, "/hst-backup2", "/hst:site2");
+            session.removeItem("/hst-backup2");
             session.save();
         }
     }

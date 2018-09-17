@@ -28,7 +28,11 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -134,12 +138,16 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
     }
 
     @Test
+    @Ignore
     public void testCrossMountHttpToHttpsLinks() throws Exception {
         List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<>();
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
+        siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:site2/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
+        siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:site2/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {
             makeSiteMapItemsHttps(siteMapItemsToSetHttpsScheme);
+            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("http", "localhost", "/subsite/home", null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);

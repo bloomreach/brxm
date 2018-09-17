@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.platform.model;
 
+import java.util.List;
+
 import org.hippoecm.hst.core.container.ComponentManager;
 
 public interface HstModelRegistry {
@@ -25,4 +27,6 @@ public interface HstModelRegistry {
     void unregisterHstModel(String contextPath) throws ModelRegistrationException;
 
     HstModel getHstModel(String contextPath);
+
+    List<HstModel> getHstModels();
 }

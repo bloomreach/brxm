@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
@@ -34,13 +35,17 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -50,14 +55,16 @@ import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 /**
  * <p>
  * AbstractBeanSpringTestCase
- * </p> 
- * 
- */ 
+ * </p>
+ */
 public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private HstURLFactory hstURLFactory;
     private HstSiteMapMatcher siteMapMatcher;
+    protected MockServletContext servletContext2;
+    protected HippoWebappContext webappContext2;
+    protected SpringComponentManager componentManager2;
 
     private final static String HTTP_SCHEME = "http";
     private final static String HTTPS_SCHEME = "https";
@@ -70,7 +77,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
 
         if (HippoWebappContextRegistry.get().getContext("/site2") == null) {
-            HippoWebappContextRegistry.get().register(new HippoWebappContext(SITE, new MockServletContext() {
+            servletContext2 = new MockServletContext() {
                 public String getContextPath() {
                     return "/site2";
                 }
@@ -78,14 +85,38 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
                 public ClassLoader getClassLoader() {
                     return AbstractBeanTestCase.class.getClassLoader();
                 }
-            }));
+            };
+            webappContext2 = new HippoWebappContext(SITE, servletContext2);
+            HippoWebappContextRegistry.get().register(webappContext2);
+            AbstractBeanTestCase.this.servletContext2.setContextPath("/site2");
+
+            final Configuration containerConfiguration = getContainerConfiguration();
+            containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:site2");
+            componentManager2 = new SpringComponentManager(containerConfiguration);
+            componentManager2.setConfigurationResources(getConfigurations());
+            componentManager2.setServletContext(AbstractBeanTestCase.this.servletContext2);
+            componentManager2.initialize();
+            componentManager2.start();
+
+            final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            modelRegistry.registerHstModel("/site2", this.getClass().getClassLoader(), componentManager2, true);
         }
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (componentManager2 != null) {
+            this.componentManager2.stop();
+            this.componentManager2.close();
+        }
+        HippoWebappContextRegistry.get().unregister(webappContext2);
     }
 
     protected ObjectConverter getObjectConverter() {
         return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);
     }
-    
+
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         annotatedClasses.add(TextBean.class);
@@ -134,11 +165,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
                 request.setLocalPort(port);
                 request.setServerPort(port);
             }
-            if (scheme == null) {
-                request.setScheme(HTTP_SCHEME);
-            } else {
-                request.setScheme(scheme);
-            }
+            request.setScheme(scheme == null ? HTTP_SCHEME : scheme);
             request.setServerName(host);
             request.addHeader("Host", hostAndPort);
             setRequestInfo(request, "/site", pathInfo);
@@ -161,9 +188,9 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        return vhosts.matchSiteMapItem(url);
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        return resolvedMount.matchSiteMapItem(url.getPathInfo());
     }
-
 
 
 }

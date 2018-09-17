@@ -7,9 +7,9 @@ definitions:
       /unittestsubproject:
         jcr:primaryType: hst:site
         hst:content: /unittestcontent/documents/unittestsubproject
-      /intranettestproject:
-        jcr:primaryType: hst:site
-        hst:content: /unittestcontent/documents/unittestproject
+#      /intranettestproject:
+#        jcr:primaryType: hst:site
+#        hst:content: /unittestcontent/documents/unittestproject
       /global:
         jcr:primaryType: hst:site
         hst:content: /unittestcontent/documents/unittestproject

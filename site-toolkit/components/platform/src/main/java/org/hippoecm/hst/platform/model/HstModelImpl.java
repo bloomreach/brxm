@@ -71,7 +71,7 @@ public class HstModelImpl implements PlatformHstModel {
     private final HstNodeLoadingCache hstNodeLoadingCache;
     private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
-    private final DefaultHstLinkCreator hstLinkCreator;
+    private final HstLinkCreator hstLinkCreator;
     private final ChannelManager channelManager;
 
     private volatile VirtualHosts virtualHosts;
@@ -96,8 +96,10 @@ public class HstModelImpl implements PlatformHstModel {
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
         configureSiteMapMatcher();
 
-        hstLinkCreator = new DefaultHstLinkCreator();
-        configureHstLinkCreator();
+        DefaultHstLinkCreator defaultHstLinkCreator = new DefaultHstLinkCreator();
+        configureHstLinkCreator(defaultHstLinkCreator, websiteComponentManager);
+
+        this.hstLinkCreator = defaultHstLinkCreator;
 
         channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
 
@@ -230,11 +232,12 @@ public class HstModelImpl implements PlatformHstModel {
         return new DefaultRewriteContextResolver();
     }
 
-    private void configureHstLinkCreator() {
+    private void configureHstLinkCreator(final DefaultHstLinkCreator hstLinkCreator, final ComponentManager websiteComponentManager) {
         final List<String> binaryLocations = websiteComponentManager.getComponent(HstLinkCreator.class.getName() + ".binaryLocations");
         hstLinkCreator.setBinaryLocations(binaryLocations.toArray(new String[binaryLocations.size()]));
 
-        hstLinkCreator.setPageNotFoundPath(websiteContainerConfiguration.getString("linkrewriting.failed.path", DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH));
+        hstLinkCreator.setPageNotFoundPath(websiteComponentManager.getContainerConfiguration()
+                .getString("linkrewriting.failed.path", DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH));
 
         hstLinkCreator.setRewriteContextResolver(getRewriteContextResolver(websiteComponentManager));
 
