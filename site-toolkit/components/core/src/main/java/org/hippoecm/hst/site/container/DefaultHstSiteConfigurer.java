@@ -44,10 +44,6 @@ import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.ProxiedServiceHolder;
-import org.onehippo.cms7.services.ProxiedServiceTracker;
-import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,8 +118,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private final static Logger log = LoggerFactory.getLogger(DefaultHstSiteConfigurer.class);
 
-    private static final long serialVersionUID = 1L;
-
     private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
 
     private static final String HST_CONFIG_PROPERTIES = "hst-config.properties";
@@ -164,7 +158,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private ServletContext servletContext;
 
-    private Thread initThread;
+    private HstModelRegistry hstModelRegistry;
 
     public DefaultHstSiteConfigurer() {
     }
@@ -178,10 +172,11 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     }
 
     @Override
-    public void initialize() throws ContainerException {
+    public void initialize(final HstModelRegistry hstModelRegistry) throws ContainerException {
         if (getServletContext() == null) {
             throw new ContainerException("No ServletContext available.");
         }
+        this.hstModelRegistry = hstModelRegistry;
 
         // If the forceful re-initialization option is not turned on
         // and the component manager were initialized in other web application,
@@ -210,21 +205,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
         }
 
-        tracker = new ProxiedServiceTracker<RepositoryService>() {
-            @Override
-            public void serviceRegistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
-                DefaultHstSiteConfigurer.this.initializeComponentManager();
-            }
-
-            @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
-                //Ignore unregistration
-            }
-        };
-        HippoServiceRegistry.addTracker(tracker, RepositoryService.class);
+        initializeComponentManager();
     }
-
-    ProxiedServiceTracker<RepositoryService> tracker;
 
     protected synchronized boolean isInitialized() {
         return initialized;
@@ -235,16 +217,16 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         ComponentManager oldComponentManager = HstServices.getComponentManager();
 
         if (oldComponentManager != null) {
-            log.info("HstSiteConfigServlet will re-initialize the Component manager...");
+            log.info("HstSiteConfigurer will re-initialize the Component manager...");
             oldComponentManager.publishEvent(new ComponentManagerBeforeReplacedEvent(oldComponentManager));
         }
 
         try {
             log.info(INIT_START_MSG);
 
-            log.info("HstSiteConfigServlet attempting to create the Component manager...");
+            log.info("HstSiteConfigurer attempting to create the Component manager...");
             componentManager = new SpringComponentManager(getServletContext(), configuration);
-            log.info("HSTSiteServlet attempting to start the Component Manager...");
+            log.info("HSTSiteConfigurer attempting to start the Component Manager...");
 
             if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {
                 String [] configurations = componentManager.getConfigurationResources();
@@ -259,12 +241,12 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
             componentManager.initialize();
             componentManager.start();
-            log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
-
-            HstServices.setComponentManager(componentManager);
+            log.info("HstSiteConfigurer has successfuly started the Component Manager....");
 
             if (oldComponentManager != null) {
-                log.info("HstSiteConfigServlet attempting to stop the old component manager...");
+                HstServices.setComponentManager(null);
+                hstModelRegistry.unregisterHstModel(getServletContext().getContextPath());
+                log.info("HstSiteConfigurer attempting to stop the old component manager...");
                 try {
                     oldComponentManager.stop();
                     oldComponentManager.close();
@@ -273,36 +255,14 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 }
             }
 
-            // TODO HSTTWO-4355 the platform webapp always needs to be initialized first since it
-            // TODO HSTTWO-4355 registers the HstModelRegistry : We need a cleaner logic here below instead of the thread
-            // TODO sleep
-//            while (HippoServiceRegistry.getService(HstModelRegistry.class) == null) {
-//                // sleep until the platform webapp has initialized and registered the HstModelRegistry
-//                log.info("Waiting until platform webapp has initialized");
-//                Thread.sleep(100);
-//            }
-
-            final SpringComponentManager finalComponentManager = componentManager;
-
-            HippoServiceRegistry.addTracker(new ProxiedServiceTracker<HstModelRegistry>() {
-                @Override
-                public void serviceRegistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
-                    serviceHolder.getServiceProxy().registerHstModel(DefaultHstSiteConfigurer.this.getServletContext().getContextPath(),
-                            DefaultHstSiteConfigurer.this.getClass().getClassLoader(),
-                            finalComponentManager, !lazyHstConfigurationLoading);
-
-                    log.info(INIT_DONE_MSG);
-                    initialized = true;
-                }
-
-                @Override
-                public void serviceUnregistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
-
-                }
-
-            }, HstModelRegistry.class);
+            hstModelRegistry.registerHstModel(DefaultHstSiteConfigurer.this.getServletContext().getContextPath(),
+                    DefaultHstSiteConfigurer.this.getClass().getClassLoader(),
+                    componentManager, !lazyHstConfigurationLoading);
+            HstServices.setComponentManager(componentManager);
+            initialized = true;
+            log.info(INIT_DONE_MSG);
         } catch (Exception e) {
-            log.error("HstSiteConfigServlet: ComponentManager initialization failed.", e);
+            log.error("HstSiteConfigurer: ComponentManager initialization failed.", e);
 
             if (componentManager != null) {
                 try { 
@@ -321,24 +281,26 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     @Override
     public synchronized void destroy() {
-        log.info("Shutting down!");
-        HippoServiceRegistry.removeTracker(tracker, RepositoryService.class);
-        HippoServiceRegistry.getService(HstModelRegistry.class).unregisterHstModel(getServletContext().getContextPath());
-        destroyHstSiteConfigurationChangesCheckerThread();
+        if (hstModelRegistry != null) {
+            log.info("Shutting down!");
+            initialized = false;
+            destroyHstSiteConfigurationChangesCheckerThread();
 
-        ComponentManager componentManager = HstServices.getComponentManager();
-        // componentManager can be null if HstSiteConfigServlet didn't finish the initialization yet.
-        if (componentManager != null) {
-            try {
-                componentManager.stop();
-                componentManager.close();
-            } catch (Exception e) {
-                log.warn("Component Manager stopping/closing error", e);
-            } finally {
-                HstServices.setComponentManager(null);
+            ComponentManager componentManager = HstServices.getComponentManager();
+            HstServices.setComponentManager(null);
+            hstModelRegistry.unregisterHstModel(getServletContext().getContextPath());
+            // componentManager can be null if HstSiteConfigServlet didn't finish the initialization yet.
+            if (componentManager != null) {
+                try {
+                    componentManager.stop();
+                    componentManager.close();
+                } catch (Exception e) {
+                    log.warn("Component Manager stopping/closing error", e);
+                }
             }
+            hstModelRegistry = null;
+            log.info("Done Shutting down!");
         }
-        log.info("Done Shutting down!");
     }
 
     /**

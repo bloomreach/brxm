@@ -29,12 +29,12 @@ public class PlatformServicesImpl implements PlatformServices
     private HstModelRegistryImpl hstModelRegistry;
     private PreviewDecorator previewDecorator;
 
-    private void init() {
-        HippoServiceRegistry.registerService(this, PlatformServices.class);
+    public void init() {
+        HippoServiceRegistry.register(this, PlatformServices.class);
     }
 
-    private void stop() {
-        HippoServiceRegistry.unregisterService(this, PlatformServices.class);
+    public void destroy() {
+        HippoServiceRegistry.unregister(this, PlatformServices.class);
     }
 
     public void setPreviewDecorator(final PreviewDecorator previewDecorator) {

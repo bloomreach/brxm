@@ -32,7 +32,6 @@ import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
-import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,23 +46,20 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     private final Map<String, HstModelImpl> models = new HashMap<>();
 
     private Repository repository;
-    private Credentials credentials;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
 
-    public void setCredentials(final Credentials credentials) {
-        this.credentials = credentials;
+    public void init() {
+        HippoServiceRegistry.register(this, HstModelRegistry.class);
     }
 
-    private void init() {
-        HippoServiceRegistry.registerService(this, HstModelRegistry.class);
-    }
-
-    private void stop() {
-        HippoServiceRegistry.unregisterService(this, HstModelRegistry.class);
-        // TODO HSTTWO-4355 should we unregister all hst models as well?
+    public synchronized void destroy() {
+        for (String contextPath : getModels().keySet()) {
+            unregisterHstModel(contextPath);
+        }
+        HippoServiceRegistry.unregister(this, HstModelRegistry.class);
     }
 
     public Map<String, HstModel> getModels() {
@@ -75,12 +71,13 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     // TODO HSTTWO-4355 register listeners for jcr events!!
     // TODO HSTTWO-4355 if a root hst:hst node gets deleted, remove the listener and remove from virtualHostsSuppliers
     @Override
-    public HstModel registerHstModel(final String contextPath, final ClassLoader websiteClassLoader,
+    public synchronized HstModel registerHstModel(final String contextPath, final ClassLoader websiteClassLoader,
                                      final ComponentManager websiteComponentManager, final boolean loadHstConfigNodes) throws ModelRegistrationException {
         if (models.containsKey(contextPath)) {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
         try {
+            Credentials credentials = websiteComponentManager.getComponent(Credentials.class.getName() + ".hstconfigreader.delegating");
             final Session session = repository.login(credentials);
             final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
             final String rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
@@ -104,7 +101,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                     hstNodeLoadingCache.getRootPath() + "/" + NODENAME_HST_CONFIGURATIONS + "/");
 
             if (loadHstConfigNodes) {
-                loadHstConfigNodes(websiteClassLoader, hstNodeLoadingCache);
+                loadHstConfigNodes(hstNodeLoadingCache);
             }
 
             final HstModelImpl model = new HstModelImpl(session, contextPath, websiteClassLoader, websiteComponentManager,
@@ -123,14 +120,9 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     }
 
     @Override
-    public void unregisterHstModel(final String contextPath) {
-        // TODO HSTTWO-4355 should this do more? Potentially stop the website component manager as well if needed?
-        // TODO currently this methods is invoked by org.hippoecm.hst.site.container.DefaultHstSiteConfigurer.destroy()
-        // TODO which stops the component manager as well...shouldn't we do that here?
+    public synchronized void unregisterHstModel(final String contextPath) {
         final HstModelImpl remove = models.remove(contextPath);
-        if (remove == null) {
-            throw new ModelRegistrationException(String.format("Could not remove HstModel for '%s' since no such model present", contextPath));
-        } else {
+        if (remove != null) {
             try {
                 remove.destroy();
             } catch (Exception e) {
@@ -142,20 +134,14 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     @Override
     public HstModel getHstModel(final String contextPath) {
-
-        final HstModel model = models.get(contextPath);
-        if (model == null) {
-            throw new IllegalArgumentException(String.format("No HstModel present for context '%s'.", contextPath));
-        }
-        return model;
-
+        return models.get(contextPath);
     }
 
     public PlatformHstModel getPlatformHstModel(final String contextPath) {
         return (PlatformHstModel)getHstModel(contextPath);
     }
 
-    private void loadHstConfigNodes(final ClassLoader websiteClassLoader, final HstNodeLoadingCache hstNodeLoadingCache) throws InterruptedException {
+    private void loadHstConfigNodes(final HstNodeLoadingCache hstNodeLoadingCache) throws InterruptedException {
         final long start = System.currentTimeMillis();
         // triggers the loading of all the hst configuration nodes
         HstNode root = null;
@@ -172,21 +158,6 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                 }
             }
         }
-        log.info("Loaded all HST Configuraion JCR nodes in {} ms.", (System.currentTimeMillis() - start));
-        // use the right class loader
-        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-        try {
-            if (websiteClassLoader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(websiteClassLoader);
-            }
-            HstServices.setHstConfigurationNodesLoaded(true);
-        } catch (Exception e) {
-            log.error("Exception loading model", e);
-            throw e;
-        } finally {
-            if (websiteClassLoader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
-            }
-        }
+        log.info("Loaded all HST Configuration JCR nodes in {} ms.", (System.currentTimeMillis() - start));
     }
 }

@@ -132,13 +132,15 @@ public abstract class AbstractSpringTestCase
         HstServices.setComponentManager(getComponentManager());
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel("/site", this.getClass().getClassLoader(), componentManager, true);
-
+        modelRegistry.registerHstModel(webappContext.getServletContext().getContextPath(),
+                this.getClass().getClassLoader(), componentManager, true);
     }
 
     @After
     public void tearDown() throws Exception {
         HippoWebappContextRegistry.get().unregister(webappContext);
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.unregisterHstModel(webappContext.getServletContext().getContextPath());
         if (componentManager != null) {
             this.componentManager.stop();
             this.componentManager.close();

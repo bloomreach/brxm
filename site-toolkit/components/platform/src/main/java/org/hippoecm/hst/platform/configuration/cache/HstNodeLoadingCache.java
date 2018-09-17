@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +47,17 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     private Repository repository;
     private Credentials credentials;
     private Set<HstEvent> events;
+    private boolean hstNodesLoaded;
 
     public HstNodeLoadingCache(final Repository repository, final Credentials credentials, final String rootPath) {
         this.rootPath = rootPath;
         rootPathLength = rootPath.length();
         this.repository = repository;
         this.credentials = credentials;
+    }
+
+    public boolean isHstNodesLoaded() {
+        return hstNodesLoaded;
     }
 
     @Override
@@ -85,6 +89,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         try (LazyCloseableSession lazyCloseableSession = createLazyCloseableSession()) {
             if (rootNode == null) {
                 rootNode = new HstNodeImpl(lazyCloseableSession.getSession().getNode(rootPath), null);
+                hstNodesLoaded = true;
                 events = null;
             } else if (events != null) {
                 // reload only certain parts

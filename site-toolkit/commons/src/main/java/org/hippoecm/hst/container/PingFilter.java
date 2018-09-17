@@ -26,6 +26,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -59,7 +60,7 @@ public class PingFilter implements Filter {
      * </p>
      * <p>
      *     By default, the check is based on whether the HST Configuration JCR Nodes all have been loaded into memory.
-     *     (indicated by {@link HstServices#isHstConfigurationNodesLoaded()} returning {@code true}.
+     *     (indicated by {@link HstModel#isHstConfigurationNodesLoaded()} returning {@code true}.
      *     This is the best check because it means the HST only needs to build its in memory model and does not need to
      *     fetch all jcr Nodes any more from the repository.
      * </p>
@@ -122,9 +123,10 @@ public class PingFilter implements Filter {
             case hstConfigNodes:
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
                 try {
-                    hstModelRegistry.getHstModel(request.getServletContext().getContextPath());
-                    // model is available and most likely hst config nodes already loaded
-                    // TODO make sure hst config nodes are really loaded in the HstNodeLoadingCache
+                    HstModel hstModel = hstModelRegistry.getHstModel(request.getServletContext().getContextPath());
+                    if (hstModel != null && hstModel.isHstConfigurationNodesLoaded()) {
+                        available(request, res);
+                    }
                     return;
                 } catch (IllegalArgumentException e) {
                     log.info("No HST Model available yet for '{}'", request.getServletContext().getContextPath());

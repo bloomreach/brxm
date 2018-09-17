@@ -15,13 +15,17 @@
  */
 package org.hippoecm.hst.site.container;
 
-import java.io.Serializable;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,46 +43,103 @@ import org.slf4j.LoggerFactory;
  *
  * <P>
  * This listener first {@link HippoWebappContextRegistry#register(HippoWebappContext) registers a HippoWebappContext}
- * of type {@link HippoWebappContext.Type#SITE}, and then invokes {@link DefaultHstSiteConfigurer} to load HST Context
- * and initialize the container.
- * Please be referred to {@link DefaultHstSiteConfigurer} to see how it finds and loads configurations in detail.
+ * of type {@link HippoWebappContext.Type#SITE}, and then waits for the services {@link RepositoryService} and
+ * {@link HstModelRegistry} to be available before using a {@link DefaultHstSiteConfigurer} to load HST Context and
+ * initialize the container.
+ * Please refer to {@link DefaultHstSiteConfigurer} to see how it finds and loads configurations in detail.
  * </P>
  */
-public class HstContextLoaderListener implements ServletContextListener, Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class HstContextLoaderListener implements ServletContextListener {
 
     private static Logger log = LoggerFactory.getLogger(HstContextLoaderListener.class);
 
     private HippoWebappContext webappContext;
+    private ProxiedServiceTracker<RepositoryService> repositoryServiceTracker;
+    private ProxiedServiceTracker<HstModelRegistry> hstModelRegistryTracker;
     private HstSiteConfigurer siteConfigurer;
-
-    public HstContextLoaderListener() {
-    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        try {
-            webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, sce.getServletContext());
-            HippoWebappContextRegistry.get().register(webappContext);
-            siteConfigurer = new DefaultHstSiteConfigurer();
-            ((DefaultHstSiteConfigurer) siteConfigurer).setServletContext(sce.getServletContext());
-            siteConfigurer.initialize();
-        } catch (Exception e) {
-            log.error("Error occurred while initializing HstSiteConfigurer.", e);
-        }
+        webappContext = new HippoWebappContext(getContextType(), sce.getServletContext());
+        HippoWebappContextRegistry.get().register(webappContext);
+        trackRepositoryService();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        untrackRepositoryService();
         HippoWebappContextRegistry.get().unregister(webappContext);
+        webappContext = null;
+    }
+
+    protected HippoWebappContext.Type getContextType() {
+        return HippoWebappContext.Type.SITE;
+    }
+
+    protected void trackRepositoryService() {
+        repositoryServiceTracker = new ProxiedServiceTracker<RepositoryService>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
+                trackHstModelRegistry(serviceHolder.getServiceProxy());
+            }
+
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
+                untrackHstModelRegistry();
+            }
+        };
+        HippoServiceRegistry.addTracker(repositoryServiceTracker, RepositoryService.class);
+    }
+
+    protected void untrackRepositoryService() {
+        if (repositoryServiceTracker != null) {
+            HippoServiceRegistry.removeTracker(repositoryServiceTracker, RepositoryService.class);
+            repositoryServiceTracker = null;
+            untrackHstModelRegistry();
+        }
+    }
+
+    protected void trackHstModelRegistry(final RepositoryService repository) {
+        hstModelRegistryTracker = new ProxiedServiceTracker<HstModelRegistry>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
+                configureHstSite(serviceHolder.getServiceProxy());
+            }
+
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
+                destroyHstSite();
+            }
+        };
+        HippoServiceRegistry.addTracker(hstModelRegistryTracker, HstModelRegistry.class);
+    }
+
+    protected void untrackHstModelRegistry() {
+        if (hstModelRegistryTracker != null) {
+            HippoServiceRegistry.removeTracker(hstModelRegistryTracker, HstModelRegistry.class);
+            hstModelRegistryTracker = null;
+            destroyHstSite();
+        }
+    }
+
+    protected void configureHstSite(final HstModelRegistry hstModelRegistry) {
+        siteConfigurer = new DefaultHstSiteConfigurer();
+        ((DefaultHstSiteConfigurer) siteConfigurer).setServletContext(webappContext.getServletContext());
+        try {
+            siteConfigurer.initialize(hstModelRegistry);
+        } catch (ContainerException e) {
+            log.error("Error occurred while initializing HstSiteConfigurer.", e);
+        }
+    }
+
+    protected void destroyHstSite() {
         if (siteConfigurer != null) {
             try {
                 siteConfigurer.destroy();
             } catch (Exception e) {
                 log.error("Error occurred while destroying HstSiteConfigurer.", e);
             }
+            siteConfigurer = null;
         }
     }
-
 }

@@ -79,7 +79,6 @@ public class HstModelImpl implements PlatformHstModel {
 
     private InvalidationMonitor invalidationMonitor;
 
-
     public HstModelImpl(final Session session,
                         final String contextPath,
                         final ClassLoader websiteClassLoader,
@@ -163,6 +162,11 @@ public class HstModelImpl implements PlatformHstModel {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isHstConfigurationNodesLoaded() {
+        return hstNodeLoadingCache.isHstNodesLoaded();
     }
 
     private void augment(final VirtualHostsService virtualHosts) throws ContainerException {

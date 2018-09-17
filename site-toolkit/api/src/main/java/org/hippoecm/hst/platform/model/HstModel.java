@@ -29,4 +29,5 @@ public interface HstModel {
 
     HstLinkCreator getHstLinkCreator();
 
+    boolean isHstConfigurationNodesLoaded();
 }
