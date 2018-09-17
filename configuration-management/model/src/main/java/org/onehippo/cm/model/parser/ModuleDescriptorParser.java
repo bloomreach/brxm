@@ -21,6 +21,7 @@ import java.util.Map;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SiteImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
@@ -49,20 +50,21 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
         final Node moduleNode = rootNodeMap.get(MODULE_KEY);
 
-        final GroupImpl groupImpl = constructGroup(groupNode, hcmSiteName);
+        final SiteImpl site = new SiteImpl(hcmSiteName);
+        final GroupImpl groupImpl = constructGroup(groupNode, site);
         final ProjectImpl project = constructProject(projectNode, groupImpl);
 
-        return constructModule(moduleNode, project, hcmSiteName);
+        return constructModule(moduleNode, project);
     }
 
-    protected GroupImpl constructGroup(final Node src, final String hcmSiteName) throws ParserException {
+    protected GroupImpl constructGroup(final Node src, final SiteImpl site) throws ParserException {
 
         if (src instanceof ScalarNode) {
-            return new GroupImpl(asStringScalar(src), hcmSiteName);
+            return new GroupImpl(asStringScalar(src), site);
         } else {
             final Map<String, Node> groupMap = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(groupMap.get(NAME_KEY));
-            final GroupImpl group = new GroupImpl(name, hcmSiteName);
+            final GroupImpl group = new GroupImpl(name, site);
             group.addAfter(asSingleOrSetOfStrScalars(groupMap.get(AFTER_KEY)));
             return group;
         }
@@ -80,15 +82,15 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent, final String hcmSiteName) throws ParserException {
+    protected ModuleImpl constructModule(final Node src, final ProjectImpl parent) throws ParserException {
         ModuleImpl module;
         if (src instanceof ScalarNode) {
-            module = parent.addModule(asStringScalar(src), hcmSiteName);
+            module = parent.addModule(asStringScalar(src));
         } else {
             final Map<String, Node> map =
                     asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(map.get(NAME_KEY));
-            module = parent.addModule(name,  hcmSiteName);
+            module = parent.addModule(name);
             module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
         }
 

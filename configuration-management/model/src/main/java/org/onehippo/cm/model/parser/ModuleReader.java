@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.SiteImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleContext;
@@ -81,10 +82,9 @@ public class ModuleReader {
     }
 
     public ModuleContext read(final Path moduleDescriptorPath, final boolean verifyOnly,
-                           final String extensionName, final JcrPath hstRoot) throws IOException, ParserException {
-        final ModuleImpl module = readDescriptor(moduleDescriptorPath, extensionName);
+                           final String siteName, final JcrPath hstRoot) throws IOException, ParserException {
+        final ModuleImpl module = readDescriptor(moduleDescriptorPath, siteName);
 
-        module.setHcmSiteName(extensionName);
         module.setHstRoot(hstRoot);
 
         final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
@@ -99,8 +99,7 @@ public class ModuleReader {
         // if there was already a matching module in the comparisonModule, use the extension info from that one
         comparisonModel.getModulesStream().filter(Predicate.isEqual(module)).findFirst()
                 .ifPresent(comparisonModule -> {
-            module.getProject().getGroup().setHcmSiteName(comparisonModule.getHcmSiteName());
-            module.setHcmSiteName(comparisonModule.getHcmSiteName());
+            module.getProject().getGroup().setSite(new SiteImpl(comparisonModule.getSiteName()));
             module.setHstRoot(comparisonModule.getHstRoot());
         });
 
@@ -109,12 +108,12 @@ public class ModuleReader {
         return moduleContext;
     }
 
-    private ModuleImpl readDescriptor(final Path moduleDescriptorPath, final String extensionName) throws IOException, ParserException {
+    private ModuleImpl readDescriptor(final Path moduleDescriptorPath, final String siteName) throws IOException, ParserException {
         try (InputStream inputStream = Files.newInputStream(moduleDescriptorPath.toRealPath());
              final InputStream moduleDescriptorInputStream = new BufferedInputStream(inputStream)) {
 
             final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-            return moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString(), extensionName);
+            return moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString(), siteName);
         }
     }
 

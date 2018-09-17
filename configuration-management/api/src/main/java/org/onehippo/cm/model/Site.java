@@ -15,23 +15,37 @@
  */
 package org.onehippo.cm.model;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the first level of a three-level hierarchy used for managing dependency relationships between
  * {@link Module}s. This is intended to equate conceptually to the level of Maven group IDs in that dependency
  * management system.
  */
-public interface Group extends OrderableByName, Comparable<Group> {
+public interface Site extends OrderableByName, Comparable<Site> {
+    /**
+     * Name of the core "site"
+     */
+    String CORE_NAME = "core";
 
     /**
-     * @return the HCM Site to which this group belongs (which might be the core, and not actually a site)
+     * @return the name of the HCM site to which this group belongs, or null if this is part of the core model
+     * @see Module#getSiteName()
      */
-    Site getSite();
+    String getName();
 
     /**
      * @return The immutable list of {@link Project}s currently in this Group.
      */
-    List<? extends Project> getProjects();
+    List<? extends Group> getGroups();
+
+    /**
+     * @return HcmSite has baked-in ordering: core is first, and other sites are alphabetically ordered
+     */
+    default Set<String> getAfter() {
+        return getName()==CORE_NAME? Collections.emptySet(): Collections.singleton(CORE_NAME);
+    }
 
 }

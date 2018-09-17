@@ -22,7 +22,7 @@ import java.util.List;
  * {@link Module}s.  This is intended to equate conceptually to the level of Maven projects in that dependency
  * management system.
  */
-public interface Project extends OrderableByName {
+public interface Project extends OrderableByName, Comparable<Project> {
 
     /**
      * @return the {@link Group} to which this Project belongs

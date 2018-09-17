@@ -28,12 +28,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Site;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
@@ -48,13 +49,16 @@ import org.onehippo.cm.model.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.model.Site.CORE_NAME;
+
 public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private static final OrderableByNameListSorter<Group> groupSorter = new OrderableByNameListSorter<>(Group.class);
+    private static final OrderableByNameListSorter<Site> siteSorter = new OrderableByNameListSorter<>(Site.class);
 
-    private final List<GroupImpl> buildingGroups = new ArrayList<>();
+    private final Map<String, SiteImpl> buildingSites = new HashMap<>();
+    private final List<SiteImpl> sites = new ArrayList<>();
     private final List<GroupImpl> groups = new ArrayList<>();
     private final List<GroupImpl> sortedGroups = Collections.unmodifiableList(groups);
 
@@ -74,8 +78,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final Map<JcrPath, ConfigurationPropertyImpl> modifiableDeletedConfigProperties = new HashMap<>();
     private final Map<JcrPath, ConfigurationPropertyImpl> deletedConfigProperties = Collections.unmodifiableMap(modifiableDeletedConfigProperties);
-    private final Set<String> modifiableHcmSiteNames = new HashSet<>();
-    private final Set<String> hcmSiteNames = Collections.unmodifiableSet(modifiableHcmSiteNames);
+    private final Set<String> modifiableSiteNames = new HashSet<>();
+    private final Set<String> siteNames = Collections.unmodifiableSet(modifiableSiteNames);
     private final Set<JcrPath> modifiableHstRoots = new HashSet<>();
     private final Set<JcrPath> hstRoots = Collections.unmodifiableSet(modifiableHstRoots);
 
@@ -107,14 +111,14 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     /**
-     * The set of all names of hcm sites present in this model. The "core" is always assumed to be present and
+     * The set of all names of sites present in this model. The "core" is always assumed to be present and
      * does not have an explicit representation. Thus, a core-only model will return an empty Set.
      * @return a Set of names for hcm sites present in this model; does not contain null
      * @since 2.0
      */
     @Override
-    public Set<String> getHcmSiteNames() {
-        return hcmSiteNames;
+    public Set<String> getSiteNames() {
+        return siteNames;
     }
 
     @Override
@@ -186,11 +190,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return this, for chaining
      */
     public ConfigurationModelImpl addGroup(final GroupImpl group) {
-        if (!buildingGroups.contains(group)) {
-            buildingGroups.add(new GroupImpl(group.getName(), group.getHcmSiteName()));
-        }
-        final GroupImpl consolidatedGroup = buildingGroups.get(buildingGroups.indexOf(group));
-        consolidatedGroup.addAfter(group.getAfter());
+        final GroupImpl consolidatedGroup = getConsolidatedGroup(group);
         for (ProjectImpl project : group.getProjects()) {
             final ProjectImpl consolidatedProject = consolidatedGroup.getOrAddProject(project.getName());
             consolidatedProject.addAfter(project.getAfter());
@@ -201,6 +201,19 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             }
         }
         return this;
+    }
+
+    private GroupImpl getConsolidatedGroup(final GroupImpl group) {
+        // Ensure uniqueness of Sites by name
+        final String siteName = group.getSite().getName();
+        if (!buildingSites.containsKey(siteName)) {
+            buildingSites.put(siteName, new SiteImpl(siteName));
+        }
+        final SiteImpl consolidatedSite = buildingSites.get(siteName);
+
+        final GroupImpl consolidatedGroup = consolidatedSite.getOrAddGroup(group.getName());
+        consolidatedGroup.addAfter(group.getAfter());
+        return consolidatedGroup;
     }
 
     /**
@@ -215,12 +228,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // this duplicates much of the logic of addGroup(),
         // but it's necessary to avoid grabbing undesired sibling modules
         final GroupImpl group = module.getProject().getGroup();
-        if (!buildingGroups.contains(group)) {
-            buildingGroups.add(new GroupImpl(group.getName(), group.getHcmSiteName()));
-        }
-        final GroupImpl consolidatedGroup = buildingGroups.get(buildingGroups.indexOf(group));;
-        consolidatedGroup.addAfter(group.getAfter());
+        final GroupImpl consolidatedGroup = getConsolidatedGroup(group);
 
+        // don't loop here -- just append the param module (and no siblings)
         final ProjectImpl project = module.getProject();
         final ProjectImpl consolidatedProject = consolidatedGroup.getOrAddProject(project.getName());
         consolidatedProject.addAfter(project.getAfter());
@@ -247,11 +257,36 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     public ConfigurationModelImpl buildModel() {
+        // if no groups or modules have been added since the last build, this method is a noop
+        if (buildingSites.isEmpty()) {
+            return this;
+        }
+
         replacements.clear();
         groups.clear();
-        groups.addAll(buildingGroups);
-        groupSorter.sort(groups);
-        groups.forEach(GroupImpl::sortProjects);
+        sites.clear();
+
+        sites.addAll(buildingSites.values());
+        buildingSites.clear();
+
+        // TODO: tests do not always have a "core", which is odd
+        siteSorter.sort(sites, Collections.singleton(CORE_NAME));
+
+        // core groups are special -- they satisfy dependencies for other groups in any site
+        final SiteImpl core = sites.get(0);
+        core.sortGroups(Collections.emptySet());
+        final Set<String> coreGroupNames =
+                core.getGroups().stream().map(GroupImpl::getName).collect(Collectors.toSet());
+        groups.addAll(core.getGroups());
+
+        // there might be only the core site
+        if (sites.size() > 1) {
+            for (SiteImpl site : sites.subList(1, sites.size())) {
+                site.sortGroups(coreGroupNames);
+                groups.addAll(site.getGroups());
+            }
+        }
+
         return this;
     }
 
@@ -263,7 +298,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         modifiableWebFileBundleDefinitions.clear();
         modifiableDeletedConfigNodes.clear();
         modifiableDeletedConfigProperties.clear();
-        modifiableHcmSiteNames.clear();
+        modifiableSiteNames.clear();
         modifiableHstRoots.clear();
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
@@ -272,10 +307,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // TODO: fix groupSorter to do this properly with lexical sort by HCM Site name, so getModulesStream() does this consistently
         // TODO: disallow dependencies that force an ordering that violates HCM Site isolation
         getModulesStream()
-                .filter(m -> Objects.isNull(m.getHcmSiteName()))
+                .filter(m -> Objects.isNull(m.getSiteName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
         getModulesStream()
-                .filter(m -> Objects.nonNull(m.getHcmSiteName()))
+                .filter(m -> Objects.nonNull(m.getSiteName()))
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
@@ -294,8 +329,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
         module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
         configurationTreeBuilder.finishModule();
-        if (module.getHcmSiteName() != null) {
-            modifiableHcmSiteNames.add(module.getHcmSiteName());
+
+        // TODO: do this more efficiency with Sites, not Modules
+        if (module.isNotCore()) {
+            modifiableSiteNames.add(module.getSiteName());
         }
         if (module.getHstRoot() != null) {
             modifiableHstRoots.add(module.getHstRoot());
@@ -375,7 +412,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
-            if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getHcmSiteName())) {
+            if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getSiteName())) {
                 m.compileManifest(this, manifest);
             }
         }

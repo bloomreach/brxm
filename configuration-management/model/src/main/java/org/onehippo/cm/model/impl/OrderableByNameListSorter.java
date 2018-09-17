@@ -16,10 +16,12 @@
 package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -73,18 +75,34 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
 
     public <U extends T> void sort(final List<U> orderables)
             throws DuplicateNameException, CircularDependencyException, MissingDependencyException {
+        sort(orderables, Collections.emptySet());
+    }
+
+    /**
+     * @param orderables items to sort
+     * @param implicitAvailables items that will satisfy dependencies without being part of orderables
+     * @param <U> the uniform type of the orderables
+     * @throws DuplicateNameException
+     * @throws CircularDependencyException
+     * @throws MissingDependencyException
+     */
+    public <U extends T> void sort(final List<U> orderables, final Set<String> implicitAvailables)
+            throws DuplicateNameException, CircularDependencyException, MissingDependencyException {
         // using TreeMap ensures the orderables are processed in alphabetically sorted order
         final Map<String, U> map = new TreeMap<>(getComparator());
 
         for (U o : orderables) {
             if (map.containsValue(o)) {
-                throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o));
+                throw new DuplicateNameException(String.format("Duplicate %s: '%s'.", orderableTypeName, o));
+            }
+            else {
+                map.put(o.getName(), o);
             }
         }
         final LinkedHashMap<String, U> sorted = new LinkedHashMap<>(orderables.size());
         final List<String> dependencyChain = new ArrayList<>(sorted.size());
         for (U orderable : map.values()) {
-            sortDepthFirst(orderable, dependencyChain, sorted, map);
+            sortDepthFirst(orderable, dependencyChain, sorted, map, implicitAvailables);
         }
 
         orderables.clear();
@@ -96,7 +114,8 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
     }
 
     private <U extends T> void sortDepthFirst(final U orderable, final List<String> dependencyChain,
-                                final LinkedHashMap<String, U> sorted, final Map<String, U> map)
+                                              final LinkedHashMap<String, U> sorted, final Map<String, U> map,
+                                              final Set<String> implicitAvailables)
             throws CircularDependencyException, MissingDependencyException {
         if (dependencyChain.contains(orderable.getName())) {
             dependencyChain.add(orderable.getName());
@@ -112,9 +131,11 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
                 dependencyChain.add(orderable.getName());
                 for (String dependency : dependencies) {
                     if (map.containsKey(dependency)) {
-                        sortDepthFirst(map.get(dependency), dependencyChain, sorted, map);
+                        sortDepthFirst(map.get(dependency), dependencyChain, sorted, map, implicitAvailables);
                     } else {
-                        processMissingDependency(orderable, dependency);
+                        if (!implicitAvailables.contains(dependency)) {
+                            processMissingDependency(orderable, dependency);
+                        }
                     }
                 }
                 dependencyChain.remove(orderable.getName());

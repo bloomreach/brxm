@@ -57,7 +57,7 @@ public interface ConfigurationModel extends Closeable {
      * @return a Set of names for extensions present in this model; does not contain null
      * @since 13.0
      */
-    Set<String> getHcmSiteNames();
+    Set<String> getSiteNames();
 
     /**
      * The set of all HST root configuration nodes registered by extensions present in this model.
