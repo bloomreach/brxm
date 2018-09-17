@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0-hst-platform-SNAPSHOT</version>
   </parent>
 
   <name>${projectName}</name>
@@ -72,7 +72,7 @@
     <!-- ***END temporary override of versions*** -->
 
     <!-- Uncomment line below when temporary overrides will be removed -->
-    <essentials.version>13.0.0-SNAPSHOT</essentials.version>
+    <essentials.version>13.0.0-hst-platform-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
     <xalan.version>2.7.2</xalan.version>
