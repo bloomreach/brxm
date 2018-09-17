@@ -298,8 +298,8 @@ public class ConfigurationContentServiceTest {
             assertEquals("[c2, c4, c3, c1, c5]", sortedNames(sortedDefinitions));
             assertTrue(listener.messages().anyMatch(m ->
                     m.contains("Following node(s) reference the same node multiple times in order-before:")
-                    && m.contains("/c3 in stubGroup/stubProject/stubModule [content: s3],")
-                    && m.contains("/c5 in stubGroup/stubProject/stubModule [content: s5]")));
+                    && m.contains("/c3 in core/stubGroup/stubProject/stubModule [content: s3],")
+                    && m.contains("/c5 in core/stubGroup/stubProject/stubModule [content: s5]")));
         }
     }
 
