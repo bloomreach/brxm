@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
@@ -37,7 +34,8 @@ import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
-import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -143,8 +141,10 @@ public class RootPanel extends ExtPanel {
         add(channelManagerCard);
 
         // TODO CHANNELMGR-1705 is contextPaths property still really needed? Is it needed in this way?
-        final Set<String> contextPathSet = ServletContextRegistry.getContexts(ServletContextRegistry.WebAppType.HST).keySet();
-        contextPaths = contextPathSet.toArray(new String[contextPathSet.size()]);
+        contextPaths = HippoWebappContextRegistry.get().getEntries()
+                .filter(sh -> sh.getServiceObject().getType() == HippoWebappContext.Type.SITE)
+                .map(sh -> sh.getServiceObject().getServletContext().getContextPath())
+                .toArray(String[]::new);
 
         // channel editor
         channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
