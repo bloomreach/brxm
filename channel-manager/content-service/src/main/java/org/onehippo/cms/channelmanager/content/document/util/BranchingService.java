@@ -17,9 +17,6 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.Session;
 
@@ -27,5 +24,5 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public interface BranchingService {
 
-    Node branch(DocumentWorkflow workflow, Map<String, Serializable> hints, Session session);
+    Node branch(DocumentWorkflow workflow, String branchId, Session session);
 }

@@ -158,7 +158,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             );
         }
 
-        final Node draftNode = branchingService.branch(workflow, hints, session);
+        final Node draftNode = branchingService.branch(workflow, branchId, session);
 
         final Document document = assembleDocument(uuid, handle, draftNode, docType);
         FieldTypeUtils.readFieldValues(draftNode, docType.getFields(), document.getFields());
