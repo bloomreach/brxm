@@ -29,7 +29,6 @@ class AddToProjectController {
     this.ProjectService = ProjectService;
 
     ProjectService.beforeChange('addToProject', () => this.close());
-
   }
 
   getSelectedProject() {
