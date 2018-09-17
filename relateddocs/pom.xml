@@ -42,10 +42,10 @@
   </scm>
 
   <properties>
-    <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.services.version>13.0.0-hst-platform-SNAPSHOT</hippo.services.version>
+    <hippo.cms.version>13.0.0-hst-platform-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>13.0.0-hst-platform-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>13.0.0-hst-platform-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
