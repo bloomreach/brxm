@@ -61,6 +61,11 @@
       hippostdpubwf:lastModificationDate: 2015-05-19T23:38:16.531+02:00
       hippostdpubwf:lastModifiedBy: admin
       hippostdpubwf:publicationDate: 2015-05-19T23:38:21.749+02:00
-      urlrewriter:rule:
-        type: string
-        resource: sample-rule.xml
+      urlrewriter:rule: |-
+        <rule>
+          <note>
+            This rule means that requests to /test/status will be redirected to /rewrite-status.
+          </note>
+          <from>/test/status</from>
+          <to type="redirect">%{context-path}/rewrite-status</to>
+        </rule>
