@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('EditComponentService', () => {
+fdescribe('EditComponentService', () => {
   let $log;
   let $q;
   let $rootScope;
@@ -46,6 +46,7 @@ describe('EditComponentService', () => {
     container: {
       isDisabled: 'container.disabled',
       isInherited: 'container.inherited',
+      id: 'container.uuid',
     },
     page: 'page',
   };
@@ -56,7 +57,7 @@ describe('EditComponentService', () => {
     ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'open']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
     mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
-    mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited']);
+    mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited', 'getId']);
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentEditor', ComponentEditor);
@@ -106,6 +107,7 @@ describe('EditComponentService', () => {
     mockComponent.getRenderVariant.and.returnValue(testData.component.variant);
     mockComponent.container.isInherited.and.returnValue(testData.container.isInherited);
     mockComponent.container.isDisabled.and.returnValue(testData.container.isDisabled);
+    mockComponent.container.getId.and.returnValue(testData.container.id);
   });
 
   function editComponent() {

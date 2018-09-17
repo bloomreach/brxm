@@ -20,8 +20,11 @@ class EditComponentMainCtrl {
     $scope,
     $translate,
     CmsService,
+    ChannelService,
     ConfigService,
+    ComponentEditor,
     ContentEditor,
+    EditComponentService,
     EditContentService,
     HippoIframeService,
     ProjectService,
@@ -32,8 +35,11 @@ class EditComponentMainCtrl {
     this.$q = $q;
     this.$scope = $scope;
     this.CmsService = CmsService;
+    this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
+    this.ComponentEditor = ComponentEditor;
     this.ContentEditor = ContentEditor;
+    this.EditComponentService = EditComponentService;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
@@ -67,7 +73,7 @@ class EditComponentMainCtrl {
 
   close() {
     this.closing = true;
-    // this.EditContentService.stopEditing();
+    this.EditComponentService.stopEditing();
   }
 
   // switchEditor() {
@@ -77,7 +83,27 @@ class EditComponentMainCtrl {
   // }
 
   deleteComponent() {
-    console.log('TODO: implement EditComponentMainCtrl.deleteComponent');
+    return this.ComponentEditor.confirmDeleteComponent()
+      .then(() => {
+        this.ComponentEditor.deleteComponent()
+          .then(() => {
+            this.ChannelService.recordOwnChange();
+            this.HippoIframeService.reload();
+            this.close();
+          })
+          .catch((errorResponse) => {
+            // delete action failed: show toast message? go to component locked mode?
+            // what if someone else deleted the component already: no problem!
+            // TODO: see PageStructureService.removeComponentById() for an example to deal with the error response
+            console.log(`TODO: implement dealing with the delete component error response: ${errorResponse}`);
+          });
+      },
+      )
+      .catch(() => {
+        // user cancelled the delete
+        this.closing = false;
+        return this.$q.reject();
+      });
   }
 
   isSaveAllowed() {
