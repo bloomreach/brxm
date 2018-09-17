@@ -30,7 +30,7 @@ describe('RightSidePanel', () => {
   let sideNavElement;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel');
 
     inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;

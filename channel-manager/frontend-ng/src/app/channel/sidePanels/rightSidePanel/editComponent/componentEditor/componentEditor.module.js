@@ -19,7 +19,7 @@ import componentFieldsComponent from './fields/componentFields/componentFields.c
 import propertyGroupComponent from './fields/propertyGroup/propertyGroup.component';
 
 const componentEditorModule = angular
-  .module('hippo-cm.channel.componentEditor', [])
+  .module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor', [])
   .component('componentEditor', componentEditorComponent)
   .component('componentFields', componentFieldsComponent)
   .component('propertyGroup', propertyGroupComponent)

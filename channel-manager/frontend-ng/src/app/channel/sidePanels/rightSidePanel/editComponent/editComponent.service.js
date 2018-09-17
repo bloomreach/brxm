@@ -14,12 +14,32 @@
  * limitations under the License.
  */
 class EditComponentService {
-  constructor($state, $transitions, $translate, CmsService, ComponentEditor, RightSidePanelService) {
+  constructor(
+    $log,
+    $state,
+    $transitions,
+    $translate,
+    ChannelService,
+    CmsService,
+    ConfigService,
+    ComponentEditor,
+    MaskService,
+    PageMetaDataService,
+    PageStructureService,
+    RightSidePanelService,
+  ) {
     'ngInject';
 
+    this.$log = $log;
     this.$state = $state;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
+    this.ConfigService = ConfigService;
+    this.MaskService = MaskService;
+    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
@@ -34,6 +54,8 @@ class EditComponentService {
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingComponent(documentId);
     });
+
+    CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
   }
 
   _stopEditingComponent(componentId) {
@@ -45,8 +67,37 @@ class EditComponentService {
     }
   }
 
-  startEditing(properties) {
-    this.$state.go('hippo-cm.channel.edit-component', { properties });
+  startEditing(componentElement) {
+    if (!componentElement) {
+      this.$log.warn('Problem opening the component properties editor: no component provided.');
+      return;
+    }
+
+    const channel = this.ChannelService.getChannel();
+    const properties = {
+      channel: {
+        contextPath: channel.contextPath,
+        mountId: channel.mountId,
+      },
+      component: {
+        id: componentElement.getId(),
+        label: componentElement.getLabel(),
+        lastModified: componentElement.getLastModified(),
+        variant: componentElement.getRenderVariant(),
+      },
+      container: {
+        isDisabled: componentElement.container.isDisabled(),
+        isInherited: componentElement.container.isInherited(),
+      },
+      page: this.PageMetaDataService.get(),
+    };
+
+    if (this.ConfigService.relevancePresent) {
+      this.MaskService.mask();
+      this.CmsService.publish('show-component-properties', properties);
+    } else {
+      this.$state.go('hippo-cm.channel.edit-component', { properties });
+    }
   }
 
   stopEditing() {

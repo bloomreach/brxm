@@ -15,4 +15,28 @@
  */
 
 describe('ComponentFields', () => {
+  let $componentController;
+  let ComponentEditor;
+
+  let component;
+
+  beforeEach(() => {
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
+
+    inject((_$componentController_, _ComponentEditor_) => {
+      $componentController = _$componentController_;
+      ComponentEditor = _ComponentEditor_;
+    });
+
+    component = $componentController('componentFields');
+    component.$onInit();
+  });
+
+  it('triggers valueChanged() on the ComponentEditor when a value is changed', () => {
+    spyOn(ComponentEditor, 'valueChanged');
+
+    component.valueChanged();
+
+    expect(ComponentEditor.valueChanged).toHaveBeenCalled();
+  });
 });

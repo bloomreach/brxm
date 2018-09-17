@@ -17,7 +17,7 @@
 import editComponentMainTemplate from './editComponentMain.html';
 import editComponentToolsTemplate from './editComponentTools.html';
 
-function config($stateProvider) {
+function editComponentConfig($stateProvider) {
   'ngInject';
 
   $stateProvider.state({
@@ -40,4 +40,4 @@ function config($stateProvider) {
   });
 }
 
-export default config;
+export default editComponentConfig;

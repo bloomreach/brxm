@@ -18,60 +18,48 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageStructureService', () => {
-  let PageStructureService;
-  let PageMetaDataService;
+  let $document;
+  let $log;
+  let $rootScope;
+  let $q;
+
   let ChannelService;
-  let CmsService;
-  let ConfigService;
-  let EditComponentService;
+  let FeedbackService;
+  let HippoIframeService;
   let HstService;
   let MarkupService;
-  let HippoIframeService;
-  let FeedbackService;
-  let MaskService;
-  let $document;
-  let $q;
-  let $log;
-  let $window;
-  let $rootScope;
+  let PageMetaDataService;
+  let PageStructureService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe.page');
 
     inject((
+      _$document_,
+      _$log_,
       _$q_,
       _$rootScope_,
-      _$log_,
-      _$document_,
       _$window_,
-      _PageStructureService_,
-      _PageMetaDataService_,
       _ChannelService_,
-      _CmsService_,
-      _ConfigService_,
       _EditComponentService_,
+      _FeedbackService_,
+      _HippoIframeService_,
       _HstService_,
       _MarkupService_,
-      _HippoIframeService_,
-      _FeedbackService_,
-      _MaskService_,
+      _PageMetaDataService_,
+      _PageStructureService_,
     ) => {
+      $document = _$document_;
+      $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $log = _$log_;
-      $document = _$document_;
-      $window = _$window_;
-      PageStructureService = _PageStructureService_;
-      PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
-      CmsService = _CmsService_;
-      ConfigService = _ConfigService_;
-      EditComponentService = _EditComponentService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
       HstService = _HstService_;
       MarkupService = _MarkupService_;
-      HippoIframeService = _HippoIframeService_;
-      FeedbackService = _FeedbackService_;
-      MaskService = _MaskService_;
+      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -489,85 +477,6 @@ describe('PageStructureService', () => {
 
     expect(container).not.toBeNull();
     expect(container.getId()).toEqual('container-no-markup');
-  });
-
-  describe('editing component properties', () => {
-    const testData = {
-      channel: {
-        contextPath: '/testContextPath',
-        mountId: 'testMountId',
-      },
-      component: {
-        id: 'testId',
-        label: 'testLabel',
-        lastModified: 12345,
-        variant: 'testVariant',
-      },
-      container: {
-        isDisabled: true,
-        isInherited: false,
-      },
-      page: {
-        testMetaData: 'foo',
-      },
-    };
-    let componentElement;
-
-    beforeEach(() => {
-      componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
-      componentElement.getId.and.returnValue(testData.component.id);
-      componentElement.getLabel.and.returnValue(testData.component.label);
-      componentElement.getLastModified.and.returnValue(testData.component.lastModified);
-      componentElement.getRenderVariant.and.returnValue(testData.component.variant);
-      componentElement.container = jasmine.createSpyObj(['isDisabled', 'isInherited']);
-      componentElement.container.isDisabled.and.returnValue(testData.container.isDisabled);
-      componentElement.container.isInherited.and.returnValue(testData.container.isInherited);
-
-      spyOn(ChannelService, 'getChannel').and.returnValue(testData.channel);
-      spyOn(PageMetaDataService, 'get').and.returnValue(testData.page);
-    });
-
-    it('triggers an event to show the component properties dialog if Relevance is present', () => {
-      spyOn(MaskService, 'mask');
-      spyOn($window.APP_TO_CMS, 'publish');
-
-      ConfigService.relevancePresent = true;
-
-      PageStructureService.showComponentProperties(componentElement);
-
-      expect(MaskService.mask).toHaveBeenCalled();
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', testData);
-    });
-
-    it('opens a side panel to edit component properties if Relevance is not present', () => {
-      spyOn(EditComponentService, 'startEditing');
-      spyOn(CmsService, 'reportUsageStatistic');
-
-      PageStructureService.showComponentProperties(componentElement);
-
-      expect(EditComponentService.startEditing).toHaveBeenCalledWith(testData);
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditComponent');
-    });
-
-    it('ignores erroneous calls to showComponentProperties', () => {
-      spyOn($log, 'warn');
-      spyOn(MaskService, 'mask');
-      spyOn($window.APP_TO_CMS, 'publish');
-
-      PageStructureService.showComponentProperties(undefined);
-
-      expect($log.warn).toHaveBeenCalled();
-      expect(MaskService.mask).not.toHaveBeenCalled();
-      expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
-    });
-
-    it('removes the mask when the component properties dialog is closed', () => {
-      spyOn(MaskService, 'unmask');
-
-      $window.CMS_TO_APP.publish('hide-component-properties');
-
-      expect(MaskService.unmask).toHaveBeenCalled();
-    });
   });
 
   it('shows the default error message when failed to add a new component from catalog', () => {

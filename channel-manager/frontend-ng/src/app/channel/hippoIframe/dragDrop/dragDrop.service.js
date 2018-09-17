@@ -27,6 +27,7 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
+    EditComponentService,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -39,6 +40,7 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
+    this.EditComponentService = EditComponentService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;
@@ -195,7 +197,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.PageStructureService.showComponentProperties(component);
+      this.EditComponentService.startEditing(component);
       this._digestIfNeeded();
     }
   }

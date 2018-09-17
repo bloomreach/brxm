@@ -21,7 +21,7 @@ describe('EditComponentToolsCtrl', () => {
   let $ctrl;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     inject(($controller, _$q_, _$rootScope_) => {
       $rootScope = _$rootScope_;
