@@ -122,4 +122,38 @@ describe('pathLinkController', () => {
       expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
   });
+
+  describe('focus', () => {
+    beforeEach(() => {
+      $ctrl.onFocus = jasmine.createSpy();
+    });
+
+    it('should forward focus event', () => {
+      $ctrl.focus('event');
+      expect($ctrl.onFocus).toHaveBeenCalledWith('event');
+    });
+
+    it('should focus container', () => {
+      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
+      $ctrl.focus('event');
+      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
+    });
+  });
+
+  describe('blur', () => {
+    beforeEach(() => {
+      $ctrl.onBlur = jasmine.createSpy();
+    });
+
+    it('should forward blur event', () => {
+      $ctrl.blur('event');
+      expect($ctrl.onBlur).toHaveBeenCalledWith('event');
+    });
+
+    it('should blur container', () => {
+      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
+      $ctrl.blur('event');
+      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
+    });
+  });
 });

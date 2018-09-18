@@ -61,6 +61,22 @@ class PathLinkController extends NodeLinkController {
 
     this._focusSelectButton();
   }
+
+  blur($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(false);
+    }
+
+    super.blur($event);
+  }
+
+  focus($event) {
+    if (this.mdInputContainer) {
+      this.mdInputContainer.setFocused(true);
+    }
+
+    super.focus($event);
+  }
 }
 
 export default PathLinkController;
