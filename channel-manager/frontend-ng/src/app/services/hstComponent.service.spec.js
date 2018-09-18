@@ -206,6 +206,6 @@ describe('HstComponentService', () => {
       spyOn(HstService, 'doDelete').and.returnValue($q.resolve());
       HstComponentService.deleteComponent('containerId', 'componentId');
       expect(HstService.doDelete).toHaveBeenCalledWith('containerId', 'componentId');
-    });    
-  })
+    });
+  });
 });

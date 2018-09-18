@@ -29,6 +29,7 @@ class PageStructureService {
     FeedbackService,
     HippoIframeService,
     HstCommentsProcessorService,
+    HstComponentService,
     HstService,
     MarkupService,
     PageMetaDataService,
@@ -41,6 +42,7 @@ class PageStructureService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
+    this.HstComponentService = HstComponentService;
     this.HstService = HstService;
     this.MarkupService = MarkupService;
     this.PageMetaDataService = PageMetaDataService;
@@ -205,7 +207,7 @@ class PageStructureService {
 
     if (component) {
       const oldContainer = component.getContainer();
-      return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
+      return this.HstComponentService.deleteComponent(oldContainer.getId(), componentId)
         .then(() => {
           this._onAfterRemoveComponent();
           return oldContainer;
