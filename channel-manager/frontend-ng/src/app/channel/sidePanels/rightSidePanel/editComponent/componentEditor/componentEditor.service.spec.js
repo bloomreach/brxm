@@ -327,7 +327,7 @@ describe('ComponentEditorService', () => {
       ComponentEditor.confirmSaveOrDiscardChanges()
         .then(() => {
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
-          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_COMPONENT_GENERIC', {
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TO_COMPONENT', {
             componentLabel: 'component-label',
           });
           done();

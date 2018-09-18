@@ -188,7 +188,7 @@ class ComponentEditorService {
       return this.$q.resolve();
     }
 
-    const message = this.$translate.instant('SAVE_CHANGES_COMPONENT_GENERIC', { componentLabel: this.component.label });
+    const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.label });
     const title = this.$translate.instant('SAVE_CHANGES_TITLE');
 
     return this.DialogService.show({
