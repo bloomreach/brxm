@@ -39,11 +39,9 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
-import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +183,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected Map<String, Serializable> getHints() {
-        String branchId = DocumentVariant.MASTER_BRANCH_ID;
+        String branchId = BranchConstants.MASTER_BRANCH_ID;
         if (branchIdModel != null){
             branchId = branchIdModel.getBranchId();
         }

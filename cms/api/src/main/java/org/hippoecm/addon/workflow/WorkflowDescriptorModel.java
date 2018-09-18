@@ -20,9 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,7 +34,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -132,7 +129,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     }
 
     public Map<String, Serializable> getHints() {
-        return getHints(DocumentVariant.MASTER_BRANCH_ID);
+        return getHints(BranchConstants.MASTER_BRANCH_ID);
     }
 
     public Map<String, Serializable> getHints(String branchId) {
