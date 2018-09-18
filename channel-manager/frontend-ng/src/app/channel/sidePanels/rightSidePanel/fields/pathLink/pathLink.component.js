@@ -22,7 +22,14 @@ import './pathLink.scss';
 const pathLinkComponent = Object.assign(
   {},
   nodeLinkComponent,
-  { controller, template },
+  {
+    controller,
+    template,
+    require: Object.assign(
+      { mdInputContainer: '?^^mdInputContainer' },
+      nodeLinkComponent.require,
+    ),
+  },
 );
 
 export default pathLinkComponent;
