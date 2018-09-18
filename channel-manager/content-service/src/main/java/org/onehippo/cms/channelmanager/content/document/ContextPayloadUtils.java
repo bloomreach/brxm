@@ -20,7 +20,8 @@ package org.onehippo.cms.channelmanager.content.document;
 import java.io.Serializable;
 import java.util.Map;
 
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
+
 
 /**
  * Utility methods for interacting with the context payload.

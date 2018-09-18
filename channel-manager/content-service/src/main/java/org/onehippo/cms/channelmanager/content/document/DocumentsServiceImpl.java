@@ -70,7 +70,6 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getDocumentWorkflow;
 import static org.onehippo.cms.channelmanager.content.document.util.ContentWorkflowUtils.getEditableWorkflow;
@@ -80,6 +79,7 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_REQUEST_PUBLICATION;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.withDisplayName;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * Implementation class for retrieving and storing Document information.

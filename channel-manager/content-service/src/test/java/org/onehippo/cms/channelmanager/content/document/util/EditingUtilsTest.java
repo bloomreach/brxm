@@ -34,22 +34,20 @@ import org.junit.runner.RunWith;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
-import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.commitEditableInstance;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.delete;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.disposeEditableInstance;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.obtainEditableInstance;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.rename;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @RunWith(EasyMockRunner.class)
 public class EditingUtilsTest {

@@ -65,8 +65,8 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @SuppressWarnings({"deprecation", "serial"})
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
