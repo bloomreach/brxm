@@ -36,9 +36,11 @@ import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,6 @@ import static org.onehippo.repository.util.JcrConstants.NT_VERSION_HISTORY;
 public class ObjectConverterImpl implements ObjectConverter {
 
     private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
-    private static final String BRANCH_ID_MASTER = "master";
 
     protected Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs;
     protected Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs;
@@ -251,7 +252,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
 
         final String branchId = getBranchIdFromContext(requestContext);
-        final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BRANCH_ID_MASTER);
+        final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
         if (branchIdOfNode.equals(branchId)) {
             return node;
         }
@@ -274,7 +275,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
                 // lookup master revision in absence of a branch version
-                version = getVersionForLabel(versionHistory, BRANCH_ID_MASTER, preview);
+                version = getVersionForLabel(versionHistory, BranchConstants.MASTER_BRANCH_ID, preview);
             }
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
                 // return current (published or unpublished) in absence of a branch and master version
@@ -301,7 +302,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     private String getBranchIdFromContext(final HstRequestContext requestContext) {
         String branchId = (String) requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID);
         if (branchId == null) {
-            return BRANCH_ID_MASTER;
+            return BranchConstants.MASTER_BRANCH_ID;
         }
         return branchId;
     }
@@ -309,9 +310,9 @@ public class ObjectConverterImpl implements ObjectConverter {
     private Optional<Node> getVersionForLabel(final Node versionHistory, final String branchId, final boolean preview) throws RepositoryException {
         final String versionLabel;
         if (preview) {
-            versionLabel = branchId + "-unpublished";
+            versionLabel = branchId + "-" + HippoStdNodeType.UNPUBLISHED;
         } else {
-            versionLabel = branchId + "-published";
+            versionLabel = branchId + "-" + HippoStdNodeType.PUBLISHED;
         }
         if (versionHistory.hasProperty(JCR_VERSIONLABELS + "/" + versionLabel)) {
             return Optional.of(versionHistory.getProperty(JCR_VERSIONLABELS + "/" + versionLabel).getNode());
