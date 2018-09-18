@@ -21,8 +21,8 @@ class EditComponentService {
     $translate,
     ChannelService,
     CmsService,
-    ConfigService,
     ComponentEditor,
+    ConfigService,
     MaskService,
     PageMetaDataService,
     PageStructureService,
@@ -46,25 +46,17 @@ class EditComponentService {
       { entering: '**.edit-component' },
       transition => this._loadComponent(transition.params().properties),
     );
-    $transitions.onBefore(
-      { from: '**.edit-component', to: 'hippo-cm' },
-      () => this._onCloseChannel(),
-    );
 
-    CmsService.subscribe('kill-editor', (documentId) => {
-      this._stopEditingComponent(documentId);
-    });
+    $transitions.onBefore(
+      { from: '**.edit-component' },
+      transition => this._beforeTransition(transition),
+    );
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
   }
 
-  _stopEditingComponent(componentId) {
-    console.log(`TODO: implement EditComponentService._stopEditingComponent -- ${componentId}`);
-    if (this.$state.$current.name === 'hippo-cm.channel.edit-component'
-    /* && this.ContentEditor.getDocumentId() === documentId */) {
-      // this.ContentEditor.kill();
-      this.stopEditing();
-    }
+  _beforeTransition(transition) {
+    this._transitionTo = transition.to().name;
   }
 
   startEditing(componentElement) {
@@ -104,6 +96,25 @@ class EditComponentService {
     this.$state.go('^');
   }
 
+  getTransitionMessageKey() {
+    switch (this._transitionTo) {
+      case 'hippo-cm':
+        return 'SAVE_CHANGES_COMPONENT_ON_CLOSE_CHANNEL';
+
+      case 'hippo-cm.channel.create-content-step-1':
+        return 'SAVE_CHANGES_COMPONENT_ON_CREATE_DOCUMENT';
+
+      case 'hippo-cm.channel.edit-component':
+        return 'SAVE_CHANGES_COMPONENT_ON_EDIT_COMPONENT';
+
+      case 'hippo-cm.channel.edit-content':
+        return 'SAVE_CHANGES_COMPONENT_ON_EDIT_DOCUMENT';
+
+      default:
+        return 'SAVE_CHANGES_COMPONENT_GENERIC';
+    }
+  }
+
   _loadComponent(properties) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
@@ -129,13 +140,6 @@ class EditComponentService {
 
     const componentName = this.ComponentEditor.getComponentName();
     this.RightSidePanelService.setTitle(componentName);
-  }
-
-  _onCloseChannel() {
-    console.log('TODO: implement EditComponentService._onCloseChannel');
-    // return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
-    //   .then(() => this.ContentEditor.discardChanges())
-    //   .then(() => this.ContentEditor.close());
   }
 }
 

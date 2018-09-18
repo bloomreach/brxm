@@ -161,6 +161,25 @@ describe('EditComponentService', () => {
     expect($state.go).toHaveBeenCalledWith('^');
   });
 
+  it('returns message-keys for state transitions', () => {
+    editComponent();
+
+    $state.go('hippo-cm.channel');
+    expect(EditComponentService.getTransitionMessageKey()).toBe('SAVE_CHANGES_COMPONENT_GENERIC');
+
+    $state.go('hippo-cm.channel.create-content-step-1');
+    expect(EditComponentService.getTransitionMessageKey()).toBe('SAVE_CHANGES_COMPONENT_ON_CREATE_DOCUMENT');
+
+    $state.go('hippo-cm.channel.edit-component');
+    expect(EditComponentService.getTransitionMessageKey()).toBe('SAVE_CHANGES_COMPONENT_ON_EDIT_COMPONENT');
+
+    $state.go('hippo-cm.channel.edit-content');
+    expect(EditComponentService.getTransitionMessageKey()).toBe('SAVE_CHANGES_COMPONENT_ON_EDIT_DOCUMENT');
+
+    $state.go('hippo-cm');
+    expect(EditComponentService.getTransitionMessageKey()).toBe('SAVE_CHANGES_COMPONENT_ON_CLOSE_CHANNEL');
+  });
+
   it('ignores erroneous calls and logs a warning', () => {
     spyOn($log, 'warn');
     spyOn(MaskService, 'mask');
