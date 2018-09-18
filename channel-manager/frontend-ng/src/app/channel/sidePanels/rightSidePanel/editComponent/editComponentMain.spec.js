@@ -15,30 +15,101 @@
  */
 
 describe('EditComponentMainCtrl', () => {
+  let $log;
   let $q;
-  let $rootScope;
   let $scope;
+  let ChannelService;
+  let CmsService;
   let ComponentEditor;
+  let EditComponentService;
+  let HippoIframeService;
 
   let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
-    inject(($controller, _$q_, _$rootScope_) => {
+    inject((
+      $controller,
+      $rootScope,
+      _$log_,
+      _$q_,
+      _EditComponentService_,
+    ) => {
+      $log = _$log_;
       $q = _$q_;
-      $rootScope = _$rootScope_;
+      EditComponentService = _EditComponentService_;
 
+      ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
+      CmsService = jasmine.createSpyObj('CmsService', [
+        'publish',
+        'reportUsageStatistic',
+      ]);
       ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
+        'close',
         'confirmDeleteComponent',
+        'confirmSaveOrDiscardChanges',
         'deleteComponent',
       ]);
+      HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
       $scope = $rootScope.$new();
-
-      $ctrl = $controller('editComponentMainCtrl', {
+      $ctrl = $controller('editComponentMainCtrl as $ctrl', {
         $scope,
+        ChannelService,
+        CmsService,
         ComponentEditor,
+        EditComponentService,
+        HippoIframeService,
+      });
+
+      $scope.$digest();
+    });
+  });
+
+  describe('ui-router state exit', () => {
+    describe('when save or discard changes is rejected', () => {
+      beforeEach(() => {
+        spyOn($log, 'error');
+      });
+
+      it('fails silently when save or discard changes is canceled', (done) => {
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().catch(() => {
+          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect($log.error).not.toHaveBeenCalled();
+          expect(ComponentEditor.close).not.toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('logs an error when save or discard changes throws an error', (done) => {
+        const error = new Error('test-error');
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject(error));
+
+        $ctrl.uiCanExit().catch(() => {
+          expect($log.error).toHaveBeenCalledWith('An error occurred while closing the ComponentEditor ->', error);
+          expect(ComponentEditor.close).not.toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+    });
+
+    describe('when save or discard changes is resolved', () => {
+      beforeEach(() => {
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+        ComponentEditor.component = { id: 'componentId' };
+      });
+
+      it('closes the component editor ', (done) => {
+        $ctrl.uiCanExit().then(() => {
+          expect(ComponentEditor.close).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
       });
     });
   });
@@ -62,13 +133,31 @@ describe('EditComponentMainCtrl', () => {
       expect(ComponentEditor.deleteComponent).not.toHaveBeenCalled();
     });
 
-    it('deletes the component if the action is confirmed', () => {
-      ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+    describe('when delete succeeds', () => {
+      beforeEach(() => {
+        ComponentEditor.deleteComponent.and.returnValue($q.resolve());
+        ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+        spyOn(EditComponentService, 'stopEditing');
 
-      $ctrl.deleteComponent();
-      $scope.$digest();
+        $ctrl.deleteComponent();
+        $scope.$digest();
+      });
 
-      expect(ComponentEditor.deleteComponent).toHaveBeenCalled();
+      it('deletes the component if the action is confirmed', () => {
+        expect(ComponentEditor.deleteComponent).toHaveBeenCalled();
+      });
+
+      it('records a change by the current user', () => {
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      });
+
+      it('reloads the page', () => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+
+      it('closes the component editor', () => {
+        expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      });
     });
   });
 });

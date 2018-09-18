@@ -16,50 +16,23 @@
 
 class EditComponentMainCtrl {
   constructor(
+    $log,
     $q,
-    $scope,
-    $translate,
-    CmsService,
     ChannelService,
-    ConfigService,
+    CmsService,
     ComponentEditor,
-    ContentEditor,
     EditComponentService,
-    EditContentService,
     HippoIframeService,
-    ProjectService,
-    RightSidePanelService,
   ) {
     'ngInject';
 
+    this.$log = $log;
     this.$q = $q;
-    this.$scope = $scope;
-    this.CmsService = CmsService;
     this.ChannelService = ChannelService;
-    this.ConfigService = ConfigService;
+    this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
-    this.ContentEditor = ContentEditor;
     this.EditComponentService = EditComponentService;
-    this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
-    this.ProjectService = ProjectService;
-    this.RightSidePanelService = RightSidePanelService;
-
-    this.closing = false;
-  }
-
-  $onInit() {
-    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
-      if (newValue === oldValue) {
-        return;
-      }
-
-      if (newValue) {
-        this.RightSidePanelService.startLoading();
-      } else {
-        this.RightSidePanelService.stopLoading();
-      }
-    });
   }
 
   discard() {
@@ -71,17 +44,6 @@ class EditComponentMainCtrl {
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
   }
 
-  close() {
-    this.closing = true;
-    this.EditComponentService.stopEditing();
-  }
-
-  // switchEditor() {
-  //   this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
-  //   this.ContentEditor.close();
-  //   this.EditContentService.stopEditing();
-  // }
-
   deleteComponent() {
     return this.ComponentEditor.confirmDeleteComponent()
       .then(() => {
@@ -89,7 +51,7 @@ class EditComponentMainCtrl {
           .then(() => {
             this.ChannelService.recordOwnChange();
             this.HippoIframeService.reload();
-            this.close();
+            this.EditComponentService.stopEditing();
           })
           .catch((errorResponse) => {
             // delete action failed: show toast message? go to component locked mode?
@@ -99,11 +61,7 @@ class EditComponentMainCtrl {
           });
       },
       )
-      .catch(() => {
-        // user cancelled the delete
-        this.closing = false;
-        return this.$q.reject();
-      });
+      .catch(() => this.$q.reject()); // user cancelled the delete
   }
 
   isSaveAllowed() {
@@ -111,30 +69,15 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
-    return this._confirmExit()
-      .then(() => this.ContentEditor.discardChanges()
-        .catch(() => {
-          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
-          // the editor should still be closed.
-        })
-        .finally(() => this.ContentEditor.close()),
-      )
-      .catch(() => {
-        // user cancelled the exit
-        this.closing = false;
-        return this.$q.reject();
-      });
-  }
-
-  _confirmExit() {
-    if (this.closing) {
-      return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-    }
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
-      .then((action) => {
-        if (action === 'SAVE') {
-          this.HippoIframeService.reload();
+    return this.ComponentEditor.confirmSaveOrDiscardChanges()
+      .then(() => this.ComponentEditor.close())
+      .catch((e) => {
+        if (e) {
+          this.$log.error('An error occurred while closing the ComponentEditor ->', e);
+        } else {
+          // the user has cancelled the confirmation dialog
         }
+        return this.$q.reject();
       });
   }
 }

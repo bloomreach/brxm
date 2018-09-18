@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+import MultiActionDialogCtrl from '../../contentEditor/multiActionDialog/multiActionDialog.controller';
+import multiActionDialogTemplate from '../../contentEditor//multiActionDialog/multiActionDialog.html';
+
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
 class ComponentEditorService {
-  constructor($q, $translate, CmsService, DialogService, FeedbackService, HstComponentService, PageStructureService) {
+  constructor($q, $translate, DialogService, FeedbackService, HstComponentService, PageStructureService) {
     'ngInject';
 
     this.$q = $q;
     this.$translate = $translate;
-    this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
@@ -147,7 +149,8 @@ class ComponentEditorService {
   }
 
   deleteComponent() {
-    return this.HstComponentService.deleteComponent(this.container.id, this.component.id);
+    return this.HstComponentService.deleteComponent(this.container.id, this.component.id)
+      .then(() => this.close());
   }
 
   getComponentName() {
@@ -177,6 +180,53 @@ class ComponentEditorService {
   close() {
     this._clearData();
     delete this.error;
+  }
+
+  /**
+   * Possible return values:
+   * - resolved promise with value 'SAVE' when changes have been saved
+   * - resolved promise with value 'DISCARD' when changes have been discarded
+   * - rejected promise when user canceled
+   */
+  confirmSaveOrDiscardChanges() {
+    return this._askSaveOrDiscardChanges()
+      .then((action) => {
+        switch (action) {
+          case 'SAVE':
+            return this.save()
+              .then(() => action); // let caller know that changes have been saved
+          case 'DISCARD':
+            this.PageStructureService.renderComponent(this.component.id);
+            return this.$q.resolve(action);
+          default:
+            return this.$q.resolve(action); // let caller know that changes have not been saved
+        }
+      });
+  }
+
+  _askSaveOrDiscardChanges() {
+    if (!this.dataDirty) {
+      return this.$q.resolve();
+    }
+
+    const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.label });
+    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
+
+    return this.DialogService.show({
+      template: multiActionDialogTemplate,
+      controller: MultiActionDialogCtrl,
+      controllerAs: '$ctrl',
+      locals: {
+        title,
+        message,
+        actions: ['DISCARD', 'SAVE'],
+      },
+      bindToController: true,
+    });
+  }
+
+  save() {
+    return this.$q.resolve();
   }
 
   _clearData() {

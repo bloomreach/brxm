@@ -17,6 +17,7 @@
 describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
+  let $translate;
   let ComponentEditor;
   let DialogService;
   let HstComponentService;
@@ -44,9 +45,18 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
 
-    inject((_$q_, _$rootScope_, _ComponentEditor_, _DialogService_, _HstComponentService_, _PageStructureService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$translate_,
+      _ComponentEditor_,
+      _DialogService_,
+      _HstComponentService_,
+      _PageStructureService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $translate = _$translate_;
       ComponentEditor = _ComponentEditor_;
       DialogService = _DialogService_;
       HstComponentService = _HstComponentService_;
@@ -292,6 +302,100 @@ describe('ComponentEditorService', () => {
       expect(DialogService.confirm).toHaveBeenCalled();
       expect(DialogService.show).toHaveBeenCalled();
       expect(result).toBe(showPromise);
+    });
+
+    it('clears the state when the component is successfully deleted', () => {
+      spyOn(ComponentEditor, 'close');
+      HstComponentService.deleteComponent.and.returnValue($q.reject());
+
+      ComponentEditor.deleteComponent();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.close).not.toHaveBeenCalled();
+
+      HstComponentService.deleteComponent.and.returnValue($q.resolve());
+
+      ComponentEditor.deleteComponent();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('confirm save or discard changes', () => {
+    beforeEach(() => {
+      ComponentEditor.component = {
+        id: 'component-id',
+        label: 'component-label',
+      };
+
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    });
+
+    it('does not show a dialog if there is no dirty data', (done) => {
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect($translate.instant).not.toHaveBeenCalled();
+          expect(DialogService.show).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('shows a dialog if there is dirty data', (done) => {
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('saves the data when the dialog resolves with "SAVE" and does not redraw', (done) => {
+      spyOn(ComponentEditor, 'save').and.callThrough();
+      spyOn(PageStructureService, 'renderComponent');
+      DialogService.show.and.returnValue($q.resolve('SAVE'));
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+      spyOn(PageStructureService, 'renderComponent');
+      spyOn(ComponentEditor, 'save');
+      DialogService.show.and.returnValue($q.resolve('DISCARD'));
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(PageStructureService.renderComponent).toHaveBeenCalled();
+          expect(ComponentEditor.save).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('translate the dialog title and body text', (done) => {
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TO_COMPONENT', {
+            componentLabel: 'component-label',
+          });
+          done();
+        });
+      $rootScope.$digest();
     });
   });
 });
