@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
@@ -63,9 +63,9 @@ public class ChannelInfoClassTest {
 
     static interface ExtendedTestInfo extends ChannelInfo {
 
-        @Parameter(name = "color")
-        @Color
-        String getColor();
+        @Parameter(name = "size")
+        @DropDownList({"small", "medium", "large"})
+        String getSize();
 
         @Parameter(name = "propertyNotShownInUI", hideInChannelManager = true)
         String getPropertyNotShownInUI();
@@ -77,13 +77,13 @@ public class ChannelInfoClassTest {
         List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(ExtendedTestInfo.class);
         assertEquals(2 + numberOfParameterAnnotationsOnChannelInfo, properties.size());
 
-        HstPropertyDefinition hpd = getPropertyDefinition("color", properties);
-        assertEquals("color", hpd.getName());
+        HstPropertyDefinition hpd = getPropertyDefinition("size", properties);
+        assertEquals("size", hpd.getName());
         assertEquals(HstValueType.STRING, hpd.getValueType());
 
         List<Annotation> annotations = hpd.getAnnotations();
         assertEquals(1, annotations.size());
-        assertEquals(Color.class, annotations.get(0).annotationType());
+        assertEquals(DropDownList.class, annotations.get(0).annotationType());
     }
 
     static interface AnalyticsChannelInfoMixin extends ChannelInfo {

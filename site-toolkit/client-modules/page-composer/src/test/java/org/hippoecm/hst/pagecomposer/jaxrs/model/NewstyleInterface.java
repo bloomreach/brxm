@@ -17,60 +17,55 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.Date;
 
-import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 interface NewstyleInterface {
-    @Parameter(name = "01-color", defaultValue = "blue")
-    @Color
-    String getColor();
-
-    @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
+    @Parameter(name = "01-image", defaultValue = "/content/gallery/default.png")
     @ImageSetPath
     String getImage();
 
-    @Parameter(name = "03-date")
+    @Parameter(name = "02-date")
     Date getDate();
 
-    @Parameter(name = "04-boolean")
+    @Parameter(name = "03-boolean")
     boolean isBoolean();
 
-    @Parameter(name = "05-booleanClass")
+    @Parameter(name = "04-booleanClass")
     Boolean isBooleanClass();
 
-    @Parameter(name = "06-int")
+    @Parameter(name = "05-int")
     int getInt();
 
-    @Parameter(name = "07-integerClass")
+    @Parameter(name = "06-integerClass")
     Integer getIntegerClass();
 
-    @Parameter(name = "08-long")
+    @Parameter(name = "07-long")
     long getLong();
 
-    @Parameter(name = "09-longClass")
+    @Parameter(name = "08-longClass")
     Long getLongClass();
 
-    @Parameter(name = "10-short")
+    @Parameter(name = "09-short")
     short getShort();
 
-    @Parameter(name = "11-shortClass")
+    @Parameter(name = "10-shortClass")
     Short getShortClass();
 
-    @Parameter(name = "12-jcrpath")
+    @Parameter(name = "11-jcrpath")
     @JcrPath(pickerInitialPath = "/content/documents/subdir/foo")
     String getJcrPath();
 
-    @Parameter(name = "13-relativejcrpath")
+    @Parameter(name = "12-relativejcrpath")
     @JcrPath(isRelative = true, pickerInitialPath = "subdir/foo", pickerConfiguration = "cms-pickers/mycustompicker")
     String getRelativeJcrPath();
 
-    @Parameter(name = "14-dropdownvalue")
+    @Parameter(name = "13-dropdownvalue")
     @DropDownList(value = {"value1", "value2", "value3"})
     String getDropDownValue();
 
-    @Parameter(name = "15-hideInChannelManager", hideInChannelManager = true)
+    @Parameter(name = "14-hideInChannelManager", hideInChannelManager = true)
     String getHiddenInChannelManager();
 }

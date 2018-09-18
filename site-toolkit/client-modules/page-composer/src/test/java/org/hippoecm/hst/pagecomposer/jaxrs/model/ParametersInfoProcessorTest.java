@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
-import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -52,59 +51,56 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(15, properties.size());
+        assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        ContainerItemComponentPropertyRepresentation colorProperty = properties.get(0);
-        assertEquals("colorfield", colorProperty.getType());
-        assertEquals("blue", colorProperty.getDefaultValue());
-
-        ContainerItemComponentPropertyRepresentation imageProperty = properties.get(1);
+        int counter = 0;
+        ContainerItemComponentPropertyRepresentation imageProperty = properties.get(counter);
         assertEquals("textfield", imageProperty.getType());
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
 
-        ContainerItemComponentPropertyRepresentation dateProperty = properties.get(2);
+        ContainerItemComponentPropertyRepresentation dateProperty = properties.get(++counter);
         assertEquals("datefield", dateProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation booleanProperty = properties.get(3);
+        ContainerItemComponentPropertyRepresentation booleanProperty = properties.get(++counter);
         assertEquals("checkbox", booleanProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation booleanClassProperty = properties.get(4);
+        ContainerItemComponentPropertyRepresentation booleanClassProperty = properties.get(++counter);
         assertEquals("checkbox", booleanClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation intProperty = properties.get(5);
+        ContainerItemComponentPropertyRepresentation intProperty = properties.get(++counter);
         assertEquals("numberfield", intProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation integerClassProperty = properties.get(6);
+        ContainerItemComponentPropertyRepresentation integerClassProperty = properties.get(++counter);
         assertEquals("numberfield", integerClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation longProperty = properties.get(7);
+        ContainerItemComponentPropertyRepresentation longProperty = properties.get(++counter);
         assertEquals("numberfield", longProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation longClassProperty = properties.get(8);
+        ContainerItemComponentPropertyRepresentation longClassProperty = properties.get(++counter);
         assertEquals("numberfield", longClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation shortProperty = properties.get(9);
+        ContainerItemComponentPropertyRepresentation shortProperty = properties.get(++counter);
         assertEquals("numberfield", shortProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(10);
+        ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(++counter);
         assertEquals("numberfield", shortClassProperty.getType());
 
-        ContainerItemComponentPropertyRepresentation jcrPathProperty = properties.get(11);
+        ContainerItemComponentPropertyRepresentation jcrPathProperty = properties.get(++counter);
         assertEquals("linkpicker", jcrPathProperty.getType());
         assertEquals("cms-pickers/documents", jcrPathProperty.getPickerConfiguration());
         assertEquals("/content/documents/subdir/foo", jcrPathProperty.getPickerInitialPath());
         assertEquals(currentMountCanonicalContentPath, jcrPathProperty.getPickerRootPath());
 
-        ContainerItemComponentPropertyRepresentation relativeJcrPathProperty = properties.get(12);
+        ContainerItemComponentPropertyRepresentation relativeJcrPathProperty = properties.get(++counter);
         assertEquals("linkpicker", relativeJcrPathProperty.getType());
         assertEquals("cms-pickers/mycustompicker", relativeJcrPathProperty.getPickerConfiguration());
         assertEquals("subdir/foo", relativeJcrPathProperty.getPickerInitialPath());
         assertEquals(currentMountCanonicalContentPath, relativeJcrPathProperty.getPickerRootPath());
 
-        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(13);
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(++counter);
         assertEquals("combo", dropDownProperty.getType());
         final String values[] = dropDownProperty.getDropDownListValues();
         assertEquals(values.length, 3);
@@ -115,7 +111,7 @@ public class ParametersInfoProcessorTest {
         String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
 
-        final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(14);
+        final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(++counter);
         assertTrue(hideInChannelManagerProperty.isHiddenInChannelManager());
 
     }
@@ -126,12 +122,12 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(15, properties.size());
+        assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(13);
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(12);
         assertEquals("combo", dropDownProperty.getType());
 
         String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
@@ -158,12 +154,12 @@ public class ParametersInfoProcessorTest {
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
 
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
-        assertEquals(15, properties.size());
+        assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        final ContainerItemComponentPropertyRepresentation representation = properties.get(13);
+        final ContainerItemComponentPropertyRepresentation representation = properties.get(12);
         final String[] displayValues = representation.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
         assertEquals("Waarde 1", displayValues[0]);
@@ -230,67 +226,38 @@ public class ParametersInfoProcessorTest {
 
         List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
 
-        // NewstyleSubContainer has 2 properties and NewstyleContainer which it extends has 15 properties, BUT
-        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 15 + 1
-        assertEquals(16, properties.size());
+        // NewstyleSubContainer has 2 properties and NewstyleContainer which it extends has 14 properties, BUT
+        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 14 + 1
+        assertEquals(15, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        final ContainerItemComponentPropertyRepresentation representation1 = properties.get(0);
+        final ContainerItemComponentPropertyRepresentation representation0 = properties.get(0);
         // present in NewstyleSubInterface_nl.properties and in NewstyleInterface.properties, however
         // value from NewstyleSubInterface_nl.properties should be shown
-        assertEquals(representation1.getLabel(), "zwart sub");
+        assertEquals(representation0.getLabel(), "Plaatje sub");
 
-        final ContainerItemComponentPropertyRepresentation representation3 = properties.get(1);
+        final ContainerItemComponentPropertyRepresentation representation1 = properties.get(1);
         // missing in NewstyleSubInterface_nl.properties but defined in NewstyleInterface.properties
-        // @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
-        assertEquals(representation3.getLabel(), "Plaatje");
+        // @Parameter(name = "02-date")
+        assertEquals(representation1.getLabel(), "Date");
 
-
-        final ContainerItemComponentPropertyRepresentation representation14 = properties.get(13);
+        final ContainerItemComponentPropertyRepresentation representation12 = properties.get(12);
         // NewstyleSubInterface_nl.properties does not have dropdown values but NewstyleInterface.properties
         // has them, so should be taken from there
-        final String[] displayValues = representation14.getDropDownListDisplayValues();
+        final String[] displayValues = representation12.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
         assertEquals("Waarde 1", displayValues[0]);
         assertEquals("Waarde 2", displayValues[1]);
         assertEquals("value3", displayValues[2]);
 
-        final ContainerItemComponentPropertyRepresentation representation15 = properties.get(15);
+        final ContainerItemComponentPropertyRepresentation representation14 = properties.get(14);
         // Present in NewstyleSubInterface_nl.properties
-        // @Parameter(name = "16-subboolean")
-        assertEquals(representation15.getLabel(),"Sub Boolean NL");
-    }
-
-    /**
-     * Below, we have a broken situation: 
-     * @Color annotation is not allowed to return a int
-     */
-    interface InvalidReturnTypeAnnotationInterface {
-        @Parameter(name="00-color", defaultValue = "blue")
-        @Color
-        int getColor();
-    }
-
-    @ParametersInfo(type= InvalidReturnTypeAnnotationInterface.class)
-    static class InvalidReturnTypeAnnotation {
-    
+        // @Parameter(name = "15-subboolean")
+        assertEquals(representation14.getLabel(),"Sub Boolean NL");
     }
     
-    @Test
-    public void testInvalidReturnTypeAnnotation() {
-        ParametersInfo parameterInfo = InvalidReturnTypeAnnotation.class.getAnnotation(ParametersInfo.class);
-        // the getProperties below are expected to log some warnings
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
-        assertEquals(1, properties.size());
-
-        // Since the @Color is not compatible with returnType int  
-        // we expect that ParameterType#getType(...) defaults back to getType 'numberfield' for 00-color
-        ContainerItemComponentPropertyRepresentation colorProperty = properties.get(0);
-        assertEquals("numberfield", colorProperty.getType());
-    }
-
     @ParametersInfo(type=FieldGroupInterface.class)
     static class FieldGroupComponent {
     }
