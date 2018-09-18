@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('EditComponentService', () => {
+describe('EditComponentService', () => {
   let $log;
   let $q;
   let $rootScope;

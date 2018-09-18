@@ -200,4 +200,12 @@ describe('HstComponentService', () => {
       expect(HstService.doGet).toHaveBeenCalledWith('id', '%40variant', 'test-locale');
     });
   });
+
+  describe('delete component', () => {
+    it('uses the HstService to delete a component', () => {
+      spyOn(HstService, 'doDelete').and.returnValue($q.resolve());
+      HstComponentService.deleteComponent('containerId', 'componentId');
+      expect(HstService.doDelete).toHaveBeenCalledWith('containerId', 'componentId');
+    });    
+  })
 });
