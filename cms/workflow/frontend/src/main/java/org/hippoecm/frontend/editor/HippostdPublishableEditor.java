@@ -52,7 +52,6 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.branch.BranchHandle;
@@ -63,8 +62,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * An editor that takes a hippo:handle for its JcrNodeModel and displays one of the variants.
@@ -708,7 +707,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private boolean isBranchDeleted(Node handle) throws EditorException {
         final String branchId = branchIdModel.getBranchId();
-        if (branchId.equals(DocumentVariant.MASTER_BRANCH_ID)) {
+        if (branchId.equals(MASTER_BRANCH_ID)) {
             // The master branch can never be deleted, so we can immediately return false.
             return false;
         }
@@ -736,7 +735,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     protected UsageEvent createUsageEvent(final String name, final IModel<Node> model) {
         return new DocumentUsageEvent(name, model, "publishable-editor");
     }
-
 
 
 }

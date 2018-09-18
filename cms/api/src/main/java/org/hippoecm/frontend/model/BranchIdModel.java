@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     }
 
     public String getBranchId() {
-        return isDefined() ? getBranchInfo().getLeft() : DocumentVariant.MASTER_BRANCH_ID;
+        return isDefined() ? getBranchInfo().getLeft() : BranchConstants.MASTER_BRANCH_ID;
     }
 
     public String getBranchName() {
