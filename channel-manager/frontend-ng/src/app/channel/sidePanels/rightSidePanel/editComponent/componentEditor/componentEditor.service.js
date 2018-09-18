@@ -170,8 +170,8 @@ class ComponentEditorService {
    * - resolved promise with value 'DISCARD' when changes have been discarded
    * - rejected promise when user canceled
    */
-  confirmSaveOrDiscardChanges(messageKey) {
-    return this._askSaveOrDiscardChanges(messageKey)
+  confirmSaveOrDiscardChanges() {
+    return this._askSaveOrDiscardChanges()
       .then((action) => {
         switch (action) {
           case 'SAVE':
@@ -183,12 +183,12 @@ class ComponentEditorService {
       });
   }
 
-  _askSaveOrDiscardChanges(messageKey) {
+  _askSaveOrDiscardChanges() {
     if (!this.dataDirty) {
       return this.$q.resolve();
     }
 
-    const message = this.$translate.instant(messageKey, { componentLabel: this.component.label });
+    const message = this.$translate.instant('SAVE_CHANGES_COMPONENT_GENERIC', { componentLabel: this.component.label });
     const title = this.$translate.instant('SAVE_CHANGES_TITLE');
 
     return this.DialogService.show({

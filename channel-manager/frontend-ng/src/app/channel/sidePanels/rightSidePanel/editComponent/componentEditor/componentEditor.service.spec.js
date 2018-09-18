@@ -324,10 +324,10 @@ describe('ComponentEditorService', () => {
     it('translate the dialog title and body text', (done) => {
       ComponentEditor.markDataDirty();
 
-      ComponentEditor.confirmSaveOrDiscardChanges('MESSAGE_KEY')
+      ComponentEditor.confirmSaveOrDiscardChanges()
         .then(() => {
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
-          expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_COMPONENT_GENERIC', {
             componentLabel: 'component-label',
           });
           done();

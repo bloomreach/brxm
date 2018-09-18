@@ -66,8 +66,7 @@ class EditComponentMainCtrl {
   }
 
   _confirmExit() {
-    const message = this.EditComponentService.getTransitionMessageKey();
-    return this.ComponentEditor.confirmSaveOrDiscardChanges(message)
+    return this.ComponentEditor.confirmSaveOrDiscardChanges()
       .then(() => this.PageStructureService.renderComponent(this.ComponentEditor.component.id));
   }
 }

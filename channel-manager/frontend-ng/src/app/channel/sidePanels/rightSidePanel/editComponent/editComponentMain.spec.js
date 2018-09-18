@@ -96,17 +96,6 @@ describe('EditComponentMainCtrl', () => {
         ComponentEditor.component = { id: 'componentId' };
       });
 
-      it('gets a transition message key for the confirmation message', (done) => {
-        spyOn(EditComponentService, 'getTransitionMessageKey').and.returnValue('translation-key');
-
-        $ctrl.uiCanExit().then(() => {
-          expect(EditComponentService.getTransitionMessageKey).toHaveBeenCalled();
-          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('translation-key');
-          done();
-        });
-        $scope.$digest();
-      });
-
       it('closes the component editor ', (done) => {
         $ctrl.uiCanExit().then(() => {
           expect(ComponentEditor.close).toHaveBeenCalled();

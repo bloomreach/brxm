@@ -47,16 +47,7 @@ class EditComponentService {
       transition => this._loadComponent(transition.params().properties),
     );
 
-    $transitions.onBefore(
-      { from: '**.edit-component' },
-      transition => this._beforeTransition(transition),
-    );
-
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
-  }
-
-  _beforeTransition(transition) {
-    this._transitionTo = transition.to().name;
   }
 
   startEditing(componentElement) {
@@ -94,25 +85,6 @@ class EditComponentService {
 
   stopEditing() {
     this.$state.go('^');
-  }
-
-  getTransitionMessageKey() {
-    switch (this._transitionTo) {
-      case 'hippo-cm':
-        return 'SAVE_CHANGES_COMPONENT_ON_CLOSE_CHANNEL';
-
-      case 'hippo-cm.channel.create-content-step-1':
-        return 'SAVE_CHANGES_COMPONENT_ON_CREATE_DOCUMENT';
-
-      case 'hippo-cm.channel.edit-component':
-        return 'SAVE_CHANGES_COMPONENT_ON_EDIT_COMPONENT';
-
-      case 'hippo-cm.channel.edit-content':
-        return 'SAVE_CHANGES_COMPONENT_ON_EDIT_DOCUMENT';
-
-      default:
-        return 'SAVE_CHANGES_COMPONENT_GENERIC';
-    }
   }
 
   _loadComponent(properties) {
