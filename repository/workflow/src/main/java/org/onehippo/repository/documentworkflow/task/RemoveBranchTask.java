@@ -29,6 +29,7 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 
 import static java.util.stream.Collectors.toList;
@@ -40,12 +41,12 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * <p>
  *     Removes the branch for this {@link DocumentHandle#getBranchId()} for this workflow invocation. If the
- *     branchId is equal to {@link DocumentVariant#MASTER_BRANCH_ID} a {@link WorkflowException} is thrown since the master
+ *     branchId is equal to {@link BranchConstants#MASTER_BRANCH_ID} a {@link WorkflowException} is thrown since the master
  *     branch is not allowed to be removed
  * </p>
  * <p>

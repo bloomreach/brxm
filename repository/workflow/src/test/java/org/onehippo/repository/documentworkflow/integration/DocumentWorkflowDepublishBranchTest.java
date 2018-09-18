@@ -15,22 +15,15 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.Consumer;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -47,7 +40,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflowIntegrationTest {
 

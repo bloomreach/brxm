@@ -26,14 +26,15 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
 
 /**
  * Sets pre-reintegration-labels in version history. The purpose of this is that when a branch, say, 'foo', gets
  * reintegrated, that an editor/author can trace back what the versions were for the
- * {@link DocumentVariant#MASTER_BRANCH_ID} branch before the reintegration took place
+ * {@link BranchConstants#MASTER_BRANCH_ID} branch before the reintegration took place
  */
 public class SetPreReintegrationLabelsTask extends AbstractDocumentTask {
 

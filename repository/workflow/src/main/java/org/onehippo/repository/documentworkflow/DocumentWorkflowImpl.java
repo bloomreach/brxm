@@ -37,7 +37,6 @@ import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.WorkflowUtils;
-import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
@@ -54,8 +53,7 @@ import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayload
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DOCUMENT;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.requestDelete;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * DocumentWorkflow implementation which delegates the document workflow state management and action processing

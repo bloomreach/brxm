@@ -26,6 +26,7 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.branch.BranchConstants;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
@@ -34,10 +35,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NA
  * DocumentVariant provides a model object for a Hippo Document variant node to the DocumentWorkflow SCXML state machine.
  */
 public class DocumentVariant extends Document {
-
-    public static final String MASTER_BRANCH_ID = "master";
-    public static final String MASTER_BRANCH_LABEL_PUBLISHED = "master-" + HippoStdNodeType.PUBLISHED;
-    public static final String MASTER_BRANCH_LABEL_UNPUBLISHED = "master-" + HippoStdNodeType.UNPUBLISHED;
 
     public DocumentVariant() {
     }
@@ -110,14 +107,14 @@ public class DocumentVariant extends Document {
         // do not nodetype check since getNode can also be a frozenNode, see DocumentWorkflowImpl.getBranch()
         final String branchIdProperty = JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, null);
         if (branchIdProperty == null) {
-            return branchId.equals(MASTER_BRANCH_ID);
+            return branchId.equals(BranchConstants.MASTER_BRANCH_ID);
         } else {
             return branchId.equals(branchIdProperty);
         }
     }
 
     public String getBranchId() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+        return JcrUtils.getStringProperty(getNode(), HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
     }
 
     public String getBranchName() throws RepositoryException {

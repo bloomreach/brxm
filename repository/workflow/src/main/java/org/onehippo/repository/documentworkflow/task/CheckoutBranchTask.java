@@ -30,12 +30,12 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BR
  *     variant below the handle
  * </p>
  * <p>
- *     If the supplied branchId is equal to {@link #ANY}, the {@link DocumentVariant#MASTER_BRANCH_ID} is checked out or
+ *     If the supplied branchId is equal to {@link #ANY}, the {@link BranchConstants#MASTER_BRANCH_ID} is checked out or
  *     if that one is missing, the oldest branch is checked out. If branchId is equal to {@link #ANY}, it is mandatory
  *     that a {@link #setStateLabel(String)} is provided : Then from version history, depending on the stateLabel, the
  *     unpublished or published will be checked out.

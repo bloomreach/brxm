@@ -21,6 +21,7 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.action.GetBranchAction;
 
@@ -81,7 +82,7 @@ public class GetBranchTask extends AbstractDocumentTask {
 
         final Session workflowSession = getWorkflowContext().getInternalWorkflowSession();
 
-        final String variantBranchId = getStringProperty(variant.getNode(workflowSession), HIPPO_PROPERTY_BRANCH_ID, DocumentVariant.MASTER_BRANCH_ID);
+        final String variantBranchId = getStringProperty(variant.getNode(workflowSession), HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
         if (branchId.equals(variantBranchId)) {
             // variant is the correct value
             return variant;

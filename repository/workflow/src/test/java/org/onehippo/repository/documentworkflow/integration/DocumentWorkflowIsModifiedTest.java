@@ -18,13 +18,10 @@ package org.onehippo.repository.documentworkflow.integration;
 import javax.jcr.Node;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
-import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

@@ -24,14 +24,13 @@ import javax.jcr.RepositoryException;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.standardworkflow.DocumentVariant.MASTER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 public class DocumentHandleIT extends AbstractDocumentWorkflowIntegrationTest {
 

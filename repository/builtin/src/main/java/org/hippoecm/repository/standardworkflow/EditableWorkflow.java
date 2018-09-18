@@ -26,6 +26,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.annotation.WorkflowAction;
+import org.onehippo.repository.branch.BranchConstants;
 
 /**
  * This interface is available as work-flow interface on documents which implement a default flow how to edit the documents.
@@ -38,7 +39,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 public interface EditableWorkflow extends Workflow {
 
     /**
-     * Request the editable copy of the {@link DocumentVariant#MASTER_BRANCH_ID} document.
+     * Request the editable copy of the {@link BranchConstants#MASTER_BRANCH_ID} document.
      * @return A reference to the document that may actually be modified, and should either be committed or disposed.
      * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
