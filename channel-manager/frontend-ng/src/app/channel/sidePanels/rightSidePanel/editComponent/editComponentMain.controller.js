@@ -20,6 +20,7 @@ class EditComponentMainCtrl {
     $scope,
     $translate,
     CmsService,
+    ComponentEditor,
     ConfigService,
     ContentEditor,
     EditContentService,
@@ -32,6 +33,7 @@ class EditComponentMainCtrl {
     this.$q = $q;
     this.$scope = $scope;
     this.CmsService = CmsService;
+    this.ComponentEditor = ComponentEditor;
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
     this.EditContentService = EditContentService;
@@ -61,7 +63,7 @@ class EditComponentMainCtrl {
   }
 
   save() {
-    this.HippoIframeService.reload();
+    this.ComponentEditor.save();
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
   }
 
@@ -81,7 +83,7 @@ class EditComponentMainCtrl {
   }
 
   isSaveAllowed() {
-    return false;
+    return this.ComponentEditor.dirty;
   }
 
   uiCanExit() {
