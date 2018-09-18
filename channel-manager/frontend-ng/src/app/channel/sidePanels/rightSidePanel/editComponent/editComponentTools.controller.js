@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
-  new: 'VisualEditingOfflineIcon',
-  live: 'VisualEditingOnlineIcon',
-  changed: 'VisualEditingAlertIcon',
-  unknown: 'VisualEditingUnknownIcon',
-};
-
 class EditContentToolsCtrl {
-  constructor($q, CmsService, ContentEditor, EditComponentService) {
+  constructor(ContentEditor, EditComponentService) {
     'ngInject';
 
-    this.$q = $q;
-    this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
     this.EditComponentService = EditComponentService;
   }
@@ -43,37 +34,6 @@ class EditContentToolsCtrl {
 
   isEditing() {
     return this.ContentEditor.isEditing();
-  }
-
-  uiCanExit() {
-    if (this.exitMode === 'view') {
-      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-        .then(() => this.ContentEditor.discardChanges())
-        .then(() => this._viewContent())
-        .finally(() => this._clearExitMode());
-    } else if (this.exitMode === 'edit') {
-      this._editContent();
-    }
-    // yes, the UI can exit. Return something to make ESLint happy.
-    this._clearExitMode();
-    return true;
-  }
-
-  _viewContent() {
-    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'view');
-    this.ContentEditor.close();
-    const statisticEventName = this._getPublicationStateValue(REPORT_USAGE_STATISTIC_EVENT_NAMES, this.publicationStateOnExit);
-    this.CmsService.reportUsageStatistic(statisticEventName);
-  }
-
-  _editContent() {
-    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
-    this.ContentEditor.close();
-    this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
-  }
-
-  _clearExitMode() {
-    delete this.exitMode;
   }
 }
 
