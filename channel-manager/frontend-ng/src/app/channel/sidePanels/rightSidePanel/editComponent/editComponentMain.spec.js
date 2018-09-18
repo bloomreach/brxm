@@ -40,8 +40,16 @@ describe('EditComponentMainCtrl', () => {
       $q = _$q_;
       EditComponentService = _EditComponentService_;
 
-      CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
-      ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['close', 'confirmSaveOrDiscardChanges']);
+      CmsService = jasmine.createSpyObj('CmsService', [
+        'publish',
+        'reportUsageStatistic',
+      ]);
+      ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
+        'close',
+        'confirmDeleteComponent',
+        'confirmSaveOrDiscardChanges',
+        'deleteComponent',
+      ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       PageStructureService = jasmine.createSpyObj('PageStructureService', ['renderComponent']);
 
@@ -111,6 +119,35 @@ describe('EditComponentMainCtrl', () => {
         });
         $scope.$digest();
       });
+    });
+  });
+
+  describe('delete component', () => {
+    it('shows a confirm delete dialog', () => {
+      ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+
+      $ctrl.deleteComponent();
+      $scope.$digest();
+
+      expect(ComponentEditor.confirmDeleteComponent).toHaveBeenCalled();
+    });
+
+    it('does not delete the component if the action is cancelled', () => {
+      ComponentEditor.confirmDeleteComponent.and.returnValue($q.reject());
+
+      $ctrl.deleteComponent();
+      $scope.$digest();
+
+      expect(ComponentEditor.deleteComponent).not.toHaveBeenCalled();
+    });
+
+    it('deletes the component if the action is confirmed', () => {
+      ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+
+      $ctrl.deleteComponent();
+      $scope.$digest();
+
+      expect(ComponentEditor.deleteComponent).toHaveBeenCalled();
     });
   });
 });

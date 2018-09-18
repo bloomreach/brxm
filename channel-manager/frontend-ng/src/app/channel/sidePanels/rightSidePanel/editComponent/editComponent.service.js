@@ -71,6 +71,7 @@ class EditComponentService {
       container: {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
+        id: componentElement.container.getId(),
       },
       page: this.PageMetaDataService.get(),
     };

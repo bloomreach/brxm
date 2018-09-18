@@ -276,6 +276,32 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('delete component functions', () => {
+    beforeEach(() => {
+      const properties = ['propertyData'];
+      openComponentEditor(properties);
+    });
+
+    it('calls the hst component service for deleteComponent', () => {
+      ComponentEditor.deleteComponent();
+      expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('containerId', 'componentId');
+    });
+
+    it('calls the dialog service for delete component confirmation', () => {
+      const showPromise = {};
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(DialogService, 'show');
+
+      DialogService.show.and.returnValue(showPromise);
+
+      const result = ComponentEditor.confirmDeleteComponent();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+  });
+
   describe('confirm save or discard changes', () => {
     beforeEach(() => {
       ComponentEditor.component = {

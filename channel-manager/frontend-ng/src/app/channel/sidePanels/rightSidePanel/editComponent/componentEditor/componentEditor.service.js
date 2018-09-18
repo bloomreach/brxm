@@ -135,6 +135,23 @@ class ComponentEditorService {
     }));
   }
 
+  confirmDeleteComponent() {
+    const translateParams = {
+      component: this.component.label,
+    };
+
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', translateParams))
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  deleteComponent() {
+    return this.HstComponentService.deleteComponent(this.container.id, this.component.id);
+  }
+
   getComponentName() {
     if (this.component) {
       return this.component.label;

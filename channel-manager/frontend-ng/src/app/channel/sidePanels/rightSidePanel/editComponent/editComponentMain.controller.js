@@ -18,6 +18,7 @@ class EditComponentMainCtrl {
   constructor(
     $log,
     $q,
+    ChannelService,
     CmsService,
     ComponentEditor,
     EditComponentService,
@@ -28,6 +29,7 @@ class EditComponentMainCtrl {
 
     this.$log = $log;
     this.$q = $q;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
     this.EditComponentService = EditComponentService;
@@ -45,7 +47,27 @@ class EditComponentMainCtrl {
   }
 
   deleteComponent() {
-    console.log('TODO: implement EditComponentMainCtrl.deleteComponent');
+    return this.ComponentEditor.confirmDeleteComponent()
+      .then(() => {
+        this.ComponentEditor.deleteComponent()
+          .then(() => {
+            this.ChannelService.recordOwnChange();
+            this.HippoIframeService.reload();
+            this.close();
+          })
+          .catch((errorResponse) => {
+            // delete action failed: show toast message? go to component locked mode?
+            // what if someone else deleted the component already: no problem!
+            // TODO: see PageStructureService.removeComponentById() for an example to deal with the error response
+            console.log(`TODO: implement dealing with the delete component error response: ${errorResponse}`);
+          });
+      },
+      )
+      .catch(() => {
+        // user cancelled the delete
+        this.closing = false;
+        return this.$q.reject();
+      });
   }
 
   isSaveAllowed() {
