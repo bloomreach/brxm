@@ -13,22 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.model;
+package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 import java.util.List;
 
-import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.configuration.hosting.Mount;
 
-public interface HstModelRegistry {
+/**
+ * Channel event occuring before a channel is deleted.
+ */
+public interface BeforeChannelDeleteEvent extends ChannelEvent {
 
-    HstModel registerHstModel(String contextPath, ClassLoader websiteClassLoader,
-                              ComponentManager websiteComponentManager, boolean loadHstConfigNodes) throws ModelRegistrationException;
+    /**
+     * Return all mounts binding to the deleting channel.
+     */
+    public List<Mount> getMounts();
 
-    void unregisterHstModel(String contextPath) throws ModelRegistrationException;
-
-    HstModel getHstModel(String contextPath);
-
-    HstModel getHstModelByWebsiteClassLoader(ClassLoader websiteClassLoader);
-
-    List<HstModel> getHstModels();
 }

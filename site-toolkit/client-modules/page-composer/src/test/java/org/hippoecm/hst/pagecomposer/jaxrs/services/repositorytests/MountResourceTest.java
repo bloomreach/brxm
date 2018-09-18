@@ -19,19 +19,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
-import com.google.common.eventbus.Subscribe;
-
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
@@ -47,7 +43,10 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import com.google.common.eventbus.Subscribe;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
@@ -55,7 +54,6 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
-import static org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper.SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

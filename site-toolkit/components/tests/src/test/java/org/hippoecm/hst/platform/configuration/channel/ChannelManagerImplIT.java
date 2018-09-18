@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.configuration.channel;
 
 import java.security.PrivilegedActionException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistrar;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -368,7 +370,10 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             session.save();
 
             ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
-            channelMngr.addChannelManagerEventListeners(shortCircuitingListener);
+
+            ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+            cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
+            cmEventListenerRegistrar.init();
 
             List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
             assertEquals(1, bluePrints.size());
@@ -629,7 +634,9 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
         MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
 
-        channelMngr.addChannelManagerEventListeners(listener1, listener2, listener3);
+        ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+        cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(listener1, listener2, listener3));
+        cmEventListenerRegistrar.init();
 
         final Channel channelToPersist = channel;
 
@@ -660,7 +667,9 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         assertEquals(1, listener2.getUpdatedCount());
         assertEquals(1, listener3.getUpdatedCount());
 
-        channelMngr.removeChannelManagerEventListeners(listener1, listener2, listener3);
+        cmEventListenerRegistrar.destroy();
+        cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+        cmEventListenerRegistrar.init();
 
         channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
         channel.setName("cmit-channel2");
@@ -710,7 +719,9 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
 
-        channelMngr.addChannelManagerEventListeners(shortCircuitingListener);
+        ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+        cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
+        cmEventListenerRegistrar.init();
 
         channelMngr.persist("cmit-test-bp2", channel);
 

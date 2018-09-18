@@ -39,8 +39,8 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -321,9 +321,10 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                PageCopyContext pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
+                PageCopyContextImpl pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
                         targetSiteMapItemUUID, targetName);
-                publishSynchronousEvent(new PageCopyEvent(pcc));
+                PageCopyEventImpl event = new PageCopyEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pcc);
+                publishSynchronousEvent(event);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getTargetMount(), pcc.getNewSiteMapItemNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }

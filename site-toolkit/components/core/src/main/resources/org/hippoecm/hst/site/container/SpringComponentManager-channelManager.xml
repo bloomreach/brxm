@@ -26,24 +26,12 @@
     </property>
   </bean>
 
-  <!-- TODO HSTTW-4355 Implement below in platform HstModelRegistryImpl since ChannelManagerImpl instantiation has moved
-       TODO over there -->
-  <!--<bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">-->
-    <!--<constructor-arg>-->
-      <!--<map>-->
-        <!--<entry>-->
-          <!--<key><value>org.springframework.context.event.ContextStartedEvent</value></key>-->
-          <!--<list>-->
-            <!--<bean class="org.springframework.beans.support.ArgumentConvertingMethodInvoker">-->
-              <!--<property name="targetObject" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />-->
-              <!--<property name="targetMethod" value="addChannelManagerEventListeners" />-->
-              <!--<property name="arguments" ref="allChannelManagerEventListeners" />-->
-            <!--</bean>-->
-          <!--</list>-->
-        <!--</entry>-->
-      <!--</map>-->
-    <!--</constructor-arg>-->
-  <!--</bean> -->
+  <bean id="channelManagerEventListenerRegistrar"
+        class="org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistrar"
+        init-method="init"
+        destroy-method="destroy">
+    <property name="channelManagerEventListeners" ref="allChannelManagerEventListeners" />
+  </bean>
 
   <bean id="allChannelManagerEventListeners" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="java.util.List" />

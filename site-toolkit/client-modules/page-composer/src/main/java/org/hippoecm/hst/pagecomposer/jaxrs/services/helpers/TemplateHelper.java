@@ -19,10 +19,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
-import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContextImpl;
+import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
+import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

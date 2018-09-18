@@ -29,12 +29,14 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.RuntimeExceptionEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.hst.platform.api.ChannelManagerEventBus;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,8 +145,10 @@ public class AbstractConfigResource implements ComponentManagerAware {
         }
     }
 
-    protected void publishSynchronousEvent(final RuntimeExceptionEvent event) throws ClientException {
-        componentManager.publishEvent(event);
+    protected void publishSynchronousEvent(final ChannelEvent event) throws ClientException {
+        final ChannelManagerEventBus cmEventBus = HippoServiceRegistry.getService(ChannelManagerEventBus.class);
+        cmEventBus.post(event, event.getChannel().getContextPath());
+
         if (event.getException() != null) {
             throw event.getException();
         }
@@ -224,5 +228,4 @@ public class AbstractConfigResource implements ComponentManagerAware {
         final String configurationPath = mount.getHstSite().getConfigurationPath();
         return configurationPath + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
-
 }

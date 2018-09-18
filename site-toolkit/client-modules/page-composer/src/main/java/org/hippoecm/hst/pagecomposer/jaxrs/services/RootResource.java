@@ -50,7 +50,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -207,7 +207,9 @@ public class RootResource extends AbstractConfigResource {
 
             channelService.preDeleteChannel(session, channel, mountsOfChannel);
 
-            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, mountsOfChannel, hstRequestContext));
+            BeforeChannelDeleteEventImpl event = new BeforeChannelDeleteEventImpl(
+                    getPageComposerContextService().getEditingPreviewChannel(), hstRequestContext, mountsOfChannel);
+            publishSynchronousEvent(event);
 
             channelService.deleteChannel(session, channel, mountsOfChannel);
             removeRenderingMountId();

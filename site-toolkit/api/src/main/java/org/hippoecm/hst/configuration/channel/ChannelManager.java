@@ -83,15 +83,4 @@ public interface ChannelManager {
      */
     boolean canUserModifyChannels();
 
-    /**
-     * Adds channel manager listeners.
-     * @param channelManagerEventListeners
-     */
-    void addChannelManagerEventListeners(ChannelManagerEventListener ... channelManagerEventListeners);
-
-    /**
-     * Removes channel manager listeners.
-     * @param channelManagerEventListeners
-     */
-    void removeChannelManagerEventListeners(ChannelManagerEventListener ... channelManagerEventListeners);
 }

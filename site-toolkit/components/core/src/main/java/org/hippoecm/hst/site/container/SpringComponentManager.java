@@ -25,8 +25,6 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import com.google.common.eventbus.EventBus;
-
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
@@ -47,6 +45,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * SpringComponentManager

@@ -19,13 +19,10 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PageCopyContext {
+public class PageCopyContextImpl implements PageCopyContext {
 
     private transient HstRequestContext requestContext;
     private transient Mount editingMount;
@@ -45,7 +42,7 @@ public class PageCopyContext {
     private transient Node newSiteMapItemNode;
     private transient Node newPageNode;
 
-    public PageCopyContext(final HstRequestContext requestContext,
+    public PageCopyContextImpl(final HstRequestContext requestContext,
                            final Mount editingMount,
                            final HstSiteMapItem sourceSiteMapItem,
                            final Node sourceSiteMapNode,
@@ -68,7 +65,7 @@ public class PageCopyContext {
     }
 
     /**
-     * @return the {@link HstRequestContext} that originated this {@link PageCopyContext}. It will never be {@code null}
+     * @return the {@link HstRequestContext} that originated this {@link PageCopyContextImpl}. It will never be {@code null}
      */
     public HstRequestContext getRequestContext() {
         return requestContext;

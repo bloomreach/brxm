@@ -38,7 +38,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,10 +46,9 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
-import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
@@ -297,12 +295,10 @@ public class MountResource extends AbstractConfigResource {
             branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         }
 
-        ChannelEvent event = new ChannelEvent(
-                ChannelEvent.ChannelEventType.PREVIEW_CREATION,
-                Collections.emptyList(),
-                getPageComposerContextService().getEditingMount(),
-                getPageComposerContextService().getEditingPreviewSite(),
-                requestContext);
+        ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
+                requestContext, ChannelEvent.ChannelEventType.PREVIEW_CREATION);
+        event.setEditingMount(getPageComposerContextService().getEditingMount());
+        event.setEditingPreviewSite(getPageComposerContextService().getEditingPreviewSite());
 
         publishSynchronousEvent(event);
         HstConfigurationUtils.persistChanges(session);
@@ -395,12 +391,10 @@ public class MountResource extends AbstractConfigResource {
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
 
-            ChannelEvent event = new ChannelEvent(
-                    ChannelEvent.ChannelEventType.PUBLISH,
-                    userIds,
-                    context.getEditingMount(),
-                    context.getEditingPreviewSite(),
-                    requestContext);
+            ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
+                    requestContext, ChannelEvent.ChannelEventType.PUBLISH);
+            event.setEditingMount(context.getEditingMount());
+            event.setEditingPreviewSite(context.getEditingPreviewSite());
 
             publishSynchronousEvent(event);
 
@@ -547,12 +541,11 @@ public class MountResource extends AbstractConfigResource {
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
 
-            ChannelEvent event = new ChannelEvent(
-                    ChannelEvent.ChannelEventType.DISCARD,
-                    userIds,
-                    context.getEditingMount(),
-                    context.getEditingPreviewSite(),
-                    requestContext);
+            ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
+                    requestContext, ChannelEvent.ChannelEventType.DISCARD);
+            event.setUserIds(userIds);
+            event.setEditingMount(context.getEditingMount());
+            event.setEditingPreviewSite(context.getEditingPreviewSite());
 
             publishSynchronousEvent(event);
 

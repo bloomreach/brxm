@@ -20,7 +20,7 @@ package org.hippoecm.hst.configuration.channel;
  * i18n of the error messages. A channel exception can also contain a number of parameters that can be used in the
  * i18n error message. Which parameters are included should be documented in the method where the exception is thrown.
  */
-public class ChannelException extends Exception {
+public class ChannelException extends RuntimeException {
 
     /**
      * Type of a channel exception. Each type contains an key that can be used as (part of) a resource bundle key.

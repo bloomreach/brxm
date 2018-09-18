@@ -28,6 +28,20 @@ import org.onehippo.cms7.services.hst.Channel;
 public interface ChannelManagerEvent {
 
     /**
+     * Channel manager event type
+     */
+    public enum ChannelManagerEventType {
+        CREATED,
+        UPDATED
+    }
+
+    /**
+     * Return channel manager event type.
+     * @return channel manager event type
+     */
+    ChannelManagerEventType getChannelManagerEventType();
+
+    /**
      * Returns a blueprint object which is being used during the channel creation.
      * If the event is not triggered on channel creation, it returns null.
      */

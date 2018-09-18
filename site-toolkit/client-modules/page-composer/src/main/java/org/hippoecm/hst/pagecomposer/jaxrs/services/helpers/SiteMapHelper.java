@@ -37,7 +37,7 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContextImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -234,7 +234,7 @@ public class SiteMapHelper extends AbstractHelper {
      * @return the {@link javax.jcr.Node} of the created new siteMapItem
      * @throws RepositoryException
      */
-    public PageCopyContext copy(final String mountId, final String sourceSiteMapItemUUID, final String targetSiteMapItemUUID, final String targetName)
+    public PageCopyContextImpl copy(final String mountId, final String sourceSiteMapItemUUID, final String targetSiteMapItemUUID, final String targetName)
             throws RepositoryException {
 
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
@@ -314,7 +314,7 @@ public class SiteMapHelper extends AbstractHelper {
         newSiteMapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 NODENAME_HST_PAGES + "/" + clonedPage.getName());
 
-        PageCopyContext pcc = new PageCopyContext(requestContext, editingMount, sourceSiteMapItem, session.getNodeByIdentifier(sourceSiteMapItemUUID),
+        PageCopyContextImpl pcc = new PageCopyContextImpl(requestContext, editingMount, sourceSiteMapItem, session.getNodeByIdentifier(sourceSiteMapItemUUID),
                 sourcePage, session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
 
         templateHelper.copyTemplates(pcc);
