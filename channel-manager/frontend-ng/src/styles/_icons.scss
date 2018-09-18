@@ -16,12 +16,12 @@
 
 // Default material design icon size: 24px
 [md-font-icon] {
-  font-size: 24px;
-  height: 24px;
-  line-height: 24px;
-  min-height: 24px;
-  min-width: 24px;
-  width: 24px;
+  font-size: $icon-size;
+  height: $icon-size;
+  line-height: $icon-size;
+  min-height: $icon-size;
+  min-width: $icon-size;
+  width: $icon-size;
 
   // Some icons are colored to be consistent with the rest of the CMS
 
