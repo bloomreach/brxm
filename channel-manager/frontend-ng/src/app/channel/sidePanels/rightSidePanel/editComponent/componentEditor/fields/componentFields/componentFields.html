@@ -86,9 +86,9 @@
     config="::componentField.pickerConfig"
     display-name="::componentField.displayValue"
     name="{{ ::componentField.name }}"
-    ng-blur="$ctrl.blurPrimitive($event)"
     ng-change="$ctrl.valueChanged()"
-    ng-focus="$ctrl.focusPrimitive($event)"
+    on-blur="$ctrl.blurPrimitive($event)"
+    on-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value">
   </path-link>
 
