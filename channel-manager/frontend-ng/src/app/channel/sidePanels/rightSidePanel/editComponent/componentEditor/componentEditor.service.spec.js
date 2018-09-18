@@ -309,13 +309,13 @@ describe('ComponentEditorService', () => {
     });
 
     it('saves the data when the dialog resolves with "SAVE"', (done) => {
-      spyOn(ComponentEditor, '_saveChanges').and.callThrough();
+      spyOn(ComponentEditor, 'save').and.callThrough();
       DialogService.show.and.returnValue($q.resolve('SAVE'));
       ComponentEditor.markDataDirty();
 
       ComponentEditor.confirmSaveOrDiscardChanges()
         .then(() => {
-          expect(ComponentEditor._saveChanges).toHaveBeenCalled();
+          expect(ComponentEditor.save).toHaveBeenCalled();
           done();
         });
       $rootScope.$digest();

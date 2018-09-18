@@ -175,7 +175,7 @@ class ComponentEditorService {
       .then((action) => {
         switch (action) {
           case 'SAVE':
-            return this._saveChanges()
+            return this.save()
               .then(() => action); // let caller know that changes have been saved
           default:
             return this.$q.resolve(action); // let caller know that changes have not been saved
@@ -204,13 +204,7 @@ class ComponentEditorService {
     });
   }
 
-  _saveChanges() {
-    console.log('Save changes');
-    return this.$q.resolve();
-  }
-
-  _discardChanges() {
-    console.log('Discard changes');
+  save() {
     return this.$q.resolve();
   }
 
