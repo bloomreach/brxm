@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -129,7 +129,17 @@
     </Logger>
 
     <!-- demo events logging -->
-    <Logger additivity="false" name="org.hippoecm.hst.demo.events" level="info">
+    <!-- Channel(Manager)Events -->
+    <Logger name="org.hippoecm.hst.platform.eventbus" level="info" additivity="false">
+      <AppenderRef ref="demo-events"/>
+    </Logger>
+    <Logger name="org.hippoecm.hst.demo.events" level="info" additivity="false">
+      <AppenderRef ref="demo-events"/>
+    </Logger>
+    <Logger name="org.hippoecm.hst.intranet.event" level="info" additivity="false">
+      <AppenderRef ref="demo-events"/>
+    </Logger>
+    <Logger name="org.hippoecm.hst.demo.channel" level="info" additivity="false">
       <AppenderRef ref="demo-events"/>
     </Logger>
 
@@ -164,7 +174,7 @@
       <AppenderRef ref="console"/>
     </Logger>
 
-    <Logger additivity="false" name="org.hippoecm.hst.container.HstDelegateeFilterBean" level="debug">
+    <Logger additivity="false" name="org.hippoecm.hst.container.HstDelegateeFilterBean" level="warn">
       <AppenderRef ref="site"/>
       <AppenderRef ref="console"/>
     </Logger>
@@ -206,7 +216,7 @@
     </Logger>
 
     <!-- In order to trace batch commit/revert process. -->
-    <Logger name="org.onehippo.repository.update.UpdaterExecutor" additivity="false" level="debug"/>
+    <Logger name="org.onehippo.repository.update.UpdaterExecutor" additivity="false" level="info"/>
 
     <Root level="warn">
       <AppenderRef ref="cms"/>
