@@ -21,8 +21,8 @@ class EditComponentService {
     $translate,
     ChannelService,
     CmsService,
-    ConfigService,
     ComponentEditor,
+    ConfigService,
     MaskService,
     PageMetaDataService,
     PageStructureService,
@@ -46,25 +46,8 @@ class EditComponentService {
       { entering: '**.edit-component' },
       transition => this._loadComponent(transition.params().properties),
     );
-    $transitions.onBefore(
-      { from: '**.edit-component', to: 'hippo-cm' },
-      () => this._onCloseChannel(),
-    );
-
-    CmsService.subscribe('kill-editor', (documentId) => {
-      this._stopEditingComponent(documentId);
-    });
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
-  }
-
-  _stopEditingComponent(componentId) {
-    console.log(`TODO: implement EditComponentService._stopEditingComponent -- ${componentId}`);
-    if (this.$state.$current.name === 'hippo-cm.channel.edit-component'
-    /* && this.ContentEditor.getDocumentId() === documentId */) {
-      // this.ContentEditor.kill();
-      this.stopEditing();
-    }
   }
 
   startEditing(componentElement) {
@@ -88,6 +71,7 @@ class EditComponentService {
       container: {
         isDisabled: componentElement.container.isDisabled(),
         isInherited: componentElement.container.isInherited(),
+        id: componentElement.container.getId(),
       },
       page: this.PageMetaDataService.get(),
     };
@@ -129,13 +113,6 @@ class EditComponentService {
 
     const componentName = this.ComponentEditor.getComponentName();
     this.RightSidePanelService.setTitle(componentName);
-  }
-
-  _onCloseChannel() {
-    console.log('TODO: implement EditComponentService._onCloseChannel');
-    // return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
-    //   .then(() => this.ContentEditor.discardChanges())
-    //   .then(() => this.ContentEditor.close());
   }
 }
 

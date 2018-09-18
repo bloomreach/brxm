@@ -79,6 +79,10 @@ class HstComponentService {
     const encodedVariant = encodeURIComponent(componentVariant);
     return this.HstService.doGet(componentId, encodedVariant, this.ConfigService.locale);
   }
+
+  deleteComponent(containerId, componentId) {
+    return this.HstService.doDelete(containerId, componentId);
+  }
 }
 
 export default HstComponentService;

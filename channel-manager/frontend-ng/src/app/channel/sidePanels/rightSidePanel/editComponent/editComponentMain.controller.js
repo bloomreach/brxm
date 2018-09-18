@@ -16,46 +16,23 @@
 
 class EditComponentMainCtrl {
   constructor(
+    $log,
     $q,
-    $scope,
-    $translate,
+    ChannelService,
     CmsService,
     ComponentEditor,
-    ConfigService,
-    ContentEditor,
-    EditContentService,
+    EditComponentService,
     HippoIframeService,
-    ProjectService,
-    RightSidePanelService,
   ) {
     'ngInject';
 
+    this.$log = $log;
     this.$q = $q;
-    this.$scope = $scope;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
-    this.ConfigService = ConfigService;
-    this.ContentEditor = ContentEditor;
-    this.EditContentService = EditContentService;
+    this.EditComponentService = EditComponentService;
     this.HippoIframeService = HippoIframeService;
-    this.ProjectService = ProjectService;
-    this.RightSidePanelService = RightSidePanelService;
-
-    this.closing = false;
-  }
-
-  $onInit() {
-    this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
-      if (newValue === oldValue) {
-        return;
-      }
-
-      if (newValue) {
-        this.RightSidePanelService.startLoading();
-      } else {
-        this.RightSidePanelService.stopLoading();
-      }
-    });
   }
 
   discard() {
@@ -67,19 +44,24 @@ class EditComponentMainCtrl {
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
   }
 
-  close() {
-    this.closing = true;
-    // this.EditContentService.stopEditing();
-  }
-
-  // switchEditor() {
-  //   this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
-  //   this.ContentEditor.close();
-  //   this.EditContentService.stopEditing();
-  // }
-
   deleteComponent() {
-    console.log('TODO: implement EditComponentMainCtrl.deleteComponent');
+    return this.ComponentEditor.confirmDeleteComponent()
+      .then(() => {
+        this.ComponentEditor.deleteComponent()
+          .then(() => {
+            this.ChannelService.recordOwnChange();
+            this.HippoIframeService.reload();
+            this.EditComponentService.stopEditing();
+          })
+          .catch((errorResponse) => {
+            // delete action failed: show toast message? go to component locked mode?
+            // what if someone else deleted the component already: no problem!
+            // TODO: see PageStructureService.removeComponentById() for an example to deal with the error response
+            console.log(`TODO: implement dealing with the delete component error response: ${errorResponse}`);
+          });
+      },
+      )
+      .catch(() => this.$q.reject()); // user cancelled the delete
   }
 
   isSaveAllowed() {
@@ -87,30 +69,15 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
-    return this._confirmExit()
-      .then(() => this.ContentEditor.discardChanges()
-        .catch(() => {
-          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
-          // the editor should still be closed.
-        })
-        .finally(() => this.ContentEditor.close()),
-      )
-      .catch(() => {
-        // user cancelled the exit
-        this.closing = false;
-        return this.$q.reject();
-      });
-  }
-
-  _confirmExit() {
-    if (this.closing) {
-      return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-    }
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
-      .then((action) => {
-        if (action === 'SAVE') {
-          this.HippoIframeService.reload();
+    return this.ComponentEditor.confirmSaveOrDiscardChanges()
+      .then(() => this.ComponentEditor.close())
+      .catch((e) => {
+        if (e) {
+          this.$log.error('An error occurred while closing the ComponentEditor ->', e);
+        } else {
+          // the user has cancelled the confirmation dialog
         }
+        return this.$q.reject();
       });
   }
 }
