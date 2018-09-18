@@ -23,7 +23,6 @@ class EditComponentMainCtrl {
     ComponentEditor,
     EditComponentService,
     HippoIframeService,
-    PageStructureService,
   ) {
     'ngInject';
 
@@ -34,7 +33,6 @@ class EditComponentMainCtrl {
     this.ComponentEditor = ComponentEditor;
     this.EditComponentService = EditComponentService;
     this.HippoIframeService = HippoIframeService;
-    this.PageStructureService = PageStructureService;
   }
 
   discard() {
@@ -53,7 +51,7 @@ class EditComponentMainCtrl {
           .then(() => {
             this.ChannelService.recordOwnChange();
             this.HippoIframeService.reload();
-            this.close();
+            this.EditComponentService.stopEditing();
           })
           .catch((errorResponse) => {
             // delete action failed: show toast message? go to component locked mode?
@@ -63,11 +61,7 @@ class EditComponentMainCtrl {
           });
       },
       )
-      .catch(() => {
-        // user cancelled the delete
-        this.closing = false;
-        return this.$q.reject();
-      });
+      .catch(() => this.$q.reject()); // user cancelled the delete
   }
 
   isSaveAllowed() {
@@ -75,7 +69,7 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
-    return this._confirmExit()
+    return this.ComponentEditor.confirmSaveOrDiscardChanges()
       .then(() => this.ComponentEditor.close())
       .catch((e) => {
         if (e) {
@@ -85,11 +79,6 @@ class EditComponentMainCtrl {
         }
         return this.$q.reject();
       });
-  }
-
-  _confirmExit() {
-    return this.ComponentEditor.confirmSaveOrDiscardChanges()
-      .then(() => this.PageStructureService.renderComponent(this.ComponentEditor.component.id));
   }
 }
 

@@ -18,11 +18,11 @@ describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
   let $scope;
+  let ChannelService;
   let CmsService;
   let ComponentEditor;
   let EditComponentService;
   let HippoIframeService;
-  let PageStructureService;
 
   let $ctrl;
 
@@ -40,6 +40,7 @@ describe('EditComponentMainCtrl', () => {
       $q = _$q_;
       EditComponentService = _EditComponentService_;
 
+      ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
       CmsService = jasmine.createSpyObj('CmsService', [
         'publish',
         'reportUsageStatistic',
@@ -51,16 +52,15 @@ describe('EditComponentMainCtrl', () => {
         'deleteComponent',
       ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-      PageStructureService = jasmine.createSpyObj('PageStructureService', ['renderComponent']);
 
       $scope = $rootScope.$new();
       $ctrl = $controller('editComponentMainCtrl as $ctrl', {
         $scope,
+        ChannelService,
         CmsService,
         ComponentEditor,
         EditComponentService,
         HippoIframeService,
-        PageStructureService,
       });
 
       $scope.$digest();
@@ -111,14 +111,6 @@ describe('EditComponentMainCtrl', () => {
         });
         $scope.$digest();
       });
-
-      it('renders the component', (done) => {
-        $ctrl.uiCanExit().then(() => {
-          expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId');
-          done();
-        });
-        $scope.$digest();
-      });
     });
   });
 
@@ -141,13 +133,31 @@ describe('EditComponentMainCtrl', () => {
       expect(ComponentEditor.deleteComponent).not.toHaveBeenCalled();
     });
 
-    it('deletes the component if the action is confirmed', () => {
-      ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+    describe('when delete succeeds', () => {
+      beforeEach(() => {
+        ComponentEditor.deleteComponent.and.returnValue($q.resolve());
+        ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+        spyOn(EditComponentService, 'stopEditing');
 
-      $ctrl.deleteComponent();
-      $scope.$digest();
+        $ctrl.deleteComponent();
+        $scope.$digest();
+      });
 
-      expect(ComponentEditor.deleteComponent).toHaveBeenCalled();
+      it('deletes the component if the action is confirmed', () => {
+        expect(ComponentEditor.deleteComponent).toHaveBeenCalled();
+      });
+
+      it('records a change by the current user', () => {
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      });
+
+      it('reloads the page', () => {
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+
+      it('closes the component editor', () => {
+        expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      });
     });
   });
 });

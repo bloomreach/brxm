@@ -30,7 +30,9 @@ describe('ComponentEditorService', () => {
       label: 'componentLabel',
       variant: 'componentVariant',
     },
-    container: 'container',
+    container: {
+      id: 'containerId',
+    },
     page: 'page',
   };
 
@@ -62,6 +64,7 @@ describe('ComponentEditorService', () => {
     });
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
   });
 
   describe('opening a component editor', () => {
@@ -300,6 +303,23 @@ describe('ComponentEditorService', () => {
       expect(DialogService.show).toHaveBeenCalled();
       expect(result).toBe(showPromise);
     });
+
+    it('clears the state when the component is successfully deleted', () => {
+      spyOn(ComponentEditor, 'close');
+      HstComponentService.deleteComponent.and.returnValue($q.reject());
+
+      ComponentEditor.deleteComponent();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.close).not.toHaveBeenCalled();
+
+      HstComponentService.deleteComponent.and.returnValue($q.resolve());
+
+      ComponentEditor.deleteComponent();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.close).toHaveBeenCalled();
+    });
   });
 
   describe('confirm save or discard changes', () => {
@@ -334,14 +354,31 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
     });
 
-    it('saves the data when the dialog resolves with "SAVE"', (done) => {
+    it('saves the data when the dialog resolves with "SAVE" and does not redraw', (done) => {
       spyOn(ComponentEditor, 'save').and.callThrough();
+      spyOn(PageStructureService, 'renderComponent');
       DialogService.show.and.returnValue($q.resolve('SAVE'));
       ComponentEditor.markDataDirty();
 
       ComponentEditor.confirmSaveOrDiscardChanges()
         .then(() => {
           expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+      spyOn(PageStructureService, 'renderComponent');
+      spyOn(ComponentEditor, 'save');
+      DialogService.show.and.returnValue($q.resolve('DISCARD'));
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(PageStructureService.renderComponent).toHaveBeenCalled();
+          expect(ComponentEditor.save).not.toHaveBeenCalled();
           done();
         });
       $rootScope.$digest();

@@ -149,7 +149,8 @@ class ComponentEditorService {
   }
 
   deleteComponent() {
-    return this.HstComponentService.deleteComponent(this.container.id, this.component.id);
+    return this.HstComponentService.deleteComponent(this.container.id, this.component.id)
+      .then(() => this.close());
   }
 
   getComponentName() {
@@ -194,6 +195,9 @@ class ComponentEditorService {
           case 'SAVE':
             return this.save()
               .then(() => action); // let caller know that changes have been saved
+          case 'DISCARD':
+            this.PageStructureService.renderComponent(this.component.id);
+            return this.$q.resolve(action);
           default:
             return this.$q.resolve(action); // let caller know that changes have not been saved
         }
