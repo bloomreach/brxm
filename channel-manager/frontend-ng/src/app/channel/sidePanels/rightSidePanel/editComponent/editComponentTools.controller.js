@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class EditContentToolsCtrl {
+class EditComponentToolsCtrl {
   constructor(ContentEditor, EditComponentService) {
     'ngInject';
 
@@ -37,4 +37,4 @@ class EditContentToolsCtrl {
   }
 }
 
-export default EditContentToolsCtrl;
+export default EditComponentToolsCtrl;
