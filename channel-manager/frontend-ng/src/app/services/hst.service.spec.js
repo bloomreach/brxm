@@ -240,17 +240,6 @@ describe('HstService', () => {
     expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
   });
 
-  it('removes an exist component from a container', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const url = `${contextPath}${apiUrlPrefix}/container-1./component-foo`;
-    $httpBackend.expectDELETE(url).respond(200);
-
-    hstService.removeHstComponent('container-1', 'component-foo').then(promiseSpy);
-    $httpBackend.flush();
-
-    expect(promiseSpy).toHaveBeenCalled();
-  });
-
   it('updates component orders of a container', () => {
     const promiseSpy = jasmine.createSpy('promiseSpy');
     const url = `${contextPath}${apiUrlPrefix}/container-1./`;

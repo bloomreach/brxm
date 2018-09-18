@@ -26,6 +26,7 @@ describe('PageStructureService', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let HstComponentService;
   let HstService;
   let MarkupService;
   let PageMetaDataService;
@@ -44,6 +45,7 @@ describe('PageStructureService', () => {
       _EditComponentService_,
       _FeedbackService_,
       _HippoIframeService_,
+      _HstComponentService_,
       _HstService_,
       _MarkupService_,
       _PageMetaDataService_,
@@ -56,6 +58,7 @@ describe('PageStructureService', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      HstComponentService = _HstComponentService_;
       HstService = _HstService_;
       MarkupService = _MarkupService_;
       PageMetaDataService = _PageMetaDataService_;
@@ -406,14 +409,14 @@ describe('PageStructureService', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(''));
 
     PageStructureService.removeComponentById('aaaa');
 
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
   });
 
@@ -424,12 +427,12 @@ describe('PageStructureService', () => {
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'unknown', parameterMap: {} }));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.reject({ error: 'unknown', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT',
       jasmine.objectContaining({ component: 'component A' }));
@@ -444,12 +447,12 @@ describe('PageStructureService', () => {
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
       jasmine.objectContaining({ component: 'component A' }));
@@ -461,12 +464,12 @@ describe('PageStructureService', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
 
     PageStructureService.removeComponentById('unknown-component');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).not.toHaveBeenCalled();
+    expect(HstComponentService.deleteComponent).not.toHaveBeenCalled();
   });
 
   it('returns a container by iframe element', () => {
