@@ -17,7 +17,9 @@
 describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
+  let $translate;
   let ComponentEditor;
+  let DialogService;
   let HstComponentService;
   let PageStructureService;
 
@@ -41,10 +43,20 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
 
-    inject((_$q_, _$rootScope_, _ComponentEditor_, _HstComponentService_, _PageStructureService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$translate_,
+      _ComponentEditor_,
+      _DialogService_,
+      _HstComponentService_,
+      _PageStructureService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $translate = _$translate_;
       ComponentEditor = _ComponentEditor_;
+      DialogService = _DialogService_;
       HstComponentService = _HstComponentService_;
       PageStructureService = _PageStructureService_;
     });
@@ -261,6 +273,66 @@ describe('ComponentEditorService', () => {
         b: 'value-b',
         c: 'value-c',
       });
+    });
+  });
+
+  describe('confirm save or discard changes', () => {
+    beforeEach(() => {
+      ComponentEditor.component = {
+        id: 'component-id',
+        label: 'component-label',
+      };
+
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    });
+
+    it('does not show a dialog if there is no dirty data', (done) => {
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect($translate.instant).not.toHaveBeenCalled();
+          expect(DialogService.show).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('shows a dialog if there is dirty data', (done) => {
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(DialogService.show).toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('saves the data when the dialog resolves with "SAVE"', (done) => {
+      spyOn(ComponentEditor, '_saveChanges').and.callThrough();
+      DialogService.show.and.returnValue($q.resolve('SAVE'));
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges()
+        .then(() => {
+          expect(ComponentEditor._saveChanges).toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('translate the dialog title and body text', (done) => {
+      ComponentEditor.markDataDirty();
+
+      ComponentEditor.confirmSaveOrDiscardChanges('MESSAGE_KEY')
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+          expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+            componentLabel: 'component-label',
+          });
+          done();
+        });
+      $rootScope.$digest();
     });
   });
 });
