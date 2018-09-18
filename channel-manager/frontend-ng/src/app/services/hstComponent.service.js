@@ -61,9 +61,7 @@ class HstComponentService {
   }
 
   setParameter(componentId, componentVariant, parameterName, parameterValue) {
-    this.setParameters({
-      [parameterName]: parameterValue,
-    });
+    this.setParameters(componentId, componentVariant, { [parameterName]: parameterValue });
   }
 
   setParameters(componentId, componentVariant, parameters) {
