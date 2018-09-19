@@ -28,11 +28,15 @@ import org.onehippo.cms7.services.hst.Channel;
 public interface ChannelManagerEvent {
 
     /**
-     * Channel manager event type
+     * Channel manager event types.
+     * <ul>
+     * <li><code>CREATING</code>: when creating a channel
+     * <li><code>UPDATING</code>: when updating a channel
+     * </ul>
      */
     public enum ChannelManagerEventType {
-        CREATED,
-        UPDATED
+        CREATING,
+        UPDATING
     }
 
     /**

@@ -102,13 +102,14 @@ public class ChannelManagerEventListenerRegistrar {
         }
 
         @Subscribe
+        @Override
         public void onChannelManagerEvent(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
             switch (event.getChannelManagerEventType()) {
-            case CREATED:
-                channelCreated(event);
+            case CREATING:
+                handleChannelCreating(event);
                 break;
-            case UPDATED:
-                channelUpdated(event);
+            case UPDATING:
+                handleChannelUpdating(event);
                 break;
             default:
                 log.warn("Unknown or unhandlable channel manager event type: {}", event);
@@ -116,11 +117,10 @@ public class ChannelManagerEventListenerRegistrar {
             }
         }
 
-        @Override
-        public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
+        private void handleChannelCreating(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
             for (ChannelManagerEventListener listener : listeners) {
                 try {
-                    listener.channelCreated(event);
+                    listener.onChannelManagerEvent(event);
                 } catch (ChannelManagerEventListenerException e) {
                     if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
                         refreshJcrSession(false);
@@ -143,11 +143,10 @@ public class ChannelManagerEventListenerRegistrar {
             }
         }
 
-        @Override
-        public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
+        private void handleChannelUpdating(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
             for (ChannelManagerEventListener listener : listeners) {
                 try {
-                    listener.channelUpdated(event);
+                    listener.onChannelManagerEvent(event);
                 } catch (ChannelManagerEventListenerException e) {
                     if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
                         refreshJcrSession(false);

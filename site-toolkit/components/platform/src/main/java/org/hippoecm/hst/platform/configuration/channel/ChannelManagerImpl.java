@@ -112,7 +112,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 channel.setId(channelName);
 
                 createChannel(configNode, blueprint, session, channelName, channel);
-                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.CREATED, blueprint,
+                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.CREATING, blueprint,
                         channel, configNode);
                 postChannelManagerEventBus(event);
 
@@ -175,7 +175,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, hostGroupName, channel);
 
-                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.UPDATED, null, channel,
+                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.UPDATING, null, channel,
                         configNode);
                 postChannelManagerEventBus(event);
 
