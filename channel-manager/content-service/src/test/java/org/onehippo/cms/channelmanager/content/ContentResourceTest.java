@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -76,6 +77,7 @@ public class ContentResourceTest extends CXFTest {
     private WorkflowService workflowService;
     private DocumentTypesService documentTypesService;
     private Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
+    private BranchSelectionService branchSelectionService;
 
     @Before
     public void setup() {
@@ -85,6 +87,7 @@ public class ContentResourceTest extends CXFTest {
         workflowService = createMock(WorkflowService.class);
         documentTypesService = createMock(DocumentTypesService.class);
         contextPayloadService = createMock(Function.class);
+        branchSelectionService = createMock(BranchSelectionService.class);
 
         final SessionRequestContextProvider sessionRequestContextProvider = createMock(SessionRequestContextProvider.class);
         expect(sessionRequestContextProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
@@ -93,13 +96,15 @@ public class ContentResourceTest extends CXFTest {
 
         expect(contextPayloadService.apply(anyObject())).andStubReturn(emptyMap());
         replay(contextPayloadService);
+        expect(branchSelectionService.getSelectedBranchId(anyObject())).andStubReturn("master");
+        replay(branchSelectionService);
 
         PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
         replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, workflowService, contextPayloadService));
+        config.addServerSingleton(new ContentResource(sessionRequestContextProvider, documentsService, workflowService, contextPayloadService, branchSelectionService));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);

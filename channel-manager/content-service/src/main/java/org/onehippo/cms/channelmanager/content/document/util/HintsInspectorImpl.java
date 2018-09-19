@@ -38,7 +38,10 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionFalse;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 
-
+/**
+ * Provides the default implementation of the interface, which is used if the module configuration property
+ * hintsInspectorClass is not present.
+ */
 public class HintsInspectorImpl implements HintsInspector {
 
     private static final String HINT_IN_USE_BY = "inUseBy";

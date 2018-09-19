@@ -17,19 +17,20 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
- * Provides the default implementation of the interface, which is used if the module configuration property
- * branchingServiceClass is not present.
+ * Provides methods for server-side manipulation of the selected branch
  */
-public class BranchingServiceImpl implements BranchingService {
+public interface BranchSelectionService {
 
-    @Override
-    public Node branch(final DocumentWorkflow workflow, final String branchId, final Session session) {
-        throw new UnsupportedOperationException("cannot create a branch without a name");
-    }
+    /**
+     * Returns the id of the currently selected branch from the context payload, where the context payload is coming
+     * from the {@link org.onehippo.cms7.services.cmscontext.CmsSessionContext} of the logged in user.
+     *
+     * @param contextPayload context payload of user's cms session
+     * @return selected branch id
+     */
+    String getSelectedBranchId(Map<String, Serializable> contextPayload);
 }

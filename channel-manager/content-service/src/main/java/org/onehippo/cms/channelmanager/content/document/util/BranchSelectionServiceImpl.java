@@ -17,19 +17,19 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
+import java.io.Serializable;
+import java.util.Map;
 
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.branch.BranchConstants;
 
 /**
  * Provides the default implementation of the interface, which is used if the module configuration property
- * branchingServiceClass is not present.
+ * branchSelectionClass is not present.
  */
-public class BranchingServiceImpl implements BranchingService {
+public class BranchSelectionServiceImpl implements BranchSelectionService {
 
     @Override
-    public Node branch(final DocumentWorkflow workflow, final String branchId, final Session session) {
-        throw new UnsupportedOperationException("cannot create a branch without a name");
+    public String getSelectedBranchId(final Map<String, Serializable> contextPayload) {
+        return BranchConstants.MASTER_BRANCH_ID;
     }
 }

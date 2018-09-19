@@ -38,11 +38,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.onehippo.cms.channelmanager.content.document.ContextPayloadUtils;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -66,15 +66,18 @@ public class ContentResource {
     private final DocumentsService documentService;
     private final WorkflowService workflowService;
     private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
+    private final BranchSelectionService branchSelectionService;
 
     public ContentResource(final SessionRequestContextProvider userSessionProvider,
                            final DocumentsService documentsService,
                            final WorkflowService workflowService,
-                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
+                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService,
+                           final BranchSelectionService branchSelectionService) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
         this.workflowService = workflowService;
         this.contextPayloadService = contextPayloadService;
+        this.branchSelectionService = branchSelectionService;
     }
 
     @POST
@@ -227,7 +230,7 @@ public class ContentResource {
     }
 
     private String getBranchId(HttpServletRequest servletRequest) {
-        return ContextPayloadUtils.getBranchId(contextPayloadService.apply(servletRequest));
+        return branchSelectionService.getSelectedBranchId(contextPayloadService.apply(servletRequest));
     }
 
     @FunctionalInterface

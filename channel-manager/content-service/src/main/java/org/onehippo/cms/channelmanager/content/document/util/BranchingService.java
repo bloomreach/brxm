@@ -22,7 +22,18 @@ import javax.jcr.Session;
 
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
+/**
+ * Provides methods for manipulation of document branches
+ */
 public interface BranchingService {
 
+    /**
+     * Creates a branch identified with branchId for the document associated with the workflow.
+     *
+     * @param workflow worflow for a document
+     * @param branchId id of branch
+     * @param session  session
+     * @return the unpublished variant node
+     */
     Node branch(DocumentWorkflow workflow, String branchId, Session session);
 }
