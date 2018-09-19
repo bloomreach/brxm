@@ -31,7 +31,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     }
 
     public static DocumentWorkflowAction checkModified() {
-        return new DocumentWorkflowAction("checkModified");
+        return new DocumentWorkflowAction("checkModified", false);
     }
 
     public static DocumentWorkflowAction obtainEditableInstance() {
@@ -107,7 +107,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     }
 
     public static DocumentWorkflowAction listVersions() {
-        return new DocumentWorkflowAction("listVersions");
+        return new DocumentWorkflowAction("listVersions", false);
     }
 
     public static DocumentWorkflowAction retrieveVersion() {
@@ -115,14 +115,14 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     }
 
     public static DocumentWorkflowAction listBranches() {
-        return new DocumentWorkflowAction("listBranches");
+        return new DocumentWorkflowAction("listBranches", false);
     }
 
     public static DocumentWorkflowAction branch() {
         return new DocumentWorkflowAction("branch");
     }
     public static DocumentWorkflowAction getBranch() {
-        return new DocumentWorkflowAction("getBranch");
+        return new DocumentWorkflowAction("getBranch", false);
     }
 
     public static DocumentWorkflowAction checkoutBranch() {
@@ -146,15 +146,23 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     }
 
     public static DocumentWorkflowAction none() {
-        return new DocumentWorkflowAction("None");
+        return new DocumentWorkflowAction("None", false);
     }
 
     private final String action;
+    private boolean mutates;
     private String requestIdentifier;
     private final Map<String, Object> eventPayload = new HashMap<>();
 
     public DocumentWorkflowAction(final String action) {
         this.action = action;
+        // default is mutates true
+        this.mutates = true;
+    }
+
+    public DocumentWorkflowAction(final String action, final boolean mutates) {
+        this.action = action;
+        this.mutates = mutates;
     }
 
     public String getRequestIdentifier() {
@@ -183,6 +191,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
 
     public String getAction() {
         return action;
+    }
+
+    public boolean isMutates() {
+        return mutates;
     }
 
     public enum DocumentPayloadKey implements PayloadKey {

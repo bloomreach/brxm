@@ -488,7 +488,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     SortedMap<Calendar, Set<String>> listVersions()
             throws WorkflowException, RepositoryException, RemoteException;
 
@@ -505,7 +505,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     Document retrieveVersion(Calendar historic)
             throws WorkflowException, RepositoryException, RemoteException;
 

@@ -37,6 +37,11 @@ import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerUtils;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.onehippo.repository.scxml.SCXMLWorkflowContext;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
@@ -163,6 +168,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             // instantiate SCXMLWorkflowExecutor using default SCXMLWorkflowContext and DocumentHandle implementing SCXMLWorkflowData
             final SCXMLWorkflowContext scxmlWorkflowContext = new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext());
             workflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, createDocumentHandle(node));
+
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -443,18 +449,38 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                     "was of type '%s'.", DocumentWorkflowAction.class.getName(), action.getClass().getName()));
         }
         DocumentWorkflowAction dwfAction = (DocumentWorkflowAction) action;
-        final Map<String, Object> eventPayload = dwfAction.getEventPayload();
 
-        workflowExecutor.start((String)eventPayload.get(BRANCH_ID.getKey()));
-
-        final String requestIdentifier = dwfAction.getRequestIdentifier();
-        if (requestIdentifier !=null){
-            dwfAction.addEventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier));
+        LockResource lock = null;
+        if (dwfAction.isMutates()) {
+            lock = getLock();
         }
-        if (requestIdentifier == null) {
-            return workflowExecutor.triggerAction(dwfAction.getAction(), eventPayload);
-        } else {
-            return workflowExecutor.triggerAction(dwfAction.getAction(), getRequestActionActions(requestIdentifier, dwfAction.getAction()), eventPayload);
+
+        try {
+            final Map<String, Object> eventPayload = dwfAction.getEventPayload();
+            workflowExecutor.start((String) eventPayload.get(BRANCH_ID.getKey()));
+            final String requestIdentifier = dwfAction.getRequestIdentifier();
+            if (requestIdentifier != null) {
+                dwfAction.addEventPayload(REQUEST, workflowExecutor.getData().getRequests().get(requestIdentifier));
+            }
+            if (requestIdentifier == null) {
+                return workflowExecutor.triggerAction(dwfAction.getAction(), eventPayload);
+            } else {
+                return workflowExecutor.triggerAction(dwfAction.getAction(), getRequestActionActions(requestIdentifier, dwfAction.getAction()), eventPayload);
+            }
+        } finally {
+            if (lock != null) {
+                lock.close();
+            }
+        }
+    }
+
+    private LockResource getLock() throws WorkflowException {
+        try {
+            final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+            final String key = "DocumentWorkflowLock-" + workflowExecutor.getData().getHandle().getIdentifier();
+            return LockManagerUtils.waitForLock(lockManager, key, 50 , 1000);
+        } catch (Exception e) {
+            throw new WorkflowException("Could not get lock key", e);
         }
     }
 
