@@ -799,8 +799,12 @@
       </state>
       <state id="can-publish-branch">
         <onentry>
-          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
-            <hippo:action action="publishBranch" enabledExpr="true"/>
+          <!-- if the workflow is for master, the publishBranch is only enabled when there is no request pending
+          or it is invoked by the workflow user -->
+          <if cond="((!requestPending or user=='workflowuser') and master) || notMaster">
+            <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+              <hippo:action action="publishBranch" enabledExpr="true"/>
+            </if>
           </if>
         </onentry>
         <transition event="publishBranch">
@@ -857,8 +861,12 @@
 
       <state id="can-depublish-branch">
         <onentry>
-          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
-            <hippo:action action="depublishBranch" enabledExpr="true"/>
+          <!-- if the workflow is for master, the depublishBranch is only enabled when there is no request pending
+          or it is invoked by the workflow user -->
+          <if cond="((!requestPending or user=='workflowuser') and master) || notMaster">
+            <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+              <hippo:action action="depublishBranch" enabledExpr="true"/>
+            </if>
           </if>
         </onentry>
         <transition event="depublishBranch">

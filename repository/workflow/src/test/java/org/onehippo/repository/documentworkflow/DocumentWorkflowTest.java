@@ -44,6 +44,7 @@ import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
@@ -267,7 +268,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
+        publishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
 
         // depublishBranch for master is false since there is only a master draft and published variant is foo
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
@@ -283,7 +284,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .hints());
 
         draftVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        draftVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
+        draftVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, session.getUserID());
 
         // only branch 'foo' is left so #getBranch for master is disabled
@@ -307,7 +308,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
         // after this, branch should be disallowed because we only allow branching from Master
         unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        unpublishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
+        unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
 
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
                 .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
@@ -358,7 +359,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         // make 'live' for master again
-        publishedVariant.getProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID).remove();
+        publishedVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
         publishedVariant.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
 
         assertMatchingKeyValues(wf.hints("foo"), HintsBuilder.build()
@@ -660,6 +661,47 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().noDepublishBranch()
                 .states()
         );
+
+        // make the unpublished also for editor : now we expect (de)publishBranch enabled but false since there is a request
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
+        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
+                .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit().copy().versionable().terminateable(false)
+                .acceptRequest(publishRequest.getIdentifier(), true)
+                .rejectRequest(publishRequest.getIdentifier())
+                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                .listBranches().branch(true).getBranch(false).checkoutBranch(false).removeBranch(false)
+                .publish(false).depublish(false).publishBranch(false).depublishBranch(false).reintegrateBranch(false)
+                .hints());
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                .status().logEvent().noEdit().requested().publishable().noDepublish().versionable().terminateable().copyable()
+                .branchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().canPublishBranch().noDepublishBranch()
+                .states()
+        );
+
+        // make the unpublished for branch 'foo' : Now despite the request, (de)publishBranch should be enabled
+
+        unpublishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
+        unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
+        assertMatchingKeyValues(wf.hints("foo"), HintsBuilder.build()
+                .status(true).isLive(false).previewAvailable(true).checkModified(false)
+                .noEdit().editable().copy().versionable().terminateable(false)
+                .acceptRequest(publishRequest.getIdentifier(), true)
+                .rejectRequest(publishRequest.getIdentifier())
+                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
+                .listBranches().branch(false).getBranch(true).checkoutBranch(true).removeBranch(true)
+                .publish(false).depublish(false).publishBranch(true).depublishBranch(false).reintegrateBranch(true)
+                .hints());
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                .status().logEvent().editable().requested().noPublish().noDepublish().versionable().terminateable().copyable()
+                .noBranchable().canCheckoutBranch().canRemoveBranch().canReintegrateBranch().canPublishBranch().noDepublishBranch()
+                .states()
+        );
+
+        // reset to author
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:author", true);
+        // reset to 'master'
+        unpublishedVariant.getProperty(HIPPO_PROPERTY_BRANCH_ID).remove();
+        unpublishedVariant.removeMixin(HIPPO_MIXIN_BRANCH_INFO);
 
         MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
@@ -1004,7 +1046,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         );
 
         publishedVariant.addMixin(HIPPO_MIXIN_BRANCH_INFO);
-        publishedVariant.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "foo");
+        publishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_ID, "foo");
 
         // workflowuser, request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
         // published = foo
