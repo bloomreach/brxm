@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
@@ -230,12 +231,24 @@ public class ObjectConverterImpl implements ObjectConverter {
             return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node, node.getPath(), node.getName());
         }
 
+        final Node canonicalNode;
         if ((node instanceof HippoNode) && ((HippoNode) node).isVirtual()) {
-            // TODO support virtual nodes for version history. (via virtual node to canonical to version history)
-            return node;
+            final Node canonical = ((HippoNode) node).getCanonicalNode();
+            if (canonical == null) {
+                // virtual only, there is never a versioned node for it
+                return node;
+            }
+            if (!(canonical.isNodeType(NT_DOCUMENT) && canonical.getParent().isNodeType(NT_HANDLE))) {
+                // not a document
+                return node;
+            }
+            canonicalNode = canonical;
+        } else {
+            canonicalNode = node;
         }
 
-        final Node handle = node.getParent();
+        final Node handle  = canonicalNode.getParent();
+
         if (!handle.isNodeType(NT_HANDLE)) {
             // node is not a variant below the handle
             return node;
@@ -285,7 +298,8 @@ public class ObjectConverterImpl implements ObjectConverter {
             log.info("Found version '{}' to use for rendering.", version.get().getPath());
 
             final Node frozenNode = version.get().getNode(JCR_FROZEN_NODE);
-            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(frozenNode, node.getPath(), node.getName());
+            // we can only decorate a frozen node to the canonical location
+            return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(frozenNode, canonicalNode.getPath(), canonicalNode.getName());
 
         } catch (ItemNotFoundException e) {
             log.warn("Version history node with id stored on '{}/@{}' does not exist. Correct the handle manually.",
