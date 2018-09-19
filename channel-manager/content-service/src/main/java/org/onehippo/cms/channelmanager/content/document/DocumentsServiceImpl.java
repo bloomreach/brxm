@@ -32,7 +32,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -66,6 +65,7 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms.channelmanager.content.error.ResetContentException;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
