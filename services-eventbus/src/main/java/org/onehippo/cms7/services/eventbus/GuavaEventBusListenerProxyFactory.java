@@ -25,15 +25,15 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.onehippo.cms7.services.ServiceHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 /**
  * Factory of dynamically generated {@link org.onehippo.cms7.services.eventbus.GuavaEventBusListenerProxy} extending
@@ -71,14 +71,14 @@ import org.slf4j.LoggerFactory;
  *   {@link org.onehippo.cms7.services.eventbus.GuavaEventBusListenerProxyFactory}.
  * </p>
  */
-class GuavaEventBusListenerProxyFactory {
+public class GuavaEventBusListenerProxyFactory {
 
     static final Logger log = LoggerFactory.getLogger(GuavaEventBusListenerProxyFactory.class);
 
     private Map<Object, GuavaEventBusListenerProxy> proxyMap = new IdentityHashMap<>();
     private SetMultimap<Class, Object> subjectMap = HashMultimap.create();
 
-    GuavaEventBusListenerProxyFactory(){}
+    public GuavaEventBusListenerProxyFactory(){}
 
     /**
      * Returns the {@link Subscribe} annotated method or null if this annotation is not present on this method nor on
@@ -264,7 +264,7 @@ class GuavaEventBusListenerProxyFactory {
      * @return A new proxy wrapper for the provided listener, or null if the provided listener does not have any
      *         (proper) {@link Subscribe} annotations.
      */
-    synchronized GuavaEventBusListenerProxy createProxy(Object subject) {
+    public synchronized GuavaEventBusListenerProxy createProxy(Object subject) {
         GuavaEventBusListenerProxy proxy = proxyMap.get(subject);
         if (proxy == null) {
             Object listener;
@@ -305,7 +305,7 @@ class GuavaEventBusListenerProxyFactory {
      * @return The already {@link GuavaEventBusListenerProxy#destroy() destroyed} proxy for the provided listener, or
      *         null if no proxy is registered for this listener
      */
-    synchronized GuavaEventBusListenerProxy removeProxy(Object subject) {
+    public synchronized GuavaEventBusListenerProxy removeProxy(Object subject) {
         GuavaEventBusListenerProxy proxy = proxyMap.remove(subject);
         if (proxy != null) {
             Object listener;
