@@ -18,9 +18,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean id="org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry"
-        name="org.hippoecm.hst.platform.api.ChannelManagerEventBus"
-        class="org.hippoecm.hst.platform.eventbus.ChannelManagerEventBusImpl"
+  <bean id="org.hippoecm.hst.platform.api.ChannelEventBus"
+        class="org.hippoecm.hst.platform.eventbus.GuavaChannelEventBus"
         init-method="init"
         destroy-method="destroy">
   </bean>

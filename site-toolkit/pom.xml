@@ -205,6 +205,12 @@
         <version>${hippo.services.contenttype.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-eventbus</artifactId>
+        <version>${hippo.services.eventbus.version}</version>
+      </dependency>
+
       <!-- JSP-related API dependencies -->
 
       <dependency>

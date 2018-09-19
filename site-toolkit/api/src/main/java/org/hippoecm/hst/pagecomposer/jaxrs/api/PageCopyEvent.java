@@ -33,7 +33,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.api;
  *     will always be persisted by the code that posted the <code>PageCopyEvent</code> to the guava event bus
  * </p>
  */
-public interface PageCopyEvent extends ChannelEvent {
+public interface PageCopyEvent extends BaseChannelEvent {
 
     /**
      * Return the page copy context data.

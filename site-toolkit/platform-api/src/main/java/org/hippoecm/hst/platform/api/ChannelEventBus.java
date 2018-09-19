@@ -15,26 +15,18 @@
  */
 package org.hippoecm.hst.platform.api;
 
-import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 
 /**
  * Channel Manager specific event bus.
  */
-public interface ChannelManagerEventBus {
-
-    /**
-     * Post a channel manager specific event to the target application specified by {@code contextPath}.
-     * @param event a channel manager specific event
-     * @param contextPath the servlet context path specifying the target application
-     */
-    void post(ChannelManagerEvent event, String contextPath);
+public interface ChannelEventBus {
 
     /**
      * Post a channel specific event to the target application specified by {@code contextPath}.
      * @param event a channel specific event
      * @param contextPath the servlet context path specifying the target application
      */
-    void post(ChannelEvent event, String contextPath);
+    void post(BaseChannelEvent event, String contextPath);
 
 }

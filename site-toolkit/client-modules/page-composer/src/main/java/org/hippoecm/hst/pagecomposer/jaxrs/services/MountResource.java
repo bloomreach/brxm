@@ -295,10 +295,11 @@ public class MountResource extends AbstractConfigResource {
             branchPreviewConfigurationNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         }
 
-        ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
-                requestContext, ChannelEvent.ChannelEventType.PREVIEW_CREATION);
-        event.setEditingMount(getPageComposerContextService().getEditingMount());
-        event.setEditingPreviewSite(getPageComposerContextService().getEditingPreviewSite());
+        final ChannelEvent event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
+                requestContext, ChannelEvent.ChannelEventType.PREVIEW_CREATION,
+                Collections.emptyList(),
+                getPageComposerContextService().getEditingMount(),
+                getPageComposerContextService().getEditingPreviewSite());
 
         publishSynchronousEvent(event);
         HstConfigurationUtils.persistChanges(session);
@@ -391,10 +392,11 @@ public class MountResource extends AbstractConfigResource {
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
 
-            ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
-                    requestContext, ChannelEvent.ChannelEventType.PUBLISH);
-            event.setEditingMount(context.getEditingMount());
-            event.setEditingPreviewSite(context.getEditingPreviewSite());
+            final ChannelEvent event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
+                    requestContext, ChannelEvent.ChannelEventType.PUBLISH,
+                    Collections.emptyList(),
+                    context.getEditingMount(),
+                    context.getEditingPreviewSite());
 
             publishSynchronousEvent(event);
 
@@ -541,11 +543,11 @@ public class MountResource extends AbstractConfigResource {
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
 
-            ChannelEventImpl event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
-                    requestContext, ChannelEvent.ChannelEventType.DISCARD);
-            event.setUserIds(userIds);
-            event.setEditingMount(context.getEditingMount());
-            event.setEditingPreviewSite(context.getEditingPreviewSite());
+            final ChannelEventImpl event = new ChannelEventImpl(
+                    getPageComposerContextService().getEditingPreviewChannel(), requestContext,
+                    ChannelEvent.ChannelEventType.DISCARD,
+                    userIds,
+                    context.getEditingMount(), context.getEditingPreviewSite());
 
             publishSynchronousEvent(event);
 

@@ -207,8 +207,7 @@ public class RootResource extends AbstractConfigResource {
 
             channelService.preDeleteChannel(session, channel, mountsOfChannel);
 
-            BeforeChannelDeleteEventImpl event = new BeforeChannelDeleteEventImpl(
-                    getPageComposerContextService().getEditingPreviewChannel(), hstRequestContext, mountsOfChannel);
+            BeforeChannelDeleteEventImpl event = new BeforeChannelDeleteEventImpl(channel, mountsOfChannel, hstRequestContext);
             publishSynchronousEvent(event);
 
             channelService.deleteChannel(session, channel, mountsOfChannel);

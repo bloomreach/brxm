@@ -20,6 +20,9 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -35,13 +38,15 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
-import org.hippoecm.hst.configuration.channel.ChannelManagerEvent.ChannelManagerEventType;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.platform.api.ChannelManagerEventBus;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -55,7 +60,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,10 +115,31 @@ public class ChannelManagerImpl implements ChannelManager {
                 String channelName = createUniqueHstConfigurationName(channel.getName(), session);
                 channel.setId(channelName);
 
-                createChannel(configNode, blueprint, session, channelName, channel);
-                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.CREATING, blueprint,
-                        channel, configNode);
-                postChannelManagerEventBus(event);
+                Node createdContentNode = createChannel(configNode, blueprint, session, channelName, channel);
+                ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
+                for (ChannelManagerEventListener listener : getChannelManagerEventListenerCollection()) {
+                    try {
+                        listener.channelCreated(event);
+                    } catch (ChannelManagerEventListenerException e) {
+                        if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
+                            session.refresh(false);
+                            if (createdContentNode != null) {
+                                log.info("Removing just created root content node '{}' due ChannelManagerEventListenerException '{}'", createdContentNode.getPath(), e.toString());
+                                createdContentNode.remove();
+                                session.save();
+                            }
+                            throw new ChannelException("Channel creation stopped by listener '" + listener.getClass().getName() + "'",
+                                    e, Type.STOPPED_BY_LISTENER, e.getMessage());
+                        } else {
+                            log.warn(
+                                    "Channel created event listener, " + listener + ", failed to handle the event. Continue channel processing",
+                                    e);
+                        }
+                    } catch (Exception listenerEx) {
+                        log.warn("Channel created event listener, " + listener + ", failed to handle the event",
+                                listenerEx);
+                    }
+                }
 
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
@@ -175,10 +200,25 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, hostGroupName, channel);
 
-                ChannelManagerEvent event = new ChannelManagerEventImpl(ChannelManagerEventType.UPDATING, null, channel,
-                        configNode);
-                postChannelManagerEventBus(event);
-
+                ChannelManagerEvent event = new ChannelManagerEventImpl(null, channel, configNode);
+                for (ChannelManagerEventListener listener : getChannelManagerEventListenerCollection()) {
+                    try {
+                        listener.channelUpdated(event);
+                    } catch (ChannelManagerEventListenerException e) {
+                        if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
+                            session.refresh(false);
+                            throw new ChannelException("Channel '" + channel.getId() + "' update stopped by listener '" + listener.getClass().getName() + "'",
+                                    e, Type.STOPPED_BY_LISTENER, e.getMessage());
+                        } else {
+                            log.warn(
+                                    "Channel created event listener, " + listener + ", failed to handle the event. Continue channel processing",
+                                    e);
+                        }
+                    } catch (Exception listenerEx) {
+                        log.error("Channel updated event listener, " + listener + ", failed to handle the event",
+                                listenerEx);
+                    }
+                }
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
@@ -608,25 +648,17 @@ public class ChannelManagerImpl implements ChannelManager {
 
     private static class ChannelManagerEventImpl implements ChannelManagerEvent {
 
-        private final ChannelManagerEventType eventType;
         private Blueprint blueprint;
         private Channel channel;
         private Node configRootNode;
 
-        private ChannelManagerEventImpl(final ChannelManagerEventType eventType, final Blueprint blueprint,
-                final Channel channel, final Node configRootNode) {
+        private ChannelManagerEventImpl(final Blueprint blueprint, final Channel channel, final Node configRootNode) {
             if (channel == null || configRootNode == null) {
                 throw new IllegalArgumentException("Channel and configRootNode are not allowed to be null in a channel manager event");
             }
-            this.eventType = eventType;
             this.blueprint = blueprint;
             this.channel = channel;
             this.configRootNode = configRootNode;
-        }
-
-        @Override
-        public ChannelManagerEventType getChannelManagerEventType() {
-            return eventType;
         }
 
         @Override
@@ -658,8 +690,11 @@ public class ChannelManagerImpl implements ChannelManager {
         return RequestContextProvider.get().getSession();
     }
 
-    private void postChannelManagerEventBus(final ChannelManagerEvent event) {
-        final ChannelManagerEventBus cmEventBus = HippoServiceRegistry.getService(ChannelManagerEventBus.class);
-        cmEventBus.post(event, event.getChannel().getContextPath());
+    private Collection<ChannelManagerEventListener> getChannelManagerEventListenerCollection() {
+        final List<ChannelManagerEventListener> listeners = new LinkedList<>();
+        ChannelManagerEventListenerRegistry.get().getEntries().forEach(holder -> {
+            listeners.add(holder.getServiceObject());
+        });
+        return listeners;
     }
 }

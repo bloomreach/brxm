@@ -28,7 +28,5 @@ public interface HstModelRegistry {
 
     HstModel getHstModel(String contextPath);
 
-    HstModel getHstModelByWebsiteClassLoader(ClassLoader websiteClassLoader);
-
     List<HstModel> getHstModels();
 }

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,36 +22,30 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.hst.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
-public class ChannelEventImpl implements ChannelEvent {
+public class ChannelEventImpl extends BaseChannelEventImpl implements ChannelEvent {
 
-    private static final Logger log = LoggerFactory.getLogger(ChannelEventImpl.class);
+    private static final long serialVersionUID = 1L;
 
-    private final Channel channel;
-    private transient final HstRequestContext requestContext;
     private final ChannelEventType channelEventType;
+    private final List<String> userIds;
+    private transient final HstRequestContext requestContext;
+    private transient final Mount editingMount;
+    private transient final HstSite editingPreviewSite;
 
-    private List<String> userIds;
-    private transient Mount editingMount;
-    private transient HstSite editingPreviewSite;
-    private transient RuntimeException exception;
-
-    public ChannelEventImpl(final Channel channel, final HstRequestContext requestContext) {
-        this(channel, requestContext, null);
-    }
-
-    public ChannelEventImpl(final Channel channel, final HstRequestContext requestContext, final ChannelEventType channelEventType) {
-        this.channel = channel;
+    public ChannelEventImpl(final Channel channel,
+                        final HstRequestContext requestContext,
+                        final ChannelEventType channelEventType,
+                        final List<String> userIds,
+                        final Mount editingMount,
+                        final HstSite editingPreviewSite) {
+        super(channel);
         this.requestContext = requestContext;
         this.channelEventType = channelEventType;
-    }
-
-    @Override
-    public Channel getChannel() {
-        return null;
+        this.userIds = Collections.unmodifiableList(userIds);
+        this.editingMount = editingMount;
+        this.editingPreviewSite = editingPreviewSite;
     }
 
     @Override
@@ -65,19 +58,7 @@ public class ChannelEventImpl implements ChannelEvent {
      */
     @Override
     public List<String> getUserIds() {
-        if (userIds == null) {
-            return Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(userIds);
-    }
-
-    public void setUserIds(List<String> userIds) {
-        if (userIds == null) {
-            this.userIds = new ArrayList<>();
-        } else {
-            this.userIds = new ArrayList<>(userIds);
-        }
+        return userIds;
     }
 
     /**
@@ -96,10 +77,6 @@ public class ChannelEventImpl implements ChannelEvent {
         return editingMount;
     }
 
-    public void setEditingMount(Mount editingMount) {
-        this.editingMount = editingMount;
-    }
-
     /**
      * @return the preview {@link HstSite} that is being modified during this request. Note that in case of PREVIEW_CREATION
      * the returned {@link HstSite} is the <strong>live</strong> site because the preview site was not yet present during
@@ -110,29 +87,10 @@ public class ChannelEventImpl implements ChannelEvent {
         return editingPreviewSite;
     }
 
-    public void setEditingPreviewSite(HstSite editingPreviewSite) {
-        this.editingPreviewSite = editingPreviewSite;
-    }
-
-    @Override
-    public RuntimeException getException() {
-        return exception;
-    }
-
-    @Override
-    public void setException(RuntimeException runtimeException) {
-        this.exception = runtimeException;
-    }
-
-    public Logger getLogger() {
-        return log;
-    }
-
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "channel=" + channel +
-                ", channelEventType=" + channelEventType +
+        return "ChannelEventImpl{" +
+                "channelEventType=" + channelEventType +
                 ", userIds=" + userIds +
                 ", editingMount=" + editingMount +
                 ", editingPreviewSite=" + editingPreviewSite +

@@ -18,17 +18,17 @@ package org.hippoecm.hst.configuration.channel;
 import org.onehippo.cms7.services.WhiteboardServiceRegistry;
 
 /**
- *  Singleton registry for decoupled/wring lookup/wiring of listeners to the {@link ChannelManagerEvent}s using
+ *  Singleton registry for decoupled/wring lookup/wiring of listeners that handle using
  *  the <a href="https://en.wikipedia.org/wiki/Whiteboard_Pattern">Whiteboard Pattern</a>.
  */
-public final class ChannelManagerEventListenerRegistry extends WhiteboardServiceRegistry<ChannelManagerEventListener> {
+public final class ChannelEventListenerRegistry extends WhiteboardServiceRegistry<Object> {
 
-    private static final ChannelManagerEventListenerRegistry INSTANCE = new ChannelManagerEventListenerRegistry();
+    private static final ChannelEventListenerRegistry INSTANCE = new ChannelEventListenerRegistry();
 
-    private ChannelManagerEventListenerRegistry() {
+    private ChannelEventListenerRegistry() {
     }
 
-    public static ChannelManagerEventListenerRegistry get() {
+    public static ChannelEventListenerRegistry get() {
         return INSTANCE;
     }
 

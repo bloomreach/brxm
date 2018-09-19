@@ -47,7 +47,6 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     private static final Logger log = LoggerFactory.getLogger(HstModelRegistryImpl.class);
 
     private final Map<String, HstModelImpl> models = new HashMap<>();
-    private final Map<ClassLoader, String> classLoaderContextPathMap = new HashMap<>();
 
     private Repository repository;
 
@@ -111,7 +110,6 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             final HstModelImpl model = new HstModelImpl(session, contextPath, websiteClassLoader, websiteComponentManager,
                     hstNodeLoadingCache, hstConfigurationLoadingCache);
             models.put(contextPath, model);
-            classLoaderContextPathMap.put(model.getWebsiteClassLoader(), contextPath);
 
             log.info("Registered HstModel for '{}'", contextPath);
             return model;
@@ -129,7 +127,6 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         final HstModelImpl remove = models.remove(contextPath);
         if (remove != null) {
             try {
-                classLoaderContextPathMap.remove(remove.getWebsiteClassLoader());
                 remove.destroy();
             } catch (Exception e) {
                 log.error("Exception while destroying the model for '{}'", contextPath, e);
@@ -141,15 +138,6 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     @Override
     public HstModel getHstModel(final String contextPath) {
         return models.get(contextPath);
-    }
-
-    @Override
-    public HstModel getHstModelByWebsiteClassLoader(final ClassLoader websiteClassLoader) {
-        final String contextPath = classLoaderContextPathMap.get(websiteClassLoader);
-        if (contextPath != null) {
-            getHstModel(contextPath);
-        }
-        return null;
     }
 
     public List<HstModel> getHstModels() {

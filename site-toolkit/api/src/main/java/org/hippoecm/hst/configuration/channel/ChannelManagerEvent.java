@@ -22,28 +22,8 @@ import org.onehippo.cms7.services.hst.Channel;
 /**
  * This event type is used by the ChannelManagerEventListener 
  * in order to identify the channel and its related information.
- * 
- * @version $Id$
  */
 public interface ChannelManagerEvent {
-
-    /**
-     * Channel manager event types.
-     * <ul>
-     * <li><code>CREATING</code>: when creating a channel
-     * <li><code>UPDATING</code>: when updating a channel
-     * </ul>
-     */
-    public enum ChannelManagerEventType {
-        CREATING,
-        UPDATING
-    }
-
-    /**
-     * Return channel manager event type.
-     * @return channel manager event type
-     */
-    ChannelManagerEventType getChannelManagerEventType();
 
     /**
      * Returns a blueprint object which is being used during the channel creation.

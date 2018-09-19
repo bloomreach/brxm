@@ -16,17 +16,15 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 import org.onehippo.cms7.services.hst.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PageCopyEventImpl extends ChannelEventImpl implements PageCopyEvent {
+public class PageCopyEventImpl extends BaseChannelEventImpl  implements PageCopyEvent {
 
-    private static final Logger log = LoggerFactory.getLogger(PageCopyEventImpl.class);
+    private static final long serialVersionUID = 1L;
 
     private final PageCopyContext pageCopyContext;
 
     public PageCopyEventImpl(final Channel channel, final PageCopyContext pageCopyContext) {
-        super(channel, pageCopyContext.getRequestContext());
+        super(channel);
         this.pageCopyContext = pageCopyContext;
     }
 
@@ -36,8 +34,11 @@ public class PageCopyEventImpl extends ChannelEventImpl implements PageCopyEvent
     }
 
     @Override
-    public Logger getLogger() {
-        return log;
+    public String toString() {
+        return "PageCopyEventImpl{" +
+                "pageCopyContext=" + getPageCopyContext() +
+                "exception=" + getException() +
+                '}';
     }
 
 }

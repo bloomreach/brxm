@@ -16,23 +16,29 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.hst.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class BeforeChannelDeleteEventImpl extends ChannelEventImpl implements BeforeChannelDeleteEvent {
+public class BeforeChannelDeleteEventImpl extends BaseChannelEventImpl implements BeforeChannelDeleteEvent {
 
-    private static final Logger log = LoggerFactory.getLogger(BeforeChannelDeleteEventImpl.class);
+    private static final long serialVersionUID = 1L;
 
+    private transient final HstRequestContext requestContext;
     private final List<Mount> mounts;
 
-    public BeforeChannelDeleteEventImpl(final Channel channel, final HstRequestContext requestContext, final List<Mount> mountsOfChannel) {
-        super(channel, requestContext);
-        this.mounts = mountsOfChannel;
+    public BeforeChannelDeleteEventImpl(final Channel channel, final List<Mount> mountsOfChannel, final HstRequestContext requestContext) {
+        super(channel);
+        this.requestContext = requestContext;
+        this.mounts = new ArrayList<>();
+
+        if (mountsOfChannel != null) {
+            this.mounts.addAll(mountsOfChannel);
+        }
     }
 
     /**
@@ -40,13 +46,24 @@ public class BeforeChannelDeleteEventImpl extends ChannelEventImpl implements Be
      */
     @Override
     public List<Mount> getMounts() {
-        return mounts;
+        if (mounts == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.unmodifiableList(mounts);
     }
 
     @Override
-    public Logger getLogger() {
-        return log;
+    public HstRequestContext getRequestContext() {
+        return requestContext;
+    }
+
+    @Override
+    public String toString() {
+        return "BeforeChannelDeleteEventImpl{" +
+                ", channel=" + getChannel() +
+                ", exception=" + getException() +
+                '}';
     }
 
 }
-
