@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -173,8 +173,8 @@ public class LoginServlet extends HttpServlet {
         defaultLoginSecurityCheckFormPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginSecurityCheckFormPagePath", null);
         defaultLoginErrorPagePath = ServletConfigUtils.getInitParameter(servletConfig, null, "loginErrorPage", null);
 
-        freeMarkerConfiguration = new Configuration();
-        freeMarkerConfiguration.setObjectWrapper(new DefaultObjectWrapper());
+        freeMarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+        freeMarkerConfiguration.setObjectWrapper(new DefaultObjectWrapper(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS));
         freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(getClass(), ""));
     }
 

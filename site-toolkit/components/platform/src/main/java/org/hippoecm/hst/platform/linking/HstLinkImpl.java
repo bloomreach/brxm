@@ -192,12 +192,7 @@ public class HstLinkImpl implements HstLink {
     ContentType getContentType() {
         return contentType;
     }
-
-    @Deprecated
-    public boolean getContainerResource() {
-        return isContainerResource();
-    }
-
+    
     @Override
     public boolean isContainerResource() {
         if (Type.UNKNOWN == type) {
@@ -554,16 +549,6 @@ public class HstLinkImpl implements HstLink {
                 @Override
                 public VirtualHost getVirtualHost() {
                     return mount.getVirtualHost();
-                }
-
-                @Override
-                public String getResolvedHostName() {
-                    return mount.getVirtualHost().getHostName();
-                }
-
-                @Override
-                public int getPortNumber() {
-                    return mount.getPort();
                 }
 
                 @Override

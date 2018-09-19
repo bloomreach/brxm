@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -335,11 +335,6 @@ public class HstQueryImpl implements HstQuery {
             removeNodeFromList(scope, excludeScopes);
             this.scopes.add(scope);
         }
-    }
-
-    @Override
-    public void setSkipInvalidScopes(boolean skipInvalidScopes) {
-       log.info("skipInvalidScopes is deprecated since 2.25.02. No need to set it any more");
     }
 
     @Override

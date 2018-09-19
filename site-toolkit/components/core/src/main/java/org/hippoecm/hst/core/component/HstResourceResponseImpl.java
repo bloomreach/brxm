@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -40,11 +39,6 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     protected HstRequestContext requestContext;
     protected HstComponentWindow componentWindow;
     protected String serveResourcePath;
-
-    @Deprecated
-    public HstResourceResponseImpl(HttpServletResponse response, HstComponentWindow componentWindow) {
-        this(response, RequestContextProvider.get(), componentWindow);
-    }
 
     public HstResourceResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow) {
         super(response);

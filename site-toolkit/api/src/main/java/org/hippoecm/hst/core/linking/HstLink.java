@@ -67,12 +67,6 @@ public interface HstLink {
     void setSubPath(String subPath);
 
     /**
-     * @deprecated since CMS 10.0, HSTTWO 2.30.00. Use {@link #isContainerResource()} instead
-      */
-    @Deprecated
-    boolean getContainerResource();
-
-    /**
      * <p>
      *     When {@link #isContainerResource()} returns <code>true</code>, the resulting URL will be webapp relative and not
      *     relative to {@link Mount#getMountPath()}

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -96,14 +95,6 @@ public abstract class AbstractMenuItem implements CommonMenuItem {
 
         log.debug("Returning resolved site map item '{}' for site menu item '{}'.", resolvedSiteMapItem.resolvedItem.getPathInfo(), this.getInfo());
         return resolvedSiteMapItem.resolvedItem;
-    }
-
-    /**
-     * @deprecated Not used since CMS 11.0 (HST 3.0.0). Use @{link #resolveToSiteMapItem()}.
-     */
-    @Deprecated
-    public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
-        return resolveToSiteMapItem();
     }
 
     /**

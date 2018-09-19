@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,17 +63,6 @@ public interface ValveContext
      * @return the current servlet response.
      */
     HttpServletResponse getServletResponse();
-
-
-    /**
-     * sets the {@link HttpServletResponse} for this {@link ValveContext} to <code>servletResponse</code>. This is
-     * typically useful when for example you want to wrap the response by some {@link javax.servlet.http.HttpServletResponseWrapper} and
-     * use this wrapper response for further processing
-     * @param servletResponse
-     * @deprecated deprecated since 2.26.02. Use {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#setServletResponse(javax.servlet.http.HttpServletResponse)} instead
-     */
-    @Deprecated
-    void setHttpServletResponse(HttpServletResponse servletResponse);
     
     /**
      * Sets the root {@link HstComponentWindow} instancethat is used to process the current request.

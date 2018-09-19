@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,27 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
-
-import java.io.IOException;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
@@ -51,6 +30,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.servlet.ServletException;
+
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 public class RootResourceTest extends AbstractFullRequestCycleTest {
 
@@ -92,7 +88,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         final String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
 
-        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
         assertEquals(Boolean.TRUE, responseMap.get("success"));
         assertEquals("OK", responseMap.get("message"));
         assertEquals(null, responseMap.get("errorCode"));
@@ -157,7 +153,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(SC_BAD_REQUEST, response.getStatus());
 
             final String restResponse = response.getContentAsString();
-            Map<String, Object> result = mapper.reader(Map.class).readValue(restResponse);
+            Map<String, Object> result = mapper.readerFor(Map.class).readValue(restResponse);
             assertEquals(CHILD_MOUNT_EXISTS.toString(), result.get("error"));
         } finally {
             session.logout();

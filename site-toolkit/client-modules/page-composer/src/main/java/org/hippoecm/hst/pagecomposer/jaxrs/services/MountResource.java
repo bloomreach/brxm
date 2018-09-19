@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -41,8 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.ISO9075;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -77,13 +78,6 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -381,12 +375,6 @@ public class MountResource extends AbstractConfigResource {
             final HstRequestContext requestContext = context.getRequestContext();
             Session session = requestContext.getSession();
 
-            List<String> mainNonWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, false);
-            List<String> mainWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, true);
-
-            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainNonWorkspaceConfigNodeNamesToPublish);
-            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainWorkspaceConfigNodeNamesToPublish);
-
             channelHelper.publishChanges(userIds);
             siteMapHelper.publishChanges(userIds);
             pagesHelper.publishChanges(userIds);
@@ -533,11 +521,7 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
-            List<String> mainNonWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, false);
-            List<String> mainWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, true);
-            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainNonWorkspaceConfigNodeNamesToRevert);
-            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainWorkspaceConfigNodeNamesToRevert);
-
+ 
             channelHelper.discardChanges(userIds);
             siteMapHelper.discardChanges(userIds);
             pagesHelper.discardChanges(userIds);
@@ -563,136 +547,6 @@ public class MountResource extends AbstractConfigResource {
         } catch (Exception e) {
             resetSession();
             return logAndReturnServerError(e);
-        }
-    }
-
-    /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
-     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
-     * remove for CMS 13
-     *
-     * @deprecated Since CMS 12
-     */
-    @Deprecated
-    private List<String> findChangedMainConfigNodeNamesExceptChannelForUsers(final Session session,
-                                                                             final String previewConfigurationPath,
-                                                                             final List<String> userIds,
-                                                                             final boolean isWorkspace) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        final String xpath = buildXPathQueryToFindMainConfigNodesExceptChannelForUsers(previewConfigurationPath, userIds, isWorkspace);
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
-
-        final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
-        List<String> mainConfigNodeNamesForUsers = new ArrayList<>();
-        for (Node mainConfigNodeForUser : mainConfigNodesForUsers) {
-            String mainConfigNodePath = mainConfigNodeForUser.getPath();
-            if (!mainConfigNodePath.startsWith(previewConfigurationPath)) {
-                log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
-                continue;
-            }
-            mainConfigNodeNamesForUsers.add(mainConfigNodeForUser.getPath().substring(previewConfigurationPath.length() + 1));
-        }
-        log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
-                new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesForUsers.toString()});
-        return mainConfigNodeNamesForUsers;
-    }
-
-    /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
-     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
-     * remove for CMS 13
-     *
-     * @deprecated Since CMS 12
-     */
-    @Deprecated
-    static String buildXPathQueryToFindMainConfigNodesExceptChannelForUsers(final String previewConfigurationPath, final List<String> userIds,
-                                                                            final boolean workspace) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
-        }
-
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        if (workspace) {
-            xpath.append("/hst:workspace");
-        }
-        xpath.append("/*[@jcr:primaryType != '" + NODETYPE_HST_CHANNEL + "' and (");
-
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
-        }
-        xpath.append(")]");
-
-        return xpath.toString();
-    }
-
-    /**
-     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which
-     * could only happen through the hst config editor which will be abandoned, hence this method should be possible to
-     * remove for CMS 13
-     *
-     * @deprecated Since CMS 12
-     */
-    @Deprecated
-    private void copyChangedMainConfigNodes(final Session session,
-                                            final String fromConfig,
-                                            final String toConfig,
-                                            final List<String> mainConfigNodeNames) throws RepositoryException {
-        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
-        for (String mainConfigNodeName : mainConfigNodeNames) {
-            if (mainConfigNodeName.startsWith("hst:workspace/")) {
-                if (StringUtils.substringAfter(mainConfigNodeName, "hst:workspace/").contains("/")) {
-                    log.warn("Skip illegal main config node name '{}' because it contains a '/' after the " +
-                            "hst:workspace node.", mainConfigNodeName);
-                    continue;
-                }
-            } else if (mainConfigNodeName.contains("/")) {
-                log.warn("Skip illegal main config node name '{}' because it contains a '/'.", mainConfigNodeName);
-                continue;
-            }
-            if (mainConfigNodeName.equals(NODENAME_HST_WORKSPACE)) {
-                log.warn("Skip illegal main config node name '{}'.", mainConfigNodeName);
-                continue;
-            }
-            String absFromPath = fromConfig + "/" + mainConfigNodeName;
-            String absToPath = toConfig + "/" + mainConfigNodeName;
-
-            if (!session.nodeExists(absFromPath)) {
-                log.info("Copy from '{}' does not exist, implying the target must be removed.", absFromPath);
-                if (session.nodeExists(absToPath)) {
-                    // copy the entire main config node
-                    session.getNode(absToPath).remove();
-                }
-                continue;
-            }
-            if (session.nodeExists(absToPath)) {
-                // copy the entire main config node
-                session.getNode(absToPath).remove();
-            }
-            Node fromNode = session.getNode(absFromPath);
-            lockHelper.unlock(fromNode);
-            final Node copy = JcrUtils.copy(session, fromNode.getPath(), absToPath);
-            checkReorderMap.put(fromNode, copy);
-            if (copy.getPath().contains("-preview/")) {
-                // it was a discard
-                copy.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-            } else {
-                // it was a publish
-                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-            }
-        }
-        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
-            reorderHelper.reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
@@ -32,15 +29,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 public class CleanupValve extends AbstractBaseOrderableValve {
 
     protected SessionSecurityDelegation sessionSecurityDelegation;
-
-    /**
-     * @deprecated since 4.1.0 resourceLifecycleManagements does not need to be set any more on the CleanupValve
-     */
-    @Deprecated
-    public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
-        log.info("CleanupValve#setResourceLifecycleManagements has been deprecated. Not 'resourceLifecycleManagements' " +
-                "is needed to be set via spring wiring any more");
-    }
 
     public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
         this.sessionSecurityDelegation = sessionSecurityDelegation;

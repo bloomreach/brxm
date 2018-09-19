@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -206,12 +206,6 @@ public class TestHstComponentInvokerImpl {
     }
 
     class CustomParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
-
-        @Override
-        public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
-                final HstRequest request, final HstParameterValueConverter converter) {
-            return createParameterInfoProxy(parametersInfo, componentConfig, (HttpServletRequest) request, converter);
-        }
 
         @Override
         protected InvocationHandler createHstParameterInfoInvocationHandler(final ParameterConfiguration parameterConfiguration, final HttpServletRequest request, final HstParameterValueConverter converter, final Class<?> parametersInfoType) {

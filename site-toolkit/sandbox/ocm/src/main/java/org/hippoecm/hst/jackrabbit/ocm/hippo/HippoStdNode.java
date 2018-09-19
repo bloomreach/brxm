@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -222,7 +222,7 @@ public class HippoStdNode implements NodeAware, SimpleObjectConverterAware {
                 if (node.hasProperty(HippoNodeType.HIPPO_UUID)) {
                    return  node.getProperty(HippoNodeType.HIPPO_UUID).getString();
                 } else if (node.isNodeType("mix:referenceable")) {
-                   return node.getUUID();
+                   return node.getIdentifier();
                 }
             } catch (RepositoryException e) {
                 log.warn("RepositoryException while comparing HippoStdNodes. Return false");

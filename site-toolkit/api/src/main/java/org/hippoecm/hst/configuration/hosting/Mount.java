@@ -164,17 +164,6 @@ public interface Mount {
     String getContentPath();
 
     /**
-     * Returns the absolute canonical content path for the content of this {@link Mount}. Note that it returns in general the same
-     * value as {@link #getContentPath()}
-     *
-     * @return The absolute absolute content path for this {@link Mount}.
-     * @deprecated since 7.9.0 : returns same as {@link #getContentPath()} : Use {@link #getContentPath()} instead
-     */
-    @Deprecated
-    String getCanonicalContentPath();
-
-
-    /**
      * <p>
      * Returns the mount path for this {@link Mount} object. The root {@link Mount} (mount with no parent mount) has an empty {@link String} ("") as mount path. A mountPath for a
      * {@link Mount} that is not a root {@link Mount} is its own {@link #getName()} plus all ancestors until the root and always starts with a "/" (except for the root, this one is empty).
@@ -221,13 +210,6 @@ public interface Mount {
      * @return <code>true</code> when the created url should have contain the port number
      */
     boolean isPortInUrl();
-
-    /**
-     * @deprecated  Since 4.0.0 (CMS 11.0.0)
-     */
-    @Deprecated
-    boolean isSite();
-
 
     /**
      * @return the portnumber for this {@link Mount}
@@ -462,13 +444,6 @@ public interface Mount {
     String getIdentifier();
 
     /**
-     * @return the repository path to the channel configuration node and <code>null</code> if not configured
-     * @deprecated since 5.0.0 (CMS 12). Use {@link Channel#getChannelPath() getChannel().getChannelPath()} instead
-     */
-    @Deprecated
-    String getChannelPath();
-
-    /**
      * @param <T> Type of the channel info.  Only checked at runtime on assignment.
      * @return A channel properties instance or <code>null</code> in case {@link #getChannel()} returns <code>null</code> or
      * when the {@link ChannelInfo} interface cannot be loaded by the current classLoader
@@ -493,24 +468,10 @@ public interface Mount {
     boolean isCacheable();
 
     /**
-     * @return the first item of default resource bundle IDs or null if not configured or empty.
-     * @deprecated since 2.28.00. Use {@link #getDefaultResourceBundleIds()} instead
-     */
-    @Deprecated
-    String getDefaultResourceBundleId();
-
-    /**
      * @return default resource bundle IDs for all sites below this mount to use, for example, { "org.example.resources.MyResources" }. Returns an empty array
      * when not configured on this {@link Mount} and empty from ancestor {@link Mount} or when root host from  {@link VirtualHost#getDefaultResourceBundleIds()}
      */
     String [] getDefaultResourceBundleIds();
-
-    /**
-     * @return the cms location (fully qualified URL) or <code>null</code> if not configured
-     * @deprecated since 7.9.1 : Use {@link #getCmsLocations()} instead
-     */
-    @Deprecated
-    String getCmsLocation();
 
     /**
      * @return the cms location(s) (fully qualified URL) or empty list if not configured

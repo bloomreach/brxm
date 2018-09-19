@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ import java.util.Set;
 
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
-import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.service.ServiceBeanAccessProvider;
 
 /**
  * Utility class to create proxies.
@@ -59,33 +57,6 @@ public class ProxyUtils
         };
         
         return factory.createInterceptorProxy(target.getClass().getClassLoader(), target, interceptor, proxyInterfaces);
-    }
-    
-    /**
-     * Creates and returns a dynamic proxy which invokes the underlying service bean access provider.
-     * 
-     * @param provider the underlying service bean access provider
-     * @param proxyInterfacesOrDelegateeClass the interfaces the proxy should implement or delegatee class which may implement interface(s).
-     * @return
-     * @deprecated since 2.28.05 (CMS 7.9.1). Do not use any more. No replacement
-     */
-    @Deprecated
-    public static Object createBeanAccessProviderProxy(final ServiceBeanAccessProvider provider, Class ... proxyInterfacesOrDelegateeClass) {
-        ProxyFactory factory = new ProxyFactory();
-        String primaryJcrType = findPrimaryJcrType(proxyInterfacesOrDelegateeClass);
-        Invoker invoker = new NamespacedBeanMethodInvoker(provider, primaryJcrType);
-        Class [] proxyInterfaces = null;
-        
-        if (proxyInterfacesOrDelegateeClass.length == 1 && !proxyInterfacesOrDelegateeClass[0].isInterface())
-        {
-            proxyInterfaces = proxyInterfacesOrDelegateeClass[0].getInterfaces();
-        }
-        else
-        {
-            proxyInterfaces = proxyInterfacesOrDelegateeClass;
-        }
-        
-        return factory.createInvokerProxy(proxyInterfaces[0].getClassLoader(), invoker, proxyInterfaces);
     }
     
     private static String findPrimaryJcrType(Class [] proxyInterfaces) {

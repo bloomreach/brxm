@@ -39,12 +39,10 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -108,12 +106,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public boolean hasNoChannelInfo() {
             return delegatee.hasNoChannelInfo();
-        }
-
-        @Override
-        @Deprecated
-        public String getCanonicalContentPath() {
-            return delegatee.getContentPath();
         }
 
         @Override
@@ -201,15 +193,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             return delegatee.getChannelInfo();
         }
 
-        @Override
-        @Deprecated
-        public String getChannelPath() {
-            if(delegatee instanceof ContextualizableMount) {
-                return  ((ContextualizableMount)delegatee).getPreviewChannelPath();
-            }
-            return delegatee.getChannelPath();
-        }
-
         /**
          * @return the repository path to the channel configuration node and <code>null</code> if not configured
          */
@@ -234,13 +217,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public boolean isCacheable() {
             return false;
-        }
-
-
-        @Deprecated
-        @Override
-        public String getDefaultResourceBundleId() {
-            return delegatee.getDefaultResourceBundleId();
         }
 
         @Override
@@ -394,15 +370,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             return delegatee.isSessionStateful();
         }
 
-        /**
-         * @deprecated  Since 4.0.0 (CMS 11.0.0)
-         */
-        @Deprecated
-        @Override
-        public boolean isSite() {
-            return delegatee.isSite();
-        }
-
         @Override
         public boolean isSubjectBasedSession() {
             return delegatee.isSubjectBasedSession();
@@ -416,12 +383,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public String getContextPath() {
             return delegatee.getContextPath();
-        }
-
-        @Deprecated
-        @Override
-        public String getCmsLocation() {
-            return delegatee.getCmsLocation();
         }
 
         @Override
@@ -570,12 +531,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
-        @Deprecated
-        public String getDefaultResourceBundleId() {
-            return delegatee.getDefaultResourceBundleId();
-        }
-
-        @Override
         public String[] getDefaultResourceBundleIds() {
             return delegatee.getDefaultResourceBundleIds();
         }
@@ -622,24 +577,9 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             this.delegatee = delegatee;
         }
 
-        @Deprecated
-        @Override
-        public boolean isExcluded(final String pathInfo) {
-            return isHstFilterExcludedPath(pathInfo);
-        }
-
         @Override
         public boolean isHstFilterExcludedPath(final String pathInfo) {
             return delegatee.isHstFilterExcludedPath(pathInfo);
-        }
-
-        @Deprecated
-        @Override
-        public ResolvedSiteMapItem matchSiteMapItem(final HstContainerURL hstContainerURL) throws MatchException {
-            // don't delegate the matching of mount since we need a decorated!
-            ResolvedMount decoratedMount = matchMount(hstContainerURL.getHostName(), hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
-            ResolvedSiteMapItem resolvedSiteMapItem =  decoratedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
-            return resolvedSiteMapItem;
         }
 
         @Override
@@ -757,11 +697,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
-        public String getDefaultResourceBundleId() {
-            return delegatee.getDefaultResourceBundleId();
-        }
-
-        @Override
         public String[] getDefaultResourceBundleIds() {
             return delegatee.getDefaultResourceBundleIds();
         }
@@ -852,18 +787,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public VirtualHost getVirtualHost() {
             return new PreviewDecoratedVirtualHost(delegatee.getVirtualHost());
-        }
-
-        @Override
-        @Deprecated
-        public String getResolvedHostName() {
-            return delegatee.getResolvedHostName();
-        }
-
-        @Override
-        @Deprecated
-        public int getPortNumber() {
-            return delegatee.getPortNumber();
         }
 
         @Override

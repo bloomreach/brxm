@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,24 +45,8 @@ public class DelegatingFilter implements Filter {
 
     private String delegateeName;
 
-    /**
-     * @deprecated not used any more since CMS 10.0, HST 2.30.00. Instead use sitemap items with
-     * hst:namedpipeline = PlainFilterChainInvokingPipeline to fall through to next servlet (filter)
-     */
-    @Deprecated
-    public static final String PREFIX_EXCLUSIONS_INIT_PARAM = "prefixExclusions";
-    /**
-     * @deprecated not used any more since CMS 10.0, HST 2.30.00. Instead use sitemap items with
-     * hst:namedpipeline = PlainFilterChainInvokingPipeline to fall through to next servlet (filter)
-     */
-    @Deprecated
-    public static final String SUFFIX_EXCLUSIONS_INIT_PARAM = "suffixExclusions";
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
-        logUnusedExclusionsInitParams(filterConfig, PREFIX_EXCLUSIONS_INIT_PARAM);
-        logUnusedExclusionsInitParams(filterConfig, SUFFIX_EXCLUSIONS_INIT_PARAM);
 
         String param = filterConfig.getInitParameter(DELEGATEE_COMPONENT_NAME_INIT_PARAM);
 
@@ -116,12 +100,4 @@ public class DelegatingFilter implements Filter {
         }
     }
 
-    private void logUnusedExclusionsInitParams(final FilterConfig filterConfig, String initParam) {
-        if (filterConfig.getInitParameter(initParam) != null ||
-                filterConfig.getServletContext().getInitParameter(initParam) != null) {
-            log.warn("{} init param is not used any more. Use a (hst:default) sitemap item to account for prefixes/suffixes " +
-                    "that need special handling or use hst-config.properties to set comma separated list for filter.prefix.exclusions or " +
-                    "filter.suffix.exclusions.", initParam);
-        }
-    }
 }

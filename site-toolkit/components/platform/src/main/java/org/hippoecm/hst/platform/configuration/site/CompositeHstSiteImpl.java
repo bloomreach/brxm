@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -108,12 +108,6 @@ public class CompositeHstSiteImpl implements CompositeHstSite {
     @Override
     public String getConfigurationPath() {
         return getActiveHstSite().getConfigurationPath();
-    }
-
-    @Override
-    @Deprecated
-    public long getVersion() {
-        return getActiveHstSite().getVersion();
     }
 
     @Override

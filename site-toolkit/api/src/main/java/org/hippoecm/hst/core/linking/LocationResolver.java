@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,18 +23,6 @@ public interface LocationResolver {
 
     /**
      * Implementations should here do their logic, possibly linkrewriting. With the resolved path from this method, a {@link HstLink} object
-     * is created
-     * @param node
-     * @param mount the {@link Mount} where the HstLink should be created for 
-     * @return the resolved HstLink for the node, or <code>null</code> when not able to create one
-     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node,
-     * org.hippoecm.hst.configuration.hosting.Mount, LocationMapTree)} instead
-     */
-    @Deprecated
-    HstLink resolve(Node node, Mount mount);
-
-    /**
-     * Implementations should here do their logic, possibly linkrewriting. With the resolved path from this method, a {@link HstLink} object
      * is created. Do not store any of the arguments as instance variables as they should not be referenced from a LocationResolver
      * @param node
      * @param mount the {@link Mount} where the HstLink should be created for
@@ -43,16 +31,6 @@ public interface LocationResolver {
      * @return the resolved HstLink for the node, or <code>null</code> when not able to create one
      */
     HstLink resolve(Node node, Mount mount, LocationMapTree locationMapTree);
-    
-    /**
-     * Since of 7.9.0, this method won't be invoked any more!
-     * Of course, your LocationResolver might not need the locationMapTree at all. Then, just keep this method empty
-     * @param locationMapTree
-     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node,
-     * org.hippoecm.hst.configuration.hosting.Mount, LocationMapTree)} instead.
-     */
-    @Deprecated
-    void setLocationMapTree(LocationMapTree locationMapTree);
     
     /**
      * 

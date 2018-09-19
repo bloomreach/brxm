@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,10 +30,8 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -81,15 +79,6 @@ public class BaseHstComponent extends GenericHstComponent {
         this.servletContext = servletContext;
     }
 
-    /**
-     * @see {@link #getComponentParameter(String)}
-     * @deprecated  since 2.26.01. Use {@link #getComponentParameter(String)} instead
-     */
-    @Deprecated
-    public String getParameter(String name, HstRequest request) {
-        return this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
-    }
-
 
     /**
      * Returns resolved parameter from HstComponentConfiguration : resolved means that possible property placeholders like
@@ -105,17 +94,6 @@ public class BaseHstComponent extends GenericHstComponent {
         return this.getComponentConfiguration().getParameter(name, RequestContextProvider.get().getResolvedSiteMapItem());
     }
 
-
-    /**
-     * @see {@link #getComponentParameters()}
-     * @deprecated  since 2.26.01. Use #getComponentParameters()} instead
-     */
-    @Deprecated
-    public  Map<String,String> getParameters(HstRequest request){
-        return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
-    }
-
-
     /**
      * See {@link #getComponentParameter(String)}, where we now return all resolved parameters (thus with inheritance of
      * ancestor components)
@@ -126,15 +104,6 @@ public class BaseHstComponent extends GenericHstComponent {
     }
 
     /**
-     * @see {@link #getComponentLocalParameter(String)}
-     * @deprecated  since 2.26.01. Use {@link #getComponentLocalParameter(String)} instead
-     */
-    @Deprecated
-    public String getLocalParameter(String name, HstRequest request) {
-        return (String)this.getComponentConfiguration().getLocalParameter(name, request.getRequestContext().getResolvedSiteMapItem());
-    }
-
-    /**
      * See {@link #getComponentParameter(String)}, but now, only resolved parameters directly on the HstComponent are taken into
      * account: in other words, no inheritance of parameters is applied
      * @param name
@@ -142,15 +111,6 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public String getComponentLocalParameter(String name) {
         return (String)this.getComponentConfiguration().getLocalParameter(name, RequestContextProvider.get().getResolvedSiteMapItem());
-    }
-
-    /**
-     * See {@link #getComponentLocalParameters()},
-     * @deprecated  since 2.26.01. Use {@link #getComponentLocalParameters()} instead
-     */
-    @Deprecated
-    public  Map<String,String> getLocalParameters(HstRequest request){
-        return this.getComponentConfiguration().getLocalParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
 
     /**
@@ -215,58 +175,13 @@ public class BaseHstComponent extends GenericHstComponent {
     public Mount getMount(HstRequest request){
         return getResolvedMount(request).getMount();
     }
-    
-    /**
-     * @param request
-     * @return the jcr path relative to the root (not starting with / thus)
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getSiteContentBasePath()} instead
-     */
-    @Deprecated
-    public String getSiteContentBasePath(HstRequest request){
-        return request.getRequestContext().getSiteContentBasePath();
-    }
-    
+        
     /**
      * @return <code>true</code> when this request is matched to a preview site
      * @see Mount#isPreview()
      */
     public boolean isPreview(HstRequest request) {
     	return request.getRequestContext().isPreview();
-    }
-    
-    
-    /**
-     * When the <code>{@link ResolvedSiteMapItem}</code> belonging to the current requestUri has a relativeContentPath that points to an
-     * existing jcr Node, a HippoBean wrapping this node is returned. When there is no relativeContentPath or the location does not exist,
-     * <code>null</code> is returned
-     * @param request
-     * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for the resolvedSiteMapItem belonging to the current request
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBean()} instead
-     */
-    @Deprecated
-    public HippoBean getContentBean(HstRequest request) {
-        return request.getRequestContext().getContentBean();
-    }
-    
-    /**
-     * @see {@link #getContentBean(HstRequest)} but only returns the bean if the found content bean is of type {@code beanMappingClass}.
-     * When the bean cannot be found, or is not of type  {@code beanMappingClass}, <code>null</code> is returned
-     * @param request current HstRequest
-     * @param beanMappingClass the class of the bean that you expect
-     * @return A HippoBean of {@code beanMappingClass} or <code>null</code> if bean cannot be found or is of a different class
-     * @deprecated  since 7.9.1 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBean(Class<T>)} instead
-     */
-    @Deprecated
-    public <T extends HippoBean> T getContentBean(HstRequest request, Class<T> beanMappingClass) {
-        return request.getRequestContext().getContentBean(beanMappingClass);
-    }
-
-    /**
-     * @deprecated  since 7.9.0. Use {@link org.hippoecm.hst.core.request.HstRequestContext#getSiteContentBaseBean()} instead
-     */
-    @Deprecated
-    public HippoBean getSiteContentBaseBean(HstRequest request) {
-        return request.getRequestContext().getSiteContentBaseBean();
     }
 
     /**
@@ -335,48 +250,6 @@ public class BaseHstComponent extends GenericHstComponent {
     }
 
     /**
-     * @param request the {@link HstRequest}
-     * @return the {@link HstQueryManager}
-     * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager()} instead
-     */
-    @Deprecated
-    public HstQueryManager getQueryManager(HstRequest request){
-        return getQueryManager(request.getRequestContext());
-    }
-    
-    /**
-     * 
-     * @param  ctx the {@link HstRequestContext}
-     * @return the {@link HstQueryManager}
-     * @see  {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager()} instead
-     */
-    @Deprecated
-    public HstQueryManager getQueryManager(HstRequestContext ctx) {
-       return ctx.getQueryManager();
-    }
-
-    /**
-     * @param session the {@link Session}
-     * @return the {@link HstQueryManager}
-     * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager(Session)} instead
-     */
-    @Deprecated
-    public HstQueryManager getQueryManager(Session session) {
-        return RequestContextProvider.get().getQueryManager(session);
-    }
-
-    /**
-     * @deprecated since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getObjectBeanManager()} instead
-     */
-    @Deprecated
-    public ObjectBeanManager getObjectBeanManager(HstRequest request) {
-       return request.getRequestContext().getObjectBeanManager();
-    }
-
-    /**
      * <p>
      * Facility method for sending a redirect to a sitemap path. You do not have to take into account the context path or {@link Mount} path
      * </p>
@@ -418,18 +291,6 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public void sendRedirect(String path, HstRequest request, HstResponse response, Map<String, String []> queryParams, String characterEncoding) {
         HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
-    }
-
-    /**
-     * @return
-     * @throws HstComponentException
-     * @deprecated  since 7.9.0, use {@link org.hippoecm.hst.content.tool.ContentBeansTool#getObjectConverter()} instead.
-     * ContentBeansTool can be accessed through {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()} and
-     * the HstReqeustContext can be fetched from the HstRequest or through RequestContextProvider.get().
-     */
-    @Deprecated
-    public ObjectConverter getObjectConverter() throws HstComponentException {
-        return RequestContextProvider.get().getContentBeansTool().getObjectConverter();
     }
 
     /**
@@ -502,15 +363,6 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
     protected <T> T getComponentParametersInfo(final HstRequest request) {
-        return (T) ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
-    }
-
-    /**
-     * @see {@link #getComponentParametersInfo(org.hippoecm.hst.core.component.HstRequest)}
-     * @deprecated  since 2.26.01. Use #getComponentParametersInfo(org.hippoecm.hst.core.component.HstRequest)} instead
-     */
-    @Deprecated
-    protected <T> T getParametersInfo(final HstRequest request) {
         return (T) ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
     }
 }

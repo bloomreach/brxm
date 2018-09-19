@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.hst.jaxrs;
 
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -65,58 +64,6 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 
     public void setServletPath(String servletPath) {
         this.servletPath = servletPath;
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public String getAnnotatedClassesResourcePath() {
-        log.warn("AbstractJaxrsService#getAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
-        return null;
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more.  If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
-        log.warn("AbstractJaxrsService#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more.  If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
-        log.warn("AbstractJaxrsService#setAnnotatedClasses is deprecated and does not do anything any more.");
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public void setObjectConverter(ObjectConverter objectConverter) {
-        log.warn("AbstractJaxrsService#setObjectConverter is deprecated and does not do anything any more.");
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-        log.warn("AbstractJaxrsService#getAnnotatedClasses is deprecated and does not do anything any more.");
-        return Collections.emptyList();
     }
 
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {

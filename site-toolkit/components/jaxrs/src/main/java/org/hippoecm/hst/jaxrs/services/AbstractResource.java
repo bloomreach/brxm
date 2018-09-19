@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.jaxrs.services;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -39,7 +38,6 @@ import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -62,36 +60,6 @@ public abstract class AbstractResource {
     
     private ContentRewriter<String> contentRewriter;
 
-    /**
-     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool
-     */
-    @Deprecated
-    public String getAnnotatedClassesResourcePath() {
-        log.warn("AbstractResource#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
-        return null;
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool
-     */
-    @Deprecated
-    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
-        log.warn("AbstractResource#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-        log.warn("AbstractResource#getAnnotatedClasses is deprecated and does not do anything any more.");
-        return Collections.emptyList();
-    }
-
     public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
         log.warn("AbstractResource#setAnnotatedClasses is deprecated and does not do anything any more.");
     }
@@ -101,16 +69,6 @@ public abstract class AbstractResource {
      */
     public ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         return requestContext.getContentBeansTool().getObjectConverter();
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
-     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public void setObjectConverter(ObjectConverter objectConverter) {
-        log.warn("AbstractResource#setObjectConverter is deprecated and does not do anything any more.");
     }
     
     /**
@@ -126,16 +84,6 @@ public abstract class AbstractResource {
      */
     public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
         return requestContext.getQueryManager(session);
-    }
-
-    /**
-     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
-     * custom  hst query manager in the HstRequestContext. This method does not do
-     * anything any more
-     */
-    @Deprecated
-    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
-        log.warn("AbstractResource#setHstQueryManagerFactory is deprecated and does not do anything any more.");
     }
     
     public String getRestRelationsBaseUri() {

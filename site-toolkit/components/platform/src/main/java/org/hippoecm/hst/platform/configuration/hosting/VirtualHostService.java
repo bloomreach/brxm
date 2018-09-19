@@ -477,14 +477,6 @@ public class VirtualHostService implements MutableVirtualHost {
         return versionInPreviewHeader;
     }
 
-    @Deprecated
-    public String getCmsLocation() {
-        if (!cmsLocations.isEmpty()) {
-            return  cmsLocations.get(0);
-        }
-        return null;
-    }
-
     public List<String> getCmsLocations() {
         return cmsLocations;
     }
@@ -529,14 +521,6 @@ public class VirtualHostService implements MutableVirtualHost {
     @Override
     public boolean isCacheable() {
         return cacheable;
-    }
-
-    @Override
-    public String getDefaultResourceBundleId() {
-        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
-            return null;
-        }
-        return defaultResourceBundleIds[0];
     }
 
     @Override

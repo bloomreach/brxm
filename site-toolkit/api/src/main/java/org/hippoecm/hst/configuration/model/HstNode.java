@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,12 +82,6 @@ public interface HstNode {
      * @param valueProvider
      */
     void setJCRValueProvider(JCRValueProvider valueProvider);
-
-    /**
-     * marks the HstNode as stale: The JCRValueProvider is out-of-date
-     * @deprecated  since 7.9.0 : use {@link #markStaleByPropertyEvent()} or {@link #markStaleByNodeEvent()}
-     */
-    void markStale();
 
     /**
      * marks the HstNode as stale due to property event: The JCRValueProvider is out-of-date.

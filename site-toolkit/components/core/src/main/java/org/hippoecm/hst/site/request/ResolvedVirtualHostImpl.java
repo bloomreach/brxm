@@ -108,15 +108,4 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
         
         return resolvedMount;
     }
-
-    @Deprecated
-    public String getResolvedHostName() {
-        return hostName;
-    }
-
-    @Deprecated
-    public int getPortNumber() {
-    	return portMount.getPortNumber();
-    }
-
 }

@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.platform.configuration.hosting;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,9 +36,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
-import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -42,14 +44,17 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.platform.configuration.site.HstSiteFactory;
-import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.configuration.site.HstSiteFactory;
+import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -59,15 +64,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
-import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -410,10 +406,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.isMapped = parent.isMapped();
         }
 
-        if(mount.getValueProvider().hasProperty(MOUNT_PROPERTY_IS_SITE)) {
-            log.warn("Property '{}' has been deprecated and can be removed.", MOUNT_PROPERTY_IS_SITE);
-        }
-
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE);
             namedPipeline  = StringPool.get(namedPipeline);
@@ -522,12 +514,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             if (resHeaderMap != null && !resHeaderMap.isEmpty()) {
                 responseHeaders = new LinkedHashMap<>(resHeaderMap);
             }
-        }
-
-        if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_CHANNELPATH)) {
-            log.warn("Property '{}' has been deprecated and is not used any more but still present on '{}'. " +
-                    "Property will be ignored.",
-                    MOUNT_PROPERTY_CHANNELPATH, mount.getValueProvider().getPath());
         }
 
         try {
@@ -721,12 +707,6 @@ public class MountService implements ContextualizableMount, MutableMount {
         return contentPath;
     }
 
-    @Deprecated
-    public String getCanonicalContentPath() {
-        return getContentPath();
-    }
-
-
     public String getMountPoint() {
         return mountPoint;
     }
@@ -803,16 +783,6 @@ public class MountService implements ContextualizableMount, MutableMount {
         return showPort;
     }
 
-    /**
-     * @deprecated  Since 4.0.0 (CMS 11.0.0)
-     */
-    @Deprecated
-    @Override
-    public boolean isSite() {
-        log.warn("Mount#isSite has been deprecated.");
-        return false;
-    }
-
     public String getContextPath() {
         return virtualHost.getContextPath();
     }
@@ -855,14 +825,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public boolean isVersionInPreviewHeader() {
         return versionInPreviewHeader;
-    }
-
-    @Deprecated
-    public String getCmsLocation() {
-        if (!cmsLocations.isEmpty()) {
-           return  cmsLocations.get(0);
-        }
-        return null;
     }
 
     public List<String> getCmsLocations() {
@@ -938,17 +900,6 @@ public class MountService implements ContextualizableMount, MutableMount {
         return cacheable;
     }
 
-
-    @Deprecated
-    @Override
-    public String getDefaultResourceBundleId() {
-        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
-            return null;
-        }
-
-        return defaultResourceBundleIds[0];
-    }
-
     @Override
     public String [] getDefaultResourceBundleIds() {
         if (defaultResourceBundleIds == null) {
@@ -985,32 +936,12 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     @Override
-    @Deprecated
-    public String getChannelPath() {
-        Channel channel = getChannel();
-        if (channel == null) {
-            return null;
-        }
-        return channel.getChannelPath();
-    }
-
-    @Override
     public Channel getChannel() {
         HstSite hstSite = getHstSite();
         if (hstSite == null) {
             return null;
         }
         return hstSite.getChannel();
-    }
-
-    @Override
-    @Deprecated
-    public String getPreviewChannelPath(){
-        Channel previewChannel = getPreviewChannel();
-        if (previewChannel == null) {
-            return null;
-        }
-        return previewChannel.getChannelPath();
     }
 
     @Override

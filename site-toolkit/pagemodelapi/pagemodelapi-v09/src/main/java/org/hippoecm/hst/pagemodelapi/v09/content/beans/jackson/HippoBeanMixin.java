@@ -44,11 +44,6 @@ public interface HippoBeanMixin extends HippoBean {
     JCRValueProvider getValueProvider();
 
     @Override
-    @Deprecated
-    @JsonIgnore
-    String getLocalizedName();
-
-    @Override
     @JsonIgnore
     String getPath();
 

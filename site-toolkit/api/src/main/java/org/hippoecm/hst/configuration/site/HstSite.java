@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -88,14 +88,6 @@ public interface HstSite {
      * @return the absolute location where the configuration for this {@link HstSite} is stored
      */
     String getConfigurationPath();
-
-    /**
-     * @return The version of hst configuration this {@link HstSite} uses. When no explicit version present, <code>-1</code>
-     * is returned
-     * @deprecated since 7.9.0 ; now always returns -1
-     */
-    @Deprecated
-    long getVersion();
 
     /**
      * @return <code>true</code> when this {@link HstSite} has a different configuration than the live.

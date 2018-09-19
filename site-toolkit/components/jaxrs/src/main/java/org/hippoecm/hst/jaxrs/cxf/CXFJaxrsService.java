@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,25 +89,6 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 
     public void setOutFaultInterceptors(List<Interceptor<? extends Message>> outFaultInterceptors) {
         this.outFaultInterceptors = outFaultInterceptors;
-    }
-
-    /**
-     * @deprecated  No longer to be used, CXF BusFactory.getDefaultBus() is used (as well as returned here) instead,
-     *              which can be pre-configured externally if desired. Interceptors are now configured on the
-     *              the created CXF Server Endpoint instead of on the (now shared) bus.
-     *
-     */
-    @Deprecated
-    protected Bus createBus() {
-        return BusFactory.getDefaultBus();
-    }
-
-    /**
-     * @deprecated use {@link #getController(org.apache.cxf.Bus, javax.servlet.ServletContext)} instead
-     */
-    @Deprecated
-    protected synchronized ServletController getController(ServletContext servletContext) {
-        return getController(BusFactory.getDefaultBus(), servletContext);
     }
 
     protected synchronized ServletController getController(Bus bus, ServletContext servletContext) {

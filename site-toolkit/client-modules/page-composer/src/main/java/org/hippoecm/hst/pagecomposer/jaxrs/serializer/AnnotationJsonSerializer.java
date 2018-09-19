@@ -68,7 +68,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
                         try {
                             serializeAnnotationAttribute(method, value, jgen);
                         } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException iarge) {
-                            throw new JsonGenerationException(iarge.fillInStackTrace());
+                            throw new JsonGenerationException(iarge.fillInStackTrace(), jgen);
                         }
                     }
                 }

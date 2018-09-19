@@ -54,13 +54,6 @@ public interface HstNodeTypes {
     String NODETYPE_HST_TEMPLATES = "hst:templates";
     String NODETYPE_HST_CHANNELINFO = "hst:channelinfo";
     String NODETYPE_HST_CHANNEL = "hst:channel";
-
-    /**
-     * @deprecated since 5.0.0 (CMS 12.0)
-     */
-    @Deprecated
-    String NODETYPE_HST_CHANNELS = "hst:channels";
-
     String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
@@ -154,18 +147,6 @@ public interface HstNodeTypes {
 
     String SITEMENUITEM_HST_PROTOTYPEITEM = "hst:prototypeitem";
 
-    /**
-     * @deprecated Not used since CMS 10.0 (HST 2.30.00). Use a (hst:default) sitemap item to account
-     * for prefixes/suffixes that need special handling.
-     */
-    @Deprecated
-    String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
-    /**
-     * @deprecated Not used since CMS 10.0 (HST 2.30.00). Use a (hst:default) sitemap item to account
-     * for prefixes/suffixes that need special handling.
-     */
-    @Deprecated
-    String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
     String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
     String VIRTUALHOSTS_PROPERTY_SCHEME = "hst:scheme";
     String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
@@ -179,11 +160,6 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS = "hst:diagnosticsthresholdmillisec";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_UNIT_THRESHOLD_MILLIS = "hst:diagnosticsunitthresholdmillisec";
 
-    /**
-     * @deprecated since CMS 7.9.1 not used any more
-     */
-    @Deprecated
-    String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP = "hst:channelmanagerhostgroup";
     String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
     String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED = "hst:channelmanagersiteauthenticationskipped";
 
@@ -206,12 +182,6 @@ public interface HstNodeTypes {
     String MOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
     String MOUNT_PROPERTY_ISMAPPED = "hst:ismapped";
 
-    /**
-     * @deprecated  Since 4.0.0 (CMS 11.0.0)
-     */
-    @Deprecated
-    String MOUNT_PROPERTY_IS_SITE = "hst:isSite";
-
     String MOUNT_PROPERTY_ALIAS = "hst:alias";
     String MOUNT_PROPERTY_TYPE = "hst:type";
     String MOUNT_PROPERTY_TYPES = "hst:types";
@@ -222,11 +192,6 @@ public interface HstNodeTypes {
     String MOUNT_PROPERTY_SESSIONSTATEFUL = "hst:sessionstateful";
     String MOUNT_PROPERTY_FORMLOGINPAGE = "hst:formloginpage";
     String MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS = "hst:defaultsitemapitemhandlerids";
-    /**
-     * @deprecated Since 5.0.0 (CMS 12.0.0). Not used any more
-     */
-    @Deprecated
-    String MOUNT_PROPERTY_CHANNELPATH = "hst:channelpath";
     String MOUNT_PROPERTY_NOCHANNELINFO = "hst:nochannelinfo";
 
     String CHANNEL_PROPERTY_NAME = "hst:name";
@@ -266,11 +231,6 @@ public interface HstNodeTypes {
     String NODENAME_HST_CONFIGURATIONS = "hst:configurations";
     String NODENAME_HST_MOUNT = "hst:mount";
     String NODENAME_HST_HOSTS = "hst:hosts";
-    /**
-     * @deprecated since 12.0.0 (5.0.0) not used any more
-     */
-    @Deprecated
-    String NODENAME_HST_CHANNELS = "hst:channels";
     String NODENAME_HST_WORKSPACE = "hst:workspace";
     String NODENAME_HST_CONTAINERS = "hst:containers";
     String NODENAME_HST_UPSTREAM = "hst:upstream";

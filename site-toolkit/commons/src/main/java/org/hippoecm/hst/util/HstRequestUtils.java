@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.util;
 
+import static org.hippoecm.hst.site.HstServices.getComponentManager;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -35,11 +37,8 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-
-import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
 /**
  * HST Request Utils
@@ -145,17 +144,6 @@ public class HstRequestUtils {
         return getDecodedPath(request, getURIEncoding(request));
     }
 
-    /**
-     * @param request
-     * @param encoding
-     * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
-     * @deprecated since CMS 12.0, not used in the Hippo stack, use {@link #getRequestPath(HttpServletRequest)}
-     */
-    @Deprecated
-    public static String getRequestPath(HttpServletRequest request, String encoding) {
-        return getDecodedPath(request, encoding);
-    }
-
     private static String getDecodedPath(HttpServletRequest request, String encoding) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
@@ -166,22 +154,6 @@ public class HstRequestUtils {
             throw new IllegalArgumentException("Invalid character encoding: " + encoding, e);
         }
 
-    }
-
-    /**
-     * @deprecated since CMS 7.9.1 (2.28.05) use {@link javax.servlet.http.HttpServletRequest#getPathInfo()} instead
-     */
-    @Deprecated
-    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request) {
-        return request.getPathInfo();
-    }
-
-    /**
-     * @deprecated since CMS 7.9.1 (2.28.05) use {@link javax.servlet.http.HttpServletRequest#getPathInfo()} instead
-     */
-    @Deprecated
-    public static String getPathInfo(ResolvedMount mount, HttpServletRequest request, String characterEncoding) {
-        return request.getPathInfo();
     }
 
     /**

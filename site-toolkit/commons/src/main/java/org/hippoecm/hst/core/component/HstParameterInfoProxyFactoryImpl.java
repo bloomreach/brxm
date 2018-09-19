@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.core.component;
+
+import static org.hippoecm.hst.util.HstRequestUtils.isComponentRenderingPreviewRequest;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
@@ -30,13 +32,10 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ParameterConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.util.HstRequestUtils.isComponentRenderingPreviewRequest;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
 
@@ -55,17 +54,6 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
     public interface TemplateParameterInfo {
         @Parameter(name = TEMPLATE_PARAM_NAME)
         public String getTemplateParameter();
-    }
-
-    /**
-     * @deprecated Use {@link #createParameterInfoProxy(ParametersInfo, ParameterConfiguration, HttpServletRequest,
-     * HstParameterValueConverter)} instead
-     */
-    @Deprecated
-    @Override
-    public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo, final ComponentConfiguration componentConfig,
-                                          final HstRequest request, final HstParameterValueConverter converter) {
-        return createParameterInfoProxy(parametersInfo, componentConfig, (HttpServletRequest) request, converter);
     }
 
     @Override

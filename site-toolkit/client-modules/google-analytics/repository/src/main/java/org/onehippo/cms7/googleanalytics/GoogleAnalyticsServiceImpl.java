@@ -15,12 +15,7 @@
  */
 package org.onehippo.cms7.googleanalytics;
 
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
-import org.onehippo.repository.modules.DaemonModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStream;
 
 import javax.jcr.Binary;
 import javax.jcr.RepositoryException;
@@ -28,7 +23,13 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
-import java.io.InputStream;
+
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
+import org.onehippo.repository.modules.DaemonModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, DaemonModule {
 
@@ -37,14 +38,12 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
     private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/googleAnalyticsConfiguration/hippo:moduleconfig";
     private static final String TABLE_ID_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:tableId";
     private static final String USERNAME_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:username";
-    private static final String PASSWORD_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:password";
     private static final String ACCOUNT_ID_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:accountId";
     private static final String PRIVATE_KEY_PROPERTY_PATH = CONFIG_NODE_PATH + "/hippogoogleanalytics:privateKey";
 
     private Session session;
 
     private volatile String userName;
-    private volatile String password;
     private volatile String accountId;
     private volatile String tableId;
     private volatile Binary privateKey;
@@ -57,7 +56,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
                     @Override
                     public void onEvent(final EventIterator events) {
                         userName = null;
-                        password = null;
                         accountId = null;
                         tableId = null;
                         privateKey = null;
@@ -107,15 +105,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
             }
         }
         return privateKey.getStream();
-    }
-
-    @Override
-    @Deprecated
-    public String getPassword() {
-        if (password == null) {
-            password = getStringProperty(session, PASSWORD_PROPERTY_PATH);
-        }
-        return password;
     }
 
     private synchronized static String getStringProperty(Session session, String propertyName) {

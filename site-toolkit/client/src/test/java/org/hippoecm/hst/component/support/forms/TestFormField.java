@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ public class TestFormField {
     public void testDeprecatedSetValues() throws Exception {
         FormField formField = new FormField("t");
 
-        formField.setValues(null);
+        formField.setValueList(null);
         assertNotNull("Getter may not return null", formField.getValueList());
         assertEquals("Size of value list must be 0", 0, formField.getValueList().size());
         assertEquals("Get value must return empty String", "", formField.getValue());
@@ -145,7 +145,7 @@ public class TestFormField {
         valuesMap.put("w 1", "w 1");
         valuesMap.put("w 2", "w 2");
         valuesMap.put(null, null);
-        formField.setValues(valuesMap);
+        formField.setValueList(new ArrayList<>(valuesMap.values()));
 
         assertEquals("First value not equal to set value", "w 1", formField.getValueList().get(0));
         assertEquals("Second value not equal to set value", "w 2", formField.getValueList().get(1));
@@ -157,36 +157,43 @@ public class TestFormField {
     @Test
     public void testDeprecatedGetValues() throws Exception {
         FormField formField = new FormField("t");
-        assertNotNull("Getter may not return null", formField.getValues());
-        assertEquals("Size of values map must be 0", 0, formField.getValues().size());
+        assertNotNull("Getter may not return null", formField.getValueList());
+        assertEquals("Size of values map must be 0", 0, formField.getValueList().size());
 
-        formField.addValue("v 1");
-        assertEquals("First value not equal to added value", "v 1", formField.getValues().get("v 1"));
-        assertEquals("Size of values map must be 1", 1, formField.getValues().size());
+		formField.addValue("v 1");
+		assertEquals("First value not equal to added value", "v 1",
+				formField.getValueList().stream().filter(item -> item.equals("v 1")).findAny());
+		assertEquals("Size of values map must be 1", 1, formField.getValueList().size());
 
-        formField.addValue("v 2");
-        assertEquals("First value not equal to added value", "v 1", formField.getValues().get("v 1"));
-        assertEquals("Second value not equal to added value", "v 2", formField.getValues().get("v 2"));
-        assertEquals("Size of values map must be 2", 2, formField.getValues().size());
+		formField.addValue("v 2");
+		assertEquals("First value not equal to added value", "v 1",
+				formField.getValueList().stream().filter(item -> item.equals("v 1")).findAny());
+		assertEquals("Second value not equal to added value", "v 2",
+				formField.getValueList().stream().filter(item -> item.equals("v 2")).findAny());
+		assertEquals("Size of values map must be 2", 2, formField.getValueList().size());
 
-        formField.addValue(null);
-        assertEquals("First value not equal to added value", "v 1", formField.getValues().get("v 1"));
-        assertEquals("Second value not equal to added value", "v 2", formField.getValues().get("v 2"));
-        assertEquals("Size of values map must still be 2", 2, formField.getValues().size());
+		formField.addValue(null);
+		assertEquals("First value not equal to added value", "v 1",
+				formField.getValueList().stream().filter(item -> item.equals("v 1")).findAny());
+		assertEquals("Second value not equal to added value", "v 2",
+				formField.getValueList().stream().filter(item -> item.equals("v 1")).findAny());
+		assertEquals("Size of values map must still be 2", 2, formField.getValueList().size());
 
-        formField.setValues(null);
-        assertNotNull("Getter may not return null", formField.getValues());
-        assertEquals("Size of values map must be 0", 0, formField.getValues().size());
+        formField.setValueList(null);
+        assertNotNull("Getter may not return null", formField.getValueList());
+        assertEquals("Size of values map must be 0", 0, formField.getValueList().size());
 
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("w 1", "w 1");
         valuesMap.put("w 2", "w 2");
         valuesMap.put(null, null);
-        formField.setValues(valuesMap);
+        formField.setValueList(new ArrayList<>(valuesMap.values()));
 
-        assertEquals("First value not equal to set value", "w 1", formField.getValues().get("w 1"));
-        assertEquals("Second value not equal to set value", "w 2", formField.getValues().get("w 2"));
-        assertEquals("Size of set values map must be 3", 3, formField.getValues().size());
+		assertEquals("First value not equal to set value", "w 1",
+				formField.getValueList().stream().filter(item -> item.equals("w 1")).findAny());
+		assertEquals("Second value not equal to set value", "w 2",
+				formField.getValueList().stream().filter(item -> item.equals("w 2")).findAny());
+		assertEquals("Size of set values map must be 3", 3, formField.getValueList().size());
     }
 
     @Test

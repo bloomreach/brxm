@@ -677,15 +677,6 @@ public class ChannelManagerImpl implements ChannelManager {
             return blueprint;
         }
 
-        /**
-         * @deprecated since 3.2.0 (CMS 10.2.0). Use {@link Channel#getId() getChannel().getId()} instead
-         */
-        @Deprecated
-        @Override
-        public String getChannelId() {
-            return channel.getId();
-        }
-
         @Override
         public Channel getChannel() {
             return channel;

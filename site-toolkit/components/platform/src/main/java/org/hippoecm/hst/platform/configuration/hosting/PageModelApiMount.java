@@ -105,15 +105,6 @@ public class PageModelApiMount implements ContextualizableMount {
         return parent.getContentPath();
     }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public String getCanonicalContentPath() {
-        return parent.getCanonicalContentPath();
-    }
-
     @Override
     public String getMountPath() {
         return parent.getMountPath() + "/" + getName();
@@ -152,15 +143,6 @@ public class PageModelApiMount implements ContextualizableMount {
     @Override
     public boolean isPortInUrl() {
         return parent.isPortInUrl();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public boolean isSite() {
-        return parent.isSite();
     }
 
     @Override
@@ -317,12 +299,6 @@ public class PageModelApiMount implements ContextualizableMount {
     }
 
     @Override
-    public String getChannelPath() {
-        // no channel for page model api mount
-        return null;
-    }
-
-    @Override
     public <T extends ChannelInfo> T getChannelInfo() {
         // no channel for page model api mount
         return null;
@@ -331,12 +307,6 @@ public class PageModelApiMount implements ContextualizableMount {
     @Override
     public Channel getChannel() {
         // no channel for page model api mount
-        return null;
-    }
-
-
-    @Override
-    public String getPreviewChannelPath() {
         return null;
     }
 
@@ -360,27 +330,9 @@ public class PageModelApiMount implements ContextualizableMount {
         return parent.isCacheable();
     }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public String getDefaultResourceBundleId() {
-        return parent.getDefaultResourceBundleId();
-    }
-
     @Override
     public String[] getDefaultResourceBundleIds() {
         return parent.getDefaultResourceBundleIds();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public String getCmsLocation() {
-        return parent.getCmsLocation();
     }
 
     @Override

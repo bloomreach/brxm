@@ -1,5 +1,5 @@
 /*
-q *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+q *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@ q *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *  limitations under the License.
  */
 package org.hippoecm.hst.servlet;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -53,17 +57,8 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 public class HstFreemarkerServlet extends FreemarkerServlet {
-
-    /**
-     * @deprecated HSTTWO-3723: no longer functional and ignored servlet/context init parameter
-     */
-    @Deprecated
-    public static final String INIT_PARAM_LOGGER_LIBRARY = "loggerLibrary";
 
     private static final Logger log = LoggerFactory.getLogger(HstFreemarkerServlet.class);
 

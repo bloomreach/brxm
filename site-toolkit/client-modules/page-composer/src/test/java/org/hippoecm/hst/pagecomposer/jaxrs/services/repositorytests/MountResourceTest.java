@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,18 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +42,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -44,17 +53,6 @@ import org.junit.Test;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
-import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractMountResourceTest {
 
@@ -176,20 +174,6 @@ public class MountResourceTest extends AbstractMountResourceTest {
         containerComponentResource.setPageComposerContextService(pageComposerContextService);
         return containerComponentResource;
     }
-
-    @Test
-    public void testXpathQueries() {
-
-        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/hst:workspace/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/hst:workspace/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
-    }
-
 
     @Test
     public void publication_of_more_than_1_new_component_does_not_result_in_reordering_warnings() throws Exception {

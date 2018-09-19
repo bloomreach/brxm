@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.container;
 import java.util.EventObject;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
@@ -40,22 +39,6 @@ public interface ComponentManager
      * Returns configuration resources for components assembly
      */
     String [] getConfigurationResources();
-
-    /**
-     * Set the ServletConfig that this object runs in.
-     * @param servletConfig
-     * @deprecated deprecated since since 3.2.0 : ServletConfig cannot be available when HST container loaded by a listener.
-     */
-    @Deprecated
-    void setServletConfig(ServletConfig servletConfig);
-
-    /**
-     * Returns the ServletConfig that this object runs in if available. Otherwise returns null.
-     * @return the ServletConfig that this object runs in, otherwise null
-     * @deprecated deprecated since since 3.2.0 : ServletConfig cannot be available when HST container loaded by a listener.
-     */
-    @Deprecated
-    ServletConfig getServletConfig();
 
     /**
      * Set the ServletContext that this object runs in.

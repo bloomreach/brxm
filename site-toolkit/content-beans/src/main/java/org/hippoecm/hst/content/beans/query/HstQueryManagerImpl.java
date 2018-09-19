@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,28 +32,13 @@ import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.repository.util.DateTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class HstQueryManagerImpl implements HstQueryManager {
 
-    private static final Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
-
     private final ObjectConverter objectConverter;
     private final Session session;
     private final DateTools.Resolution defaultResolution;
-
-    /**
-     * @deprecated since 2.24.13 / 2.16.01. Use {@link #HstQueryManagerImpl(Session, ObjectConverter, DateTools.Resolution)}
-     * instead
-     */
-    @Deprecated
-    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter) {
-        this(session, objectConverter, DateTools.Resolution.MILLISECOND);
-        log.warn("Using deprecated HstQueryManagerImpl constructor. No Filter.Resolution is specified. Use default" +
-                " Filter.Resolution.EXPENSIVE_PRECISE");
-    }
 
     public HstQueryManagerImpl(final Session session,
                                final ObjectConverter objectConverter,

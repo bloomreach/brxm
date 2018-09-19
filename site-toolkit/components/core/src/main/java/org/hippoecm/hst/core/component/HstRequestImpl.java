@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,16 +43,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
 
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
-
-    /**
-     * @deprecated since 2.25.02 never used.
-     */
-    public static final String CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".userPrincipalClassName";
-
-    /**
-     * @deprecated since 2.25.02  never used.
-     */
-    public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
 
     // do not make CONTAINER_ATTR_NAME_PREFIXES volatile, even if some code checking tool claims it should : it is
     // by far not worth the performance penalty, and worst case, it is initialized more than once

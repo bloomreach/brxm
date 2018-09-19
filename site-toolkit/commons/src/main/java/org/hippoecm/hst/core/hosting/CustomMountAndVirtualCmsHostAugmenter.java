@@ -489,11 +489,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public String getDefaultResourceBundleId() {
-            return null;
-        }
-
-        @Override
         public String[] getDefaultResourceBundleIds() {
             return EMPTY_ARRAY;
         }
@@ -506,15 +501,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         @Override
         public boolean isCustomHttpsSupported() {
             return false;
-        }
-
-        @Deprecated
-        @Override
-        public String getCmsLocation() {
-            if (!cmsLocations.isEmpty()) {
-                return cmsLocations.get(0);
-            }
-            return null;
         }
 
         public List<String> getCmsLocations() {
@@ -693,15 +679,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return false;
         }
 
-        /**
-         * @deprecated  Since 4.0.0 (CMS 11.0.0)
-         */
-        @Deprecated
-        @Override
-        public boolean isSite() {
-            return false;
-        }
-
         @Override
         public int getPort() {
             return 0;
@@ -749,12 +726,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getContentPath() {
-            return FAKE_NON_EXISTING_PATH;
-        }
-
-        @Override
-        @Deprecated
-        public String getCanonicalContentPath() {
             return FAKE_NON_EXISTING_PATH;
         }
 
@@ -873,12 +844,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        @Deprecated
-        public String getChannelPath() {
-            return null;
-        }
-
-        @Override
         public Channel getChannel() {
             return null;
         }
@@ -893,12 +858,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return false;
         }
 
-        @Deprecated
-        @Override
-        public String getDefaultResourceBundleId() {
-            return null;
-        }
-
         @Override
         public String[] getDefaultResourceBundleIds() {
             return EMPTY_ARRAY;
@@ -909,20 +868,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             StringBuilder builder = new StringBuilder("CustomMount [hostName=").append(virtualHost.getHostName())
                     .append(", mountPath = ").append(mountPath).append("]");
             return builder.toString();
-        }
-
-        @Deprecated
-        @Override
-        public String getCmsLocation() {
-            if (virtualHost instanceof MutableVirtualHost) {
-                if (((MutableVirtualHost) virtualHost).getCmsLocations().isEmpty()) {
-                    return null;
-                }
-                return ((MutableVirtualHost) virtualHost).getCmsLocations().get(0);
-            } else {
-                log.warn("Can only get cms location of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
-                return null;
-            }
         }
 
         @Override

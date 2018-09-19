@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.service.translation.HippoTranslationBeanService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
@@ -45,14 +44,6 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
     private Class<K> beanMappingClass;
 
     public AvailableTranslations(Node node) {
-        this.node = node;
-    }
-    /**
-     * @param node the <code>node</code> to get the translations for
-     * @deprecated Deprecated since CMS 11.0.0 (HST 4.0.0). Use {@link #AvailableTranslations(Node)} instead.
-     */
-    @Deprecated
-    public AvailableTranslations(final Node node, final ObjectConverter objectConverter) {
         this.node = node;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,12 +30,6 @@ public interface ChannelManagerEvent {
      * If the event is not triggered on channel creation, it returns null.
      */
     Blueprint getBlueprint();
-
-    /**
-     * @deprecated since 3.2.0 (CMS 10.2.0). Use {@link Channel#getId() getChannel().getId()} instead
-     */
-    @Deprecated
-    String getChannelId();
 
     /**
      * @return the {@link Channel} which was used as an input during channel creation or update. This will never return

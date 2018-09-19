@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -311,25 +311,10 @@ public interface Filter extends BaseFilter {
     void addLike(String fieldAttributeName, String value) throws FilterException ;
 
     /**
-     * @see #addLike(String, String)
-     * @deprecated Since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified anyway
-     */
-    @Deprecated
-    void addLike(String fieldAttributeName, Object value) throws FilterException ;
-
-    /**
      * @see #addLike(String, String) only now inverted
      *
      */
     void addNotLike(String fieldAttributeName, String value) throws FilterException ;
-
-    /**
-     * @see #addLike(String, String) only now inverted
-     *
-     * @deprecated Since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified anyway
-     */
-    @Deprecated
-    void addNotLike(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value

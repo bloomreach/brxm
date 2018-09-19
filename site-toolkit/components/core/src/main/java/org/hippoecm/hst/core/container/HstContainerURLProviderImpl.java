@@ -306,20 +306,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
     }
 
-    @Deprecated
-    public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-        StringBuilder url = new StringBuilder(100);
-        String mountPrefix = containerURL.getResolvedMountPath();
-
-        if(mountPrefix != null) {
-            url.append(mountPrefix);
-        }
-
-        String pathInfo = buildHstURLPath(containerURL, requestContext);
-        url.append(pathInfo);
-        return url.toString();
-    }
-
     protected String buildHstURLPath(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException {
         String encoding = containerURL.getURIEncoding();
         StringBuilder url = new StringBuilder(100);

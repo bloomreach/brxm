@@ -16,47 +16,7 @@
 package org.hippoecm.hst.platform.configuration.sitemap;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.ConfigurationUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
-import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.core.internal.CollectionOptimizer;
-import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.core.util.PropertyParser;
-import org.hippoecm.hst.util.HttpHeaderUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
-
 import static org.hippoecm.hst.configuration.ConfigurationConstants.CONTAINER_RESOURCE_PIPELINE_NAME;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_CACHEABLE;
@@ -89,6 +49,41 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_S
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_USERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.WILDCARD;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
+import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
+import org.hippoecm.hst.util.HttpHeaderUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, ConfigurationLockInfo
@@ -753,15 +748,6 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     @Override
     public int getSchemeNotMatchingResponseCode() {
         return schemeNotMatchingResponseCode;
-    }
-
-    @Override
-    public String getResourceBundleId() {
-        if (resourceBundleIds == null || resourceBundleIds.length == 0) {
-            return null;
-        }
-
-        return resourceBundleIds[0];
     }
 
     @Override

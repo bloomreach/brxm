@@ -22,13 +22,11 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
+import org.hippoecm.hst.platform.HstModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
@@ -39,10 +37,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     private Object hstModelMutex;
     private HstModelProvider hstModelProvider;
-
-    private volatile VirtualHosts prevVirtualHostsModel;
-    private volatile VirtualHosts virtualHostsModel;
-
 
     protected volatile BuilderState state = BuilderState.UNDEFINED;
 
@@ -60,9 +54,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     private boolean staleConfigurationSupported = false;
 
-    private HstURLFactory urlFactory;
-
-    private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
     private HstComponentRegistry componentRegistry;
 
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
@@ -128,18 +119,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
 
-    /** @deprecated Since CMS 10.0, HST 2.30.00.
-    */
-    @Deprecated
-    public void setUrlFactory(HstURLFactory urlFactory) {
-        this.urlFactory = urlFactory;
-    }
-
-    @Deprecated
-    public HstURLFactory getUrlFactory() {
-        return this.urlFactory;
-    }
-
     public HstSiteMapMatcher getSiteMapMatcher() {
 
         return hstModelProvider.getHstModel().getHstSiteMapMatcher();
@@ -157,22 +136,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void addHstConfigurationAugmenter(HstConfigurationAugmenter augmenter) {
         hstConfigurationAugmenters.add(augmenter);
     }
-
-    /**
-     * @deprecated since CMS 10.0, HST 2.30.00
-     */
-    @Deprecated
-    public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
-        this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
-    }
-
-    /**
-     * @deprecated since CMS 10.0, HST 2.30.00
-     */
-    @Deprecated
-    public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
-        return siteMapItemHandlerFactory;
-    } 
     
     public String getPathSuffixDelimiter() {
         return pathSuffixDelimiter;
@@ -197,11 +160,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {
         log.info("Is stale configuration for HST model supported: '{}'", staleConfigurationSupported);
         this.staleConfigurationSupported = staleConfigurationSupported;
-    }
-
-    @Deprecated
-    public boolean isExcludedByHstFilterInitParameter(String pathInfo) {
-        return isHstFilterExcludedPath(pathInfo);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,22 +71,6 @@ public abstract class NodeRepresentation {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    /**
-     * @deprecated use {@link #getDisplayName()} instead
-     */
-    @Deprecated
-    public String getLocalizedName() {
-    	return getDisplayName();
-    }
-
-    /**
-     * @deprecated use {@link #setDisplayName(String)} instead
-     */
-    @Deprecated
-    public void setLocalizedName(String localizedName) {
-    	setDisplayName(localizedName);
     }
     
     @XmlElement(name="path")

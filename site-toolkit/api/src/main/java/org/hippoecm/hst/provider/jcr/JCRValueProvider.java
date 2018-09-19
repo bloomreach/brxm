@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,13 +33,6 @@ public interface JCRValueProvider extends ValueProvider{
      * @return the display name of the backing jcr node according to {@link HippoNode#getDisplayName()}
      */
     String getDisplayName();
-
-    /**
-     * @return the localized name of the backing jcr node according {@link HippoNode#getLocalizedName()}
-     * @deprecated use {@link #getDisplayName()} instead
-     */
-    @Deprecated
-    String getLocalizedName();
     
     /**
      * returns the parent {@link Node} of this value provider or <code>null</code> when the node is detached.

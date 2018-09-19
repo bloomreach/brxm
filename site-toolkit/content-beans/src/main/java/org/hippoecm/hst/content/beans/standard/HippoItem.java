@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -114,23 +114,6 @@ public class HippoItem implements HippoBean {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    /**
-     * @deprecated use {@link #getDisplayName()} instead. Deprecated since 4.0.0
-     */
-    @Deprecated
-    @IndexField(ignoreInCompound = true)
-    public String getLocalizedName() {
-        return getDisplayName();
-    }
-
-    /**
-     * @deprecated use {@link #setDisplayName(String)} instead. Deprecated since 4.0.0
-     */
-    @Deprecated
-    public void setLocalizedName(String localizedName) {
-        this.localizedName = localizedName;
     }
 
     public String getPath() {

@@ -121,20 +121,6 @@ public class DocumentParamsScanner {
         return getParameterNames(componentClassName, parametersInfoClassName, classLoader);
     }
 
-    /**
-     * @param componentClassName the class name for which the {@link ParametersInfo} is scanned
-     * @return {@link java.util.Set} of parameter names that have a {@link JcrPath} annotation
-     * present. Returns empty set if and exception occurs (for example <code>componentClassName</code> cannot be
-     * instantiated) or no
-     * {@link ParametersInfo} is present on <code>componentClassName</code>
-     * @deprecated Use {{@link #getNames(HstComponentConfiguration, ClassLoader)} instead.
-     */
-    @Deprecated
-    public static Set<String> getNames(final String componentClassName,
-                                       final ClassLoader classLoader) {
-        return getParameterNames(componentClassName, null, classLoader);
-    }
-
     private static Set<String> getParameterNames(final String componentClassName, final String parametersInfoClassName,
             final ClassLoader classLoader) {
 

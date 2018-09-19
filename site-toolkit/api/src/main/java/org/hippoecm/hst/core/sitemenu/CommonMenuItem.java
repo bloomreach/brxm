@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
@@ -48,12 +47,6 @@ public interface CommonMenuItem {
      * cannot be resolved in the <code>{@link HstSiteMap}</code>
      */
     ResolvedSiteMapItem resolveToSiteMapItem();
-
-    /**
-     * @deprecated Not used since CMS 11.0 (HST 4.0.0). Use @{link #resolveToSiteMapItem()}.
-     */
-    @Deprecated
-    ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request);
 
     /**
      * A sitemenu item is expanded if one of its descendants is selected or if it is selected itself

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageSetRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.Link;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +198,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 Node childResourceNode = childImageBean.getNode();
                 childResourceNode.setProperty("jcr:mimeType", mimeType);
                 childResourceNode.setProperty("jcr:data", childResourceNode.getSession().getValueFactory().createBinary(childResourceContentStream));
-                childResourceNode.save();
+                childResourceNode.getSession().save();
                 
                 if (binariesCache != null) {
                     HstLink hstLink = requestContext.getHstLinkCreator().create(childImageBean, requestContext);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,35 +15,16 @@
  */
 package org.hippoecm.hst.utils;
 
-import java.lang.annotation.Annotation;
-
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.DefaultHstParameterValueConverter;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.util.ParametersInfoUtils;
 
 public class ParameterUtils {
 
     public static final String PARAMETERS_INFO_ATTRIBUTE = ParameterUtils.class.getName() + ".parametersInfo";
-
-    /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_DATETIME_FORMAT} instead
-     */
-    public static final String ISO_DATETIME_FORMAT = DefaultHstParameterValueConverter.ISO_DATETIME_FORMAT;
-
-    /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_DATE_FORMAT} instead
-     */
-    public static final String ISO_DATE_FORMAT = DefaultHstParameterValueConverter.ISO_DATE_FORMAT;
-
-    /**
-     * @deprecated since 5.1.0 : use {@link DefaultHstParameterValueConverter#ISO_TIME_FORMAT} instead
-     */
-    public static final String ISO_TIME_FORMAT = DefaultHstParameterValueConverter.ISO_TIME_FORMAT;
 
     public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new DefaultHstParameterValueConverter();
 
@@ -79,23 +60,5 @@ public class ParameterUtils {
         }
 
         return parametersInfo;
-    }
-
-    /**
-     * Returns an annotation on a 'parameter method' in a parameters info class, i.e. a method that is annotated
-     * with {@link @Parameter}.
-     *
-     * @param parametersInfo the parameters info class to analyze
-     * @param parameterName the name of the parameter as returned by {@link Parameter#name()}
-     * @param annotationClass the class of the annotation to find
-     * @param <A> the annotation, or null if the annotation could not be found
-     * @return
-     * @deprecated Use {@link ParametersInfoUtils#getParameterAnnotation(ParametersInfo, String, Class)}.
-     */
-    @Deprecated
-    public static <A extends Annotation> A getParameterAnnotation(final ParametersInfo parametersInfo,
-                                                                  final String parameterName,
-                                                                  final Class<A> annotationClass) {
-        return ParametersInfoUtils.getParameterAnnotation(parametersInfo, parameterName, annotationClass);
     }
 }

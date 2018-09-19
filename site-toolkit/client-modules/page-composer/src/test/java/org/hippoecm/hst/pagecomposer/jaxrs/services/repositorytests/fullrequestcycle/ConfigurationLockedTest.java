@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
     private void forbiddenAssertions(final ForbiddenException e) throws java.io.IOException {
         MockHttpServletResponse response = e.getResponse();
         final String restResponse = response.getContentAsString();
-        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
 
         assertEquals(Boolean.FALSE, responseMap.get("success"));
         assertEquals(ClientError.FORBIDDEN.name(), responseMap.get("errorCode"));

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,22 +31,6 @@ import org.hippoecm.hst.core.request.ParameterConfiguration;
  */
 
 public interface HstParameterInfoProxyFactory {
-
-    /**
-     * Returns a proxy instance of the interface T. The proxy delegates the {@link Parameter} annotated getters in the interface T to the backing {@link ComponentConfiguration} parameters, 
-     * thus to {@link ComponentConfiguration#getParameter(String, org.hippoecm.hst.core.request.ResolvedSiteMapItem)}
-     * @param <T> proxy instance of the interface T
-     * @param parametersInfo the ParametersInfo annotation of the {@link HstComponent}
-     * @param componentConfig the backing {@link ComponentConfiguration} of the {@link HstComponent}
-     * @param request the {@link HstRequest}
-     * @param converter the HstParameterValueConverter that does the actual conversion
-     * @return proxy instance of the interface T
-     * @throws IllegalArgumentException if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
-     * @deprecated Use {@link #createParameterInfoProxy(ParametersInfo, ParameterConfiguration, HttpServletRequest, HstParameterValueConverter)} instead
-     */
-    @Deprecated
-    <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
-            HstRequest request, HstParameterValueConverter converter);
 
     /**
      * Returns a proxy instance of the interface T. The proxy delegates the {@link Parameter} annotated getters in the interface T to the backing {@link ComponentConfiguration} parameters, 

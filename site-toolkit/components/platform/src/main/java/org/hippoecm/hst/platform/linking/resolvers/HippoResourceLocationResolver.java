@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,25 +15,23 @@
  */
 package org.hippoecm.hst.platform.linking.resolvers;
 
+import static org.hippoecm.hst.platform.linking.DefaultHstLinkCreator.BINARIES_PREFIX;
+
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
+import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
-import static org.hippoecm.hst.platform.linking.DefaultHstLinkCreator.BINARIES_PREFIX;
 
 public class HippoResourceLocationResolver implements ResourceLocationResolver {
     
@@ -43,27 +41,6 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     private List<ResourceContainer> resourceContainers;
     
     private final static String NODE_TYPE = HippoNodeType.NT_RESOURCE;
-
-    /**
-     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node, org.hippoecm.hst.configuration.hosting.Mount,
-     *             LocationMapTree)} instead
-     */
-    @Deprecated
-    public void setLocationMapTree(LocationMapTree locationMapTree) {
-        // we do not need a locationMapTree one for binary data
-    }
-
-    /**
-     * @deprecated since 2.30.00 (CMS 10.0). If a cdn host is required, this needs to be configured on hst:virtualhost nodes
-     */
-    @Deprecated
-    public void setBinariesPrefix(String binariesPrefix){
-        if (StringUtils.isNotBlank(binariesPrefix)) {
-            log.warn("hst-config.properties property 'binaries.prefix.path' is not used any more. Ignoring configured value '{}'." +
-                    " If you configured a cdn host in the binaries prefix, you have to configure that now on a hst:virtualhost " +
-                    "or hst:mount configuration node through property '{}'.", binariesPrefix, VIRTUALHOST_PROPERTY_CDN_HOST);
-        }
-    }
     
     public void setBinaryLocations(String[] binaryLocations) {
         if (binaryLocations == null) {
@@ -84,16 +61,6 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     
     public String getNodeType() {
         return NODE_TYPE;
-    }
-
-    /**
-     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node, org.hippoecm.hst.configuration.hosting.Mount,
-     *             LocationMapTree)} instead
-     */
-    @Deprecated
-    public HstLink resolve(final Node node, final Mount mount) {
-        log.warn("This method is deprecated. Use resolve(Node, Mount, LocationMapTree) instead");
-        return resolve(node, mount, null);
     }
 
     public HstLink resolve(Node node, final Mount mount, final LocationMapTree tree) {

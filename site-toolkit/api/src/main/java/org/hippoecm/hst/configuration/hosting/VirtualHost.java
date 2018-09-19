@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -176,13 +176,6 @@ public interface VirtualHost {
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
      */
     boolean isCacheable();
-
-    /**
-     * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
-     * @return the first item of default resource bundle IDs or null if not configured or empty.
-     */
-    @Deprecated
-    String getDefaultResourceBundleId();
 
     /**
      * @return default resource bundle IDs for all sites below this virtualhost to use, for example { "org.example.resources.MyResources" }. Returns empty array

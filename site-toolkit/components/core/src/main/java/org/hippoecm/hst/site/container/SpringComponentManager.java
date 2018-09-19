@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.Configuration;
@@ -78,7 +77,6 @@ public class SpringComponentManager implements ComponentManager {
     private Map<String, ModuleInstance> addonModuleInstancesMap;
     private List<ModuleInstance> addonModuleInstancesList;
 
-    private ServletConfig servletConfig;
     private ServletContext servletContext;
 
     private EventBus containerEventBus = new EventBus();
@@ -94,35 +92,9 @@ public class SpringComponentManager implements ComponentManager {
         this.containerConfiguration = new ContainerConfigurationImpl(this.configuration);
     }
 
-    public SpringComponentManager(ServletConfig servletConfig, Configuration configuration) {
-        this(configuration);
-        setServletConfig(servletConfig);
-    }
-
     public SpringComponentManager(ServletContext servletContext, Configuration configuration) {
         this(configuration);
         setServletContext(servletContext);
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
-     */
-    @Deprecated
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
-        if (servletConfig != null) {
-            setServletContext(servletConfig.getServletContext());
-        }
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#getServletConfig()
-     */
-    @Deprecated
-    public ServletConfig getServletConfig() {
-        return this.servletConfig;
     }
 
     public void setServletContext(ServletContext servletContext) {

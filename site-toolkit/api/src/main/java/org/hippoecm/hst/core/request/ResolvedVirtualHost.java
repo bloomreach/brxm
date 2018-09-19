@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,26 +29,6 @@ public interface ResolvedVirtualHost {
      * @return the backing virtual host of this ResolvedVirtualHost
      */
     VirtualHost getVirtualHost();
-    
-    /**
-     * the hostName that resolved to this ResolvedVirtualHost. Note that this might be different then the one in {@link VirtualHost#getHostName()} as this
-     * hostName might contain not yet filled in wildcards. 
-     * @see VirtualHost#getHostName()
-     * @return the hostName that resolved to this ResolvedVirtualHost
-     * @deprecated since HST 2.28.00 (CMS 7.9.0) use {@link #getVirtualHost()}#{@link org.hippoecm.hst.configuration.hosting.VirtualHost#getHostName()}
-     * instead
-     */
-    @Deprecated
-    String getResolvedHostName();
-
-    /**
-     * the portNumber that resolved to this ResolvedVirtualHost.
-     * @return the portNumber that resolved to this ResolvedVirtualHost
-     * @deprecated since HST 2.28.00 (CMS 7.9.0) use {@link org.hippoecm.hst.core.request.ResolvedMount#getPortNumber()}
-     * instead
-     */
-    @Deprecated
-    int getPortNumber();
 
     /**
      * <p> This method tries to match the current {@link ResolvedVirtualHost} for

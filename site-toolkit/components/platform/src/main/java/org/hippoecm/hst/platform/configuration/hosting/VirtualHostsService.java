@@ -225,11 +225,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
             cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
         }
 
-        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP)) {
-            log.warn("Property '{}' on hst:hosts node has been deprecated and is not used any more. Can be removed.",
-                    HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
-        }
-
         String sites = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES);
         if(!StringUtils.isEmpty(sites)) {
             log.info("Channel manager will load work with hst:sites node '{}' instead of the default '{}'.",
@@ -239,13 +234,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT)) {
             showPort = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        }
-
-        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS)) {
-            logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        }
-        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS)) {
-            logUnusedExclusionsProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         }
 
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME)) {
@@ -444,12 +432,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
     }
 
-    @Deprecated
-    @Override
-    public boolean isExcluded(final String pathInfo) {
-        return isHstFilterExcludedPath(pathInfo);
-    }
-
     // TODO HSTTWO-4355 get rid of the hstManager !!!
     public boolean isHstFilterExcludedPath(String pathInfo) {
         // TODO HSTTWO-4355 fix
@@ -521,20 +503,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         mountsByIdentifier.put(mount.getIdentifier(), mount);
 
     }
-
-    @Deprecated
-    public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
-        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hstContainerURL.getHostName());
-        if(resolvedVirtualHost == null) {
-            throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");
-        }
-        ResolvedMount resolvedMount  = resolvedVirtualHost.matchMount(hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
-        if(resolvedMount == null) {
-            throw new MatchException("resolvedVirtualHost '"+hstContainerURL.getHostName()+"' does not have a mount");
-        }
-        return resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
-    }
-
 
     public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
         Task matchingTask = null;
@@ -797,15 +765,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     public boolean isCacheable() {
         return cacheable;
-    }
-
-    @Override
-    public String getDefaultResourceBundleId() {
-        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
-            return null;
-        }
-
-        return defaultResourceBundleIds[0];
     }
 
     public String [] getDefaultResourceBundleIds() {

@@ -237,15 +237,6 @@ public class HstNodeImpl implements HstNode {
         return parent;
     }
 
-    /**
-     * @deprecated  since 7.9.0
-     */
-    @Deprecated
-    @Override
-    public void markStale() {
-        stale = true;
-    }
-
     @Override
     public void markStaleByPropertyEvent() {
         stale = true;

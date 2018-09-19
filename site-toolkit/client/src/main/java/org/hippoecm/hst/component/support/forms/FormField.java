@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package org.hippoecm.hst.component.support.forms;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,32 +97,6 @@ public class FormField {
             this.valueList = new ArrayList<>();
         } else {
             this.valueList = valueList;
-        }
-    }
-
-    /**
-     * @deprecated use 'getValueList' instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public Map<String, String> getValues() {
-        Map<String, String> map = new LinkedHashMap<>(valueList.size());
-        for (String s : valueList) {
-            map.put(s, s);
-        }
-        return map;
-    }
-
-    /**
-     * @deprecated use 'setValueList' instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public void setValues(final Map<String, String> values) {
-        if (values == null) {
-            this.valueList = new ArrayList<>();
-        } else {
-            this.valueList = new ArrayList<>(values.values());
         }
     }
 

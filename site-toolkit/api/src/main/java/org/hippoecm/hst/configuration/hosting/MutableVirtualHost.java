@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,13 +32,6 @@ public interface MutableVirtualHost extends VirtualHost {
      * @throws IllegalArgumentException if the <code>portMount</code> could not be added
      */
     void addPortMount(MutablePortMount portMount) throws IllegalArgumentException;
-
-    /**
-     * @return the cms location (fully qualified URL) or <code>null</code> if not configured
-     * @deprecated since 7.9.1 : Use {@link #getCmsLocations()} instead
-     */
-    @Deprecated
-    String getCmsLocation();
 
     /**
      * @return the cms location(s) (fully qualified URL) or empty list if not configured

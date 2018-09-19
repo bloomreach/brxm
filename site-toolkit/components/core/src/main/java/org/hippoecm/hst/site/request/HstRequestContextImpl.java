@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -698,17 +698,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(filters);
-    }
-
-    @Override
-    public void addComponentWindowFilter(HstComponentWindowFilter filter) {
-        log.warn("HstRequestContextImpl.addComponentWindowFilter is deprecated. Use spring bean " +
-                "'org.hippoecm.hst.core.container.HstComponentWindowFilter.list' to add HstComponentWindowFilter instances");
-        checkStateValidity();
-        if (filters == null) {
-            filters = new ArrayList<>();
-        }
-        filters.add(filter);
     }
 
     @Override

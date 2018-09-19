@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -151,9 +151,9 @@ public class ObjectConverterImpl implements ObjectConverter {
                 }
             }
             jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
-            Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
+            Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
           
-            if (proxyInterfacesOrDelegateeClass == null) {
+            if (delegateeClass == null) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
                     log.info("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
                             "removed from all content including from prototypes.");
@@ -166,22 +166,24 @@ public class ObjectConverterImpl implements ObjectConverter {
                         continue;
                     }
                     // take the first fallback type
-                    proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                    if(proxyInterfacesOrDelegateeClass != null) {
-                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, proxyInterfacesOrDelegateeClass);
+                    delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
+                    if(delegateeClass != null) {
+                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, delegateeClass);
                         break;
                     }
                 }
             }
             
-            if (proxyInterfacesOrDelegateeClass != null) {
-                Object object = ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
-                if (object instanceof NodeAware) {
-                    ((NodeAware) object).setNode(node);
-                }
-                if (object instanceof ObjectConverterAware) {
-                    ((ObjectConverterAware) object).setObjectConverter(this);
-                }
+            if (delegateeClass != null) {
+				Object object = ServiceFactory.create(delegateeClass);
+				if (object != null) {
+					if (object instanceof NodeAware) {
+						((NodeAware) object).setNode(node);
+					}
+					if (object instanceof ObjectConverterAware) {
+						((ObjectConverterAware) object).setObjectConverter(this);
+					}
+				}
                 return object;
             }
             path = node.getPath();

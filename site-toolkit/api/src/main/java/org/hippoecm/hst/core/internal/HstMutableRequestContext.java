@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -107,16 +107,6 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @param conditions the {@link Set} of {@link String} conditions
      */
     void setComponentFilterTags(Set<String> conditions);
-
-    /**
-     * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}
-     *
-     * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
-     * @deprecated since 2.30.02 (CMS 10.0.2). Instead, use spring bean 'org.hippoecm.hst.core.container.HstComponentWindowFilter.list'
-     * to add HstComponentWindowFilter items
-     */
-    @Deprecated
-    void addComponentWindowFilter(HstComponentWindowFilter filter);
 
     /**
      * Sets the {@link HstComponentWindowFilter}s on the {@link HstRequestContext}

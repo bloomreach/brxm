@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         final MockHttpServletResponse response = render(mountId, requestResponse, creds);
         final String restResponse = response.getContentAsString();
-        return mapper.reader(Map.class).readValue(restResponse);
+        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     protected void startEditAssertions(final Credentials creds, final boolean shouldSucceed) throws RepositoryException, IOException, ServletException {
@@ -138,7 +138,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         final MockHttpServletResponse response = render(mountId, requestResponse, creds);
         final String restResponse = response.getContentAsString();
-        return mapper.reader(Map.class).readValue(restResponse);
+        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     protected void copyPageAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
@@ -175,7 +175,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         final MockHttpServletResponse response = render(mountId, requestResponse, creds);
         final String restResponse = response.getContentAsString();
-        return mapper.reader(Map.class).readValue(restResponse);
+        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     protected void publishAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
@@ -207,7 +207,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         final MockHttpServletResponse response = render(mountId, requestResponse, creds);
         final String restResponse = response.getContentAsString();
-        return mapper.reader(Map.class).readValue(restResponse);
+        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     protected void discardAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
@@ -275,7 +275,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         if (shouldSucceed) {
             final String restResponse = response.getContentAsString();
-            final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
 
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertEquals("Site is published", responseMap.get("message"));
@@ -327,7 +327,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         if (shouldSucceed) {
             final String restResponse = response.getContentAsString();
-            final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
 
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertTrue(responseMap.get("message").toString().contains("discarded"));

@@ -21,15 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.onehippo.cms7.services.hst.Channel;
 
 
 /**
@@ -41,11 +39,6 @@ public interface VirtualHosts {
     String DEFAULT_SCHEME = "http";
 
     /**
-     * @deprecated since CMS 10.0, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
-     */
-    @Deprecated
-    boolean isExcluded(String pathInfo);
-    /**
      *
      * Some paths should not be handled by the hst framework request processing, eg /ping/
      *
@@ -55,25 +48,6 @@ public interface VirtualHosts {
      * @return true when the path must be excluded for matching to a host.
      */
     boolean isHstFilterExcludedPath(String pathInfo);
-
-    /**
-     * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the
-     * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchMount(String, String)}, which returns the {@link ResolvedMount}. This object
-     * delegates to {@link ResolvedMount#matchSiteMapItem(String)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
-     * in the chain a match cannot be made a MatchException exception is thrown
-     * </p>
-     *
-     * @param hstContainerURL the HstContainerURL
-     * @return the resolvedSiteMapItem for this request
-     * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match
-     * a sitemap item
-     * @deprecated since 2.28.00 (CMS 7.9) use {@link #matchMount(String, String, String)} instead and then
-     * {@link ResolvedMount#matchSiteMapItem(String)}
-     */
-    @Deprecated
-    ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL) throws MatchException;
-
 
     /**
      * <p> This method tries to match a hostName, contextPath and requestPath to a flyweight {@link ResolvedMount}. It
@@ -197,13 +171,6 @@ public interface VirtualHosts {
      * no threshold for subtask diagnostics
      */
     long getDiagnosticsUnitThresholdMillis();
-
-    /**
-     * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
-     * @return the first item of default resource bundle IDs or null if not configured or empty.
-     */
-    @Deprecated
-    String getDefaultResourceBundleId();
 
     /**
      * @return default resource bundle IDs for all sites to use, for example { "org.example.resources.MyResources" }, or empty array

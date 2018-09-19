@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.site.container;
 import java.util.EventObject;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -41,24 +40,6 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
 
     public ComponentManager getComponentManager() {
         return this.componentManager;
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
-     */
-    @Deprecated
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.componentManager.setServletConfig(servletConfig);
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#getServletConfig()
-     */
-    @Deprecated
-    public ServletConfig getServletConfig() {
-        return this.componentManager.getServletConfig();
     }
 
     public void setServletContext(ServletContext servletContext) {

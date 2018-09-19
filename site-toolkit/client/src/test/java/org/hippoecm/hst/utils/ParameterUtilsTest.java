@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -143,48 +144,48 @@ public class ParameterUtilsTest {
     @Test
     public void getParameterAnnotationOfAbsolutePath() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "absolutePath", JcrPath.class);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, "absolutePath", JcrPath.class);
         assertFalse(jcrPath.isRelative());
     }
 
     @Test
     public void getParameterAnnotationOfRelativePath() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "relativePath", JcrPath.class);
+        JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, "relativePath", JcrPath.class);
         assertTrue(jcrPath.isRelative());
     }
 
     @Test
     public void getParameterAnnotationOfOtherParameter() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "queryOptions", JcrPath.class);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, "queryOptions", JcrPath.class);
         assertNull(jcrPath);
     }
 
     @Test
     public void getParameterAnnotationOfUnknownParameter() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "noSuchParameter", JcrPath.class);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, "noSuchParameter", JcrPath.class);
         assertNull(jcrPath);
     }
 
     @Test
     public void getParameterAnnotationOfNullParametersInfo() {
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(null, "parameter", JcrPath.class);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(null, "parameter", JcrPath.class);
         assertNull(jcrPath);
     }
 
     @Test
     public void getParameterAnnotationOfNullParameter() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, null, JcrPath.class);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, null, JcrPath.class);
         assertNull(jcrPath);
     }
 
     @Test
     public void getParameterAnnotationOfNullAnnotationClass() {
         final ParametersInfo paramsInfo = TestSearchComponent.class.getAnnotation(ParametersInfo.class);
-        final JcrPath jcrPath = ParameterUtils.getParameterAnnotation(paramsInfo, "parameter", null);
+        final JcrPath jcrPath = ParametersInfoUtils.getParameterAnnotation(paramsInfo, "parameter", null);
         assertNull(jcrPath);
     }
 

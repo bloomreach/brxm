@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.context.ServletConfigAware;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.ServletContextAwareProcessor;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -85,14 +84,11 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
         beanFactory.addBeanPostProcessor(this);
         // copied from org.springframework.web.context.support.AbstractRefreshableWebApplicationContext
         if (componentManager != null && componentManager.getServletContext() != null) {
-            beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(componentManager.getServletContext(), componentManager.getServletConfig()));
+            beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(componentManager.getServletContext()));
             beanFactory.ignoreDependencyInterface(ServletContextAware.class);
-            if (componentManager.getServletConfig() != null) {
-                beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
-            }
 
             WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, componentManager.getServletContext());
-            WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, componentManager.getServletContext(), componentManager.getServletConfig());
+            WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, componentManager.getServletContext());
         }
     }
 

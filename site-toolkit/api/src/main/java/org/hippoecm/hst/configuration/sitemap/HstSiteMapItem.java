@@ -396,12 +396,6 @@ public interface HstSiteMapItem {
     int getSchemeNotMatchingResponseCode();
 
     /**
-     * @return the first item of default resource bundle IDs or null if not configured or empty.
-     * @deprecated Use {@link #getResourceBundleIds()} instead.
-     */
-    String getResourceBundleId();
-
-    /**
      * @return resource bundle IDs for this sitemapitem and descendants to use, for example {
      * "org.example.resources.MyResources" }, or an empty array when not configured on this {@link HstSiteMapItem} and
      * empty from ancestor {@link HstSiteMapItem} or when root sitemapitem from {@link

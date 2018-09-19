@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.mock.core.request;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -53,7 +52,6 @@ import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -453,19 +451,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(filters);
-    }
-
-    /**
-     * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}
-     * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
-     */
-    @Override
-    public void addComponentWindowFilter(HstComponentWindowFilter filter) {
-        checkStateValidity();
-        if (filters == null) {
-            filters = new ArrayList<HstComponentWindowFilter>();
-        }
-        filters.add(filter);
     }
 
     @Override

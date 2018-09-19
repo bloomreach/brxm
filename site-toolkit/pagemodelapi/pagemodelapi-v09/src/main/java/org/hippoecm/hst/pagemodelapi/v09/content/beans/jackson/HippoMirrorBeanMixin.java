@@ -26,9 +26,4 @@ public interface HippoMirrorBeanMixin extends HippoMirrorBean, HippoBeanMixin {
     @Override
     HippoBean getReferencedBean();
 
-    @JsonIgnore
-    @Override
-    @Deprecated
-    HippoBean getDeref();
-
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -31,8 +30,6 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 public class MockComponentManager implements ComponentManager {
 
     private Map<String, Object> components = new HashMap<String, Object>();
-
-    private ServletConfig servletConfig;
 
     private ServletContext servletContext;
 
@@ -44,29 +41,6 @@ public class MockComponentManager implements ComponentManager {
     @Override
     public String[] getConfigurationResources() {
         return new String[0];
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#setServletConfig(javax.servlet.ServletConfig)
-     */
-    @Deprecated
-    @Override
-    public void setServletConfig(final ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
-        if (servletConfig != null) {
-          this.servletContext = servletConfig.getServletContext();
-        }
-    }
-
-    /**
-     * @deprecated deprecated since since 3.2.0
-     * @see ComponentManager#getServletConfig()
-     */
-    @Deprecated
-    @Override
-    public ServletConfig getServletConfig() {
-        return servletConfig;
     }
 
     @Override

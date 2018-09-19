@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.resourcebundle;
 
+import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +28,6 @@ import java.util.ResourceBundle;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -34,8 +35,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.repository.util.JcrConstants.JCR_DATA;
 
 /**
  * ResourceBundleUtils
@@ -59,24 +58,6 @@ public class ResourceBundleUtils {
      * If the locale is null, then the default locale (Locale.getDefault()) is used.
      * If the specific resource bundle is not found from the HST ResourceBundleRegistry, then it looks up Java standard resource bundles.
      * It may throw java.util.MissingResourceException if a resource is not found when Java standard resource bundle resources are looked up.
-     * @param servletRequest
-     * @param basename
-     * @param locale
-     * @return
-     * @throws java.lang.NullPointerException - if baseName is null 
-     * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
-     * @deprecated since HST 2.30.00 (CMS 10.0) Use {@link #getBundle(String, java.util.Locale)} instead since <code>servletRequest</code> is unused
-     */
-    @Deprecated
-    public static ResourceBundle getBundle(HttpServletRequest servletRequest, String basename, Locale locale) {
-        return getBundle(basename, locale, true);
-    }
-
-    /**
-     * Returns resource bundle based on the specified basename and locale.
-     * If the locale is null, then the default locale (Locale.getDefault()) is used.
-     * If the specific resource bundle is not found from the HST ResourceBundleRegistry, then it looks up Java standard resource bundles.
-     * It may throw java.util.MissingResourceException if a resource is not found when Java standard resource bundle resources are looked up.
      * @param basename
      * @param locale
      * @return
@@ -85,26 +66,6 @@ public class ResourceBundleUtils {
      */
     public static ResourceBundle getBundle(String basename, Locale locale) {
         return getBundle(basename, locale, true);
-    }
-
-
-    /**
-     * Returns resource bundle based on the specified basename and locale.
-     * If the locale is null, then the default locale (Locale.getDefault()) is used.
-     * If the specific resource bundle is not found from the HST ResourceBundleRegistry, then it looks up Java standard resource bundles
-     * when the fallbackToJavaResourceBundle is true.
-     * It may throw java.util.MissingResourceException if a resource is not found when Java standard resource bundle resources are looked up.
-     * @param servletRequest
-     * @param basename
-     * @param locale
-     * @param fallbackToJavaResourceBundle
-     * @throws java.lang.NullPointerException - if baseName is null 
-     * @throws java.util.MissingResourceException - if no Java standard resource bundle for the specified base name can be found
-     * @deprecated since HST 2.30.00 (CMS 10.0) Use {@link #getBundle(String, java.util.Locale, boolean)} instead since <code>servletRequest</code> is unused
-     */
-    @Deprecated
-    public static ResourceBundle getBundle(HttpServletRequest servletRequest, String basename, Locale locale, boolean fallbackToJavaResourceBundle) {
-        return getBundle(basename, locale, fallbackToJavaResourceBundle);
     }
 
     /**

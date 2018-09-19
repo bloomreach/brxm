@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public interface HstQuery {
     /**
      * The default limit that is used for a HstQuery. Use {@link #setLimit(int)} if you need to override this value. 
      */
-    final static int DEFAULT_LIMIT = 1000;
+    static final int DEFAULT_LIMIT = 1000;
     
     
     void setFilter(BaseFilter filter);
@@ -128,16 +128,6 @@ public interface HstQuery {
      * @param scopes
      */
     void excludeScopes(Node[] scopes);
-    
-    /**
-     * Whether invalid scopes should be skipped, or if an invalid scope is found (jcr node is null, HippoBean is empty, etc), throw 
-     * a QueryException. Default HstQuery implementation throw a QueryException when an invalid scope is encountered. If skipInvalid is set
-     * to <code>true</code>, then still, when all scopes happen to be invalid, a QueryException is thrown
-     * @param skipInvalidScopes is <code>true</code>, invalid scopes are ignored
-     * @deprecated  since 2.25.02 : skipInvalidScopes is not used any more. You can remove invoking this method
-     */
-    @Deprecated
-    void setSkipInvalidScopes(boolean skipInvalidScopes);
     
     /**
      * The actual execution of the HstQuery. The HstQueryResult will never contain one and the same result twice. So, if a result matches

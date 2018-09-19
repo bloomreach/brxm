@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -114,15 +114,6 @@ public class BinariesCache {
         }
         CacheElement element = cache.createElement(page.getCacheKey(), page);
         cache.put(element);
-    }
-
-    /**
-     * @deprecated deprecated since 2.26.00 Use {@link #clearBlockingLock(CacheKey)} instead.
-     * @param page
-     */
-    @Deprecated
-    public void clearBlockingLock(BinaryPage page) {
-        clearBlockingLock(page.getCacheKey());
     }
 
     /**

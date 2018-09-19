@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.internal;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 
 /**
  *  This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code

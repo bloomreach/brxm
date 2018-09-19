@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ package org.hippoecm.hst.configuration.model;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 
 public interface HstManager {
 
@@ -38,14 +35,6 @@ public interface HstManager {
      * <code>true</code>
      */
     VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException;
-
-    /**
-     * @return the HstURLFactory
-     * @deprecated Since CMS 10.0, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
-     * can be fetched through  the HST Spring Component Manager
-     */
-    @Deprecated
-    HstURLFactory getUrlFactory();
     
     /**
      * a HstSitesManager must contain a reference to the {@link HstSiteMapMatcher} that is being used. You can inject your own
@@ -53,20 +42,6 @@ public interface HstManager {
      * @return the global HstSiteMapMatcher implementation used for all the hosts & sites
      */
     HstSiteMapMatcher getSiteMapMatcher();
-    
-    /**
-     * @return the siteMapItemHandler factory which can create {@link HstSiteMapItemHandler} instances
-     * @deprecated Since CMS 10.0, HST 2.30.00. No use case any more. If required, the {@link HstSiteMapItemHandlerFactory}
-     * can be fetched through  the HST Spring Component Manager
-     */
-    @Deprecated
-    HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
-
-    /**
-     * @deprecated since CMS 10.0, HST 2.30.00. Use {@link #isHstFilterExcludedPath(String)} instead
-     */
-    @Deprecated
-    boolean isExcludedByHstFilterInitParameter(String pathInfo);
 
     /**
      *

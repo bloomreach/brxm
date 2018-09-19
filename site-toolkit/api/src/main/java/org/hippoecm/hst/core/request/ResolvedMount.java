@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,15 +29,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
  * to the {@link ResolvedSiteMapItem} and {@link HstSiteMapItem}
  */
 public interface ResolvedMount {
-
-    /**
-     * @return the {@link ResolvedVirtualHost} for this {@link ResolvedMount}
-     * @deprecated since 2.28.00 (CMS 7.9). Use {@link #getMount} and then {@link org.hippoecm.hst.configuration.hosting.Mount#getVirtualHost()}
-     * to get the the virtualhost. This method is deprecated because in case of a preview decorated mount, via the
-     * {@link ResolvedVirtualHost} you get to the undecorated hosts and mounts
-     */
-    @Deprecated
-    ResolvedVirtualHost getResolvedVirtualHost();
 
     /**
      * @return the port number of the host that was used during matching to this {@link ResolvedMount}
