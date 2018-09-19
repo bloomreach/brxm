@@ -15,47 +15,27 @@
  */
 package org.hippoecm.hst.demo.events;
 
-import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
+import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.ProxiedServiceHolder;
-import org.onehippo.cms7.services.ProxiedServiceTracker;
+import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.eventbus.AllowConcurrentEvents;
-import com.google.common.eventbus.Subscribe;
 
 public class SitePageCopyEventListener {
 
     private static Logger log = LoggerFactory.getLogger(SitePageCopyEventListener.class);
 
-    private ProxiedServiceTracker<ChannelManagerEventListenerRegistry> cmEventListenerRegistryTracker;
-
     public void init() {
-        cmEventListenerRegistryTracker = new ProxiedServiceTracker<ChannelManagerEventListenerRegistry>() {
-            @Override
-            public void serviceRegistered(final ProxiedServiceHolder<ChannelManagerEventListenerRegistry> holder) {
-                holder.getServiceProxy().registerChannelEventListener(SitePageCopyEventListener.this);
-            }
-
-            @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<ChannelManagerEventListenerRegistry> holder) {
-                holder.getServiceProxy().unregisterChannelEventListener(SitePageCopyEventListener.this);
-            }
-        };
-
-        HippoServiceRegistry.addTracker(cmEventListenerRegistryTracker, ChannelManagerEventListenerRegistry.class);
+        ChannelEventListenerRegistry.get().register(this);
     }
 
     public void destroy() {
-        HippoServiceRegistry.removeTracker(cmEventListenerRegistryTracker, ChannelManagerEventListenerRegistry.class);
+        ChannelEventListenerRegistry.get().unregister(this);
     }
 
     @Subscribe
-    @AllowConcurrentEvents
     public void onPageCopyEvent(PageCopyEvent event) {
         log.info("SitePageCopyEventListener handling PageCopyEvent: {}", event);
 

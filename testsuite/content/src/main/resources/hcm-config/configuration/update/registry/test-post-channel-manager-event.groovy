@@ -23,8 +23,9 @@ import javax.jcr.Session
 import org.onehippo.cms7.services.HippoServiceRegistry
 import org.onehippo.cms7.services.hst.Channel
 import org.hippoecm.hst.configuration.channel.ChannelManagerEvent
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry
 import org.hippoecm.hst.core.request.HstRequestContext
-import org.hippoecm.hst.platform.api.ChannelManagerEventBus
+import org.hippoecm.hst.platform.api.ChannelEventBus
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEventImpl
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent
@@ -43,7 +44,7 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
   def cmEventBus
 
   void initialize(Session session) {
-    cmEventBus = HippoServiceRegistry.getService(ChannelManagerEventBus.class)
+    cmEventBus = HippoServiceRegistry.getService(ChannelEventBus.class)
   }
 
   boolean doUpdate(Node node) {
@@ -56,16 +57,18 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
 
     if (testEventType == "PageCopyEvent") {
       event = createMockPageCopyContext()
+      cmEventBus.post(event, targetContextPath)
     } else if (testEventType == "BeforeChannelDeleteEvent") {
       event = createMockBeforeChannelDeleteEvent()
+      cmEventBus.post(event, targetContextPath)
     } else if (testEventType == "ChannelEvent") {
       event = createMockChannelEvent()
+      cmEventBus.post(event, targetContextPath)
     } else if (testEventType == "ChannelManagerEvent") {
       event = createMockChannelManagerEvent()
-    }
-
-    if (event != null) {
-      cmEventBus.post(event, targetContextPath)
+      getChannelManagerEventListenerCollection().each {
+        it.channelCreated(event)
+      }
     }
 
     return false
@@ -105,7 +108,6 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
 
   ChannelManagerEvent createMockChannelManagerEvent() {
     def event = [
-      getChannelManagerEventType: {-> return ChannelManagerEvent.ChannelManagerEventType.CREATING },
       getBlueprint: {-> return null },
       getChannelId: {-> return null },
       getChannel: {-> return null },
@@ -113,5 +115,11 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
     ] as ChannelManagerEvent
 
     return event
+  }
+
+  Object getChannelManagerEventListenerCollection() {
+    def listeners = []
+    ChannelManagerEventListenerRegistry.get().getEntries().forEach { holder -> listeners.add(holder.getServiceObject()) }
+    return listeners
   }
 }
