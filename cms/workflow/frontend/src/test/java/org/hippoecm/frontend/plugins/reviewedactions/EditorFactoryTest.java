@@ -41,7 +41,6 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflowImpl;
 
