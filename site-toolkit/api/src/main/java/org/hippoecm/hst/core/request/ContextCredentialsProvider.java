@@ -36,6 +36,4 @@ public interface ContextCredentialsProvider {
      */
     Credentials getWritableCredentials(HstRequestContext requestContext);
 
-
-    Object getPreviewCredentials(HstRequestContext hstRequestContext);
 }

@@ -60,8 +60,4 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
         return writableCredentials;
     }
 
-    @Override
-    public Object getPreviewCredentials(final HstRequestContext hstRequestContext) {
-        return defaultCredentialsForPreviewMode;
-    }
 }
