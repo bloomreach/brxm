@@ -20,7 +20,7 @@ import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.action.GetBranchAction;
@@ -33,8 +33,8 @@ import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 /**
  *  <p>
- *     Returns a {@link org.hippoecm.repository.standardworkflow.DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
- *     The {@link javax.jcr.Node} backing the {@link org.hippoecm.repository.standardworkflow.DocumentVariant} can be a
+ *     Returns a {@link DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
+ *     The {@link javax.jcr.Node} backing the {@link DocumentVariant} can be a
  *     frozen node. This {@link GetBranchAction} is idempotent and does not change any state
  * </p>
  */

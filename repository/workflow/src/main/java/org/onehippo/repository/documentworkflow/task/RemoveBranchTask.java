@@ -28,7 +28,7 @@ import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 

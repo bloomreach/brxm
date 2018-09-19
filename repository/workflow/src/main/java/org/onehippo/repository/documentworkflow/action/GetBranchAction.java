@@ -19,12 +19,13 @@ package org.onehippo.repository.documentworkflow.action;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.GetBranchTask;
 
 /**
  * <p>
- *     Returns a {@link org.hippoecm.repository.standardworkflow.DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
- *     The {@link javax.jcr.Node} backing the {@link org.hippoecm.repository.standardworkflow.DocumentVariant} can be a
+ *     Returns a {@link DocumentVariant} for the {@link DocumentHandle#getBranchId()}.
+ *     The {@link javax.jcr.Node} backing the {@link DocumentVariant} can be a
  *     frozen node. This {@link GetBranchAction} is idempotent and does not change any state
  * </p>
  *

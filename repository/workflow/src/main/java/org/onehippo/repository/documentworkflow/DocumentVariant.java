@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.hippoecm.repository.standardworkflow;
+package org.onehippo.repository.documentworkflow;
 
 import java.util.Date;
 

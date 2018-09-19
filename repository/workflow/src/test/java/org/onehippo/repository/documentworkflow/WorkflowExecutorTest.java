@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableSet;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for restoring a version using standard JCR restore

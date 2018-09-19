@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.standardworkflow.DocumentVariant;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.scxml.MockAccessManagedSession;
 
