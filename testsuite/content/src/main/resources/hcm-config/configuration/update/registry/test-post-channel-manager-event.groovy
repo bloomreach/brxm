@@ -105,7 +105,7 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
 
   ChannelManagerEvent createMockChannelManagerEvent() {
     def event = [
-      getChannelManagerEventType: {-> return ChannelManagerEvent.ChannelManagerEventType.CREATED },
+      getChannelManagerEventType: {-> return ChannelManagerEvent.ChannelManagerEventType.CREATING },
       getBlueprint: {-> return null },
       getChannelId: {-> return null },
       getChannel: {-> return null },

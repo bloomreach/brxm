@@ -32,17 +32,17 @@ import org.slf4j.LoggerFactory;
  * Example <CODE>ChannelManagerEventListener</CODE> implementation
  * which simply logs all the triggered event information.
  * </P>
- * 
- * @version $Id$
  */
 public class DemoChannelManagerEventListener implements ChannelManagerEventListener {
-    
+
     private static Logger log = LoggerFactory.getLogger(DemoChannelManagerEventListener.class);
 
+    @Override
     public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been created. {}", channelManagerEventToString(event));
     }
 
+    @Override
     public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been updated. {}", channelManagerEventToString(event));
     }
