@@ -741,16 +741,21 @@
     <state id="reintegrate-branch">
       <onentry>
         <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
-          <hippo:action action="reintegrateBranch" enabledExpr="!!unpublished and branchExists and notMaster"/>
+          <hippo:action action="reintegrateBranch" enabledExpr="false"/>
         </if>
       </onentry>
       <!-- the initial no-reintegrate-branch state is used and active to indicate reintegrate-branch operations are
          currently not allowed or possible -->
       <state id="no-reintegrate-branch">
         <!-- event-less transition to 'can-reintegrate-branch' state -->
-        <transition target="can-reintegrate-branch" cond="!!unpublished and branchExists and notMaster and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+        <transition target="can-reintegrate-branch" cond="!!unpublished and branchExists and notMaster"/>
       </state>
       <state id="can-reintegrate-branch">
+        <onentry>
+          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+            <hippo:action action="reintegrateBranch" enabledExpr="true"/>
+          </if>
+        </onentry>
         <transition event="reintegrateBranch">
 
           <!-- if the unpublished version is not for the branch to reintegrate, first version it to avoid any loss of
@@ -783,17 +788,21 @@
     <state id="publish-branch">
       <onentry>
         <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
-          <hippo:action action="publishBranch" enabledExpr="!!unpublished and branchExists and modified"/>
+          <hippo:action action="publishBranch" enabledExpr="false"/>
         </if>
       </onentry>
       <!-- the initial no-publish-branch state is used and active to indicate publish-branch operations are
        currently not allowed or possible -->
       <state id="no-publish-branch">
         <!-- event-less transition to 'can-publish-branch' state -->
-        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified and workflowContext.isGranted(unpublished, 'hippo:editor')"/>
+        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified"/>
       </state>
       <state id="can-publish-branch">
-
+        <onentry>
+          <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
+            <hippo:action action="publishBranch" enabledExpr="true"/>
+          </if>
+        </onentry>
         <transition event="publishBranch">
 
           <if cond="anyBranchLive and notMaster">
@@ -838,17 +847,21 @@
     <state id="depublish-branch">
       <onentry>
         <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
-          <hippo:action action="depublishBranch" enabledExpr="live and branchExists"/>
+          <hippo:action action="depublishBranch" enabledExpr="false"/>
         </if>
       </onentry>
       <state id="no-depublish-branch">
         <!-- event-less transition to 'can-depublish-branch' state -->
-        <transition target="can-depublish-branch" cond="live and branchExists and workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')"/>
+        <transition target="can-depublish-branch" cond="live and branchExists"/>
       </state>
 
       <state id="can-depublish-branch">
+        <onentry>
+          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+            <hippo:action action="depublishBranch" enabledExpr="true"/>
+          </if>
+        </onentry>
         <transition event="depublishBranch">
-
           <if cond="!!unpublished">
             <!-- there is already an unpublished version -->
 
