@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,17 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
 interface NewstyleSubInterface extends NewstyleInterface {
 
     // overriding should work in combination with i18n
     @Override
-    @Parameter(name = "00-color", defaultValue = "purple")
-    @Color
-    String getColor();
+    @Parameter(name = "01-image", defaultValue = "/content/gallery/default.png")
+    @ImageSetPath
+    String getImage();
 
-    @Parameter(name = "16-subboolean")
+    @Parameter(name = "15-subboolean")
     boolean isSubBoolean();
-
 }
