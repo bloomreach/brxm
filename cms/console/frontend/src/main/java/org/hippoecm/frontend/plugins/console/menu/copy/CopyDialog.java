@@ -78,7 +78,6 @@ public class CopyDialog extends LookupDialog {
     private String target;
     private Label targetLabel;
     private final IModelReference<Node> modelReference;
-    //private TextFieldWidget nameField;
 
     public CopyDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
@@ -183,12 +182,12 @@ public class CopyDialog extends LookupDialog {
 
     private Node getParentDestNode() throws RepositoryException {
         IJcrTreeNode selectedTreeNode = getSelectedNode();
-        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null ) {
+        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null) {
             return null;
         }
         Node parentNode = selectedTreeNode.getNodeModel().getObject();
         final String[] elements = name.split("/");
-        for (int i = 0; i < elements.length-1; i++) {
+        for (int i = 0; i < elements.length - 1; i++) {
             if (!parentNode.hasNode(elements[i])) {
                 throw new RepositoryException("No such destination: " + parentNode.getPath() + "/" + elements[i]);
             }
@@ -197,15 +196,6 @@ public class CopyDialog extends LookupDialog {
         return parentNode;
     }
 
-  /*  @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        if (nameField != null && nameField.getFocusComponent() != null) {
-            final Component textField = nameField.getFocusComponent();
-            response.render(OnDomReadyHeaderItem.forScript("document.getElementById('" + textField.getMarkupId() + "').focus(); document.getElementById('" + textField.getMarkupId() + "').select();"));
-        }
-    }
-*/
     @Override
     public IValueMap getProperties() {
         return SIZE;
