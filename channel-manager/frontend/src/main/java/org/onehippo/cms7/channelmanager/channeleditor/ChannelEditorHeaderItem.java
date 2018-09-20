@@ -31,7 +31,6 @@ public class ChannelEditorHeaderItem extends HeaderItem {
     // This list should be identical to the one defined in the pom.xml of this module.
     // The order of items matters.
     private static final String[] RESOURCES = {
-            "plugins/colorfield/colorfield.js",
             "plugins/floatingwindow/FloatingWindow.js",
             "plugins/vtabs/VerticalTabPanel.js",
             "ComponentVariants.js",
