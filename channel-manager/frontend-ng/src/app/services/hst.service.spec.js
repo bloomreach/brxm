@@ -245,7 +245,7 @@ describe('HstService', () => {
     const url = `${contextPath}${apiUrlPrefix}/container-1./`;
     $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
 
-    hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
+    hstService.updateHstContainer('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
     $httpBackend.flush();
 
     expect(promiseSpy).toHaveBeenCalled();

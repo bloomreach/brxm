@@ -1057,13 +1057,13 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getContainers()[0];
       const componentA = container.getComponents()[0];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
 
       PageStructureService.moveComponent(componentA, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1077,13 +1077,13 @@ describe('PageStructureService', () => {
       const componentA = container.getComponents()[0];
       const componentB = container.getComponents()[1];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
 
       PageStructureService.moveComponent(componentB, container, componentA);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1098,15 +1098,15 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container1)).toEqual(['aaaa', 'bbbb']);
       expect(componentIds(container2)).toEqual([]);
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['bbbb']);
       expect(componentIds(container2)).toEqual(['aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
@@ -1120,13 +1120,13 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getContainers()[0];
       const component = container.getComponents()[0];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValue($q.reject());
+      spyOn(HstService, 'updateHstContainer').and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1142,14 +1142,14 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValues($q.reject(), $q.resolve());
+      spyOn(HstService, 'updateHstContainer').and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1165,14 +1165,14 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValues($q.resolve(), $q.reject());
+      spyOn(HstService, 'updateHstContainer').and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });

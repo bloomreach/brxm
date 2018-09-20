@@ -398,7 +398,7 @@ class PageStructureService {
   }
 
   _storeContainer(container) {
-    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
+    return this.HstService.updateHstContainer(container.getId(), container.getHstRepresentation());
   }
 
   renderNewComponentInContainer(newComponentId, container) {
