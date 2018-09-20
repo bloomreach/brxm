@@ -27,8 +27,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.PreviewDecorator;
-import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -42,11 +41,15 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
@@ -58,6 +61,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -67,6 +71,8 @@ import org.springframework.mock.web.MockServletContext;
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class AbstractPageComposerTest {
+
+    private static final String CONTEXT_PATH = "/site";
 
     protected SpringComponentManager componentManager;
     protected HstManager hstManager;
@@ -78,7 +84,7 @@ public class AbstractPageComposerTest {
     protected PreviewDecorator previewDecorator;
     protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
         public String getContextPath() {
-            return "/site";
+            return CONTEXT_PATH;
         }
     });
 
@@ -104,6 +110,14 @@ public class AbstractPageComposerTest {
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+
+        final HstModelProvider hstModelProvider = componentManager.getComponent(HstModelProvider.class.getName());
+        hstModelProvider.setContextPath(CONTEXT_PATH);
+
+        final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        hstModelRegistry.registerHstModel(CONTEXT_PATH, Thread.currentThread().getContextClassLoader(),
+                componentManager, false);
+
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
@@ -155,7 +169,11 @@ public class AbstractPageComposerTest {
     }
 
     protected Configuration getContainerConfiguration() {
-        return new PropertiesConfiguration();
+        PropertiesConfiguration configuration = new PropertiesConfiguration();
+        // FIXME: for now set hst.configuration.rootPath, otherwise hst model building fails.
+        //        assume the hst.configuration.rootPath property should be set to something else in tests later.
+        configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
+        return configuration;
     }
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final String hostAndPort,
@@ -305,5 +323,12 @@ public class AbstractPageComposerTest {
         return catalogItem.getIdentifier();
     }
 
+    protected void registerChannelEventListener(Object listener) {
+        ChannelEventListenerRegistry.get().register(listener);
+    }
+
+    protected void unregisterChannelEventListener(Object listener) {
+        ChannelEventListenerRegistry.get().unregister(listener);
+    }
 
 }

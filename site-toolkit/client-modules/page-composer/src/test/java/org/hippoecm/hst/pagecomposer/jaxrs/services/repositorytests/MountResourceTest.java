@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
@@ -39,14 +38,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import com.google.common.eventbus.Subscribe;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
@@ -533,7 +530,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void create_preview_channel_event() throws Exception {
         final ChannelEventListener listener = new ChannelEventListener();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             mockNewRequest(session, "localhost", "");
             mountResource.startEdit();
             assertTrue(listener.previewCreatedEventProcessed);
@@ -546,7 +543,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             mountResource.startEdit();
             assertFalse(listener.previewCreatedEventProcessed);
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
 
     }
@@ -555,7 +552,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void publish_mount_with_ChannelEventListener() throws Exception {
         final ChannelEventListener listener = new ChannelEventListener();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
@@ -567,7 +564,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertFalse("during event dispatching locks should be already removed!",
                     listener.locksOnConfigurationPresentDuringEventDispatching);
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
     }
 
@@ -575,7 +572,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void discard_mount_with_ChannelEventListener() throws Exception {
         final ChannelEventListener listener = new ChannelEventListener();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
             mountResource.discardChanges();
@@ -585,7 +582,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertFalse("during event dispatching locks should be already removed!",
                     listener.locksOnConfigurationPresentDuringEventDispatching);
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
 
     }
@@ -606,7 +603,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void publish_mount_with_ChannelEventListener_that_sets_ClientException_does_not_result_in_publication_but_bad_request() throws Exception {
         final ChannelEventListenerSettingClientException listener = new ChannelEventListenerSettingClientException();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
@@ -624,7 +621,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
     }
 
@@ -633,7 +630,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void discard_mount_with_ChannelEventListener_that_sets_ClientException_does_not_result_in_discard_but_bad_request() throws Exception {
         final ChannelEventListenerSettingClientException listener = new ChannelEventListenerSettingClientException();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
@@ -651,7 +648,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
     }
 
@@ -668,7 +665,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void publish_mount_with_ChannelEventListener_that_sets_IllegalStateException_does_not_result_in_publication_but_server_error() throws Exception {
         final ChannelEventListenerSettingIllegalStateException listener = new ChannelEventListenerSettingIllegalStateException();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
@@ -685,7 +682,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
     }
 
@@ -694,7 +691,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public void discard_mount_with_ChannelEventListener_that_sets_IllegalStateException_does_not_result_in_discard_but_server_error() throws Exception {
         final ChannelEventListenerSettingIllegalStateException listener = new ChannelEventListenerSettingIllegalStateException();
         try {
-            HstServices.getComponentManager().registerEventSubscriber(listener);
+            registerChannelEventListener(listener);
             createSomePreviewChanges();
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
@@ -711,7 +708,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
         } finally {
-            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+            unregisterChannelEventListener(listener);
         }
     }
 

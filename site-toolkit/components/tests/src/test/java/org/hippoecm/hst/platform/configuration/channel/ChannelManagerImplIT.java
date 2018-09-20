@@ -632,17 +632,19 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
 
-        final ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
         final MyChannelManagerEventListener listener1 = new MyChannelManagerEventListener();
         final MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
         final MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
-        cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(listener1, listener2, listener3));
-        cmEventListenerRegistrar.init();
 
-        final Channel channelToPersist = channel;
-        final String channelId = channelMngr.persist("cmit-test-bp2", channelToPersist);
+        final String channelId;
 
+        final ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
         try {
+            cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(listener1, listener2, listener3));
+            cmEventListenerRegistrar.init();
+
+            final Channel channelToPersist = channel;
+            channelId = channelMngr.persist("cmit-test-bp2", channelToPersist);
 
             resetDummyHostOnRequestContext();
 

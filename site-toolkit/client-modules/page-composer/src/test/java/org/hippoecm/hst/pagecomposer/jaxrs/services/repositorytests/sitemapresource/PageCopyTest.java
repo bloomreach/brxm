@@ -21,14 +21,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
-import com.google.common.eventbus.AllowConcurrentEvents;
-import com.google.common.eventbus.Subscribe;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -40,6 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.eventbus.Subscribe;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
@@ -204,20 +202,17 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     public static class PageCopyEventListener {
 
-        private ComponentManager componentManager;
         protected PageCopyEvent receivedEvent;
 
-        public void destroy() {
-            componentManager.unregisterEventSubscriber(this);
+        public void init() {
+            ChannelEventListenerRegistry.get().register(this);
         }
 
-        public PageCopyEventListener(final ComponentManager componentManager) {
-            this.componentManager = componentManager;
-            componentManager.registerEventSubscriber(this);
+        public void destroy() {
+            ChannelEventListenerRegistry.get().unregister(this);
         }
 
         @Subscribe
-        @AllowConcurrentEvents
         public void onPageCopyEvent(PageCopyEvent event) {
             if (event.getException() != null) {
                 return;
@@ -235,8 +230,9 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void page_copy_guava_event() throws Exception {
-        PageCopyEventListener pageCopyEventListener = new PageCopyEventListener(componentManager);
+        PageCopyEventListener pageCopyEventListener = new PageCopyEventListener();
         try {
+            pageCopyEventListener.init();
             copyHomePageWithinSameChannel(true, "copiedHome", null);
             final PageCopyEvent pce = pageCopyEventListener.receivedEvent;
             assertNotNull(pce);
@@ -268,8 +264,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     public static class FailingPageCopyEventListener extends PageCopyEventListener {
         final RuntimeException exception;
-        public FailingPageCopyEventListener(final ComponentManager componentManager, final RuntimeException exception) {
-            super(componentManager);
+        public FailingPageCopyEventListener(final RuntimeException exception) {
+            super();
             this.exception = exception;
         }
 
@@ -282,8 +278,9 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void page_copy_guava_event_short_circuiting_with_runtime_exception() throws Exception {
-        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(componentManager, new RuntimeException());
+        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(new RuntimeException());
         try {
+            failingCopyEventListener.init();
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
@@ -304,9 +301,9 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void page_copy_guava_event_short_circuiting_with_client_exception() throws Exception {
-        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(componentManager,
-                new ClientException("client exception", INVALID_NAME));
+        FailingPageCopyEventListener failingCopyEventListener = new FailingPageCopyEventListener(new ClientException("client exception", INVALID_NAME));
         try {
+            failingCopyEventListener.init();
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
