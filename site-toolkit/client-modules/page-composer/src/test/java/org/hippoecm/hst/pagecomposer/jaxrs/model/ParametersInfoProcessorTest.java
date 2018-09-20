@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -258,6 +259,34 @@ public class ParametersInfoProcessorTest {
         assertEquals(representation14.getLabel(),"Sub Boolean NL");
     }
     
+    /**
+     * Below, we have a broken situation: 
+     * @DropDownList annotation is not allowed to return a int
+     */
+    interface InvalidReturnTypeAnnotationInterface {
+        @Parameter(name="dropdown", defaultValue = "value1")
+        @DropDownList(value = {"value1", "value2", "value3"})
+        int getDropDown();
+    }
+
+    @ParametersInfo(type= InvalidReturnTypeAnnotationInterface.class)
+    static class InvalidReturnTypeAnnotation {
+
+    }
+
+    @Test
+    public void testInvalidReturnTypeAnnotation() {
+        ParametersInfo parameterInfo = InvalidReturnTypeAnnotation.class.getAnnotation(ParametersInfo.class);
+        // the getProperties below are expected to log some warnings
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, "");
+        assertEquals(1, properties.size());
+
+        // Since the @DropDownList is not compatible with returnType int  
+        // we expect that ParameterType#getType(...) defaults back to getType 'numberfield' for dropdown
+        ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(0);
+        assertEquals("numberfield", dropDownProperty.getType());
+    }
+
     @ParametersInfo(type=FieldGroupInterface.class)
     static class FieldGroupComponent {
     }
