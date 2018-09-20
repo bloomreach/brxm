@@ -19,18 +19,11 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.onehippo.cms7.services.hst.Channel;
 
 /**
  * Channel event occuring before a channel is deleted.
  */
 public interface BeforeChannelDeleteEvent extends BaseChannelEvent {
-
-    /**
-     * Return the channel where this event occurs on.
-     * @return the channel where this event occurs on
-     */
-    public Channel getChannel();
 
     /**
      * @return the {@link HstRequestContext} that is used that triggers this this channel event

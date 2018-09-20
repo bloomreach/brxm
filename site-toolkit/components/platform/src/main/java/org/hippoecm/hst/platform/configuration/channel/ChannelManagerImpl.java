@@ -20,9 +20,7 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -117,16 +115,20 @@ public class ChannelManagerImpl implements ChannelManager {
 
                 Node createdContentNode = createChannel(configNode, blueprint, session, channelName, channel);
                 ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
-                for (ChannelManagerEventListener listener : getChannelManagerEventListenerCollection()) {
+                getChannelManagerEventListeners().forEach(listener -> {
                     try {
                         listener.channelCreated(event);
                     } catch (ChannelManagerEventListenerException e) {
                         if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
-                            session.refresh(false);
-                            if (createdContentNode != null) {
-                                log.info("Removing just created root content node '{}' due ChannelManagerEventListenerException '{}'", createdContentNode.getPath(), e.toString());
-                                createdContentNode.remove();
-                                session.save();
+                            try {
+                                session.refresh(false);
+                                if (createdContentNode != null) {
+                                    log.info("Removing just created root content node '{}' due ChannelManagerEventListenerException '{}'", createdContentNode.getPath(), e.toString());
+                                    createdContentNode.remove();
+                                    session.save();
+                                }
+                            } catch (RepositoryException re) {
+                                log.warn("Failed to clean up temporarily created content node.", e);
                             }
                             throw new ChannelException("Channel creation stopped by listener '" + listener.getClass().getName() + "'",
                                     e, Type.STOPPED_BY_LISTENER, e.getMessage());
@@ -139,7 +141,7 @@ public class ChannelManagerImpl implements ChannelManager {
                         log.warn("Channel created event listener, " + listener + ", failed to handle the event",
                                 listenerEx);
                     }
-                }
+                });
 
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
@@ -201,12 +203,16 @@ public class ChannelManagerImpl implements ChannelManager {
                 updateChannel(configNode, hostGroupName, channel);
 
                 ChannelManagerEvent event = new ChannelManagerEventImpl(null, channel, configNode);
-                for (ChannelManagerEventListener listener : getChannelManagerEventListenerCollection()) {
+                getChannelManagerEventListeners().forEach(listener -> {
                     try {
                         listener.channelUpdated(event);
                     } catch (ChannelManagerEventListenerException e) {
                         if (e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
-                            session.refresh(false);
+                            try {
+                                session.refresh(false);
+                            } catch (RepositoryException re) {
+                                log.warn("Failed to refresh session.", e);
+                            }
                             throw new ChannelException("Channel '" + channel.getId() + "' update stopped by listener '" + listener.getClass().getName() + "'",
                                     e, Type.STOPPED_BY_LISTENER, e.getMessage());
                         } else {
@@ -218,7 +224,7 @@ public class ChannelManagerImpl implements ChannelManager {
                         log.error("Channel updated event listener, " + listener + ", failed to handle the event",
                                 listenerEx);
                     }
-                }
+                });
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
@@ -690,11 +696,8 @@ public class ChannelManagerImpl implements ChannelManager {
         return RequestContextProvider.get().getSession();
     }
 
-    private Collection<ChannelManagerEventListener> getChannelManagerEventListenerCollection() {
-        final List<ChannelManagerEventListener> listeners = new LinkedList<>();
-        ChannelManagerEventListenerRegistry.get().getEntries().forEach(holder -> {
-            listeners.add(holder.getServiceObject());
-        });
-        return listeners;
+    private Stream<ChannelManagerEventListener> getChannelManagerEventListeners() {
+        return ChannelManagerEventListenerRegistry.get().getEntries().map(e -> e.getServiceObject());
     }
+
 }
