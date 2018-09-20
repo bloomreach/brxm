@@ -365,13 +365,12 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
                 "hippostd:foldertype", "new-folder"
         };
 
+        final ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
         try {
             RepositoryTestCase.build(prototypeBootstrap, session);
             session.save();
 
-            ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
-
-            ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+            final ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
             cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
             cmEventListenerRegistrar.init();
 
@@ -397,6 +396,9 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             junit.framework.Assert.assertFalse(session.nodeExists("/unittestcontent/documents/newchannel"));
 
         } finally {
+            // remove the listeners again because otherwise they are kept over multiple tests
+            cmEventListenerRegistrar.destroy();
+
             if (session.nodeExists("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint")) {
                 session.getNode("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint").remove();
             }
@@ -630,46 +632,45 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
 
-        MyChannelManagerEventListener listener1 = new MyChannelManagerEventListener();
-        MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
-        MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
-
-        ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+        final ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
+        final MyChannelManagerEventListener listener1 = new MyChannelManagerEventListener();
+        final MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
+        final MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
         cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(listener1, listener2, listener3));
         cmEventListenerRegistrar.init();
 
         final Channel channelToPersist = channel;
+        final String channelId = channelMngr.persist("cmit-test-bp2", channelToPersist);
 
-        String channelId;
-        channelId = channelMngr.persist("cmit-test-bp2", channelToPersist);
-        resetDummyHostOnRequestContext();
+        try {
 
-        assertEquals(1, listener1.getCreatedCount());
-        assertEquals(1, listener2.getCreatedCount());
-        assertEquals(1, listener3.getCreatedCount());
-        assertEquals(0, listener1.getUpdatedCount());
-        assertEquals(0, listener2.getUpdatedCount());
-        assertEquals(0, listener3.getUpdatedCount());
+            resetDummyHostOnRequestContext();
 
-        channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
-        channel.setName("cmit-channel2");
-        channel.setUrl("http://cmit-myhost2");
-        channel.setContentRoot("/");
-        final Channel channelToSave = channel;
+            assertEquals(1, listener1.getCreatedCount());
+            assertEquals(1, listener2.getCreatedCount());
+            assertEquals(1, listener3.getCreatedCount());
+            assertEquals(0, listener1.getUpdatedCount());
+            assertEquals(0, listener2.getUpdatedCount());
+            assertEquals(0, listener3.getUpdatedCount());
 
-        channelMngr.save(channelToSave);
-        resetDummyHostOnRequestContext();
+            channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
+            channel.setName("cmit-channel2");
+            channel.setUrl("http://cmit-myhost2");
+            channel.setContentRoot("/");
+            final Channel channelToSave = channel;
 
-        assertEquals(1, listener1.getCreatedCount());
-        assertEquals(1, listener2.getCreatedCount());
-        assertEquals(1, listener3.getCreatedCount());
-        assertEquals(1, listener1.getUpdatedCount());
-        assertEquals(1, listener2.getUpdatedCount());
-        assertEquals(1, listener3.getUpdatedCount());
+            channelMngr.save(channelToSave);
+            resetDummyHostOnRequestContext();
 
-        cmEventListenerRegistrar.destroy();
-        cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
-        cmEventListenerRegistrar.init();
+            assertEquals(1, listener1.getCreatedCount());
+            assertEquals(1, listener2.getCreatedCount());
+            assertEquals(1, listener3.getCreatedCount());
+            assertEquals(1, listener1.getUpdatedCount());
+            assertEquals(1, listener2.getUpdatedCount());
+            assertEquals(1, listener3.getUpdatedCount());
+        } finally {
+            cmEventListenerRegistrar.destroy();
+        }
 
         channel = hstManager.getVirtualHosts().getChannels("dev-localhost").get(channelId);
         channel.setName("cmit-channel2");
@@ -717,14 +718,16 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
 
-        ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
+        final ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
+        final ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
 
-        ChannelManagerEventListenerRegistrar cmEventListenerRegistrar = new ChannelManagerEventListenerRegistrar();
-        cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
-        cmEventListenerRegistrar.init();
-
-        channelMngr.persist("cmit-test-bp2", channel);
-
+        try {
+            cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
+            cmEventListenerRegistrar.init();
+            channelMngr.persist("cmit-test-bp2", channel);
+        } finally {
+            cmEventListenerRegistrar.destroy();
+        }
     }
 
     private void resetDummyHostOnRequestContext() throws ContainerException {
