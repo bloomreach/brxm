@@ -50,6 +50,7 @@ describe('EditComponentMainCtrl', () => {
         'confirmDeleteComponent',
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
+        'save',
       ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
@@ -64,6 +65,26 @@ describe('EditComponentMainCtrl', () => {
       });
 
       $scope.$digest();
+    });
+  });
+
+  it('allows save when the component editor is dirty', () => {
+    ComponentEditor.dirty = false;
+    expect($ctrl.isSaveAllowed()).toBe(false);
+
+    ComponentEditor.dirty = true;
+    expect($ctrl.isSaveAllowed()).toBe(true);
+  });
+
+  describe('save component', () => {
+    it('saves changes', () => {
+      $ctrl.save();
+      expect(ComponentEditor.save).toHaveBeenCalled();
+    });
+
+    it('reports a usage statistics', () => {
+      $ctrl.save();
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
     });
   });
 
