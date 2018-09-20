@@ -21,9 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @deprecated The support of picking color values for component properties by a color picker is dropped. Color values 
- * can be edited as string values using the regular @Parameter annotation with a String return type of the annotated 
- * getter.
+ * @deprecated The support of picking color values for component properties by a color picker will be dropped. Color
+ * values can be edited as string values using the regular @Parameter annotation with a String return type of the
+ * annotated getter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
