@@ -15,17 +15,26 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import org.onehippo.cms7.services.WhiteboardServiceRegistry;
+import org.onehippo.cms7.services.WhiteboardProxiedServiceRegistry;
 
 /**
  *  Singleton registry for decoupled/wring lookup/wiring of listeners to the {@link ChannelManagerEvent}s using
  *  the <a href="https://en.wikipedia.org/wiki/Whiteboard_Pattern">Whiteboard Pattern</a>.
+ *  <p>
+ *  HST site webapp may want to subscribe {@link ChannelManagerEvent}s from the Channel Manager.
+ *  In that case, you should implement a {@link ChannelManagerEventListener} and register a listener instance
+ *  through <code>ChannelManagerEventListenerRegistry.register(listener);</code>.
+ *  <p>
+ *  <em>Note:</em> Also, you should unregister the listener when the listener is not needed any more (e.g. your
+ *  site webapp getting stopped or undeployed) through <code>ChannelManagerEventListenerRegistry.unregister(listener);</code>
+ *  <p>
  */
-public final class ChannelManagerEventListenerRegistry extends WhiteboardServiceRegistry<ChannelManagerEventListener> {
+public final class ChannelManagerEventListenerRegistry extends WhiteboardProxiedServiceRegistry<ChannelManagerEventListener> {
 
     private static final ChannelManagerEventListenerRegistry INSTANCE = new ChannelManagerEventListenerRegistry();
 
     private ChannelManagerEventListenerRegistry() {
+        super(ChannelManagerEventListener.class);
     }
 
     public static ChannelManagerEventListenerRegistry get() {

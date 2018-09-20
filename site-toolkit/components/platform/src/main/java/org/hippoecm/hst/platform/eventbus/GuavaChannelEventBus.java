@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
-import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.platform.api.ChannelEventBus;
 import org.hippoecm.hst.platform.model.HstModel;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.EventBus;
 
 /**
- * {@link ChannelEventBus} implementation, also implementing {@link ChannelManagerEventListenerRegistry}.
+ * {@link ChannelEventBus} implementation.
  * <p>
  * This initializes and maintains Guava event bus per site's classloader on listener registration.
  * And, it finds a proper Guava event bus by finding the {@link HstModel} by the <code>contextPath</code> of a
@@ -47,39 +46,58 @@ import com.google.common.eventbus.EventBus;
  * <p>
  * There are some implementation strategies adopted here:
  * <ul>
- * <li>Guava event bus is instantiated by site webapp's classloader as its listener depends on its own Guave library.
- *     So, each event bus instance may scan annotations of the listener class loaded by its classloader.
- * <li>When registering a listener, the listener's class' classloader is assumed to be the same as its site webapp's classloader.
- * <li>As Guava event bus is instantiated by each site webapp's classloader, Java reflection was used whenever
- *     invoking on the specific Guava event bus.
- * <li>To avoid any potential application specific errors from the current thread's context classloader that could
- *     be referred by the specific application code, whenever invoking on a specific Guava event bus, the current
- *     context classloader is switched to the classloader of the Guava event bus.
+ * <li>Guava event bus is instantiated by platform webapp's classloader to guarantee the same library usages.
+ *     So, each event listener from site webapp must be annotated with <code>org.onehippo.cms7.services.eventbus.Subscribe</code>,
+ *     not <code>com.google.common.eventbus.Subscribe</code>. See the JavaDoc of <code>org.onehippo.cms7.services.eventbus.Subscribe</code>
+ *     for detail.
+ * <li>When registering a listener, the listener's class' classloader is indicated through its {@link ServiceHolder},
+ *     and used to find the internal Guava eventBus for the site webapp or find the {@link HstModel} for the site webapp.
  * </ul>
  */
 public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Object> {
 
     private static Logger log = LoggerFactory.getLogger(GuavaChannelEventBus.class);
 
-    private volatile Map<ClassLoader, EventBusWrapper> eventBusMap = new ConcurrentHashMap<>();
+    /**
+     * Internal Guava eventBus map by site webapp's classloader as keys.
+     * <p>
+     * Its lifecycle is bound to this bean's lifecycle which is controlled through the init method ({@link #init()})
+     * and destroy method ({@link #destroy()}) in spring bean assembly.
+     */
+    private volatile Map<ClassLoader, EventBusWrapper> eventBusMap;
 
-    private final GuavaEventBusListenerProxyFactory proxyFactory = new GuavaEventBusListenerProxyFactory();
+    /**
+     * Internal {@link GuavaEventBusListenerProxyFactory} instance for this eventBus.
+     * <p>
+     * Its lifecycle is bound to this bean's lifecycle which is controlled through the init method ({@link #init()})
+     * and destroy method ({@link #destroy()}) in spring bean assembly.
+     */
+    private GuavaEventBusListenerProxyFactory proxyFactory;
 
+    /**
+     * Initialization lifecycle method, configured as "init-method" in spring bean assembly.
+     */
     public void init() {
-        HippoServiceRegistry.register(this, ChannelEventBus.class);
+        proxyFactory = new GuavaEventBusListenerProxyFactory();
+        eventBusMap = new ConcurrentHashMap<>();
         ChannelEventListenerRegistry.get().addTracker(this);
+        HippoServiceRegistry.register(this, ChannelEventBus.class);
     }
 
+    /**
+     * Destroying lifecycle method, configured as "init-method" in spring bean assembly.
+     */
     public void destroy() {
+        HippoServiceRegistry.unregister(this, ChannelEventBus.class);
+        ChannelEventListenerRegistry.get().removeTracker(this);
         proxyFactory.clear();
         eventBusMap.values().forEach(eventBus -> eventBus.dispose());
-        ChannelEventListenerRegistry.get().removeTracker(this);
-        HippoServiceRegistry.unregister(this, ChannelEventBus.class);
+        eventBusMap.clear();
     }
 
     @Override
     public void serviceRegistered(final ServiceHolder<Object> serviceHolder) {
-        GuavaEventBusListenerProxy proxy = proxyFactory.createProxy(serviceHolder);
+        final GuavaEventBusListenerProxy proxy = proxyFactory.createProxy(serviceHolder);
 
         if (proxy != null) {
             final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(serviceHolder.getClassLoader(), true);
@@ -90,14 +108,28 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
 
     @Override
     public void serviceUnregistered(final ServiceHolder<Object> serviceHolder) {
-        GuavaEventBusListenerProxy proxy = proxyFactory.removeProxy(serviceHolder);
+        final GuavaEventBusListenerProxy proxy = proxyFactory.removeProxy(serviceHolder);
 
         if (proxy != null) {
             final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(serviceHolder.getClassLoader(), false);
 
-            if (eventBus != null) {
-                log.info("Unregistering event listener proxy for {}", serviceHolder.getServiceObject());
-                eventBus.unregister(proxy);
+            if (eventBus == null) {
+                log.warn("No event bus found so cannot unregister the proxy: {}.", proxy);
+                return;
+            }
+
+            log.info("Unregistering event listener proxy for {}", serviceHolder.getServiceObject());
+            eventBus.unregister(proxy);
+
+            // If there's no subscribers remaining in the stage of site webapp's unregistering listeners,
+            // then we don't need to keep the classloader and the eventBus for the site webapp any more.
+            // In typical deployment scenario, it's not a big deal as all the webapps will be stopped and destroyed
+            // together in most cases, almost never undeploying a webapp individually so far.
+            // However, still it seems better to remove an eventBus key-value as soon as a site webapp reaches
+            // unregistration phase in order to avoid any potential OOM issues by keeping the undeployed webapp's
+            // classloader.
+            if (eventBus.isSubscribersEmpty()) {
+                eventBusMap.remove(serviceHolder.getClassLoader());
             }
         }
     }
@@ -109,13 +141,22 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
         final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(model.getWebsiteClassLoader(), false);
 
         if (eventBus == null) {
-            log.error("No event bus found for contextPath: {}.", contextPath);
+            log.warn("Cannot post event because no event bus found for contextPath, {}: {}", contextPath, event);
+            return;
         }
 
         log.info("Posting channel event to application ({}) event listener: {}", contextPath, event);
         eventBus.post(event);
     }
 
+    /**
+     * Return the {@link EventBusWrapper} by the given {@code classLoader} if existing.
+     * If not existing and the {@code create} is true, then it creates a new instance for the {@code classLoader}.
+     * @param classLoader site webapp's classloader
+     * @param create whether to create a new instance or not if not found
+     * @return the {@link EventBusWrapper} by the given {@code classLoader} if existing,
+     *         or create a new one if {@code create} is true
+     */
     private EventBusWrapper getEventBusWrapperByClassLoader(final ClassLoader classLoader, final boolean create) {
         EventBusWrapper eventBus = eventBusMap.get(classLoader);
 
@@ -133,6 +174,15 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
         return eventBus;
     }
 
+    /**
+     * Internal Guava EventBus wrapper.
+     * <p>
+     * This wrapper provides the following additionally:
+     * <ul>
+     * <li><code>dispose()</code> which unregister all the subscribers.
+     * <li><code>isSubscribersEmpty()</code> which returns true if the internal subscribers is empty.
+     * </ul>
+     */
     static class EventBusWrapper {
 
         private final EventBus eventBus = new EventBus();
@@ -150,6 +200,10 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
 
         void post(Object event) {
             eventBus.post(event);
+        }
+
+        boolean isSubscribersEmpty() {
+            return subscribers.isEmpty();
         }
 
         void dispose() {
