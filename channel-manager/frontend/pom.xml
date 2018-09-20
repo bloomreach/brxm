@@ -225,7 +225,6 @@
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
-                <include>${channel.editor.package}/plugins/colorfield/colorfield.js</include>
                 <include>${channel.editor.package}/plugins/floatingwindow/FloatingWindow.js</include>
                 <include>${channel.editor.package}/plugins/vtabs/VerticalTabPanel.js</include>
                 <include>${channel.editor.package}/ComponentVariants.js</include>
