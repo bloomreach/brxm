@@ -31,7 +31,9 @@ public class TestModuleDescriptorUtils {
     
     @Test
     public void testDefaultLoading() throws Exception {
-        List<ModuleDefinition> moduleDefs = ModuleDescriptorUtils.collectAllModuleDefinitions();
+        List<ModuleDefinition> moduleDefs = ModuleDescriptorUtils.collectAllModuleDefinitions(getClass().getClassLoader(),
+                ContainerConstants.DEFAULT_ADDON_MODULE_DESCRIPTOR_PATHS,
+                "META-INF/hst-assembly/addon/module1.xml");
         
         assertNotNull(moduleDefs);
         assertFalse(moduleDefs.isEmpty());
@@ -119,9 +121,9 @@ public class TestModuleDescriptorUtils {
         List<ModuleDefinition> moduleDefs = 
             ModuleDescriptorUtils.collectAllModuleDefinitions(getClass().getClassLoader(), 
                     ContainerConstants.DEFAULT_ADDON_MODULE_DESCRIPTOR_PATHS,
-                    "META-INF/hst-assembly/addon/module2.xml");
+                    "META-INF/hst-assembly/addon/module1.xml", "META-INF/hst-assembly/addon/module2.xml");
         
-        // from module.xml
+        // from module1.xml
         
         assertNotNull(moduleDefs);
         assertFalse(moduleDefs.isEmpty());
