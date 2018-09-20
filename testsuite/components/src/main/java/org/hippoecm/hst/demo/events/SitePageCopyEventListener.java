@@ -52,9 +52,7 @@ public class SitePageCopyEventListener {
 
     @Subscribe
     public void onChannelEvent(ChannelEvent event) {
-        if (event.getChannelEventType() != null) {
-            log.info("SitePageCopyEventListener handling ChannelEvent. {}", event);
-        }
+        log.info("SitePageCopyEventListener handling ChannelEvent. {}", event);
     }
 
 }

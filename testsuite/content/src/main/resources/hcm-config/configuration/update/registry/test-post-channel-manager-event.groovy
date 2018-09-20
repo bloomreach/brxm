@@ -91,8 +91,8 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
   BeforeChannelDeleteEvent createMockBeforeChannelDeleteEvent() {
     return new BeforeChannelDeleteEventImpl(
       new Channel(),
-      new HstRequestContextImpl(null),
-      new ArrayList()
+      new ArrayList(),
+      new HstRequestContextImpl(null)
     )
   }
 
@@ -100,7 +100,10 @@ class TestPostChannelManagerEventUpdater extends BaseNodeUpdateVisitor {
     def event = new ChannelEventImpl(
       new Channel(),
       new HstRequestContextImpl(null),
-      ChannelEvent.ChannelEventType.PUBLISH
+      ChannelEvent.ChannelEventType.PUBLISH,
+      new ArrayList(),
+      null,
+      null
     )
 
     return event

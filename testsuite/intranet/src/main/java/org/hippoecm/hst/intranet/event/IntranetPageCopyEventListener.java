@@ -52,9 +52,7 @@ public class IntranetPageCopyEventListener {
 
     @Subscribe
     public void onChannelEvent(ChannelEvent event) {
-        if (event.getChannelEventType() != null) {
-            log.info("IntranetPageCopyEventListener handling ChannelEvent. {}", event);
-        }
+        log.info("IntranetPageCopyEventListener handling ChannelEvent. {}", event);
     }
 
 }
