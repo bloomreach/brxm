@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -69,7 +68,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
         final String revisionBranchName = getRevisionBranchName();
 
-        add(new FeedbackStdWorkflow("created-for", new StringResourceModel("created-for-project", this, null,
+        add(new FeedbackStdWorkflow("created-for", new StringResourceModel("created-for-branch", this, null,
                 new LoadableDetachableModel<String>() {
                     @Override
                     protected String load() {
