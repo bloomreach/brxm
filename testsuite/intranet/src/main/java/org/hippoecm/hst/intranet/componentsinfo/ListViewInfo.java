@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.intranet.componentsinfo;
 
-import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -35,7 +34,6 @@ import org.hippoecm.hst.core.parameters.Parameter;
         )
 })
 public interface ListViewInfo extends GeneralListInfo {
-
     /**
      * Returns the scope to search below. Leading and trailing slashes do not have meaning and will be skipped when using the scope. The scope
      * is always relative to the current {@link org.hippoecm.hst.configuration.hosting.Mount#getContentPath()}, even if it starts with a <code>/</code>
@@ -52,7 +50,5 @@ public interface ListViewInfo extends GeneralListInfo {
     String getCssClass();
 
     @Parameter(name = "bgColor", defaultValue="")
-    @Color
     String getBgColor();
-
 }
