@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.copy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.commons.flat.TreeTraverser;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -39,6 +50,7 @@ import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationId
 import org.hippoecm.frontend.widgets.AutoFocusSelectTextFieldWidget;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +60,17 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     private static final IValueMap SIZE = new ValueMap("width=515,height=540");
+
+    /**
+     * Set of mixins that should not be copied to target nodes.
+     */
+    private static final Set<String> MIXIN_NAMES_NOT_TO_COPY = Stream.of(
+
+            // It might cause nodes to unintentionally become part of a branch.
+            HippoNodeType.NT_HIPPO_VERSION_INFO,
+            HippoNodeType.HIPPO_MIXIN_BRANCH_INFO
+
+    ).collect(Collectors.toSet());
 
     private String name;
     private Boolean generate = true;
@@ -148,6 +171,8 @@ public class CopyDialog extends LookupDialog {
                     targetNode.accept(new GenerateNewTranslationIdsVisitor());
                 }
 
+                removeMixinsNotToCopy(targetNode);
+
                 modelReference.setModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException | IllegalArgumentException ex) {
@@ -186,4 +211,37 @@ public class CopyDialog extends LookupDialog {
         return SIZE;
     }
 
+    private void removeMixinsNotToCopy(final Node targetNode) throws RepositoryException {
+        final Set<String> mixins = MIXIN_NAMES_NOT_TO_COPY;
+        log.info("Removing mixins '{}' from all child nodes of '{}'.", mixins, targetNode.getPath());
+        final List<NodeType> mixinNodeTypes = getNodeTypes(mixins, targetNode.getSession().getWorkspace().getNodeTypeManager());
+        for (Node node : new TreeTraverser(targetNode)) {
+            for (NodeType mixinNodeType : mixinNodeTypes) {
+                final String mixinNodeTypeName = mixinNodeType.getName();
+                if (node.isNodeType(mixinNodeTypeName)) {
+                    log.info("Mixin '{}' found on node '{}', removing properties.", mixinNodeTypeName, node.getPath());
+                    for (PropertyDefinition propertyDefinition : mixinNodeType.getPropertyDefinitions()) {
+                        final String propertyName = propertyDefinition.getName();
+                        if (node.hasProperty(propertyName)) {
+                            node.getProperty(propertyName).remove();
+                            log.info("Property '{}' of mixin '{}' removed", propertyName, mixinNodeTypeName);
+                        }
+                    }
+                    node.removeMixin(mixinNodeTypeName);
+                }
+            }
+        }
+    }
+
+    private List<NodeType> getNodeTypes(Set<String> nodeTypeNames, NodeTypeManager nodeTypeManager) throws RepositoryException {
+        final List<NodeType> nodeTypes = new ArrayList<>();
+        for (String nodeTypeName : nodeTypeNames) {
+            try {
+                nodeTypes.add(nodeTypeManager.getNodeType(nodeTypeName));
+            } catch (NoSuchNodeTypeException e) {
+                log.error("Expected nodeType '{}' to exist", nodeTypeName, e);
+            }
+        }
+        return nodeTypes;
+    }
 }
