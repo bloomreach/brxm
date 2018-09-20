@@ -1,0 +1,4 @@
+group: hippo-cms
+project: hippo-testsuite
+module:
+  name: hippo-testsuite-repository-data-site

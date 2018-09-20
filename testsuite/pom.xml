@@ -211,6 +211,7 @@
     <module>linear-algebra</module>
     <module>linear-algebra-sub</module>
     <!-- End Add-on component context -->
+    <module>repository-data</module>
     <module>content</module>
     <module>intranet-bootstrap</module>
     <module>components</module>
@@ -264,7 +265,6 @@
                   <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
                   <project.basedir>${project.basedir}</project.basedir>
-                  <use.hcm.sites>false</use.hcm.sites>
                 </systemProperties>
               </container>
               <deployables>

@@ -32,12 +32,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-hcm-site</artifactId>
-      <version>${hippo.hst.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
@@ -71,24 +65,26 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-testsuite-repository-data-site</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
-      <version>${project.version}</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
+    <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-content</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-webfiles</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-intranet-bootstrap-content</artifactId>
       <version>${project.version}</version>
     </dependency>
 
