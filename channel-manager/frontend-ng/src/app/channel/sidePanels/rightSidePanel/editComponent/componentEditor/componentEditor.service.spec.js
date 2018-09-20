@@ -102,6 +102,15 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.getComponentName()).toBe('componentLabel');
     });
 
+    it('returns the display name of the error when no component is set and there is an error', () => {
+      ComponentEditor.error = {
+        messageParams: {
+          displayName: 'componentLabel',
+        },
+      };
+      expect(ComponentEditor.getComponentName()).toBe('componentLabel');
+    });
+
     it('returns undefined if component is not set', () => {
       expect(ComponentEditor.getComponentName()).toBeUndefined();
     });
@@ -259,6 +268,20 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('dirty state', () => {
+    it('is false initially', () => {
+      expect(ComponentEditor.dirty).toBe(false);
+    });
+
+    it('can be changed', () => {
+      ComponentEditor.dirty = true;
+      expect(ComponentEditor.dirty).toBe(true);
+
+      ComponentEditor.dirty = false;
+      expect(ComponentEditor.dirty).toBe(false);
+    });
+  });
+
   describe('valueChanged', () => {
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', () => {
       spyOn(PageStructureService, 'renderComponent');
@@ -276,6 +299,46 @@ describe('ComponentEditorService', () => {
         b: 'value-b',
         c: 'value-c',
       });
+    });
+  });
+
+  describe('save', () => {
+    it('stores the new parameter values as form data', () => {
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+
+      const properties = [
+        { name: 'a', value: 'value-a' },
+        { name: 'b', value: 'value-b' },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.save();
+
+      expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', { a: 'value-a', b: 'value-b' });
+    });
+
+    it('resets the dirty state when saving succeeded', () => {
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+
+      openComponentEditor([]);
+      ComponentEditor.dirty = true;
+
+      ComponentEditor.save();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.dirty).toBe(false);
+    });
+
+    it('keeps the dirty state when saving failed', () => {
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.reject());
+
+      openComponentEditor([]);
+      ComponentEditor.dirty = true;
+
+      ComponentEditor.save();
+      $rootScope.$digest();
+
+      expect(ComponentEditor.dirty).toBe(true);
     });
   });
 
