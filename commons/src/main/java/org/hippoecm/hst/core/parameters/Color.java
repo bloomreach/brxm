@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated The support of picking color values for component properties by a color picker will be dropped. Color
+ * values can be edited as string values using the regular @Parameter annotation with a String return type of the
+ * annotated getter.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Deprecated
 public @interface Color {
 }
