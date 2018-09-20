@@ -38,12 +38,23 @@ describe('ComponentFields', () => {
   });
 
   describe('valueChanged', () => {
+    beforeEach(() => {
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
     it('updates the preview when a value is changed', () => {
       spyOn(ComponentEditor, 'updatePreview').and.returnValue($q.resolve());
 
       component.valueChanged();
+      component.valueChanged();
+      expect(ComponentEditor.updatePreview.calls.count()).toBe(1);
 
-      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+      jasmine.clock().tick(500);
+      expect(ComponentEditor.updatePreview.calls.count()).toBe(2);
     });
 
     it('closes the editor when the result of a value change cannot be processed', () => {
