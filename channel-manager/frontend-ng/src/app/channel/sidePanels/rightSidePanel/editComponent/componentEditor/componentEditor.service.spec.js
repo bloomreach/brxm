@@ -311,6 +311,20 @@ describe('ComponentEditorService', () => {
         c: 'value-c',
       });
     });
+
+    it('only passes the first 10 characters of a date field value', () => {
+      spyOn(PageStructureService, 'renderComponent');
+      const properties = [
+        { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.valueChanged();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+        a: '2017-09-21',
+      });
+    });
   });
 
   describe('save', () => {

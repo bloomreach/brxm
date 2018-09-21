@@ -183,7 +183,12 @@ class ComponentEditorService {
 
   _propertiesAsFormData() {
     return this.properties.reduce((formData, property) => {
-      formData[property.name] = property.value;
+      if (property.type === 'datefield') {
+        // cut off the time and time zone information from the value that the datefield returns
+        formData[property.name] = property.value.substring(0, 10);
+      } else {
+        formData[property.name] = property.value;
+      }
       return formData;
     }, {});
   }
