@@ -15,8 +15,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -50,6 +54,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
@@ -62,6 +69,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -69,6 +77,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
+import static org.joor.Reflect.on;
+import static org.onehippo.cms7.services.cmscontext.CmsSessionContext.SESSION_KEY;
 
 public class AbstractPageComposerTest {
 
@@ -115,13 +128,19 @@ public class AbstractPageComposerTest {
         hstModelProvider.setContextPath(CONTEXT_PATH);
 
         final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        hstModelRegistry.registerHstModel(CONTEXT_PATH, Thread.currentThread().getContextClassLoader(),
+        final HstModel hstModel = hstModelRegistry.registerHstModel(CONTEXT_PATH, Thread.currentThread().getContextClassLoader(),
                 componentManager, false);
 
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
+        siteMapMatcher = hstModel.getHstSiteMapMatcher();
         hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
-        hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
+
+        hstEventsCollector = on(hstModel)
+                .field("invalidationMonitor")
+                .field("hstEventsDispatcher")
+                .field("hstEventsCollector").get();
+                //HstServices.getComponentManager().getComponent("hstEventsCollector");
+
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         previewDecorator = HstServices.getComponentManager().getComponent(PreviewDecorator.class.getName());
 
@@ -139,6 +158,10 @@ public class AbstractPageComposerTest {
         restoreHstConfigBackup(session);
 
         session.logout();
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.unregisterHstModel("/site");
+
         this.componentManager.stop();
         this.componentManager.close();
         HippoWebappContextRegistry.get().unregister(webappContext);
@@ -197,6 +220,23 @@ public class AbstractPageComposerTest {
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);
 
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+
+        final HstModel hstModel = modelRegistry.getHstModel("/site");
+
+        //new CXFJaxrsHstConfigService.HstModelSnapshot((PlatformHstModel) hstModel);
+        final HstModel liveHstModelSnapshot =
+                on(CXFJaxrsHstConfigService.class.getName() + "$HstModelSnapshot")
+                        .create((PlatformHstModel) hstModel).get();
+
+        //new CXFJaxrsHstConfigService.HstModelSnapshot((PlatformHstModel) liveHstModelSnapshot, previewDecorator);
+        final HstModel previewHstModelSnapshot =
+                on(CXFJaxrsHstConfigService.class.getName() + "$HstModelSnapshot")
+                        .create(liveHstModelSnapshot, previewDecorator).get();
+
+        requestContext.setAttribute(PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
+        requestContext.setAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
+
         requestContext.getServletRequest().setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ModifiableRequestContextProvider.set(requestContext);
 
@@ -248,10 +288,49 @@ public class AbstractPageComposerTest {
         final String mountId = mount.getMount().getIdentifier();
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
         // TODO HSTTWO-4374 this does not work any more, use CmsSessionContext instead?
-        mockRequest.getSession().setAttribute(ContainerConstants.RENDERING_HOST, host);
-        mockRequest.getSession().setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+//        mockRequest.getSession().setAttribute(RENDERING_HOST, host);
+//        mockRequest.getSession().setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+
+        CmsSessionContextMock contextMock =
+                new CmsSessionContextMock(new SimpleCredentials("admin", "admin".toCharArray()));
+        mockRequest.getSession().setAttribute(SESSION_KEY, contextMock);
+        contextMock.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        contextMock.getContextPayload().put(RENDERING_HOST, host);
+
+        mockRequest.setAttribute(SESSION_KEY, contextMock);
 
         return hstURLFactory.getContainerURLProvider().parseURL(mockRequest, response, mount);
+    }
+
+    public static class CmsSessionContextMock implements CmsSessionContext {
+
+        private SimpleCredentials credentials;
+        Map<String, Serializable> contextPayload;
+
+        public CmsSessionContextMock(Credentials credentials) {
+            this.contextPayload = new HashMap<>();
+            this.credentials = (SimpleCredentials)credentials;
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public Map<String, Serializable> getContextPayload() {
+            return contextPayload;
+        }
+
+        @Override
+        public String getCmsContextServiceId() {
+            return null;
+        }
+
+        @Override
+        public Object get(final String key) {
+            return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
+        }
     }
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url, final HstMutableRequestContext requestContext) throws ContainerException {
