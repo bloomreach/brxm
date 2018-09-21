@@ -25,8 +25,7 @@
 
     var ajaxSettings = {
         headers: {
-          'CMS-User': config.cmsUser,
-          'Force-Client-Host': 'true'
+          'CMS-User': config.cmsUser
         }
       },
       timeoutMillis = {};

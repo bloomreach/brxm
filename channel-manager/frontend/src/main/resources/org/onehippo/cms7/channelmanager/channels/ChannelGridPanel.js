@@ -123,7 +123,6 @@
                       window.location.pathname + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname'),
                       {
                           'CMS-User': this.cmsUser,
-                          'Force-Client-Host': 'true',
                           'contextPath' : record.get('contextPath')
                       }
                     );

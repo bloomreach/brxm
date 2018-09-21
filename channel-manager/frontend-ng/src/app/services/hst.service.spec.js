@@ -86,7 +86,6 @@ describe('HstService', () => {
   it('can do a GET call', () => {
     $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
     }).respond(200);
     hstService.doGet('some-uuid', 'one', 'two', 'three').catch(fail);
@@ -100,7 +99,6 @@ describe('HstService', () => {
     };
     $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
     }).respond(200);
     hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
@@ -116,7 +114,6 @@ describe('HstService', () => {
   it('can do a POST call', () => {
     $httpBackend.expectPOST(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/json;charset=utf-8',
     }).respond(200);
@@ -127,7 +124,6 @@ describe('HstService', () => {
   it('can do a POST call without data', () => {
     $httpBackend.expectPOST(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, null, {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/json;charset=utf-8',
     }).respond(200);
@@ -301,7 +297,6 @@ describe('HstService', () => {
       foo: 'bar',
       test: 'me',
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
     };
     const response = { data: { key: 'value' } };
@@ -337,7 +332,6 @@ describe('HstService', () => {
   it('can do a put call', () => {
     $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/json;charset=utf-8',
     }).respond(200);
@@ -348,7 +342,6 @@ describe('HstService', () => {
   it('can do a put form call', () => {
     $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, 'foo=1&bar=a%20b', {
       'CMS-User': 'testUser',
-      'Force-Client-Host': 'true',
       Accept: 'application/json, text/plain, */*',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     }).respond(200);

@@ -80,7 +80,6 @@
             Ext.Ajax.request({
               url: self.composerRestMountUrl + '/' + self.componentId,
               headers: {
-                'Force-Client-Host': 'true',
                 'contextPath': self.siteContextPath
               },
               success: function(result) {
@@ -118,7 +117,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Force-Client-Host': 'true',
             'contextPath': this.siteContextPath
           },
           params: Ext.util.JSON.encode(variantIds),
@@ -148,7 +146,6 @@
             method: 'POST',
             url: this.composerRestMountUrl + '/' + this.componentId,
             headers: {
-              'Force-Client-Host': 'true',
               'Content-Type': 'application/json',
               'lastModifiedTimestamp': this.lastModified,
               'contextPath': this.siteContextPath

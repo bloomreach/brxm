@@ -109,7 +109,6 @@ class HstService {
 
     headers = headers || {};
     headers['CMS-User'] = this.ConfigService.cmsUser;
-    headers['Force-Client-Host'] = 'true';
     headers.contextPath = this.config.contextPath;
     headers.hostGroup = this.config.hostGroup;
 

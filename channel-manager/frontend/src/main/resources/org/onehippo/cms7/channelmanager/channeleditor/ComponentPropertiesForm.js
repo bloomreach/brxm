@@ -90,7 +90,6 @@
               method: 'DELETE',
               url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
               headers: {
-                'Force-Client-Host': 'true',
                 'lastModifiedTimestamp': this.lastModified,
                 'contextPath': this.siteContextPath
               },
@@ -186,7 +185,6 @@
 
       form.submit({
         headers: {
-          'Force-Client-Host': 'true',
           'Move-To': this.newVariantId,
           'lastModifiedTimestamp': this.lastModified,
           'contextPath': this.siteContextPath
@@ -459,7 +457,6 @@
         method: 'GET',
         url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale,
         headers: {
-          'Force-Client-Host': 'true',
           'contextPath': this.siteContextPath
         }
       });
