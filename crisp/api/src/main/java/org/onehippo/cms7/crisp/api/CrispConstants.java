@@ -41,6 +41,11 @@ public class CrispConstants {
     public static final String REGISTRY_MODULE_PATH = "/hippo:configuration/hippo:modules/crispregistry";
 
     /**
+     * Node name of the CRISP module configuration node.
+     */
+    public static final String MODULE_CONFIG = "hippo:moduleconfig";
+
+    /**
      * Node type name of the CRISP module configuration node.
      */
     public static final String NT_MODULE_CONFIG = "crisp:moduleconfig";
@@ -61,10 +66,9 @@ public class CrispConstants {
     public static final String RESOURCE_RESOLVER_CONTAINER = "crisp:resourceresolvercontainer";
 
     /**
-     * Default CRISP ResourceResolver container configuration node path.
+     * Default CRISP module configuration node path.
      */
-    public static final String DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH =
-            "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer";
+    public static final String DEFAULT_CRISP_MODULE_CONFIG_PATH = REGISTRY_MODULE_PATH + "/" + MODULE_CONFIG;
 
     /**
      * Property name of a CRISP ResourceResolver configuration node, containing its own <code>ResourceResolver</code>
