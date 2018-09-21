@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl;
 import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
 import org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ import static org.junit.Assert.assertTrue;
  * This test will help avoid any typos, duplicate configuration, etc.
  * </P>
  */
-public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTestCase {
+public class SystemDefaultSessionPoolConfigurationsIT extends AbstractTestConfigurations {
 
     private MultipleRepository multipleRepository;
 
@@ -98,9 +99,9 @@ public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTest
         assertFalse(repo.getTestWhileIdle());
         assertEquals(60000, repo.getTimeBetweenEvictionRunsMillis());
         assertEquals(1, repo.getNumTestsPerEvictionRun());
-        assertEquals(300000, repo.getMinEvictableIdleTimeMillis());
+        assertEquals(60000, repo.getMinEvictableIdleTimeMillis());
         assertTrue(repo.getRefreshOnPassivate());
-        assertEquals(300000, repo.getMaxRefreshIntervalOnPassivate());
+        assertEquals(1000, repo.getMaxRefreshIntervalOnPassivate());
         assertEquals(3600000, repo.getMaxTimeToLiveMillis());
     }
 
@@ -120,9 +121,9 @@ public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTest
         assertFalse(repo.getTestWhileIdle());
         assertEquals(60000, repo.getTimeBetweenEvictionRunsMillis());
         assertEquals(1, repo.getNumTestsPerEvictionRun());
-        assertEquals(300000, repo.getMinEvictableIdleTimeMillis());
+        assertEquals(60000, repo.getMinEvictableIdleTimeMillis());
         assertTrue(repo.getRefreshOnPassivate());
-        assertEquals(300000, repo.getMaxRefreshIntervalOnPassivate());
+        assertEquals(1000, repo.getMaxRefreshIntervalOnPassivate());
         assertEquals(3600000, repo.getMaxTimeToLiveMillis());
     }
 
@@ -142,9 +143,9 @@ public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTest
         assertFalse(repo.getTestWhileIdle());
         assertEquals(60000, repo.getTimeBetweenEvictionRunsMillis());
         assertEquals(1, repo.getNumTestsPerEvictionRun());
-        assertEquals(300000, repo.getMinEvictableIdleTimeMillis());
+        assertEquals(60000, repo.getMinEvictableIdleTimeMillis());
         assertTrue(repo.getRefreshOnPassivate());
-        assertEquals(300000, repo.getMaxRefreshIntervalOnPassivate());
+        assertEquals(1000, repo.getMaxRefreshIntervalOnPassivate());
         assertEquals(3600000, repo.getMaxTimeToLiveMillis());
     }
 
@@ -164,9 +165,9 @@ public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTest
         assertFalse(repo.getTestWhileIdle());
         assertEquals(60000, repo.getTimeBetweenEvictionRunsMillis());
         assertEquals(1, repo.getNumTestsPerEvictionRun());
-        assertEquals(300000, repo.getMinEvictableIdleTimeMillis());
+        assertEquals(60000, repo.getMinEvictableIdleTimeMillis());
         assertTrue(repo.getRefreshOnPassivate());
-        assertEquals(300000, repo.getMaxRefreshIntervalOnPassivate());
+        assertEquals(1000, repo.getMaxRefreshIntervalOnPassivate());
         assertEquals(3600000, repo.getMaxTimeToLiveMillis());
     }
 
@@ -186,9 +187,9 @@ public class SystemDefaultSessionPoolConfigurationsIT extends AbstractSpringTest
         assertFalse(repo.getTestWhileIdle());
         assertEquals(60000, repo.getTimeBetweenEvictionRunsMillis());
         assertEquals(1, repo.getNumTestsPerEvictionRun());
-        assertEquals(300000, repo.getMinEvictableIdleTimeMillis());
+        assertEquals(60000, repo.getMinEvictableIdleTimeMillis());
         assertTrue(repo.getRefreshOnPassivate());
-        assertEquals(300000, repo.getMaxRefreshIntervalOnPassivate());
+        assertEquals(1000, repo.getMaxRefreshIntervalOnPassivate());
         assertEquals(3600000, repo.getMaxTimeToLiveMillis());
     }
 

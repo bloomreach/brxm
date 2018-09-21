@@ -94,7 +94,7 @@
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
 
-  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl" destroy-method="close">
+  <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl" destroy-method="close">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>
@@ -102,10 +102,42 @@
         <entry key-ref="javax.jcr.Credentials.preview" value-ref="javax.jcr.Repository.preview" />
         <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
         <entry key-ref="javax.jcr.Credentials.hstconfigreader" value-ref="javax.jcr.Repository.hstconfigreader" />
+        <entry key-ref="javax.jcr.Credentials.binaries" value-ref="javax.jcr.Repository.binaries" />
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
     <constructor-arg ref="javax.jcr.Credentials.default" />
+    <constructor-arg>
+      <map key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="repositoryProviderClassName" value="${repositoryProviderClassName}" />
+        <entry key="repositoryAddress" value="${default.repository.address}"/>
+        <entry key="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
+        <entry key="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+        <entry key="defaultCredentialsPassword" value="${default.repository.password}"/>
+
+        <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+        <!-- Properties below are for lazy initialized pooling repositories. As there can be many of these, for example one per unique faceted navigation free text search
+             these settings are deliberately low
+        -->
+        <entry key="maxActive" value="${disposable.repository.maxActive}"/>
+        <entry key="maxIdle" value="${disposable.repository.maxIdle}"/>
+        <entry key="minIdle" value="${disposable.repository.minIdle}"/>
+        <entry key="initialSize" value="${disposable.repository.initialSize}"/>
+        <entry key="maxWait" value="${disposable.repository.maxWait}"/>
+        <entry key="whenExhaustedAction" value="${disposable.repository.whenExhaustedAction}"/>
+        <entry key="testOnBorrow" value="${disposable.repository.testOnBorrow}"/>
+        <entry key="testOnReturn" value="${disposable.repository.testOnReturn}"/>
+        <entry key="testWhileIdle" value="${disposable.repository.testWhileIdle}"/>
+        <!-- check every 10 seconds for eviction -->
+        <entry key="timeBetweenEvictionRunsMillis" value="${disposable.repository.timeBetweenEvictionRunsMillis}"/>
+        <entry key="numTestsPerEvictionRun" value="${disposable.repository.numTestsPerEvictionRun}"/>
+        <!-- when a session is idle for just three minutes, we already dispose it to avoid to much memory consumption -->
+        <entry key="minEvictableIdleTimeMillis" value="${disposable.repository.minEvictableIdleTimeMillis}"/>
+        <entry key="refreshOnPassivate" value="${disposable.repository.refreshOnPassivate}"/>
+        <!-- the maxRefreshIntervalOnPassivate must not be to low, as we do not want an entire faceted tree view to be refreshed -->
+        <entry key="maxRefreshIntervalOnPassivate" value="${disposable.repository.maxRefreshIntervalOnPassivate}"/>
+      </map>
+    </constructor-arg>
   </bean>
 
   <bean id="javax.jcr.Repository.default" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
@@ -129,6 +161,7 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="maxRefreshIntervalOnPassivate" value="1000"/>
     <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
         <property name="alwaysActive" value="true"/>
@@ -157,6 +190,7 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="maxRefreshIntervalOnPassivate" value="1000"/>
     <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
         <property name="alwaysActive" value="true"/>
@@ -185,6 +219,7 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="maxRefreshIntervalOnPassivate" value="1000"/>
     <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
         <property name="alwaysActive" value="true"/>
@@ -213,6 +248,36 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
     <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="maxRefreshIntervalOnPassivate" value="1000"/>
+    <property name="resourceLifecycleManagement">
+      <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
+        <property name="alwaysActive" value="true"/>
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="javax.jcr.Repository.binaries" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
+        init-method="initialize" destroy-method="close">
+    <!-- delegated JCR repository -->
+    <property name="repositoryAddress"><null/></property>
+    <property name="defaultCredentialsUserID" value="${binaries.repository.user.name}${repository.pool.user.name.separator}${binaries.repository.pool.name}" />
+    <property name="defaultCredentialsPassword" value="${binaries.repository.password}" />
+    <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+    <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+    <property name="maxActive" value="${binaries.repository.maxActive}" />
+    <property name="maxIdle" value="${binaries.repository.maxIdle}" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
+    <property name="maxRefreshIntervalOnPassivate" value="1000"/>
     <property name="resourceLifecycleManagement">
       <bean class="org.hippoecm.hst.core.jcr.pool.PooledSessionResourceManagement">
         <property name="alwaysActive" value="true"/>

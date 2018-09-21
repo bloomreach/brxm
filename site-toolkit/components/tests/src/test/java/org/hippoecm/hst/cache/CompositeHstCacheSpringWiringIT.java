@@ -18,7 +18,7 @@ package org.hippoecm.hst.cache;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class CompositeHstCacheSpringWiringIT extends AbstractSpringTestCase {
+public class CompositeHstCacheSpringWiringIT extends AbstractTestConfigurations {
 
     // the following spring bean ids *MUST* be wired and the names are not allowed to be changed
     public static final String NOOP_CACHE_SPRING_BEAN_ID = "noopCache";
