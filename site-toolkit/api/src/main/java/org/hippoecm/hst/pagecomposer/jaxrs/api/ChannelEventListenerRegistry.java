@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.channel;
+package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.onehippo.cms7.services.WhiteboardServiceRegistry;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 

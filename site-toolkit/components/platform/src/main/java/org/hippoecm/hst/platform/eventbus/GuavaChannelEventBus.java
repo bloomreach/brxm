@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.platform.api.ChannelEventBus;
 import org.hippoecm.hst.platform.model.HstModel;
