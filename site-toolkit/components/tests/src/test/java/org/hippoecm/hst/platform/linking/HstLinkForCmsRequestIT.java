@@ -92,7 +92,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     @Test
     public void testLinksCMSRequestNoRenderingHost() throws Exception {
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null, false);
+            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
@@ -128,7 +128,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // NOW below, even when show contextpath is FALSE, the /site contextpath should be included because the links are
         // for cms host
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null, false);
+            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
@@ -163,7 +163,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     @Test
     public void testLinksCMSRequestWITHRenderingHost() throws Exception {
         // the rendering host is www.unit.test
-        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", false);
+        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test");
         // assert that the match Mount is www.unit.test
         assertEquals("Matched mount should be the renderHost mount", "www.unit.test", requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
 
@@ -213,7 +213,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // We now do a request that is for the preview site (PORT 8081). Because for the 'unittestsubproject' we have only
         // configured LIVE mounts, then when we request a link, we expect to get a link from a 'live mount to preview mount
         // decorated version' because we are in a cms request
-        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081", false);
+        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081");
         assertTrue(requestContext.isCmsRequest());
         // assert that the match Mount is localhost
         assertEquals("Matched mount should be the renderHost mount", "localhost",
@@ -237,42 +237,14 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     }
 
 
-
-    /**
-     * Even when a render host is set, when there is also an indication on the request that the client host should be forced, then
-     * the render host should be skipped. This is the case where for example on the http session the renderhost is stored, but
-     * the request should not used this stored renderhost. Then, with the parameter Force-Client-Host = true this can be indicated
-     * @throws Exception
-     */
-    @Test
-    public void testLinksCMSRequestWITHRenderingHostAndForceClientHost() throws Exception {
-        // the rendering host is www.unit.test but we also indicate Force-Client-Host = true
-        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", true);
-        // even though the renderingHost www.unit.test is set
-        
-        // Since hst:defaulthostname is localhost, with 'force client host' and client host 'cms.example.com' which does
-        // not have a configured mount, a fallback to localhost should be seen:
-        assertEquals("Matched mount should be the renderHost mount", "localhost",
-                requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
-
-
-        // when not forcing client host, we should get www.unit.test as the matched mount its hostname
-
-        requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", false);
-        assertEquals("Matched mount should be the renderHost mount", "www.unit.test",
-                requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
-
-    }
-
     public HstRequestContext getRequestFromCms(final String hostAndPort,
                                                final String pathInfo,
                                                final String queryString,
-                                               final String renderingHost,
-                                               final boolean forceClientHost) throws Exception {
+                                               final String renderingHost) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
         ModifiableRequestContextProvider.set(requestContext);
-        HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost, forceClientHost);
+        HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
@@ -291,8 +263,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
                                                            final String hostAndPort,
                                                            final String pathInfo,
                                                            final String queryString,
-                                                           final String renderingHost,
-                                                           final boolean forceClientHost) throws Exception {
+                                                           final String renderingHost) throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
         {
@@ -312,9 +283,6 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
             requestContext.setCmsRequest(true);
             if (renderingHost != null) {
                 request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
-            }
-            if (forceClientHost) {
-                request.setParameter("Force-Client-Host", "true");
             }
             containerRequest = new HstContainerRequestImpl(request, hstManager.getPathSuffixDelimiter());
         }

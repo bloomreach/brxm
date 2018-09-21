@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -205,13 +205,8 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
                                final String prefix,
                                final MultivaluedMap<String, String> parameters) throws IllegalStateException {
         for (String parameterName : parameters.keySet()) {
-            // the Force-Client-Host is some 'magic' parameter we do not need to store
-            // this check can be removed once in all code, the Force-Client-Host parameter from the queryString
-            // has been replaced by a request header.
-            if (!"Force-Client-Host".equals(parameterName)) {
-                String parameterValue = parameters.getFirst(parameterName);
-                componentParameters.setValue(prefix, parameterName, parameterValue);
-            }
+            String parameterValue = parameters.getFirst(parameterName);
+            componentParameters.setValue(prefix, parameterName, parameterValue);
         }
     }
 

@@ -181,7 +181,6 @@ public class TestHstRequestUtils {
     public void forcedRenderHostWithoutPortUsesPortFromForwardedHostHeader() {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getHeader("X-Forwarded-Host")).andReturn("www.example.org:8080");
-        expect(request.getParameter("Force-Client-Host")).andReturn("false");
         expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost");
         replay(request);
         final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
