@@ -101,7 +101,9 @@ public class ChannelPropertyMapper {
         } else {
             channelId = configurationNode.getName();
         }
-        Channel channel = new Channel(channelId);
+        // prefix the channel id with the contextPath since across hst configurations, the same hst:configuration node
+        // can be used, which would result in duplicate channel ids
+        Channel channel = new Channel(contextPath + "-" + channelId);
         channel.setName(channelId);
         channel.setChannelSettingsEditable(channelSettingsEditable);
 
