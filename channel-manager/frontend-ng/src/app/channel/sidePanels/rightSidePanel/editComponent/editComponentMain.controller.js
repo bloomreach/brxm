@@ -40,7 +40,7 @@ class EditComponentMainCtrl {
   }
 
   save() {
-    this.HippoIframeService.reload();
+    this.ComponentEditor.save();
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
   }
 
@@ -65,7 +65,7 @@ class EditComponentMainCtrl {
   }
 
   isSaveAllowed() {
-    return false;
+    return this.ComponentEditor.dirty;
   }
 
   uiCanExit() {

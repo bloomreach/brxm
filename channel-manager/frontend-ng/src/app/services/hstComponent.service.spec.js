@@ -184,6 +184,39 @@ describe('HstComponentService', () => {
     });
   });
 
+  describe('setParameters', () => {
+    beforeEach(() => {
+      spyOn(HstService, 'doPutForm');
+      spyOn(ChannelService, 'recordOwnChange');
+    });
+
+    it('uses the HstService to store the parameter data of a component', () => {
+      HstService.doPutForm.and.returnValue($q.resolve());
+
+      HstComponentService.setParameters('id', 'variant', { param1: 1, param2: 2 });
+      $rootScope.$digest();
+
+      expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', 'variant');
+      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    });
+
+    it('does not record own change if parameter change fails', () => {
+      HstService.doPutForm.and.returnValue($q.reject());
+
+      HstComponentService.setParameters('id', 'variant', { param1: 1, param2: 2 });
+      $rootScope.$digest();
+
+      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+    });
+
+    it('URI-encodes the variant name', () => {
+      HstService.doPutForm.and.returnValue($q.resolve());
+
+      HstComponentService.setParameters('id', '@variant', { param1: 1, param2: 2 });
+      expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', '%40variant');
+    });
+  });
+
   describe('getProperties', () => {
     beforeEach(() => {
       spyOn(HstService, 'doGet').and.returnValue($q.resolve());

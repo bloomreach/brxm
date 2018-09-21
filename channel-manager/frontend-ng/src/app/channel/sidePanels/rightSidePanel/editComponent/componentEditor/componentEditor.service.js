@@ -163,18 +163,28 @@ class ComponentEditorService {
     return undefined;
   }
 
-  isDataDirty() {
-    return this.dataDirty;
+  get dirty() {
+    return !!this.propertiesDirty;
+  }
+
+  set dirty(dirty) {
+    this.propertiesDirty = dirty;
   }
 
   valueChanged() {
-    const formData = {};
-    this.properties.forEach((property) => { formData[property.name] = property.value; });
-    this.PageStructureService.renderComponent(this.component.id, formData);
+    this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
-  markDataDirty() {
-    this.dataDirty = true;
+  save() {
+    return this.HstComponentService.setParameters(this.component.id, this.component.variant, this._propertiesAsFormData())
+      .then(() => delete this.propertiesDirty);
+  }
+
+  _propertiesAsFormData() {
+    return this.properties.reduce((formData, property) => {
+      formData[property.name] = property.value;
+      return formData;
+    }, {});
   }
 
   close() {
@@ -205,7 +215,7 @@ class ComponentEditorService {
   }
 
   _askSaveOrDiscardChanges() {
-    if (!this.dataDirty) {
+    if (!this.propertiesDirty) {
       return this.$q.resolve();
     }
 
@@ -225,10 +235,6 @@ class ComponentEditorService {
     });
   }
 
-  save() {
-    return this.$q.resolve();
-  }
-
   _clearData() {
     delete this.channel;
     delete this.component;
@@ -236,7 +242,7 @@ class ComponentEditorService {
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;
-    delete this.dataDirty;
+    delete this.propertiesDirty;
   }
 }
 

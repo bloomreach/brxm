@@ -154,7 +154,7 @@ class HstService {
     return this.doPost(null, containerId, catalogComponent.id);
   }
 
-  updateHstComponent(containerId, containerRepresentation) {
+  updateHstContainer(containerId, containerRepresentation) {
     return this._callHst('PUT', containerId, [], containerRepresentation);
   }
 }

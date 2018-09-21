@@ -29,7 +29,13 @@ class ComponentEditorCtrl {
   _monitorDirty() {
     this.$scope.$watch('$ctrl.form.$dirty', (dirty) => {
       if (dirty) {
-        this.ComponentEditor.markDataDirty();
+        this.ComponentEditor.dirty = true;
+      }
+    });
+
+    this.$scope.$watch('$ctrl.ComponentEditor.dirty', (dirty) => {
+      if (!dirty) {
+        this.form.$setPristine();
       }
     });
   }

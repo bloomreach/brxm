@@ -21,13 +21,6 @@ import template from './componentEditor.html';
 const componentEditorComponent = {
   controller,
   template,
-  bindings: {
-    allowSave: '<',
-    closeLabel: '@?',
-    loading: '=',
-    onClose: '&',
-    onSave: '&',
-  },
 };
 
 export default componentEditorComponent;
