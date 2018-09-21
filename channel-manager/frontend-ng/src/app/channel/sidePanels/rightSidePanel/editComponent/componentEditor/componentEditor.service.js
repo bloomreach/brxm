@@ -15,7 +15,7 @@
  */
 
 import MultiActionDialogCtrl from '../../contentEditor/multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from '../../contentEditor//multiActionDialog/multiActionDialog.html';
+import multiActionDialogTemplate from '../../contentEditor/multiActionDialog/multiActionDialog.html';
 
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
