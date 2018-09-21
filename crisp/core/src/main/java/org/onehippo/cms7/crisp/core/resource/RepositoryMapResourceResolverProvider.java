@@ -150,6 +150,12 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     @Override
     public void destroy() {
         HippoEventListenerRegistry.get().unregister(configurationChangeEventListener);
+
+        childAppContexts.values().forEach(childContext -> {
+            childContext.close();
+        });
+
+        childAppContexts.clear();
     }
 
     /**
