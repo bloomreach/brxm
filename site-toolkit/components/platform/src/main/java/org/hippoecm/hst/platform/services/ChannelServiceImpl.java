@@ -68,6 +68,11 @@ public class ChannelServiceImpl implements ChannelService {
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
             for (Mount mount : mountsByHostGroup) {
 
+                if (mount.isPreview()) {
+                    log.debug("Skipping explicit preview mounts");
+                    continue;
+                }
+
                 final Mount previewMount = previewDecorator.decorateMountAsPreview(mount);
 
                 final Channel channel = previewMount.getChannel();
