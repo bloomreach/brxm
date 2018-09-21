@@ -16,11 +16,13 @@
 
 package org.hippoecm.hst.platform.services;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 import javax.jcr.Session;
 
@@ -53,7 +55,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public List<Channel> getChannels(final Session userSession, final String cmsHost) {
-        final List<Channel> channels = new ArrayList<>();
+        final Map<String, Channel> channels = new HashMap<>();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
@@ -84,14 +86,19 @@ public class ChannelServiceImpl implements ChannelService {
                 final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) hstModel).getChannelFilter();
 
                 if (channelFilter.test(userSession, channel)) {
-                    channels.add(channel);
+                    if (channels.containsKey(channel.getId())) {
+                        log.error("Found channel with duplicate id. Skipping channel '{}' which has a duplicate id with '{}'",
+                                channel, channels.get(channel.getId()));
+                    } else {
+                        channels.put(channel.getId(), channel);
+                    }
                 } else {
                     log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
                 }
             }
         }
 
-        return channels;
+        return channels.values().stream().collect(Collectors.toList());
     }
 
     @Override
