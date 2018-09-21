@@ -39,6 +39,7 @@ describe('ChannelService', () => {
 
     channelMock = {
       contextPath: '/testContextPath',
+      hostGroup: 'testHostGroup',
       hostname: 'test.host.name',
       mountId: 'mountId',
       id: 'channelId',
@@ -55,8 +56,6 @@ describe('ChannelService', () => {
       locale: 'en',
       projectsEnabled: false,
     };
-
-    ConfigServiceMock.setContextPathForChannel = jasmine.createSpy('setContextPathForChannel');
 
     angular.mock.module(($provide) => {
       $provide.value('ConfigService', ConfigServiceMock);
@@ -104,8 +103,8 @@ describe('ChannelService', () => {
     ProjectService.selectedProject = projectMock;
   });
 
-  function loadChannel(id = 'testChannelId', contextPath = 'testContextPath') {
-    ChannelService.initializeChannel(id, contextPath);
+  function loadChannel(id = 'testChannelId', contextPath = 'testContextPath', hostGroup = 'testHostGroup') {
+    ChannelService.initializeChannel(id, contextPath, hostGroup);
     $rootScope.$digest();
   }
 
@@ -117,15 +116,16 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
       contextPath: 'testContextPath',
+      hostGroup: 'dev-localhost',
       previewHstConfigExists: true,
     };
 
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
 
-    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, testChannel.hostGroup, '/testPath');
     $rootScope.$digest();
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath);
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
   });
@@ -138,6 +138,7 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
       contextPath: 'testContextPath',
+      hostGroup: 'dev-localhost',
       previewHstConfigExists: false,
     };
     const editableTestChannel = {
@@ -147,16 +148,17 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapIdChanged',
       contextPath: 'testContextPath',
+      hostGroup: 'dev-localhost',
       previewHstConfigExists: true,
     };
 
     HstService.getChannel.and.returnValues($q.resolve(testChannel), $q.resolve(editableTestChannel));
     HstService.doPost.and.returnValue($q.resolve());
 
-    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, testChannel.hostGroup, '/testPath');
     $rootScope.$digest();
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath);
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
   });
 
@@ -168,6 +170,7 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
       contextPath: 'testContextPath',
+      hostGroup: 'dev-localhost',
       preview: false,
       previewHstConfigExists: false,
     };
@@ -175,11 +178,11 @@ describe('ChannelService', () => {
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
     SessionService.hasWriteAccess.and.returnValue(false);
 
-    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, testChannel.hostGroup, '/testPath');
     $rootScope.$digest();
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath);
-    expect(HstService.getChannel).not.toHaveBeenCalledWith(`${testChannel.id}-preview`, testChannel.contextPath);
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
+    expect(HstService.getChannel).not.toHaveBeenCalledWith(`${testChannel.id}-preview`, testChannel.contextPath, testChannel.hostGroup);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     expect(HstService.doPost).not.toHaveBeenCalled();
     expect(ChannelService.getChannel()).toEqual(testChannel);
@@ -193,6 +196,7 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
       contextPath: 'testContextPath',
+      hostGroup: 'dev-localhost',
       previewHstConfigExists: false,
     };
 
@@ -200,10 +204,10 @@ describe('ChannelService', () => {
     HstService.doPost.and.returnValue($q.reject({ message: 'Failed to create preview configuration' }));
     spyOn($log, 'error');
 
-    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, '/testPath');
+    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, testChannel.hostGroup, '/testPath');
     $rootScope.$digest();
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath);
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
@@ -229,10 +233,11 @@ describe('ChannelService', () => {
   it('should not enter composer mode when retrieval of the channel fails', () => {
     const id = 'testChannelId';
     const contextPath = 'testContextPath';
+    const hostGroup = 'testHostGroup';
 
     HstService.getChannel.and.returnValue($q.reject());
-    loadChannel(id, contextPath);
-    expect(HstService.getChannel).toHaveBeenCalledWith(id, contextPath);
+    loadChannel(id, contextPath, hostGroup);
+    expect(HstService.getChannel).toHaveBeenCalledWith(id, contextPath, hostGroup);
     expect(SessionService.initialize).not.toHaveBeenCalled();
   });
 

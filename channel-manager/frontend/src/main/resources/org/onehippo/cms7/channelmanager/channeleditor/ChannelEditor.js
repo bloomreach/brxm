@@ -66,10 +66,10 @@
     loadChannel: function() {
       this._destroyComponentPropertiesWindow();
       if (this.channelId) {
-        this._getContextPath(this.channelId)
-          .when(function (contextPath) {
+        this._getChannel(this.channelId)
+          .when(function (channel) {
             var branchedChannelId = this._getBranchedChannelId(this.channelId, this.branchId);
-            this.hostToIFrame.publish('load-channel', branchedChannelId, contextPath, this.branchId, this.initialPath);
+            this.hostToIFrame.publish('load-channel', branchedChannelId, channel.contextPath, channel.hostGroup, this.branchId, this.initialPath);
 
             // reset the state; the state in the app is leading. When loadChannel is called again,
             // we'll send a reload-channel event instead that reloads the current app state.
@@ -83,12 +83,8 @@
       }
     },
 
-    _getContextPath: function(channelId) {
+    _getChannel: function(channelId) {
       return new Hippo.Future(function (success, fail) {
-        if (this.initialConfig.contextPaths.length === 1) {
-          // return the only choice
-          success(this.initialConfig.contextPaths[0]);
-        }
         this.channelStoreFuture.when(function (config) {
           var channelRecord = config.store.getById(channelId);
           if (!channelRecord) {
@@ -96,7 +92,7 @@
             channelRecord = config.store.getById(channelId + '-preview');
           }
           if (channelRecord) {
-            success(channelRecord.json.contextPath);
+            success(channelRecord.json);
           } else {
             fail();
           }
@@ -181,7 +177,7 @@
         constrain: true,
         hidden: true,
         composerRestMountUrl: window.location.pathname + this.apiUrlPrefix,
-        siteContextPath : this.selectedChannel.contextPath,
+        siteContextPath : channel.contextPath,
         locale: this.locale,
         variantsUuid: this.variantsUuid,
         mountId: channel.mountId,

@@ -58,9 +58,9 @@ class ChannelService {
    * @param branchId the ID of the channel branch to show. Defaults to the active project.
    * @returns {*}
    */
-  initializeChannel(channelId, contextPath, branchId) {
+  initializeChannel(channelId, contextPath, hostGroup, branchId) {
     return this.$q.when(branchId || this.ProjectService.selectedProject.id)
-      .then(projectId => this.HstService.getChannel(channelId, contextPath)
+      .then(projectId => this.HstService.getChannel(channelId, contextPath, hostGroup)
         .then(channel => this.SessionService.initialize(channel)
           .then(() => this._ensurePreviewHstConfigExists(channel))
           .then(previewChannel => this._loadProject(channel, projectId)

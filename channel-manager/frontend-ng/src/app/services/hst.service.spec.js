@@ -23,12 +23,14 @@ describe('HstService', () => {
   let hstService;
   let ConfigServiceMock;
 
+  const cmsContextPath = '/cms';
   const contextPath = '/testContextPath';
+  const hostGroup = 'testHostGroup';
   const apiUrlPrefix = '/testApiUrlPrefix';
   const rootUuid = 'cafebabe';
   const hostname = 'test.host.name';
   const mountId = '1234';
-  const handshakeUrl = `${contextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
+  const handshakeUrl = `${cmsContextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
   const channel = { contextPath, hostname, mountId };
 
   beforeEach(() => {
@@ -37,8 +39,7 @@ describe('HstService', () => {
     ConfigServiceMock = {
       apiUrlPrefix,
       cmsUser: 'testUser',
-      contextPath,
-      getCmsContextPath: () => contextPath,
+      getCmsContextPath: () => cmsContextPath,
       contextPaths: [contextPath, '/anotherContextPath'],
       rootUuid,
     };
@@ -64,95 +65,23 @@ describe('HstService', () => {
   });
 
   it('prefixes all API urls with the context path and api url prefix', () => {
-    expect(hstService._createApiUrl('1234', ['somepath'])).toEqual('/testContextPath/testApiUrlPrefix/1234./somepath');
+    expect(hstService._createApiUrl('1234', ['somepath'])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./somepath`);
   });
 
   it('trims concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+    expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
   });
 
   it('ignores undefined path elements', () => {
-    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined])).toEqual('/testContextPath/testApiUrlPrefix/1234./bar');
+    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./bar`);
   });
 
   it('removes clashing slashes from concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+    expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
   });
 
   it('can create an API URL with only a UUID', () => {
-    expect(hstService._createApiUrl('1234', [])).toEqual('/testContextPath/testApiUrlPrefix/1234./');
-  });
-
-  it('can do a GET call', () => {
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-    }).respond(200);
-    hstService.doGet('some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
-
-  it('can do a GET call with query parameters', () => {
-    const params = {
-      param1: 'value1',
-      'param/2': 'value/2',
-    };
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-    }).respond(200);
-    hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
-
-  it('returns a rejected promise when a GET call fails', () => {
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`).respond(500);
-    hstService.doGet('some-uuid', 'one', 'two', 'three').then(fail);
-    $httpBackend.flush();
-  });
-
-  it('can do a POST call', () => {
-    $httpBackend.expectPOST(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json;charset=utf-8',
-    }).respond(200);
-    hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
-
-  it('can do a POST call without data', () => {
-    $httpBackend.expectPOST(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, null, {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json;charset=utf-8',
-    }).respond(200);
-    hstService.doPost(null, 'some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
-
-  it('returns a rejected promise when a POST call fails', () => {
-    $httpBackend.expectPOST(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }).respond(500);
-    hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').then(fail);
-    $httpBackend.flush();
-  });
-
-  it('constructs a valid handshake url when initializing a channel session', () => {
-    $httpBackend.expectGET(handshakeUrl).respond(200);
-    hstService.initializeSession(channel);
-    $httpBackend.flush();
-  });
-
-  it('uses the new context path after it has been changed', () => {
-    $httpBackend.expectGET('/testContextPath/testApiUrlPrefix/1234./test').respond(200);
-    hstService.doGet('1234', 'test');
-    $httpBackend.flush();
-
-    hstService.contextPath = '/newContextPath';
-
-    $httpBackend.expectGET('/newContextPath/testApiUrlPrefix/1234./test').respond(200);
-    hstService.doGet('1234', 'test');
-    $httpBackend.flush();
+    expect(hstService._createApiUrl('1234', [])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./`);
   });
 
   describe('when initialization is successful', () => {
@@ -200,7 +129,7 @@ describe('HstService', () => {
       id: 'channelA',
       contextPath: '/a',
     };
-    const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/${channelA.id}`;
+    const url = `${cmsContextPath}${apiUrlPrefix}/${rootUuid}./channels/${channelA.id}`;
     const catchSpy = jasmine.createSpy('catchSpy');
 
     $httpBackend.expectGET(url).respond(200, channelA);
@@ -218,134 +147,193 @@ describe('HstService', () => {
 
   it('rejects a promise when a channel load fails', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
-    const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
+    const url = `${cmsContextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
     $httpBackend.expectGET(url).respond(500);
     hstService
-      .getChannel('test', contextPath)
+      .getChannel('test', contextPath, hostGroup)
       .catch(catchSpy);
 
     $httpBackend.flush();
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('adds a new component from catalog toolkit', () => {
-    spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
-
-    hstService.addHstComponent({ id: '123456' }, 'container1').then((response) => {
-      expect(response).toEqual({ id: 'cafebabe' });
+  describe('with an initialized session', () => {
+    beforeEach(() => {
+      hstService.contextPath = contextPath;
+      hstService.hostGroup = hostGroup;
     });
 
-    expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
-  });
+    it('can do a GET call', () => {
+      $httpBackend.expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
+        'CMS-User': 'testUser',
+        contextPath,
+        hostGroup,
+        Accept: 'application/json, text/plain, */*',
+      }).respond(200);
+      hstService.doGet('some-uuid', 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-  it('removes an exist component from a container', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const url = `${contextPath}${apiUrlPrefix}/container-1./component-foo`;
-    $httpBackend.expectDELETE(url).respond(200);
+    it('can do a GET call with query parameters', () => {
+      const params = {
+        param1: 'value1',
+        'param/2': 'value/2',
+      };
+      $httpBackend.expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
+        'CMS-User': 'testUser',
+        contextPath,
+        hostGroup,
+        Accept: 'application/json, text/plain, */*',
+      }).respond(200);
+      hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-    hstService.removeHstComponent('container-1', 'component-foo').then(promiseSpy);
-    $httpBackend.flush();
+    it('returns a rejected promise when a GET call fails', () => {
+      $httpBackend.expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`).respond(500);
+      hstService.doGet('some-uuid', 'one', 'two', 'three').then(fail);
+      $httpBackend.flush();
+    });
 
-    expect(promiseSpy).toHaveBeenCalled();
-  });
+    it('can do a POST call', () => {
+      $httpBackend.expectPOST(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
+        'CMS-User': 'testUser',
+        Accept: 'application/json, text/plain, */*',
+        contextPath,
+        hostGroup,
+        'Content-Type': 'application/json;charset=utf-8',
+      }).respond(200);
+      hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-  it('updates component orders of a container', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const url = `${contextPath}${apiUrlPrefix}/container-1./`;
-    $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
+    it('can do a POST call without data', () => {
+      $httpBackend.expectPOST(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, null, {
+        'CMS-User': 'testUser',
+        Accept: 'application/json, text/plain, */*',
+        contextPath,
+        hostGroup,
+        'Content-Type': 'application/json;charset=utf-8',
+      }).respond(200);
+      hstService.doPost(null, 'some-uuid', 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-    hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
-    $httpBackend.flush();
+    it('returns a rejected promise when a POST call fails', () => {
+      $httpBackend.expectPOST(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }).respond(500);
+      hstService.doPost({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').then(fail);
+      $httpBackend.flush();
+    });
 
-    expect(promiseSpy).toHaveBeenCalled();
-  });
+    it('constructs a valid handshake url when initializing a channel session', () => {
+      $httpBackend.expectGET(handshakeUrl).respond(200);
+      hstService.initializeSession(channel);
+      $httpBackend.flush();
+    });
 
-  it('extracts the sitemap from the returned pages response', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const siteMap = ['dummy'];
-    const siteMapId = 'testSiteMapId';
-    const url = `${contextPath}${apiUrlPrefix}/${siteMapId}./pages`;
-    $httpBackend.expectGET(url).respond(200, { data: { pages: siteMap } });
+    it('can do a put call', () => {
+      $httpBackend.expectPUT(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
+        'CMS-User': 'testUser',
+        Accept: 'application/json, text/plain, */*',
+        contextPath,
+        hostGroup,
+        'Content-Type': 'application/json;charset=utf-8',
+      }).respond(200);
+      hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-    hstService.getSiteMap('testSiteMapId').then(promiseSpy);
-    $httpBackend.flush();
+    it('can do a put form call', () => {
+      $httpBackend.expectPUT(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three`, 'foo=1&bar=a%20b', {
+        'CMS-User': 'testUser',
+        Accept: 'application/json, text/plain, */*',
+        contextPath,
+        hostGroup,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }).respond(200);
+      hstService.doPutForm({ foo: 1, bar: 'a b' }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+      $httpBackend.flush();
+    });
 
-    expect(promiseSpy).toHaveBeenCalledWith(siteMap);
-  });
+    it('augments the set of requested POST headers', () => {
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      const uuid = 'test-uuid';
+      const url = `${cmsContextPath}${apiUrlPrefix}/${uuid}./pages`;
+      const appHeaders = {
+        foo: 'bar',
+        test: 'me',
+      };
+      const httpHeaders = {
+        foo: 'bar',
+        test: 'me',
+        'CMS-User': 'testUser',
+        Accept: 'application/json, text/plain, */*',
+        contextPath,
+        hostGroup,
+      };
+      const response = { data: { key: 'value' } };
+      $httpBackend.expectPOST(url, undefined, httpHeaders).respond(200, response);
+      hstService.doPostWithHeaders(uuid, appHeaders, 'pages').then(promiseSpy);
+      $httpBackend.flush();
 
-  it('rejects the promise when retrieving the sitemap fails', () => {
-    const catchSpy = jasmine.createSpy('catchSpy');
-    const siteMapId = 'testSiteMapId';
-    const url = `${contextPath}${apiUrlPrefix}/${siteMapId}./pages`;
-    $httpBackend.expectGET(url).respond(500);
+      expect(promiseSpy).toHaveBeenCalledWith(response);
+    });
 
-    hstService.getSiteMap('testSiteMapId').catch(catchSpy);
-    $httpBackend.flush();
+    it('adds a new component from catalog toolkit', () => {
+      spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
 
-    expect(catchSpy).toHaveBeenCalled();
-  });
+      hstService.addHstComponent({ id: '123456' }, 'container1').then((response) => {
+        expect(response).toEqual({ id: 'cafebabe' });
+      });
 
-  it('augments the set of requested POST headers', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const uuid = 'test-uuid';
-    const url = `${contextPath}${apiUrlPrefix}/${uuid}./pages`;
-    const appHeaders = {
-      foo: 'bar',
-      test: 'me',
-    };
-    const httpHeaders = {
-      foo: 'bar',
-      test: 'me',
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-    };
-    const response = { data: { key: 'value' } };
-    $httpBackend.expectPOST(url, undefined, httpHeaders).respond(200, response);
-    hstService.doPostWithHeaders(uuid, appHeaders, 'pages').then(promiseSpy);
-    $httpBackend.flush();
+      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
+    });
 
-    expect(promiseSpy).toHaveBeenCalledWith(response);
-  });
+    it('removes an exist component from a container', () => {
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      const url = `${cmsContextPath}${apiUrlPrefix}/container-1./component-foo`;
+      $httpBackend.expectDELETE(url).respond(200);
 
-  it('handles undefined path elements gracefully', () => {
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}./one`).respond(200);
-    hstService.doGet(undefined, 'one');
-    $httpBackend.flush();
+      hstService.removeHstComponent('container-1', 'component-foo').then(promiseSpy);
+      $httpBackend.flush();
 
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/uuid./one`).respond(200);
-    hstService.doGet('uuid', undefined, 'one');
-    $httpBackend.flush();
+      expect(promiseSpy).toHaveBeenCalled();
+    });
 
-    delete hstService.contextPath;
-    $httpBackend.expectGET(`${apiUrlPrefix}/uuid./`).respond(200);
-    hstService.doGet('uuid');
-    $httpBackend.flush();
+    it('updates component orders of a container', () => {
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      const url = `${cmsContextPath}${apiUrlPrefix}/container-1./`;
+      $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
 
-    delete ConfigServiceMock.apiUrlPrefix;
-    $httpBackend.expectGET(`${contextPath}/uuid./`).respond(200);
-    hstService.doGet('uuid');
-    $httpBackend.flush();
-    ConfigServiceMock.apiUrlPrefix = apiUrlPrefix;
-    ConfigServiceMock.contextPath = contextPath;
-  });
+      hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
+      $httpBackend.flush();
 
-  it('can do a put call', () => {
-    $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/json;charset=utf-8',
-    }).respond(200);
-    hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
-  });
+      expect(promiseSpy).toHaveBeenCalled();
+    });
 
-  it('can do a put form call', () => {
-    $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, 'foo=1&bar=a%20b', {
-      'CMS-User': 'testUser',
-      Accept: 'application/json, text/plain, */*',
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    }).respond(200);
-    hstService.doPutForm({ foo: 1, bar: 'a b' }, 'some-uuid', 'one', 'two', 'three').catch(fail);
-    $httpBackend.flush();
+    it('extracts the sitemap from the returned pages response', () => {
+      const promiseSpy = jasmine.createSpy('promiseSpy');
+      const siteMap = ['dummy'];
+      const siteMapId = 'testSiteMapId';
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+      $httpBackend.expectGET(url).respond(200, { data: { pages: siteMap } });
+
+      hstService.getSiteMap('testSiteMapId').then(promiseSpy);
+      $httpBackend.flush();
+
+      expect(promiseSpy).toHaveBeenCalledWith(siteMap);
+    });
+
+    it('rejects the promise when retrieving the sitemap fails', () => {
+      const catchSpy = jasmine.createSpy('catchSpy');
+      const siteMapId = 'testSiteMapId';
+      const url = `${cmsContextPath}${apiUrlPrefix}/${siteMapId}./pages`;
+      $httpBackend.expectGET(url).respond(500);
+
+      hstService.getSiteMap('testSiteMapId').catch(catchSpy);
+      $httpBackend.flush();
+
+      expect(catchSpy).toHaveBeenCalled();
+    });
   });
 });
