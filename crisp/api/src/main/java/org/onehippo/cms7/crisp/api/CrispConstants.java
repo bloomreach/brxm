@@ -61,6 +61,12 @@ public class CrispConstants {
     public static final String RESOURCE_RESOLVER_CONTAINER = "crisp:resourceresolvercontainer";
 
     /**
+     * Default CRISP ResourceResolver container configuration node path.
+     */
+    public static final String DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH =
+            "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer";
+
+    /**
      * Property name of a CRISP ResourceResolver configuration node, containing its own <code>ResourceResolver</code>
      * bean configuration.
      */
