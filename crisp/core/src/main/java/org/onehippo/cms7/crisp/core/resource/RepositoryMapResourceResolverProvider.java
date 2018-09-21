@@ -32,10 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
-import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
-import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -77,11 +73,6 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      * Flag whether or not this bean was initialized successfully.
      */
     private boolean initialized;
-
-    /**
-     * {@link HippoEventBus} event listener instance to subscribe configuration changes in the repository.
-     */
-    private ConfigurationChangeEventListener configurationChangeEventListener;
 
     /**
      * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
@@ -140,8 +131,6 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     @Override
     public void afterPropertiesSet() throws Exception {
         new ResourceResolversInitializingThread().start();
-        configurationChangeEventListener = new ConfigurationChangeEventListener();
-        HippoEventListenerRegistry.get().register(configurationChangeEventListener);
     }
 
     /**
@@ -149,28 +138,11 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      */
     @Override
     public void destroy() {
-        HippoEventListenerRegistry.get().unregister(configurationChangeEventListener);
-
         childAppContexts.values().forEach(childContext -> {
             childContext.close();
         });
 
         childAppContexts.clear();
-    }
-
-    /**
-     * {@link HippoEventBus} event listener to subscribe configuration changes in the repository and initialize
-     * the {@link ResourceResolver}s for each <strong>resource space</strong>s.
-     */
-    public class ConfigurationChangeEventListener {
-        @Subscribe
-        public void handleEvent(HippoEvent event) {
-            if (CrispConstants.EVENT_APPLICATION_NAME.equals(event.application())
-                    && CrispConstants.EVENT_CATEGORY_CONFIGURATION.equals(event.category())
-                    && CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION.equals(event.action())) {
-                initializeResourceResolvers();
-            }
-        }
     }
 
     /**
@@ -189,7 +161,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      * @return initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
      * returns true if the initialization was successful.
      */
-    private boolean initializeResourceResolvers() {
+    protected boolean refreshResourceResolvers() {
         boolean inited = false;
         Session session = null;
 
@@ -318,7 +290,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
 
         public void run() {
             while (!initialized) {
-                if (initializeResourceResolvers()) {
+                if (refreshResourceResolvers()) {
                     initialized = true;
                     break;
                 }
