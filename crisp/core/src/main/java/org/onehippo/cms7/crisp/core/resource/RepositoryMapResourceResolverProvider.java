@@ -168,6 +168,16 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     }
 
     /**
+     * Return the CRISP ResourceResolver container configuration node path.
+     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer"
+     * @return the CRISP ResourceResolver container configuration node path
+     */
+    protected String getResourceResolverContainerConfigPath() {
+        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH;
+        return resourceResolverContainerConfigPath;
+    }
+
+    /**
      * Initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
      * returns true if the initialization was successful.
      * @return initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
@@ -178,7 +188,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         Session session = null;
 
         try {
-            final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH;
+            final String resourceResolverContainerConfigPath = getResourceResolverContainerConfigPath();
 
             session = repository.login(credentials);
 
