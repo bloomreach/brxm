@@ -168,20 +168,27 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         try {
             final String moduleConfigPath = getModuleConfigPath();
 
+            if (moduleConfigPath == null) {
+                log.info("Waiting for CRISP module configuration node path being determined...");
+                // if the moduleConfigPath is not determined yet, let's just wait for next checking cycle.
+                return false;
+            }
+
             session = repository.login(credentials);
 
             if (!session.nodeExists(moduleConfigPath)) {
-                log.warn("No CRISP module configuration exists at {}.", moduleConfigPath);
-                return false;
+                log.info("There is no CRISP module configuration node, not existing at '{}'.", moduleConfigPath);
+                // if not bootstrapped properly, let's assume that the system doesn't need CRISP module config.
+                return true;
             }
 
             final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
                     + CrispConstants.RESOURCE_RESOLVER_CONTAINER;
 
             if (!session.nodeExists(resourceResolverContainerConfigPath)) {
-                log.warn(
-                        "No CRISP resource resolver is found at {} as it doesn't exist.",
+                log.info("There is no CRISP resource resolvers container configuration node, not existing at '{}'.",
                         resourceResolverContainerConfigPath);
+                // if not bootstrapped properly, let's assume that the system doesn't need CRISP module config.
                 return true;
             }
 
@@ -249,7 +256,21 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             }
         }
 
+        if (inited) {
+            try {
+                onResourceResolversRefreshed();
+            } catch (Exception e) {
+                log.error("Error occurred while executing onResourceResolversRefreshed event handler.", e);
+            }
+        }
+
         return inited;
+    }
+
+    /**
+     * Can be overriden as an event when the internal resource resolvers are just refreshed.
+     */
+    protected void onResourceResolversRefreshed() {
     }
 
     /**
