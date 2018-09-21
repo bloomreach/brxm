@@ -184,8 +184,9 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
 
             if (!session.nodeExists(moduleConfigPath)) {
                 log.info("There is no CRISP module configuration node, not existing at '{}'.", moduleConfigPath);
-                // if not bootstrapped properly, let's assume that the system doesn't need CRISP module config.
-                return true;
+                // Even if not bootstrapped properly, let's try to load configuration in the nexe cycle
+                // as system admin may configure it after startup.
+                return false;
             }
 
             final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
@@ -194,8 +195,9 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             if (!session.nodeExists(resourceResolverContainerConfigPath)) {
                 log.info("There is no CRISP resource resolvers container configuration node, not existing at '{}'.",
                         resourceResolverContainerConfigPath);
-                // if not bootstrapped properly, let's assume that the system doesn't need CRISP module config.
-                return true;
+                // Even if not bootstrapped properly, let's try to load configuration in the nexe cycle
+                // as system admin may configure it after startup.
+                return false;
             }
 
             final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);
