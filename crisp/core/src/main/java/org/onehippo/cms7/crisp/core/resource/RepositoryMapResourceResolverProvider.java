@@ -244,7 +244,8 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
 
             for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
                 if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
-                    oldChildContext = childAppContexts.get(resourceSpaceNameInChildContexts);
+                    oldChildContext = childAppContexts.remove(resourceSpaceNameInChildContexts);
+
                     if (oldChildContext != null) {
                         oldChildContext.close();
                     }
