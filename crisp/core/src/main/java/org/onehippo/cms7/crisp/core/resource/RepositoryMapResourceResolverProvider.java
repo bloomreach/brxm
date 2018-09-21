@@ -146,12 +146,12 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     }
 
     /**
-     * Return the CRISP ResourceResolver container configuration node path.
-     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer"
-     * @return the CRISP ResourceResolver container configuration node path
+     * Return the CRISP module configuration node path.
+     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig"
+     * @return the CRISP module configuration node path
      */
-    protected String getResourceResolverContainerConfigPath() {
-        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH;
+    protected String getModuleConfigPath() {
+        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_CRISP_MODULE_CONFIG_PATH;
         return resourceResolverContainerConfigPath;
     }
 
@@ -166,15 +166,23 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         Session session = null;
 
         try {
-            final String resourceResolverContainerConfigPath = getResourceResolverContainerConfigPath();
+            final String moduleConfigPath = getModuleConfigPath();
 
             session = repository.login(credentials);
 
+            if (!session.nodeExists(moduleConfigPath)) {
+                log.warn("No CRISP module configuration exists at {}.", moduleConfigPath);
+                return false;
+            }
+
+            final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
+                    + CrispConstants.RESOURCE_RESOLVER_CONTAINER;
+
             if (!session.nodeExists(resourceResolverContainerConfigPath)) {
                 log.warn(
-                        "No CRISP resource resolvers initialization from repository configuration at '{}' as it doesn't exist.",
+                        "No CRISP resource resolver is found at {} as it doesn't exist.",
                         resourceResolverContainerConfigPath);
-                return false;
+                return true;
             }
 
             final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);

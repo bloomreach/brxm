@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.crisp.hst.resource;
 
-import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.core.resource.RepositoryMapResourceResolverProvider;
@@ -57,13 +56,6 @@ public class RefreshableRepositoryMapResourceResolverProvider extends Repository
     public void destroy() {
         HippoEventListenerRegistry.get().unregister(configurationChangeEventListener);
         super.destroy();
-    }
-
-    @Override
-    protected String getResourceResolverContainerConfigPath() {
-        final String defaultPath = super.getResourceResolverContainerConfigPath();
-        return HstServices.getComponentManager().getContainerConfiguration()
-                .getString(CrispConstants.CRISP_MODULE_CONFIG_PATH_PROP_NAME, defaultPath);
     }
 
     /**
