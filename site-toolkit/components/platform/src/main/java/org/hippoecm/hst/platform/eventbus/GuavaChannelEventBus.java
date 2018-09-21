@@ -141,7 +141,7 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
         final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(model.getWebsiteClassLoader(), false);
 
         if (eventBus == null) {
-            log.warn("Cannot post event because no event bus found for contextPath, {}: {}", contextPath, event);
+            log.debug("No channel event listener registered for application ({}), not posting: {}", contextPath, event);
             return;
         }
 
