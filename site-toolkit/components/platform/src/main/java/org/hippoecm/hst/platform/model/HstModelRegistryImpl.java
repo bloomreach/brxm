@@ -80,6 +80,8 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
         try {
+            // TODO HSTTWO-4355 We really need to get rid of the core below! The *website* component manager should not even
+            // TODO provide hstconfigreader.delegating any more since this is only needed in the platform webapp!!
             Credentials credentials = websiteComponentManager.getComponent(Credentials.class.getName() + ".hstconfigreader.delegating");
             final Session session = repository.login(credentials);
             final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
