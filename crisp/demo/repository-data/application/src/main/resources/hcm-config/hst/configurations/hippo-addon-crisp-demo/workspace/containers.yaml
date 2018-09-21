@@ -35,9 +35,9 @@ definitions:
             hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsEventsComponent
             hst:label: Events List
             hst:parameternames: [hidePastEvents, documentTypes, sortField, sortOrder,
-              includeSubtypes, showPagination, path, pageSize, documentDateField]
+              includeSubtypes, showPagination, path, pageSize, documentDateField, hidePastEvents]
             hst:parametervalues: ['on', 'hippoaddoncrispdemo:eventsdocument', '',
-              desc, 'off', 'on', '', '10', 'hippoaddoncrispdemo:enddate']
+              desc, 'off', 'on', '', '10', 'hippoaddoncrispdemo:enddate', 'off']
             hst:template: eventslist-main-eventslist
             hst:xtype: hst.item
       /eventspage:
