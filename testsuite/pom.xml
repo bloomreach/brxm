@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0-hst-platform-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>13.0.0-SNAPSHOT</version>
+  <version>13.0.0-hst-platform-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -282,13 +282,13 @@
                     <context>/site</context>
                   </properties>
                 </deployable>
-                <deployable>
-                  <location>${project.basedir}/intranet/target/intranet.war</location>
-                  <type>war</type>
-                  <properties>
-                    <context>/intranet</context>
-                  </properties>
-                </deployable>
+                <!--<deployable>-->
+                  <!--<location>${project.basedir}/intranet/target/intranet.war</location>-->
+                  <!--<type>war</type>-->
+                  <!--<properties>-->
+                    <!--<context>/intranet</context>-->
+                  <!--</properties>-->
+                <!--</deployable>-->
                 <deployable>
                   <location>${project.basedir}/solr/target/solr.war</location>
                   <type>war</type>
