@@ -38,23 +38,23 @@ class Step1Service {
     delete this.locale;
     delete this.rootPath;
     delete this.defaultPath;
-    delete this.templateQuery;
+    delete this.documentTemplateQuery;
   }
 
   stop() {
     this._reset();
   }
 
-  open(templateQuery, rootPath, defaultPath) {
+  open(documentTemplateQuery, rootPath, defaultPath) {
     this._reset();
 
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
-    this.templateQuery = templateQuery;
+    this.documentTemplateQuery = documentTemplateQuery;
 
-    return this.ContentService._send('GET', ['templatequery', templateQuery], null, true)
-      .then(templateQueryResult => this._onLoadDocumentTypes(templateQueryResult.documentTypes))
-      .catch(error => this._onError(error, `Unexpected error loading template query "${templateQuery}"`));
+    return this.ContentService._send('GET', ['documenttemplatequery', documentTemplateQuery], null, true)
+      .then(documentTemplateQueryResult => this._onLoadDocumentTypes(documentTemplateQueryResult.documentTypes))
+      .catch(error => this._onError(error, `Unexpected error loading template query "${documentTemplateQuery}"`));
   }
 
   /**
@@ -95,7 +95,7 @@ class Step1Service {
     const document = {
       name: this.name,
       slug: this.url,
-      templateQuery: this.templateQuery,
+      documentTemplateQuery: this.documentTemplateQuery,
       documentTypeId: this.documentType,
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
