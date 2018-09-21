@@ -163,6 +163,17 @@ describe('ComponentEditorService', () => {
       expectGroup(groups[0], 'DEFAULT_PROPERTY_GROUP_LABEL', 1);
     });
 
+    it('marks the group with the default group label', () => {
+      openComponentEditor([
+        { groupLabel: '' },
+        { groupLabel: 'test' },
+      ]);
+
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups[0].default).toBe(true);
+      expect(groups[1].default).toBe(false);
+    });
+
     it('puts all the fields with the same label in one group', () => {
       openComponentEditor([
         { groupLabel: '' },

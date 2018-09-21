@@ -130,6 +130,7 @@ class ComponentEditorService {
 
     return Array.from(groups).map(group => ({
       collapse: group[0] !== null && group[0] !== TEMPLATE_PICKER,
+      default: group[0] === defaultGroupLabel,
       fields: group[1],
       label: group[0],
     }));

@@ -26,7 +26,7 @@
     <md-list class="qa-catalog">
       <md-list-item class="md-2-line"
                     md-virtual-repeat="component in $ctrl.filteredComponents"
-                    ng-class="{'list-item-active catalog-list-item-active': $ctrl.isComponentSelected(component)}"
+                    ng-class="{'list-item-active text-italic': $ctrl.isComponentSelected(component)}"
                     ng-click="$ctrl.onSelect(component)">
         <img class="md-avatar"
              ng-src="{{component.iconURL}}" />

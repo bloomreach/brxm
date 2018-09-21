@@ -33,7 +33,8 @@
              ng-class="{'collapsed': collapse.isCollapsed}">
     </md-icon>
 
-    <span layout-fill>
+    <span layout-fill
+          ng-class="{'text-italic': $ctrl.group.default}">
       {{ $ctrl.group.label }}
     </span>
   </h5>
