@@ -20,7 +20,7 @@
       </article>
     </#list>
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-document"/>
+      <@hst.manageContent documentTemplateQuery="new-document"/>
     </div>
     <#if cparam.showPagination>
       <#include "../include/pagination.ftl">
