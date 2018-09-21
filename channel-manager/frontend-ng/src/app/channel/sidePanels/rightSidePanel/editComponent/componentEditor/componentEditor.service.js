@@ -181,9 +181,10 @@ class ComponentEditorService {
   }
 
   _propertiesAsFormData() {
-    const formData = {};
-    this.properties.forEach((property) => { formData[property.name] = property.value; });
-    return formData;
+    return this.properties.reduce((formData, property) => {
+      formData[property.name] = property.value;
+      return formData;
+    }, {});
   }
 
   close() {
