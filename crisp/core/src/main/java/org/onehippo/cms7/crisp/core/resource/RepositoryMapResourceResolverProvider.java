@@ -146,12 +146,18 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     }
 
     /**
-     * Return the CRISP ResourceResolver container configuration node path.
-     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer"
-     * @return the CRISP ResourceResolver container configuration node path
+     * Return the CRISP module configuration node path.
+     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig"
+     * <p>
+     * This method may be overridden to determine a different CRISP module configuration path per site webapp.
+     * In that case, the overriden method may return null if the site webapp is not fully initialized yet and so
+     * it cannot read HST container configuration yet for instance.
+     * Therefore, if {@link #getModuleConfigPath()} returns null, then this tries to load the module configuration
+     * later again.
+     * @return the CRISP module configuration node path, or null if not determinable yet
      */
-    protected String getResourceResolverContainerConfigPath() {
-        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_RESOURCE_RESOLVER_CONTAINER_CONFIG_PATH;
+    protected String getModuleConfigPath() {
+        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_CRISP_MODULE_CONFIG_PATH;
         return resourceResolverContainerConfigPath;
     }
 
@@ -166,15 +172,23 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         Session session = null;
 
         try {
-            final String resourceResolverContainerConfigPath = getResourceResolverContainerConfigPath();
-
             session = repository.login(credentials);
+
+            final String moduleConfigPath = getModuleConfigPath();
+
+            if (moduleConfigPath == null || !session.nodeExists(moduleConfigPath)) {
+                log.warn("No CRISP module configuration node is determined yet or exists at '{}'.", moduleConfigPath);
+                return false;
+            }
+
+            final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
+                    + CrispConstants.RESOURCE_RESOLVER_CONTAINER;
 
             if (!session.nodeExists(resourceResolverContainerConfigPath)) {
                 log.warn(
-                        "No CRISP resource resolvers initialization from repository configuration at '{}' as it doesn't exist.",
+                        "No CRISP resource resolver is found at {} as it doesn't exist.",
                         resourceResolverContainerConfigPath);
-                return false;
+                return true;
             }
 
             final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);

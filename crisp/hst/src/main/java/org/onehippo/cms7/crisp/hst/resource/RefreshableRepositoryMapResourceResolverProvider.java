@@ -60,10 +60,14 @@ public class RefreshableRepositoryMapResourceResolverProvider extends Repository
     }
 
     @Override
-    protected String getResourceResolverContainerConfigPath() {
-        final String defaultPath = super.getResourceResolverContainerConfigPath();
+    protected String getModuleConfigPath() {
+        if (!HstServices.isAvailable()) {
+            return null;
+        }
+
+        final String defaultModulePath = super.getModuleConfigPath();
         return HstServices.getComponentManager().getContainerConfiguration()
-                .getString(CrispConstants.CRISP_MODULE_CONFIG_PATH_PROP_NAME, defaultPath);
+                .getString(CrispConstants.CRISP_MODULE_CONFIG_PATH_PROP_NAME, defaultModulePath);
     }
 
     /**
