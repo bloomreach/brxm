@@ -18,10 +18,12 @@ describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
   let $scope;
+  let $translate;
   let ChannelService;
   let CmsService;
   let ComponentEditor;
   let EditComponentService;
+  let FeedbackService;
   let HippoIframeService;
 
   let $ctrl;
@@ -34,10 +36,12 @@ describe('EditComponentMainCtrl', () => {
       $rootScope,
       _$log_,
       _$q_,
+      _$translate_,
       _EditComponentService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
+      $translate = _$translate_;
       EditComponentService = _EditComponentService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
@@ -52,6 +56,7 @@ describe('EditComponentMainCtrl', () => {
         'deleteComponent',
         'save',
       ]);
+      FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
       $scope = $rootScope.$new();
@@ -61,6 +66,7 @@ describe('EditComponentMainCtrl', () => {
         CmsService,
         ComponentEditor,
         EditComponentService,
+        FeedbackService,
         HippoIframeService,
       });
 
@@ -77,14 +83,38 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('save component', () => {
-    it('saves changes', () => {
-      $ctrl.save();
-      expect(ComponentEditor.save).toHaveBeenCalled();
+    it('should show a toaster on error', (done) => {
+      const parameterMap = {};
+      ComponentEditor.save.and.returnValue($q.reject({
+        data: {
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap,
+        },
+      }));
+
+      spyOn($translate, 'instant');
+      $translate.instant.and.returnValue('translated');
+
+      $ctrl.save()
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
+          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          done();
+        });
+      $scope.$digest();
     });
 
-    it('reports a usage statistics', () => {
-      $ctrl.save();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
+    it('should report usage statistics', (done) => {
+      ComponentEditor.save.and.returnValue($q.resolve(''));
+      $ctrl.save()
+        .then(() => {
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
+
+          done();
+        });
+      $scope.$digest();
     });
   });
 

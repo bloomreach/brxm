@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
+const ERRORS = {
+  ITEM_ALREADY_LOCKED: 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED',
+};
+
 class EditComponentMainCtrl {
   constructor(
     $log,
     $q,
+    $translate,
     ChannelService,
     CmsService,
     ComponentEditor,
     EditComponentService,
+    FeedbackService,
     HippoIframeService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$q = $q;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
     this.EditComponentService = EditComponentService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
   }
 
@@ -40,8 +48,15 @@ class EditComponentMainCtrl {
   }
 
   save() {
-    this.ComponentEditor.save();
-    this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
+    return this.ComponentEditor.save()
+      .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
+      .catch((error) => {
+        const message = ERRORS[error.data.error]
+          ? this.$translate.instant(ERRORS[error.data.error], error.data.parameterMap)
+          : error.message;
+
+        this.FeedbackService.showError(message);
+      });
   }
 
   deleteComponent() {
