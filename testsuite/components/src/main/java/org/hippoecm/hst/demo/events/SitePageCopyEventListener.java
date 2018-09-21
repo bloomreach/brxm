@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.demo.events;
 
-import org.hippoecm.hst.configuration.channel.ChannelEventListenerRegistry;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
