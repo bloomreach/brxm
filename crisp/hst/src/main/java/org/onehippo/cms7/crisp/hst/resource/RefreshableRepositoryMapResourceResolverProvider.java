@@ -15,14 +15,18 @@
  */
 package org.onehippo.cms7.crisp.hst.resource;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+
+import org.hippoecm.hst.core.jcr.EventListenerItemImpl;
+import org.hippoecm.hst.core.jcr.EventListenersContainer;
 import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.crisp.api.CrispConstants;
-import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.core.resource.RepositoryMapResourceResolverProvider;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
-import org.onehippo.cms7.services.eventbus.Subscribe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extending {@link RepositoryMapResourceResolverProvider} to be able to refresh the internal resource resolvers
@@ -30,14 +34,13 @@ import org.onehippo.cms7.services.eventbus.Subscribe;
  * <p>
  * Also, this class overrides {@link #getResourceResolverContainerConfigPath()} in order to allow an HST site webapp
  * to override the default CRISP ResourceResolver container configuration node path (e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer")
- * by configuring a property in hst-config.properties.
+ * by configuring a property named {@link CrispConstants#CRISP_MODULE_CONFIG_PATH_PROP_NAME} in hst-config.properties.
  */
 public class RefreshableRepositoryMapResourceResolverProvider extends RepositoryMapResourceResolverProvider {
 
-    /**
-     * {@link HippoEventBus} event listener instance to subscribe configuration changes in the repository.
-     */
-    private ConfigurationChangeEventListener configurationChangeEventListener;
+    private static Logger log = LoggerFactory.getLogger(RefreshableRepositoryMapResourceResolverProvider.class);
+
+    private EventListenersContainer moduleConfigChangeListenersContainer;
 
     /**
      * Default constructor.
@@ -46,17 +49,8 @@ public class RefreshableRepositoryMapResourceResolverProvider extends Repository
         super();
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-        configurationChangeEventListener = new ConfigurationChangeEventListener();
-        HippoServiceRegistry.registerService(configurationChangeEventListener, HippoEventBus.class);
-    }
-
-    @Override
-    public void destroy() {
-        HippoServiceRegistry.unregisterService(configurationChangeEventListener, HippoEventBus.class);
-        super.destroy();
+    public void setModuleConfigChangeListenersContainer(EventListenersContainer moduleConfigChangeListenersContainer) {
+        this.moduleConfigChangeListenersContainer = moduleConfigChangeListenersContainer;
     }
 
     @Override
@@ -70,16 +64,81 @@ public class RefreshableRepositoryMapResourceResolverProvider extends Repository
                 .getString(CrispConstants.CRISP_MODULE_CONFIG_PATH_PROP_NAME, defaultModulePath);
     }
 
+    @Override
+    protected void onResourceResolversRefreshed() {
+        if (moduleConfigChangeListenersContainer != null) {
+            disposeModuleConfigChangeListenersContainer();
+            initializeModuleConfigChangeListenersContainer();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+
+        if (moduleConfigChangeListenersContainer != null) {
+            disposeModuleConfigChangeListenersContainer();
+        }
+    }
+
     /**
-     * {@link HippoEventBus} event listener to subscribe configuration changes in the repository and initialize
-     * the {@link ResourceResolver}s for each <strong>resource space</strong>s.
+     * Called by the module configuration listener on event. As an optimization, may be overridden
+     * to return false for events that are actually not a configuration change, so that they don't trigger
+     * a reconfiguration.
+     * <p>
+     * This is the same pattern as <code>org.onehippo.repository.modules.AbstractReconfigurableDaemonModule</code>
+     * @param event event returned by the EventIterator
+     * @return true if this event requires reloading of the configuration
+     * @throws RepositoryException if repository exception occurs
      */
-    public class ConfigurationChangeEventListener {
-        @Subscribe
-        public void handleEvent(HippoEvent event) {
-            if (CrispConstants.EVENT_APPLICATION_NAME.equals(event.application())
-                    && CrispConstants.EVENT_CATEGORY_CONFIGURATION.equals(event.category())
-                    && CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION.equals(event.action())) {
+    protected boolean isRefreshableEvent(Event event) throws RepositoryException {
+        return true;
+    }
+
+    private void initializeModuleConfigChangeListenersContainer() {
+        final EventListenerItemImpl listenerItem = new EventListenerItemImpl();
+        listenerItem.setAbsolutePath(getModuleConfigPath());
+        listenerItem.setDeep(true);
+        listenerItem.setEventTypes(Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED);
+        listenerItem.setNoLocal(false);
+        listenerItem.setEventListener(new ModuleConfigurationChangeListener());
+
+        moduleConfigChangeListenersContainer.addEventListenerItem(listenerItem);
+        moduleConfigChangeListenersContainer.start();
+    }
+
+    private void disposeModuleConfigChangeListenersContainer() {
+        moduleConfigChangeListenersContainer.stop();
+
+        moduleConfigChangeListenersContainer.getEventListenerItems().forEach(listenerItem -> {
+            moduleConfigChangeListenersContainer.removeEventListenerItem(listenerItem);
+        });
+    }
+
+    /**
+     * Applying the same pattern as <code>org.onehippo.repository.modules.AbstractReconfigurableDaemonModule</code>.
+     */
+    private class ModuleConfigurationChangeListener implements EventListener {
+
+        @Override
+        public void onEvent(EventIterator events) {
+            boolean updated = false;
+
+            while (events.hasNext()) {
+                final Event event = events.nextEvent();
+
+                try {
+                    if (isRefreshableEvent(event)) {
+                        updated = true;
+                        break;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to determine if event is a refreshable event", e);
+                }
+            }
+
+            if (updated) {
                 refreshResourceResolvers();
             }
         }

@@ -24,7 +24,14 @@
         class="org.onehippo.cms7.crisp.hst.resource.RefreshableRepositoryMapResourceResolverProvider">
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+    <property name="moduleConfigChangeListenersContainer">
+      <bean class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl">
+        <property name="repository" ref="javax.jcr.Repository"/>
+        <property name="sessionLiveCheck" value="true"/>
+        <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
+        <property name="sessionLiveCheckInterval" value="60000"/>
+      </bean>
+    </property>
   </bean>
 
 </beans>
-
