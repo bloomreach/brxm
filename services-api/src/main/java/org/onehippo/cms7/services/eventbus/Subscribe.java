@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import java.lang.annotation.Target;
  * Annotation for single-argument (void) methods that indicates that the method is a listener.
  * The parameter type is to be used to filter events.
  * <p>
- * Annotated methods will be invoked asynchronously, but should refrain from expensive operations
- * since that will block the entire event delivery mechanism.
+ * Annotated methods may be invoked synchronously or asynchronously, depending on which eventbus
+ * they are delivered, but in any case must refrain from expensive operations since that will block
+ * the entire event delivery mechanism, and also the event raising process in case of synchronous events.
  * <p>
  * This annotation is a fork of the guava eventbus annotation.  This was necessary since we do not
  * want to push the guava library (see http://code.google.com/p/guava-libraries/) onto the shared
