@@ -115,8 +115,17 @@ public interface HippoUserManager extends UserManager {
 
     /**
      * Checks if the username should be treated in a case-sensitive way.
+     * (ie, ldap usually isn't, the internal provider is)
      * @return true if the username should be treated in a case-sensitive way.
      */
     boolean isCaseSensitive();
+
+    /**
+     * Checks if the username should be sync to the application as lowercase or uppercase.
+     * @return true if the username should be sync to the application as lowercase.
+     */
+    default boolean isUserIdLowerCase() {
+        return true;
+    }
 
 }

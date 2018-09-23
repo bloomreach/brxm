@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
@@ -132,6 +131,26 @@ public class JcrUtils {
         try {
             return baseNode.getProperty(relPath).getString();
         } catch (PathNotFoundException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the enum value of a string property at <code>relPath</code> from <code>baseNode</code> or
+     * <code>defaultValue</code> if no such property exists.
+     *
+     * @param baseNode     existing node that should be the base for the relative path
+     * @param relPath      relative path to the property to get
+     * @param defaultValue default value to return when the property does not exist
+     * @return the enum value of a string property at <code>relPath</code> from <code>baseNode</code> or
+     *         <code>defaultValue</code> if no such property exists or property doesn't have any enum value
+     * @throws RepositoryException in case of exception accessing the Repository
+     */
+    public static <E extends Enum<E>> E getEnumProperty(Node baseNode, String relPath, E defaultValue) throws RepositoryException {
+        try {
+            String propertyValue = baseNode.getProperty(relPath).getString();
+            return (E) Enum.valueOf(defaultValue.getClass(), propertyValue);
+        } catch (PathNotFoundException | IllegalArgumentException e) {
             return defaultValue;
         }
     }
@@ -814,26 +833,6 @@ public class JcrUtils {
         }
 
         throw new ItemNotFoundException("The 'current' item does not longer exist below its parent");
-    }
-
-    private static boolean isAutoCreatedNode(final String childName, Node parent) throws RepositoryException {
-        for (NodeDefinition nodeDefinition : parent.getPrimaryNodeType().getChildNodeDefinitions()) {
-            if (childName.equals(nodeDefinition.getName())) {
-                if (nodeDefinition.isAutoCreated()) {
-                    return true;
-                }
-            }
-        }
-        for (NodeType nodeType : parent.getMixinNodeTypes()) {
-            for (NodeDefinition nodeDefinition : nodeType.getChildNodeDefinitions()) {
-                if (childName.equals(nodeDefinition.getName())) {
-                    if (nodeDefinition.isAutoCreated()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private static byte[] objectToBytes(Object o) throws RepositoryException {
