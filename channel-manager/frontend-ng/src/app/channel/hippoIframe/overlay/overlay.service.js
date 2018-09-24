@@ -376,20 +376,20 @@ class OverlayService {
     const config = {
       containerItem: structureElement.getEnclosingElement(),
       defaultPath: structureElement.getDefaultPath(),
+      documentTemplateQuery: structureElement.getDocumentTemplateQuery(),
       documentUuid,
       parameterBasePath,
       parameterName,
       parameterValue: structureElement.getParameterValue(),
       pickerConfig: structureElement.getPickerConfig(),
       rootPath: structureElement.getRootPath(),
-      templateQuery: structureElement.getTemplateQuery(),
     };
 
     if (!this.ChannelService.isEditable()) {
       delete config.parameterName;
 
       if (config.documentUuid) { // whenever uuid is available, only edit button for authors
-        delete config.templateQuery;
+        delete config.documentTemplateQuery;
         return config;
       }
 
@@ -439,7 +439,7 @@ class OverlayService {
       buttons.push(selectDocumentButton);
     }
 
-    if (config.templateQuery) {
+    if (config.documentTemplateQuery) {
       const createContentButton = {
         id: 'create-content',
         mainIcon: plusSvg,
@@ -468,7 +468,7 @@ class OverlayService {
     if (manageContentConfig.documentUuid) {
       mainButton.addClass('qa-edit-content');
     }
-    if (manageContentConfig.templateQuery) {
+    if (manageContentConfig.documentTemplateQuery) {
       mainButton.addClass('qa-add-content');
     }
     if (manageContentConfig.parameterName) {

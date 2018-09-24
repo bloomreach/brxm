@@ -52,8 +52,10 @@ describe('EditComponentMainCtrl', () => {
       ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
         'close',
         'confirmDeleteComponent',
+        'confirmDiscardChanges',
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
+        'discardChanges',
         'save',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
@@ -115,6 +117,26 @@ describe('EditComponentMainCtrl', () => {
           done();
         });
       $scope.$digest();
+    });
+  });
+
+  describe('discard component changes', () => {
+    it('does discard changes when confirmed', () => {
+      ComponentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+
+      $ctrl.discard();
+      $scope.$digest();
+
+      expect(ComponentEditor.discardChanges).toHaveBeenCalled();
+    });
+
+    it('does not discard changes when not confirmed', () => {
+      ComponentEditor.confirmDiscardChanges.and.returnValue($q.reject());
+
+      $ctrl.discard();
+      $scope.$digest();
+
+      expect(ComponentEditor.discardChanges).not.toHaveBeenCalled();
     });
   });
 

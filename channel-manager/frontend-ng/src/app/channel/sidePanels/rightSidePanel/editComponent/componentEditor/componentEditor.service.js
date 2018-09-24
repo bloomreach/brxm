@@ -15,7 +15,7 @@
  */
 
 import MultiActionDialogCtrl from '../../contentEditor/multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from '../../contentEditor//multiActionDialog/multiActionDialog.html';
+import multiActionDialogTemplate from '../../contentEditor/multiActionDialog/multiActionDialog.html';
 
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
@@ -49,13 +49,6 @@ class ComponentEditorService {
     this.container = container;
     this.page = page;
     this.properties = this._normalizeProperties(properties);
-
-    console.log('Channel', this.channel);
-    console.log('Component', this.component);
-    console.log('Component properties', this.properties);
-    console.log('Container', this.container);
-    console.log('Page', this.page);
-
     this.propertyGroups = this._groupProperties(this.properties);
   }
 
@@ -130,6 +123,7 @@ class ComponentEditorService {
 
     return Array.from(groups).map(group => ({
       collapse: group[0] !== null && group[0] !== TEMPLATE_PICKER,
+      default: group[0] === defaultGroupLabel,
       fields: group[1],
       label: group[0],
     }));
@@ -182,9 +176,36 @@ class ComponentEditorService {
 
   _propertiesAsFormData() {
     return this.properties.reduce((formData, property) => {
-      formData[property.name] = property.value;
+      if (property.type === 'datefield') {
+        // cut off the time and time zone information from the value that the datefield returns
+        formData[property.name] = property.value.substring(0, 10);
+      } else {
+        formData[property.name] = property.value;
+      }
       return formData;
     }, {});
+  }
+
+  confirmDiscardChanges() {
+    const translateParams = {
+      component: this.component.label,
+    };
+
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TO COMPONENT', translateParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  discardChanges() {
+    return this.open({
+      channel: this.channel,
+      component: this.component,
+      container: this.container,
+      page: this.page,
+    }).finally(() => this.PageStructureService.renderComponent(this.component.id));
   }
 
   close() {

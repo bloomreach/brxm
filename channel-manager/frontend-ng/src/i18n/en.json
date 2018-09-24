@@ -17,6 +17,7 @@
   "CONFIRM_DELETE_MENU_ITEM_MESSAGE": "Delete '{{menuItem}}'?",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all changes?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",
+  "CONFIRM_DISCARD_CHANGES_TO COMPONENT": "Discard unsaved changes to '{{component}}'?",
   "CONFIRM_DISCARD_NEW_DOCUMENT": "This will delete the '{{documentName}}' document",
   "CONFIRM_DISCARD_OWN_CHANGES_IN_PROJECT_MESSAGE": "Discard your changes to channel '{{ channelName }}' for project '{{ projectName }}'?",
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Discard your changes?",

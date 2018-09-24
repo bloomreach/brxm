@@ -163,6 +163,17 @@ describe('ComponentEditorService', () => {
       expectGroup(groups[0], 'DEFAULT_PROPERTY_GROUP_LABEL', 1);
     });
 
+    it('marks the group with the default group label', () => {
+      openComponentEditor([
+        { groupLabel: '' },
+        { groupLabel: 'test' },
+      ]);
+
+      const groups = ComponentEditor.getPropertyGroups();
+      expect(groups[0].default).toBe(true);
+      expect(groups[1].default).toBe(false);
+    });
+
     it('puts all the fields with the same label in one group', () => {
       openComponentEditor([
         { groupLabel: '' },
@@ -300,6 +311,20 @@ describe('ComponentEditorService', () => {
         c: 'value-c',
       });
     });
+
+    it('only passes the first 10 characters of a date field value', () => {
+      spyOn(PageStructureService, 'renderComponent');
+      const properties = [
+        { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.valueChanged();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+        a: '2017-09-21',
+      });
+    });
   });
 
   describe('save', () => {
@@ -382,6 +407,53 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
 
       expect(ComponentEditor.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('discard changes functions', () => {
+    beforeEach(() => {
+      const properties = ['propertyData'];
+      openComponentEditor(properties);
+    });
+
+    it('calls the dialog service to confirm', () => {
+      const showPromise = {};
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(DialogService, 'show');
+
+      DialogService.show.and.returnValue(showPromise);
+
+      const result = ComponentEditor.confirmDiscardChanges();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('reopens the component to discard changes', () => {
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      ComponentEditor.discardChanges();
+      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+    });
+
+    it('redraws the component when discarding changes succeeded', () => {
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'renderComponent');
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
+    });
+
+    it('redraws the component when discarding changes failed', () => {
+      spyOn(ComponentEditor, 'open').and.returnValue($q.reject());
+      spyOn(PageStructureService, 'renderComponent');
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
     });
   });
 

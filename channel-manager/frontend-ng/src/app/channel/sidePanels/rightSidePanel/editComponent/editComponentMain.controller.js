@@ -44,7 +44,8 @@ class EditComponentMainCtrl {
   }
 
   discard() {
-    console.log('TODO: implement EditComponentMainCtrl.discard');
+    this.ComponentEditor.confirmDiscardChanges()
+      .then(() => this.ComponentEditor.discardChanges());
   }
 
   save() {
