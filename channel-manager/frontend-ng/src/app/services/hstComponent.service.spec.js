@@ -182,6 +182,12 @@ describe('HstComponentService', () => {
       HstComponentService.setParameter('id', '@variant', 'name', 'value');
       expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', '%40variant');
     });
+
+    it('returns a promise', (done) => {
+      HstService.doPutForm.and.returnValue($q.resolve());
+      HstComponentService.setParameter('id', '@variant', 'name', 'value').then(done);
+      $rootScope.$digest();
+    });
   });
 
   describe('setParameters', () => {
