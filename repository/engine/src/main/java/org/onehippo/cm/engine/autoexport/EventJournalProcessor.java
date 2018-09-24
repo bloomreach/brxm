@@ -617,7 +617,7 @@ public class EventJournalProcessor {
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
                 final ModuleImpl loadedModule = new ModuleReader(false, true)
-                        .read(moduleDescriptorPath, false, module.getHcmSiteName(), module.getHstRoot())
+                        .read(moduleDescriptorPath, false, module.getSiteName(), module.getHstRoot())
                         .getModule();
                 // store mvnPath again for later use
                 loadedModule.setMvnPath(module.getMvnPath());

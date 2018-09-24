@@ -109,12 +109,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
-    private static class HcmSiteRecord {
+    private static class SiteRecord {
         final String siteName;
         final JcrPath hstRoot;
         final ServletContext servletContext;
 
-        public HcmSiteRecord(final String siteName, final JcrPath hstRoot, final ServletContext servletContext) {
+        public SiteRecord(final String siteName, final JcrPath hstRoot, final ServletContext servletContext) {
             this.siteName = siteName;
             this.hstRoot = hstRoot;
             this.servletContext = servletContext;
@@ -127,7 +127,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private ConfigurationConfigService configService;
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
-    private Map<String, HcmSiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
+    private Map<String, SiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
 
     private static final String USE_HCM_SITES_PROPERTY = "use.hcm.sites";
@@ -170,24 +170,24 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         return this;
     }
 
-    private void applySiteConfig(final HcmSiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
+    private void applySiteConfig(final SiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
         log.info("New HCM site detected: {}", record.siteName);
 
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
         // TODO: this is not actually a new model, so code below that assumes it is must be reworked
-        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readHcmSite(record.siteName, record.hstRoot,
+        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(record.siteName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
         if (startAutoExportService) {
             final List<ModuleImpl> hcmSiteModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
-                    .stream().filter(m -> record.siteName.equals(m.getHcmSiteName())).collect(toList());
+                    .stream().filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
             if (CollectionUtils.isNotEmpty(hcmSiteModulesFromSourceFiles)) {
                 newRuntimeConfigModel = mergeWithSourceModules(hcmSiteModulesFromSourceFiles, newRuntimeConfigModel);
             }
         }
 
         //Reload baseline for bootstrap 2+
-        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getHcmSiteNames());
+        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
 
         boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, false, false, false);
         if (success) {
@@ -198,10 +198,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             runtimeConfigurationModel = newRuntimeConfigModel;
             //store only HCM Site modules
             final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                    .filter(m -> record.siteName.equals(m.getHcmSiteName())).collect(toList());
-            baselineService.storeHcmSite(record.siteName, modulesToSave, session);
+                    .filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
+            baselineService.storeSite(record.siteName, modulesToSave, session);
             if (startAutoExportService) {
-                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getHcmSiteNames());
+                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
             }
 
             processHcmSiteWebFileBundles(record);
@@ -211,10 +211,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private void processHcmSiteWebFileBundles(final HcmSiteRecord record) throws IOException, RepositoryException {
+    private void processHcmSiteWebFileBundles(final SiteRecord record) throws IOException, RepositoryException {
         //process webfilebundle instructions from HCM Site which are not from the current site
         final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream()
-                .filter(m -> record.siteName.equals(m.getHcmSiteName()))
+                .filter(m -> record.siteName.equals(m.getSiteName()))
                 .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
         configService.writeWebfiles(webfileBundleDefs, baselineService, session);
     }
@@ -276,7 +276,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                                     .peek(m -> {
                                         //Copy the module's hcm site name and hstRoot (if exist) from bootstrap module
                                         ModuleImpl source = bootstrapModules.get(bootstrapModules.indexOf(m));
-                                        m.setHcmSiteName(source.getHcmSiteName());
                                         m.setHstRoot(source.getHstRoot());
                                     })
                                     .collect(toList());
@@ -637,8 +636,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         try {
             final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
             ConfigurationModelImpl model = modelReader.read(Thread.currentThread().getContextClassLoader());
-            for (final HcmSiteRecord record : hcmSiteRecords.values()) {
-                model = modelReader.readHcmSite(record.siteName, record.hstRoot, record.servletContext.getClassLoader(), model);
+            for (final SiteRecord record : hcmSiteRecords.values()) {
+                model = modelReader.readSite(record.siteName, record.hstRoot, record.servletContext.getClassLoader(), model);
             }
             return model;
         } catch (Exception e) {
@@ -927,7 +926,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         log.error("HCM Site: " + hcmSiteName + " already added");
                         return;
                     }
-                    final HcmSiteRecord record = new HcmSiteRecord(hcmSiteName, hstRoot, servletContext);
+                    final SiteRecord record = new SiteRecord(hcmSiteName, hstRoot, servletContext);
                     if (runtimeConfigurationModel != null) {
                         // already initialized: apply hcm site
                         applySiteConfig(record);
@@ -949,7 +948,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             try {
                 lockManager.lock();
                 try {
-                    for (HcmSiteRecord record : hcmSiteRecords.values()) {
+                    for (SiteRecord record : hcmSiteRecords.values()) {
                         if (record.servletContext.getContextPath().equals(contextPath)) {
                             // TODO: autoexport handling to be adjusted for this?
                             hcmSiteRecords.remove(record.siteName);

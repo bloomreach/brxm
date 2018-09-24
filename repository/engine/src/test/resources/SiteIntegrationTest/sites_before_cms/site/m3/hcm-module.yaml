@@ -1,6 +1,5 @@
 group:
   name: hippo-extension-test3
-  after: [hippo-cms, test-group, hippo-extension-test2]
 project:
   name: extension-test3
 module: 

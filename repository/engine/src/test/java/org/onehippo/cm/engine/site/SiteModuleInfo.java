@@ -13,28 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.extension;
+package org.onehippo.cm.engine.site;
 
 import org.onehippo.cm.engine.autoexport.ModuleInfo;
 
-import static org.onehippo.cm.engine.extension.HcmSiteIntegrationTest.EXTENSIONS_INTEGRATION_TEST;
+import static org.onehippo.cm.engine.site.SiteIntegrationTest.SITE_INTEGRATION_TEST;
 
-public class HcmSiteModuleInfo extends ModuleInfo {
+public class SiteModuleInfo extends ModuleInfo {
 
-    public HcmSiteModuleInfo(final String fixtureName) {
+    public SiteModuleInfo(final String fixtureName) {
         super(fixtureName);
     }
 
-    public HcmSiteModuleInfo(final String fixtureName, final String moduleName) {
+    public SiteModuleInfo(final String fixtureName, final String moduleName) {
         super(fixtureName, moduleName);
     }
 
-    public HcmSiteModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
+    public SiteModuleInfo(final String fixtureName, final String moduleName, final String inName, final String outName) {
         super(fixtureName, moduleName, inName, outName);
     }
 
     @Override
     protected String getFixtureRootFolder() {
-        return EXTENSIONS_INTEGRATION_TEST;
+        return SITE_INTEGRATION_TEST;
     }
 }
