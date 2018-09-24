@@ -72,7 +72,7 @@ class EditComponentMainCtrl {
   }
 
   isSaveAllowed() {
-    return this.form && this.form.$dirty;
+    return this.form && this.form.$dirty && this.form.$valid;
   }
 
   uiCanExit() {
