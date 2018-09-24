@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
@@ -30,6 +31,10 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 
 /**
  * Custom workflow task for archiving document.
@@ -58,6 +63,19 @@ public class ArchiveDocumentTask extends AbstractDocumentTask {
         } catch (RepositoryException e) {
             throw new WorkflowException(e.getMessage(), e);
         }
+
+        final Node handle = dh.getHandle();
+        if (handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            // to be sure, not only remove the NT_HIPPO_VERSION_INFO but first explicitly remove the properties
+            if (handle.hasProperty(HIPPO_BRANCHES_PROPERTY)) {
+                handle.getProperty(HIPPO_BRANCHES_PROPERTY).remove();
+            }
+            if (handle.hasProperty(HIPPO_VERSION_HISTORY_PROPERTY)) {
+                handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).remove();
+            }
+            handle.removeMixin(NT_HIPPO_VERSION_INFO);
+        }
+
 
         try {
             variant = dh.getDocuments().get(HippoStdNodeType.UNPUBLISHED);
