@@ -282,13 +282,13 @@
                     <context>/site</context>
                   </properties>
                 </deployable>
-                <!--<deployable>-->
-                  <!--<location>${project.basedir}/intranet/target/intranet.war</location>-->
-                  <!--<type>war</type>-->
-                  <!--<properties>-->
-                    <!--<context>/intranet</context>-->
-                  <!--</properties>-->
-                <!--</deployable>-->
+                <deployable>
+                  <location>${project.basedir}/intranet/target/intranet.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/intranet</context>
+                  </properties>
+                </deployable>
                 <deployable>
                   <location>${project.basedir}/solr/target/solr.war</location>
                   <type>war</type>
