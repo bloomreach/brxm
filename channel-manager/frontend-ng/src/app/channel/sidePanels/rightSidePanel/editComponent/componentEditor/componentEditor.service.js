@@ -186,6 +186,28 @@ class ComponentEditorService {
     }, {});
   }
 
+  confirmDiscardChanges() {
+    const translateParams = {
+      component: this.component.label,
+    };
+
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TO COMPONENT', translateParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  discardChanges() {
+    return this.open({
+      channel: this.channel,
+      component: this.component,
+      container: this.container,
+      page: this.page,
+    }).finally(() => this.PageStructureService.renderComponent(this.component.id));
+  }
+
   close() {
     this._clearData();
     delete this.error;

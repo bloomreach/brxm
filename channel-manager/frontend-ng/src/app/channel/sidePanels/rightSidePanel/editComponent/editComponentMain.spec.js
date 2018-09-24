@@ -48,8 +48,10 @@ describe('EditComponentMainCtrl', () => {
       ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
         'close',
         'confirmDeleteComponent',
+        'confirmDiscardChanges',
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
+        'discardChanges',
         'save',
       ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -85,6 +87,26 @@ describe('EditComponentMainCtrl', () => {
     it('reports a usage statistics', () => {
       $ctrl.save();
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
+    });
+  });
+
+  describe('discard component changes', () => {
+    it('does discard changes when confirmed', () => {
+      ComponentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+
+      $ctrl.discard();
+      $scope.$digest();
+
+      expect(ComponentEditor.discardChanges).toHaveBeenCalled();
+    });
+
+    it('does not discard changes when not confirmed', () => {
+      ComponentEditor.confirmDiscardChanges.and.returnValue($q.reject());
+
+      $ctrl.discard();
+      $scope.$digest();
+
+      expect(ComponentEditor.discardChanges).not.toHaveBeenCalled();
     });
   });
 
