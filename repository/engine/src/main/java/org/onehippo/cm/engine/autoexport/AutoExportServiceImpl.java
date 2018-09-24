@@ -29,6 +29,7 @@ import javax.jcr.observation.ObservationManager;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SiteImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,25 +94,28 @@ public final class AutoExportServiceImpl implements EventListener {
 
         // confirm that auto-export modules have no modules following them that are not also being exported
         // (unless the trailing module only has webfiles)
-        boolean startedAutoExport = false;
-        for (final ModuleImpl module : baseline.getModules()) {
-            // once we encounter an exported module, make sure all following modules are auto-exported
-            if (!startedAutoExport && module.getMvnPath() != null) {
-                startedAutoExport = true;
-            }
-            if (startedAutoExport && module.getMvnPath() == null) {
-                // check definitions for that module to see if there's anything other than webfiles
-                final int nonWebfilesDefCount = module.getContentDefinitions().size()
-                        + module.getConfigDefinitions().size()
-                        + module.getNamespaceDefinitions().size();
-                if (nonWebfilesDefCount > 0) {
-                    // cannot have a sequence from exported to not-exported!
-                    log.error("autoexport modules must be the last modules applied to configuration or content, but found additional module: {}", module.getFullName());
-                    return false;
+        // do this check separately for each site, since sites cannot be affected by each other
+        for (final SiteImpl site : baseline.getSites()) {
+            boolean startedAutoExport = false;
+            for (final ModuleImpl module : site.getModules()) {
+                // once we encounter an exported module, make sure all following modules are auto-exported
+                if (!startedAutoExport && module.getMvnPath() != null) {
+                    startedAutoExport = true;
                 }
-                else {
-                    // but webfiles-only modules are okay, even if mixed in with or trailing exported modules
-                    log.debug("autoexport detected a dependent module, allowed because it is either empty or includes webfilebundle definitions only: {}", module.getFullName());
+                if (startedAutoExport && module.getMvnPath() == null) {
+                    // check definitions for that module to see if there's anything other than webfiles
+                    final int nonWebfilesDefCount = module.getContentDefinitions().size()
+                            + module.getConfigDefinitions().size()
+                            + module.getNamespaceDefinitions().size();
+                    if (nonWebfilesDefCount > 0) {
+                        // cannot have a sequence from exported to not-exported!
+                        log.error("autoexport modules must be the last modules applied to configuration or content, but found additional module: {}", module.getFullName());
+                        return false;
+                    }
+                    else {
+                        // but webfiles-only modules are okay, even if mixed in with or trailing exported modules
+                        log.debug("autoexport detected a dependent module, allowed because it is either empty or includes webfilebundle definitions only: {}", module.getFullName());
+                    }
                 }
             }
         }

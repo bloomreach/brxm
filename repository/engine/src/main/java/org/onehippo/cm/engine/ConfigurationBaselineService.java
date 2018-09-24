@@ -390,8 +390,14 @@ public class ConfigurationBaselineService {
         }
         else {
             // a descriptor must exist, or this isn't a valid baseline
-            // TODO: support generating a descriptor at runtime?
-            throw new IllegalStateException("Module descriptor does not exist for module: "+module.getFullName());
+            // TODO: throw an appropriate exception if this is to be forbidden
+//            throw new IllegalStateException("Module descriptor does not exist for module: "+module.getFullName());
+
+            // if descriptor doesn't exist,
+            String dummyDescriptor = module.compileDummyDescriptor();
+
+            // write that back to the YAML property and digest it
+            storeString(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, HCM_YAML);
         }
 
         // if this Module has an actions file...
