@@ -21,6 +21,7 @@ import java.util.Map;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SiteImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
@@ -37,6 +38,10 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
     }
 
     public ModuleImpl parse(final InputStream inputStream, final String location) throws ParserException {
+        return parse(inputStream, location, null);
+    }
+
+    public ModuleImpl parse(final InputStream inputStream, final String location, final String hcmSiteName) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
         final Map<String, Node> rootNodeMap =
                 asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
@@ -45,20 +50,21 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
         final Node moduleNode = rootNodeMap.get(MODULE_KEY);
 
-        final GroupImpl groupImpl = constructGroup(groupNode);
+        final SiteImpl site = new SiteImpl(hcmSiteName);
+        final GroupImpl groupImpl = constructGroup(groupNode, site);
         final ProjectImpl project = constructProject(projectNode, groupImpl);
 
         return constructModule(moduleNode, project);
     }
 
-    protected GroupImpl constructGroup(final Node src) throws ParserException {
+    protected GroupImpl constructGroup(final Node src, final SiteImpl site) throws ParserException {
 
         if (src instanceof ScalarNode) {
-            return new GroupImpl(asStringScalar(src));
+            return new GroupImpl(asStringScalar(src), site);
         } else {
             final Map<String, Node> groupMap = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
             final String name = asStringScalar(groupMap.get(NAME_KEY));
-            final GroupImpl group = new GroupImpl(name);
+            final GroupImpl group = new GroupImpl(name, site);
             group.addAfter(asSingleOrSetOfStrScalars(groupMap.get(AFTER_KEY)));
             return group;
         }

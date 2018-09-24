@@ -256,7 +256,7 @@ public class ConfigurationModelImplTest {
         try {
             model.addGroup(c1b);
         } catch (IllegalStateException e) {
-            assertEquals("Module c1/p1/m1 already exists while merging projects. Merging of modules is not supported.", e.getMessage());
+            assertEquals("Module core/c1/p1/m1 already exists while merging projects. Merging of modules is not supported.", e.getMessage());
         }
     }
 
@@ -330,7 +330,11 @@ public class ConfigurationModelImplTest {
     }
 
     private List<ConfigDefinitionImpl> getConfigDefinitionsFromFirstModule(final ConfigurationModelImpl configurationModel) {
-        final ModuleImpl module = configurationModel.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
+        return getConfigDefinitionsFromModule(0, configurationModel);
+    }
+
+    private List<ConfigDefinitionImpl> getConfigDefinitionsFromModule(final int index, final ConfigurationModelImpl configurationModel) {
+        final ModuleImpl module = configurationModel.getModulesStream().collect(Collectors.toList()).get(index);
         return new ArrayList<>(module.getConfigDefinitions());
     }
 
@@ -376,19 +380,22 @@ public class ConfigurationModelImplTest {
 
     @Test
     public void build_model_using_extension_module() throws Exception {
-        final GroupImpl c1 = new GroupImpl("c1");
+        final GroupImpl coreGroup = new GroupImpl("coreGroup");
+        final ModuleImpl coreModule = coreGroup.addProject("coreProject").addModule("coreModule");
+
+        final SiteImpl s1 = new SiteImpl("s1");
+        final GroupImpl c1 = new GroupImpl("c1", s1);
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
         final ModuleImpl m2 = c1.addProject("p2").addModule("m2");
-        m2.setHcmSiteName("m2");
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m2);
 
-        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(coreGroup).build();
         final ConfigurationNodeImpl nodeFromSecondModule = model.resolveNode("/b");
         assertNotNull(nodeFromSecondModule);
 
-        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromModule(1, model);
         assertEquals(5, definitions.size());
     }
 
@@ -419,7 +426,7 @@ public class ConfigurationModelImplTest {
             new ConfigurationModelImpl().addGroup(c1).build();
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]' and 'c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'core/c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]' and 'core/c1/p1/m1 [config: builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
         }
     }
 
@@ -442,7 +449,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [config: string]' and 'c1/p1/m1 [config: builder/definition-sorter.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'core/c1/p1/m1 [config: string]' and 'core/c1/p1/m1 [config: builder/definition-sorter.yaml]'.", e.getMessage());
         }
     }
 
@@ -465,7 +472,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Namespaces are specified in multiple sources of a module: 'c1/p1/m1 [config: string]' and 'c1/p1/m1 [config: builder/definition-sorter.yaml]'. To ensure proper ordering, they must be specified in a single source.", e.getMessage());
+            assertEquals("Namespaces are specified in multiple sources of a module: 'core/c1/p1/m1 [config: string]' and 'core/c1/p1/m1 [config: builder/definition-sorter.yaml]'. To ensure proper ordering, they must be specified in a single source.", e.getMessage());
         }
     }
 
@@ -556,7 +563,7 @@ public class ConfigurationModelImplTest {
             model.build();
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate web file bundle with name 'name' found in source files 'c1/p1/m1 [config: string]' and 'c2/p2/m2 [config: string]'.",
+            assertEquals("Duplicate web file bundle with name 'name' found in source files 'core/c1/p1/m1 [config: string]' and 'core/c2/p2/m2 [config: string]'.",
                     e.getMessage());
         }
     }

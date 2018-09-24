@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.model.Site;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.TreeDefinitionImpl;
 import org.onehippo.cm.model.path.JcrPath;
@@ -395,11 +396,12 @@ public class ConfigurationTreeBuilder {
             if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
                 //Compare with parent definition extension. It should be core or have the same extension
                 final TreeDefinitionImpl<?> parentDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
-                final String parentNodeExtensionName = parentDefinition.getSource().getModule().getHcmSiteName();
-                final String childDefinitionExtensionName = definition.getSource().getModule().getHcmSiteName();
-                if (parentNodeExtensionName != null && !Objects.equals(childDefinitionExtensionName, parentNodeExtensionName)) {
+                final String parentNodeSiteName = parentDefinition.getSource().getModule().getSiteName();
+                final String childDefinitionSiteName = definition.getSource().getModule().getSiteName();
+                if (parentNodeSiteName != null && !Site.CORE_NAME.equals(parentNodeSiteName)
+                        && !Objects.equals(childDefinitionSiteName, parentNodeSiteName)) {
                     final String errMessage = String.format("Cannot add child config definition '%s' to parent node definition, " +
-                                    "as it is defined in different extension: %s -> %s",
+                                    "as it is defined in different site: %s -> %s",
                             definition.getNode().getPath(), definition.getSource(), parentDefinition.getSource());
                     logger.error(errMessage);
                     throw new IllegalArgumentException(errMessage);
@@ -413,10 +415,10 @@ public class ConfigurationTreeBuilder {
         } else  if (!rootForDefinition.isRoot() && definitionNode.hasPropertiesOrMeta()) {
             //Config node already exists, validate if existing config node belongs to the same extension
             final TreeDefinitionImpl<?> existingDefinition = rootForDefinition.getDefinitions().get(0).getDefinition();
-            if (!Objects.equals(definition.getSource().getModule().getHcmSiteName(),
-                    existingDefinition.getSource().getModule().getHcmSiteName())) {
+            if (!Objects.equals(definition.getSource().getModule().getSiteName(),
+                    existingDefinition.getSource().getModule().getSiteName())) {
                 final String errMessage = String.format("Cannot merge config definitions with the same path '%s' defined in different " +
-                                "extensions or in both core and an extension: %s -> %s",
+                                "sites or in both core and a site: %s -> %s",
                         definition.getNode().getPath(), existingDefinition.getSource(), definition.getSource());
                 logger.error(errMessage);
                 throw new IllegalArgumentException(errMessage);

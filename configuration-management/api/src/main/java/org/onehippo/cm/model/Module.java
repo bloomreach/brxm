@@ -30,7 +30,7 @@ import org.onehippo.cm.model.source.Source;
  * Represents the atomic deployable unit in the Hippo Configuration Management (HCM) system. This is intended to equate
  * conceptually to the level of Maven modules and artifact IDs in that dependency management system.
  */
-public interface Module extends OrderableByName {
+public interface Module extends OrderableByName, Comparable<Module> {
 
     /**
      * @return the full group/project/module name for this module
@@ -56,13 +56,13 @@ public interface Module extends OrderableByName {
     /**
      * @return true if this module is part of an extension; false if this module is in the core model
      */
-    boolean isHcmSite();
+    boolean isNotCore();
 
     /**
      * @return HCM Site name of the Module or null if it is a core Module
      * @since 13.0
      */
-    String getHcmSiteName();
+    String getSiteName();
 
     /**
      * @return JcrPath of HST root configuration node for the corresponding extension or null if it is a core Module

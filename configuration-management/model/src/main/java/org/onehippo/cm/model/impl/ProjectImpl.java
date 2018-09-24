@@ -17,6 +17,7 @@ package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,7 +34,10 @@ public class ProjectImpl implements Project {
 
     private static final Logger log = LoggerFactory.getLogger(ProjectImpl.class);
 
-    private static final OrderableByNameListSorter<Module> modulesSorter = new OrderableByNameListSorter<>(Module.class);
+    private static final Comparator<Project> projectComparator =
+            Comparator.comparing(Project::getGroup).thenComparing(Project::getName);
+    private static final OrderableByNameListSorter<Module> modulesSorter =
+            new OrderableByNameListSorter<>(Module.class);
 
     private final String name;
     private final GroupImpl group;
@@ -113,6 +117,11 @@ public class ProjectImpl implements Project {
         final ModuleImpl module = new ModuleImpl(other, this);
         moduleMap.put(module.getName(), module);
         modifiableModules.add(module);
+    }
+
+    @Override
+    public int compareTo(final Project o) {
+        return projectComparator.compare(this,o);
     }
 
     public boolean equals(Object other) {

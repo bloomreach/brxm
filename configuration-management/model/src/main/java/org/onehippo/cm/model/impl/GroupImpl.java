@@ -17,6 +17,7 @@ package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,9 +30,15 @@ import org.onehippo.cm.model.Project;
 
 public class GroupImpl implements Group {
 
-    private static final OrderableByNameListSorter<Project> projectsSorter = new OrderableByNameListSorter<>(Project.class);
+    private static final Comparator<Group> groupComparator =
+            Comparator.comparing(Group::getSite).thenComparing(Group::getName);
+    private static final OrderableByNameListSorter<Project> projectsSorter =
+            new OrderableByNameListSorter<>(Project.class);
 
     private final String name;
+
+    // Non-final because of annoying code-flow problem in ModuleReader.readReplacement()
+    private SiteImpl site;
 
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
@@ -41,20 +48,39 @@ public class GroupImpl implements Group {
     private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
     public GroupImpl(final String name) {
+        this(name, new SiteImpl(null));
+    }
+
+    public GroupImpl(final String name, final SiteImpl site) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
         }
+        if (site == null) {
+            throw new IllegalArgumentException("Parameter 'site' cannot be null");
+        }
         this.name = name;
+        this.site = site;
     }
 
-    public GroupImpl(final String name, final String... after) {
-        this(name);
+    public GroupImpl(final String name, final SiteImpl site, final String... after) {
+        this(name, site);
         Collections.addAll(modifiableAfter, after);
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public SiteImpl getSite() {
+        return site;
+    }
+
+    // Exists only because of annoying code-flow problem in ModuleReader.readReplacement()
+    // Should not be used for any other purpose!
+    public void setSite(final SiteImpl site) {
+        this.site = site;
     }
 
     @Override
@@ -88,12 +114,19 @@ public class GroupImpl implements Group {
         return projectMap.containsKey(name) ? projectMap.get(name) : addProject(name);
     }
 
+    @Override
+    public int compareTo(final Group o) {
+        return groupComparator.compare(this, o);
+    }
+
     public boolean equals(Object other) {
         if (this == other) {
             return true;
         }
         if (other instanceof Group) {
-            return this.getName().equals(((Group)other).getName());
+            final Group otherGroup = (Group) other;
+            return this.getName().equals(otherGroup.getName())
+                    && Objects.equals(getSite(), otherGroup.getSite());
         }
         return false;
     }
@@ -101,13 +134,14 @@ public class GroupImpl implements Group {
     // hashCode() and equals() should be consistent!
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(name, site);
     }
 
     @Override
     public String toString() {
         return "GroupImpl{" +
                 "name='" + name + '\'' +
+                ", site=" + site +
                 '}';
     }
 }

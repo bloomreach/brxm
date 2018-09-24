@@ -44,7 +44,7 @@ public class OrderableByNameListSorterTest {
         try {
             orderableSorter.sort(list(o1, o2));
         } catch (DuplicateNameException e) {
-            assertEquals("Duplicate OrderableByName named 'o1'.", e.getMessage());
+            assertEquals("Duplicate OrderableByName: 'o1'.", e.getMessage());
         }
     }
 

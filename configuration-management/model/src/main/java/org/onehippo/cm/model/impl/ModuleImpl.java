@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.Site;
 import org.onehippo.cm.model.definition.ActionItem;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
@@ -70,7 +71,7 @@ import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
-public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
+public class ModuleImpl implements Module, Cloneable {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleImpl.class);
 
@@ -80,7 +81,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private String hcmSiteName = null;
     private JcrPath hstRoot = null;
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
@@ -131,6 +131,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     ModuleImpl(final ModuleImpl module, final ProjectImpl project) {
         this(module.getName(), project);
+
+        // TODO: Set siteName on project.getGroup()? Should not be necessary if project was created properly...
+
         modifiableAfter.addAll(module.getAfter());
         configResourceInputProvider = module.getConfigResourceInputProvider();
         contentResourceInputProvider = module.getContentResourceInputProvider();
@@ -143,7 +146,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         sortedSources.forEach(source -> source.setModule(this));
 
         mvnPath = module.getMvnPath();
-        hcmSiteName = module.getHcmSiteName();
         hstRoot = module.getHstRoot();
         archiveFile = module.getArchiveFile();
         build();
@@ -243,12 +245,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     @Override
-    public String getHcmSiteName() {
-        return hcmSiteName;
-    }
-
-    public void setHcmSiteName(final String hcmSiteName) {
-        this.hcmSiteName = hcmSiteName;
+    public String getSiteName() {
+        return getProject().getGroup().getSite().getName();
     }
 
     @Override
@@ -264,8 +262,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * @return true if this module is part of an HCM Site; false if this module is in the core model
      */
     @Override
-    public boolean isHcmSite() {
-        return hcmSiteName != null;
+    public boolean isNotCore() {
+        return !Site.CORE_NAME.equals(getSiteName());
     }
 
     /**
@@ -595,8 +593,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                 return null;
             }
             return rip.getResourceInputStream(null, path);
-        }
-        else {
+        } else {
             return valueIs;
         }
     }
@@ -652,7 +649,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
-                ((hcmSiteName ==null)? "": ("hcmSiteName='" + hcmSiteName +"', ")) +
                 ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
@@ -666,8 +662,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
         if (other instanceof Module) {
             Module otherModule = (Module)other;
-            return this.getName().equals(otherModule.getName()) &&
-                    this.getProject().equals(otherModule.getProject());
+            return this.getName().equals(otherModule.getName())
+                    && this.getProject().equals(otherModule.getProject());
         }
         return false;
     }
@@ -676,7 +672,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     public ModuleImpl clone() {
         // deep clone
         try {
-            GroupImpl newGroup = new GroupImpl(project.getGroup().getName());
+            SiteImpl site = new SiteImpl(project.getGroup().getSite().getName());
+            GroupImpl newGroup = new GroupImpl(project.getGroup().getName(), site);
             newGroup.addAfter(project.getGroup().getAfter());
 
             ProjectImpl newProject = newGroup.addProject(project.getName());
@@ -687,7 +684,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
-            newModule.setHcmSiteName(hcmSiteName);
             newModule.setHstRoot(hstRoot);
             // probably not needed as archive module aren't supposed to (need to) be cloned
             newModule.setArchiveFile(archiveFile);
@@ -740,6 +736,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     public String getFullName() {
         return String.join("/",
+                getSiteName(),
                 getProject().getGroup().getName(),
                 getProject().getName(),
                 getName());

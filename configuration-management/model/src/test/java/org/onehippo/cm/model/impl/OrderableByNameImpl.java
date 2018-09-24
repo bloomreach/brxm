@@ -18,7 +18,8 @@ package org.onehippo.cm.model.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.onehippo.cm.model.OrderableByName;
@@ -38,7 +39,7 @@ public class OrderableByNameImpl implements OrderableByName {
 
     public OrderableByNameImpl(final String name, final String afterCsv) {
         this.name = name;
-        after = new LinkedHashSet<>(Arrays.asList(afterCsv.split("\\s*,\\s*")));
+        after = new HashSet<>(Arrays.asList(afterCsv.split("\\s*,\\s*")));
     }
 
     public String getName() {
@@ -47,5 +48,19 @@ public class OrderableByNameImpl implements OrderableByName {
 
     public Set<String> getAfter() {
         return after;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof OrderableByNameImpl) {
+            OrderableByNameImpl o = (OrderableByNameImpl) obj;
+            return Objects.equals(name, o.name) && after.equals(o.after);
+        }
+        return false;
     }
 }

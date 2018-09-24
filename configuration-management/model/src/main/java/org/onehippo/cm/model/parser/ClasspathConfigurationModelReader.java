@@ -107,17 +107,16 @@ public class ClasspathConfigurationModelReader {
      * @throws IOException
      * @throws ParserException
      */
-    public ConfigurationModelImpl readHcmSite(final String hcmSiteName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
+    public ConfigurationModelImpl readSite(final String siteName, final JcrPath hstRoot, final ClassLoader classLoader, final ConfigurationModelImpl model)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         final Pair<Set<FileSystem>, List<ModuleImpl>> hcmSiteModules =
-                readModulesFromClasspath(classLoader, false, hcmSiteName, hstRoot);
+                readModulesFromClasspath(classLoader, false, siteName, hstRoot);
 
         // insert hcm site name and hstRoot into each module
         hcmSiteModules.getRight().forEach(module -> {
-            module.setHcmSiteName(hcmSiteName);
             module.setHstRoot(hstRoot);
         });
 
