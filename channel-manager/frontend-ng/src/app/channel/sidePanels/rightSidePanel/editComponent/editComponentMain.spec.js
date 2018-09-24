@@ -91,7 +91,7 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('discard component changes', () => {
-    it('discard changes when confirmed', () => {
+    it('does discard changes when confirmed', () => {
       ComponentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.discard();
