@@ -205,7 +205,7 @@ class ComponentEditorService {
       component: this.component,
       container: this.container,
       page: this.page,
-    });
+    }).finally(() => this.PageStructureService.renderComponent(this.component.id));
   }
 
   close() {

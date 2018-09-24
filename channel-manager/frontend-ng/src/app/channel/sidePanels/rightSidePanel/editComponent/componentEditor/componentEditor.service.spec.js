@@ -431,9 +431,29 @@ describe('ComponentEditorService', () => {
     });
 
     it('reopens the component to discard changes', () => {
-      spyOn(ComponentEditor, 'open');
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
       ComponentEditor.discardChanges();
       expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+    });
+
+    it('redraws the component when discarding changes succeeded', () => {
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'renderComponent');
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
+    });
+
+    it('redraws the component when discarding changes failed', () => {
+      spyOn(ComponentEditor, 'open').and.returnValue($q.reject());
+      spyOn(PageStructureService, 'renderComponent');
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
     });
   });
 
