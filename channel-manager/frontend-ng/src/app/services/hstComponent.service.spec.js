@@ -157,23 +157,27 @@ describe('HstComponentService', () => {
       spyOn(ChannelService, 'recordOwnChange');
     });
 
-    it('uses the HstService to store the parameter data of a component', () => {
+    it('uses the HstService to store the parameter data of a component', (done) => {
       HstService.doPutForm.and.returnValue($q.resolve());
 
-      HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      HstComponentService.setParameter('id', 'variant', 'name', 'value')
+        .then(() => {
+          expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
+          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          done();
+        });
       $rootScope.$digest();
-
-      expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
-      expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
 
-    it('does not record own change if parameter change fails', () => {
+    it('does not record own change if parameter change fails', (done) => {
       HstService.doPutForm.and.returnValue($q.reject());
 
-      HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      HstComponentService.setParameter('id', 'variant', 'name', 'value')
+        .catch(() => {
+          expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+          done();
+        });
       $rootScope.$digest();
-
-      expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
     });
 
     it('URI-encodes the variant name', () => {
