@@ -157,21 +157,12 @@ class ComponentEditorService {
     return undefined;
   }
 
-  get dirty() {
-    return !!this.propertiesDirty;
-  }
-
-  set dirty(dirty) {
-    this.propertiesDirty = dirty;
-  }
-
   valueChanged() {
     this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
   save() {
-    return this.HstComponentService.setParameters(this.component.id, this.component.variant, this._propertiesAsFormData())
-      .then(() => delete this.propertiesDirty);
+    return this.HstComponentService.setParameters(this.component.id, this.component.variant, this._propertiesAsFormData());
   }
 
   _propertiesAsFormData() {
@@ -236,10 +227,6 @@ class ComponentEditorService {
   }
 
   _askSaveOrDiscardChanges() {
-    if (!this.propertiesDirty) {
-      return this.$q.resolve();
-    }
-
     const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.label });
     const title = this.$translate.instant('SAVE_CHANGES_TITLE');
 
@@ -263,7 +250,6 @@ class ComponentEditorService {
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;
-    delete this.propertiesDirty;
   }
 }
 
