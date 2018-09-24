@@ -1,7 +1,6 @@
 import java.nio.file.Paths
 
 final String propertiesMarker = '<!-- PROPERTIES_MARKER -->'
-final String groupAfterMarker = '<!-- GROUP_AFTER -->'
 final String cmsDependenciesMarker = '<!-- PARENT_PROJECT_DEPENDENCIES -->'
 final String pomFile = 'pom.xml'
 final String hcmModuleFilename = "hcm-module.yaml"
@@ -30,7 +29,6 @@ def siteModuleDescriptorFile = repositoryDataDir.resolve("site")
 def webfilesModuleDescriptorFile = repositoryDataDir.resolve("webfiles")
         .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
 
-def afterGroup = 'after: hippo-cms'
 if (property == null) {
 //    Main project creation. No need to do anything extra here, just clear markers
     println "Creating main project"
@@ -72,8 +70,6 @@ if (property == null) {
     </dependency>"""
     replacePlaceHolder(cmsDependenciesPomFile, cmsDependenciesMarker, cmdDepText)
 
-    afterGroup = "after: $parentArtifactId"
-
     //remove repository-data/application configuration & security yaml definitions as they've been already defined at
     //parent module
     def appModuleConfigDir = repositoryDataDir.resolve("application")
@@ -81,11 +77,6 @@ if (property == null) {
     appModuleConfigDir.resolve("configuration").toFile().deleteDir()
     appModuleConfigDir.resolve("security").toFile().deleteDir()
 }
-
-replacePlaceHolder(appModuleDescriptorFile, groupAfterMarker, afterGroup)
-replacePlaceHolder(devModuleDescriptorFile, groupAfterMarker, afterGroup)
-replacePlaceHolder(siteModuleDescriptorFile, groupAfterMarker, afterGroup)
-replacePlaceHolder(webfilesModuleDescriptorFile, groupAfterMarker, afterGroup)
 
 private static void replacePlaceHolder(File file, String marker, String text) {
     def fileContent = file.getText('UTF-8').replace(marker, text)
