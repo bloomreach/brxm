@@ -49,13 +49,6 @@ class ComponentEditorService {
     this.container = container;
     this.page = page;
     this.properties = this._normalizeProperties(properties);
-
-    console.log('Channel', this.channel);
-    console.log('Component', this.component);
-    console.log('Component properties', this.properties);
-    console.log('Container', this.container);
-    console.log('Page', this.page);
-
     this.propertyGroups = this._groupProperties(this.properties);
   }
 
