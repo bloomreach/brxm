@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Site;
@@ -58,13 +59,26 @@ public class SiteImpl implements Site {
         return group;
     }
 
-    public void sortGroups(Set<String> coreGroupNames) {
-        groupSorter.sort(modifiableGroups, coreGroupNames);
+    public void sortGroups(final SiteImpl core) {
+        if (core != null) {
+            final Set<String> coreGroupNames =
+                    core.getGroups().stream().map(GroupImpl::getName).collect(Collectors.toSet());
+            groupSorter.sort(modifiableGroups, coreGroupNames);
+        }
+        else {
+            groupSorter.sort(modifiableGroups);
+        }
         modifiableGroups.forEach(GroupImpl::sortProjects);
     }
 
     public GroupImpl getOrAddGroup(final String name) {
         return groupMap.containsKey(name) ? groupMap.get(name) : addGroup(name);
+    }
+
+    public Iterable<ModuleImpl> getModules() {
+        return modifiableGroups.stream()
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream())::iterator;
     }
 
     @Override

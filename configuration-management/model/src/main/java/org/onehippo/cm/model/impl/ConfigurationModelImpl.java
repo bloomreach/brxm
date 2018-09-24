@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +86,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     private Set<FileSystem> filesystems = new HashSet<>();
 
     private long buildTimeStamp = 0;
+
+    public List<SiteImpl> getSites() {
+        return Collections.unmodifiableList(sites);
+    }
 
     @Override
     public List<GroupImpl> getSortedGroups() {
@@ -264,7 +267,9 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         replacements.clear();
         groups.clear();
-        sites.clear();
+
+        // TODO: assume build is always additive -- start from a new ConfigurationModelImpl instance to remove sites
+//        sites.clear();
 
         sites.addAll(buildingSites.values());
         buildingSites.clear();
@@ -274,15 +279,13 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         // core groups are special -- they satisfy dependencies for other groups in any site
         final SiteImpl core = sites.get(0);
-        core.sortGroups(Collections.emptySet());
-        final Set<String> coreGroupNames =
-                core.getGroups().stream().map(GroupImpl::getName).collect(Collectors.toSet());
+        core.sortGroups(null);
         groups.addAll(core.getGroups());
 
         // there might be only the core site
         if (sites.size() > 1) {
             for (SiteImpl site : sites.subList(1, sites.size())) {
-                site.sortGroups(coreGroupNames);
+                site.sortGroups(core);
                 groups.addAll(site.getGroups());
             }
         }

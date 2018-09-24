@@ -15,9 +15,11 @@
  */
 package org.onehippo.cm.model.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +36,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Site;
@@ -56,6 +59,7 @@ import org.onehippo.cm.model.parser.ContentSourceHeadParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.util.DigestUtils;
@@ -442,6 +446,15 @@ public class ModuleImpl implements Module, Cloneable {
         // TODO this is an ugly hack in part because RIP uses config root instead of module root
         boolean hasDescriptor = digestResource(null, "/../" + HCM_MODULE_YAML, null, rip, items);
 
+        // special-case handle a missing descriptor by generating a dummy one, for demo case
+        // TODO remove when demo is restructured to use module-specific descriptors
+        if (!hasDescriptor) {
+            // create a manifest item for a dummy descriptor
+            String descriptor = this.compileDummyDescriptor();
+            String digest = DigestUtils.digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
+            items.put("/" + HCM_MODULE_YAML, digest);
+        }
+
         // digest the actions file
         digestResource(null, "/../" + ACTIONS_YAML, null, rip, items);
 
@@ -582,6 +595,38 @@ public class ModuleImpl implements Module, Cloneable {
             return rip.getResourceInputStream(null, path);
         } else {
             return valueIs;
+        }
+    }
+
+    /**
+     * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
+     * descriptor for a set of modules.
+     * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
+     */
+    public String compileDummyDescriptor() {
+        // serialize a dummy module descriptor for this module
+
+        // create a dummy group->project->module setup with just the data relevant to this Module
+        GroupImpl group = new GroupImpl(getProject().getGroup().getName());
+        group.addAfter(getProject().getGroup().getAfter());
+        ProjectImpl project = group.addProject(getProject().getName());
+        project.addAfter(getProject().getAfter());
+        ModuleImpl dummyModule = project.addModule(getName());
+        dummyModule.addAfter(getAfter());
+
+        log.debug("Creating dummy module descriptor for {}/{}/{}",
+                group.getName(), project.getName(), getName());
+
+        // serialize that dummy group
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            // todo switch to single-module alternate serializer
+            final ModuleDescriptorSerializer descriptorSerializer = new ModuleDescriptorSerializer();
+            descriptorSerializer.serialize(baos, dummyModule);
+            return baos.toString(StandardCharsets.UTF_8.name());
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Problem compiling dummy descriptor", e);
         }
     }
 
