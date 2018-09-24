@@ -1,6 +1,5 @@
 group:
   name: hippo-extension-namespace
-  after: [hippo-cms, test-group, hippo-extension-test2]
 project:
   name: extension-namespace
 module: 

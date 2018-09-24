@@ -161,7 +161,7 @@ public class ConfigurationContentService {
 
             // Check if there is root content definition belonging to different extension
             if (contentDefinitions.entrySet().stream().anyMatch(e -> JcrPaths.getPath(baseNodePath).startsWith(e.getKey()) &&
-                    e.getValue().getHcmSiteName() != null && !Objects.equals(module.getHcmSiteName(), e.getValue().getHcmSiteName()))) {
+                    e.getValue().getSiteName() != null && !Objects.equals(module.getSiteName(), e.getValue().getSiteName()))) {
                 log.error("Incompatible content definition: {}. Content definition can be applied only if it's parent " +
                         "belongs to core or same extension", baseNodePath);
                 failedPaths.add(baseNodePath);

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.extension;
+package org.onehippo.cm.engine.site;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,22 +59,22 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
 
-public class HcmSiteIntegrationTest {
+public class SiteIntegrationTest {
 
-    static final String EXTENSIONS_INTEGRATION_TEST = "ExtensionsIntegrationTest";
+    static final String SITE_INTEGRATION_TEST = "SiteIntegrationTest";
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void extensions_before_and_after_cms_init() throws Exception {
+    public void sites_before_and_after_cms_init() throws Exception {
 
-        final String fixtureName = "extensions_before_cms";
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
                 final IsolatedRepository repository = fixture.getRepository();
@@ -83,31 +83,31 @@ public class HcmSiteIntegrationTest {
                     final Node extNode = session.getNode("/m1-extension");
                     extNode.getProperty("property").getString();
                 } catch (PathNotFoundException ex) {
-                    fail("Node extension-m1 from extension m1 or its properties are not found");
+                    fail("Node extension-m1 from site m1 or its properties are not found");
                 }
 
                 try {
                     session.getNode("/m2-extension");
-                    fail("Extension node should not exist");
+                    fail("Site node should not exist");
                 } catch (PathNotFoundException e) {
                     //expected
                 }
 
-                //Validate that baseline contains m1 extension after core bootstrap
+                //Validate that baseline contains m1 site after core bootstrap
                 final ConfigurationModelImpl runtimeModel1 = repository.getRuntimeConfigurationModel();
                 final ConfigurationNodeImpl configurationNode = runtimeModel1.resolveNode("/m1-extension");
                 assertNotNull(configurationNode);
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
 
                 try {
                     final Node extNode2 = session.getNode("/m2-extension");
                     extNode2.getProperty("property").getString();
                 } catch (PathNotFoundException ex) {
-                    fail("Node extension-m2 from extension m2 or its properties are not found");
+                    fail("Node extension-m2 from site m2 or its properties are not found");
                 }
 
-                //Validate that baseline contains m1 & m2 extensions after extension event
+                //Validate that baseline contains m1 & m2 sites after site event
                 final ConfigurationModelImpl runtimeModel2 = repository.getRuntimeConfigurationModel();
 
                 final ConfigurationNodeImpl configurationNode1 = runtimeModel2.resolveNode("/m1-extension");
@@ -124,25 +124,25 @@ public class HcmSiteIntegrationTest {
     }
 
     @Test
-    public void extensions_test_incompatible_nodeoverride() throws Exception {
+    public void sites_test_incompatible_nodeoverride() throws Exception {
 
-        final String fixtureName = "extensions_before_cms";
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
                     try {
-                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m3"));
-                        fail("Failure is expected since node from extension 'A' cannot override node from extension 'B'");
+                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m3"));
+                        fail("Failure is expected since node from site 'A' cannot override node from site 'B'");
                     } catch (Exception ignore) {
                         assertTrue(interceptor.messages()
                                 .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/m2-extension' " +
-                                        "defined in different extensions or in both core and an extension")));
+                                        "defined in different sites or in both core and a site")));
                     }
                 }
             });
@@ -152,21 +152,21 @@ public class HcmSiteIntegrationTest {
     }
 
     @Test
-    public void extensions_test_incompatible_subnode() throws Exception {
+    public void sites_test_incompatible_subnode() throws Exception {
 
-        final String fixtureName = "extensions_before_cms";
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
                     try {
-                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m4"));
-                        fail("Failure is expected since extension's node cannot belong to node from different extension");
+                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m4"));
+                        fail("Failure is expected since site's node cannot belong to node from different site");
                     } catch (Exception ignore) {
                         assertTrue(interceptor.messages()
                                 .anyMatch(m->m.startsWith("Cannot add child config definition '/m2-extension/extension4node' to parent node definition")));
@@ -179,26 +179,26 @@ public class HcmSiteIntegrationTest {
     }
 
     @Test
-    public void extensions_test_delete() throws Exception {
+    public void sites_test_delete() throws Exception {
 
-        //Delete node which is part of another extension
-        final String fixtureName = "extensions_before_cms";
+        //Delete node which is part of another site
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
                     try {
-                        hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m5"));
-                        fail("Failure is expected since extension cannot delete node which belongs to another extension or core");
+                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m5"));
+                        fail("Failure is expected since site cannot delete node which belongs to another site or core");
                     } catch (Exception ignore) {
                         assertTrue(interceptor.messages()
                                 .anyMatch(m->m.startsWith("Cannot merge config definitions with the same path '/corenode/subcorenode' " +
-                                        "defined in different extensions or in both core and an extension")));
+                                        "defined in different sites or in both core and a site")));
                     }
                 }
             });
@@ -208,23 +208,23 @@ public class HcmSiteIntegrationTest {
     }
 
     /**
-     * Apply content definition '/content/m2contentnode/m6node' from m6 extension
-     * on top of m2 extension '/content/m2contentnode'.
+     * Apply content definition '/content/m2contentnode/m6node' from m6 site
+     * on top of m2 site '/content/m2contentnode'.
      */
     @Test
-    public void extensions_test_incompatible_content_defs() throws Exception {
+    public void sites_test_incompatible_content_defs() throws Exception {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
-        final String fixtureName = "extensions_before_cms";
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m6"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m6"));
                 try {
                     final Node m2node = session.getNode("/content/m2contentnode");
                     if (m2node.hasNode("m6node")) {
@@ -240,23 +240,23 @@ public class HcmSiteIntegrationTest {
     }
 
     @Test
-    public void extensions_test_namespace_defs() throws Exception {
+    public void sites_test_namespace_defs() throws Exception {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
-        final String fixtureName = "extensions_before_cms";
+        final String fixtureName = "sites_before_cms";
         final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
-            hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m1"));
+            hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m1"));
             fixture.test(session -> {
 
-                hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "m2"));
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try {
-                    hippoWebappContextRegistry.register(createExtensionApplicationContext(fixtureName, "namespace"));
-                    fail("Namespace definitions from extension modules are not supported");
+                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
+                    fail("Namespace definitions from site modules are not supported");
                 } catch(Exception ex) {
-                    assertTrue(ex.getMessage().contains("Namespace definition can not be a part of extension module"));
+                    assertTrue(ex.getMessage().contains("Namespace definition can not be a part of site module"));
                 }
             });
         } finally {
@@ -264,22 +264,22 @@ public class HcmSiteIntegrationTest {
         }
     }
 
-    public HippoWebappContext createExtensionApplicationContext(final String fixtureName, final String extensionName) throws MalformedURLException {
-        final Path extensionsBasePath = getExtensionBasePath(fixtureName, getBaseDir());
-        final Path extensionPath = extensionsBasePath.resolve(extensionName);
-        final URL dirUrl = new URL(extensionPath.toUri().toURL().toString());
-        final URLClassLoader extensionClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
+    public HippoWebappContext createSiteApplicationContext(final String fixtureName, final String siteName) throws MalformedURLException {
+        final Path siteBasePath = getSiteBasePath(fixtureName, getBaseDir());
+        final Path sitePath = siteBasePath.resolve(siteName);
+        final URL dirUrl = new URL(sitePath.toUri().toURL().toString());
+        final URLClassLoader siteClassLoader = new URLClassLoader(new URL[]{dirUrl}, null);
         return new HippoWebappContext(HippoWebappContext.Type.SITE,
-                new ExtensionServletContext(extensionPath.toString(), "/"+extensionName, extensionClassLoader));
+                new SiteServletContext(sitePath.toString(), "/"+siteName, siteClassLoader));
     }
 
-    public Path getExtensionBasePath(final String fixtureName, final Path path) {
+    public Path getSiteBasePath(final String fixtureName, final Path path) {
         return path.resolve("src")
                 .resolve("test")
                 .resolve("resources")
-                .resolve(EXTENSIONS_INTEGRATION_TEST)
+                .resolve(SITE_INTEGRATION_TEST)
                 .resolve(fixtureName)
-                .resolve("extension");
+                .resolve("site");
     }
 
     public Path getBaseDir() {
@@ -294,7 +294,7 @@ public class HcmSiteIntegrationTest {
         private final Path projectPath;
 
         public Fixture(final String fixtureName) throws IOException {
-            this(new HcmSiteModuleInfo(fixtureName));
+            this(new SiteModuleInfo(fixtureName));
         }
 
         private Fixture(final ModuleInfo... modules) throws IOException {
@@ -349,12 +349,12 @@ public class HcmSiteIntegrationTest {
         }
     }
 
-    private static class ExtensionServletContext extends MockServletContext {
+    private static class SiteServletContext extends MockServletContext {
 
         private final String resourcePath;
         private final ClassLoader classLoader;
 
-        public ExtensionServletContext(final String resourcePath, final String contextPath, final ClassLoader classLoader) {
+        public SiteServletContext(final String resourcePath, final String contextPath, final ClassLoader classLoader) {
             super(resourcePath);
             this.resourcePath = resourcePath;
             this.classLoader = classLoader;

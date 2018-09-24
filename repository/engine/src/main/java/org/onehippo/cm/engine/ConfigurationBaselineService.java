@@ -158,7 +158,7 @@ public class ConfigurationBaselineService {
             // clear any module whose HCM site is present in the model, plus any core module
             // this gives us a clean slate for storing the new baseline for core and HCM sites that are available now
             //TODO SS: Remove all hcm sites configs at once?
-            for (String hcmSiteName: model.getHcmSiteNames()) {
+            for (String hcmSiteName: model.getSiteNames()) {
                 if (hcmSitesNode.hasNode(hcmSiteName)) {
                     hcmSitesNode.getNode(hcmSiteName).remove();
                 }
@@ -182,10 +182,10 @@ public class ConfigurationBaselineService {
             // create group, project, and module nodes, if necessary
             // foreach group
 
-            final List<ModuleImpl> hcmSiteModules = model.getModulesStream().filter(m -> m.getHcmSiteName() != null)
+            final List<ModuleImpl> siteModules = model.getModulesStream().filter(ModuleImpl::isNotCore)
                     .collect(toList());
-            for (ModuleImpl module: hcmSiteModules) {
-                storeHcmSiteModule(module, hcmSitesNode, session);
+            for (ModuleImpl module: siteModules) {
+                storeSiteModule(module, hcmSitesNode, session);
             }
 
             for (GroupImpl group : model.getSortedGroups()) {
@@ -197,7 +197,7 @@ public class ConfigurationBaselineService {
 
                     // foreach module
                     for (ModuleImpl module : project.getModules()) {
-                        if (!module.isHcmSite()) {
+                        if (!module.isNotCore()) {
                             Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
                             // process each core module in detail
                             storeBaselineModule(module, moduleNode, session, false);
@@ -223,7 +223,7 @@ public class ConfigurationBaselineService {
 
 
     //TODO SS: Add javadocs
-    public void storeHcmSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
+    public void storeSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
             throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
@@ -236,7 +236,7 @@ public class ConfigurationBaselineService {
             }
 
             for (ModuleImpl module: modules) {
-                storeHcmSiteModule(module, hcmSitesCatalogNode, session);
+                storeSiteModule(module, hcmSitesCatalogNode, session);
             }
             session.save();
 
@@ -247,19 +247,19 @@ public class ConfigurationBaselineService {
 
 
     //TODO SS: Add javadocs
-    private void storeHcmSiteModule(final ModuleImpl module, final Node parentNode, final Session session)
+    private void storeSiteModule(final ModuleImpl module, final Node parentNode, final Session session)
             throws RepositoryException, IOException {
-        if (StringUtils.isEmpty(module.getHcmSiteName())) {
+        if (StringUtils.isEmpty(module.getSiteName())) {
             throw new ConfigurationRuntimeException(String.format("Module %s does not belong to an HCM site", module));
         }
         if (module.getHstRoot() == null) {
-            throw new ConfigurationRuntimeException(String.format("Module %s for HCM site %s has no hstRoot", module, module.getHcmSiteName()));
+            throw new ConfigurationRuntimeException(String.format("Module %s for HCM site %s has no hstRoot", module, module.getSiteName()));
         }
-        final Node hcmSiteNode = createNodeIfNecessary(parentNode, module.getHcmSiteName(), NT_HCM_SITE, false);
+        final Node hcmSiteNode = createNodeIfNecessary(parentNode, module.getSiteName(), NT_HCM_SITE, false);
         final String hstRoot = JcrUtils.getStringProperty(hcmSiteNode, HCM_HSTROOT, null);
         if (hstRoot != null && !module.getHstRoot().equals(hstRoot)) {
             throw new ConfigurationRuntimeException(String.format("Module %s for hcm site %s has different hstRoot %s than in baseline (%s)"
-                    , module, module.getHcmSiteName(), module.getHstRoot(), hstRoot));
+                    , module, module.getSiteName(), module.getHstRoot(), hstRoot));
         }
         if (hstRoot == null) {
             hcmSiteNode.setProperty(HCM_HSTROOT, module.getHstRoot().toString());
@@ -305,8 +305,8 @@ public class ConfigurationBaselineService {
                 baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
                 Node moduleNode;
-                if (module.isHcmSite()) {
-                    final Node hcmSiteNode = hcmSitesNode.getNode(module.getHcmSiteName());
+                if (module.isNotCore()) {
+                    final Node hcmSiteNode = hcmSitesNode.getNode(module.getSiteName());
                     moduleNode = getModuleNode(hcmSiteNode, module);
                 } else {
                     moduleNode = getModuleNode(baseline, module);
@@ -318,8 +318,7 @@ public class ConfigurationBaselineService {
                     source.markUnchanged();
                 }
 
-                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode);
-                reloadedModule.setHcmSiteName(module.getHcmSiteName());
+                final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode, module.getSiteName());
                 reloadedModule.setHstRoot(module.getHstRoot());
                 parseSources(singletonList(reloadedModule));
                 newBaselineModules.add(reloadedModule);
@@ -390,8 +389,11 @@ public class ConfigurationBaselineService {
             storeString(is, descriptorNode, HCM_YAML);
         }
         else {
+            // a descriptor must exist, or this isn't a valid baseline
+            // TODO: throw an appropriate exception if this is to be forbidden
+//            throw new IllegalStateException("Module descriptor does not exist for module: "+module.getFullName());
+
             // if descriptor doesn't exist,
-            // TODO: throw an appropriate exception if this is to be forbidden, once demo config is reorganized
             String dummyDescriptor = module.compileDummyDescriptor();
 
             // write that back to the YAML property and digest it
@@ -685,7 +687,7 @@ public class ConfigurationBaselineService {
 
                 // make sure we load core modules, in addition to specified HCM Sites
                 // First phase: load and parse core module descriptors
-                final List<ModuleImpl> modules = parseDescriptors(baselineNode);
+                final List<ModuleImpl> modules = parseDescriptors(baselineNode, null);
 
                 if (isNotEmpty(hcmSites)) {
                     final Node hcmSiteCatalogNode = baselineNode.getNode(HCM_SITES);
@@ -693,9 +695,8 @@ public class ConfigurationBaselineService {
                         final Node hcmSiteNode = eni.nextNode();
                         final String hcmSiteName = hcmSiteNode.getName();
                         final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
-                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode);
+                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode, hcmSiteName);
                         hcmSiteModules.forEach(module -> {
-                            module.setHcmSiteName(hcmSiteName);
                             module.setHstRoot(JcrPaths.getPath(hstRoot));
                         });
                         modules.addAll(hcmSiteModules);
@@ -730,14 +731,14 @@ public class ConfigurationBaselineService {
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected List<ModuleImpl> parseDescriptors(final Node baselineNode)
+    protected List<ModuleImpl> parseDescriptors(final Node baselineNode, final String hcmSiteName)
             throws RepositoryException, ParserException {
         // groups accumulator
         final List<ModuleImpl> modules = new ArrayList<>();
 
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            final ModuleImpl module = loadModuleDescriptor(moduleNode);
+            final ModuleImpl module = loadModuleDescriptor(moduleNode, hcmSiteName);
             modules.add(module);
         }
 
@@ -747,12 +748,12 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Helper for {@link #parseDescriptors(Node)} -- loads one module descriptor from a given module baseline node.
+     * Helper for {@link #parseDescriptors(Node,String)} -- loads one module descriptor from a given module baseline node.
      * @param moduleNode the JCR node where the baseline for a module has been previously stored
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected ModuleImpl loadModuleDescriptor(final Node moduleNode) throws RepositoryException, ParserException {
+    protected ModuleImpl loadModuleDescriptor(final Node moduleNode, final String hcmSiteName) throws RepositoryException, ParserException {
         final ModuleImpl module;
 
         Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
@@ -763,7 +764,7 @@ public class ConfigurationBaselineService {
             // parse descriptor with ModuleDescriptorParser
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
-                    .parse(is, moduleNode.getPath());
+                    .parse(is, moduleNode.getPath(), hcmSiteName);
 
             // TODO: determine and set actual HCM Site name
 

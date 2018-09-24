@@ -121,7 +121,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(baselineSource, baseline, true);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:document' of node '/test/keep-as-is' is adjusted to 'nt:unstructured' as defined in [test-group/test-project/test-module-0 [config: string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:document' of node '/test/keep-as-is' is adjusted to 'nt:unstructured' as defined in [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         assertEquals(testNode.getNode("keep-as-is").getPrimaryNodeType().getName(), "nt:unstructured");
@@ -151,7 +151,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "        jcr:primaryType: hippo:document\n";
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(updateSource, baseline);
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:handle' of node '/test/change-type' has been changed from 'nt:unstructured'.Overriding to type 'hippo:document', defined in [test-group/test-project/test-module-0 [config: string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:handle' of node '/test/change-type' has been changed from 'nt:unstructured'.Overriding to type 'hippo:document', defined in [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         assertEquals("hippo:document", testNode.getNode("change-type").getPrimaryNodeType().getName());
@@ -277,10 +277,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(baselineSource, baseline, true);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Mixin 'hippostd:relaxed' has been added to node '/test/tweak-mixins', " +
-                            "but is removed because it is not present in definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "but is removed because it is not present in definition [core/test-group/test-project/test-module-0 [config: string]].")));
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Mixin 'mix:language' has been removed from node '/test/tweak-mixins', " +
-                            "but is re-added because it is defined at [test-group/test-project/test-module-0 [config: string]].")));
+                            "but is re-added because it is defined at [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         assertTrue(hasMixins(testNode.getNode("tweak-mixins"), Collections.singletonList("mix:language")));
@@ -454,10 +454,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(source, baseline);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/single' has been changed in the repository," +
-                            " and will be overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            " and will be overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/multiple' has been changed in the repository," +
-                            " and will be overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            " and will be overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
@@ -494,10 +494,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(source, baseline, true);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/single' has been changed in the repository, " +
-                            "and will be overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "and will be overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/multiple' has been changed in the repository, " +
-                            "and will be overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "and will be overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
@@ -654,10 +654,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/single' has been created in the repository, and will be " +
-                            "overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/multiple' has been created in the repository, and will be" +
-                            " overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            " overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
@@ -673,10 +673,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, true);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/single' has been created in the repository, and will be " +
-                            "overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/multiple' has been created in the repository, and will be" +
-                            " overridden due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            " overridden due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
@@ -748,7 +748,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, baseline, true, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property '/test/single' has been deleted from the repository, and will be re-added " +
-                            "due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType, single]");
@@ -859,7 +859,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(update, baseline, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
-                    "[OVERRIDE] Property '/test/single' originally defined in [test-group/test-project/test-module-0 [config: string]] " +
+                    "[OVERRIDE] Property '/test/single' originally defined in [core/test-group/test-project/test-module-0 [config: string]] " +
                             "has been changed, but will be deleted because it no longer is part of the configuration model.")));
         }
 
@@ -872,7 +872,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
             applyDefinitions(update, baseline, true, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
-                    "[OVERRIDE] Property '/test/single' originally defined in [test-group/test-project/test-module-0 [config: string]] " +
+                    "[OVERRIDE] Property '/test/single' originally defined in [core/test-group/test-project/test-module-0 [config: string]] " +
                             "has been changed, but will be deleted because it no longer is part of the configuration model.")));
         }
 
@@ -944,7 +944,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, baseline, true, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Property 'single' of node '/test' has been added to the repository, but will be " +
-                            "deleted because it is not defined in [test-group/test-project/test-module-0 [config: string]].")));
+                            "deleted because it is not defined in [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test", "[]", "[jcr:primaryType]");
@@ -988,7 +988,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             assertEquals(uuid, testNode.getNode("child").getIdentifier());
             assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
-                    " for node '/test/child2' defined in [test-group/test-project/test-module-0 [config: string]]" +
+                    " for node '/test/child2' defined in [core/test-group/test-project/test-module-0 [config: string]]" +
                     " already in use: a new jcr:uuid will be generated instead.")));
         }
     }
@@ -1261,13 +1261,13 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             assertFalse(testNode.hasProperty("foo/bar/path-reference"));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
                     "for property '/test/foo/bar/uuid-reference' defined in " +
-                    "[test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
+                    "[core/test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
                     "for property '/test/foo/bar/uuid-references' defined in " +
-                    "[test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
+                    "[core/test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Path reference '/undefined' for property " +
                     "'/test/foo/bar/path-reference' defined in " +
-                    "[test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
+                    "[core/test-group/test-project/test-module-0 [config: string]] not found: skipping.")));
         }
     }
 
@@ -1471,7 +1471,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, baseline, true, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Node '/test/child' has been removed, but will be re-added " +
-                            "due to definition [test-group/test-project/test-module-0 [config: string]].")));
+                            "due to definition [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         expectNode("/test/child", "[]", "[jcr:primaryType]");
@@ -1514,7 +1514,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             applyDefinitions(definition, baseline, true, expectedEvents);
             assertTrue(interceptor.messages().anyMatch(m -> m.equals(
                     "[OVERRIDE] Child node 'child[1]' exists, but will be deleted while processing the children " +
-                            "of node '/test' defined in [test-group/test-project/test-module-0 [config: string]].")));
+                            "of node '/test' defined in [core/test-group/test-project/test-module-0 [config: string]].")));
         }
 
         assertFalse(testNode.hasNode("child"));
