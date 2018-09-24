@@ -19,6 +19,7 @@ describe('ComponentFields', () => {
   let ComponentEditor;
 
   let component;
+  let form;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
@@ -28,14 +29,31 @@ describe('ComponentFields', () => {
       ComponentEditor = _ComponentEditor_;
     });
 
-    component = $componentController('componentFields');
+    form = {};
+
+    component = $componentController('componentFields',
+      {},
+      { form },
+    );
   });
 
-  it('triggers valueChanged() on the ComponentEditor when a value is changed', () => {
-    spyOn(ComponentEditor, 'valueChanged');
+  describe('valueChanged', () => {
+    it('triggers valueChanged() on the ComponentEditor when a value is changed and valid', () => {
+      spyOn(ComponentEditor, 'valueChanged');
+      form.$valid = true;
 
-    component.valueChanged();
+      component.valueChanged();
 
-    expect(ComponentEditor.valueChanged).toHaveBeenCalled();
+      expect(ComponentEditor.valueChanged).toHaveBeenCalled();
+    });
+
+    it('does not trigger valueChanged() on the ComponentEditor when a value is changed to something invalid', () => {
+      spyOn(ComponentEditor, 'valueChanged');
+      form.$valid = false;
+
+      component.valueChanged();
+
+      expect(ComponentEditor.valueChanged).not.toHaveBeenCalled();
+    });
   });
 });

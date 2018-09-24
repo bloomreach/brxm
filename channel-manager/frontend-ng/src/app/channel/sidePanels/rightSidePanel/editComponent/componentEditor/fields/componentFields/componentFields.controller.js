@@ -23,7 +23,9 @@ class ComponentFieldsCtrl {
   }
 
   valueChanged() {
-    this.ComponentEditor.valueChanged();
+    if (this.form.$valid) {
+      this.ComponentEditor.valueChanged();
+    }
   }
 
   focusPrimitive() {
