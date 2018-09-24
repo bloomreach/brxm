@@ -410,6 +410,33 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('discard changes functions', () => {
+    beforeEach(() => {
+      const properties = ['propertyData'];
+      openComponentEditor(properties);
+    });
+
+    it('calls the dialog service to confirm', () => {
+      const showPromise = {};
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(DialogService, 'show');
+
+      DialogService.show.and.returnValue(showPromise);
+
+      const result = ComponentEditor.confirmDiscardChanges();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('reopens the component to discard changes', () => {
+      spyOn(ComponentEditor, 'open');
+      ComponentEditor.discardChanges();
+      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+    });
+  });
+
   describe('confirm save or discard changes', () => {
     beforeEach(() => {
       ComponentEditor.component = {
