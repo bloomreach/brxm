@@ -43,7 +43,7 @@ describe('ComponentEditorService', () => {
   }
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     inject((
       _$q_,
@@ -279,20 +279,6 @@ describe('ComponentEditorService', () => {
     });
   });
 
-  describe('dirty state', () => {
-    it('is false initially', () => {
-      expect(ComponentEditor.dirty).toBe(false);
-    });
-
-    it('can be changed', () => {
-      ComponentEditor.dirty = true;
-      expect(ComponentEditor.dirty).toBe(true);
-
-      ComponentEditor.dirty = false;
-      expect(ComponentEditor.dirty).toBe(false);
-    });
-  });
-
   describe('valueChanged', () => {
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', () => {
       spyOn(PageStructureService, 'renderComponent');
@@ -340,30 +326,6 @@ describe('ComponentEditorService', () => {
       ComponentEditor.save();
 
       expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', { a: 'value-a', b: 'value-b' });
-    });
-
-    it('resets the dirty state when saving succeeded', () => {
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
-
-      openComponentEditor([]);
-      ComponentEditor.dirty = true;
-
-      ComponentEditor.save();
-      $rootScope.$digest();
-
-      expect(ComponentEditor.dirty).toBe(false);
-    });
-
-    it('keeps the dirty state when saving failed', () => {
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.reject());
-
-      openComponentEditor([]);
-      ComponentEditor.dirty = true;
-
-      ComponentEditor.save();
-      $rootScope.$digest();
-
-      expect(ComponentEditor.dirty).toBe(true);
     });
   });
 
@@ -468,19 +430,7 @@ describe('ComponentEditorService', () => {
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
     });
 
-    it('does not show a dialog if there is no dirty data', (done) => {
-      ComponentEditor.confirmSaveOrDiscardChanges()
-        .then(() => {
-          expect($translate.instant).not.toHaveBeenCalled();
-          expect(DialogService.show).not.toHaveBeenCalled();
-          done();
-        });
-      $rootScope.$digest();
-    });
-
-    it('shows a dialog if there is dirty data', (done) => {
-      ComponentEditor.dirty = true;
-
+    it('shows a dialog', (done) => {
       ComponentEditor.confirmSaveOrDiscardChanges()
         .then(() => {
           expect(DialogService.show).toHaveBeenCalled();

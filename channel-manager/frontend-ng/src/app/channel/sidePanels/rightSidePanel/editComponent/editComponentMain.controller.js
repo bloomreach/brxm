@@ -72,7 +72,15 @@ class EditComponentMainCtrl {
   }
 
   isSaveAllowed() {
-    return this.form && this.form.$dirty && this.form.$valid;
+    return this._isFormDirty() && this._isFormValid();
+  }
+
+  _isFormDirty() {
+    return this.form && this.form.$dirty;
+  }
+
+  _isFormValid() {
+    return this.form && this.form.$valid;
   }
 
   uiCanExit() {
@@ -89,7 +97,7 @@ class EditComponentMainCtrl {
   }
 
   _saveOrDiscardChanges() {
-    if (this.form.$dirty) {
+    if (this._isFormDirty()) {
       return this.ComponentEditor.confirmSaveOrDiscardChanges();
     }
     return this.$q.resolve();

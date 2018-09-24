@@ -25,6 +25,7 @@ describe('EditComponentMainCtrl', () => {
   let HippoIframeService;
 
   let $ctrl;
+  let form;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
@@ -52,6 +53,7 @@ describe('EditComponentMainCtrl', () => {
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
         'discardChanges',
+        'getPropertyGroups',
         'save',
       ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -66,25 +68,71 @@ describe('EditComponentMainCtrl', () => {
         HippoIframeService,
       });
 
+      $ctrl.form = form = jasmine.createSpyObj('form', ['$setPristine']);
       $scope.$digest();
     });
   });
 
-  it('allows save when the component editor is dirty', () => {
-    ComponentEditor.dirty = false;
-    expect($ctrl.isSaveAllowed()).toBe(false);
+  it('gets the property groups', () => {
+    const propertyGroups = [];
+    ComponentEditor.getPropertyGroups.and.returnValue(propertyGroups);
+    expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
+  });
 
-    ComponentEditor.dirty = true;
-    expect($ctrl.isSaveAllowed()).toBe(true);
+  describe('isSaveAllowed', () => {
+    it('returns falsy when the form does not exist yet', () => {
+      delete $ctrl.form;
+      expect($ctrl.isSaveAllowed()).toBeFalsy();
+    });
+
+    it('returns false when the form is not dirty', () => {
+      form.$dirty = false;
+      expect($ctrl.isSaveAllowed()).toBe(false);
+    });
+
+    it('returns false when the form is dirty but not valid', () => {
+      form.$dirty = true;
+      form.$valid = false;
+      expect($ctrl.isSaveAllowed()).toBe(false);
+    });
+
+    it('returns true when the form is dirty and valid', () => {
+      form.$dirty = true;
+      form.$valid = true;
+      expect($ctrl.isSaveAllowed()).toBe(true);
+    });
   });
 
   describe('save component', () => {
     it('saves changes', () => {
+      ComponentEditor.save.and.returnValue($q.resolve());
+
       $ctrl.save();
+      $scope.$digest();
+
       expect(ComponentEditor.save).toHaveBeenCalled();
     });
 
+    it('makes the form pristine when saving changes succeeds', () => {
+      ComponentEditor.save.and.returnValue($q.resolve());
+
+      $ctrl.save();
+      $scope.$digest();
+
+      expect(form.$setPristine).toHaveBeenCalled();
+    });
+
+    it('keeps the form dirty when saving changes fails', () => {
+      ComponentEditor.save.and.returnValue($q.reject());
+
+      $ctrl.save();
+      $scope.$digest();
+
+      expect(form.$setPristine).not.toHaveBeenCalled();
+    });
+
     it('reports a usage statistics', () => {
+      ComponentEditor.save.and.returnValue($q.resolve());
       $ctrl.save();
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
     });
@@ -114,6 +162,7 @@ describe('EditComponentMainCtrl', () => {
     describe('when save or discard changes is rejected', () => {
       beforeEach(() => {
         spyOn($log, 'error');
+        form.$dirty = true;
       });
 
       it('fails silently when save or discard changes is canceled', (done) => {

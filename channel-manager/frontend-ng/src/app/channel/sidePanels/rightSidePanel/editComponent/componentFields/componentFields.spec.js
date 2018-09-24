@@ -22,7 +22,7 @@ describe('ComponentFields', () => {
   let form;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent.componentEditor');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     inject((_$componentController_, _ComponentEditor_) => {
       $componentController = _$componentController_;
