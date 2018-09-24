@@ -103,8 +103,10 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
-    // TODO when is below used? We already have org.hippoecm.hst.platform.api.ChannelService.getChannels() which fetches
-    // TODO all channels from all hst configs. When is this #getChannels used?
+    /**
+     * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
+     * cross channel page copy which is not supported over cross webapp
+     */
     @GET
     @Path("/channels")
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
@@ -112,6 +114,7 @@ public class RootResource extends AbstractConfigResource {
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
                                 @QueryParam("skipBranches") final boolean skipBranches,
                                 @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked) {
+
         try {
             final List<Channel> channels = this.channelService.getChannels(previewConfigRequired,
                     workspaceRequired,
