@@ -35,13 +35,19 @@ class EditComponentMainCtrl {
     this.HippoIframeService = HippoIframeService;
   }
 
+  getPropertyGroups() {
+    return this.ComponentEditor.getPropertyGroups();
+  }
+
   discard() {
     this.ComponentEditor.confirmDiscardChanges()
       .then(() => this.ComponentEditor.discardChanges());
   }
 
   save() {
-    this.ComponentEditor.save();
+    this.ComponentEditor.save()
+      .then(() => this.form.$setPristine());
+
     this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
   }
 
@@ -66,11 +72,19 @@ class EditComponentMainCtrl {
   }
 
   isSaveAllowed() {
-    return this.ComponentEditor.dirty;
+    return this._isFormDirty() && this._isFormValid();
+  }
+
+  _isFormDirty() {
+    return this.form && this.form.$dirty;
+  }
+
+  _isFormValid() {
+    return this.form && this.form.$valid;
   }
 
   uiCanExit() {
-    return this.ComponentEditor.confirmSaveOrDiscardChanges()
+    return this._saveOrDiscardChanges()
       .then(() => this.ComponentEditor.close())
       .catch((e) => {
         if (e) {
@@ -80,6 +94,13 @@ class EditComponentMainCtrl {
         }
         return this.$q.reject();
       });
+  }
+
+  _saveOrDiscardChanges() {
+    if (this._isFormDirty()) {
+      return this.ComponentEditor.confirmSaveOrDiscardChanges();
+    }
+    return this.$q.resolve();
   }
 }
 
