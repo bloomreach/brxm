@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,11 +92,8 @@ public class OrderableByNameListSorter<T extends OrderableByName> {
         final Map<String, U> map = new TreeMap<>(getComparator());
 
         for (U o : orderables) {
-            if (map.containsValue(o)) {
-                throw new DuplicateNameException(String.format("Duplicate %s: '%s'.", orderableTypeName, o));
-            }
-            else {
-                map.put(o.getName(), o);
+            if (map.put(o.getName(), o) != null) {
+                throw new DuplicateNameException(String.format("Duplicate %s: '%s'.", orderableTypeName, o.getName()));
             }
         }
         final LinkedHashMap<String, U> sorted = new LinkedHashMap<>(orderables.size());
