@@ -85,14 +85,21 @@ describe('EditComponentMainCtrl', () => {
       expect($ctrl.isSaveAllowed()).toBeFalsy();
     });
 
-    it('returns false when the form is not dirty', () => {
+    it('returns false when the form is neither dirty nor valid', () => {
       form.$dirty = false;
+      form.$valid = false;
       expect($ctrl.isSaveAllowed()).toBe(false);
     });
 
     it('returns false when the form is dirty but not valid', () => {
       form.$dirty = true;
       form.$valid = false;
+      expect($ctrl.isSaveAllowed()).toBe(false);
+    });
+
+    it('returns false when the form is not dirty and valid', () => {
+      form.$dirty = false;
+      form.$valid = true;
       expect($ctrl.isSaveAllowed()).toBe(false);
     });
 
