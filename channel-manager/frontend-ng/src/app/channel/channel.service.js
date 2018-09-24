@@ -153,7 +153,10 @@ class ChannelService {
   }
 
   makeRenderPath(channelRelativePath) {
-    return this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
+    const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
+
+    // let the HST know the host name of the rendered page via an internal query parameter
+    return `${path}?org.hippoecm.hst.container.render_host=${this.channel.hostname}`;
   }
 
   makePath(renderPath) {
