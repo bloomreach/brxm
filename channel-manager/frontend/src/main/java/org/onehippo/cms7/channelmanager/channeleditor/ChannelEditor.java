@@ -183,7 +183,6 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/colorfield/colorfield.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
         response.render(ChannelEditorHeaderItem.get());
     }

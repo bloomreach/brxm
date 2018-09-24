@@ -93,13 +93,6 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-jquery</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
@@ -232,7 +225,6 @@
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
-                <include>${channel.editor.package}/plugins/colorfield/colorfield.js</include>
                 <include>${channel.editor.package}/plugins/floatingwindow/FloatingWindow.js</include>
                 <include>${channel.editor.package}/plugins/vtabs/VerticalTabPanel.js</include>
                 <include>${channel.editor.package}/ComponentVariants.js</include>
