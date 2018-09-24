@@ -68,7 +68,9 @@ describe('EditComponentMainCtrl', () => {
         HippoIframeService,
       });
 
-      $ctrl.form = form = jasmine.createSpyObj('form', ['$setPristine']);
+      form = jasmine.createSpyObj('form', ['$setPristine']);
+      $ctrl.form = form;
+
       $scope.$digest();
     });
   });
