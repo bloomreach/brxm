@@ -306,7 +306,7 @@ public class ConfigurationConfigService {
                 namespaceDefinitions.stream().filter(ns -> (ns.getSource().getModule().isNotCore())).findFirst();
         cndExtension.ifPresent(def -> {
             final String msg = String.format("Failed to process namespace definition defined in %s: " +
-                    "namespace with prefix '%s'. Namespace definition can not be a part of extension module: '%s'",
+                    "namespace with prefix '%s'. Namespace definition can not be a part of site module: '%s'",
                     def.getOrigin(), def.getPrefix(), def.getSource().getModule());
             throw new ConfigurationRuntimeException(msg);
         });
