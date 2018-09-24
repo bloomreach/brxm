@@ -19,7 +19,12 @@
          md-border-bottom>
   <md-tab label="{{ ::'RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES' | translate }}">
     <md-tab-body>
-      <component-editor />
+      <form name="$ctrl.form"
+            class="form-dense-layout">
+        <property-group class="top-level"
+                        ng-repeat="propertyGroup in $ctrl.getPropertyGroups() track by propertyGroup.label"
+                        group="propertyGroup" />
+      </form>
     </md-tab-body>
   </md-tab>
 </md-tabs>

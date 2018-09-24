@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from '../../contentEditor/multiActionDialog/multiActionDialog.controller';
-import multiActionDialogTemplate from '../../contentEditor/multiActionDialog/multiActionDialog.html';
+import MultiActionDialogCtrl from '../contentEditor/multiActionDialog/multiActionDialog.controller';
+import multiActionDialogTemplate from '../contentEditor/multiActionDialog/multiActionDialog.html';
 
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
