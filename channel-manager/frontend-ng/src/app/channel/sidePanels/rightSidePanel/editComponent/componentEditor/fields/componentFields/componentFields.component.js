@@ -21,8 +21,6 @@ const componentFieldsComponent = {
   bindings: {
     name: '<',
     fields: '<',
-    onFieldFocus: '&',
-    onFieldBlur: '&',
   },
   controller: ComponentFieldsCtrl,
   template,

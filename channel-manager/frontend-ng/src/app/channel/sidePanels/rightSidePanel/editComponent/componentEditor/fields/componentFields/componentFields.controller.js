@@ -22,11 +22,6 @@ class ComponentFieldsCtrl {
     this.ComponentEditor = ComponentEditor;
   }
 
-  $onInit() {
-    this.onFieldFocus = this.onFieldFocus || angular.noop;
-    this.onFieldBlur = this.onFieldBlur || angular.noop;
-  }
-
   valueChanged() {
     this.ComponentEditor.valueChanged();
   }

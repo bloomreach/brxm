@@ -29,7 +29,6 @@ describe('ComponentFields', () => {
     });
 
     component = $componentController('componentFields');
-    component.$onInit();
   });
 
   it('triggers valueChanged() on the ComponentEditor when a value is changed', () => {
