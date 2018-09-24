@@ -1,5 +1,3 @@
 group: hippo-cms
-project:
-    name: hippo-site-toolkit
-    after: hippo-repository
+project: hippo-site-toolkit
 module: hst-addon-hcm-site
