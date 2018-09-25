@@ -54,6 +54,7 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,8 +122,7 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             });
         }});
         add(new EmptyPanel("menu"));
-
-        CategoriesService service = context.getService(CategoriesBuilder.CATEGORIES_BUILDER_ID, CategoriesService.class);
+        final CategoriesService service = HippoServiceRegistry.getService(CategoriesService.class);
         categoriesBuilder = Optional.ofNullable(service).map(CategoriesService::getBuilder).orElse(new CategoriesBuilderImpl());
     }
 
