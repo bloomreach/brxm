@@ -52,7 +52,12 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +120,11 @@ public class LoginPanel extends Panel {
         ConcurrentLoginFilter.validateSession(session, username, false);
 
         userSession.setLocale(getSelectedLocale());
+
+        final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
+        final CmsSessionContext newCmsSessionContext = cmsContextService.create(userSession.getHttpSession());
+        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
+
     }
 
     private boolean isDevMode() {
