@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import componentEditorModule from './componentEditor/componentEditor.module';
+import componentEditorService from './componentEditor.service';
+import componentFieldsComponent from './componentFields/componentFields.component';
 import editComponentConfig from './editComponent.config';
 import editComponentMainCtrl from './editComponentMain.controller';
 import editComponentService from './editComponent.service';
 import editComponentToolsCtrl from './editComponentTools.controller';
+import propertyGroupComponent from './propertyGroup/propertyGroup.component';
 
 const editComponentModule = angular
-  .module('hippo-cm.channel.rightSidePanel.editComponent', [
-    componentEditorModule,
-  ])
+  .module('hippo-cm.channel.rightSidePanel.editComponent', [])
   .config(editComponentConfig)
+  .service('ComponentEditor', componentEditorService)
   .service('EditComponentService', editComponentService)
   .controller('editComponentMainCtrl', editComponentMainCtrl)
-  .controller('editComponentToolsCtrl', editComponentToolsCtrl);
+  .controller('editComponentToolsCtrl', editComponentToolsCtrl)
+  .component('componentFields', componentFieldsComponent)
+  .component('propertyGroup', propertyGroupComponent);
 
 export default editComponentModule.name;
