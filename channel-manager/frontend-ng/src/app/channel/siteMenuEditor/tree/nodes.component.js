@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import controller from './siteMenuEditor.controller';
-import template from './siteMenuEditor.html';
+import template from './nodes.template.html';
 
-const siteMenuEditorComponent = {
-  bindings: {
-    menuUuid: '@',
-    onDone: '&',
-    onError: '&',
-    onSuccess: '&',
+const treeNodesComponent = {
+  require: {
+    hippoTree: '^^hippoTree',
   },
-  controller,
+  bindings: {
+    items: '=',
+  },
   template,
 };
 
-export default siteMenuEditorComponent;
+export default treeNodesComponent;
