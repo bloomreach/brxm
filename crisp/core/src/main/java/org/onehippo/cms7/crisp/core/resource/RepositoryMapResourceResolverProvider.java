@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     /**
      * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
      */
-    private Map<String, AbstractApplicationContext> childAppContexts = new LinkedHashMap<>();
+    private Map<String, AbstractApplicationContext> childAppContexts = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Default constructor.
@@ -266,7 +267,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                 }
             }
 
-            log.warn("CRISP resource resolvers map: {}", getResourceResolverMap());
+            log.info("CRISP resource resolvers map: {}", getResourceResolverMap());
 
             inited = true;
         } catch (RepositoryException e) {
