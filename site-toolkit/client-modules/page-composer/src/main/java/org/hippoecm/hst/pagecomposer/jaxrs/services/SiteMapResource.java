@@ -315,7 +315,7 @@ public class SiteMapResource extends AbstractConfigResource {
         if (StringUtils.isNotBlank(mountId)) {
             // validate target mount has preview and a workspace
             preValidators.add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService(), mountId));
-            preValidators.add(validatorFactory.getHasWorkspaceConfigurationValidator(mountId));
+            preValidators.add(validatorFactory.getHasWorkspaceConfigurationValidator(getPageComposerContextService(), mountId));
         }
 
         return tryExecute(new Callable<Response>() {

@@ -67,14 +67,6 @@ public class ValidatorFactory {
         return new SiteMenuItemRepresentationValidator(uriValidator, representation);
     }
 
-    /**
-     * @deprecated since HST 3.2.0. Use {@link #getConfigurationExistsValidator} instead
-     */
-    @Deprecated
-    public Validator getCurrentPreviewConfigurationValidator(final String id, final SiteMapHelper siteMapHelper) {
-        return getConfigurationExistsValidator(id, siteMapHelper);
-    }
-
     public Validator getConfigurationExistsValidator(final String id, final SiteMapHelper siteMapHelper) {
         return new ConfigurationExistsValidator(id, siteMapHelper);
     }
@@ -96,8 +88,8 @@ public class ValidatorFactory {
         return new HasPreviewConfigurationValidator(pageComposerContextService, mountId);
     }
 
-    public Validator getHasWorkspaceConfigurationValidator(final String mountId) {
-        return new HasWorkspaceConfigurationValidator(mountId);
+    public Validator getHasWorkspaceConfigurationValidator(final PageComposerContextService pageComposerContextService, final String mountId) {
+        return new HasWorkspaceConfigurationValidator(pageComposerContextService, mountId);
     }
 
     public Validator getNameValidator(String name) {

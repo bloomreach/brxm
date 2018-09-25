@@ -26,19 +26,22 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 public class HasPreviewConfigurationValidator implements Validator {
 
+    private final PageComposerContextService pageComposerContextService;
     private final String mountId;
 
     public HasPreviewConfigurationValidator(final PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
         this.mountId = pageComposerContextService.getEditingMount().getIdentifier();
     }
     public HasPreviewConfigurationValidator(final PageComposerContextService pageComposerContextService,
                                             final String mountId) {
+        this.pageComposerContextService = pageComposerContextService;
         this.mountId = mountId;
     }
 
     @Override
     public void validate(final HstRequestContext requestContext) throws RuntimeException {
-        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        Mount mount = pageComposerContextService.getEditingPreviewVirtualHosts().getMountByIdentifier(mountId);
         if (!mount.getHstSite().hasPreviewConfiguration()) {
             final String message = String.format("There is no preview configuration for '%s'", mount.getHstSite().getConfigurationPath());
             throw new ClientException("There is no preview configuration", ClientError.NO_PREVIEW_CONFIGURATION, Collections.singletonMap("errorReason", message));

@@ -74,7 +74,7 @@ public class HstConfigurationUtils {
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
         session.save();
-        EventPathsInvalidator invalidator = getPreviewHstModel().getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = getPreviewHstModel().getEventPathsInvalidator();
         // after the save the paths need to be send, not before!
         if (invalidator != null && pathsToBeChanged != null) {
             invalidator.eventPaths(pathsToBeChanged);

@@ -32,15 +32,17 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE
 
 public class HasWorkspaceConfigurationValidator implements Validator {
 
+    private PageComposerContextService pageComposerContextService;
     private final String mountId;
 
-    public HasWorkspaceConfigurationValidator(final String mountId) {
+    public HasWorkspaceConfigurationValidator(final PageComposerContextService pageComposerContextService, final String mountId) {
+        this.pageComposerContextService = pageComposerContextService;
         this.mountId = mountId;
     }
 
     @Override
     public void validate(final HstRequestContext requestContext) throws RuntimeException {
-        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        Mount mount = pageComposerContextService.getEditingPreviewVirtualHosts().getMountByIdentifier(mountId);
         try {
             if (!requestContext.getSession().nodeExists(mount.getHstSite().getConfigurationPath() + "/" + NODENAME_HST_WORKSPACE)) {
                 final String message = String.format("There is no workspace configuration for '%s'", mount.getHstSite().getConfigurationPath());

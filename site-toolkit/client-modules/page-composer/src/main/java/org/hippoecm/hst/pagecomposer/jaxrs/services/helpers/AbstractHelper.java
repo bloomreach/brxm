@@ -61,6 +61,10 @@ public abstract class AbstractHelper {
         this.pageComposerContextService = pageComposerContextService;
     }
 
+    public PageComposerContextService getPageComposerContextService() {
+        return pageComposerContextService;
+    }
+
     void setLockHelper(LockHelper lockHelper) {
         this.lockHelper = lockHelper;
     }

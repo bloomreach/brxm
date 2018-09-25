@@ -42,7 +42,7 @@ public class ConfigurationExistsValidator implements Validator {
         if (mountId == null) {
             helper.getConfigObject(id);
         } else {
-            helper.getConfigObject(id, requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId));
+            helper.getConfigObject(id, helper.getPageComposerContextService().getEditingPreviewVirtualHosts().getMountByIdentifier(mountId));
         }
 
     }
