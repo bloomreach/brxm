@@ -56,6 +56,8 @@ describe('EditComponentMainCtrl', () => {
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
         'discardChanges',
+        'getComponentName',
+        'reOpen',
         'save',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
@@ -85,7 +87,7 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('save component', () => {
-    it('should show a toaster on error', (done) => {
+    it('fails with a message when another user locked the component\'s container', (done) => {
       const parameterMap = {};
       ComponentEditor.save.and.returnValue($q.reject({
         data: {
@@ -101,13 +103,40 @@ describe('EditComponentMainCtrl', () => {
         .then(() => {
           expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
           expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(ComponentEditor.reOpen).toHaveBeenCalled();
           done();
         });
       $scope.$digest();
     });
 
-    it('should report usage statistics', (done) => {
+    it('fails with a message when another user deleted the component', (done) => {
+      ComponentEditor.save.and.returnValue($q.reject({
+        message: 'javax.jcr.ItemNotFoundException: some-uuid',
+        data: {
+          error: null,
+        },
+      }));
+
+      spyOn($translate, 'instant');
+      $translate.instant.and.returnValue('translated');
+      spyOn(EditComponentService, 'stopEditing');
+
+      $ctrl.save()
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(EditComponentService.stopEditing).toHaveBeenCalled();
+          expect($ctrl.kill).toBe(true);
+          done();
+        });
+      $scope.$digest();
+    });
+
+    it('should report usage statistics when the save succeeds', (done) => {
       ComponentEditor.save.and.returnValue($q.resolve(''));
       $ctrl.save()
         .then(() => {
@@ -230,6 +259,47 @@ describe('EditComponentMainCtrl', () => {
 
       it('closes the component editor', () => {
         expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      });
+    });
+
+    describe('when the delete fails it reloads the page and', () => {
+      const resultParameters = {
+        component: 'componentName',
+      };
+
+      beforeEach(() => {
+        ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+        spyOn($translate, 'instant');
+        $translate.instant.and.returnValue('translated');
+        ComponentEditor.getComponentName.and.returnValue('componentName');
+      });
+
+      it('shows a message if the component was locked by another user and reopens the editor', () => {
+        ComponentEditor.deleteComponent.and.returnValue($q.reject({
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap: {},
+        }));
+
+        $ctrl.deleteComponent();
+        $scope.$digest();
+
+        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+        expect(ComponentEditor.reOpen).toHaveBeenCalled();
+      });
+
+      it('shows a default message if a general delete error occurs', () => {
+        ComponentEditor.deleteComponent.and.returnValue($q.reject({
+          parameterMap: {},
+        }));
+
+        $ctrl.deleteComponent();
+        $scope.$digest();
+
+        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(HippoIframeService.reload).toHaveBeenCalled();
       });
     });
   });

@@ -200,12 +200,15 @@ class ComponentEditorService {
   }
 
   discardChanges() {
+    return this.reOpen().finally(() => this.PageStructureService.renderComponent(this.component.id));
+  }
+
+  reOpen() {
     return this.open({
       channel: this.channel,
       component: this.component,
       container: this.container,
-      page: this.page,
-    }).finally(() => this.PageStructureService.renderComponent(this.component.id));
+      page: this.page });
   }
 
   close() {

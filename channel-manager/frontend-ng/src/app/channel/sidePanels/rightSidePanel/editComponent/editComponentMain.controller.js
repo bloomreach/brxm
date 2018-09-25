@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-const ERRORS = {
+const DELETE_ERRORS = {
+  GENERAL_ERROR: 'ERROR_DELETE_COMPONENT',
+  ITEM_ALREADY_LOCKED: 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
+};
+const SAVE_ERRORS = {
+  GENERAL_ERROR: 'ERROR_UPDATE_COMPONENT',
   ITEM_ALREADY_LOCKED: 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED',
 };
 
@@ -52,11 +57,18 @@ class EditComponentMainCtrl {
     return this.ComponentEditor.save()
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
       .catch((error) => {
-        const message = ERRORS[error.data.error]
-          ? this.$translate.instant(ERRORS[error.data.error], error.data.parameterMap)
-          : error.message;
+        const message = SAVE_ERRORS[error.data.error]
+          ? this.$translate.instant(SAVE_ERRORS[error.data.error], error.data.parameterMap)
+          : this.$translate.instant(SAVE_ERRORS.GENERAL_ERROR);
 
         this.FeedbackService.showError(message);
+        this.HippoIframeService.reload();
+        if (error.data.error === 'ITEM_ALREADY_LOCKED') {
+          this.ComponentEditor.reOpen(); // reopen will be in readonly mode
+        } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
+          this.kill = true;
+          this.EditComponentService.stopEditing();
+        }
       });
   }
 
@@ -69,11 +81,18 @@ class EditComponentMainCtrl {
             this.HippoIframeService.reload();
             this.EditComponentService.stopEditing();
           })
-          .catch((errorResponse) => {
-            // delete action failed: show toast message? go to component locked mode?
-            // what if someone else deleted the component already: no problem!
-            // TODO: see PageStructureService.removeComponentById() for an example to deal with the error response
-            console.log(`TODO: implement dealing with the delete component error response: ${errorResponse}`);
+          .catch((error) => {
+            const messageParameters = error.parameterMap;
+            messageParameters.component = this.ComponentEditor.getComponentName();
+            const message = DELETE_ERRORS[error.error]
+              ? this.$translate.instant(DELETE_ERRORS[error.error], messageParameters)
+              : this.$translate.instant(DELETE_ERRORS.GENERAL_ERROR, messageParameters);
+
+            this.FeedbackService.showError(message);
+            this.HippoIframeService.reload();
+            if (error.error === 'ITEM_ALREADY_LOCKED') {
+              this.ComponentEditor.reOpen(); // reopen will be in readonly mode
+            }
           });
       },
       )
@@ -85,6 +104,9 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
+    if (this.kill) {
+      return true;
+    }
     return this.ComponentEditor.confirmSaveOrDiscardChanges()
       .then(() => this.ComponentEditor.close())
       .catch((e) => {

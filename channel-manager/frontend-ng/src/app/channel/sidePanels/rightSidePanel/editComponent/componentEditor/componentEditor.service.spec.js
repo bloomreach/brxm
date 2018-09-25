@@ -95,6 +95,17 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('reopening the editor', () => {
+    it('opens the editor for the component is was opened for', () => {
+      const properties = ['propertyData'];
+      openComponentEditor(properties);
+
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      ComponentEditor.reOpen();
+      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+    });
+  });
+
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
       openComponentEditor(['propertyData']);
@@ -431,13 +442,13 @@ describe('ComponentEditorService', () => {
     });
 
     it('reopens the component to discard changes', () => {
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reOpen').and.returnValue($q.resolve());
       ComponentEditor.discardChanges();
-      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+      expect(ComponentEditor.reOpen).toHaveBeenCalled();
     });
 
     it('redraws the component when discarding changes succeeded', () => {
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reOpen').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'renderComponent');
 
       ComponentEditor.discardChanges();
