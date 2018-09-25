@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     /**
      * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
      */
-    private Map<String, AbstractApplicationContext> childAppContexts = new LinkedHashMap<>();
+    private Map<String, AbstractApplicationContext> childAppContexts = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Default constructor.
@@ -247,7 +248,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                 }
             }
 
-            log.warn("CRISP resource resolvers map: {}", getResourceResolverMap());
+            log.info("CRISP resource resolvers map: {}", getResourceResolverMap());
 
             inited = true;
         } catch (RepositoryException e) {
