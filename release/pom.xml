@@ -41,7 +41,7 @@
   <properties>
     <hippo.release.version>13.0.0-hst-platform-SNAPSHOT</hippo.release.version>
 
-    <hippo.jackrabbit.version>2.16.1-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.2-h2</hippo.jackrabbit.version>
 
     <hippo.configuration-management.version>13.0.0-hst-platform-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>13.0.0-hst-platform-SNAPSHOT</hippo.addon-channel-manager.version>
@@ -78,7 +78,7 @@
     <hippo.plugin.taxonomy.version>13.0.0-hst-platform-SNAPSHOT</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>13.0.0-hst-platform-SNAPSHOT</hippo.addon-crisp.version>
 
-    <hippo.maven.plugin.l10n>2.2.0</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
   </properties>
@@ -340,11 +340,6 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-types</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-jquery</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -676,6 +671,11 @@
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+        <artifactId>hst-addon-hcm-site</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-cms-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
@@ -802,6 +802,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-poll-addon-hcm-site</artifactId>
+        <version>${hippo.plugin.poll.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-relateddocs</artifactId>
         <version>${hippo.plugin.relateddocs.version}</version>
       </dependency>
@@ -823,6 +828,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-robotstxt-hst-client</artifactId>
+        <version>${hippo.plugin.robotstxt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-robotstxt-addon-hcm-site</artifactId>
         <version>${hippo.plugin.robotstxt.version}</version>
       </dependency>
       <dependency>
@@ -857,7 +867,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-sitemap-content</artifactId>
+        <artifactId>hippo-plugin-sitemap-hcm-site</artifactId>
         <version>${hippo.plugin.sitemap.version}</version>
       </dependency>
       <dependency>
@@ -885,28 +895,6 @@
         <artifactId>hippo-plugin-taxonomy-hstclient</artifactId>
         <version>${hippo.plugin.taxonomy.version}</version>
       </dependency>
-
-      <!-- All Hippo Github artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>optimized</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor</artifactId>
-        <classifier>sources</classifier>
-        <version>${hippo.ckeditor.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-ckeditor-config</artifactId>
-        <version>${hippo.ckeditor.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
