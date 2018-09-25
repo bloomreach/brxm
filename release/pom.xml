@@ -607,11 +607,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-        <artifactId>hst-cms-rest</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.client-modules</groupId>
         <artifactId>hst-page-composer</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
