@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     /**
      * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
      */
-    private Map<String, AbstractApplicationContext> childAppContexts = new LinkedHashMap<>();
+    private Map<String, AbstractApplicationContext> childAppContexts = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Default constructor.
@@ -150,6 +151,12 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     @Override
     public void destroy() {
         HippoServiceRegistry.unregisterService(configurationChangeEventListener, HippoEventBus.class);
+
+        childAppContexts.values().forEach(childContext -> {
+            childContext.close();
+        });
+
+        childAppContexts.clear();
     }
 
     /**
@@ -168,6 +175,16 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     }
 
     /**
+     * Return the CRISP module configuration node path.
+     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig"
+     * @return the CRISP module configuration node path
+     */
+    protected String getModuleConfigPath() {
+        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_CRISP_MODULE_CONFIG_PATH;
+        return resourceResolverContainerConfigPath;
+    }
+
+    /**
      * Initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
      * returns true if the initialization was successful.
      * @return initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
@@ -178,83 +195,81 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         Session session = null;
 
         try {
+            final String moduleConfigPath = getModuleConfigPath();
+
             session = repository.login(credentials);
 
-            if (session.nodeExists(CrispConstants.REGISTRY_MODULE_PATH)) {
-                Node moduleNode = session.getNode(CrispConstants.REGISTRY_MODULE_PATH);
+            if (!session.nodeExists(moduleConfigPath)) {
+                log.warn("No CRISP module configuration exists at {}.", moduleConfigPath);
+                return false;
+            }
 
-                if (moduleNode.hasNode("hippo:moduleconfig")) {
-                    Node moduleConfigNode = moduleNode.getNode("hippo:moduleconfig");
+            final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
+                    + CrispConstants.RESOURCE_RESOLVER_CONTAINER;
 
-                    if (!moduleConfigNode.isNodeType(CrispConstants.NT_MODULE_CONFIG)) {
-                        log.error("CRISP module configuration node must be type of '{}'.",
-                                CrispConstants.NT_MODULE_CONFIG);
-                        return false;
-                    }
+            if (!session.nodeExists(resourceResolverContainerConfigPath)) {
+                log.warn(
+                        "No CRISP resource resolver is found at {} as it doesn't exist.",
+                        resourceResolverContainerConfigPath);
+                return true;
+            }
 
-                    if (moduleConfigNode.hasNode(CrispConstants.RESOURCE_RESOLVER_CONTAINER)) {
-                        Node resourceReesolverContainerNode = moduleConfigNode
-                                .getNode(CrispConstants.RESOURCE_RESOLVER_CONTAINER);
-                        Map<String, ResourceResolver> tempResourceResolversMap = new LinkedHashMap<>();
+            final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);
 
-                        Node resourceResolverNode;
-                        String resourceSpace;
-                        Set<String> resourceSpaceNames = new HashSet<>();
-                        String beanDef;
-                        String[] propNames;
-                        String[] propValues;
-                        AbstractApplicationContext newChildContext;
-                        AbstractApplicationContext oldChildContext;
-                        ResourceResolver resourceResolver;
+            Node resourceResolverNode;
+            String resourceSpace;
+            Set<String> resourceSpaceNames = new HashSet<>();
+            String beanDef;
+            String[] propNames;
+            String[] propValues;
+            AbstractApplicationContext newChildContext;
+            AbstractApplicationContext oldChildContext;
+            ResourceResolver resourceResolver;
 
-                        for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
-                            resourceResolverNode = nodeIt.nextNode();
+            for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
+                resourceResolverNode = nodeIt.nextNode();
 
-                            if (resourceResolverNode != null) {
-                                resourceSpace = resourceResolverNode.getName();
-                                beanDef = JcrUtils.getStringProperty(resourceResolverNode,
-                                        CrispConstants.BEAN_DEFINITION, null);
-                                propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                                        CrispConstants.PROP_NAMES, null);
-                                propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                                        CrispConstants.PROP_VALUES, null);
+                if (resourceResolverNode != null) {
+                    resourceSpace = resourceResolverNode.getName();
+                    beanDef = JcrUtils.getStringProperty(resourceResolverNode,
+                            CrispConstants.BEAN_DEFINITION, null);
+                    propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                            CrispConstants.PROP_NAMES, null);
+                    propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                            CrispConstants.PROP_VALUES, null);
 
-                                if (StringUtils.isNotBlank(beanDef)) {
-                                    try {
-                                        newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
-                                        resourceSpaceNames.add(resourceSpace);
-                                        resourceResolver = newChildContext.getBean(ResourceResolver.class);
-                                        tempResourceResolversMap.put(resourceSpace, resourceResolver);
-                                        oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
+                    if (StringUtils.isNotBlank(beanDef)) {
+                        try {
+                            newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
+                            resourceSpaceNames.add(resourceSpace);
+                            resourceResolver = newChildContext.getBean(ResourceResolver.class);
+                            setResourceResolver(resourceSpace, resourceResolver);
+                            oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
 
-                                        if (oldChildContext != null) {
-                                            oldChildContext.close();
-                                        }
-                                    } catch (Exception childContextEx) {
-                                        log.error("Failed to load child context for resource space, '{}'.",
-                                                resourceSpace, childContextEx);
-                                    }
-                                }
+                            if (oldChildContext != null) {
+                                oldChildContext.close();
                             }
+                        } catch (Exception childContextEx) {
+                            log.error("Failed to load child context for resource space, '{}'.",
+                                    resourceSpace, childContextEx);
                         }
-
-                        for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
-                            if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
-                                oldChildContext = childAppContexts.get(resourceSpaceNameInChildContexts);
-                                if (oldChildContext != null) {
-                                    oldChildContext.close();
-                                }
-                            }
-                        }
-
-                        setResourceResolverMap(tempResourceResolversMap);
-
-                        log.warn("CRISP resource resolvers map initialized: {}", getResourceResolverMap());
                     }
                 }
-
-                inited = true;
             }
+
+            for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
+                if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
+                    oldChildContext = childAppContexts.remove(resourceSpaceNameInChildContexts);
+
+                    if (oldChildContext != null) {
+                        oldChildContext.close();
+                    }
+                }
+            }
+
+            log.info("CRISP resource resolvers map: {}", getResourceResolverMap());
+
+            inited = true;
         } catch (RepositoryException e) {
             log.warn("Cannot initialize resource resolvers (yet). Perhaps the repository wasn't initialized yet. {}", e.toString());
         } finally {

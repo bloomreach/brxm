@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG;
 import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML;
+import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN;
 
 public class NewsContentComponent extends EssentialsContentComponent {
 
@@ -82,7 +83,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
                 Resource products = (Resource) productCatalogsXml.getValue("products");
                 Resource firstProductResource = products.getChildren(0, 1).get(0);
                 ResourceBeanMapper resourceBeanMapper = resourceServiceBroker
-                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML);
+                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN);
                 Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
                 log.debug("==> First product (XML): [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
                         firstProduct.getDescription());
@@ -145,11 +146,11 @@ public class NewsContentComponent extends EssentialsContentComponent {
             final Map<String, Object> pathVars = new HashMap<>();
             // Note: Just as an example, let's try to find all the data by passing empty query string.
             pathVars.put("fullTextSearchTerm", "");
-            productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML,
+            productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN,
                     "/products.xml?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML, "/products.xml", document.getTitle(), e);
+                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN, "/products.xml", document.getTitle(), e);
         }
 
         return productCatalogs;

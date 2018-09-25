@@ -15,27 +15,43 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 
 /**
  * Simple {@link ResourceResolverProvider} implementation based on a <code>Map</code> instance which has entries
  * of <strong>resource space</strong> name and <code>ResourceResolver</code> object pairs.
  */
-public class MapResourceResolverProvider implements ResourceResolverProvider {
+public class MapResourceResolverProvider implements ResourceResolverProvider, BeanFactoryAware {
+
+    private static Logger log = LoggerFactory.getLogger(MapResourceResolverProvider.class);
 
     /**
      * Internal <code>Map</code> instance which has entries of <strong>resource space</strong> name and <code>ResourceResolver</code>
      * object pairs.
      */
-    private Map<String, ResourceResolver> resourceResolverMap;
+    private Map<String, ResourceResolver> resourceResolverMap = new ConcurrentHashMap<>();
+
+    private BeanFactory beanFactory;
 
     /**
      * Default constructor.
      */
     public MapResourceResolverProvider() {
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
     /**
@@ -45,7 +61,7 @@ public class MapResourceResolverProvider implements ResourceResolverProvider {
      *         and <code>ResourceResolver</code> object pairs
      */
     public Map<String, ResourceResolver> getResourceResolverMap() {
-        return resourceResolverMap;
+        return Collections.unmodifiableMap(resourceResolverMap);
     }
 
     /**
@@ -54,20 +70,37 @@ public class MapResourceResolverProvider implements ResourceResolverProvider {
      * @param resourceResolverMap the internal <code>Map</code> instance which has entries of <strong>resource
      *        space</strong> name and <code>ResourceResolver</code> object pairs
      */
-    public void setResourceResolverMap(Map<String, ResourceResolver> resourceResolverMap) {
-        this.resourceResolverMap = resourceResolverMap;
+    public synchronized void setResourceResolverMap(Map<String, ResourceResolver> resourceResolverMap) {
+        this.resourceResolverMap.clear();
+
+        if (resourceResolverMap != null) {
+            this.resourceResolverMap.putAll(resourceResolverMap);
+        }
+    }
+
+    @Override
+    public ResourceResolver getResourceResolver(String resourceSpace) {
+        ResourceResolver resourceResolver = resourceResolverMap.get(resourceSpace);
+
+        // If a resourceResolver is not found in the internal map, fall back to the spring bean assembly
+        // by finding the resourceResolver by the resourceSpace name as bean name.
+        if (resourceResolver == null && beanFactory != null) {
+            try {
+                resourceResolver = beanFactory.getBean(resourceSpace, ResourceResolver.class);
+            } catch (BeansException ignore) {
+            }
+        }
+
+        return resourceResolver;
     }
 
     /**
-     * {@inheritDoc}
+     * Set a resource resolver by the {@code resourceSpace}.
+     * @param resourceSpace resource space name
+     * @param resourceResolver a {@link ResourceResolver}
      */
-    @Override
-    public ResourceResolver getResourceResolver(String resourceSpace) {
-        if (resourceResolverMap != null) {
-            return resourceResolverMap.get(resourceSpace);
-        }
-
-        return null;
+    public void setResourceResolver(String resourceSpace, ResourceResolver resourceResolver) {
+        resourceResolverMap.put(resourceSpace, resourceResolver);
     }
 
 }
