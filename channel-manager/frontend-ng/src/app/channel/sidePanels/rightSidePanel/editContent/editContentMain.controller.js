@@ -78,12 +78,13 @@ class EditContentMainCtrl {
 
   uiCanExit() {
     return this._confirmExit()
-      .then(() => {
-        // don't return the result of discardChanges: if it fails (e.g. because an admin unlocked the document)
-        // the editor should still be closed.
-        this.ContentEditor.discardChanges()
-          .finally(() => this.ContentEditor.close());
-      })
+      .then(() => this.ContentEditor.discardChanges()
+        .catch(() => {
+          // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
+          // the editor should still be closed.
+        })
+        .finally(() => this.ContentEditor.close()),
+      )
       .catch(() => {
         // user cancelled the exit
         this.closing = false;

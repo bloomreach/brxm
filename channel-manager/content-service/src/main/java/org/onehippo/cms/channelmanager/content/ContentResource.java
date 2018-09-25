@@ -48,7 +48,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
-import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
+import org.onehippo.cms.channelmanager.content.templatequery.DocumentTemplateQueryService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
@@ -151,10 +151,10 @@ public class ContentResource {
     }
 
     @GET
-    @Path("templatequery/{documentId}")
-    public Response getTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documenttemplatequery/{documentId}")
+    public Response getDocumentTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
+                (session, locale) -> DocumentTemplateQueryService.get().getDocumentTemplateQuery(id, session, locale));
     }
 
     @GET

@@ -79,19 +79,19 @@ describe('CreateContentService', () => {
       expect(CreateContentService.$state.$current.name).toBe('hippo-cm');
     });
 
-    it('displays an error if configuration is missing property "templateQuery"', () => {
+    it('displays an error if configuration is missing property "documentTemplateQuery"', () => {
       spyOn(FeedbackService, 'showError');
 
       CreateContentService.start({});
       $rootScope.$apply();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
     });
   });
 
   it('starts creating a new document', () => {
     spyOn(Step1Service, 'open').and.returnValue($q.resolve());
-    const config = { templateQuery: 'tpl-query' };
+    const config = { documentTemplateQuery: 'tpl-query' };
     CreateContentService.start(config);
     $rootScope.$digest();
 
@@ -110,7 +110,7 @@ describe('CreateContentService', () => {
     component.getLabel.and.returnValue('Banner');
     component.getRenderVariant.and.returnValue('hippo-default');
     const config = {
-      templateQuery: 'tpl-query',
+      documentTemplateQuery: 'tpl-query',
       containerItem: component,
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
@@ -158,10 +158,10 @@ describe('CreateContentService', () => {
   });
 
   describe('validate config data for transition to step1', () => {
-    it('should have a templateQuery configuration option', () => {
+    it('should have a documentTemplateQuery configuration option', () => {
       spyOn(FeedbackService, 'showError');
       CreateContentService.start();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "templateQuery"');
+      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
     });
   });
 
