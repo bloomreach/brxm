@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,17 +89,18 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         tomcat.setBaseDir(getTmpTomcatFolderName());
         portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
+        tomcat.getConnector(); // Trigger the creation of the default connector
         Context context = tomcat.addContext("/plain", getTmpTomcatFolderName());
         Tomcat.addServlet(context, "plain", new HttpServlet() {
             protected void service(HttpServletRequest req, HttpServletResponse resp)
-                    throws ServletException, IOException {
+                    throws IOException {
                 resp.setContentType("text/plain");
                 Writer w = resp.getWriter();
                 w.write("Hello world from plain servlet");
                 w.flush();
             }
         });
-        context.addServletMapping("/*", "plain");
+        context.addServletMappingDecoded("/*", "plain");
         tomcat.start();
 
         if (HippoServiceRegistry.getService(RepositoryService.class) == null) {
@@ -191,7 +191,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         return tmpTomcatFolder.getRoot().getAbsolutePath();
     }
 
-    public void initializeCXF() {
+    private void initializeCXF() {
         Context context = tomcat.addContext("/META-INF/cxf", getTmpTomcatFolderName());
         Wrapper servlet = context.createWrapper();
         servlet.setName("embedCXF");
@@ -201,13 +201,13 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
                 HelloWorldResource.class.getName()
         );
         context.addChild(servlet);
-        context.addServletMapping( "/*", "embedCXF" );
+        context.addServletMappingDecoded( "/*", "embedCXF" );
     }
 
     private void initializeRepoJaxrsService() {
         Context context = tomcat.addContext("/jaxrs", getTmpTomcatFolderName());
         Tomcat.addServlet(context, "jaxrs", new RepositoryJaxrsServlet());
-        context.addServletMapping("/*", "jaxrs");
+        context.addServletMappingDecoded("/*", "jaxrs");
     }
 
     @Test

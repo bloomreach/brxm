@@ -694,12 +694,12 @@ public class ConfigurationBaselineService {
                     for (NodeIterator eni = hcmSiteCatalogNode.getNodes(); eni.hasNext();) {
                         final Node hcmSiteNode = eni.nextNode();
                         final String hcmSiteName = hcmSiteNode.getName();
-                        final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
-                        final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode, hcmSiteName);
-                        hcmSiteModules.forEach(module -> {
-                            module.setHstRoot(JcrPaths.getPath(hstRoot));
-                        });
-                        modules.addAll(hcmSiteModules);
+                        if (hcmSites.contains(hcmSiteName)) {
+                            final String hstRoot = hcmSiteNode.getProperty(HCM_HSTROOT).getString();
+                            final List<ModuleImpl> hcmSiteModules = parseDescriptors(hcmSiteNode, hcmSiteName);
+                            hcmSiteModules.forEach(module -> module.setHstRoot(JcrPaths.getPath(hstRoot)));
+                            modules.addAll(hcmSiteModules);
+                        }
                     }
                 }
 
