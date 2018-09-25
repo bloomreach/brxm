@@ -94,7 +94,7 @@ class ChannelService {
     if (channel.preview) {
       return this.$q.resolve(channel);
     }
-    return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath);
+    return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath, channel.hostGroup);
   }
 
   _loadProject(channel, branchId) {
