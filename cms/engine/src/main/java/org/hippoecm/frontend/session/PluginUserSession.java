@@ -563,7 +563,7 @@ public class PluginUserSession extends UserSession {
         }
     }
 
-    private HttpSession getHttpSession() {
+    public HttpSession getHttpSession() {
         return ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getSession();
     }
 
