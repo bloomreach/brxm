@@ -116,9 +116,9 @@
          override on command line with -Dcargo.debug.suspend=y -->
     <cargo.debug.suspend>n</cargo.debug.suspend>
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.major.version>8</cargo.tomcat.major.version>
+    <cargo.tomcat.major.version>9</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>8.5.34</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>9.0.12</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
