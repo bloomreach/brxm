@@ -257,6 +257,11 @@
     <constructor-arg ref="jaxrsHstConfigService"/>
   </bean>
 
+  <bean id="pageComposerSecurityValve" parent="abstractValve" class="org.hippoecm.hst.pagecomposer.jaxrs.container.PageComposerSecurityValve">
+    <property name="valveName" value="pageComposerSecurityValve" />
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+  </bean>
+
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="org.hippoecm.hst.core.container.Pipeline" />
     <property name="targetObject">
@@ -273,8 +278,7 @@
           <property name="initializationValves">
             <list>
               <ref bean="initializationValve"/>
-              <ref bean="pageComposerRequestContextValve"/>
-              <ref bean="cmsSecurityValve"/>
+              <ref bean="pageComposerSecurityValve"/>
             </list>
           </property>
           <property name="processingValves">

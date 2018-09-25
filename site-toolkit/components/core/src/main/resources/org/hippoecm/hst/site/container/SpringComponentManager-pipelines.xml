@@ -61,10 +61,6 @@
     <property name="sessionSecurityDelegation" ref="org.hippoecm.hst.core.jcr.SessionSecurityDelegation"/>
   </bean>
 
-  <bean id="pageComposerRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageComposerRequestContextValve">
-    <property name="valveName" value="pageComposerRequestContextValve" />
-  </bean>
-
   <!-- Generic no-cache response headers setting valve -->
   <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
     <property name="valveName" value="noCacheResponseHeadersValve" />

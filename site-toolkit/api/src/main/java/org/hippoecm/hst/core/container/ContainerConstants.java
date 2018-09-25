@@ -147,12 +147,6 @@ public interface ContainerConstants {
     String CMS_REQUEST_USER_ID_ATTR = "org.hippoecm.hst.container.cms_user_id";
 
     /**
-     * The attribute used on the request to indicate that the request is from a CMS context *and* is a RPC page composer request
-     * that also might need to use the credentials from the cms (jcr session) user, for example an RPC call that needs to modify the HST config
-     */
-    String CHANNEL_MGR_PAGE_COMPOSER_REQUEST_CONTEXT = "org.hippoecm.hst.container.sso_channel_mgr_page_composer_request_context";
-
-    /**
      * The attribute used on the request or http session to indicate that the page should be rendered as some specific
      * variant
      */

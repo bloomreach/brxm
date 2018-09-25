@@ -27,13 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -46,7 +44,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USE
 
 /**
  * <p>
- * CmsSecurityValve responsible for authenticating the user using CMS.
+ * CmsSecurityValve responsible for authenticating the user using CMS to render a preview of the website.
  * </p>
  * <p> This valve check if the CMS has provided encrypted credentials or not if and only if the
  * page request is done from the CMS context. This valve checks if the CMS has provided encrypted credentials or not.
@@ -55,15 +53,9 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USE
  * with the URL, this valve will redirect to the CMS auth URL with a secret. If the credentials are  available with the
  * URL, this valve will try to get the session for the credentials and continue. </p>
  *
- * <p>
- * The check whether the page request originates from a CMS context is done by checking whether the {@link
- * HstRequestContext#getRenderHost()}
- * is not <code>null</code> : A non-null render host implies that the CMS requested the page.
- * </p>
  */
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
-    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION = CmsSecurityValve.class.getName() + ".CmsChannelManagerRestSession";
     public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION = CmsSecurityValve.class.getName() + ".CmsPreviewSession";
 
     private SessionSecurityDelegation sessionSecurityDelegation;
@@ -125,7 +117,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             // still on the HttpSessionBoundJcrSessionHolder attribute of the HST http session. We need to clear these
             // now actively
             if (httpSession != null) {
-                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION, httpSession);
                 HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
             } else {
                 httpSession = servletRequest.getSession(true);
@@ -148,16 +139,12 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
-                if (isPageComposerRequest(servletRequest)) {
-                    jcrSession = getOrCreateCmsChannelManagerRestSession(servletRequest);
+                // request preview website, for example in channel manager. The request is not
+                // a REST call
+                if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
+                    jcrSession = getOrCreateCmsPreviewSession(servletRequest);
                 } else {
-                    // request preview website, for example in channel manager. The request is not
-                    // a REST call
-                    if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        jcrSession = getOrCreateCmsPreviewSession(servletRequest);
-                    } else {
-                        // do not yet create a session. just use the one that the HST container will create later
-                    }
+                    // do not yet create a session. just use the one that the HST container will create later
                 }
 
                 if (jcrSession != null) {
@@ -166,7 +153,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 context.invokeNext();
 
                 if (jcrSession != null && jcrSession.hasPendingChanges()) {
-                    log.warn("Request to {} triggered changes in JCR session that were not saved - they will be lost", servletRequest.getPathInfo());
+                    log.warn("Request to {} triggered changes in JCR session that were not saved - they will be lost",
+                            servletRequest.getPathInfo());
                 }
             } catch (LoginException e) {
                 // the credentials of the current CMS user have changed, so reset the current authentication
@@ -275,27 +263,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             destinationPath.append("?").append(queryString);
         }
         return destinationPath.toString();
-    }
-
-    private static boolean isPageComposerRequest(final HttpServletRequest servletRequest) {
-        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CHANNEL_MGR_PAGE_COMPOSER_REQUEST_CONTEXT));
-    }
-
-    private Session getOrCreateCmsChannelManagerRestSession(final HttpServletRequest request) throws LoginException, ContainerException {
-        long start = System.currentTimeMillis();
-
-        try {
-            final SimpleCredentials credentials = (SimpleCredentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
-            final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION,
-                    request.getSession(), credentials, sessionSecurityDelegation::getDelegatedSession);
-            // This returns a plain session for credentials where access is not merged with for example preview user session
-            log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
-            return session;
-        } catch (LoginException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ContainerException("Failed to create session based on SSO.", e);
-        }
     }
 
     private Session getOrCreateCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {
