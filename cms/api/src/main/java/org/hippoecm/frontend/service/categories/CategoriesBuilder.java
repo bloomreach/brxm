@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public interface CategoriesBuilder extends IClusterable {
 
-    String CATEGORIES_BUILDER_ID = "categories.builder.id";
-
     boolean useVersionCategories();
 
     CategoriesBuilder config(IPluginConfig config);

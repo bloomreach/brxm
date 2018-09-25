@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.service.categories;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.onehippo.cms7.services.SingletonService;
 
+@SingletonService
 public interface CategoriesService extends IClusterable {
 
     CategoriesBuilder getBuilder();
