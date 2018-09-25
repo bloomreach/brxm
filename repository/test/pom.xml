@@ -157,11 +157,9 @@
           </systemPropertyVariables>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>
-            <exclude>**/RemoteSPITest.java</exclude>
             <exclude>**/MirrorTest.java</exclude>
             <exclude>**/FacetedNavigationConcurrencyTest.java</exclude>
             <exclude>**/SampleRemoteWorkflowTest.java</exclude>
-            <exclude>**/RemoteTest.java</exclude>
             <exclude>**/TotalSizeTest.java</exclude>
             <exclude>**/DropboxTest.java</exclude>
             <exclude>**/StampedeTest.java</exclude>
@@ -204,7 +202,6 @@
                     <include>**/MirrorTest.java</include>
                     <include>**/FacetedNavigationConcurrencyTest.java</include>
                     <include>**/SampleRemoteWorkflowTest.java</include>
-                    <include>**/RemoteTest.java</include>
                     <include>**/WorkflowChainingTest.java</include>
                     <include>**/TotalSizeTest.java</include>
                     <include>**/DropboxTest.java</include>
