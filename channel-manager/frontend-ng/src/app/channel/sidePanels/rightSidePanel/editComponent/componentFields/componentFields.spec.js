@@ -38,22 +38,22 @@ describe('ComponentFields', () => {
   });
 
   describe('valueChanged', () => {
-    it('triggers valueChanged() on the ComponentEditor when a value is changed and valid', () => {
-      spyOn(ComponentEditor, 'valueChanged');
+    it('updates the preview when a value is changed and valid', () => {
+      spyOn(ComponentEditor, 'updatePreview');
       form.$valid = true;
 
       component.valueChanged();
 
-      expect(ComponentEditor.valueChanged).toHaveBeenCalled();
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
     });
 
-    it('does not trigger valueChanged() on the ComponentEditor when a value is changed to something invalid', () => {
-      spyOn(ComponentEditor, 'valueChanged');
+    it('does not update the preview when a value is changed to something invalid', () => {
+      spyOn(ComponentEditor, 'updatePreview');
       form.$valid = false;
 
       component.valueChanged();
 
-      expect(ComponentEditor.valueChanged).not.toHaveBeenCalled();
+      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
     });
   });
 });

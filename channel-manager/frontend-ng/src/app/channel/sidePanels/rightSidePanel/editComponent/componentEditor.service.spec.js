@@ -279,7 +279,7 @@ describe('ComponentEditorService', () => {
     });
   });
 
-  describe('valueChanged', () => {
+  describe('updatePreview', () => {
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', () => {
       spyOn(PageStructureService, 'renderComponent');
       const properties = [
@@ -289,7 +289,7 @@ describe('ComponentEditorService', () => {
       ];
       openComponentEditor(properties);
 
-      ComponentEditor.valueChanged();
+      ComponentEditor.updatePreview();
 
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
         a: 'value-a',
@@ -305,7 +305,7 @@ describe('ComponentEditorService', () => {
       ];
       openComponentEditor(properties);
 
-      ComponentEditor.valueChanged();
+      ComponentEditor.updatePreview();
 
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
         a: '2017-09-21',
