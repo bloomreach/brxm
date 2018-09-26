@@ -139,7 +139,7 @@ public class ChannelUtils {
             }
         };
 
-        T parametersInfo = (T) factory.createInvokerProxy(parametersInfoType.getClassLoader(), invoker, proxyClasses);
+        T parametersInfo = (T) factory.createInvokerProxy(proxyClasses[0].getClassLoader(), invoker, proxyClasses);
 
         return parametersInfo;
     }
