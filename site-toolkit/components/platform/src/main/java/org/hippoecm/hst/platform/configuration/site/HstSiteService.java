@@ -59,6 +59,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
+import static org.hippoecm.hst.platform.configuration.channel.ChannelUtils.getChannelInfoClass;
+import static org.hippoecm.hst.platform.configuration.channel.ChannelUtils.getChannelInfoMixins;
 
 public class HstSiteService implements HstSite {
 
@@ -202,13 +204,14 @@ public class HstSiteService implements HstSite {
                 ch.setWorkspaceExists(true);
             }
 
-            ch.setHasCustomProperties(hasChannelCustomProperties(ch));
-
             String mountPath = mount.getMountPath();
             ch.setLocale(mountSiteMapConfiguration.getLocale());
             ch.setMountId(mount.getIdentifier());
             ch.setMountPath(mountPath);
             ch.setContextPath(mountSiteMapConfiguration.getContextPath());
+
+            ch.setHasCustomProperties(hasChannelCustomProperties(ch));
+
 
             // do not fetch the sitemap id via #getSiteMap() because that part should be invoked lazily
             CompositeConfigurationNode siteMapNode = findSiteMapNode();
@@ -270,47 +273,6 @@ public class HstSiteService implements HstSite {
         return channelInfoClass != ChannelInfo.class;
     }
 
-    private Class<? extends ChannelInfo> getChannelInfoClass(final Channel channel) {
-        String channelInfoClassName = channel.getChannelInfoClassName();
-        if (channelInfoClassName == null) {
-            log.debug("No channelInfoClassName defined. Return just the ChannelInfo interface class");
-            return ChannelInfo.class;
-        }
-        try {
-            return (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
-        } catch (ClassNotFoundException cnfe) {
-            log.warn("Configured class '{}' was not found", channelInfoClassName, cnfe);
-        } catch (ClassCastException cce) {
-            log.warn("Configured class '{}' does not extend ChannelInfo",
-                    channelInfoClassName, cce);
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Class<? extends ChannelInfo>> getChannelInfoMixins(final Channel channel) {
-        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
-
-        if (CollectionUtils.isEmpty(channelInfoMixinNames)) {
-            return Collections.emptyList();
-        }
-
-        List<Class<? extends ChannelInfo>> mixins = new ArrayList<>();
-
-        for (String channelInfoMixinName : channelInfoMixinNames) {
-            try {
-                Class<? extends ChannelInfo> mixinClazz = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class
-                        .getClassLoader().loadClass(channelInfoMixinName);
-                mixins.add(mixinClazz);
-            } catch (ClassNotFoundException cnfe) {
-                log.warn("Configured mixin class {} was not found.", channelInfoMixinName, cnfe);
-            } catch (ClassCastException cce) {
-                log.warn("Configured mixin class {} does not extend ChannelInfo", channelInfoMixinName, cce);
-            }
-        }
-
-        return mixins;
-    }
 
     @SuppressWarnings("unchecked")
     public <T extends ChannelInfo> T getChannelInfo() {

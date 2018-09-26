@@ -16,18 +16,30 @@
 package org.hippoecm.hst.platform.configuration.channel;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.proxy.ProxyFactory;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.hst.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChannelUtils {
+
+
+    static final Logger log = LoggerFactory.getLogger(ChannelUtils.class);
 
     @SafeVarargs
     @SuppressWarnings("unchecked")
@@ -127,9 +139,67 @@ public class ChannelUtils {
             }
         };
 
-        T parametersInfo = (T) factory.createInvokerProxy(ChannelUtils.class.getClassLoader(), invoker, proxyClasses);
+        T parametersInfo = (T) factory.createInvokerProxy(parametersInfoType.getClassLoader(), invoker, proxyClasses);
 
         return parametersInfo;
     }
 
+    public static Class<?> getChannelInfoClass(final String className, final String contextPath) throws ClassNotFoundException {
+        return getWebsiteClassLoader(contextPath).loadClass(className);
+    }
+
+    public static Class<? extends ChannelInfo> getChannelInfoClass(final Channel channel) {
+        String channelInfoClassName = channel.getChannelInfoClassName();
+        if (channelInfoClassName == null) {
+            log.debug("No channelInfoClassName defined. Return just the ChannelInfo interface class");
+            return ChannelInfo.class;
+        }
+        try {
+            return (Class<? extends ChannelInfo>) getWebsiteClassLoader(channel.getContextPath()).loadClass(channelInfoClassName);
+        } catch (ClassNotFoundException cnfe) {
+            log.warn("Configured class '{}' was not found", channelInfoClassName, cnfe);
+        } catch (ClassCastException cce) {
+            log.warn("Configured class '{}' does not extend ChannelInfo",
+                    channelInfoClassName, cce);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Class<? extends ChannelInfo>> getChannelInfoMixins(final Channel channel) {
+        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
+
+        if (CollectionUtils.isEmpty(channelInfoMixinNames)) {
+            return Collections.emptyList();
+        }
+
+        List<Class<? extends ChannelInfo>> mixins = new ArrayList<>();
+
+        for (String channelInfoMixinName : channelInfoMixinNames) {
+            try {
+                Class<? extends ChannelInfo> mixinClazz =
+                        (Class<? extends ChannelInfo>) getWebsiteClassLoader(channel.getContextPath()).loadClass(channelInfoMixinName);
+                mixins.add(mixinClazz);
+            } catch (ClassNotFoundException cnfe) {
+                log.warn("Configured mixin class {} was not found.", channelInfoMixinName, cnfe);
+            } catch (ClassCastException cce) {
+                log.warn("Configured mixin class {} does not extend ChannelInfo", channelInfoMixinName, cce);
+            }
+        }
+
+        return mixins;
+    }
+
+    private static ClassLoader getWebsiteClassLoader(final String contextPath) {
+        if (contextPath == null) {
+            throw new ModelLoadingException("Cannot get a classloader if there is no contextPath provided");
+        }
+        final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        final HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
+        if (hstModel == null) {
+            throw new ModelLoadingException(String.format("Cannot get ClassLoader for contextPath '%s' since there is no " +
+                    "registered HstModel for that contextPath", contextPath));
+        }
+        return hstModel.getWebsiteClassLoader();
+    }
 }

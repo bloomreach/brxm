@@ -53,6 +53,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_OUT_OF_SYNC;
+import static org.hippoecm.hst.platform.configuration.channel.ChannelUtils.getChannelInfoClass;
 
 public class ChannelPropertyMapper {
 
@@ -231,7 +232,7 @@ public class ChannelPropertyMapper {
 
         if (channelInfoType != null) {
             final Class<? extends ChannelInfo> channelInfoClazz = loadChannelInfoClass(channelInfoType, channel.getId(),
-                    null, false);
+                    channel.getContextPath(), false);
             final Class<? extends ChannelInfo>[] channelInfoMixinClasses = getChannelInfoMixinClasses(
                     (channelInfoMixins != null) ? channelInfoMixins.toArray(new String[channelInfoMixins.size()])
                             : null,
@@ -537,10 +538,15 @@ public class ChannelPropertyMapper {
             final String contextPath, final boolean isBlueprint) {
         Class<?> channelInfoClazz = null;
 
-        // TODO HSTTWO-4354 most likely we need here the class loader from the site webapp instead of the current one
-        // TODO since the current one is the platform classloader
+        if (contextPath == null) {
+            log.warn("Cannot load channel info class if there is not contextPath provided. Return null");
+            return null;
+        }
+
+
         try {
-            Class<?> clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
+
+            Class<?> clazz = getChannelInfoClass(className, contextPath);
 
             if (ChannelInfo.class.isAssignableFrom(clazz)) {
                 channelInfoClazz = clazz;
@@ -558,15 +564,6 @@ public class ChannelPropertyMapper {
                             "channel info class needs to be added to that webapp as well: {}",
                             className, channelId, contextPath, e.toString());
                 }
-            }
-            else if (contextPath == null) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
-                            "contextPath agnostic mounts, the channel info needs to be in every HST webapp. ", className, channelId, e);
-                } else {
-                    log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
-                            "contextPath agnostic mounts, the channel info needs to be in every HST webapp : {}", className, channelId, e.toString());
-                }
             } else {
                 if (log.isDebugEnabled()) {
                     log.warn("Could not load channel info class '{}' for channel '{}'", className, channelId, e);
@@ -578,4 +575,6 @@ public class ChannelPropertyMapper {
 
         return (Class<? extends ChannelInfo>) channelInfoClazz;
     }
+
+
 }
