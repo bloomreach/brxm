@@ -92,18 +92,21 @@ describe('PageCopyComponent', () => {
     channels = [
       {
         contextPath: '/site',
+        hostGroup: 'dev-localhost',
         id: 'channelA',
         mountId: 'channelMountA',
         name: 'Channel A',
       },
       {
         contextPath: '/site',
+        hostGroup: 'dev-localhost',
         id: 'channelB',
         mountId: 'channelMountB',
         name: 'Channel B',
       },
       {
         contextPath: '/intranet',
+        hostGroup: 'dev-localhost',
         id: 'channelC',
         mountId: 'channelMountC',
         name: 'Channel C',
@@ -365,7 +368,7 @@ describe('PageCopyComponent', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id, $ctrl.channel.contextPath);
+    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id, $ctrl.channel.contextPath, $ctrl.channel.hostGroup);
     $rootScope.$digest();
     expect(HippoIframeService.initializePath).toHaveBeenCalledWith(copyReturn.pathInfo);
     expect($ctrl.onDone).toHaveBeenCalled();
