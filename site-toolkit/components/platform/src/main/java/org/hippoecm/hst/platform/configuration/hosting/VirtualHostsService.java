@@ -30,7 +30,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -43,7 +42,6 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.platform.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.platform.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.hosting.MatchException;
@@ -881,19 +879,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (channel == null) {
             throw new ChannelException("Cannot get ChannelInfoClass for null");
         }
-        String channelInfoClassName = channel.getChannelInfoClassName();
-        if (channelInfoClassName == null) {
-            log.debug("No channelInfoClassName defined. Return just the ChannelInfo interface class");
-            return ChannelInfo.class;
-        }
-        try {
-            return (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
-        } catch (ClassNotFoundException cnfe) {
-            throw new ChannelException("Configured class " + channelInfoClassName + " was not found", cnfe);
-        } catch (ClassCastException cce) {
-            throw new ChannelException("Configured class " + channelInfoClassName + " does not extend ChannelInfo",
-                    cce);
-        }
+        return ChannelUtils.getChannelInfoClass(channel);
     }
 
     @Override
@@ -911,27 +897,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             throw new ChannelException("Cannot get ChannelMixinClasses for null");
         }
 
-        final List<String> channelInfoMixinNames = channel.getChannelInfoMixinNames();
-
-        if (CollectionUtils.isEmpty(channelInfoMixinNames)) {
-            return Collections.emptyList();
-        }
-
-        List<Class<? extends ChannelInfo>> mixins = new ArrayList<>();
-
-        for (String channelInfoMixinName : channelInfoMixinNames) {
-            try {
-                Class<? extends ChannelInfo> mixinClazz = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class
-                        .getClassLoader().loadClass(channelInfoMixinName);
-                mixins.add(mixinClazz);
-            } catch (ClassNotFoundException cnfe) {
-                log.warn("Configured mixin class {} was not found.", channelInfoMixinName, cnfe);
-            } catch (ClassCastException cce) {
-                log.warn("Configured mixin class {} does not extend ChannelInfo", channelInfoMixinName, cce);
-            }
-        }
-
-        return mixins;
+        return ChannelUtils.getChannelInfoMixins(channel);
     }
 
     @Override
