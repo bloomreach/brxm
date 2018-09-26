@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.onehippo.cms7.services.hst.Channel;
 public interface ChannelManagerEventListener {
 
     /**
-     * Called immediately after a channel has been created through {@link ChannelManager#persist(String, Channel)}.
+     * Called immediately after a channel has been created through {@link ChannelManager#persist(Session, String, Channel)}.
      * <b>Note</b> that when for every ChannelManagerEventListener the {@link ChannelManagerEventListener#channelCreated(ChannelManagerEvent)} callback 
      * have been done, the JCR {@link Session} that belongs to {@link ChannelManagerEvent#getConfigRootNode()} is 
      * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 
@@ -51,7 +51,7 @@ public interface ChannelManagerEventListener {
     void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException;
 
     /**
-     * Called immediately after a channel has been updated through {@link ChannelManager#save(Channel)}.
+     * Called immediately after a channel has been updated through {@link ChannelManager#save(Session, String, Channel)}.
      * <b>Note</b> that when for every ChannelManagerEventListener the {@link ChannelManagerEventListener#channelUpdated(ChannelManagerEvent)} callback 
      * method has been done, the JCR {@link Session} that belongs to {@link ChannelManagerEvent#getConfigRootNode()} is 
      * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 

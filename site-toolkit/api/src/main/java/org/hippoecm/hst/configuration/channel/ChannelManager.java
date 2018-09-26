@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.configuration.channel;
+
+import javax.jcr.Session;
 
 import org.onehippo.cms7.services.hst.Channel;
 
@@ -33,6 +35,8 @@ public interface ChannelManager {
      * with the returned channel ID.
      * </p>
      *
+     *
+     * @param session the session used to persist the changes
      * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
      * @param channel a channel instance to be persisted
      * @return the channel ID of the created channel
@@ -43,44 +47,24 @@ public interface ChannelManager {
      * already exists. The exception has one parameter: the absolute JCR path of the existing mount.
      * </ul>
      */
-    String persist(String blueprintId, Channel channel) throws ChannelException;
-
-    /**
-     * @deprecated This method is deprecated by {{@link #save(String, Channel)}} since version 4.0.0.
-     *
-     * <br/>
-     * Save channel properties.  If the URL path of the new channel is not empty, all
-     * path-steps except the last one should already map to an existing mount.
-     * <p>
-     * When invoking this method, an HstSubject context must be provided with the credentials necessary
-     * to persist the channel.
-     * </p>
-     *
-     * @param channel the channel to persist
-     * @throws ChannelException with type @{link ChannelException.Type#MOUNT_NOT_FOUND} when all but the last path-step
-     * in the URL path of a new channel do not map to existing mounts, or the URL path of an existing channel does not
-     * map to an existing mount. The exception has one parameter: the absolute JCR path of the missing mount.
-     * @throws ChannelException with type {@link ChannelException.Type#CHANNEL_LOCKED}, {@link ChannelException.Type#CHANNEL_OUT_OF_SYNC}
-     * or {@link ChannelException.Type#UNKNOWN} when the channel could not be persisted.
-     */
-    @Deprecated
-    void save(Channel channel) throws ChannelException;
+    String persist(final Session session, String blueprintId, Channel channel) throws ChannelException;
 
     /**
      * Save channel properties for the given host group. If the URL path of the new channel is not empty, all
      * path-steps except the last one should already map to an existing mount.
      *
+     * @param session the session used to persist the changes
      * @param hostGroupName
      * @param channel
      * @throws ChannelException
      */
-    void save(final String hostGroupName, final Channel channel) throws ChannelException;
+    void save(final Session session, final String hostGroupName, final Channel channel) throws ChannelException;
 
     /**
-     * Can the current user (set in HstSubject) create or modify channels.
+     * Can the current session create or modify channels.
      *
      * @return true when the user can create a channel, false otherwise
      */
-    boolean canUserModifyChannels();
+    boolean canUserModifyChannels(final Session session);
 
 }

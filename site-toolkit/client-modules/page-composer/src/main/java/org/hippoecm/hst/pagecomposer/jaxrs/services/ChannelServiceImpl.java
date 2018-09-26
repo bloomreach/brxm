@@ -307,7 +307,7 @@ public class ChannelServiceImpl implements ChannelService {
                     "not part of the HST workspace");
         }
 
-        getPreviewHstModel().getChannelManager().save(hostGroup, channel);
+        getPreviewHstModel().getChannelManager().save(session, hostGroup, channel);
     }
 
     @Override

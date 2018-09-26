@@ -66,6 +66,7 @@ import com.google.common.net.InetAddresses;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_NAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_HOSTS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
@@ -100,14 +101,13 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public String persist(final String blueprintId, Channel channel) throws ChannelException {
+    public String persist(final Session session, final String blueprintId, Channel channel) throws ChannelException {
         synchronized (hstModel) {
             Blueprint blueprint = hstModel.getVirtualHosts().getBlueprint(blueprintId);
             if (blueprint == null) {
                 throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
             }
             try {
-                final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
 
                 String channelName = createUniqueHstConfigurationName(channel.getName(), session);
@@ -187,18 +187,11 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    @Deprecated
     @Override
-    public void save(final Channel channel) throws ChannelException {
-        final String hostGroupForCmsHost = getHostGroupNameFromContext();
-        save(hostGroupForCmsHost, channel);
-    }
-
-    @Override
-    public void save(final String hostGroupName, final Channel channel) throws ChannelException {
+    public void save(final Session session, final String hostGroupName, final Channel channel) throws ChannelException {
         synchronized (hstModel) {
             try {
-                final Session session = getSession();
+                // TODO is hostGroupName not available on the Channel object already??? IF so, remove from method
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, hostGroupName, channel);
 
@@ -235,9 +228,8 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public synchronized boolean canUserModifyChannels() {
+    public synchronized boolean canUserModifyChannels(final Session session) {
         try {
-            final Session session = getSession();
             return session.hasPermission(hstNodeLoadingCache.getRootPath() + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
@@ -256,6 +248,7 @@ public class ChannelManagerImpl implements ChannelManager {
         try {
             // Create virtual host
             final URI channelUri = getChannelUri(channel);
+            // NOTE channel.getHostGroup() is null for a blueprint channel since a blueprint can be used for any host group
             final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
             // Create or reuse HST configuration
@@ -290,9 +283,14 @@ public class ChannelManagerImpl implements ChannelManager {
         } catch (ChannelException e) {
             if (contentRootNode != null) {
                 session.refresh(false);     // remove the new configuration
-                contentRootNode.remove();   // remove the new content
+                contentRootNode.remove();   // remove the new content which was persisted via workflow already
                 session.save();
+            } else {
+                session.refresh(false);
             }
+            throw e;
+        } catch (Exception e) {
+            session.refresh(false);
             throw e;
         }
         return contentRootNode;
@@ -397,15 +395,17 @@ public class ChannelManagerImpl implements ChannelManager {
         return mount;
     }
 
+    /*
+     * This returns the host group of the current request, which is a cms wicket channel manager request. However, we
+     * REQUIRE that the cms hostgroup name is the same as the host group name for the separate hst website configurations,
+     * hence we can get hold of the cms host group via the current HstRequestContext
+     */
     private String getHostGroupNameFromContext() throws ChannelException {
-        // FIXME: move all modification methods to the 'cmsrest' module and use the
-        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
-        // TODO FIXME below does not work any more!!!!
-        final String hostGroupForCmsHost = (String) RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
-        if (StringUtils.isEmpty(hostGroupForCmsHost)) {
+        final String cmsHostGroupName = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost().getHostGroupName();
+        if (StringUtils.isEmpty(cmsHostGroupName)) {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
         }
-        return hostGroupForCmsHost;
+        return cmsHostGroupName;
     }
 
     private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
@@ -421,7 +421,12 @@ public class ChannelManagerImpl implements ChannelManager {
             elements = hostName.split("[.]");
         }
 
-        Node host = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupName);
+        if (!configRoot.hasNode(NODENAME_HST_HOSTS + "/" + hostGroupName)) {
+            throw new ChannelException(String.format("Cannot persist new channel since host group '%s' does not exist below '%s'",
+                    hostGroupName, configRoot.getPath() + "/" + NODENAME_HST_HOSTS));
+        }
+
+        Node host = configRoot.getNode(NODENAME_HST_HOSTS + "/" + hostGroupName);
 
         for (int i = elements.length - 1; i >= 0; i--) {
             host = getOrAddNode(host, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);

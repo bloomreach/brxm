@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistrar;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -45,6 +46,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
@@ -63,6 +65,9 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_BLUEPRINTS;
@@ -102,7 +107,6 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         session = repository.login(cred);
         createHstConfigBackup(session);
         final MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
         requestContext.setSession(session);
         ModifiableRequestContextProvider.set(requestContext);
 
@@ -115,7 +119,17 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
         final VirtualHost dummyHost = virtualHosts.getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
-        ((MockHstRequestContext) RequestContextProvider.get()).setVirtualHost(dummyHost);
+        final MockHstRequestContext mockHstRequestContext = (MockHstRequestContext) RequestContextProvider.get();
+        mockHstRequestContext.setVirtualHost(dummyHost);
+
+        final ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        final Mount mount = createNiceMock(Mount.class);
+        expect(resolvedMount.getMount()).andStubReturn(mount);
+        expect(mount.getVirtualHost()).andStubReturn(dummyHost);
+
+        replay(resolvedMount, mount);
+
+        mockHstRequestContext.setResolvedMount(resolvedMount);
     }
 
     @Override
@@ -180,7 +194,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
-        channelMngr.save("dev-localhost", channel);
+        channelMngr.save(session, "dev-localhost", channel);
         resetDummyHostOnRequestContext();
 
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
@@ -214,7 +228,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
-        channelMngr.save("dev-localhost", channel);
+        channelMngr.save(session, "dev-localhost", channel);
         resetDummyHostOnRequestContext();
         Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("After a change, getChannels should return different instance for the Map", channelsAgain != channels);
@@ -283,7 +297,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
 
-        String channelId = channelMngr.persist(blueprint.getId(), channel);
+        String channelId = channelMngr.persist(session, blueprint.getId(), channel);
         resetDummyHostOnRequestContext();
 
         final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
@@ -333,7 +347,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             channel.setUrl("http://cmit-myhost");
             channel.setLocale("nl_NL");
 
-            String channelId = channelMngr.persist(blueprint.getId(), channel);
+            String channelId = channelMngr.persist(session, blueprint.getId(), channel);
             assertEquals("newchannel", channelId);
 
             // assert content created from prototype
@@ -387,7 +401,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             channel.setLocale("nl_NL");
 
             try {
-                channelMngr.persist(blueprint.getId(), channel);
+                channelMngr.persist(session, blueprint.getId(), channel);
                 fail("ChannelException was expected");
             } catch (ChannelException e) {
                 //expected
@@ -427,7 +441,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
 
-        String channelId = channelMngr.persist(blueprint.getId(), channel);
+        String channelId = channelMngr.persist(session, blueprint.getId(), channel);
         resetDummyHostOnRequestContext();
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
@@ -500,7 +514,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost/newmount");
 
-        channelMngr.persist(blueprint.getId(), channel);
+        channelMngr.persist(session, blueprint.getId(), channel);
     }
 
     public static interface TestInfoClass extends ChannelInfo {
@@ -526,7 +540,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         blueprintChannel.setUrl("http://cmit-myhost");
         blueprintChannel.setContentRoot("/");
 
-        channelMngr.persist("cmit-test-bp", blueprintChannel);
+        channelMngr.persist(session, "cmit-test-bp", blueprintChannel);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
         resetDummyHostOnRequestContext();
         assertEquals("cmit-channel", hstManager.getVirtualHosts().getChannelById("dev-localhost","cmit-channel").getName());
@@ -548,7 +562,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
-        channelMngr.persist("cmit-test-bp", channel);
+        channelMngr.persist(session, "cmit-test-bp", channel);
         resetDummyHostOnRequestContext();
         TestInfoClass channelInfo = hstManager.getVirtualHosts().getChannelInfo(channel);
         assertEquals("noot", channelInfo.getGetme());
@@ -583,7 +597,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/");
-        channelMngr.persist("cmit-test-bp", channel);
+        channelMngr.persist(session, "cmit-test-bp", channel);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
     }
 
@@ -599,7 +613,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/");
-        channelMngr.persist("cmit-test-bp", channel);
+        channelMngr.persist(session, "cmit-test-bp", channel);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
     }
 
@@ -644,7 +658,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             cmEventListenerRegistrar.init();
 
             final Channel channelToPersist = channel;
-            channelId = channelMngr.persist("cmit-test-bp2", channelToPersist);
+            channelId = channelMngr.persist(session, "cmit-test-bp2", channelToPersist);
 
             resetDummyHostOnRequestContext();
 
@@ -661,7 +675,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
             channel.setContentRoot("/");
             final Channel channelToSave = channel;
 
-            channelMngr.save(channelToSave);
+            channelMngr.save(session, "dev-localhost", channelToSave);
             resetDummyHostOnRequestContext();
 
             assertEquals(1, listener1.getCreatedCount());
@@ -679,7 +693,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
         final Channel channelToSave2 = channel;
-        channelMngr.save(channelToSave2);
+        channelMngr.save(session, "dev-localhost", channelToSave2);
         resetDummyHostOnRequestContext();
 
         assertEquals(1, listener1.getCreatedCount());
@@ -726,7 +740,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         try {
             cmEventListenerRegistrar.setChannelManagerEventListeners(Arrays.asList(shortCircuitingListener));
             cmEventListenerRegistrar.init();
-            channelMngr.persist("cmit-test-bp2", channel);
+            channelMngr.persist(session, "cmit-test-bp2", channel);
         } finally {
             cmEventListenerRegistrar.destroy();
         }

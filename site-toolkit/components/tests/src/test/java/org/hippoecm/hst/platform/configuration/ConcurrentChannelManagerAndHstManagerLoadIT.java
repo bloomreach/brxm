@@ -292,12 +292,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									existingChannel.getProperties().put(TEST_PROP, newTestValue);
 
 									MockHstRequestContext ctx = new MockHstRequestContext();
-									ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
 									ctx.setSession(getSession2());
 									final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
 									ctx.setVirtualHost(dummyHost);
 									ModifiableRequestContextProvider.set(ctx);
-									channelManager.save(existingChannel);
+									channelManager.save(getSession1(), "dev-localhost", existingChannel);
 									ModifiableRequestContextProvider.clear();
 									// get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is
 									// called concurrently, we can only guarantee that the loaded value for TEST_PROP
@@ -378,12 +377,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		} finally {
 			existingChannel.getProperties().remove(TEST_PROP);
 			MockHstRequestContext ctx = new MockHstRequestContext();
-			ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
 			ctx.setSession(getSession1());
 			final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
 			ctx.setVirtualHost(dummyHost);
 			ModifiableRequestContextProvider.set(ctx);
-			channelManager.save(existingChannel);
+			channelManager.save(getSession1(), "dev-localhost", existingChannel);
 			ModifiableRequestContextProvider.clear();
 			mountNode.getProperty(TEST_PROP).remove();
 			mountNode.getSession().save();

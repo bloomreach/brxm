@@ -40,7 +40,6 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
     public void setUp() throws Exception {
         super.setUp();
         final MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
         //ModifiableRequestContextProvider.set(requestContext);
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
     }
