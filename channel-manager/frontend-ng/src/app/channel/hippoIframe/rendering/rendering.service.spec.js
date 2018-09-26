@@ -127,7 +127,9 @@ describe('RenderingService', () => {
       spyOn(RenderingService, '_parseLinks');
 
       spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
+      spyOn(PageMetaDataService, 'getContextPath').and.returnValue('/contextPathX');
       spyOn(ChannelService, 'getId').and.returnValue('channelY');
+      spyOn(ChannelService, 'getHostGroup').and.returnValue('theHostGroup');
 
       RenderingService.createOverlay();
       $rootScope.$digest();
@@ -139,10 +141,12 @@ describe('RenderingService', () => {
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
       expect(ChannelService.getId).toHaveBeenCalled();
+      expect(ChannelService.getHostGroup).toHaveBeenCalled();
 
       deferred.resolve();
       $rootScope.$digest();
 
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('channelX', '/contextPathX', 'theHostGroup');
       expect(RenderingService._parseLinks).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });

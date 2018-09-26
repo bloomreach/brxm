@@ -310,6 +310,10 @@ class ChannelService {
     return this.channel.contentRoot;
   }
 
+  getHostGroup() {
+    return this.channel.hostGroup;
+  }
+
   deleteChannel() {
     return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
   }

@@ -111,14 +111,15 @@ class RenderingService {
 
     if (channelIdFromService !== channelIdFromPage) {
       const contextPathFromPage = this.PageMetaDataService.getContextPath();
+      const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
 
       if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
         // Current channel is a branch, but new channel has no branch of that project
         // therefore load core
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, this.ProjectService.core.id);
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel, this.ProjectService.core.id);
       } else {
         // otherwise load new channel within current project
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage);
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);
       }
     }
   }
