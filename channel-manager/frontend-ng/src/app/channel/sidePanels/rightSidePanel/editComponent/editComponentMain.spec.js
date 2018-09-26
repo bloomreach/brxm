@@ -81,6 +81,18 @@ describe('EditComponentMainCtrl', () => {
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
   });
 
+  describe('hasProperties', () => {
+    it('returns true when there are properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([{}]);
+      expect($ctrl.hasProperties()).toBe(true);
+    });
+
+    it('returns false when there are no properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([]);
+      expect($ctrl.hasProperties()).toBe(false);
+    });
+  });
+
   describe('isSaveAllowed', () => {
     it('returns falsy when the form does not exist yet', () => {
       delete $ctrl.form;
