@@ -62,8 +62,8 @@ public class ChannelPropertyMapper {
     private ChannelPropertyMapper() {
     }
 
-    public static Channel readBlueprintChannel(final HstNode channelNode) {
-        return readChannel(channelNode, null, false, null, true);
+    public static Channel readBlueprintChannel(final HstNode channelNode, final String contextPath) {
+        return readChannel(channelNode, null, false, contextPath, true);
     }
 
     public static Channel readChannel(final HstNode channelNode, final HstNode configurationNode, final String contextPath) {
@@ -546,7 +546,7 @@ public class ChannelPropertyMapper {
 
         try {
 
-            Class<?> clazz = getChannelInfoClass(className, contextPath);
+            final Class<?> clazz = getChannelInfoClass(className, contextPath);
 
             if (ChannelInfo.class.isAssignableFrom(clazz)) {
                 channelInfoClazz = clazz;

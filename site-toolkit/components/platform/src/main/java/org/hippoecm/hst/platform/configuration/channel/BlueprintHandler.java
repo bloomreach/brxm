@@ -67,7 +67,7 @@ public class BlueprintHandler {
         }
         final Channel channel;
         if (channelNode != null) {
-            channel = ChannelPropertyMapper.readBlueprintChannel(channelNode);
+            channel = ChannelPropertyMapper.readBlueprintChannel(channelNode, contextPath);
         } else {
             channel = new Channel();
         }
