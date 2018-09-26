@@ -26,6 +26,7 @@
     name="{{ ::componentField.name }}"
     ng-blur="$ctrl.blurPrimitive($event)"
     ng-change="$ctrl.valueChanged()"
+    ng-disabled="::$ctrl.readOnly"
     ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
     ng-required="::componentField.required"/>
@@ -36,6 +37,7 @@
       name="{{ ::componentField.name }}"
       ng-blur="$ctrl.blurPrimitive($event)"
       ng-change="$ctrl.valueChanged()"
+      ng-disabled="::$ctrl.readOnly"
       ng-false-value="'off'"
       ng-focus="$ctrl.focusPrimitive($event)"
       ng-model="componentField.value"
@@ -50,6 +52,7 @@
     name="{{ ::componentField.name }}"
     ng-blur="$ctrl.blurPrimitive($event)"
     ng-change="$ctrl.valueChanged()"
+    ng-disabled="::$ctrl.readOnly"
     ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
     ng-pattern="/^(-\d)?\d*$/"
@@ -60,6 +63,7 @@
     aria-label="{{ ::componentField.name }}"
     name="{{ ::componentField.name }}"
     ng-change="$ctrl.valueChanged()"
+    ng-disabled="::$ctrl.readOnly"
     ng-model="componentField.value"
     ng-required="::componentField.required">
     <md-option 
@@ -72,6 +76,7 @@
   <date-field
     ng-switch-when="datefield"
     class="md-primary"
+    disabled="::$ctrl.readOnly"
     field-type="{ type: 'DATE_ONLY' }"
     name="::componentField.name"
     ng-blur="$ctrl.blurPrimitive($event)"
@@ -84,6 +89,7 @@
     ng-switch-when="linkpicker"
     aria-label="{{ ::componentField.label }}"
     config="::componentField.pickerConfig"
+    disabled="::$ctrl.readOnly"
     display-name="::componentField.displayValue"
     name="{{ ::componentField.name }}"
     ng-change="$ctrl.valueChanged()"

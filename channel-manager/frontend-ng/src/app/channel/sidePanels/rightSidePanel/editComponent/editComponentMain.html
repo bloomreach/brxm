@@ -23,7 +23,8 @@
             class="form-dense-layout">
         <property-group class="top-level"
                         ng-repeat="propertyGroup in $ctrl.getPropertyGroups() track by propertyGroup.label"
-                        group="propertyGroup" />
+                        group="propertyGroup"
+                        read-only="$ctrl.isReadOnly()"/>
       </form>
     </md-tab-body>
   </md-tab>
@@ -33,7 +34,8 @@
   <div class="md-toolbar-tools">
     <span flex>
       <md-button class="qa-deletecomponent large-label"
-                 ng-click="$ctrl.deleteComponent()">
+                 ng-click="$ctrl.deleteComponent()"
+                 ng-disabled="$ctrl.isReadOnly()">
         {{ ::'DELETE_COMPONENT' | translate }}
       </md-button>
     </span>

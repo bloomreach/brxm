@@ -19,6 +19,7 @@
        ng-blur="$ctrl.blur($event)"
        ng-class="{'has-focus': $ctrl.hasFocus}"
        ng-click="$ctrl.openLinkPicker()"
+       ng-disabled="$ctrl.disabled"
        ng-focus="$ctrl.focus($event)"
        ng-model="$ctrl.displayName"
        ng-required="$ctrl.isRequired"
@@ -30,6 +31,7 @@
   <md-button class="md-icon-button hippo-node-link-clear"
              ng-blur="$ctrl.blur($event)"
              ng-click="$ctrl.clear()"
+             ng-disabled="$ctrl.disabled"
              ng-focus="$ctrl.focus($event)"
              ng-if="$ctrl.displayName">
     <md-icon md-font-icon="mdi-close"></md-icon>
@@ -38,6 +40,7 @@
              focus-if="$ctrl.linkPicked"
              ng-blur="$ctrl.blur($event)"
              ng-click="$ctrl.openLinkPicker()"
+             ng-disabled="$ctrl.disabled"
              ng-focus="$ctrl.focus($event)">
     <md-icon md-font-icon="mdi-magnify"></md-icon>
   </md-button>

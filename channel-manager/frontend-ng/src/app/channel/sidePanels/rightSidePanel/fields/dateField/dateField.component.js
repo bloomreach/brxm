@@ -22,6 +22,7 @@ const dateFieldComponent = {
   bindings: {
     name: '<',
     fieldType: '<',
+    disabled: '<?',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

@@ -54,6 +54,7 @@ describe('EditComponentMainCtrl', () => {
         'deleteComponent',
         'discardChanges',
         'getPropertyGroups',
+        'isReadOnly',
         'save',
       ]);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -79,6 +80,14 @@ describe('EditComponentMainCtrl', () => {
     const propertyGroups = [];
     ComponentEditor.getPropertyGroups.and.returnValue(propertyGroups);
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
+  });
+
+  it('gets the read-only state', () => {
+    ComponentEditor.isReadOnly.and.returnValue(true);
+    expect($ctrl.isReadOnly()).toBe(true);
+
+    ComponentEditor.isReadOnly.and.returnValue(false);
+    expect($ctrl.isReadOnly()).toBe(false);
   });
 
   describe('isSaveAllowed', () => {

@@ -43,6 +43,10 @@ class ComponentEditorService {
     return this.propertyGroups;
   }
 
+  isReadOnly() {
+    return this.container && this.container.isDisabled;
+  }
+
   _onLoadSuccess(channel, component, container, page, properties) {
     this.channel = channel;
     this.component = component;
