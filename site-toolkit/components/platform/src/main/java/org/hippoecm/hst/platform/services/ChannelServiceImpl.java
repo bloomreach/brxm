@@ -1,5 +1,5 @@
 /*
-*  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -90,7 +90,9 @@ public class ChannelServiceImpl implements ChannelService {
                         log.error("Found channel with duplicate id. Skipping channel '{}' which has a duplicate id with '{}'",
                                 channel, channels.get(channel.getId()));
                     } else {
-                        channels.put(channel.getId(), channel);
+                        // never return the HST model Channel instances but clone them!!
+                        final Channel clone = new Channel(channel);
+                        channels.put(channel.getId(), clone);
                     }
                 } else {
                     log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
@@ -107,7 +109,7 @@ public class ChannelServiceImpl implements ChannelService {
         final PlatformHstModel hstModel = hstModelRegistry.getPlatformHstModel(channel.getContextPath());
 
         try {
-            return hstModel.getChannelManager().persist(blueprintId, channel);
+            return hstModel.getChannelManager().persist(userSession, blueprintId, channel);
         } catch (ChannelException ce) {
             log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;

@@ -36,7 +36,9 @@ public interface ChannelService {
 	 * @param cmsHost the host over which the cms is accessed
      * @return {@link List} of {@link Channel}s of all available channels, empty list otherwise. Note that if for
      * a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version is returned as
-     * that is typically the version that is needed to work with through this {@link ChannelService}
+     * that is typically the version that is needed to work with through this {@link ChannelService}. Also note that
+	 * a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel} are returned to
+	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
      */
 	List<Channel> getChannels(Session userSession, String cmsHost);
 

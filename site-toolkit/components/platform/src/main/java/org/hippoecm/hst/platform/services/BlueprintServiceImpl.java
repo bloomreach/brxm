@@ -17,7 +17,6 @@ package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -37,7 +36,11 @@ public class BlueprintServiceImpl implements BlueprintService {
     public List<Blueprint> getBlueprints() {
         List<Blueprint> blueprints = new ArrayList<>();
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
-            blueprints.addAll(hstModel.getVirtualHosts().getBlueprints());
+
+            // make sure to always use Blueprint.copy since we should not return the actual HST model instances
+            hstModel.getVirtualHosts().getBlueprints().stream()
+                    .forEach(blueprint -> blueprints.add(Blueprint.copy(blueprint)));
+
         }
         return blueprints;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,20 @@ public class Blueprint {
     private String contentRoot;
     private Channel prototypeChannel;
     private String path;
+
+
+    public static Blueprint copy(final Blueprint source) {
+		final Blueprint copy = new Blueprint();
+		copy.setId(source.getId());
+		copy.setContentRoot(source.getContentRoot());
+		copy.setDescription(source.getDescription());
+		copy.setHasContentPrototype(source.hasContentPrototype);
+		copy.setName(source.getName());
+		copy.setPath(source.getPath());
+		final Channel channelCopy = new Channel(source.getPrototypeChannel());
+		copy.setPrototypeChannel(channelCopy);
+		return copy;
+	}
 
     /**
      * Get {@link Blueprint} id
