@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.util;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCopyHandler implements CopyHandler {
 
-    private final static String[] PROTECTED = new String[] {
+    private static final Set<String> PROTECTED_PROPERTY_NAMES = Stream.of(
             JcrConstants.JCR_UUID,
             JcrConstants.JCR_BASE_VERSION,
             JcrConstants.JCR_PREDECESSORS,
@@ -44,23 +48,40 @@ public class DefaultCopyHandler implements CopyHandler {
             JcrConstants.JCR_FROZEN_UUID,
             JcrConstants.JCR_IS_CHECKED_OUT,
             JcrConstants.JCR_LOCK_OWNER,
-            JcrConstants.JCR_LOCK_IS_DEEP,
-    };
+            JcrConstants.JCR_LOCK_IS_DEEP
+    ).collect(Collectors.toSet());
 
-    static {
-        Arrays.sort(PROTECTED);
-    }
-
-    static final Logger log = LoggerFactory.getLogger(DefaultCopyHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultCopyHandler.class);
 
     private final Stack<Node> nodes = new Stack<>();
     private final Stack<NodeType[]> nodeTypes = new Stack<>();
+    private final Set<String> protectedMixinNames = new HashSet<>();
+    private final Set<String> protectedMixinPropertyNames = new HashSet<>();
     protected final NodeTypeManager nodeTypeManager;
 
     public DefaultCopyHandler(Node node) throws RepositoryException {
+        this(node, Collections.emptySet());
+    }
+
+    public DefaultCopyHandler(Node node, Set<String> protectedMixinNames) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(node);
         setCurrent(node);
         nodeTypeManager = node.getSession().getWorkspace().getNodeTypeManager();
+        for (String protectedMixinName : protectedMixinNames) {
+            if (!nodeTypeManager.hasNodeType(protectedMixinName)) {
+                log.warn("Node type {} is unknown, skipping it", protectedMixinName);
+            } else {
+                final NodeType mixinNodeType = nodeTypeManager.getNodeType(protectedMixinName);
+                if (!mixinNodeType.isMixin()) {
+                    log.warn("Node type {} is not a mixin, skipping it", protectedMixinName);
+                } else {
+                    this.protectedMixinNames.add(mixinNodeType.getName());
+                    for (PropertyDefinition propertyDefinition : mixinNodeType.getPropertyDefinitions()) {
+                        this.protectedMixinPropertyNames.add(propertyDefinition.getName());
+                    }
+                }
+            }
+        }
     }
 
     protected DefaultCopyHandler setCurrent(Node node) throws RepositoryException {
@@ -91,7 +112,9 @@ public class DefaultCopyHandler implements CopyHandler {
                     childDest = getCurrent().addNode(nodeInfo.getName(), nodeInfo.getNodeTypeName());
                 }
                 for (String nodeTypeName : nodeInfo.getMixinNames()) {
-                    childDest.addMixin(nodeTypeName);
+                    if (!protectedMixinNames.contains(nodeTypeName)) {
+                        childDest.addMixin(nodeTypeName);
+                    }
                 }
                 setCurrent(childDest);
                 return;
@@ -109,17 +132,34 @@ public class DefaultCopyHandler implements CopyHandler {
 
     @Override
     public void setProperty(final PropInfo propInfo) throws RepositoryException {
-        if (propInfo != null && getCurrent() != null && Arrays.binarySearch(PROTECTED, propInfo.getName()) < 0) {
-            PropertyDefinition definition = propInfo.getApplicablePropertyDef(getCurrentNodeTypes());
-            if (definition == null) {
-                log.error("Unable to create property from PropInfo " + propInfo + ": No applicable property definition");
-            } else if (!definition.isProtected()) {
-                if (propInfo.isMultiple()) {
-                    getCurrent().setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
-                } else {
-                    getCurrent().setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
-                }
-            }
+
+        if (propInfo == null) {
+            return;
+        }
+
+        final Node current = getCurrent();
+        if (current == null) {
+            return;
+        }
+
+        if (isProtected(propInfo)) {
+            return;
+        }
+
+        final PropertyDefinition definition = propInfo.getApplicablePropertyDef(getCurrentNodeTypes());
+        if (definition == null) {
+            log.error("Unable to create property from PropInfo {} : No applicable property definition", propInfo);
+            return;
+        }
+
+        if (definition.isProtected()) {
+            return;
+        }
+
+        if (propInfo.isMultiple()) {
+            current.setProperty(propInfo.getName(), propInfo.getValues(), propInfo.getType());
+        } else {
+            current.setProperty(propInfo.getName(), propInfo.getValue(), propInfo.getType());
         }
     }
 
@@ -130,5 +170,13 @@ public class DefaultCopyHandler implements CopyHandler {
 
     protected NodeType[] getCurrentNodeTypes() {
         return nodeTypes.peek();
+    }
+
+    final Set<String> getProtectedMixinNames() {
+        return protectedMixinNames;
+    }
+
+    private boolean isProtected(final PropInfo propInfo) {
+        return PROTECTED_PROPERTY_NAMES.contains(propInfo.getName()) || protectedMixinPropertyNames.contains(propInfo.getName());
     }
 }
