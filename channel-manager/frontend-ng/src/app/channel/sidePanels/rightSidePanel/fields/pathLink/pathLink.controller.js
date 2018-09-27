@@ -27,12 +27,12 @@ class PathLinkController extends NodeLinkController {
     super.$onInit();
 
     this.CmsService.subscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.subscribe('path-canceled', this._onPathCanceled, this);
+    this.CmsService.subscribe('path-cancelled', this._onPathCanceled, this);
   }
 
   $onDestroy() {
     this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.unsubscribe('path-canceled', this._onPathCanceled, this);
+    this.CmsService.unsubscribe('path-cancelled', this._onPathCanceled, this);
   }
 
   openLinkPicker() {
