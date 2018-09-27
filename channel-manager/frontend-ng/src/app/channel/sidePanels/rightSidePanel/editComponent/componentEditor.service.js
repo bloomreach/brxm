@@ -193,10 +193,10 @@ class ComponentEditorService {
   }
 
   discardChanges() {
-    return this.reOpen().finally(() => this.PageStructureService.renderComponent(this.component.id));
+    return this.reopen().finally(() => this.PageStructureService.renderComponent(this.component.id));
   }
 
-  reOpen() {
+  reopen() {
     return this.open({
       channel: this.channel,
       component: this.component,

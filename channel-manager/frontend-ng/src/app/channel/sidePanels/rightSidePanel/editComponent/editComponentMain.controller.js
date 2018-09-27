@@ -69,7 +69,7 @@ class EditComponentMainCtrl {
         this.FeedbackService.showError(message);
         this.HippoIframeService.reload();
         if (error.data.error === 'ITEM_ALREADY_LOCKED') {
-          this.ComponentEditor.reOpen(); // reopen will be in readonly mode
+          this.ComponentEditor.reopen(); // reopen will be in readonly mode
         } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
           this.kill = true;
           this.EditComponentService.stopEditing();
@@ -96,7 +96,7 @@ class EditComponentMainCtrl {
             this.FeedbackService.showError(message);
             this.HippoIframeService.reload();
             if (error.error === 'ITEM_ALREADY_LOCKED') {
-              this.ComponentEditor.reOpen(); // reopen will be in readonly mode
+              this.ComponentEditor.reopen(); // reopen will be in readonly mode
             }
           });
       },

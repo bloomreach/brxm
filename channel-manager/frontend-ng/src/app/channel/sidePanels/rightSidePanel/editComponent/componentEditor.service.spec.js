@@ -101,7 +101,7 @@ describe('ComponentEditorService', () => {
       openComponentEditor(properties);
 
       spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
-      ComponentEditor.reOpen();
+      ComponentEditor.reopen();
       expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
     });
   });
@@ -404,13 +404,13 @@ describe('ComponentEditorService', () => {
     });
 
     it('reopens the component to discard changes', () => {
-      spyOn(ComponentEditor, 'reOpen').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
       ComponentEditor.discardChanges();
-      expect(ComponentEditor.reOpen).toHaveBeenCalled();
+      expect(ComponentEditor.reopen).toHaveBeenCalled();
     });
 
     it('redraws the component when discarding changes succeeded', () => {
-      spyOn(ComponentEditor, 'reOpen').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'renderComponent');
 
       ComponentEditor.discardChanges();

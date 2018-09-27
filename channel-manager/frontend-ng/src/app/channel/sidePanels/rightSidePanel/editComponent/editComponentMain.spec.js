@@ -60,7 +60,7 @@ describe('EditComponentMainCtrl', () => {
         'getComponentName',
         'getPropertyGroups',
         'isKilled',
-        'reOpen',
+        'reopen',
         'save',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
@@ -140,7 +140,7 @@ describe('EditComponentMainCtrl', () => {
           expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
-          expect(ComponentEditor.reOpen).toHaveBeenCalled();
+          expect(ComponentEditor.reopen).toHaveBeenCalled();
           done();
         });
       $scope.$digest();
@@ -359,7 +359,7 @@ describe('EditComponentMainCtrl', () => {
         expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
         expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
         expect(HippoIframeService.reload).toHaveBeenCalled();
-        expect(ComponentEditor.reOpen).toHaveBeenCalled();
+        expect(ComponentEditor.reopen).toHaveBeenCalled();
       });
 
       it('shows a default message if a general delete error occurs', () => {
