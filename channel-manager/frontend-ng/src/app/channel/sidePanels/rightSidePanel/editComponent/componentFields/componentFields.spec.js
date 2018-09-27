@@ -16,7 +16,10 @@
 
 describe('ComponentFields', () => {
   let $componentController;
+  let $q;
+  let $scope;
   let ComponentEditor;
+  let EditComponentService;
 
   let component;
   let form;
@@ -24,9 +27,12 @@ describe('ComponentFields', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
-    inject((_$componentController_, _ComponentEditor_) => {
+    inject((_$componentController_, _$q_, $rootScope, _ComponentEditor_, _EditComponentService_) => {
       $componentController = _$componentController_;
+      $q = _$q_;
+      $scope = $rootScope.$new();
       ComponentEditor = _ComponentEditor_;
+      EditComponentService = _EditComponentService_;
     });
 
     form = {};
@@ -41,6 +47,7 @@ describe('ComponentFields', () => {
     it('triggers valueChanged() on the ComponentEditor when a value is changed and valid', () => {
       spyOn(ComponentEditor, 'valueChanged');
       form.$valid = true;
+      ComponentEditor.valueChanged.and.returnValue($q.resolve());
 
       component.valueChanged();
 
@@ -54,6 +61,17 @@ describe('ComponentFields', () => {
       component.valueChanged();
 
       expect(ComponentEditor.valueChanged).not.toHaveBeenCalled();
+    });
+
+    it('closes the editor when the result of a value change cannot be processed', () => {
+      spyOn(ComponentEditor, 'valueChanged').and.returnValue($q.reject());
+      spyOn(EditComponentService, 'killEditor');
+      form.$valid = true;
+
+      component.valueChanged();
+      $scope.$digest();
+
+      expect(EditComponentService.killEditor).toHaveBeenCalled();
     });
   });
 });

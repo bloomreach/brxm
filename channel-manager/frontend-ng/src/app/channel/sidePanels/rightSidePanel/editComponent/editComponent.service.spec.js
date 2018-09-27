@@ -54,7 +54,7 @@ describe('EditComponentService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
-    ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'open']);
+    ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'killEditor', 'open']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
     mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
     mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited', 'getId']);
@@ -154,6 +154,17 @@ describe('EditComponentService', () => {
       editComponent();
 
       expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+    });
+  });
+
+  describe('killing the editor', () => {
+    it('kills the editor and stops editing', () => {
+      spyOn(EditComponentService, 'stopEditing');
+
+      EditComponentService.killEditor();
+
+      expect(ComponentEditor.killEditor).toHaveBeenCalled();
+      expect(EditComponentService.stopEditing).toHaveBeenCalled();
     });
   });
 

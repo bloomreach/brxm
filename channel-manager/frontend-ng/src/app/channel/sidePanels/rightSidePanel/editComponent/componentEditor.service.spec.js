@@ -98,6 +98,17 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('reopening the editor', () => {
+    it('opens the editor for the component is was opened for originally', () => {
+      const properties = ['propertyData'];
+      openComponentEditor(properties);
+
+      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      ComponentEditor.reopen();
+      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+    });
+  });
+
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
       openComponentEditor(['propertyData']);
@@ -300,8 +311,8 @@ describe('ComponentEditorService', () => {
   });
 
   describe('valueChanged', () => {
-    it('transforms the "properties" data and passes it to the PageStructureService to render the component', () => {
-      spyOn(PageStructureService, 'renderComponent');
+    it('transforms the "properties" data and passes it to the PageStructureService to render the component', (done) => {
+      spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
       const properties = [
         { name: 'a', value: 'value-a' },
         { name: 'b', value: 'value-b' },
@@ -309,27 +320,31 @@ describe('ComponentEditorService', () => {
       ];
       openComponentEditor(properties);
 
-      ComponentEditor.valueChanged();
-
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
-        a: 'value-a',
-        b: 'value-b',
-        c: 'value-c',
+      ComponentEditor.valueChanged().then(() => {
+        expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+          a: 'value-a',
+          b: 'value-b',
+          c: 'value-c',
+        });
+        done();
       });
+      $rootScope.$digest();
     });
 
-    it('only passes the first 10 characters of a date field value', () => {
-      spyOn(PageStructureService, 'renderComponent');
+    it('only passes the first 10 characters of a date field value', (done) => {
+      spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
       const properties = [
         { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
       ];
       openComponentEditor(properties);
 
-      ComponentEditor.valueChanged();
-
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
-        a: '2017-09-21',
+      ComponentEditor.valueChanged().then(() => {
+        expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+          a: '2017-09-21',
+        });
+        done();
       });
+      $rootScope.$digest();
     });
   });
 
@@ -392,6 +407,30 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('the close function', () => {
+    it('clears all properties so a next call starts with a clean slate', () => {
+      ComponentEditor.channel = {};
+      ComponentEditor.component = {};
+      ComponentEditor.container = {};
+      ComponentEditor.kill = false;
+      ComponentEditor.page = {};
+      ComponentEditor.properties = {};
+      ComponentEditor.propertyGroups = {};
+      ComponentEditor.error = 'error';
+
+      ComponentEditor.close();
+
+      expect(ComponentEditor.channel).toBeUndefined();
+      expect(ComponentEditor.component).toBeUndefined();
+      expect(ComponentEditor.container).toBeUndefined();
+      expect(ComponentEditor.kill).toBeUndefined();
+      expect(ComponentEditor.page).toBeUndefined();
+      expect(ComponentEditor.properties).toBeUndefined();
+      expect(ComponentEditor.propertyGroups).toBeUndefined();
+      expect(ComponentEditor.error).toBeUndefined();
+    });
+  });
+
   describe('discard changes functions', () => {
     beforeEach(() => {
       const properties = ['propertyData'];
@@ -413,13 +452,13 @@ describe('ComponentEditorService', () => {
     });
 
     it('reopens the component to discard changes', () => {
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
       ComponentEditor.discardChanges();
-      expect(ComponentEditor.open).toHaveBeenCalledWith(testData);
+      expect(ComponentEditor.reopen).toHaveBeenCalled();
     });
 
     it('redraws the component when discarding changes succeeded', () => {
-      spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'renderComponent');
 
       ComponentEditor.discardChanges();

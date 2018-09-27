@@ -88,6 +88,11 @@ class EditComponentService {
     this.$state.go('^');
   }
 
+  killEditor() {
+    this.ComponentEditor.killEditor();
+    this.stopEditing();
+  }
+
   _loadComponent(properties) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
