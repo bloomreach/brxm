@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.PageComposerUtil.executeWithWebsiteClassLoader;
 
 public class DocumentUtils {
 
@@ -103,7 +104,11 @@ public class DocumentUtils {
             return;
         }
 
-        ParametersInfo info = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(item);
+        pageComposerContextService.getEditingPreviewVirtualHosts().getContextPath();
+
+        ParametersInfo info = executeWithWebsiteClassLoader(componentConfiguration ->
+                ParametersInfoAnnotationUtils.getParametersInfoAnnotation(item), item);
+
 
         if (info != null) {
 
