@@ -14,16 +14,23 @@
   ~ limitations under the License.
   -->
 
-<md-tabs flex="grow"
-         layout="column"
-         md-border-bottom>
+<md-tabs
+  flex="grow"
+  layout="column"
+  md-border-bottom
+>
   <md-tab label="{{ ::'RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES' | translate }}">
     <md-tab-body>
-      <form name="$ctrl.form"
-            class="form-dense-layout">
-        <property-group class="top-level"
-                        ng-repeat="propertyGroup in $ctrl.getPropertyGroups() track by propertyGroup.label"
-                        group="propertyGroup" />
+      <form
+        name="$ctrl.form"
+        class="form-dense-layout"
+      >
+        <property-group
+          class="top-level"
+          ng-repeat="propertyGroup in $ctrl.getPropertyGroups() track by propertyGroup.label"
+          group="propertyGroup"
+          read-only="$ctrl.isReadOnly()"
+        />
       </form>
     </md-tab-body>
   </md-tab>
@@ -32,21 +39,28 @@
 <md-toolbar>
   <div class="md-toolbar-tools">
     <span flex>
-      <md-button class="qa-deletecomponent large-label"
-                 ng-click="$ctrl.deleteComponent()">
+      <md-button
+        class="qa-deletecomponent large-label"
+        ng-click="$ctrl.deleteComponent()"
+        ng-disabled="$ctrl.isReadOnly()"
+      >
         {{ ::'DELETE_COMPONENT' | translate }}
       </md-button>
     </span>
 
-    <md-button class="qa-discard"
-               ng-click="$ctrl.discard()"
-               ng-disabled="!$ctrl.isSaveAllowed()">
+    <md-button
+      class="qa-discard"
+      ng-click="$ctrl.discard()"
+      ng-disabled="!$ctrl.isSaveAllowed()"
+    >
       {{ ::'DISCARD' | translate }}
     </md-button>
 
-    <md-button class="qa-save"
-               ng-click="$ctrl.save()"
-               ng-disabled="!$ctrl.isSaveAllowed()">
+    <md-button
+      class="qa-save"
+      ng-click="$ctrl.save()"
+      ng-disabled="!$ctrl.isSaveAllowed()"
+    >
       {{ ::'SAVE' | translate }}
     </md-button>
 

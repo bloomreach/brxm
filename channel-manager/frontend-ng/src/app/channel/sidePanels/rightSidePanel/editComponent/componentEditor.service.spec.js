@@ -23,18 +23,7 @@ describe('ComponentEditorService', () => {
   let HstComponentService;
   let PageStructureService;
 
-  const testData = {
-    channel: 'channel',
-    component: {
-      id: 'componentId',
-      label: 'componentLabel',
-      variant: 'componentVariant',
-    },
-    container: {
-      id: 'containerId',
-    },
-    page: 'page',
-  };
+  let testData;
 
   function openComponentEditor(properties) {
     HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
@@ -65,6 +54,20 @@ describe('ComponentEditorService', () => {
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
+
+    testData = {
+      channel: 'channel',
+      component: {
+        id: 'componentId',
+        label: 'componentLabel',
+        variant: 'componentVariant',
+      },
+      container: {
+        id: 'containerId',
+        isDisabled: false,
+      },
+      page: 'page',
+    };
   });
 
   describe('opening a component editor', () => {
@@ -231,6 +234,23 @@ describe('ComponentEditorService', () => {
       expect(fields[3].value).toBe('defaultValue');
       expect(fields[4].value).toBe('');
       expect(fields[5].value).toBe(false);
+    });
+  });
+
+  describe('read-only state', () => {
+    it('is undefined when the container is unknown', () => {
+      expect(ComponentEditor.isReadOnly()).toBeUndefined();
+    });
+
+    it('is false when the container is not disabled', () => {
+      openComponentEditor([]);
+      expect(ComponentEditor.isReadOnly()).toBe(false);
+    });
+
+    it('is true when the container is disabled', () => {
+      testData.container.isDisabled = true;
+      openComponentEditor([]);
+      expect(ComponentEditor.isReadOnly()).toBe(true);
     });
   });
 

@@ -43,6 +43,10 @@ class ComponentEditorService {
     return this.propertyGroups;
   }
 
+  isReadOnly() {
+    return this.container && this.container.isDisabled;
+  }
+
   _onLoadSuccess(channel, component, container, page, properties) {
     this.channel = channel;
     this.component = component;
@@ -54,8 +58,7 @@ class ComponentEditorService {
 
   _onLoadFailure(response) {
     this._clearData();
-    console.log('TODO: implement ComponentEditorService._onLoadFailure');
-    console.log(`Failure for: ${response}`);
+    console.error('TODO: implement ComponentEditorService._onLoadFailure', response);
   }
 
   /**
@@ -63,6 +66,10 @@ class ComponentEditorService {
    * @param {Array} properties
    */
   _normalizeProperties(properties) {
+    if (!properties) {
+      return [];
+    }
+
     properties.forEach((property) => {
       if (property.type === 'linkpicker') {
         property.pickerConfig = this._getPickerConfig(property);

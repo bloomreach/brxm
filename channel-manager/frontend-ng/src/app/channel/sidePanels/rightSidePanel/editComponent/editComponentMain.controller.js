@@ -39,6 +39,10 @@ class EditComponentMainCtrl {
     return this.ComponentEditor.getPropertyGroups();
   }
 
+  isReadOnly() {
+    return this.ComponentEditor.isReadOnly();
+  }
+
   discard() {
     this.ComponentEditor.confirmDiscardChanges()
       .then(() => this.ComponentEditor.discardChanges());
