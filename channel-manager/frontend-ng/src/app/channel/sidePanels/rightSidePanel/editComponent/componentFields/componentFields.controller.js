@@ -25,7 +25,7 @@ class ComponentFieldsCtrl {
 
   valueChanged() {
     if (this.form.$valid) {
-      this.ComponentEditor.valueChanged()
+      this.ComponentEditor.updatePreview()
         .catch(() => {
           this.EditComponentService.killEditor();
         });

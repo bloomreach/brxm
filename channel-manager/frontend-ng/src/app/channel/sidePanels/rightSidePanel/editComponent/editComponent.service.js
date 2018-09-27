@@ -84,6 +84,13 @@ class EditComponentService {
     }
   }
 
+  syncPreview() {
+    if (this.$state.is('hippo-cm.channel.edit-component')
+      && this.PageStructureService.getComponentById(this.$state.params.properties.component.id)) {
+      this.ComponentEditor.updatePreview();
+    }
+  }
+
   stopEditing() {
     this.$state.go('^');
   }
@@ -98,7 +105,6 @@ class EditComponentService {
     this.RightSidePanelService.startLoading();
     this.ComponentEditor.open(properties)
       .then(() => {
-        this.componentId = properties.component.id;
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
       })

@@ -166,7 +166,7 @@ class ComponentEditorService {
     return undefined;
   }
 
-  valueChanged() {
+  updatePreview() {
     return this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 

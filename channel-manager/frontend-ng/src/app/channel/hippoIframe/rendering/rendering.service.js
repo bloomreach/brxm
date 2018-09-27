@@ -24,6 +24,7 @@ class RenderingService {
     ConfigService,
     DomService,
     DragDropService,
+    EditComponentService,
     HippoIframeService,
     HstCommentsProcessorService,
     LinkProcessorService,
@@ -40,6 +41,7 @@ class RenderingService {
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
+    this.EditComponentService = EditComponentService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.LinkProcessorService = LinkProcessorService;
@@ -56,16 +58,17 @@ class RenderingService {
   createOverlay() {
     this.PageStructureService.clearParsedElements();
 
-    this._insertCss().then(() => {
-      this._parseHstComments();
-      this.updateDragDrop();
-      this._updateChannelIfSwitched();
-      this._parseLinks();
-      this.HippoIframeService.signalPageLoadCompleted();
-    }, () => {
-      // stop progress indicator
-      this.HippoIframeService.signalPageLoadCompleted();
-    });
+    this._insertCss()
+      .then(() => {
+        this._parseHstComments();
+        this.updateDragDrop();
+        this._updateChannelIfSwitched();
+        this._parseLinks();
+        this.EditComponentService.syncPreview();
+      })
+      .finally(() => {
+        this.HippoIframeService.signalPageLoadCompleted();
+      });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
     // and return to the channel overview upon confirming?

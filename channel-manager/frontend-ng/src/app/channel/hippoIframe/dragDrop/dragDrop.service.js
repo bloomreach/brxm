@@ -295,7 +295,8 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
+    return this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
+      .then(() => this.EditComponentService.syncPreview())
       .finally(() => {
         this.dropping = false;
       });
