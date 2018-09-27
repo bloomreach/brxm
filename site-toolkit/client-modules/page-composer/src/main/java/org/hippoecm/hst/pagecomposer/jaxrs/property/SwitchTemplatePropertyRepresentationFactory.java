@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getEditingPreviewVirtualHosts;
 
 public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepresentationFactory {
 
@@ -127,7 +128,13 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
                 // READ I18N files from REPOSITORY and NOT from filesystem because of future 'hot web file replacing'
 
-                final String templateFreeMarkerPath = WebFileUtils.webFilePathToJcrPath(componentConfiguration.getRenderPath());
+                String bundleName = getEditingPreviewVirtualHosts().getContextPath();
+                if (!bundleName.isEmpty()) {
+                    bundleName = bundleName.substring(1);
+                }
+
+                final String templateFreeMarkerPath =
+                        WebFileUtils.webFilePathToJcrPath(componentConfiguration.getRenderPath(), bundleName);
 
                 final Session session = containerItemNode.getSession();
                 if (!session.nodeExists(templateFreeMarkerPath)) {
@@ -139,7 +146,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
                 final List<String> variantWebFilePaths = new ArrayList<>();
                 // add the main template
-                final String webFileTemplateFreeMarkerPath = WebFileUtils.jcrPathToWebFilePath(templateFreeMarkerPath);
+                final String webFileTemplateFreeMarkerPath = WebFileUtils.jcrPathToWebFilePath(templateFreeMarkerPath, bundleName);
                 variantWebFilePaths.add(webFileTemplateFreeMarkerPath);
 
                 if (session.nodeExists(freeMarkerVariantsFolderPath)) {
@@ -151,7 +158,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                         if (variant.getPath().endsWith(FTL_SUFFIX)) {
                             log.debug("Found variant '{}' for '{}'", variant.getPath(), templateFreeMarkerPath);
                             final String variantJcrPath = variant.getPath();
-                            final String variantWebFilePath = WebFileUtils.jcrPathToWebFilePath(variantJcrPath);
+                            final String variantWebFilePath = WebFileUtils.jcrPathToWebFilePath(variantJcrPath, bundleName);
                             variantWebFilePaths.add(variantWebFilePath);
                         } else {
                             log.debug("Found node '{}' below '{}' but it does not end with .ftl and is thus not a variant",

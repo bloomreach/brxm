@@ -17,6 +17,7 @@ package org.hippoecm.hst.freemarker.jcr;
 
 import java.io.IOException;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.util.WebFileUtils;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class WebFileTemplateLoader extends AbstractTemplateLoader {
             return null;
         }
 
-        String absPath = WebFileUtils.webFilePathToJcrPath(templateSource);
+        String absPath = WebFileUtils.webFilePathToJcrPath(templateSource, WebFileUtils.getBundleName(RequestContextProvider.get()));
         log.info("Trying to load freemarker template for web file from '{}'", absPath);
 
         final RepositorySource repositorySource = getLoadingCache().get(absPath);

@@ -59,7 +59,8 @@ public class ParametersInfoUtils {
         if (annotation == null) {
             return null;
         }
-
+        // TODO below will fail if called from the page-composer since the wrong HstRequestContext is then used
+        // Should account for this?
         HstParameterInfoProxyFactory parameterInfoProxyFacotory = RequestContextProvider.get()
                 .getParameterInfoProxyFactory();
         T parametersInfo = parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request,
