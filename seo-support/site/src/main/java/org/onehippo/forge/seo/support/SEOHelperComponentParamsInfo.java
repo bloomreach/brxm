@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,13 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 titleKey = "group.descriptionsettings",
                 value = {
                         "document-description-bean-props",
-                        "default-meta-description"
+                        "default-meta-description",
+                }
+        ),
+        @FieldGroup(
+                titleKey = "group.imagesettings",
+                value = {
+                        "document-image-bean-props"
                 }
         ),
         @FieldGroup(
@@ -89,6 +95,9 @@ public interface SEOHelperComponentParamsInfo {
 
     @Parameter(name="document-description-bean-props", defaultValue="description")
     String getDocumentDescriptionBeanProperties();
+
+    @Parameter(name="document-image-bean-props", defaultValue="image")
+    String getDocumentImageBeanProperties();
 
     @Parameter(name="site-title")
     String getSiteTitle();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -313,6 +313,7 @@ public class SEOHelperComponentTest {
         private String documentTitleBeanProperties = "title";
         private String documentKeywordsBeanProperties = "keywords";
         private String documentDescriptionBeanProperties = "description";
+        private String documentImageBeanProperties = "image";
         private String siteTitle;
         private String dublinCoreSchemaLink = "http://purl.org/dc/elements/1.1/";
         private String dublinCoreTermsLink = "http://purl.org/dc/terms/";
@@ -381,6 +382,11 @@ public class SEOHelperComponentTest {
 
         public String getDocumentDescriptionBeanProperties() {
             return documentDescriptionBeanProperties;
+        }
+
+        @Override
+        public String getDocumentImageBeanProperties() {
+            return documentImageBeanProperties;
         }
 
         public void setDocumentDescriptionBeanProperties(String documentDescriptionBeanProperties) {
