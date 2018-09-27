@@ -104,8 +104,6 @@ public class DocumentUtils {
             return;
         }
 
-        pageComposerContextService.getEditingPreviewVirtualHosts().getContextPath();
-
         ParametersInfo info = executeWithWebsiteClassLoader(componentConfiguration ->
                 ParametersInfoAnnotationUtils.getParametersInfoAnnotation(item), item);
 
