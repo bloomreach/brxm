@@ -15,16 +15,20 @@
  */
 
 class ComponentFieldsCtrl {
-  constructor($scope, ComponentEditor) {
+  constructor($scope, ComponentEditor, EditComponentService) {
     'ngInject';
 
     this.$scope = $scope;
     this.ComponentEditor = ComponentEditor;
+    this.EditComponentService = EditComponentService;
   }
 
   valueChanged() {
     if (this.form.$valid) {
-      this.ComponentEditor.updatePreview();
+      this.ComponentEditor.updatePreview()
+        .catch(() => {
+          this.EditComponentService.killEditor();
+        });
     }
   }
 

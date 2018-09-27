@@ -19,8 +19,8 @@ import ComponentFieldsCtrl from './componentFields.controller';
 
 const componentFieldsComponent = {
   bindings: {
-    name: '<',
     fields: '<',
+    readOnly: '<',
   },
   controller: ComponentFieldsCtrl,
   template,

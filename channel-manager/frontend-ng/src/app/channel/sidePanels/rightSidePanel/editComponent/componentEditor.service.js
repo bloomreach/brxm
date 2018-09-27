@@ -29,6 +29,8 @@ class ComponentEditorService {
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
+
+    this.kill = false;
   }
 
   open({ channel, component, container, page }) {
@@ -43,6 +45,10 @@ class ComponentEditorService {
     return this.propertyGroups;
   }
 
+  isReadOnly() {
+    return this.container && this.container.isDisabled;
+  }
+
   _onLoadSuccess(channel, component, container, page, properties) {
     this.channel = channel;
     this.component = component;
@@ -54,8 +60,7 @@ class ComponentEditorService {
 
   _onLoadFailure(response) {
     this._clearData();
-    console.log('TODO: implement ComponentEditorService._onLoadFailure');
-    console.log(`Failure for: ${response}`);
+    console.error('TODO: implement ComponentEditorService._onLoadFailure', response);
   }
 
   /**
@@ -63,6 +68,10 @@ class ComponentEditorService {
    * @param {Array} properties
    */
   _normalizeProperties(properties) {
+    if (!properties) {
+      return [];
+    }
+
     properties.forEach((property) => {
       if (property.type === 'linkpicker') {
         property.pickerConfig = this._getPickerConfig(property);
@@ -158,7 +167,7 @@ class ComponentEditorService {
   }
 
   updatePreview() {
-    this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
+    return this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
   save() {
@@ -191,17 +200,28 @@ class ComponentEditorService {
   }
 
   discardChanges() {
+    return this.reopen().finally(() => this.PageStructureService.renderComponent(this.component.id));
+  }
+
+  reopen() {
     return this.open({
       channel: this.channel,
       component: this.component,
       container: this.container,
-      page: this.page,
-    }).finally(() => this.PageStructureService.renderComponent(this.component.id));
+      page: this.page });
   }
 
   close() {
     this._clearData();
     delete this.error;
+  }
+
+  isKilled() {
+    return this.kill;
+  }
+
+  killEditor() {
+    this.kill = true;
   }
 
   /**
@@ -247,6 +267,7 @@ class ComponentEditorService {
     delete this.channel;
     delete this.component;
     delete this.container;
+    delete this.kill;
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;

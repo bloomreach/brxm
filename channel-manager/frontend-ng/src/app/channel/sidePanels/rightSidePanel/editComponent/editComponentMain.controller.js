@@ -14,29 +14,46 @@
  * limitations under the License.
  */
 
+const DELETE_ERRORS = {
+  GENERAL_ERROR: 'ERROR_DELETE_COMPONENT',
+  ITEM_ALREADY_LOCKED: 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
+};
+const SAVE_ERRORS = {
+  GENERAL_ERROR: 'ERROR_UPDATE_COMPONENT',
+  ITEM_ALREADY_LOCKED: 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED',
+};
+
 class EditComponentMainCtrl {
   constructor(
     $log,
     $q,
+    $translate,
     ChannelService,
     CmsService,
     ComponentEditor,
     EditComponentService,
+    FeedbackService,
     HippoIframeService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$q = $q;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
     this.EditComponentService = EditComponentService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
   }
 
   getPropertyGroups() {
     return this.ComponentEditor.getPropertyGroups();
+  }
+
+  isReadOnly() {
+    return this.ComponentEditor.isReadOnly();
   }
 
   discard() {
@@ -45,10 +62,22 @@ class EditComponentMainCtrl {
   }
 
   save() {
-    this.ComponentEditor.save()
-      .then(() => this.form.$setPristine());
+    return this.ComponentEditor.save()
+      .then(() => this.form.$setPristine())
+      .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
+      .catch((error) => {
+        const message = SAVE_ERRORS[error.data.error]
+          ? this.$translate.instant(SAVE_ERRORS[error.data.error], error.data.parameterMap)
+          : this.$translate.instant(SAVE_ERRORS.GENERAL_ERROR);
 
-    this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent');
+        this.FeedbackService.showError(message);
+        this.HippoIframeService.reload();
+        if (error.data.error === 'ITEM_ALREADY_LOCKED') {
+          this.ComponentEditor.reopen(); // reopen will be in readonly mode
+        } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
+          this.EditComponentService.killEditor();
+        }
+      });
   }
 
   deleteComponent() {
@@ -60,11 +89,18 @@ class EditComponentMainCtrl {
             this.HippoIframeService.reload();
             this.EditComponentService.stopEditing();
           })
-          .catch((errorResponse) => {
-            // delete action failed: show toast message? go to component locked mode?
-            // what if someone else deleted the component already: no problem!
-            // TODO: see PageStructureService.removeComponentById() for an example to deal with the error response
-            console.log(`TODO: implement dealing with the delete component error response: ${errorResponse}`);
+          .catch((error) => {
+            const messageParameters = error.parameterMap;
+            messageParameters.component = this.ComponentEditor.getComponentName();
+            const message = DELETE_ERRORS[error.error]
+              ? this.$translate.instant(DELETE_ERRORS[error.error], messageParameters)
+              : this.$translate.instant(DELETE_ERRORS.GENERAL_ERROR, messageParameters);
+
+            this.FeedbackService.showError(message);
+            this.HippoIframeService.reload();
+            if (error.error === 'ITEM_ALREADY_LOCKED') {
+              this.ComponentEditor.reopen(); // reopen will be in readonly mode
+            }
           });
       },
       )
@@ -84,6 +120,9 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
+    if (this.ComponentEditor.isKilled()) {
+      return true;
+    }
     return this._saveOrDiscardChanges()
       .then(() => this.ComponentEditor.close())
       .catch((e) => {

@@ -258,24 +258,30 @@ class PageStructureService {
   renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
-      this.MarkupService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        // re-fetch component because a parallel renderComponent call may have updated the component's markup
-        component = this.getComponentById(componentId);
+      return this.MarkupService.fetchComponentMarkup(component, propertiesMap)
+        .then((response) => {
+          // re-fetch component because a parallel renderComponent call may have updated the component's markup
+          component = this.getComponentById(componentId);
 
-        const newMarkup = response.data;
-        const updatedComponent = this._updateComponent(component, newMarkup);
+          const newMarkup = response.data;
+          const updatedComponent = this._updateComponent(component, newMarkup);
 
-        if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
-          this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
-          this.HippoIframeService.reload();
-        }
-      });
-      // TODO handle error
-      // show error message that component rendering failed.
-      // can we use the toast for this? the component properties dialog is open at this moment...
-    } else {
-      this.$log.warn(`Cannot render unknown component '${componentId}'`);
+          if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
+            this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
+            this.HippoIframeService.reload();
+          }
+        })
+        .catch((response) => {
+          if (response.status === 404) {
+            // component being edited is removed (by someone else), reload the page
+            this.HippoIframeService.reload();
+            this.FeedbackService.showError('FEEDBACK_NOT_FOUND_MESSAGE');
+            return this.$q.reject();
+          }
+          return this.$q.resolve();
+        });
     }
+    return this.$q.resolve();
   }
 
   /**

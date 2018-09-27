@@ -18,10 +18,12 @@ describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
   let $scope;
+  let $translate;
   let ChannelService;
   let CmsService;
   let ComponentEditor;
   let EditComponentService;
+  let FeedbackService;
   let HippoIframeService;
 
   let $ctrl;
@@ -35,10 +37,12 @@ describe('EditComponentMainCtrl', () => {
       $rootScope,
       _$log_,
       _$q_,
+      _$translate_,
       _EditComponentService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
+      $translate = _$translate_;
       EditComponentService = _EditComponentService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
@@ -53,9 +57,14 @@ describe('EditComponentMainCtrl', () => {
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
         'discardChanges',
+        'getComponentName',
         'getPropertyGroups',
+        'isKilled',
+        'isReadOnly',
+        'reopen',
         'save',
       ]);
+      FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
       $scope = $rootScope.$new();
@@ -65,6 +74,7 @@ describe('EditComponentMainCtrl', () => {
         CmsService,
         ComponentEditor,
         EditComponentService,
+        FeedbackService,
         HippoIframeService,
       });
 
@@ -79,6 +89,14 @@ describe('EditComponentMainCtrl', () => {
     const propertyGroups = [];
     ComponentEditor.getPropertyGroups.and.returnValue(propertyGroups);
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
+  });
+
+  it('gets the read-only state', () => {
+    ComponentEditor.isReadOnly.and.returnValue(true);
+    expect($ctrl.isReadOnly()).toBe(true);
+
+    ComponentEditor.isReadOnly.and.returnValue(false);
+    expect($ctrl.isReadOnly()).toBe(false);
   });
 
   describe('isSaveAllowed', () => {
@@ -113,37 +131,83 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('save component', () => {
-    it('saves changes', () => {
-      ComponentEditor.save.and.returnValue($q.resolve());
+    it('fails with a message when another user locked the component\'s container', (done) => {
+      const parameterMap = {};
+      ComponentEditor.save.and.returnValue($q.reject({
+        data: {
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap,
+        },
+      }));
 
-      $ctrl.save();
+      spyOn($translate, 'instant');
+      $translate.instant.and.returnValue('translated');
+
+      $ctrl.save()
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
+          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(ComponentEditor.reopen).toHaveBeenCalled();
+          done();
+        });
       $scope.$digest();
-
-      expect(ComponentEditor.save).toHaveBeenCalled();
     });
 
-    it('makes the form pristine when saving changes succeeds', () => {
-      ComponentEditor.save.and.returnValue($q.resolve());
+    it('fails with a message when another user deleted the component', (done) => {
+      ComponentEditor.save.and.returnValue($q.reject({
+        message: 'javax.jcr.ItemNotFoundException: some-uuid',
+        data: {
+          error: null,
+        },
+      }));
 
-      $ctrl.save();
+      spyOn($translate, 'instant');
+      $translate.instant.and.returnValue('translated');
+      spyOn(EditComponentService, 'killEditor');
+
+      $ctrl.save()
+        .then(() => {
+          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(EditComponentService.killEditor).toHaveBeenCalled();
+          done();
+        });
       $scope.$digest();
-
-      expect(form.$setPristine).toHaveBeenCalled();
     });
 
-    it('keeps the form dirty when saving changes fails', () => {
+    it('makes the form pristine when saving changes succeeds', (done) => {
+      ComponentEditor.save.and.returnValue($q.resolve());
+      $ctrl.save().then(() => {
+        expect(form.$setPristine).toHaveBeenCalled();
+        done();
+      });
+      $scope.$digest();
+    });
+
+    it('keeps the form dirty when saving changes fails', (done) => {
       ComponentEditor.save.and.returnValue($q.reject());
 
-      $ctrl.save();
+      $ctrl.save().catch(() => {
+        expect(form.$setPristine).not.toHaveBeenCalled();
+        done();
+      });
       $scope.$digest();
-
-      expect(form.$setPristine).not.toHaveBeenCalled();
     });
 
-    it('reports a usage statistics', () => {
-      ComponentEditor.save.and.returnValue($q.resolve());
-      $ctrl.save();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
+    it('should report usage statistics when the save succeeds', (done) => {
+      ComponentEditor.save.and.returnValue($q.resolve(''));
+      $ctrl.save()
+        .then(() => {
+          expect(ComponentEditor.save).toHaveBeenCalled();
+          expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveComponent');
+
+          done();
+        });
+      $scope.$digest();
     });
   });
 
@@ -213,6 +277,16 @@ describe('EditComponentMainCtrl', () => {
         $scope.$digest();
       });
     });
+
+    describe('when the editor is killed', () => {
+      it('checks for the kill status of the component editor', () => {
+        ComponentEditor.isKilled.and.returnValue(true);
+        form.$dirty = true;
+
+        expect($ctrl.uiCanExit()).toBe(true);
+        expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('delete component', () => {
@@ -258,6 +332,47 @@ describe('EditComponentMainCtrl', () => {
 
       it('closes the component editor', () => {
         expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      });
+    });
+
+    describe('when the delete fails it reloads the page and', () => {
+      const resultParameters = {
+        component: 'componentName',
+      };
+
+      beforeEach(() => {
+        ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
+        spyOn($translate, 'instant');
+        $translate.instant.and.returnValue('translated');
+        ComponentEditor.getComponentName.and.returnValue('componentName');
+      });
+
+      it('shows a message if the component was locked by another user and reopens the editor', () => {
+        ComponentEditor.deleteComponent.and.returnValue($q.reject({
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap: {},
+        }));
+
+        $ctrl.deleteComponent();
+        $scope.$digest();
+
+        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+        expect(ComponentEditor.reopen).toHaveBeenCalled();
+      });
+
+      it('shows a default message if a general delete error occurs', () => {
+        ComponentEditor.deleteComponent.and.returnValue($q.reject({
+          parameterMap: {},
+        }));
+
+        $ctrl.deleteComponent();
+        $scope.$digest();
+
+        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(HippoIframeService.reload).toHaveBeenCalled();
       });
     });
   });
