@@ -71,8 +71,7 @@ class EditComponentMainCtrl {
         if (error.data.error === 'ITEM_ALREADY_LOCKED') {
           this.ComponentEditor.reopen(); // reopen will be in readonly mode
         } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
-          this.kill = true;
-          this.EditComponentService.stopEditing();
+          this.EditComponentService.killEditor();
         }
       });
   }
@@ -117,7 +116,7 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
-    if (this.kill || this.ComponentEditor.isKilled()) {
+    if (this.ComponentEditor.isKilled()) {
       return true;
     }
     return this._saveOrDiscardChanges()

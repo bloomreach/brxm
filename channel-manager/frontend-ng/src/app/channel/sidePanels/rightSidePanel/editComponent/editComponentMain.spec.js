@@ -156,7 +156,7 @@ describe('EditComponentMainCtrl', () => {
 
       spyOn($translate, 'instant');
       $translate.instant.and.returnValue('translated');
-      spyOn(EditComponentService, 'stopEditing');
+      spyOn(EditComponentService, 'killEditor');
 
       $ctrl.save()
         .then(() => {
@@ -164,8 +164,7 @@ describe('EditComponentMainCtrl', () => {
           expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
-          expect(EditComponentService.stopEditing).toHaveBeenCalled();
-          expect($ctrl.kill).toBe(true);
+          expect(EditComponentService.killEditor).toHaveBeenCalled();
           done();
         });
       $scope.$digest();
@@ -271,14 +270,6 @@ describe('EditComponentMainCtrl', () => {
     });
 
     describe('when the editor is killed', () => {
-      it('checks for the kill status of the main controller', () => {
-        $ctrl.kill = true;
-        form.$dirty = true;
-
-        expect($ctrl.uiCanExit()).toBe(true);
-        expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
-      });
-
       it('checks for the kill status of the component editor', () => {
         ComponentEditor.isKilled.and.returnValue(true);
         form.$dirty = true;

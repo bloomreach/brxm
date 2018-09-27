@@ -63,17 +63,15 @@ describe('ComponentFields', () => {
       expect(ComponentEditor.valueChanged).not.toHaveBeenCalled();
     });
 
-    it('closes the editor when result of a value change cannot be processed', () => {
+    it('closes the editor when the result of a value change cannot be processed', () => {
       spyOn(ComponentEditor, 'valueChanged').and.returnValue($q.reject());
-      spyOn(ComponentEditor, 'killEditor');
-      spyOn(EditComponentService, 'stopEditing');
+      spyOn(EditComponentService, 'killEditor');
       form.$valid = true;
 
       component.valueChanged();
       $scope.$digest();
 
-      expect(ComponentEditor.killEditor).toHaveBeenCalled();
-      expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      expect(EditComponentService.killEditor).toHaveBeenCalled();
     });
   });
 });
