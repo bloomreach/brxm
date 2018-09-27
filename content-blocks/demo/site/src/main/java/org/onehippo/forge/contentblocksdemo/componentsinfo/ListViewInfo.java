@@ -53,7 +53,6 @@ public interface ListViewInfo extends GeneralListInfo {
     String getCssClass();
 
     @Parameter(name = "bgColor", defaultValue="")
-    @Color
     String getBgColor();
 
 }
