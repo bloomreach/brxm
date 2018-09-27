@@ -14,33 +14,42 @@
   limitations under the License.
 -->
 
-<div class="qa-property-group"
-     collapse
-     layout="column"
-     layout-align="start"
-     layout-margin
-     ng-class="{'has-focused-field': $ctrl.hasFocus}">
+<div
+  class="qa-property-group"
+  collapse
+  layout="column"
+  layout-align="start"
+  layout-margin
+  ng-class="{'has-focused-field': $ctrl.hasFocus}"
+>
 
-  <h5 class="collapse-toggle"
-       layout
-       layout-align="start center"
-       layout-fill
-       layout-margin
-       ng-click="collapse.toggle()"
-       ng-if="$ctrl.group.collapse">
-    <md-icon class="collapse-icon"
-             md-font-icon="mdi-chevron-down"
-             ng-class="{'collapsed': collapse.isCollapsed}">
+  <h5
+    class="collapse-toggle"
+    layout
+    layout-align="start center"
+    layout-fill
+    layout-margin
+    ng-click="collapse.toggle()"
+    ng-if="$ctrl.group.collapse"
+  >
+    <md-icon
+      class="collapse-icon"
+      md-font-icon="mdi-chevron-down"
+      ng-class="{'collapsed': collapse.isCollapsed}"
+    >
     </md-icon>
 
-    <span layout-fill
-          ng-class="{'text-italic': $ctrl.group.default}">
+    <span
+      layout-fill
+      ng-class="{'text-italic': $ctrl.group.default}"
+    >
       {{ $ctrl.group.label }}
     </span>
   </h5>
 
-  <component-fields class="collapse-element"
-                    fields="$ctrl.group.fields"
-                    read-only="$ctrl.readOnly"
-  </component-fields>
+  <component-fields
+    class="collapse-element"
+    fields="$ctrl.group.fields"
+    read-only="$ctrl.readOnly"
+  />
 </div>
