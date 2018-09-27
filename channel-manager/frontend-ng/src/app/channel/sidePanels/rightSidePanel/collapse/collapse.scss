@@ -34,6 +34,10 @@
   display: block;
   transition: height $swift-ease-out;
 
+  &.ng-animate {
+    overflow: hidden;
+  }
+
   &.collapsed {
     overflow: hidden;
     transition: height $swift-ease-in;
