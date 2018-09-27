@@ -117,7 +117,7 @@ class EditComponentMainCtrl {
   }
 
   uiCanExit() {
-    if (this.kill) {
+    if (this.kill || this.ComponentEditor.isKilled()) {
       return true;
     }
     return this._saveOrDiscardChanges()

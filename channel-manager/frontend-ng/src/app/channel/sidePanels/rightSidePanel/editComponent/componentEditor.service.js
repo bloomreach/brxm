@@ -29,6 +29,8 @@ class ComponentEditorService {
     this.FeedbackService = FeedbackService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
+
+    this.kill = false;
   }
 
   open({ channel, component, container, page }) {
@@ -158,7 +160,7 @@ class ComponentEditorService {
   }
 
   valueChanged() {
-    this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
+    return this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
   save() {
@@ -207,6 +209,14 @@ class ComponentEditorService {
     delete this.error;
   }
 
+  isKilled() {
+    return this.kill;
+  }
+
+  killEditor() {
+    this.kill = true;
+  }
+
   /**
    * Possible return values:
    * - resolved promise with value 'SAVE' when changes have been saved
@@ -250,6 +260,7 @@ class ComponentEditorService {
     delete this.channel;
     delete this.component;
     delete this.container;
+    delete this.kill;
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;

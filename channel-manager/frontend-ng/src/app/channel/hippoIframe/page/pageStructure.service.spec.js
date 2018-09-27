@@ -700,13 +700,24 @@ describe('PageStructureService', () => {
   });
 
   it('gracefully handles requests to re-render an unknown component', () => {
-    spyOn($log, 'warn');
     spyOn(MarkupService, 'fetchComponentMarkup');
 
     PageStructureService.renderComponent('unknown-component');
 
-    expect($log.warn).toHaveBeenCalled();
     expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
+  });
+
+  it('shows an error message and reloads the page when a component has been deleted', () => {
+    spyOn(PageStructureService, 'getComponentById').and.returnValue({});
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
+    spyOn(HippoIframeService, 'reload');
+    spyOn(FeedbackService, 'showError');
+
+    PageStructureService.renderComponent('componentId');
+    $rootScope.$digest();
+
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
   });
 
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {

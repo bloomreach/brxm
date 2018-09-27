@@ -59,6 +59,7 @@ describe('EditComponentMainCtrl', () => {
         'discardChanges',
         'getComponentName',
         'getPropertyGroups',
+        'isKilled',
         'reOpen',
         'save',
       ]);
@@ -266,6 +267,24 @@ describe('EditComponentMainCtrl', () => {
           done();
         });
         $scope.$digest();
+      });
+    });
+
+    describe('when the editor is killed', () => {
+      it('checks for the kill status of the main controller', () => {
+        $ctrl.kill = true;
+        form.$dirty = true;
+
+        expect($ctrl.uiCanExit()).toBe(true);
+        expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
+      });
+
+      it('checks for the kill status of the component editor', () => {
+        ComponentEditor.isKilled.and.returnValue(true);
+        form.$dirty = true;
+
+        expect($ctrl.uiCanExit()).toBe(true);
+        expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
       });
     });
   });
