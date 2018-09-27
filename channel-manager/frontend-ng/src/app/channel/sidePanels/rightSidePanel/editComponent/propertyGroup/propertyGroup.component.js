@@ -20,8 +20,8 @@ import controller from './propertyGroup.controller';
 
 const propertyGroupComponent = {
   bindings: {
-    name: '<',
     group: '<',
+    readOnly: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

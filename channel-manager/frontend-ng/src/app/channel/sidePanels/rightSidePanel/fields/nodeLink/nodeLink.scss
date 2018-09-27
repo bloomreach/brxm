@@ -32,11 +32,7 @@ $first-button-left-padding: 8px;
 }
 
 node-link {
-  md-input-container & .md-input[disabled].ng-not-empty {
-    color: $text-dark;
-  }
-
-  .md-input {
+  .md-input:enabled {
     cursor: pointer;
   }
 

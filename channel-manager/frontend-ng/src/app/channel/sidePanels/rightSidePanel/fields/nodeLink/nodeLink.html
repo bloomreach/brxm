@@ -14,31 +14,40 @@
   limitations under the License.
   -->
 
-<input aria-label="{{::$ctrl.ariaLabel}}"
-       name="{{::$ctrl.name}}"
-       ng-blur="$ctrl.blur($event)"
-       ng-class="{'has-focus': $ctrl.hasFocus}"
-       ng-click="$ctrl.openLinkPicker()"
-       ng-focus="$ctrl.focus($event)"
-       ng-model="$ctrl.displayName"
-       ng-required="$ctrl.isRequired"
-       readonly="readonly"
-       tabindex="-1"
-       type="text">
+<input
+  aria-label="{{::$ctrl.ariaLabel}}"
+  name="{{::$ctrl.name}}"
+  ng-blur="$ctrl.blur($event)"
+  ng-class="{'has-focus': $ctrl.hasFocus}"
+  ng-click="$ctrl.openLinkPicker()"
+  ng-disabled="$ctrl.disabled"
+  ng-focus="$ctrl.focus($event)"
+  ng-model="$ctrl.displayName"
+  ng-required="$ctrl.isRequired"
+  readonly="readonly"
+  tabindex="-1"
+  type="text"
+>
 
 <div class="hippo-node-link-buttons">
-  <md-button class="md-icon-button hippo-node-link-clear"
-             ng-blur="$ctrl.blur($event)"
-             ng-click="$ctrl.clear()"
-             ng-focus="$ctrl.focus($event)"
-             ng-if="$ctrl.displayName">
+  <md-button
+    class="md-icon-button hippo-node-link-clear"
+    ng-blur="$ctrl.blur($event)"
+    ng-click="$ctrl.clear()"
+    ng-disabled="$ctrl.disabled"
+    ng-focus="$ctrl.focus($event)"
+    ng-if="$ctrl.displayName"
+  >
     <md-icon md-font-icon="mdi-close"></md-icon>
   </md-button>
-  <md-button class="md-icon-button hippo-node-link-select"
-             focus-if="$ctrl.linkPicked"
-             ng-blur="$ctrl.blur($event)"
-             ng-click="$ctrl.openLinkPicker()"
-             ng-focus="$ctrl.focus($event)">
+  <md-button
+    class="md-icon-button hippo-node-link-select"
+    focus-if="$ctrl.linkPicked"
+    ng-blur="$ctrl.blur($event)"
+    ng-click="$ctrl.openLinkPicker()"
+    ng-disabled="$ctrl.disabled"
+    ng-focus="$ctrl.focus($event)"
+  >
     <md-icon md-font-icon="mdi-magnify"></md-icon>
   </md-button>
 </div>
