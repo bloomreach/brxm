@@ -41,6 +41,7 @@ public class WebFileUtils {
      * {@link WebFilesService#JCR_ROOT_PATH} followed by the bundleName (typically the contextPath of the webfile for
      * a specific site webapp)
      */
+    // RD-4598 TODO what if the bundleName is empty? Do we still support ROOT.wat deployment for a site?
     public static String webFilePathToJcrPath(final String templateSource, final String bundleName) {
         final String webFilePath = "/" + PathUtils.normalizePath(templateSource.substring(
                 ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL.length()));
