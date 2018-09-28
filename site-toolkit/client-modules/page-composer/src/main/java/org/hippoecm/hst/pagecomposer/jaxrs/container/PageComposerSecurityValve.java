@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.container.AbstractBaseOrderableValve;
-import org.hippoecm.hst.core.container.CmsSecurityValve;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -37,7 +35,7 @@ import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 
 public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
 
-    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION = CmsSecurityValve.class.getName() + ".CmsChannelManagerRestSession";
+    public static final String HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION = PageComposerSecurityValve.class.getName() + ".CmsChannelManagerRestSession";
 
     private Repository repository;
 
@@ -50,24 +48,24 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = context.getRequestContext();
 
-        HttpSession httpSession = servletRequest.getSession(false);
+        final HttpSession cmsHttpSession = servletRequest.getSession(false);
 
-        if (httpSession == null) {
+        if (cmsHttpSession == null) {
             sendError(context.getServletResponse(), HttpServletResponse.SC_UNAUTHORIZED);
         }
 
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(cmsHttpSession);
 
         if (cmsSessionContext == null) {
             sendError(context.getServletResponse(), HttpServletResponse.SC_UNAUTHORIZED);
         }
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager.
-        synchronized (httpSession) {
+        synchronized (cmsHttpSession) {
             Session jcrSession = null;
             try {
 
-                jcrSession = getOrCreateCmsChannelManagerRestSession(servletRequest, cmsSessionContext.getRepositoryCredentials());
+                jcrSession = getOrCreateCmsChannelManagerRestSession(cmsHttpSession, cmsSessionContext.getRepositoryCredentials());
                 ((HstMutableRequestContext) requestContext).setSession(jcrSession);
 
                 context.invokeNext();
@@ -96,13 +94,13 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
     }
 
 
-    private Session getOrCreateCmsChannelManagerRestSession(final HttpServletRequest request,
+    private Session getOrCreateCmsChannelManagerRestSession(final HttpSession cmsHttpSession,
                                                             final SimpleCredentials credentials) throws RepositoryException, ContainerException {
         long start = System.currentTimeMillis();
 
         try {
             final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CHANNEL_MNGR_SESSION,
-                    request.getSession(), credentials, repository::login);
+                 cmsHttpSession, credentials, repository::login);
             // This returns a plain session for credentials where access is not merged with for example preview user session
             log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
