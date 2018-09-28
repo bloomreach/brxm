@@ -21,7 +21,6 @@
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
     <version>30-SNAPSHOT</version>
-    <relativePath />
   </parent>
 
   <name>Hippo CMS l10n Tooling Project</name>
