@@ -103,6 +103,12 @@
         <version>${hippo.configuration-management.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-migration</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
