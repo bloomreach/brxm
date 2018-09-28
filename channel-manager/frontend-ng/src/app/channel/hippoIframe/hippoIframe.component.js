@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import template from './hippoIframe.html';
+import controller from './hippoIframe.controller';
+import template from './hippoIframe.template.html';
 
-function hippoIframe() {
-  'ngInject';
+const hippoIframeComponent = {
+  bindings: {
+    showComponentsOverlay: '=',
+    showContentOverlay: '=',
+    onEditMenu: '&',
+  },
+  template,
+  controller,
+  controllerAs: 'iframe',
+};
 
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      showComponentsOverlay: '=',
-      showContentOverlay: '=',
-      onEditMenu: '&',
-    },
-    template,
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
-}
-
-export default hippoIframe;
+export default hippoIframeComponent;
