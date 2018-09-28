@@ -96,12 +96,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-        <version>${dollar}{essentials.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>${dollar}{jsp-api.version}</version>
