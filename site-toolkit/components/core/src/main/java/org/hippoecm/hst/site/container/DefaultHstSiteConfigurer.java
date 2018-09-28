@@ -256,7 +256,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             }
 
             hstModelRegistry.registerHstModel(DefaultHstSiteConfigurer.this.getServletContext().getContextPath(),
-                    DefaultHstSiteConfigurer.this.getClass().getClassLoader(),
                     componentManager, !lazyHstConfigurationLoading);
             HstServices.setComponentManager(componentManager);
             initialized = true;

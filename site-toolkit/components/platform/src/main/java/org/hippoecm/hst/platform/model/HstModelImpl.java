@@ -64,8 +64,6 @@ public class HstModelImpl implements PlatformHstModel {
     private Session session;
     private final String contextPath;
     private final ContainerConfiguration websiteContainerConfiguration;
-    // not yet used but most likely needed
-    private ClassLoader websiteClassLoader;
     private ClassLoader platformClassloader = this.getClass().getClassLoader();
     private final ComponentManager websiteComponentManager;
     private final HstNodeLoadingCache hstNodeLoadingCache;
@@ -81,13 +79,11 @@ public class HstModelImpl implements PlatformHstModel {
 
     public HstModelImpl(final Session session,
                         final String contextPath,
-                        final ClassLoader websiteClassLoader,
                         final ComponentManager websiteComponentManager,
                         final HstNodeLoadingCache hstNodeLoadingCache,
                         final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws RepositoryException {
         this.session = session;
         this.contextPath = contextPath;
-        this.websiteClassLoader = websiteClassLoader;
         this.websiteComponentManager = websiteComponentManager;
         websiteContainerConfiguration = websiteComponentManager.getContainerConfiguration();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
@@ -114,11 +110,6 @@ public class HstModelImpl implements PlatformHstModel {
     public void destroy() throws RepositoryException {
         invalidationMonitor.destroy();
         session.logout();
-    }
-
-    @Override
-    public ClassLoader getWebsiteClassLoader() {
-        return websiteClassLoader;
     }
 
     public synchronized void invalidate() {

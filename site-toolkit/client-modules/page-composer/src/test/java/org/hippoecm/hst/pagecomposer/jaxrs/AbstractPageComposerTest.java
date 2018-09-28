@@ -128,8 +128,7 @@ public class AbstractPageComposerTest {
         hstModelProvider.setContextPath(CONTEXT_PATH);
 
         final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        final HstModel hstModel = hstModelRegistry.registerHstModel(CONTEXT_PATH, Thread.currentThread().getContextClassLoader(),
-                componentManager, false);
+        final HstModel hstModel = hstModelRegistry.registerHstModel(CONTEXT_PATH, componentManager, false);
 
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         siteMapMatcher = hstModel.getHstSiteMapMatcher();

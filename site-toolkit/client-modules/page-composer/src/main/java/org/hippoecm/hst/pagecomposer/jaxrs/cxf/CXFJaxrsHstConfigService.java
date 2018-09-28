@@ -197,11 +197,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         }
 
         @Override
-        public ClassLoader getWebsiteClassLoader() {
-            return delegatee.getWebsiteClassLoader();
-        }
-
-        @Override
         public VirtualHosts getVirtualHosts() {
             if (cache != null) {
                 return cache;

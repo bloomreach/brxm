@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,16 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
 
 public class PageComposerUtil {
+
+    private static Logger log = LoggerFactory.getLogger(PageComposerUtil.class);
 
     private PageComposerUtil() {}
 
@@ -87,8 +91,13 @@ public class PageComposerUtil {
         final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             final HstModel websiteHstModel = (HstModel) RequestContextProvider.get().getAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR);
-            if (websiteHstModel != null) {
-                Thread.currentThread().setContextClassLoader(websiteHstModel.getWebsiteClassLoader());
+
+            final String contextPath = websiteHstModel.getVirtualHosts().getContextPath();
+            final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+            if (webappContext == null) {
+                log.warn("No webapp registered for '{}'. Use current thread class loader.", contextPath);
+            } else {
+                Thread.currentThread().setContextClassLoader(webappContext.getServletContext().getClassLoader());
             }
             return function.apply(input);
         } finally {

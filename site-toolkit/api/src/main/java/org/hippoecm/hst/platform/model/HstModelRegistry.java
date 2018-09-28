@@ -21,8 +21,8 @@ import org.hippoecm.hst.core.container.ComponentManager;
 
 public interface HstModelRegistry {
 
-    HstModel registerHstModel(String contextPath, ClassLoader websiteClassLoader,
-                              ComponentManager websiteComponentManager, boolean loadHstConfigNodes) throws ModelRegistrationException;
+    HstModel registerHstModel(String contextPath, ComponentManager websiteComponentManager,
+                              boolean loadHstConfigNodes) throws ModelRegistrationException;
 
     void unregisterHstModel(String contextPath) throws ModelRegistrationException;
 

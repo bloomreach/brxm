@@ -74,8 +74,8 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     // TODO HSTTWO-4355 register listeners for jcr events!!
     // TODO HSTTWO-4355 if a root hst:hst node gets deleted, remove the listener and remove from virtualHostsSuppliers
     @Override
-    public synchronized HstModel registerHstModel(final String contextPath, final ClassLoader websiteClassLoader,
-                                     final ComponentManager websiteComponentManager, final boolean loadHstConfigNodes) throws ModelRegistrationException {
+    public synchronized HstModel registerHstModel(final String contextPath, final ComponentManager websiteComponentManager,
+                                                  final boolean loadHstConfigNodes) throws ModelRegistrationException {
         if (models.containsKey(contextPath)) {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
@@ -109,7 +109,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                 loadHstConfigNodes(hstNodeLoadingCache);
             }
 
-            final HstModelImpl model = new HstModelImpl(session, contextPath, websiteClassLoader, websiteComponentManager,
+            final HstModelImpl model = new HstModelImpl(session, contextPath, websiteComponentManager,
                     hstNodeLoadingCache, hstConfigurationLoadingCache);
             models.put(contextPath, model);
 

@@ -25,10 +25,11 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.platform.api.ChannelEventBus;
 import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ServiceHolder;
 import org.onehippo.cms7.services.ServiceTracker;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaEventBusListenerProxy;
 import org.onehippo.cms7.services.eventbus.GuavaEventBusListenerProxyFactory;
 import org.slf4j.Logger;
@@ -136,9 +137,14 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
 
     @Override
     public void post(BaseChannelEvent event, String contextPath) {
-        final HstModelRegistry registry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        final HstModel model = registry.getHstModel(contextPath);
-        final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(model.getWebsiteClassLoader(), false);
+
+        final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+        if (webappContext == null) {
+            log.warn("Cannot post event to webapp '{}' since no webapp registered for that context path", contextPath);
+            return;
+        }
+
+        final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(webappContext.getServletContext().getClassLoader(), false);
 
         if (eventBus == null) {
             log.debug("No channel event listener registered for application ({}), not posting: {}", contextPath, event);

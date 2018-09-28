@@ -99,7 +99,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
             componentManager2.start();
 
             final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            modelRegistry.registerHstModel("/site2", this.getClass().getClassLoader(), componentManager2, true);
+            modelRegistry.registerHstModel("/site2", componentManager2, true);
         }
     }
 

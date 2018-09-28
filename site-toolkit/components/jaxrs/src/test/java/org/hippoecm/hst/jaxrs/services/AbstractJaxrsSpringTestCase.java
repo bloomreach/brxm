@@ -62,7 +62,7 @@ public abstract class AbstractJaxrsSpringTestCase
         HstServices.setComponentManager(getComponentManager());
 
         final HstModelRegistry modelRegistry = componentManager.getComponent(HstModelRegistry.class);
-        modelRegistry.registerHstModel("/site", this.getClass().getClassLoader(), componentManager, true);
+        modelRegistry.registerHstModel("/site", componentManager, true);
     }
 
     @After

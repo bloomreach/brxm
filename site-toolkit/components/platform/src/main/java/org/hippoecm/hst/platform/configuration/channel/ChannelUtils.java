@@ -28,10 +28,9 @@ import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.proxy.ProxyFactory;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,12 +193,14 @@ public class ChannelUtils {
         if (contextPath == null) {
             throw new ModelLoadingException("Cannot get a classloader if there is no contextPath provided");
         }
-        final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        final HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
-        if (hstModel == null) {
-            throw new ModelLoadingException(String.format("Cannot get ClassLoader for contextPath '%s' since there is no " +
-                    "registered HstModel for that contextPath", contextPath));
+
+        final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+        if (webappContext == null) {
+            log.warn("Cannot get specific class loader for contextPath '{}' since no webapp registered for that context path. " +
+                    "Return current thread its ClassLoader", contextPath);
+            return Thread.currentThread().getContextClassLoader();
         }
-        return hstModel.getWebsiteClassLoader();
+
+        return webappContext.getServletContext().getClassLoader();
     }
 }

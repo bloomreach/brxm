@@ -131,8 +131,7 @@ public abstract class AbstractSpringTestCase
         HstServices.setComponentManager(getComponentManager());
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel(webappContext.getServletContext().getContextPath(),
-                this.getClass().getClassLoader(), componentManager, true);
+        modelRegistry.registerHstModel(webappContext.getServletContext().getContextPath(), componentManager, true);
     }
 
     @After
