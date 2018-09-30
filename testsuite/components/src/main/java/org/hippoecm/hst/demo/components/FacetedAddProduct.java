@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class FacetedAddProduct extends BaseHstComponent {
         Session writableSession = null;
         try {
             writableSession = this.getPersistableSession(request);
-            String rootByPath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
+            String rootByPath = request.getRequestContext().getResolvedMount().getMount().getContentPath();
             rootByPath = PathUtils.normalizePath(rootByPath);
             String numberStr = request.getParameter("number");
             int number = Integer.parseInt(numberStr);
