@@ -8,6 +8,12 @@
     "type": "git",
     "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
   },
+  "browserslist": [
+    "last 1 Chrome versions",
+    "last 1 Firefox versions",
+    "last 1 Safari versions",
+    "last 1 Edge versions"
+  ],
   "engines": {
     "node": "8",
     "npm": "6"
