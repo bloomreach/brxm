@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class HippoLockManager extends LockManagerImpl {
      * @throws javax.jcr.RepositoryException if an error occurs
      */
     public HippoLockManager(org.apache.jackrabbit.core.SessionImpl session, FileSystem fs, ScheduledExecutorService executor) throws RepositoryException {
-        super(session, fs, null);
+        super(session, fs, executor);
     }
 
     @Override
