@@ -101,6 +101,11 @@ describe('EditComponentMainCtrl', () => {
       ComponentEditor.getPropertyGroups.and.returnValue([]);
       expect($ctrl.hasProperties()).toBe(false);
     });
+
+    it('returns false when no property groups are defined yet', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue(undefined);
+      expect($ctrl.hasProperties()).toBe(false);
+    });
   });
 
   it('gets the read-only state', () => {
