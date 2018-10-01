@@ -24,12 +24,10 @@ class ComponentFieldsCtrl {
   }
 
   valueChanged() {
-    if (this.form.$valid) {
-      this.ComponentEditor.updatePreview()
-        .catch(() => {
-          this.EditComponentService.killEditor();
-        });
-    }
+    this.ComponentEditor.updatePreview()
+      .catch(() => {
+        this.EditComponentService.killEditor();
+      });
   }
 
   focusPrimitive() {
