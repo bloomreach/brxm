@@ -17,6 +17,7 @@ package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +29,9 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.engine.ExportConfig;
 import org.onehippo.cm.model.ConfigurationModel;
@@ -49,12 +53,12 @@ public class AutoExportConfig extends ExportConfig {
     private final Node node;
     private final String nodePath;
     private Boolean enabled;
-    private Map<String, Collection<String>> modules;
+    private Map<String, Pair<String, Collection<String>>> modules;
     private OverrideResidualMatchers overrideResidualContext;
     private InjectResidualMatchers injectResidualMatchers;
 
     // constructor for testing purposes only
-    AutoExportConfig(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PatternSet filterUuidPaths) {
+    AutoExportConfig(Boolean enabled, Map<String, Pair<String, Collection<String>>> modules, PatternSet exclusionContext, PatternSet filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -162,11 +166,10 @@ public class AutoExportConfig extends ExportConfig {
         return injectResidualMatchers;
     }
 
-    Map<String, Collection<String>> getModules() {
+    Map<String, Pair<String, Collection<String>>> getModules() {
         if (modules == null) {
-            modules = new LinkedHashMap<>();
             final ArrayList<String> moduleStrings = getModuleStringsFromNode();
-            processModuleStrings(moduleStrings, modules, isEnabled());
+            modules = processModuleStrings(moduleStrings, isEnabled());
         }
         return modules;
     }
@@ -186,10 +189,19 @@ public class AutoExportConfig extends ExportConfig {
         return moduleStrings;
     }
 
-    public static void processModuleStrings(final ArrayList<String> moduleStrings,
-                                            final Map<String, Collection<String>> modules, final boolean logChanges) {
+    /**
+     * Return parsed module configuration
+     * @param moduleStrings unparsed modules configurations
+     * @param logChanges when true enable logging
+     * @return Return a map containing module configurations, module maven path as a key
+     * and site name with a collection of module JCR path mappings as a value
+     */
+    public static Map<String, Pair<String, Collection<String>>> processModuleStrings(final Collection<String> moduleStrings,
+                                                                                     final boolean logChanges) {
+
+        final Map<String, Pair<String, Collection<String>>> modulesConfig = new LinkedHashMap<>();
         boolean rootRepositoryPathIsConfigured = false;
-        Collection<String> allRepositoryPaths = new HashSet<>();
+        final Collection<String> allRepositoryPaths = new HashSet<>();
 
         // for each entry of form "{module}:{path}" or possibly just "{module}"
         for (String moduleEntry : moduleStrings) {
@@ -197,18 +209,35 @@ public class AutoExportConfig extends ExportConfig {
             int offset = moduleEntry.indexOf(":/");
 
             // if there is no path, this is the special case of registering a module to update existing definitions only
+            final String separator = ":";
             if (offset == -1) {
-                if (logChanges) {
-                    log.info("Module at '{}' registered to update existing definitions via auto-export without mapping to a repository path", moduleEntry);
+                String modulePath = moduleEntry;
+                String siteName = null;
+                if (modulePath.contains(separator)) {
+                    //There is also a site name specified within a module path
+                    siteName = StringUtils.substringAfter(modulePath, separator);
+                    modulePath = StringUtils.substringBefore(modulePath, separator);
                 }
-                addRepositoryPath(moduleEntry, null, modules, logChanges);
+
+                if (logChanges) {
+                    log.info("Module at '{}' registered to update existing definitions via auto-export without mapping to a repository path", modulePath);
+                }
+
+                addRepositoryPath(modulePath, null, siteName, modulesConfig, logChanges);
             }
-            // otherwise, this is the normal "{module}:{path}" pair
+            // otherwise, this is the normal "{module}:{path}" pair or "{module}:{site}:{path}"
             else {
                 String modulePath = moduleEntry.substring(0, offset);
+                String siteName = null;
+                if (modulePath.contains(separator)) {
+                    //There is also a site name specified within a module path
+                    siteName = StringUtils.substringAfter(modulePath, separator);
+                    modulePath = StringUtils.substringBefore(modulePath, separator);
+                }
+
                 String repositoryPath = moduleEntry.substring(offset + 1);
                 if (!allRepositoryPaths.contains(repositoryPath)) {
-                    addRepositoryPath(modulePath, repositoryPath, modules, logChanges);
+                    addRepositoryPath(modulePath, repositoryPath, siteName, modulesConfig, logChanges);
                     allRepositoryPaths.add(repositoryPath);
                     if (repositoryPath.equals("/")) {
                         rootRepositoryPathIsConfigured = true;
@@ -217,27 +246,30 @@ public class AutoExportConfig extends ExportConfig {
                     if (logChanges) {
                         log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: the same repository path {} may not be mapped to multiple modules", repositoryPath);
                     }
+                    return Collections.emptyMap();
                 }
             }
         }
         if (!rootRepositoryPathIsConfigured) {
             if (logChanges) {
                 log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: there must be a module that maps to /");
-
-                // in this condition, we should disable auto-export entirely
-                modules.clear();
             }
+            // in this condition, we should disable auto-export entirely
+            return Collections.emptyMap();
         }
+
+        return modulesConfig;
     }
 
-    private static void addRepositoryPath(final String modulePath, final String repositoryPath,
-                                          final Map<String, Collection<String>> modules, final boolean logChanges) {
-        Collection<String> repositoryPaths = modules.computeIfAbsent(modulePath, k -> new ArrayList<>());
+    private static void addRepositoryPath(final String modulePath, final String repositoryPath, final String siteName,
+                                          final Map<String, Pair<String, Collection<String>>> modules, final boolean logChanges) {
+        Pair<String, Collection<String>> repositoryPaths = modules.computeIfAbsent(modulePath, k ->
+            new MutablePair<>(siteName, new ArrayList<>()));
         if (logChanges && repositoryPath != null) {
             log.info("Changes to repository path '{}' will be exported to directory '{}'", repositoryPath, modulePath);
         }
         if (repositoryPath != null) {
-            repositoryPaths.add(repositoryPath);
+            repositoryPaths.getRight().add(repositoryPath);
         }
     }
 

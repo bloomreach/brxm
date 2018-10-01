@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +41,11 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
@@ -660,14 +662,18 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         final ConfigurationPropertyImpl autoExportModulesProp =
                 bootstrapModel.resolveProperty(AutoExportConstants.SERVICE_CONFIG_PATH
                         + "/" + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME);
-        final LinkedHashMap<String, Collection<String>> modulesConfig = new LinkedHashMap<>();
+        Map<String, Pair<String, Collection<String>>> modulesConfig = null;
         if (autoExportModulesProp != null) {
             final ArrayList<String> moduleStrings = new ArrayList<>();
             for (ValueImpl value : autoExportModulesProp.getValues()) {
                 moduleStrings.add(value.getString());
             }
             // reuse the auto-export logic to tweak the defined config as necessary
-            AutoExportConfig.processModuleStrings(moduleStrings, modulesConfig, false);
+            modulesConfig = AutoExportConfig.processModuleStrings(moduleStrings,false);
+        }
+
+        if (MapUtils.isEmpty(modulesConfig)) {
+            return Collections.emptyList();
         }
 
         // convert the project basedir to a Path, so we can resolve modules against it
@@ -694,8 +700,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
 
             // When loading module from disk, use hcm site info from matching module previously-loaded from jars
+            final String siteName = modulesConfig.get(mvnModulePath).getLeft();
             final ModuleImpl module =
-                    new ModuleReader().readReplacement(moduleDescriptorPath, bootstrapModel).getModule();
+                    new ModuleReader().readReplacement(moduleDescriptorPath, bootstrapModel, siteName).getModule();
 
             // store mvnSourcePath on each module for later use by auto-export
             module.setMvnPath(mvnModulePath);

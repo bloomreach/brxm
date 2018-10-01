@@ -22,13 +22,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.easymock.EasyMock;
 import org.junit.Rule;
 import org.junit.Test;
@@ -155,7 +156,7 @@ public class DefinitionMergeTest {
                             final boolean singleModule, String[] toExport) {
             this.testName = testName;
             this.toExport = toExport;
-            Map<String, Collection<String>> modules = new HashMap<>();
+            Map<String, Pair<String, Collection<String>>> modules = new HashMap<>();
             modules.put("exportFirst", parsePathString(firstModulePaths));
             if (!singleModule) {
                 modules.put("exportSecond", parsePathString(secondModulePaths));
@@ -164,11 +165,11 @@ public class DefinitionMergeTest {
         }
 
 
-        private List<String> parsePathString(final String string) {
+        private Pair<String, Collection<String>> parsePathString(final String string) {
             if (string == null || string.equals("")) {
-                return Collections.emptyList();
+                return new ImmutablePair<>(null, Collections.emptyList());
             }
-            return Arrays.asList(string.split(","));
+            return new ImmutablePair<>(null, Arrays.asList(string.split(",")));
         }
 
         public MergeFixture base(final String... base) {
