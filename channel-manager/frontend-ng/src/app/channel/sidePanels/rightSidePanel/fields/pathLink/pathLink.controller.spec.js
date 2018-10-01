@@ -107,18 +107,18 @@ describe('pathLinkController', () => {
     });
   });
 
-  describe('_onPathCanceled', () => {
+  describe('_onPathCancelled', () => {
     beforeEach(() => {
       spyOn($ctrl, '_focusSelectButton');
     });
 
     it('does not handle "path-cancelled" event if field name does not match', () => {
-      $ctrl._onPathCanceled('SomeField');
+      $ctrl._onPathCancelled('SomeField');
       expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
     });
 
     it('handles "path-cancelled" event', () => {
-      $ctrl._onPathCanceled($ctrl.name);
+      $ctrl._onPathCancelled($ctrl.name);
       expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
   });
