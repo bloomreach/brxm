@@ -272,6 +272,8 @@ describe('DragDropService', () => {
     beforeEach(() => {
       dropHandler = jasmine.createSpy('onDropHandler');
       DragDropService.onDrop(dropHandler);
+
+      spyOn(EditComponentService, 'syncPreview');
     });
 
     it('is called when a component is dropped', (done) => {
@@ -280,12 +282,13 @@ describe('DragDropService', () => {
       loadIframeFixture(() => {
         expect(DragDropService.dropping = false);
 
-        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined);
-
-        expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
-        expect(DragDropService.dropping = false);
-
-        done();
+        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined)
+          .then(() => {
+            expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
+            expect(EditComponentService.syncPreview).toHaveBeenCalled();
+            expect(DragDropService.dropping = false);
+            done();
+          });
       });
     });
 
@@ -295,12 +298,13 @@ describe('DragDropService', () => {
       loadIframeFixture(() => {
         expect(DragDropService.dropping = false);
 
-        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined);
-
-        expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
-        expect(DragDropService.dropping = false);
-
-        done();
+        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined)
+          .catch(() => {
+            expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
+            expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
+            expect(DragDropService.dropping = false);
+            done();
+          });
       });
     });
 

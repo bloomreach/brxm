@@ -20,10 +20,11 @@ import DateFieldFieldCtrl from './dateField.controller';
 
 const dateFieldComponent = {
   bindings: {
-    name: '<',
+    disabled: '<?',
     fieldType: '<',
-    onFieldFocus: '&',
+    name: '<',
     onFieldBlur: '&',
+    onFieldFocus: '&',
   },
   controller: DateFieldFieldCtrl,
   template,

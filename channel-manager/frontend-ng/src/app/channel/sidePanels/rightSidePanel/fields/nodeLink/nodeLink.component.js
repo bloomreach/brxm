@@ -24,6 +24,7 @@ const nodeLinkComponent = {
   bindings: {
     ariaLabel: '@',
     config: '<',
+    disabled: '<?',
     displayName: '<',
     hint: '<',
     index: '<',
