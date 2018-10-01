@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,14 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.hst.service.AbstractJCRService;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.Service;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
 
-public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo {
+public class CategoryInfoImpl implements CategoryInfo {
 
     private String name;
     private Locale locale;
@@ -37,21 +38,22 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
 
     private Map<String, Object> properties;
 
-    public CategoryInfoImpl(Node jcrNode) {
-        super(jcrNode);
+	public CategoryInfoImpl(Node jcrNode) {
 
-        this.locale = TaxonomyUtil.toLocale(getValueProvider().getName());
-        this.name = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
-        this.description = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
+		JCRValueProvider jvp = new JCRValueProviderImpl(jcrNode);
 
-        this.synonyms = getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
+		this.locale = TaxonomyUtil.toLocale(jvp.getName());
+		this.name = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
+		this.description = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
 
-        if (synonyms == null) {
-            synonyms = ArrayUtils.EMPTY_STRING_ARRAY;
-        }
+		this.synonyms = jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
 
-        this.properties = this.getValueProvider().getProperties();
-    }
+		if (synonyms == null) {
+			synonyms = ArrayUtils.EMPTY_STRING_ARRAY;
+		}
+
+		this.properties = jvp.getProperties();
+	}
 
     public String getName() {
         return name;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.service.AbstractJCRService;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.Service;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -37,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TaxonomyImpl extends AbstractJCRService implements Taxonomy {
+public class TaxonomyImpl implements Taxonomy {
 
     static Logger log = LoggerFactory.getLogger(CategoryImpl.class);
 
@@ -52,10 +53,10 @@ public class TaxonomyImpl extends AbstractJCRService implements Taxonomy {
     private Map<String, Category> descendantsByKey = new HashMap<>();
 
     public TaxonomyImpl(Node taxonomy) throws RepositoryException, TaxonomyException {
-        super(taxonomy);
-        this.name = this.getValueProvider().getName();
-        this.path = this.getValueProvider().getPath();
-        this.locales = TaxonomyUtil.getLocalesList(this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
+		JCRValueProvider jvp = new JCRValueProviderImpl(taxonomy);
+        this.name = jvp.getName();
+        this.path = jvp.getPath();
+        this.locales = TaxonomyUtil.getLocalesList(jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
 
         NodeIterator nodes = taxonomy.getNodes();
         while(nodes.hasNext()) {
