@@ -63,7 +63,8 @@ class EditComponentMainCtrl {
 
   discard() {
     this.ComponentEditor.confirmDiscardChanges()
-      .then(() => this.ComponentEditor.discardChanges());
+      .then(() => this.ComponentEditor.discardChanges())
+      .then(() => this.form.$setPristine());
   }
 
   save() {
@@ -110,6 +111,10 @@ class EditComponentMainCtrl {
       },
       )
       .catch(() => this.$q.reject()); // user cancelled the delete
+  }
+
+  isDiscardAllowed() {
+    return this._isFormDirty();
   }
 
   isSaveAllowed() {

@@ -147,6 +147,23 @@ describe('EditComponentMainCtrl', () => {
     });
   });
 
+  describe('isDiscardAllowed', () => {
+    it('returns falsy when the form does not exist yet', () => {
+      delete $ctrl.form;
+      expect($ctrl.isDiscardAllowed()).toBeFalsy();
+    });
+
+    it('returns false when the form is pristine', () => {
+      form.$dirty = false;
+      expect($ctrl.isDiscardAllowed()).toBe(false);
+    });
+
+    it('returns true when the form is dirty', () => {
+      form.$dirty = true;
+      expect($ctrl.isDiscardAllowed()).toBe(true);
+    });
+  });
+
   describe('save component', () => {
     it('fails with a message when another user locked the component\'s container', (done) => {
       const parameterMap = {};
@@ -229,13 +246,14 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('discard component changes', () => {
-    it('does discard changes when confirmed', () => {
+    it('does discard changes when confirmed and makes the form pristine again', () => {
       ComponentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.discard();
       $scope.$digest();
 
       expect(ComponentEditor.discardChanges).toHaveBeenCalled();
+      expect(form.$setPristine).toHaveBeenCalled();
     });
 
     it('does not discard changes when not confirmed', () => {
