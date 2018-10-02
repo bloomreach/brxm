@@ -24,9 +24,6 @@ const componentFieldsComponent = {
   },
   controller: ComponentFieldsCtrl,
   template,
-  require: {
-    form: '^^form',
-  },
 };
 
 export default componentFieldsComponent;
