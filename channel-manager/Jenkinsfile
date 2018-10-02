@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-// TODO temporarily skip tests in the jenkins build
-cmsPipeline( mavenGoals: "clean deploy -DskipTests", skipITs: true )
+cmsPipeline()
