@@ -259,6 +259,42 @@ describe('ComponentEditorService', () => {
       loadProperty(undefined, 'defaultValue').andExpectValueToBe('defaultValue');
       loadProperty('', 'defaultValue').andExpectValueToBe('defaultValue');
     });
+
+    it('defaults to "off" for checkbox fields', () => {
+      loadProperty(null, null, 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, undefined, 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, '', 'checkbox').andExpectValueToBe('off');
+    });
+
+    it('normalizes both the defaultValue and the value to "on" and "off" for checkbox fields', () => {
+      loadProperty(null, true, 'checkbox').andExpectValueToBe('on');
+      loadProperty(null, 1, 'checkbox').andExpectValueToBe('on');
+      loadProperty(null, 'true', 'checkbox').andExpectValueToBe('on');
+      loadProperty(null, '1', 'checkbox').andExpectValueToBe('on');
+      loadProperty(null, 'on', 'checkbox').andExpectValueToBe('on');
+      loadProperty(null, 'ON', 'checkbox').andExpectValueToBe('on');
+
+      loadProperty(null, false, 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, 0, 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, 'false', 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, '0', 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, 'off', 'checkbox').andExpectValueToBe('off');
+      loadProperty(null, 'OFF', 'checkbox').andExpectValueToBe('off');
+
+      loadProperty(true, null, 'checkbox').andExpectValueToBe('on');
+      loadProperty(1, null, 'checkbox').andExpectValueToBe('on');
+      loadProperty('true', null, 'checkbox').andExpectValueToBe('on');
+      loadProperty('1', null, 'checkbox').andExpectValueToBe('on');
+      loadProperty('on', null, 'checkbox').andExpectValueToBe('on');
+      loadProperty('ON', null, 'checkbox').andExpectValueToBe('on');
+
+      loadProperty(false, null, 'checkbox').andExpectValueToBe('off');
+      loadProperty(0, null, 'checkbox').andExpectValueToBe('off');
+      loadProperty('false', null, 'checkbox').andExpectValueToBe('off');
+      loadProperty('0', null, 'checkbox').andExpectValueToBe('off');
+      loadProperty('off', null, 'checkbox').andExpectValueToBe('off');
+      loadProperty('OFF', null, 'checkbox').andExpectValueToBe('off');
+    });
   });
 
   describe('read-only state', () => {

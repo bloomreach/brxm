@@ -78,6 +78,12 @@ class ComponentEditorService {
       if (property.type === 'linkpicker') {
         property.pickerConfig = this._getPickerConfig(property);
       }
+      if (property.type === 'checkbox') {
+        if (!isEmpty(property.value)) {
+          property.value = this._booleanAsOnOff(property.value);
+        }
+        property.defaultValue = this._booleanAsOnOff(property.defaultValue);
+      }
     });
 
     return properties;
@@ -99,6 +105,13 @@ class ComponentEditorService {
         isPathPicker: true,
       },
     };
+  }
+
+  _booleanAsOnOff(boolean) {
+    const booleanAsString = String(boolean).toLowerCase();
+    return booleanAsString === 'true' || booleanAsString === '1' || booleanAsString === 'on'
+      ? 'on'
+      : 'off';
   }
 
   _groupProperties(properties) {
