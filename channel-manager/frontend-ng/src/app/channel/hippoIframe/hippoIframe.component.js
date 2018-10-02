@@ -19,8 +19,8 @@ import template from './hippoIframe.template.html';
 
 const hippoIframeComponent = {
   bindings: {
-    showComponentsOverlay: '=',
-    showContentOverlay: '=',
+    showComponentsOverlay: '<',
+    showContentOverlay: '<',
     onEditMenu: '&',
   },
   template,

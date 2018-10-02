@@ -76,19 +76,22 @@ class HippoIframeCtrl {
   }
 
   $onInit() {
-    this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
-      this.OverlayService.showComponentsOverlay(value);
-      if (this.HippoIframeService.pageLoaded) {
-        this.RenderingService.updateDragDrop();
-      }
-    });
-    this.$scope.$watch('iframe.showContentOverlay', (value) => {
-      this.OverlayService.showContentOverlay(value);
-    });
-
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
     this.DragDropService.onDrop(this._moveComponent.bind(this));
+  }
+
+  $onChanges(changes) {
+    if (changes.showComponentsOverlay) {
+      this.OverlayService.showComponentsOverlay(changes.showComponentsOverlay.currentValue);
+      if (this.HippoIframeService.pageLoaded) {
+        this.RenderingService.updateDragDrop();
+      }
+    }
+
+    if (changes.showContentOverlay) {
+      this.OverlayService.showContentOverlay(changes.showContentOverlay.currentValue);
+    }
   }
 
   $onDestroy() {

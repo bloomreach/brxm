@@ -65,10 +65,12 @@ describe('hippoIframeCtrl', () => {
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
+    scope.showComponentsOverlay = false;
+    scope.showContentOverlay = false;
 
     const el = angular.element(
-      `<hippo-iframe show-components-overlay="false"
-                     show-content-overlay="false"
+      `<hippo-iframe show-components-overlay="showComponentsOverlay"
+                     show-content-overlay="showContentOverlay"
                      on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);
@@ -180,24 +182,24 @@ describe('hippoIframeCtrl', () => {
     spyOn(RenderingService, 'updateDragDrop');
 
     HippoIframeService.pageLoaded = false;
-    hippoIframeCtrl.showComponentsOverlay = true;
+    scope.showComponentsOverlay = true;
     $rootScope.$digest();
 
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
-    hippoIframeCtrl.showComponentsOverlay = false;
+    scope.showComponentsOverlay = false;
     $rootScope.$digest();
 
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     HippoIframeService.pageLoaded = true;
-    hippoIframeCtrl.showComponentsOverlay = true;
+    scope.showComponentsOverlay = true;
     $rootScope.$digest();
 
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
 
     RenderingService.updateDragDrop.calls.reset();
-    hippoIframeCtrl.showComponentsOverlay = false;
+    scope.showComponentsOverlay = false;
     $rootScope.$digest();
 
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
@@ -206,12 +208,12 @@ describe('hippoIframeCtrl', () => {
   it('toggles the components overlay', () => {
     spyOn(OverlayService, 'showComponentsOverlay');
 
-    hippoIframeCtrl.showComponentsOverlay = true;
+    scope.showComponentsOverlay = true;
     $rootScope.$digest();
 
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
 
-    hippoIframeCtrl.showComponentsOverlay = false;
+    scope.showComponentsOverlay = false;
     $rootScope.$digest();
 
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
@@ -220,12 +222,12 @@ describe('hippoIframeCtrl', () => {
   it('toggles the content overlay', () => {
     spyOn(OverlayService, 'showContentOverlay');
 
-    hippoIframeCtrl.showContentOverlay = true;
+    scope.showContentOverlay = true;
     $rootScope.$digest();
 
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(true);
 
-    hippoIframeCtrl.showContentOverlay = false;
+    scope.showContentOverlay = false;
     $rootScope.$digest();
 
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
