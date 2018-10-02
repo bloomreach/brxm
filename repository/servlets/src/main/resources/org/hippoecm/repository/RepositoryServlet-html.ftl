@@ -167,10 +167,10 @@ ${response.setContentType("text/html;charset=UTF-8")}
               <#list 1..distance as d>
                 <#assign ancestorLink = "../${ancestorLink}">
               </#list>
-              <a href="${ancestorLink}">${ancestor.name!html}</a>/<#t>
+              <a href="${ancestorLink}">${ancestor.name}</a>/<#t>
               <#assign distance = distance - 1>
             </#list>
-            <a href="./">${currentNode.name!html}</a>/<#t>
+            <a href="./">${currentNode.name}</a>/<#t>
           </#if>
         </code>
 
@@ -182,7 +182,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
               <#if child.index gt 1>
                 <#assign childLink = "${childLink}[${child.index}]">
               </#if>
-              <a href="./${childLink}/">
+              <a href="./${childLink?url_path}/">
                 ${child.name}
                 <#if child.hasProperty("hippo:count")>
                 [${child.getProperty("hippo:count").long}]
@@ -240,7 +240,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
         <#list queryResultNodes as node>
           <#if node??>
             <li>
-              <a href="${baseRelPath}${node.path?substring(1)!url}">${node.path}</a>
+              <a href="${baseRelPath}${node.path?substring(1)?url_path}">${node.path}</a>
     <#-- TODO
               writer.println("<a class=\"node-link\" title=\"Open node in new cms console window\" target=\"_blank\" href=\"" + req.getContextPath() + "/console/?path=" + resultNode.getPath() + "\">c</a>");
               writer.println("<a class=\"node-link\" title=\"Open node in new cms window\" target=\"_blank\" href=\"" + req.getContextPath() + "/?path=" + resultNode.getPath() + "\">cms</a>");
@@ -304,7 +304,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
         </blockquote>
         <ol>
           <li>
-            Found node: <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a>
+            Found node: <a href="${baseRelPath}${nodeById.path?substring(1)?url_path}">${nodeById.path}</a>
             <#-- TODO
             writer.println("<a class=\"node-link\" title=\"Open node in new cms console window\" target=\"_blank\" href=\"" + req.getContextPath() + "/console/?path=" + n.getPath() + "\">c</a>");
             writer.println("<a class=\"node-link\" title=\"Open node in new cms window\" target=\"_blank\" href=\"" + req.getContextPath() + "/?path=" + n.getPath() + "\">cms</a>");
@@ -317,7 +317,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
         <h3>Getting nodes having a reference to </h3>
         <blockquote>
           UUID = ${request.getParameter("uuid")!}
-          ( <a href="${baseRelPath}${nodeById.path?substring(1)!url}">${nodeById.path}</a> )
+          ( <a href="${baseRelPath}${nodeById.path?substring(1)?url_path}">${nodeById.path}</a> )
         </blockquote>
         <hr>
         <table>
