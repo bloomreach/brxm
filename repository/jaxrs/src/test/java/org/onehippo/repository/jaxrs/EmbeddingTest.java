@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,18 +68,19 @@ public class EmbeddingTest {
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
+        tomcat.getConnector(); // Trigger the creation of the default connector
 
         Context context = tomcat.addContext("", getTmpTomcatFolderName());
         Tomcat.addServlet(context, "embedTomcat", new HttpServlet() {
             protected void service(HttpServletRequest req, HttpServletResponse resp)
-                    throws ServletException, IOException {
+                    throws IOException {
                 resp.setContentType("text/plain");
                 Writer w = resp.getWriter();
                 w.write("Hello world from plain servlet");
                 w.flush();
             }
         });
-        context.addServletMapping("/embedTomcat/*", "embedTomcat");
+        context.addServletMappingDecoded("/embedTomcat/*", "embedTomcat");
 
         tomcat.start();
 
@@ -101,6 +101,7 @@ public class EmbeddingTest {
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
+        tomcat.getConnector(); // Trigger the creation of the default connector
 
         Context context = tomcat.addContext("", getTmpTomcatFolderName());
         Wrapper servlet = context.createWrapper();
@@ -111,7 +112,7 @@ public class EmbeddingTest {
                 HelloWorldResource.class.getName()
         );
         context.addChild(servlet);
-        context.addServletMapping( "/embedCXF/*", "embedCXF" );
+        context.addServletMappingDecoded( "/embedCXF/*", "embedCXF" );
 
         tomcat.start();
 
@@ -132,10 +133,11 @@ public class EmbeddingTest {
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
+        tomcat.getConnector(); // Trigger the creation of the default connector
 
         Context context = tomcat.addContext("", getTmpTomcatFolderName());
         Tomcat.addServlet(context, "embedRepositoryJaxrsServlet", new RepositoryJaxrsServlet());
-        context.addServletMapping("/embedRepositoryJaxrsServlet/*", "embedRepositoryJaxrsServlet");
+        context.addServletMappingDecoded("/embedRepositoryJaxrsServlet/*", "embedRepositoryJaxrsServlet");
         tomcat.start();
 
         RepositoryJaxrsEndpoint jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint("/")
