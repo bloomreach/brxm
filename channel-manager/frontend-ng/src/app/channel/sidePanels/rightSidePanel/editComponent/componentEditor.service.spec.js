@@ -87,7 +87,7 @@ describe('ComponentEditorService', () => {
     });
 
     it('stores the editor data', () => {
-      const properties = ['propertyData'];
+      const properties = [{ name: 'test-property' }];
       openComponentEditor(properties);
 
       expect(ComponentEditor.channel).toBe(testData.channel);
@@ -100,8 +100,7 @@ describe('ComponentEditorService', () => {
 
   describe('reopening the editor', () => {
     it('opens the editor for the component is was opened for originally', () => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
 
       spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
       ComponentEditor.reopen();
@@ -111,7 +110,7 @@ describe('ComponentEditorService', () => {
 
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
-      openComponentEditor(['propertyData']);
+      openComponentEditor();
 
       expect(ComponentEditor.getComponentName()).toBe('componentLabel');
     });
@@ -227,24 +226,38 @@ describe('ComponentEditorService', () => {
       expect(groups.length).toBe(3);
       expectGroup(groups[0], null, 2, false);
     });
+  });
 
-    it('uses the property\'s defaultValue if it is defined/not-null/not-empty and the property value is null', () => {
-      openComponentEditor([
-        { value: null },
-        { value: null, defaultValue: null },
-        { value: null, defaultValue: '' },
-        { value: null, defaultValue: 'defaultValue' },
-        { value: '', defaultValue: 'defaultValue' },
-        { value: false, defaultValue: true },
-      ]);
+  describe('the default value', () => {
+    function loadProperty(value, defaultValue, type = 'textfield') {
+      openComponentEditor([{ value, defaultValue, type }]);
 
       const fields = ComponentEditor.getPropertyGroups()[0].fields;
-      expect(fields[0].value).toBe(null);
-      expect(fields[1].value).toBe(null);
-      expect(fields[2].value).toBe(null);
-      expect(fields[3].value).toBe('defaultValue');
-      expect(fields[4].value).toBe('');
-      expect(fields[5].value).toBe(false);
+      return {
+        andExpectValueToBe: (expectedValue) => {
+          expect(fields[0].value).toBe(expectedValue);
+        },
+      };
+    }
+
+    it('is ignored when the default value is null, undefined or empty string', () => {
+      loadProperty(null, undefined).andExpectValueToBe(null);
+      loadProperty(null, null).andExpectValueToBe(null);
+      loadProperty(null, '').andExpectValueToBe(null);
+
+      loadProperty(undefined, undefined).andExpectValueToBe(undefined);
+      loadProperty(undefined, null).andExpectValueToBe(undefined);
+      loadProperty(undefined, '').andExpectValueToBe(undefined);
+
+      loadProperty('', undefined).andExpectValueToBe('');
+      loadProperty('', null).andExpectValueToBe('');
+      loadProperty('', '').andExpectValueToBe('');
+    });
+
+    it('is used when the value is null, undefined or empty string', () => {
+      loadProperty(null, 'defaultValue').andExpectValueToBe('defaultValue');
+      loadProperty(undefined, 'defaultValue').andExpectValueToBe('defaultValue');
+      loadProperty('', 'defaultValue').andExpectValueToBe('defaultValue');
     });
   });
 
@@ -346,6 +359,25 @@ describe('ComponentEditorService', () => {
       });
       $rootScope.$digest();
     });
+
+    it('uses the defaultValue for empty properties if it is defined', (done) => {
+      spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
+
+      const properties = [
+        { name: 'a', value: '', defaultValue: 'defaultValue' },
+        { name: 'b', value: 'b', defaultValue: 'defaultValue' },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.updatePreview().then(() => {
+        expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
+          a: 'defaultValue',
+          b: 'b',
+        });
+        done();
+      });
+      $rootScope.$digest();
+    });
   });
 
   describe('save', () => {
@@ -362,12 +394,28 @@ describe('ComponentEditorService', () => {
 
       expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', { a: 'value-a', b: 'value-b' });
     });
+
+    it('uses the defaultValue for empty properties if it is defined', () => {
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+
+      const properties = [
+        { name: 'a', value: '', defaultValue: 'defaultValue' },
+        { name: 'b', value: 'b', defaultValue: 'defaultValue' },
+      ];
+      openComponentEditor(properties);
+
+      ComponentEditor.save();
+
+      expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', {
+        a: 'defaultValue',
+        b: 'b',
+      });
+    });
   });
 
   describe('delete component functions', () => {
     beforeEach(() => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
     });
 
     it('calls the hst component service for deleteComponent', () => {
@@ -433,8 +481,7 @@ describe('ComponentEditorService', () => {
 
   describe('discard changes functions', () => {
     beforeEach(() => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
     });
 
     it('calls the dialog service to confirm', () => {

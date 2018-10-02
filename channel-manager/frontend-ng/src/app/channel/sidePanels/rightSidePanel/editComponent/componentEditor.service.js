@@ -19,6 +19,8 @@ import multiActionDialogTemplate from '../contentEditor/multiActionDialog/multiA
 
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
+const isEmpty = str => str === undefined || str === null || str === '';
+
 class ComponentEditorService {
   constructor($q, $translate, DialogService, FeedbackService, HstComponentService, PageStructureService) {
     'ngInject';
@@ -108,13 +110,9 @@ class ComponentEditorService {
     const groups = new Map();
     properties
       .filter(property => !property.hiddenInChannelManager)
-      .map((property) => {
-        if (property.value === null && property.defaultValue) {
-          property.value = property.defaultValue;
-        }
-        return property;
-      })
       .forEach((property) => {
+        property.value = this._valueOrDefault(property);
+
         if (property.name === TEMPLATE_PICKER) {
           property.groupLabel = TEMPLATE_PICKER;
         }
@@ -136,6 +134,12 @@ class ComponentEditorService {
       fields: group[1],
       label: group[0],
     }));
+  }
+
+  _valueOrDefault(property) {
+    return isEmpty(property.value) && !isEmpty(property.defaultValue)
+      ? property.defaultValue
+      : property.value;
   }
 
   confirmDeleteComponent() {
@@ -176,6 +180,8 @@ class ComponentEditorService {
 
   _propertiesAsFormData() {
     return this.properties.reduce((formData, property) => {
+      property.value = this._valueOrDefault(property);
+
       if (property.type === 'datefield') {
         // cut off the time and time zone information from the value that the datefield returns
         formData[property.name] = property.value.substring(0, 10);
