@@ -91,20 +91,20 @@ describe('EditComponentMainCtrl', () => {
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
   });
 
-  describe('hasProperties', () => {
-    it('returns true when there are properties', () => {
-      ComponentEditor.getPropertyGroups.and.returnValue([{}]);
-      expect($ctrl.hasProperties()).toBe(true);
-    });
-
-    it('returns false when there are no properties', () => {
+  describe('hasNoProperties', () => {
+    it('returns true when there are no properties', () => {
       ComponentEditor.getPropertyGroups.and.returnValue([]);
-      expect($ctrl.hasProperties()).toBe(false);
+      expect($ctrl.hasNoProperties()).toBe(true);
     });
 
-    it('returns false when no property groups are defined yet', () => {
+    it('returns false when there are properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([{}]);
+      expect($ctrl.hasNoProperties()).toBe(false);
+    });
+
+    it('returns false when no properties have been loaded yet', () => {
       ComponentEditor.getPropertyGroups.and.returnValue(undefined);
-      expect($ctrl.hasProperties()).toBe(false);
+      expect($ctrl.hasNoProperties()).toBe(false);
     });
   });
 

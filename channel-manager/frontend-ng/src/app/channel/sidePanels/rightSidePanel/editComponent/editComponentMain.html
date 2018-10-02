@@ -23,7 +23,7 @@
     <md-tab-body>
       <md-subheader class="md-no-sticky"
                     md-colors="{background: 'hippo-grey-200'}"
-                    ng-if="::!$ctrl.hasProperties()">
+                    ng-if="$ctrl.hasNoProperties()">
         <div>{{ ::'FEEDBACK_NO_EDITABLE_COMPONENT_PROPERTIES' | translate }}</div>
       </md-subheader>
       <form
