@@ -271,13 +271,14 @@ describe('EditComponentMainCtrl', () => {
       beforeEach(() => {
         spyOn($log, 'error');
         form.$dirty = true;
+        form.$valid = true;
       });
 
       it('fails silently when save or discard changes is canceled', (done) => {
         ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().catch(() => {
-          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(true);
           expect($log.error).not.toHaveBeenCalled();
           expect(ComponentEditor.close).not.toHaveBeenCalled();
           done();
@@ -320,6 +321,20 @@ describe('EditComponentMainCtrl', () => {
 
         expect($ctrl.uiCanExit()).toBe(true);
         expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when the changes are invalid', () => {
+      it('uses the validation state to confirm or discard changes', (done) => {
+        form.$dirty = true;
+        form.$valid = false;
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().catch(() => {
+          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(false);
+          done();
+        });
+        $scope.$digest();
       });
     });
   });

@@ -486,11 +486,12 @@ describe('ComponentEditorService', () => {
       };
 
       spyOn($translate, 'instant');
+      spyOn(DialogService, 'alert');
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
     });
 
     it('shows a dialog', (done) => {
-      ComponentEditor.confirmSaveOrDiscardChanges()
+      ComponentEditor.confirmSaveOrDiscardChanges(true)
         .then(() => {
           expect(DialogService.show).toHaveBeenCalled();
           done();
@@ -498,40 +499,8 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
     });
 
-    it('saves the data when the dialog resolves with "SAVE" and does not redraw', (done) => {
-      spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'renderComponent');
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ComponentEditor.dirty = true;
-
-      ComponentEditor.confirmSaveOrDiscardChanges()
-        .then(() => {
-          expect(ComponentEditor.save).toHaveBeenCalled();
-          expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
-          done();
-        });
-      $rootScope.$digest();
-    });
-
-    it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
-      spyOn(PageStructureService, 'renderComponent');
-      spyOn(ComponentEditor, 'save');
-      DialogService.show.and.returnValue($q.resolve('DISCARD'));
-      ComponentEditor.dirty = true;
-
-      ComponentEditor.confirmSaveOrDiscardChanges()
-        .then(() => {
-          expect(PageStructureService.renderComponent).toHaveBeenCalled();
-          expect(ComponentEditor.save).not.toHaveBeenCalled();
-          done();
-        });
-      $rootScope.$digest();
-    });
-
-    it('translate the dialog title and body text', (done) => {
-      ComponentEditor.dirty = true;
-
-      ComponentEditor.confirmSaveOrDiscardChanges()
+    it('translates the dialog title and body text', (done) => {
+      ComponentEditor.confirmSaveOrDiscardChanges(true)
         .then(() => {
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TO_COMPONENT', {
@@ -540,6 +509,75 @@ describe('ComponentEditorService', () => {
           done();
         });
       $rootScope.$digest();
+    });
+
+    describe('with valid data', () => {
+      it('saves the data when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
+        spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
+        spyOn(PageStructureService, 'renderComponent');
+        DialogService.show.and.returnValue($q.resolve('SAVE'));
+
+        ComponentEditor.confirmSaveOrDiscardChanges(true)
+          .then(() => {
+            expect(ComponentEditor.save).toHaveBeenCalled();
+            expect(DialogService.alert).not.toHaveBeenCalled();
+            expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+            done();
+          });
+        $rootScope.$digest();
+      });
+
+      it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+        spyOn(PageStructureService, 'renderComponent');
+        spyOn(ComponentEditor, 'save');
+        DialogService.show.and.returnValue($q.resolve('DISCARD'));
+
+        ComponentEditor.confirmSaveOrDiscardChanges(true)
+          .then(() => {
+            expect(PageStructureService.renderComponent).toHaveBeenCalled();
+            expect(ComponentEditor.save).not.toHaveBeenCalled();
+            done();
+          });
+        $rootScope.$digest();
+      });
+    });
+
+    describe('with invalid data', () => {
+      beforeEach(() => {
+        const alert = jasmine.createSpyObj('alert', ['ok', 'textContent']);
+        alert.textContent.and.returnValue(alert);
+        alert.ok.and.returnValue(alert);
+        DialogService.alert.and.returnValue(alert);
+      });
+
+      it('shows an alert when the dialog resolved with "SAVE" and neither saves nor redraws the component', (done) => {
+        spyOn(ComponentEditor, 'save');
+        spyOn(PageStructureService, 'renderComponent');
+        DialogService.show.and.returnValues($q.resolve('SAVE'), $q.resolve());
+
+        ComponentEditor.confirmSaveOrDiscardChanges(false)
+          .catch(() => {
+            expect(DialogService.alert).toHaveBeenCalled();
+            expect(ComponentEditor.save).not.toHaveBeenCalled();
+            expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+            done();
+          });
+        $rootScope.$digest();
+      });
+
+      it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+        spyOn(PageStructureService, 'renderComponent');
+        spyOn(ComponentEditor, 'save');
+        DialogService.show.and.returnValue($q.resolve('DISCARD'));
+
+        ComponentEditor.confirmSaveOrDiscardChanges(false)
+          .then(() => {
+            expect(PageStructureService.renderComponent).toHaveBeenCalled();
+            expect(ComponentEditor.save).not.toHaveBeenCalled();
+            done();
+          });
+        $rootScope.$digest();
+      });
     });
   });
 });
