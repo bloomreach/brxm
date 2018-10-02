@@ -60,6 +60,14 @@ describe('NameUrlFields', () => {
   }
 
   describe('updating the url field when name changes', () => {
+    beforeEach(() => {
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
     it('calls setDocumentUrlByName directly after first keyup is triggered on nameInputElement', () => {
       setNameInputValue('test val');
       expect(component.setDocumentUrlByName).toHaveBeenCalled();
@@ -69,7 +77,10 @@ describe('NameUrlFields', () => {
       setNameInputValue('test');
       setNameInputValue(' val');
       expect(component.setDocumentUrlByName.calls.count()).toBe(1);
+
       $timeout.flush();
+      jasmine.clock().tick(400);
+
       expect(component.setDocumentUrlByName.calls.count()).toBe(2);
     });
 
@@ -78,13 +89,12 @@ describe('NameUrlFields', () => {
       spies.generateDocumentUrlByName.and.returnValue(deferredRequest.promise);
 
       setNameInputValue('1');
-      $timeout.flush();
       setNameInputValue('12');
-      $timeout.flush();
       setNameInputValue('123');
-      $timeout.flush();
-      expect(component.setDocumentUrlByName.calls.count()).toBe(1);
 
+      jasmine.clock().tick(400);
+
+      expect(component.setDocumentUrlByName.calls.count()).toBe(1);
       deferredRequest.resolve();
       $rootScope.$digest();
 
