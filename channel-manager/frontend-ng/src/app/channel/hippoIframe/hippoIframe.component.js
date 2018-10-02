@@ -25,7 +25,6 @@ const hippoIframeComponent = {
   },
   template,
   controller,
-  controllerAs: 'iframe',
 };
 
 export default hippoIframeComponent;
