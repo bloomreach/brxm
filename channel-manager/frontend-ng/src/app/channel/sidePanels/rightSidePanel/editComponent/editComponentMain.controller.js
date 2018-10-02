@@ -52,6 +52,11 @@ class EditComponentMainCtrl {
     return this.ComponentEditor.getPropertyGroups();
   }
 
+  hasNoProperties() {
+    const propertyGroups = this.getPropertyGroups();
+    return angular.isArray(propertyGroups) && propertyGroups.length === 0;
+  }
+
   isReadOnly() {
     return this.ComponentEditor.isReadOnly();
   }

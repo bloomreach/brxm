@@ -91,6 +91,23 @@ describe('EditComponentMainCtrl', () => {
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
   });
 
+  describe('hasNoProperties', () => {
+    it('returns true when there are no properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([]);
+      expect($ctrl.hasNoProperties()).toBe(true);
+    });
+
+    it('returns false when there are properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([{}]);
+      expect($ctrl.hasNoProperties()).toBe(false);
+    });
+
+    it('returns false when no properties have been loaded yet', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue(undefined);
+      expect($ctrl.hasNoProperties()).toBe(false);
+    });
+  });
+
   it('gets the read-only state', () => {
     ComponentEditor.isReadOnly.and.returnValue(true);
     expect($ctrl.isReadOnly()).toBe(true);
