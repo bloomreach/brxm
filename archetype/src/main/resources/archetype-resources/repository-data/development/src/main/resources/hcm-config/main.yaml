@@ -11,7 +11,7 @@ definitions:
         type: string
         # this value tells auto-export to update existing definitions but not create new definitions here
         # add path mappings to export development data into this module
-        value: ['repository-data/development', 'repository-data/site:/hst:${rootArtifactId.replace($hyphen,$empty)}']
+        value: ['repository-data/development', 'repository-data/site:${rootArtifactId.replace($hyphen,$empty)}:/hst:${rootArtifactId.replace($hyphen,$empty)}']
     /hippo:configuration/hippo:groups/author:
       hipposys:members:
         operation: add
