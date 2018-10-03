@@ -38,6 +38,7 @@ public interface ChannelService {
 	 * a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 */
+	// TODO replace 'cmsHost' with host group
 	List<Channel> getLiveChannels(Session userSession, String cmsHost);
 
 
@@ -52,6 +53,7 @@ public interface ChannelService {
 	 * {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 */
+	// TODO replace 'cmsHost' with host group
 	List<Channel> getPreviewChannels(Session userSession, String cmsHost);
 
 	/**

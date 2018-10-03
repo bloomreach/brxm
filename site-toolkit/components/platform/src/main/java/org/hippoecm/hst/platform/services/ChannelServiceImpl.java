@@ -45,8 +45,9 @@ import org.slf4j.LoggerFactory;
 public class ChannelServiceImpl implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
-    private HstModelRegistryImpl hstModelRegistry;
-    private PreviewDecorator previewDecorator;
+
+    private final HstModelRegistryImpl hstModelRegistry;
+    private final PreviewDecorator previewDecorator;
 
     public ChannelServiceImpl(final HstModelRegistryImpl hstModelRegistry, final PreviewDecorator previewDecorator) {
         this.hstModelRegistry = hstModelRegistry;
@@ -54,11 +55,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    // TODO replace 'cmsHost' with host group
     public List<Channel> getLiveChannels(final Session userSession, final String cmsHost) {
         return doGetChannels(userSession, cmsHost, false);
     }
 
     @Override
+    // TODO replace 'cmsHost' with host group
     public List<Channel> getPreviewChannels(final Session userSession, final String cmsHost) {
         return doGetChannels(userSession, cmsHost, true);
     }

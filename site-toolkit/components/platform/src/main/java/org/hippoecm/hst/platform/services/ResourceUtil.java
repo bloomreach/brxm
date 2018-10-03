@@ -52,6 +52,7 @@ public class ResourceUtil {
      * @param cmsHost the host to match
      * @return the host group name for {@code cmsHost} and {@code null} if the {@code cmsHost} cannot be matched
      */
+    // TODO we need to get rid of this code since we should be able to drop cms locations property completely
     public static String getHostGroupNameForCmsHost(final VirtualHosts virtualHosts, final String cmsHost) {
 
         for (Map.Entry<String, Map<String, MutableVirtualHost>> entry : ((MutableVirtualHosts)virtualHosts).getRootVirtualHostsByGroup().entrySet()) {
