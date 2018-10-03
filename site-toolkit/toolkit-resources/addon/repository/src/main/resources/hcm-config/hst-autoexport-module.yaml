@@ -6,7 +6,7 @@ definitions:
           value: ['/hst:*/hst:configurations/*-preview', '/hst:*/hst:configurations/*-preview/**']
         autoexport:filteruuidpaths:
           operation: add
-          value: ['/hst:*']
+          value: ['/hst:*/**']
         autoexport:injectresidualchildnodecategory:
           operation: add
           value: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content',
