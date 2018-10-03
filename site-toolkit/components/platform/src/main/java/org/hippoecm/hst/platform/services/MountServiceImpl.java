@@ -10,12 +10,8 @@ import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.api.MountService;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MountServiceImpl implements MountService {
-
-    private static final Logger log = LoggerFactory.getLogger(MountServiceImpl.class);
 
     private final HstModelRegistryImpl hstModelRegistry;
     private final PreviewDecorator previewDecorator;
