@@ -54,7 +54,16 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<Channel> getChannels(final Session userSession, final String cmsHost) {
+    public List<Channel> getLiveChannels(final Session userSession, final String cmsHost) {
+        return doGetChannels(userSession, cmsHost, false);
+    }
+
+    @Override
+    public List<Channel> getPreviewChannels(final Session userSession, final String cmsHost) {
+        return doGetChannels(userSession, cmsHost, true);
+    }
+
+    private List<Channel> doGetChannels(final Session userSession, final String cmsHost, final boolean preview) {
         final Map<String, Channel> channels = new HashMap<>();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
@@ -75,9 +84,14 @@ public class ChannelServiceImpl implements ChannelService {
                     continue;
                 }
 
-                final Mount previewMount = previewDecorator.decorateMountAsPreview(mount);
+                final Mount useMount;
+                if (preview) {
+                    useMount = previewDecorator.decorateMountAsPreview(mount);
+                } else {
+                    useMount = mount;
+                }
 
-                final Channel channel = previewMount.getChannel();
+                final Channel channel = useMount.getChannel();
                 if (channel == null) {
                     log.debug("No channel present for mount '{}'", mount);
                     continue;
