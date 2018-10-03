@@ -19,12 +19,8 @@ import './hippoIframe.scss';
 class HippoIframeCtrl {
   constructor(
     $element,
-    $log,
-    $scope,
-    $translate,
     CmsService,
     ContainerService,
-    DialogService,
     DragDropService,
     HippoIframeService,
     OverlayService,
@@ -36,13 +32,9 @@ class HippoIframeCtrl {
     'ngInject';
 
     this.$element = $element;
-    this.$log = $log;
-    this.$scope = $scope;
-    this.$translate = $translate;
 
     this.CmsService = CmsService;
     this.ContainerService = ContainerService;
-    this.DialogService = DialogService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;

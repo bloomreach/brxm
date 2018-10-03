@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import controller from './hippoIframe.controller';
+
 describe('hippoIframeCtrl', () => {
+  let $element;
   let $rootScope;
   let $window;
   let CmsService;
@@ -25,11 +28,11 @@ describe('hippoIframeCtrl', () => {
   let PageStructureService;
   let RenderingService;
   let SpaService;
-  let hippoIframeCtrl;
-  let scope;
+  let ViewportService;
+  let $ctrl;
+  let onEditMenu;
 
   beforeEach(() => {
-    let $compile;
     angular.mock.module('hippo-cm');
 
     inject((
@@ -45,8 +48,8 @@ describe('hippoIframeCtrl', () => {
       _PageStructureService_,
       _RenderingService_,
       _SpaService_,
+      _ViewportService_,
     ) => {
-      $compile = _$compile_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
@@ -57,26 +60,33 @@ describe('hippoIframeCtrl', () => {
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
       SpaService = _SpaService_;
-      scope = $rootScope.$new();
+      ViewportService = _ViewportService_;
+
+      $element = angular.element('<div></div>');
+
+      spyOn(OverlayService, 'onEditMenu');
+      spyOn(DragDropService, 'onDrop');
+      onEditMenu = jasmine.createSpy('onEditMenu');
+
+      $ctrl = $controller(controller, {
+        $element,
+        CmsService,
+        ContainerService,
+        DragDropService,
+        HippoIframeService,
+        OverlayService,
+        PageStructureService,
+        RenderingService,
+        SpaService,
+        ViewportService,
+      }, {
+        showComponentsOverlay: false,
+        showContentOverlay: false,
+        onEditMenu,
+      });
+
+      $ctrl.$onInit();
     });
-
-    spyOn(OverlayService, 'onEditMenu');
-    spyOn(DragDropService, 'onDrop');
-
-    scope.testEditMode = false;
-    scope.onEditMenu = jasmine.createSpy('onEditMenu');
-    scope.showComponentsOverlay = false;
-    scope.showContentOverlay = false;
-
-    const el = angular.element(
-      `<hippo-iframe show-components-overlay="showComponentsOverlay"
-                     show-content-overlay="showContentOverlay"
-                     on-edit-menu="onEditMenu(menuUuid)">
-      </hippo-iframe>`);
-    $compile(el)(scope);
-    scope.$digest();
-
-    hippoIframeCtrl = el.controller('hippo-iframe');
   });
 
   describe('render component', () => {
@@ -104,7 +114,7 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('does not respond to the render-component event anymore when destroyed', () => {
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
 
       expect(SpaService.renderComponent).not.toHaveBeenCalled();
@@ -130,7 +140,7 @@ describe('hippoIframeCtrl', () => {
 
     it('does not call the on-drop callback anymore when destroyed', () => {
       spyOn(DragDropService, 'offDrop');
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       expect(DragDropService.offDrop).toHaveBeenCalled();
     });
   });
@@ -146,7 +156,7 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('does not respond to the delete-component event anymore when destroyed', () => {
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('delete-component', '1234');
       expect(ContainerService.deleteComponent).not.toHaveBeenCalled();
     });
@@ -154,15 +164,15 @@ describe('hippoIframeCtrl', () => {
 
   it('unsubscribes "delete-component" event when the controller is destroyed', () => {
     spyOn(CmsService, 'unsubscribe');
-    hippoIframeCtrl.$onDestroy();
-    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), hippoIframeCtrl);
+    $ctrl.$onDestroy();
+    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), $ctrl);
   });
 
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay');
 
-    hippoIframeCtrl.onLoad();
+    $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(RenderingService.createOverlay).toHaveBeenCalled();
@@ -172,7 +182,7 @@ describe('hippoIframeCtrl', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(true);
     spyOn(SpaService, 'initSpa');
 
-    hippoIframeCtrl.onLoad();
+    $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(SpaService.initSpa).toHaveBeenCalled();
@@ -182,60 +192,60 @@ describe('hippoIframeCtrl', () => {
     spyOn(RenderingService, 'updateDragDrop');
 
     HippoIframeService.pageLoaded = false;
-    scope.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
-    scope.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     HippoIframeService.pageLoaded = true;
-    scope.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
 
     RenderingService.updateDragDrop.calls.reset();
-    scope.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
   });
 
   it('toggles the components overlay', () => {
     spyOn(OverlayService, 'showComponentsOverlay');
 
-    scope.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
 
-    scope.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('toggles the content overlay', () => {
     spyOn(OverlayService, 'showContentOverlay');
 
-    scope.showContentOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showContentOverlay: { currentValue: true },
+    });
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(true);
 
-    scope.showContentOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showContentOverlay: { currentValue: false },
+    });
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
   });
 
   it('calls its edit menu function when the overlay service wants to edit a menu', () => {
     const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
     callback('menu-uuid');
-    expect(scope.onEditMenu).toHaveBeenCalledWith('menu-uuid');
+    expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
   });
 });
