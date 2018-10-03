@@ -30,8 +30,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
-import org.hippoecm.hst.platform.model.HstModelImpl;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -74,10 +72,13 @@ public class HstConfigurationUtils {
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
         session.save();
-        final EventPathsInvalidator invalidator = getPreviewHstModel().getEventPathsInvalidator();
-        // after the save the paths need to be send, not before!
-        if (invalidator != null && pathsToBeChanged != null) {
-            invalidator.eventPaths(pathsToBeChanged);
+        final PlatformHstModel previewHstModel = getPreviewHstModel();
+        if (previewHstModel != null) {
+            final EventPathsInvalidator invalidator = previewHstModel.getEventPathsInvalidator();
+            // after the save the paths need to be send, not before!
+            if (invalidator != null && pathsToBeChanged != null) {
+                invalidator.eventPaths(pathsToBeChanged);
+            }
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),StringUtils.join(prunedPathChanges, ","));
