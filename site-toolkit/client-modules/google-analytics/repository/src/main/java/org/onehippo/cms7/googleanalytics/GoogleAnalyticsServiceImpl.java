@@ -109,15 +109,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService, Daemo
         return privateKey.getStream();
     }
 
-    @Override
-    @Deprecated
-    public String getPassword() {
-        if (password == null) {
-            password = getStringProperty(session, PASSWORD_PROPERTY_PATH);
-        }
-        return password;
-    }
-
     private synchronized static String getStringProperty(Session session, String propertyName) {
         String value = null;
         try {
