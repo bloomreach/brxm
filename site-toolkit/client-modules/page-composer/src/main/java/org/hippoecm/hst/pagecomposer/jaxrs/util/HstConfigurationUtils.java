@@ -79,6 +79,8 @@ public class HstConfigurationUtils {
             if (invalidator != null && pathsToBeChanged != null) {
                 invalidator.eventPaths(pathsToBeChanged);
             }
+        } else {
+            log.warn("HstConfigurationUtils#persistChanges should not be used when invoked from outside the channel mgr");
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),StringUtils.join(prunedPathChanges, ","));
