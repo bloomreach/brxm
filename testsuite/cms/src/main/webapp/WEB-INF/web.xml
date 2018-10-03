@@ -30,7 +30,7 @@
       ,classpath*:com/onehippo/**/*.class
       ,classpath*:org/onehippo/forge/**/*.class
     </param-value>
-  </context-param>HstPlatformContextLoaderListener
+  </context-param>
   <!-- HstContextLoaderListener configuring/initializing/destroying HST Container -->
   <listener>
     <listener-class>org.hippoecm.hst.platform.container.HstCmsContextLoaderListener</listener-class>
