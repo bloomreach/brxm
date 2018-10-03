@@ -46,7 +46,7 @@ import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
-import org.hippoecm.hst.platform.linking.HstLinkProcessorChain;
+import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
 import org.hippoecm.hst.platform.linking.containers.DefaultResourceContainer;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
