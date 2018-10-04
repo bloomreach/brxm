@@ -173,6 +173,7 @@ describe('EditComponentMainCtrl', () => {
           parameterMap,
         },
       }));
+      ComponentEditor.reopen.and.returnValue($q.resolve());
 
       spyOn($translate, 'instant');
       $translate.instant.and.returnValue('translated');
@@ -184,6 +185,7 @@ describe('EditComponentMainCtrl', () => {
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           expect(ComponentEditor.reopen).toHaveBeenCalled();
+          expect(form.$setPristine).toHaveBeenCalled();
           done();
         });
       $scope.$digest();

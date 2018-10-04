@@ -79,7 +79,7 @@ class EditComponentMainCtrl {
         this.FeedbackService.showError(message);
         this.HippoIframeService.reload();
         if (error.data.error === 'ITEM_ALREADY_LOCKED') {
-          this.ComponentEditor.reopen(); // reopen will be in readonly mode
+          this._onComponentLocked();
         } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
           this.EditComponentService.killEditor();
         }
@@ -105,7 +105,7 @@ class EditComponentMainCtrl {
             this.FeedbackService.showError(message);
             this.HippoIframeService.reload();
             if (error.error === 'ITEM_ALREADY_LOCKED') {
-              this.ComponentEditor.reopen(); // reopen will be in readonly mode
+              this._onComponentLocked();
             }
           });
       },
@@ -127,6 +127,11 @@ class EditComponentMainCtrl {
 
   _isFormValid() {
     return this.form && this.form.$valid;
+  }
+
+  _onComponentLocked() {
+    this.ComponentEditor.reopen()
+      .then(() => this.form.$setPristine());
   }
 
   uiCanExit() {
