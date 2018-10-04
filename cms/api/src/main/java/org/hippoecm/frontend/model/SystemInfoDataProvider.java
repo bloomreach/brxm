@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -95,8 +95,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         nf.setMaximumFractionDigits(2);
         info.clear();
         info.put("Project version", getProjectVersion());
-        info.put("Hippo Release version", getReleaseVersion());
-        info.put("Hippo CMS version", getCMSVersion());
+        info.put("BloomReach Release version", getReleaseVersion());
+        info.put("BloomReach CMS version", getCMSVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Memory maximum", nf.format(((double) runtime.maxMemory()) / MB) + " MB");
