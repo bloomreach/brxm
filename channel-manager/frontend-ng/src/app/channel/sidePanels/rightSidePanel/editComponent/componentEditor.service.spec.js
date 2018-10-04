@@ -240,60 +240,41 @@ describe('ComponentEditorService', () => {
       };
     }
 
+    const emptyValues = [undefined, null, ''];
+    const testValues = emptyValues.concat('test');
+
     it('is ignored when the default value is null, undefined or empty string', () => {
-      loadProperty(null, undefined).andExpectValueToBe(null);
-      loadProperty(null, null).andExpectValueToBe(null);
-      loadProperty(null, '').andExpectValueToBe(null);
-
-      loadProperty(undefined, undefined).andExpectValueToBe(undefined);
-      loadProperty(undefined, null).andExpectValueToBe(undefined);
-      loadProperty(undefined, '').andExpectValueToBe(undefined);
-
-      loadProperty('', undefined).andExpectValueToBe('');
-      loadProperty('', null).andExpectValueToBe('');
-      loadProperty('', '').andExpectValueToBe('');
+      testValues.forEach((value) => {
+        emptyValues.forEach((defaultValue) => {
+          loadProperty(value, defaultValue).andExpectValueToBe(value);
+        });
+      });
     });
 
     it('is used when the value is null, undefined or empty string', () => {
-      loadProperty(null, 'defaultValue').andExpectValueToBe('defaultValue');
-      loadProperty(undefined, 'defaultValue').andExpectValueToBe('defaultValue');
-      loadProperty('', 'defaultValue').andExpectValueToBe('defaultValue');
+      emptyValues.forEach((emptyValue) => {
+        loadProperty(emptyValue, 'defaultValue').andExpectValueToBe('defaultValue');
+      });
     });
 
     it('defaults to "off" for checkbox fields', () => {
-      loadProperty(null, null, 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, undefined, 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, '', 'checkbox').andExpectValueToBe('off');
+      testValues.forEach((emptyDefaultValue) => {
+        loadProperty(null, emptyDefaultValue, 'checkbox').andExpectValueToBe('off');
+      });
     });
 
-    it('normalizes both the defaultValue and the value to "on" and "off" for checkbox fields', () => {
-      loadProperty(null, true, 'checkbox').andExpectValueToBe('on');
-      loadProperty(null, 1, 'checkbox').andExpectValueToBe('on');
-      loadProperty(null, 'true', 'checkbox').andExpectValueToBe('on');
-      loadProperty(null, '1', 'checkbox').andExpectValueToBe('on');
-      loadProperty(null, 'on', 'checkbox').andExpectValueToBe('on');
-      loadProperty(null, 'ON', 'checkbox').andExpectValueToBe('on');
+    it('normalizes value and defaultValue to "on" and "off" for checkbox fields', () => {
+      const onValues = [true, 'true', 1, '1', 'on', 'On', 'ON'];
+      onValues.forEach((onValue) => {
+        loadProperty(onValue, null, 'checkbox').andExpectValueToBe('on');
+        loadProperty(null, onValue, 'checkbox').andExpectValueToBe('on');
+      });
 
-      loadProperty(null, false, 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, 0, 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, 'false', 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, '0', 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, 'off', 'checkbox').andExpectValueToBe('off');
-      loadProperty(null, 'OFF', 'checkbox').andExpectValueToBe('off');
-
-      loadProperty(true, null, 'checkbox').andExpectValueToBe('on');
-      loadProperty(1, null, 'checkbox').andExpectValueToBe('on');
-      loadProperty('true', null, 'checkbox').andExpectValueToBe('on');
-      loadProperty('1', null, 'checkbox').andExpectValueToBe('on');
-      loadProperty('on', null, 'checkbox').andExpectValueToBe('on');
-      loadProperty('ON', null, 'checkbox').andExpectValueToBe('on');
-
-      loadProperty(false, null, 'checkbox').andExpectValueToBe('off');
-      loadProperty(0, null, 'checkbox').andExpectValueToBe('off');
-      loadProperty('false', null, 'checkbox').andExpectValueToBe('off');
-      loadProperty('0', null, 'checkbox').andExpectValueToBe('off');
-      loadProperty('off', null, 'checkbox').andExpectValueToBe('off');
-      loadProperty('OFF', null, 'checkbox').andExpectValueToBe('off');
+      const offValues = [false, 'false', 0, '0', 'off', 'Off', 'OFF'];
+      offValues.forEach((offValue) => {
+        loadProperty(offValue, null, 'checkbox').andExpectValueToBe('off');
+        loadProperty(null, offValue, 'checkbox').andExpectValueToBe('off');
+      });
     });
   });
 
