@@ -4,10 +4,6 @@
     "perspective-title" : {
       "status" : "CLEAN",
       "locales" : null
-    },
-    "site.is.down.message" : {
-      "status" : "CLEAN",
-      "locales" : null
     }
   }
 }
