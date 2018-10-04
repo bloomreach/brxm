@@ -108,8 +108,7 @@ class ComponentEditorService {
   }
 
   _booleanAsOnOff(boolean) {
-    const booleanAsString = String(boolean).toLowerCase();
-    return booleanAsString === 'true' || booleanAsString === '1' || booleanAsString === 'on'
+    return ['true', '1', 'on'].includes(String(boolean).toLowerCase())
       ? 'on'
       : 'off';
   }
