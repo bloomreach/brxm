@@ -52,13 +52,19 @@ class EditComponentMainCtrl {
     return this.ComponentEditor.getPropertyGroups();
   }
 
+  hasNoProperties() {
+    const propertyGroups = this.getPropertyGroups();
+    return angular.isArray(propertyGroups) && propertyGroups.length === 0;
+  }
+
   isReadOnly() {
     return this.ComponentEditor.isReadOnly();
   }
 
   discard() {
     this.ComponentEditor.confirmDiscardChanges()
-      .then(() => this.ComponentEditor.discardChanges());
+      .then(() => this.ComponentEditor.discardChanges())
+      .then(() => this.form.$setPristine());
   }
 
   save() {
@@ -107,6 +113,10 @@ class EditComponentMainCtrl {
       .catch(() => this.$q.reject()); // user cancelled the delete
   }
 
+  isDiscardAllowed() {
+    return this._isFormDirty();
+  }
+
   isSaveAllowed() {
     return this._isFormDirty() && this._isFormValid();
   }
@@ -137,7 +147,7 @@ class EditComponentMainCtrl {
 
   _saveOrDiscardChanges() {
     if (this._isFormDirty()) {
-      return this.ComponentEditor.confirmSaveOrDiscardChanges();
+      return this.ComponentEditor.confirmSaveOrDiscardChanges(this._isFormValid());
     }
     return this.$q.resolve();
   }

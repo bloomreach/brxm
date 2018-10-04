@@ -65,18 +65,18 @@ describe('pathLinkController', () => {
       expect($ctrl.displayName).toEqual('TestDisplayName');
       expect($ctrl.ngModel.$modelValue).toEqual('model-value');
       expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function), jasmine.any(Object));
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-canceled', jasmine.any(Function), jasmine.any(Object));
+      expect(CmsService.subscribe).toHaveBeenCalledWith('path-cancelled', jasmine.any(Function), jasmine.any(Object));
     });
   });
 
   describe('$onDestroy', () => {
-    it('unsubscribes the "path-picked" and "path-canceled" event listeners', () => {
+    it('unsubscribes the "path-picked" and "path-cancelled" event listeners', () => {
       spyOn(CmsService, 'unsubscribe');
 
       $ctrl.$onDestroy();
       $scope.$apply();
       expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function), jasmine.any(Object));
-      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-canceled', jasmine.any(Function), jasmine.any(Object));
+      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-cancelled', jasmine.any(Function), jasmine.any(Object));
     });
   });
 
@@ -107,18 +107,18 @@ describe('pathLinkController', () => {
     });
   });
 
-  describe('_onPathCanceled', () => {
+  describe('_onPathCancelled', () => {
     beforeEach(() => {
       spyOn($ctrl, '_focusSelectButton');
     });
 
-    it('does not handle "path-canceled" event if field name does not match', () => {
-      $ctrl._onPathCanceled('SomeField');
+    it('does not handle "path-cancelled" event if field name does not match', () => {
+      $ctrl._onPathCancelled('SomeField');
       expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
     });
 
-    it('handles "path-canceled" event', () => {
-      $ctrl._onPathCanceled($ctrl.name);
+    it('handles "path-cancelled" event', () => {
+      $ctrl._onPathCancelled($ctrl.name);
       expect($ctrl._focusSelectButton).toHaveBeenCalled();
     });
   });

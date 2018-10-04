@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import { throttle } from 'throttle-debounce';
+
+const THROTTLE_PERIOD = 500;
+
 class ComponentFieldsCtrl {
   constructor($scope, ComponentEditor, EditComponentService) {
     'ngInject';
@@ -21,15 +25,15 @@ class ComponentFieldsCtrl {
     this.$scope = $scope;
     this.ComponentEditor = ComponentEditor;
     this.EditComponentService = EditComponentService;
+
+    this.valueChanged = throttle(THROTTLE_PERIOD, this.valueChanged.bind(this));
   }
 
   valueChanged() {
-    if (this.form.$valid) {
-      this.ComponentEditor.updatePreview()
-        .catch(() => {
-          this.EditComponentService.killEditor();
-        });
-    }
+    this.ComponentEditor.updatePreview()
+      .catch(() => {
+        this.EditComponentService.killEditor();
+      });
   }
 
   focusPrimitive() {

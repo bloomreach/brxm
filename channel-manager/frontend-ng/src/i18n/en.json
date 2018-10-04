@@ -131,6 +131,8 @@
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
   "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published.",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
+  "FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES": "Cannot save component '{{componentLabel}}', there are errors in field values",
+  "FEEDBACK_NO_EDITABLE_COMPONENT_PROPERTIES": "This component has no editable properties",
   "FEEDBACK_DEFAULT_MESSAGE": "Couldn't open the document for editing",
   "FEEDBACK_DEFAULT_TITLE": "Error",
   "FEEDBACK_DOCUMENT_INVALID_TITLE": "Invalid pending changes found",

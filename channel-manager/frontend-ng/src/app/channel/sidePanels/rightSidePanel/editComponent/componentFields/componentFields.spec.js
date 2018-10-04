@@ -22,7 +22,6 @@ describe('ComponentFields', () => {
   let EditComponentService;
 
   let component;
-  let form;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
@@ -35,37 +34,32 @@ describe('ComponentFields', () => {
       EditComponentService = _EditComponentService_;
     });
 
-    form = {};
-
-    component = $componentController('componentFields',
-      {},
-      { form },
-    );
+    component = $componentController('componentFields');
   });
 
   describe('valueChanged', () => {
-    it('updates the preview when a value is changed and valid', () => {
-      spyOn(ComponentEditor, 'updatePreview').and.returnValue($q.resolve());
-      form.$valid = true;
-
-      component.valueChanged();
-
-      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+    beforeEach(() => {
+      jasmine.clock().install();
     });
 
-    it('does not update the preview when a value is changed to something invalid', () => {
-      spyOn(ComponentEditor, 'updatePreview');
-      form.$valid = false;
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
+    it('updates the preview when a value is changed', () => {
+      spyOn(ComponentEditor, 'updatePreview').and.returnValue($q.resolve());
 
       component.valueChanged();
+      component.valueChanged();
+      expect(ComponentEditor.updatePreview.calls.count()).toBe(1);
 
-      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
+      jasmine.clock().tick(500);
+      expect(ComponentEditor.updatePreview.calls.count()).toBe(2);
     });
 
     it('closes the editor when the result of a value change cannot be processed', () => {
       spyOn(ComponentEditor, 'updatePreview').and.returnValue($q.reject());
       spyOn(EditComponentService, 'killEditor');
-      form.$valid = true;
 
       component.valueChanged();
       $scope.$digest();

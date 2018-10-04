@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import { throttle } from 'throttle-debounce';
+
 const URL_UPDATE_DELAY = 400;
 
 class NameUrlFieldsController {
-  constructor($element, CreateContentService, throttle) {
+  constructor($element, CreateContentService) {
     'ngInject';
 
     this.createContentService = CreateContentService;
     this.isManualUrlMode = false;
     this.isUrlUpdating = false;
     this.nameInputField = $element.find('.name-input-element');
-    this.updateUrlThrottle = throttle(() => this.updateUrl(), URL_UPDATE_DELAY, true);
+    this.updateUrlThrottle = throttle(URL_UPDATE_DELAY, this.updateUrl.bind(this));
   }
 
   $onInit() {

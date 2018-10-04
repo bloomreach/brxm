@@ -244,18 +244,24 @@ class ComponentEditorService {
   }
 
   /**
+   * @param isValid whether the changes are valid
+   *
    * Possible return values:
    * - resolved promise with value 'SAVE' when changes have been saved
    * - resolved promise with value 'DISCARD' when changes have been discarded
    * - rejected promise when user canceled
    */
-  confirmSaveOrDiscardChanges() {
+  confirmSaveOrDiscardChanges(isValid) {
     return this._askSaveOrDiscardChanges()
       .then((action) => {
         switch (action) {
           case 'SAVE':
-            return this.save()
-              .then(() => action); // let caller know that changes have been saved
+            if (isValid) {
+              return this.save()
+                .then(() => action); // let caller know that changes have been saved
+            }
+            return this._alertFieldErrors()
+              .then(() => this.$q.reject());
           case 'DISCARD':
             this.PageStructureService.renderComponent(this.component.id);
             return this.$q.resolve(action);
@@ -280,6 +286,16 @@ class ComponentEditorService {
       },
       bindToController: true,
     });
+  }
+
+  _alertFieldErrors() {
+    const message = this.$translate.instant('FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES', { componentLabel: this.component.label });
+    const ok = this.$translate.instant('OK');
+    const alert = this.DialogService.alert()
+      .textContent(message)
+      .ok(ok);
+
+    return this.DialogService.show(alert);
   }
 
   _clearData() {

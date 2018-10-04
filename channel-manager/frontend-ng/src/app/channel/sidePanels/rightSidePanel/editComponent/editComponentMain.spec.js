@@ -91,6 +91,23 @@ describe('EditComponentMainCtrl', () => {
     expect($ctrl.getPropertyGroups()).toBe(propertyGroups);
   });
 
+  describe('hasNoProperties', () => {
+    it('returns true when there are no properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([]);
+      expect($ctrl.hasNoProperties()).toBe(true);
+    });
+
+    it('returns false when there are properties', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue([{}]);
+      expect($ctrl.hasNoProperties()).toBe(false);
+    });
+
+    it('returns false when no properties have been loaded yet', () => {
+      ComponentEditor.getPropertyGroups.and.returnValue(undefined);
+      expect($ctrl.hasNoProperties()).toBe(false);
+    });
+  });
+
   it('gets the read-only state', () => {
     ComponentEditor.isReadOnly.and.returnValue(true);
     expect($ctrl.isReadOnly()).toBe(true);
@@ -127,6 +144,23 @@ describe('EditComponentMainCtrl', () => {
       form.$dirty = true;
       form.$valid = true;
       expect($ctrl.isSaveAllowed()).toBe(true);
+    });
+  });
+
+  describe('isDiscardAllowed', () => {
+    it('returns falsy when the form does not exist yet', () => {
+      delete $ctrl.form;
+      expect($ctrl.isDiscardAllowed()).toBeFalsy();
+    });
+
+    it('returns false when the form is pristine', () => {
+      form.$dirty = false;
+      expect($ctrl.isDiscardAllowed()).toBe(false);
+    });
+
+    it('returns true when the form is dirty', () => {
+      form.$dirty = true;
+      expect($ctrl.isDiscardAllowed()).toBe(true);
     });
   });
 
@@ -212,13 +246,14 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('discard component changes', () => {
-    it('does discard changes when confirmed', () => {
+    it('does discard changes when confirmed and makes the form pristine again', () => {
       ComponentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.discard();
       $scope.$digest();
 
       expect(ComponentEditor.discardChanges).toHaveBeenCalled();
+      expect(form.$setPristine).toHaveBeenCalled();
     });
 
     it('does not discard changes when not confirmed', () => {
@@ -236,13 +271,14 @@ describe('EditComponentMainCtrl', () => {
       beforeEach(() => {
         spyOn($log, 'error');
         form.$dirty = true;
+        form.$valid = true;
       });
 
       it('fails silently when save or discard changes is canceled', (done) => {
         ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
 
         $ctrl.uiCanExit().catch(() => {
-          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalled();
+          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(true);
           expect($log.error).not.toHaveBeenCalled();
           expect(ComponentEditor.close).not.toHaveBeenCalled();
           done();
@@ -285,6 +321,20 @@ describe('EditComponentMainCtrl', () => {
 
         expect($ctrl.uiCanExit()).toBe(true);
         expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when the changes are invalid', () => {
+      it('uses the validation state to confirm or discard changes', (done) => {
+        form.$dirty = true;
+        form.$valid = false;
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+
+        $ctrl.uiCanExit().catch(() => {
+          expect(ComponentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(false);
+          done();
+        });
+        $scope.$digest();
       });
     });
   });

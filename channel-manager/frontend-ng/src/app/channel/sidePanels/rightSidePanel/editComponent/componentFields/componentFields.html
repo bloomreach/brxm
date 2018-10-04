@@ -59,6 +59,7 @@
     ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
     ng-pattern="/^(-\d)?\d*$/"
+    ng-required="::componentField.required"
     type="text"
   />
 
@@ -83,7 +84,7 @@
     ng-switch-when="datefield"
     class="md-primary"
     disabled="::$ctrl.readOnly"
-    field-type="{ type: 'DATE_ONLY' }"
+    field-type="{ displayName: componentField.label, required: componentField.required, type: 'DATE_ONLY' }"
     name="::componentField.name"
     ng-blur="$ctrl.blurPrimitive($event)"
     ng-change="$ctrl.valueChanged()"
@@ -98,6 +99,7 @@
     config="::componentField.pickerConfig"
     disabled="::$ctrl.readOnly"
     display-name="::componentField.displayValue"
+    is-required="::componentField.required"
     name="{{ ::componentField.name }}"
     ng-change="$ctrl.valueChanged()"
     ng-model="componentField.value"
