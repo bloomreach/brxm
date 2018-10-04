@@ -131,6 +131,8 @@
 - * multiple
 + * multiple
 
+[hipposys:versionable] > mix:versionable mixin
+
 // REPOSITORY: SECURITY
 
 [hipposys:accessmanager] > nt:base

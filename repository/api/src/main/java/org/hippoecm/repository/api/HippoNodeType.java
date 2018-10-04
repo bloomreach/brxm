@@ -426,6 +426,8 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_MODULE_CONFIG = "hipposys:moduleconfig";
 
+    String HIPPOSYS_VERSIONABLE = "hipposys:versionable";
+
     String NT_HIPPO_VERSION_INFO = "hippo:versionInfo";
 
     String HIPPO_VERSION_HISTORY_PROPERTY = "hippo:versionHistory";

@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,20 +25,38 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinitionTemplate;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeDefinition;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import static org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VERSIONABLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_CONFIGURATION;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 
 public class MigrateToV13 {
 
     static final Logger log = LoggerFactory.getLogger(MigrateToV13.class);
+
+    public static final String NT_HST_HST = "hst:hst";
+    public static final String NT_HST_BLUEPRINT = "hst:blueprint";
+    public static final String NT_HST_BLUEPRINTS = "hst:blueprints";
+    public static final String NT_HST_CHANNEL = "hst:channel";
+    public static final String NT_HST_CHANNELS = "hst:channels";
+    public static final String NT_HST_CONFIGURATION = "hst:configuration";
+    public static final String NT_HST_CONFIGURATIONS = "hst:configurations";
+    public static final String NT_HST_SITE = "hst:site";
+    public static final String NT_HST_SITES = "hst:sites";
+    public static final String NT_HST_VIRTUALHOSTS = "hst:virtualhosts";
 
     public static final String OBSOLETE_NT_HIPPO_INITIALIZEITEM = "hippo:initializeitem";
     public static final String OBSOLETE_NT_HIPPO_INITIALIZEFOLDER = "hippo:initializefolder";
@@ -56,8 +75,8 @@ public class MigrateToV13 {
         this.session = rootSession;
         this.ntr = ntr;
         this.dryRun = dryRun;
-        this.ntm = rootSession.getWorkspace().getNodeTypeManager();
-        this.qm = rootSession.getWorkspace().getQueryManager();
+        this.ntm = session.getWorkspace().getNodeTypeManager();
+        this.qm = session.getWorkspace().getQueryManager();
     }
 
     public void migrateIfNeeded() throws RepositoryException {
@@ -71,7 +90,11 @@ public class MigrateToV13 {
         ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPOSYS_INITIALIZEITEM, false, null);
         ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPO_INITIALIZEITEM, false, null);
 
-        if (!dryRun) {
+        removeVersionableMixinFromNodeTypes();
+
+        if (dryRun) {
+            log.info("MigrateToV13 dry-run completed.");
+        } else {
             removeChildNodeFromType(OBSOLETE_NT_HIPPO_INITIALIZEFOLDER, OBSOLETE_NT_HIPPO_INITIALIZEITEM);
             removeChildNodeFromType(NT_CONFIGURATION, OBSOLETE_NT_HIPPO_INITIALIZEFOLDER);
             removeChildNodeFromType(NT_HCM_ROOT, OBSOLETE_NT_HIPPO_LOCK);
@@ -83,8 +106,88 @@ public class MigrateToV13 {
 
             removeNodeType(OBSOLETE_NT_HIPPO_INITIALIZEITEM, false);
             log.info("MigrateToV13 completed.");
+        }
+    }
+
+    private void ensureHippoSysVersionableMixinType() throws RepositoryException {
+        if (!ntm.hasNodeType(HIPPOSYS_VERSIONABLE)) {
+            log.info("Registering new Mixin {}", HIPPOSYS_VERSIONABLE);
+            final NodeTypeTemplate ntt = ntm.createNodeTypeTemplate();
+            ntt.setName(HIPPOSYS_VERSIONABLE);
+            ntt.setDeclaredSuperTypeNames(new String[]{NodeType.MIX_VERSIONABLE});
+            ntt.setMixin(true);
+            ntm.registerNodeType(ntt, false);
         } else {
-            log.info("MigrateToV13 dry-run completed.");
+            log.info("Mixin {} already registered", HIPPOSYS_VERSIONABLE);
+        }
+    }
+
+    private void removeVersionableMixinFromNodeTypes() throws RepositoryException {
+        final String[] candidateVersionableNodeTypes = {
+                NT_HST_HST, NT_HST_BLUEPRINT, NT_HST_BLUEPRINTS, NT_HST_CHANNEL, NT_HST_CHANNELS, NT_HST_CONFIGURATION,
+                NT_HST_CONFIGURATIONS, NT_HST_SITE, NT_HST_SITES, NT_HST_VIRTUALHOSTS
+        };
+        final Set<NodeTypeDefinition> versionableNodeTypes = new LinkedHashSet<>();
+        final Set<String> versionableNodeTypesUsed = new LinkedHashSet<>();
+        boolean hasHippoSysVersionableMixinType = false;
+        for (final String ntName : candidateVersionableNodeTypes) {
+            if (ntm.hasNodeType(ntName)) {
+                final NodeTypeDefinition ntd = ntm.getNodeType(ntName);
+                if (Arrays.stream(ntd.getDeclaredSupertypeNames()).anyMatch(MIX_VERSIONABLE::equals)) {
+                    versionableNodeTypes.add(ntd);
+                    if (dryRun) {
+                        log.info("Mixin {} will be removed from NodeType {} during the actual migration to v13", MIX_VERSIONABLE, ntName);
+                    } else {
+                        log.info("Removing Mixin {} from NodeType {}", MIX_VERSIONABLE, ntName);
+                    }
+                    if (!dryRun && !hasHippoSysVersionableMixinType) {
+                        ensureHippoSysVersionableMixinType();
+                        hasHippoSysVersionableMixinType = true;
+                    }
+                    final Query query = qm.createQuery("//element(*, " + ntName + ")", Query.XPATH);
+                    QueryResult queryResult = query.execute();
+
+                    for (final Node node : new NodeIterable(queryResult.getNodes())) {
+                        if (!dryRun) {
+                            log.info("Adding temporarily Mixin {} to {} node at {}",
+                                    HIPPOSYS_VERSIONABLE, ntName, node.getPath());
+                            JcrUtils.ensureIsCheckedOut(node);
+                            node.addMixin(HIPPOSYS_VERSIONABLE);
+                            versionableNodeTypesUsed.add(ntName);
+                        }
+                    }
+                }
+            }
+        }
+        if (!dryRun) {
+            if (!versionableNodeTypesUsed.isEmpty()) {
+                session.save();
+            }
+            for (final NodeTypeDefinition ntd : versionableNodeTypes) {
+                final NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntd);
+                ntt.setDeclaredSuperTypeNames(
+                        Arrays.stream(ntd.getDeclaredSupertypeNames())
+                                .filter(n -> !n.equals(MIX_VERSIONABLE))
+                                .toArray(String[]::new)
+                );
+                ntr.ignoreNextConflictingContent();
+                ntm.registerNodeType(ntt, true);
+                log.info("Mixin {} removed from NodeType {}", MIX_VERSIONABLE, ntd.getName());
+            }
+            if (!versionableNodeTypesUsed.isEmpty()) {
+                for (final String ntName : versionableNodeTypesUsed) {
+                    final Query query = qm.createQuery("//element(*, " + ntName + ")", Query.XPATH);
+                    QueryResult queryResult = query.execute();
+                    for (final Node node : new NodeIterable(queryResult.getNodes())) {
+                        if (node.isNodeType(HIPPOSYS_VERSIONABLE)) {
+                            log.info("Removing temporarily added Mixin {} from {} node at {}",
+                                    HIPPOSYS_VERSIONABLE, ntName, node.getPath());
+                            node.removeMixin(HIPPOSYS_VERSIONABLE);
+                        }
+                    }
+                }
+                session.save();
+            }
         }
     }
 
@@ -98,7 +201,8 @@ public class MigrateToV13 {
                 if (Arrays.stream(ndt.getRequiredPrimaryTypeNames()).anyMatch(childNodeType::equals)) {
                     iter.remove();
                     found = true;
-                    log.info("Removing ChildNodeDefinition {} of type {} from NodeType {}", ndt.getName(), childNodeType, nodeType);
+                    log.info("Removing ChildNodeDefinition {} of type {} from NodeType {}",
+                            ndt.getName(), childNodeType, nodeType);
                     ntr.ignoreNextConflictingContent();
                     ntm.registerNodeType(ntt, true);
                 }
@@ -109,7 +213,7 @@ public class MigrateToV13 {
         }
     }
 
-    private void removeNodeType(final String nodeType, boolean mixin) throws RepositoryException {
+    private void removeNodeType(final String nodeType, final boolean mixin) throws RepositoryException {
         if (ntm.hasNodeType(nodeType)) {
             log.info("Removing "+(mixin ? "Mixin" : "NodeType")+" {}", nodeType);
             ntr.ignoreNextCheckReferencesInContent();
@@ -117,14 +221,17 @@ public class MigrateToV13 {
         }
     }
 
-    private void ensureNodeTypeNotInUse(final String nodeType, boolean mixin, String[] mixinPrimaryTypes) throws RepositoryException {
+    private void ensureNodeTypeNotInUse(final String nodeType, boolean mixin, final String[] mixinPrimaryTypes) throws RepositoryException {
+        if (!ntm.hasNodeType(nodeType)) {
+            return;
+        }
         final Query query = qm.createQuery("//element(*, " + nodeType + ")", Query.XPATH);
         final QueryResult queryResult = query.execute();
         boolean save = false;
         for (final Node node : new NodeIterable(queryResult.getNodes())) {
-            if (mixin && !Arrays.stream(node.getMixinNodeTypes()).map(nt -> nt.getName()).anyMatch(nodeType::equals)) {
+            if (mixinPrimaryTypes != null && mixin && !Arrays.stream(node.getMixinNodeTypes()).map(nt -> nt.getName()).anyMatch(nodeType::equals)) {
                 if (Arrays.stream(mixinPrimaryTypes).anyMatch(node.getPrimaryNodeType().getName()::equals)) {
-                    log.info("Mixin {} is part of the primary type {} of node at '{}', which Will be removed later.",
+                    log.info("Mixin {} is part of the primary type {} of node at '{}' which will be removed during the actual migration to v13.",
                             nodeType, node.getPrimaryNodeType().getName(), node.getPath());
                     continue;
                 } else {
@@ -133,20 +240,31 @@ public class MigrateToV13 {
                     // This would block migration to v13 but an extremely unlikely case (then requiring custom handling).
                 }
             }
+            final String type = mixin ? "Mixin" : "Node";
             if (dryRun) {
-                log.warn("{} {} to be dropped is still in use at '{}'.\n" +
+                log.warn("{} type {} to be dropped is still in use at '{}'.\n" +
                                 "All usages of {} will be automatically removed during the actual migrating to v13",
-                        mixin ? "Mixin" : "Node", nodeType, node.getPath(), nodeType);
+                        type, nodeType, node.getPath(), nodeType);
             } else {
-                log.info("{} {} to be dropped is still in use at '{}'.\nRemoving for migrating to v13",
-                        mixin ? "Mixin" : "Node", nodeType, node.getPath());
+                log.info("Removing still in use {} type {} at '{}'.", type, nodeType, node.getPath());
             }
-            if (mixin) {
-                node.removeMixin(nodeType);
-            } else {
-                node.remove();
+            boolean skip = false;
+            if (!node.isCheckedOut()) {
+                if (dryRun) {
+                    log.warn("Node at {} is checked-in: skipping dryRun removal.", node.getPath());
+                    skip = true;
+                } else {
+                    JcrUtils.ensureIsCheckedOut(node);
+                }
             }
-            save = true;
+            if (!skip) {
+                if (mixin) {
+                    node.removeMixin(nodeType);
+                } else {
+                    node.remove();
+                }
+                save = true;
+            }
         }
         if (save && !dryRun) {
             session.save();
