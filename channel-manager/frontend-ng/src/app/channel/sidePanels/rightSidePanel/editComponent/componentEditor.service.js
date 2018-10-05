@@ -30,7 +30,7 @@ class ComponentEditorService {
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
 
-    this.kill = false;
+    this.killed = false;
     PageStructureService.registerChangeListener(this._onStructureChange.bind(this));
   }
 
@@ -241,11 +241,11 @@ class ComponentEditorService {
   }
 
   isKilled() {
-    return this.kill;
+    return this.killed;
   }
 
-  killEditor() {
-    this.kill = true;
+  kill() {
+    this.killed = true;
   }
 
   /**
@@ -307,7 +307,7 @@ class ComponentEditorService {
     delete this.channel;
     delete this.component;
     delete this.container;
-    delete this.kill;
+    delete this.killed;
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;

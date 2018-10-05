@@ -476,7 +476,7 @@ describe('ComponentEditorService', () => {
       ComponentEditor.channel = {};
       ComponentEditor.component = {};
       ComponentEditor.container = {};
-      ComponentEditor.kill = false;
+      ComponentEditor.killed = false;
       ComponentEditor.page = {};
       ComponentEditor.properties = {};
       ComponentEditor.propertyGroups = {};
@@ -487,7 +487,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.channel).toBeUndefined();
       expect(ComponentEditor.component).toBeUndefined();
       expect(ComponentEditor.container).toBeUndefined();
-      expect(ComponentEditor.kill).toBeUndefined();
+      expect(ComponentEditor.killed).toBeUndefined();
       expect(ComponentEditor.page).toBeUndefined();
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();

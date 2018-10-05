@@ -97,7 +97,7 @@ class EditComponentService {
   }
 
   killEditor() {
-    this.ComponentEditor.killEditor();
+    this.ComponentEditor.kill();
     this.stopEditing();
   }
 
