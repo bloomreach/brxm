@@ -14,14 +14,14 @@
   limitations under the License.
 -->
 
-<div layout-padding>
+<div layout-padding class="add-to-project">
   <div>
     {{ 'DOCUMENT_NOT_PART_OF_PROJECT' | translate:$ctrl.getSelectedProject() }}
   </div>
 
   <div layout
        layout-align="end center">
-    <md-button ng-click="$ctrl.onClose()">
+    <md-button ng-click="$ctrl.close()">
       {{ 'CANCEL' | translate }}
     </md-button>
     <md-button ng-click="$ctrl.addDocumentToProject()">

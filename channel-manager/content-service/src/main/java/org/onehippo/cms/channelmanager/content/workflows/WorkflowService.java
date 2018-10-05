@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms.channelmanager.content.workflows;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -31,13 +28,13 @@ public interface WorkflowService {
     /**
      * Executes a {@link DocumentWorkflow} action.
      *
-     * @param uuid           UUID of the document to be updated
-     * @param action         the name of the workflow action to be executed (e.g. "publish")
-     * @param session        user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                       pending.
-     * @param contextPayload the context payload from the Cms session context
+     * @param uuid     UUID of the document to be updated
+     * @param action   the name of the workflow action to be executed (e.g. "publish")
+     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
+     *                 pending.
+     * @param branchId id of branch for which to execute the action
      * @throws ErrorWithPayloadException If executing the action failed.
      */
     void executeDocumentWorkflowAction(String uuid, String action, Session session,
-                                       Map<String, Serializable> contextPayload) throws ErrorWithPayloadException;
+                                       String branchId) throws ErrorWithPayloadException;
 }

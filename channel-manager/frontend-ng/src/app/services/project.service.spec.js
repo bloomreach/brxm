@@ -24,6 +24,9 @@ describe('ProjectService', () => {
   const mountId = '12';
   const projects = [
     {
+      id: 'master',
+    },
+    {
       id: 'test1',
       name: 'test1',
     },
@@ -32,7 +35,7 @@ describe('ProjectService', () => {
       name: 'test2',
     },
   ];
-  const currentProject = projects[0];
+  const currentProject = projects[1];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm', ($provide) => {
@@ -65,7 +68,6 @@ describe('ProjectService', () => {
     spyOn(ConfigService, 'getCmsContextPath').and.returnValue('/test/');
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
-    $httpBackend.expectGET('/test/ws/projects').respond(200, projects);
 
     $httpBackend.expectPUT(`/test/ws/projects/activeProject/${currentProject.id}`).respond(200, currentProject.id);
 
@@ -80,19 +82,18 @@ describe('ProjectService', () => {
 
   it('loads projects and sets the current project', () => {
     expect(ProjectService.projects).toEqual(projects);
-    expect(ProjectService.allProjects).toEqual(projects);
     expect(ProjectService.selectedProject).toEqual(currentProject);
   });
 
-  it('selects the core if the selectedProject is not a project', () => {
+  it('selects the core if the selectedProject is master', () => {
     $httpBackend.expectDELETE('/test/ws/projects/activeProject').respond(200, currentProject.id);
-    ProjectService.updateSelectedProject('something');
+    ProjectService.updateSelectedProject('master');
     $httpBackend.flush();
   });
 
   it('calls setproject if the selectedProject is a project', () => {
-    $httpBackend.expectPUT(`/test/ws/projects/activeProject/${projects[1].id}`).respond(200, currentProject.id);
-    ProjectService.updateSelectedProject(projects[1].id);
+    $httpBackend.expectPUT(`/test/ws/projects/activeProject/${projects[2].id}`).respond(200, currentProject.id);
+    ProjectService.updateSelectedProject(projects[2].id);
     $httpBackend.flush();
   });
 

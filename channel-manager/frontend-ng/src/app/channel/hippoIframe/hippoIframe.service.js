@@ -43,13 +43,9 @@ class HippoIframeService {
     this.iframeJQueryElement = iframeJQueryElement;
     this.pageLoaded = false;
 
-    if (this.ConfigService.projectsEnabled) {
-      this.ProjectService.registerListener(() => {
-        // Reloads the current page when the project changes so new data will be shown.
-        // When another project became active the page reload will trigger a channel switch.
-        this.reload();
-      });
-    }
+    // Reloads the current page when the project changes so new data will be shown.
+    // When another project became active the page reload will trigger a channel switch.
+    this.ProjectService.afterChange('iframeReload', () => this.reload());
   }
 
   initializePath(channelRelativePath) {
@@ -117,7 +113,7 @@ class HippoIframeService {
     return this.deferredReload.promise;
   }
 
-  // called by the hippoIframe controller when the processing of the loaded page is completed.
+  // called by the rendering service when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
     this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;

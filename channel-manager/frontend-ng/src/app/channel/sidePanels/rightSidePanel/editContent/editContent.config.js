@@ -14,11 +14,30 @@
  * limitations under the License.
  */
 
+import './addToProject/addToProject.scss';
+import addToProjectTemplate from './addToProject/addToProject.html';
 import editContentMainTemplate from './editContentMain.html';
 import editContentToolsTemplate from './editContentTools.html';
 
 function config($stateProvider) {
   'ngInject';
+
+  $stateProvider.state({
+    name: 'hippo-cm.channel.add-to-project',
+    params: {
+      documentId: '',
+    },
+    views: {
+      main: {
+        controller: 'addToProjectCtrl',
+        controllerAs: '$ctrl',
+        template: addToProjectTemplate,
+      },
+      tools: {
+        template: '',
+      },
+    },
+  });
 
   $stateProvider.state({
     name: 'hippo-cm.channel.edit-content',

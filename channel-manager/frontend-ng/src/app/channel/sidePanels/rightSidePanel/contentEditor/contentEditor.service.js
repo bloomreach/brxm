@@ -341,14 +341,20 @@ class ContentEditorService {
     return this.DialogService.show(confirm);
   }
 
+  confirmClose(messageKey, messageParams) {
+    return this.confirmSaveOrDiscardChanges(messageKey, messageParams)
+      .then(() => this.discardChanges())
+      .then(() => this.close());
+  }
+
   /**
    * Possible return values:
    * - resolved promise with value 'SAVE' when changes have been saved
    * - resolved promise with value 'DISCARD' when changes have been discarded
    * - rejected promise when user canceled
    */
-  confirmSaveOrDiscardChanges(messageKey) {
-    return this._askSaveOrDiscardChanges(messageKey)
+  confirmSaveOrDiscardChanges(messageKey, messageParams) {
+    return this._askSaveOrDiscardChanges(messageKey, messageParams)
       .then((action) => {
         switch (action) {
           case 'SAVE':
@@ -360,12 +366,15 @@ class ContentEditorService {
       });
   }
 
-  _askSaveOrDiscardChanges(messageKey) {
+  _askSaveOrDiscardChanges(messageKey, messageParams = {}) {
     if (this._doNotConfirm()) {
       return this.$q.resolve('DISCARD');
     }
 
-    const message = this.$translate.instant(messageKey, { documentName: this.document.displayName });
+    const translateParams = angular.copy(messageParams);
+    translateParams.documentName = this.document.displayName;
+
+    const message = this.$translate.instant(messageKey, translateParams);
     const title = this.$translate.instant('SAVE_CHANGES_TITLE');
 
     return this.DialogService.show({

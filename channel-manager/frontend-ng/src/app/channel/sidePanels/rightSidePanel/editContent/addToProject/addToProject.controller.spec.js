@@ -15,12 +15,11 @@
  */
 
 describe('addToProjectComponent', () => {
-  let $componentController;
+  let $controller;
   let $ctrl;
-  let $q;
-  let $rootScope;
+  let $uiRouterGlobals;
   let ProjectService;
-  let ContentEditor;
+  let EditContentService;
 
   const testDocumentId = 'testDocument';
 
@@ -32,26 +31,21 @@ describe('addToProjectComponent', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$componentController_,
-      _$q_,
-      _$rootScope_,
+      _$controller_,
+      _$uiRouterGlobals_,
       _ProjectService_,
-      _ContentEditor_,
+      _EditContentService_,
     ) => {
-      $componentController = _$componentController_;
-      $q = _$q_;
-      $rootScope = _$rootScope_;
+      $controller = _$controller_;
+      $uiRouterGlobals = _$uiRouterGlobals_;
       ProjectService = _ProjectService_;
-      ContentEditor = _ContentEditor_;
+      EditContentService = _EditContentService_;
     });
 
     ProjectService.selectedProject = testProject;
+    $uiRouterGlobals.params = { documentId: testDocumentId };
 
-    spyOn(ProjectService, 'associateWithProject').and.returnValue($q.resolve());
-    spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocumentId);
-    spyOn(ContentEditor, 'open');
-
-    $ctrl = $componentController('addToProject');
+    $ctrl = $controller('addToProjectCtrl');
   });
 
   describe('getSelectedProject', () => {
@@ -62,22 +56,15 @@ describe('addToProjectComponent', () => {
 
   describe('addDocumentToProject', () => {
     it('adds the document to the selected project', () => {
+      spyOn(EditContentService, 'branchAndEditDocument');
       $ctrl.addDocumentToProject();
-      expect(ContentEditor.getDocumentId).toHaveBeenCalled();
-      expect(ProjectService.associateWithProject).toHaveBeenCalledWith(testDocumentId);
+      expect(EditContentService.branchAndEditDocument).toHaveBeenCalledWith(testDocumentId);
     });
 
-    it('opens the document in the content editor', () => {
-      $ctrl.addDocumentToProject();
-      $rootScope.$digest();
-      expect(ContentEditor.open).toHaveBeenCalledWith(testDocumentId);
-    });
-
-    it('does not open the document in the content editor when the document could not be added to the selected project', () => {
-      ProjectService.associateWithProject.and.returnValue($q.reject());
-      $ctrl.addDocumentToProject();
-      $rootScope.$digest();
-      expect(ContentEditor.open).not.toHaveBeenCalled();
+    it('closes the content service', () => {
+      spyOn(EditContentService, 'stopEditing');
+      $ctrl.close();
+      expect(EditContentService.stopEditing).toHaveBeenCalled();
     });
   });
 });
