@@ -19,13 +19,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 
 /**
- * CRISP Repository Addon <code>DaemonModule</code> implementation that produces {@link HippoEvent} on any module
- * configuration change through {@link HippoEventBus}.
+ * CRISP Repository Addon <code>DaemonModule</code>.
  */
 public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
 
