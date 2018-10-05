@@ -40,19 +40,20 @@ public class CategoryInfoImpl implements CategoryInfo {
 
 	public CategoryInfoImpl(Node jcrNode) {
 
-		JCRValueProvider jvp = new JCRValueProviderImpl(jcrNode);
+        // Use a ValueProvider, and make sure to clean it up
+        try (final JCRValueProviderImpl jvp = new JCRValueProviderImpl(jcrNode)) {
+            this.locale = TaxonomyUtil.toLocale(jvp.getName());
+            this.name = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
+            this.description = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
 
-		this.locale = TaxonomyUtil.toLocale(jvp.getName());
-		this.name = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
-		this.description = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
+            this.synonyms = jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
 
-		this.synonyms = jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
+            if (synonyms == null) {
+                synonyms = ArrayUtils.EMPTY_STRING_ARRAY;
+            }
 
-		if (synonyms == null) {
-			synonyms = ArrayUtils.EMPTY_STRING_ARRAY;
-		}
-
-		this.properties = jvp.getProperties();
+            this.properties = jvp.getProperties();
+        }
 	}
 
     public String getName() {
@@ -78,10 +79,6 @@ public class CategoryInfoImpl implements CategoryInfo {
 
     public String[] getSynonyms() {
         return synonyms;
-    }
-
-    public Service[] getChildServices() {
-        return new Service[0];
     }
 
     public Map<String, Object> getProperties() {

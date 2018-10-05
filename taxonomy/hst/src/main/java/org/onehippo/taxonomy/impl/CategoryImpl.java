@@ -60,17 +60,19 @@ public class CategoryImpl implements Category {
 
     public CategoryImpl(final Node item, final Category parent, final TaxonomyImpl taxonomyImpl) throws RepositoryException, TaxonomyException {
 
-        this.taxonomy = taxonomyImpl;
-        this.parent = parent;
-        this.name = item.getName();
-        final String path = item.getPath();
-        if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
-            throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
-        }
-        this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
+        // Use a ValueProvider, but make sure to clean it up
+        try (final JCRValueProviderImpl jvp = new JCRValueProviderImpl(item)) {
+            this.taxonomy = taxonomyImpl;
+            this.parent = parent;
+            this.name = jvp.getName();
+            final String path = jvp.getPath();
+            if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
+                throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
+            }
+            this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
 
-		JCRValueProvider jvp = new JCRValueProviderImpl(item);        
-        this.key = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+            this.key = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+        }
 
         if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
             for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
@@ -112,13 +114,6 @@ public class CategoryImpl implements Category {
     
     public Taxonomy getTaxonomy() {
         return this.taxonomy;
-    }
-
-    public Service[] getChildServices() {
-        Collection<Service> composite =  new CompositeCollection(new Collection [] {
-                translations.values(), childCategories });
-        return composite.toArray(new Service[composite.size()]);
-        
     }
 
     public Category getParent() {

@@ -53,26 +53,29 @@ public class TaxonomyImpl implements Taxonomy {
     private Map<String, Category> descendantsByKey = new HashMap<>();
 
     public TaxonomyImpl(Node taxonomy) throws RepositoryException, TaxonomyException {
-		JCRValueProvider jvp = new JCRValueProviderImpl(taxonomy);
-        this.name = jvp.getName();
-        this.path = jvp.getPath();
-        this.locales = TaxonomyUtil.getLocalesList(jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
 
-        NodeIterator nodes = taxonomy.getNodes();
-        while(nodes.hasNext()) {
-            Node childItem = nodes.nextNode();
-            if(childItem != null) {
-                if(childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
-                    Category taxonomyItem = new CategoryImpl(childItem, null, this);
-                    this.childCategories.add(taxonomyItem);
-                } else {
-                    log.warn("Skipping child node below '{}' that is not of type '{}'",
-                            this.path, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY);
+        // Use a ValueProvider, but make sure to clean it up
+        try (final JCRValueProviderImpl jvp = new JCRValueProviderImpl(taxonomy)) {
+            this.name = jvp.getName();
+            this.path = jvp.getPath();
+            this.locales = TaxonomyUtil.getLocalesList(jvp.getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_LOCALES));
+
+            NodeIterator nodes = taxonomy.getNodes();
+            while (nodes.hasNext()) {
+                Node childItem = nodes.nextNode();
+                if (childItem != null) {
+                    if (childItem.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
+                        Category taxonomyItem = new CategoryImpl(childItem, null, this);
+                        this.childCategories.add(taxonomyItem);
+                    } else {
+                        log.warn("Skipping child node below '{}' that is not of type '{}'",
+                                this.path, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY);
+                    }
+                    // the descendant items are added in the constructor of TaxonomyItemImpl
                 }
-                // the descendant items are added in the constructor of TaxonomyItemImpl
             }
+            populateMaps();
         }
-        populateMaps();
     }
 
     private void populateMaps() {
