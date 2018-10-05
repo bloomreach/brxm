@@ -149,7 +149,13 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     /**
      * Return the CRISP module configuration node path.
      * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig"
-     * @return the CRISP module configuration node path
+     * <p>
+     * This method may be overridden to determine a different CRISP module configuration path per site webapp.
+     * In that case, the overriden method may return null if the site webapp is not fully initialized yet and so
+     * it cannot read HST container configuration yet for instance.
+     * Therefore, if {@link #getModuleConfigPath()} returns null, then this tries to load the module configuration
+     * later again.
+     * @return the CRISP module configuration node path, or null if not determinable yet
      */
     protected String getModuleConfigPath() {
         final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_CRISP_MODULE_CONFIG_PATH;
@@ -167,6 +173,8 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         Session session = null;
 
         try {
+            session = repository.login(credentials);
+
             final String moduleConfigPath = getModuleConfigPath();
 
             if (moduleConfigPath == null) {
@@ -174,8 +182,6 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                 // if the moduleConfigPath is not determined yet, let's just wait for next checking cycle.
                 return false;
             }
-
-            session = repository.login(credentials);
 
             if (!session.nodeExists(moduleConfigPath)) {
                 log.info("There is no CRISP module configuration node, not existing at '{}'.", moduleConfigPath);
