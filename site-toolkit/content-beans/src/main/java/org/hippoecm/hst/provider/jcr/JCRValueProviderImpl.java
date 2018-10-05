@@ -39,7 +39,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRValueProviderImpl implements JCRValueProvider{
+public class JCRValueProviderImpl implements JCRValueProvider, AutoCloseable {
   
     private static final long serialVersionUID = 1L;
     
@@ -144,6 +144,15 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         } catch(RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
+    }
+
+    /**
+     * Implement AutoCloseable for caller convenience.
+     * @since 13.0
+     */
+    @Override
+    public void close() throws Exception {
+        detach();
     }
    
     public void detach(){
