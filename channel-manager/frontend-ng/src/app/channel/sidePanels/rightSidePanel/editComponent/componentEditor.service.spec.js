@@ -261,6 +261,38 @@ describe('ComponentEditorService', () => {
           });
         });
       });
+
+      it('sets the display value for "linkpicker" fields if it is empty', () => {
+        emptyValues.forEach((emptyValue) => {
+          const property = {
+            value: emptyValue,
+            displayValue: emptyValue,
+            defaultValue: 'node-name',
+            type: 'linkpicker',
+          };
+          ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+          expect(property.displayValue).toBe('node-name');
+
+          property.value = emptyValue;
+          property.displayValue = 'display-value';
+          ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+          expect(property.displayValue).toBe('display-value');
+        });
+      });
+
+      it('sets the display value for "linkpicker" fields to the last segment of a path', () => {
+        const property = {
+          value: '',
+          displayValue: '',
+          defaultValue: '/a/b/c',
+          type: 'linkpicker',
+        };
+        ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+        expect(property.displayValue).toBe('c');
+      });
     });
 
     it('tries to set the default value for each non-hidden property when opening the component editor', () => {

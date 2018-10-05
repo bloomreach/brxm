@@ -151,6 +151,9 @@ class ComponentEditorService {
   setDefaultIfValueIsEmpty(property) {
     if (property && isEmpty(property.value) && !isEmpty(property.defaultValue)) {
       property.value = property.defaultValue;
+      if (property.type === 'linkpicker' && isEmpty(property.displayValue)) {
+        property.displayValue = property.value.substring(property.value.lastIndexOf('/') + 1);
+      }
     }
   }
 
