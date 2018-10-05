@@ -151,7 +151,7 @@ public class JCRValueProviderImpl implements JCRValueProvider, AutoCloseable {
      * @since 13.0
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         detach();
     }
    
