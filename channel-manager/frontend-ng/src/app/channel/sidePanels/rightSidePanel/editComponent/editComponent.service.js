@@ -16,6 +16,7 @@
 class EditComponentService {
   constructor(
     $log,
+    $q,
     $state,
     $transitions,
     $translate,
@@ -31,6 +32,7 @@ class EditComponentService {
     'ngInject';
 
     this.$log = $log;
+    this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
@@ -92,7 +94,10 @@ class EditComponentService {
   }
 
   stopEditing() {
-    this.$state.go('^');
+    if (this.$state.is('hippo-cm.channel.edit-component')) {
+      return this.$state.go('^');
+    }
+    return this.$q.resolve();
   }
 
   killEditor() {
