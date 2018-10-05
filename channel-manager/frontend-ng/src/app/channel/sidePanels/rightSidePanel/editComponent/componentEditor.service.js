@@ -31,6 +31,7 @@ class ComponentEditorService {
     this.PageStructureService = PageStructureService;
 
     this.kill = false;
+    PageStructureService.registerChangeListener(this._onStructureChange.bind(this));
   }
 
   open({ channel, component, container, page }) {
@@ -61,6 +62,29 @@ class ComponentEditorService {
   _onLoadFailure(response) {
     this._clearData();
     console.error('TODO: implement ComponentEditorService._onLoadFailure', response);
+  }
+
+  _onStructureChange() {
+    if (!this.component) {
+      return;
+    }
+
+    const component = this.PageStructureService.getComponentById(this.component.id);
+    if (!component) {
+      return;
+    }
+
+    const changedContainer = {
+      isDisabled: component.container.isDisabled(),
+      isInherited: component.container.isInherited(),
+      id: component.container.getId(),
+    };
+    const isLockApplied = this.container.isDisabled !== changedContainer.isDisabled;
+    Object.assign(this.container, changedContainer);
+
+    if (isLockApplied) {
+      this.reopen();
+    }
   }
 
   /**
