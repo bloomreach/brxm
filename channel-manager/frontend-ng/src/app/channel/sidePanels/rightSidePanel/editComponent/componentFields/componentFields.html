@@ -25,10 +25,9 @@
     ng-switch-when="textfield"
     aria-label="{{ ::componentField.label }}"
     name="{{ ::componentField.name }}"
-    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
     ng-disabled="::$ctrl.readOnly"
-    ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
     ng-required="::componentField.required"
   />
@@ -37,11 +36,9 @@
     <md-checkbox
       class="md-primary"
       name="{{ ::componentField.name }}"
-      ng-blur="$ctrl.blurPrimitive($event)"
       ng-change="$ctrl.valueChanged()"
       ng-disabled="::$ctrl.readOnly"
       ng-false-value="'off'"
-      ng-focus="$ctrl.focusPrimitive($event)"
       ng-model="componentField.value"
       ng-true-value="'on'"
     >
@@ -53,10 +50,9 @@
     ng-switch-when="numberfield"
     class="md-primary"
     name="{{ ::componentField.name }}"
-    ng-blur="$ctrl.blurPrimitive($event)"
+    ng-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
     ng-disabled="::$ctrl.readOnly"
-    ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
     ng-pattern="/^(-\d)?\d*$/"
     ng-required="::componentField.required"
@@ -86,9 +82,8 @@
     disabled="::$ctrl.readOnly"
     field-type="{ displayName: componentField.label, required: componentField.required, type: 'DATE_ONLY' }"
     name="::componentField.name"
-    ng-blur="$ctrl.blurPrimitive($event)"
+    on-field-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
-    ng-focus="$ctrl.focusPrimitive($event)"
     ng-model="componentField.value"
   >
   </date-field>
@@ -98,13 +93,12 @@
     aria-label="{{ ::componentField.label }}"
     config="::componentField.pickerConfig"
     disabled="::$ctrl.readOnly"
-    display-name="::componentField.displayValue"
+    display-name="componentField.displayValue"
     is-required="::componentField.required"
     name="{{ ::componentField.name }}"
+    on-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
     ng-model="componentField.value"
-    on-blur="$ctrl.blurPrimitive($event)"
-    on-focus="$ctrl.focusPrimitive($event)"
   >
   </path-link>
 

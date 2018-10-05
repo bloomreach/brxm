@@ -67,4 +67,15 @@ describe('ComponentFields', () => {
       expect(EditComponentService.killEditor).toHaveBeenCalled();
     });
   });
+
+  describe('blur', () => {
+    it('sets the default value of an empty property when the field blurs', () => {
+      spyOn(ComponentEditor, 'setDefaultIfValueIsEmpty');
+
+      const property = {};
+      component.blur(property);
+
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).toHaveBeenCalledWith(property);
+    });
+  });
 });
