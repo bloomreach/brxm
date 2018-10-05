@@ -16,7 +16,6 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,8 +38,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.junit.Assert.assertTrue;
@@ -89,8 +88,7 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
             // this should now fail
             versionManager.getVersionHistory(variant.getPath());
             fail("versionManager.getVersionHistory should had failed");
-        }
-        catch (UnsupportedRepositoryOperationException e) {
+        } catch (UnsupportedRepositoryOperationException e) {
             // expected because published variant (now) should no longer be versioned.
         }
         variant = getVariant(PUBLISHED);

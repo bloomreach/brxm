@@ -38,7 +38,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.lock.LockException;
 import org.onehippo.cms7.services.lock.LockManager;
 import org.onehippo.cms7.services.lock.LockManagerUtils;
 import org.onehippo.cms7.services.lock.LockResource;
@@ -47,16 +46,16 @@ import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_ID;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.BRANCH_NAME;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.STATE;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.VERSION;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DESTINATION;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.NAME;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REASON;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.REQUEST;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.STATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DATE;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DOCUMENT;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.DATE;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.VERSION;
+import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.requestDelete;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
@@ -111,8 +110,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
                 try {
                     Class<DocumentHandleFactory> clazz = (Class<DocumentHandleFactory>) Class.forName(className);
                     return clazz.newInstance().createDocumentHandle(node);
-                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|ClassCastException e) {
-                    throw new WorkflowException("Invalid document handle factory class '"+className+"'", e);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException e) {
+                    throw new WorkflowException("Invalid document handle factory class '" + className + "'", e);
                 }
             }
         }
@@ -148,15 +147,15 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @SuppressWarnings("unchecked")
     protected Map<String, Boolean> getRequestActionActions(String requestIdentifier, String action) throws WorkflowException {
         Map<String, Map<String, Boolean>> requestActionsInfo =
-                (Map<String, Map<String, Boolean>>)workflowExecutor.getContext().getFeedback().get("requests");
+                (Map<String, Map<String, Boolean>>) workflowExecutor.getContext().getFeedback().get("requests");
         if (requestActionsInfo != null) {
             Map<String, Boolean> requestActions = requestActionsInfo.get(requestIdentifier);
             if (requestActions != null) {
                 return requestActions;
             }
         }
-        throw new WorkflowException("Cannot invoke workflow "+workflowExecutor.getContext().getScxmlId()+" action "+action+": request "+
-                requestIdentifier+" not found");
+        throw new WorkflowException("Cannot invoke workflow " + workflowExecutor.getContext().getScxmlId() + " action " + action + ": request " +
+                requestIdentifier + " not found");
     }
 
     // Workflow implementation / WorkflowImpl override
@@ -169,10 +168,9 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             final SCXMLWorkflowContext scxmlWorkflowContext = new SCXMLWorkflowContext(getScxmlId(), getWorkflowContext());
             workflowExecutor = new SCXMLWorkflowExecutor<>(scxmlWorkflowContext, createDocumentHandle(node));
 
-        }
-        catch (WorkflowException wfe) {
+        } catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
-                throw (RepositoryException)wfe.getCause();
+                throw (RepositoryException) wfe.getCause();
             }
             throw new RepositoryException(wfe);
         }
@@ -250,7 +248,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void requestDepublication(final Date depublicationDate) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.requestDepublication().addEventPayload(TARGET_DATE,depublicationDate));
+        triggerAction(DocumentWorkflowAction.requestDepublication().addEventPayload(TARGET_DATE, depublicationDate));
     }
 
     @Override
@@ -260,7 +258,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void requestPublication(final Date publicationDate) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.requestPublication().addEventPayload(TARGET_DATE,publicationDate));
+        triggerAction(DocumentWorkflowAction.requestPublication().addEventPayload(TARGET_DATE, publicationDate));
     }
 
     @Override
@@ -282,23 +280,23 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void rename(final String newName) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.rename().addEventPayload(NAME,newName));
+        triggerAction(DocumentWorkflowAction.rename().addEventPayload(NAME, newName));
     }
 
     @Override
     public void copy(final Document destination, final String newName) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.copy().addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName));
+        triggerAction(DocumentWorkflowAction.copy().addEventPayload(DESTINATION, destination).addEventPayload(NAME, newName));
     }
 
     @Override
     public void copy(final Document destination, final String newName, final String branchId) throws WorkflowException {
         triggerAction(DocumentWorkflowAction.copy()
-                .addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName).addEventPayload(BRANCH_ID, branchId));
+                .addEventPayload(DESTINATION, destination).addEventPayload(NAME, newName).addEventPayload(BRANCH_ID, branchId));
     }
 
     @Override
     public void move(final Document destination, final String newName) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.move().addEventPayload(DESTINATION,destination).addEventPayload(NAME,newName));
+        triggerAction(DocumentWorkflowAction.move().addEventPayload(DESTINATION, destination).addEventPayload(NAME, newName));
     }
 
     @Override
@@ -308,7 +306,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        triggerAction(DocumentWorkflowAction.depublish().addEventPayload(TARGET_DATE,depublicationDate));
+        triggerAction(DocumentWorkflowAction.depublish().addEventPayload(TARGET_DATE, depublicationDate));
     }
 
     @Override
@@ -318,7 +316,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
-        triggerAction(DocumentWorkflowAction.publish().addEventPayload(TARGET_DATE,publicationDate));
+        triggerAction(DocumentWorkflowAction.publish().addEventPayload(TARGET_DATE, publicationDate));
     }
 
     @Override
@@ -344,13 +342,13 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public void acceptRequest(String requestIdentifier, String reason) throws WorkflowException{
+    public void acceptRequest(String requestIdentifier, String reason) throws WorkflowException {
         acceptRequest(requestIdentifier);
     }
 
     @Override
     public void rejectRequest(String requestIdentifier, final String reason) throws WorkflowException {
-        triggerAction(DocumentWorkflowAction.rejectRequest().requestIdentifier(requestIdentifier).addEventPayload(REASON,reason));
+        triggerAction(DocumentWorkflowAction.rejectRequest().requestIdentifier(requestIdentifier).addEventPayload(REASON, reason));
     }
 
     // UnlockWorkflow implementation
@@ -369,17 +367,17 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document versionRestoreTo(final Calendar historic, Document target) throws WorkflowException, RepositoryException {
-        return (Document) triggerAction(DocumentWorkflowAction.versionRestoreTo().addEventPayload(DATE,historic).addEventPayload(TARGET_DOCUMENT,target));
+        return (Document) triggerAction(DocumentWorkflowAction.versionRestoreTo().addEventPayload(DATE, historic).addEventPayload(TARGET_DOCUMENT, target));
     }
 
     @Override
     public Document restoreVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return (Document) triggerAction(DocumentWorkflowAction.restoreVersion().addEventPayload(DATE,historic));
+        return (Document) triggerAction(DocumentWorkflowAction.restoreVersion().addEventPayload(DATE, historic));
     }
 
     @Override
     public Document restoreVersionToBranch(final Version version, final String branchId) throws WorkflowException, RepositoryException {
-        return (Document) triggerAction(DocumentWorkflowAction.restoreVersionToBranch().addEventPayload(VERSION, version).addEventPayload(BRANCH_ID,branchId));
+        return (Document) triggerAction(DocumentWorkflowAction.restoreVersionToBranch().addEventPayload(VERSION, version).addEventPayload(BRANCH_ID, branchId));
     }
 
     @Override
@@ -390,7 +388,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
-        return (Document)triggerAction(DocumentWorkflowAction.retrieveVersion().addEventPayload(DATE,historic));
+        return (Document) triggerAction(DocumentWorkflowAction.retrieveVersion().addEventPayload(DATE, historic));
     }
 
     @Override
@@ -478,7 +476,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         try {
             final LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
             final String key = "DocumentWorkflowLock-" + workflowExecutor.getData().getHandle().getIdentifier();
-            return LockManagerUtils.waitForLock(lockManager, key, 50 , 1000);
+            return LockManagerUtils.waitForLock(lockManager, key, 50, 1000);
         } catch (Exception e) {
             throw new WorkflowException("Could not get lock key", e);
         }

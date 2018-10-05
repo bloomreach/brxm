@@ -17,12 +17,7 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.TreeMap;
-
-import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
-import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
-import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
 public class HintsBuilder {
 

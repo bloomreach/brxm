@@ -15,15 +15,11 @@
  */
 package org.hippoecm.repository.util;
 
-import java.util.Collections;
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
