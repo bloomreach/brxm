@@ -117,7 +117,7 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('isSaveAllowed', () => {
-    it('returns falsy when the form does not exist yet', () => {
+    it('returns false when the form does not exist yet', () => {
       delete $ctrl.form;
       expect($ctrl.isSaveAllowed()).toBeFalsy();
     });
@@ -145,6 +145,15 @@ describe('EditComponentMainCtrl', () => {
       form.$valid = true;
       expect($ctrl.isSaveAllowed()).toBe(true);
     });
+
+    it('returns false when the editor is in read only mode', () => {
+      form.$dirty = true;
+      form.$valid = true;
+      spyOn($ctrl, 'isReadOnly');
+      $ctrl.isReadOnly.and.returnValue(true);
+
+      expect($ctrl.isSaveAllowed()).toBe(false);
+    });
   });
 
   describe('isDiscardAllowed', () => {
@@ -161,6 +170,14 @@ describe('EditComponentMainCtrl', () => {
     it('returns true when the form is dirty', () => {
       form.$dirty = true;
       expect($ctrl.isDiscardAllowed()).toBe(true);
+    });
+
+    it('returns false when the editor is in read only mode', () => {
+      form.$dirty = true;
+      spyOn($ctrl, 'isReadOnly');
+      $ctrl.isReadOnly.and.returnValue(true);
+
+      expect($ctrl.isDiscardAllowed()).toBe(false);
     });
   });
 
@@ -184,8 +201,6 @@ describe('EditComponentMainCtrl', () => {
           expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
-          expect(ComponentEditor.reopen).toHaveBeenCalled();
-          expect(form.$setPristine).toHaveBeenCalled();
           done();
         });
       $scope.$digest();
@@ -326,6 +341,18 @@ describe('EditComponentMainCtrl', () => {
       });
     });
 
+    describe('when the editor is in the read only mode', () => {
+      it('checks for the read only mode of the component editor', () => {
+        spyOn($ctrl, 'isReadOnly');
+        $ctrl.isReadOnly.and.returnValue(true);
+        ComponentEditor.isKilled.and.returnValue(false);
+        form.$dirty = true;
+
+        expect($ctrl.uiCanExit()).toBe(true);
+        expect(ComponentEditor.confirmSaveOrDiscardChanges).not.toHaveBeenCalled();
+      });
+    });
+
     describe('when the changes are invalid', () => {
       it('uses the validation state to confirm or discard changes', (done) => {
         form.$dirty = true;
@@ -411,7 +438,6 @@ describe('EditComponentMainCtrl', () => {
         expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
         expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
         expect(HippoIframeService.reload).toHaveBeenCalled();
-        expect(ComponentEditor.reopen).toHaveBeenCalled();
       });
 
       it('shows a default message if a general delete error occurs', () => {

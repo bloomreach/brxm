@@ -78,9 +78,7 @@ class EditComponentMainCtrl {
 
         this.FeedbackService.showError(message);
         this.HippoIframeService.reload();
-        if (error.data.error === 'ITEM_ALREADY_LOCKED') {
-          this._onComponentLocked();
-        } else if (error.message.startsWith('javax.jcr.ItemNotFoundException')) {
+        if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
           this.EditComponentService.killEditor();
         }
       });
@@ -104,9 +102,6 @@ class EditComponentMainCtrl {
 
             this.FeedbackService.showError(message);
             this.HippoIframeService.reload();
-            if (error.error === 'ITEM_ALREADY_LOCKED') {
-              this._onComponentLocked();
-            }
           });
       },
       )
@@ -114,11 +109,11 @@ class EditComponentMainCtrl {
   }
 
   isDiscardAllowed() {
-    return this._isFormDirty();
+    return this._isFormDirty() && !this.isReadOnly();
   }
 
   isSaveAllowed() {
-    return this._isFormDirty() && this._isFormValid();
+    return this._isFormDirty() && this._isFormValid() && !this.isReadOnly();
   }
 
   _isFormDirty() {
@@ -129,13 +124,8 @@ class EditComponentMainCtrl {
     return this.form && this.form.$valid;
   }
 
-  _onComponentLocked() {
-    this.ComponentEditor.reopen()
-      .then(() => this.form.$setPristine());
-  }
-
   uiCanExit() {
-    if (this.ComponentEditor.isKilled()) {
+    if (this.ComponentEditor.isKilled() || this.isReadOnly()) {
       return true;
     }
     return this._saveOrDiscardChanges()
