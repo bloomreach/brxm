@@ -123,7 +123,7 @@ class ComponentEditorService {
     properties
       .filter(property => !property.hiddenInChannelManager)
       .forEach((property) => {
-        property.value = this._valueOrDefault(property);
+        this.setDefaultIfValueIsEmpty(property);
 
         if (property.name === TEMPLATE_PICKER) {
           property.groupLabel = TEMPLATE_PICKER;
@@ -148,10 +148,10 @@ class ComponentEditorService {
     }));
   }
 
-  _valueOrDefault(property) {
-    return isEmpty(property.value) && !isEmpty(property.defaultValue)
-      ? property.defaultValue
-      : property.value;
+  setDefaultIfValueIsEmpty(property) {
+    if (property && isEmpty(property.value) && !isEmpty(property.defaultValue)) {
+      property.value = property.defaultValue;
+    }
   }
 
   confirmDeleteComponent() {
@@ -192,8 +192,6 @@ class ComponentEditorService {
 
   _propertiesAsFormData() {
     return this.properties.reduce((formData, property) => {
-      property.value = this._valueOrDefault(property);
-
       if (property.type === 'datefield') {
         // cut off the time and time zone information from the value that the datefield returns
         formData[property.name] = property.value.substring(0, 10);

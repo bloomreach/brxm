@@ -229,6 +229,53 @@ describe('ComponentEditorService', () => {
   });
 
   describe('the default value', () => {
+    const emptyValues = [undefined, null, ''];
+    const testValues = emptyValues.concat('test');
+
+    describe('setDefaultIfValueIsEmpty', () => {
+      it('does not error if property does not exist', () => {
+        try {
+          ComponentEditor.setDefaultIfValueIsEmpty();
+          ComponentEditor.setDefaultIfValueIsEmpty(null);
+        } catch (e) {
+          fail();
+        }
+      });
+
+      it('changes the property value if it is empty and a default value is present', () => {
+        emptyValues.forEach((emptyValue) => {
+          const property = { value: emptyValue, defaultValue: 'defaultValue' };
+          ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+          expect(property.value).toBe('defaultValue');
+        });
+      });
+
+      it('does not change the property value if the default value is null, undefined or empty string', () => {
+        testValues.forEach((value) => {
+          emptyValues.forEach((defaultValue) => {
+            const property = { value, defaultValue };
+            ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+            expect(property.value).toBe(value);
+          });
+        });
+      });
+    });
+
+    it('tries to set the default value for each non-hidden property when opening the component editor', () => {
+      spyOn(ComponentEditor, 'setDefaultIfValueIsEmpty');
+
+      openComponentEditor();
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).not.toHaveBeenCalled();
+
+      openComponentEditor([{ hiddenInChannelManager: true }]);
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).not.toHaveBeenCalled();
+
+      openComponentEditor([{}, {}]);
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).toHaveBeenCalledTimes(2);
+    });
+
     function loadProperty(value, defaultValue, type = 'textfield') {
       openComponentEditor([{ value, defaultValue, type }]);
 
@@ -239,23 +286,6 @@ describe('ComponentEditorService', () => {
         },
       };
     }
-
-    const emptyValues = [undefined, null, ''];
-    const testValues = emptyValues.concat('test');
-
-    it('is ignored when the default value is null, undefined or empty string', () => {
-      testValues.forEach((value) => {
-        emptyValues.forEach((defaultValue) => {
-          loadProperty(value, defaultValue).andExpectValueToBe(value);
-        });
-      });
-    });
-
-    it('is used when the value is null, undefined or empty string', () => {
-      emptyValues.forEach((emptyValue) => {
-        loadProperty(emptyValue, 'defaultValue').andExpectValueToBe('defaultValue');
-      });
-    });
 
     it('defaults to "off" for checkbox fields', () => {
       testValues.forEach((emptyDefaultValue) => {
@@ -345,16 +375,19 @@ describe('ComponentEditorService', () => {
       spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
       const properties = [
         { name: 'a', value: 'value-a' },
-        { name: 'b', value: 'value-b' },
-        { name: 'c', value: 'value-c', hiddenInChannelManager: true },
+        { name: 'b', value: '' },
+        { name: 'c', value: '', defaultValue: 'value-c' },
+        { name: 'd', value: 'value-d', hiddenInChannelManager: true },
       ];
       openComponentEditor(properties);
+      properties[1].value = 'value-b';
 
       ComponentEditor.updatePreview().then(() => {
         expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
           a: 'value-a',
           b: 'value-b',
           c: 'value-c',
+          d: 'value-d',
         });
         done();
       });
@@ -376,25 +409,6 @@ describe('ComponentEditorService', () => {
       });
       $rootScope.$digest();
     });
-
-    it('uses the defaultValue for empty properties if it is defined', (done) => {
-      spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
-
-      const properties = [
-        { name: 'a', value: '', defaultValue: 'defaultValue' },
-        { name: 'b', value: 'b', defaultValue: 'defaultValue' },
-      ];
-      openComponentEditor(properties);
-
-      ComponentEditor.updatePreview().then(() => {
-        expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
-          a: 'defaultValue',
-          b: 'b',
-        });
-        done();
-      });
-      $rootScope.$digest();
-    });
   });
 
   describe('save', () => {
@@ -403,29 +417,18 @@ describe('ComponentEditorService', () => {
 
       const properties = [
         { name: 'a', value: 'value-a' },
-        { name: 'b', value: 'value-b' },
+        { name: 'b', value: '' },
+        { name: 'c', value: '', defaultValue: 'value-c' },
       ];
       openComponentEditor(properties);
-
-      ComponentEditor.save();
-
-      expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', { a: 'value-a', b: 'value-b' });
-    });
-
-    it('uses the defaultValue for empty properties if it is defined', () => {
-      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
-
-      const properties = [
-        { name: 'a', value: '', defaultValue: 'defaultValue' },
-        { name: 'b', value: 'b', defaultValue: 'defaultValue' },
-      ];
-      openComponentEditor(properties);
+      properties[1].value = 'value-b';
 
       ComponentEditor.save();
 
       expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', {
-        a: 'defaultValue',
-        b: 'b',
+        a: 'value-a',
+        b: 'value-b',
+        c: 'value-c',
       });
     });
   });
