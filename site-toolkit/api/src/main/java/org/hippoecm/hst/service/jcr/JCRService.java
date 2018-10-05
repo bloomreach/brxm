@@ -18,6 +18,10 @@ package org.hippoecm.hst.service.jcr;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.service.Service;
 
+/**
+ * @deprecated since 12.6 -- should not be used and has no replacement
+ */
+@Deprecated
 public interface JCRService extends Service {
     
     /**
