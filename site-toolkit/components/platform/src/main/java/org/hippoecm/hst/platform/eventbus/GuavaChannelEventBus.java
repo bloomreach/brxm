@@ -75,6 +75,8 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
      */
     private GuavaEventBusListenerProxyFactory proxyFactory;
 
+    private final ClassLoader platformClassLoader = GuavaChannelEventBus.class.getClassLoader();
+
     /**
      * Initialization lifecycle method, configured as "init-method" in spring bean assembly.
      */
@@ -144,15 +146,25 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
             return;
         }
 
-        final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(webappContext.getServletContext().getClassLoader(), false);
+        final ClassLoader[] cls;
+        final ClassLoader webappCL = webappContext.getServletContext().getClassLoader();
+        if (webappCL == platformClassLoader) {
+            cls = new ClassLoader[]{platformClassLoader};
+        } else {
+            cls = new ClassLoader[]{platformClassLoader, webappCL};
+        }
+        for (ClassLoader classLoader : cls) {
+            final EventBusWrapper eventBus = getEventBusWrapperByClassLoader(classLoader, false);
 
-        if (eventBus == null) {
-            log.debug("No channel event listener registered for application ({}), not posting: {}", contextPath, event);
-            return;
+            if (eventBus == null) {
+                log.debug("No channel event listener registered for class loader ({}), not posting: {}", classLoader, event);
+                return;
+            }
+
+            log.info("Posting channel event to class loader ({}) event listener: {}", classLoader, event);
+            eventBus.post(event);
         }
 
-        log.info("Posting channel event to application ({}) event listener: {}", contextPath, event);
-        eventBus.post(event);
     }
 
     /**
