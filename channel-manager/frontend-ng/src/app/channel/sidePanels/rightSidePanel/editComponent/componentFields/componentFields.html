@@ -49,19 +49,26 @@
     </md-checkbox>
   </div>
 
-  <input
-    ng-switch-when="numberfield"
-    class="md-primary"
-    name="{{ ::componentField.name }}"
-    ng-blur="$ctrl.blurPrimitive($event)"
-    ng-change="$ctrl.valueChanged()"
-    ng-disabled="$ctrl.readOnly"
-    ng-focus="$ctrl.focusPrimitive($event)"
-    ng-model="componentField.value"
-    ng-pattern="/^(-\d)?\d*$/"
-    ng-required="::componentField.required"
-    type="text"
-  />
+  <!-- ng-container isn't presented in AngularJS but will be actually used in Angular -->
+  <ng-container ng-switch-when="numberfield">
+    <input
+      class="md-primary"
+      name="{{ ::componentField.name }}"
+      ng-blur="$ctrl.blurPrimitive($event)"
+      ng-change="$ctrl.valueChanged()"
+      ng-disabled="$ctrl.readOnly"
+      ng-focus="$ctrl.focusPrimitive($event); $ctrl.form[componentField.name].$setTouched()"
+      ng-model="componentField.value"
+      ng-pattern="/^(-\d)?\d*$/"
+      ng-required="::componentField.required"
+      type="text"
+    />
+    <div ng-messages="$ctrl.form[componentField.name].$error">
+      <div ng-message="pattern">
+        {{ 'ERROR_FIELD_LONG_PATTERN' | translate }}
+      </div>
+    </div>
+  </ng-container>
 
   <md-select
     ng-switch-when="combo"
