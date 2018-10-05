@@ -21,12 +21,14 @@ import rejectPromptTemplate from './rejectPrompt/reject-prompt.html';
 class ChannelMenuService extends MenuService {
   constructor(
     $log,
+    $q,
     $state,
     $translate,
     ChannelService,
     CmsService,
     ConfigService,
     DialogService,
+    EditComponentService,
     FeedbackService,
     HippoIframeService,
     SessionService,
@@ -38,12 +40,14 @@ class ChannelMenuService extends MenuService {
     super();
 
     this.$log = $log;
+    this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
+    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
@@ -142,7 +146,7 @@ class ChannelMenuService extends MenuService {
 
   // Changes
   _showManageChanges() {
-    this.showSubPage('manage-changes');
+    this._closeEditors().then(() => this.showSubPage('manage-changes'));
   }
 
   _hasAnyChanges() {
@@ -170,17 +174,23 @@ class ChannelMenuService extends MenuService {
   }
 
   _publish() {
-    this.ChannelService.publishOwnChanges()
-      .then(() => {
-        this.CmsService.publish('channel-changed-in-angular');
-        this.HippoIframeService.reload();
-      })
-      .catch((response) => {
-        response = response || {};
+    this._closeEditors().then(() => {
+      this.ChannelService.publishOwnChanges()
+        .then(() => {
+          this.CmsService.publish('channel-changed-in-angular');
+          this.HippoIframeService.reload();
+        })
+        .catch((response) => {
+          response = response || {};
 
-        this.$log.info(response.message);
-        this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
-      });
+          this.$log.info(response.message);
+          this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
+        });
+    });
+  }
+
+  _closeEditors() {
+    return this.EditComponentService.stopEditing();
   }
 
   _reject() {
@@ -201,19 +211,21 @@ class ChannelMenuService extends MenuService {
   }
 
   _discardChanges() {
-    this._confirmDiscard().then(() => {
-      this.ChannelService.discardOwnChanges()
-        .then(() => {
-          this.CmsService.publish('channel-changed-in-angular');
-          this.HippoIframeService.reload();
-          this.SiteMapService.load(this.ChannelService.getSiteMapId());
-        })
-        .catch((response) => {
-          response = response || {};
+    this._closeEditors().then(() => {
+      this._confirmDiscard().then(() => {
+        this.ChannelService.discardOwnChanges()
+          .then(() => {
+            this.CmsService.publish('channel-changed-in-angular');
+            this.HippoIframeService.reload();
+            this.SiteMapService.load(this.ChannelService.getSiteMapId());
+          })
+          .catch((response) => {
+            response = response || {};
 
-          this.$log.info(response.message);
-          this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
-        });
+            this.$log.info(response.message);
+            this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
+          });
+      });
     });
   }
 
@@ -244,23 +256,25 @@ class ChannelMenuService extends MenuService {
   }
 
   _deleteChannel() {
-    this._confirmDelete()
-      .then(() => {
-        this._showDeleteProgress();
-        this.ChannelService.deleteChannel()
-          .then(() => {
-            this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
-            this.CmsService.publish('channel-deleted');
-          })
-          .catch((response) => {
-            this._hideDeleteProgress();
-            if (response && response.error === 'CHILD_MOUNT_EXISTS') {
-              this._showElaborateFeedback(response, 'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS');
-            } else {
-              this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_DELETE_FAILED');
-            }
-          });
-      });
+    this._closeEditors().then(() => {
+      this._confirmDelete()
+        .then(() => {
+          this._showDeleteProgress();
+          this.ChannelService.deleteChannel()
+            .then(() => {
+              this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
+              this.CmsService.publish('channel-deleted');
+            })
+            .catch((response) => {
+              this._hideDeleteProgress();
+              if (response && response.error === 'CHILD_MOUNT_EXISTS') {
+                this._showElaborateFeedback(response, 'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS');
+              } else {
+                this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_DELETE_FAILED');
+              }
+            });
+        });
+    });
   }
 
   _confirmDelete() {
