@@ -25,7 +25,7 @@
   <description>Hippo CMS7 Project POM</description>
   <packaging>pom</packaging>
 
-  <url>http://www.onehippo.org/cms7/</url>
+  <url>http://www.onehippo.org/</url>
 
   <organization>
     <name>Hippo B.V. (http://www.onehippo.com)</name>
