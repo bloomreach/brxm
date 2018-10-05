@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,14 +45,6 @@ public class WebFileUtilsTest {
         expect(context.getResolvedMount()).andReturn(resolvedMount);
         expect(resolvedMount.getMount()).andReturn(mount);
         replay(context, resolvedMount);
-    }
-
-    @Test
-    public void testGetBundleName_returns_default_when_mount_has_no_contextpath() {
-        expect(mount.getContextPath()).andReturn(null);
-        expect(mount.getParent()).andReturn(null);
-        replay(mount);
-        assertThat(getBundleName(context), is(WebFileUtils.DEFAULT_BUNDLE_NAME));
     }
 
     @Test
