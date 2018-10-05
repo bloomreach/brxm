@@ -61,18 +61,18 @@ public class CategoryImpl implements Category {
     public CategoryImpl(final Node item, final Category parent, final TaxonomyImpl taxonomyImpl) throws RepositoryException, TaxonomyException {
 
         // Use a ValueProvider, but make sure to clean it up
-        try (final JCRValueProviderImpl jvp = new JCRValueProviderImpl(item)) {
-            this.taxonomy = taxonomyImpl;
-            this.parent = parent;
-            this.name = jvp.getName();
-            final String path = jvp.getPath();
-            if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
-                throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
-            }
-            this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
-
-            this.key = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+        final JCRValueProviderImpl jvp = new JCRValueProviderImpl(item);
+        this.taxonomy = taxonomyImpl;
+        this.parent = parent;
+        this.name = jvp.getName();
+        final String path = jvp.getPath();
+        if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
+            throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
         }
+        this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
+
+        this.key = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+        jvp.detach();
 
         if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
             for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
