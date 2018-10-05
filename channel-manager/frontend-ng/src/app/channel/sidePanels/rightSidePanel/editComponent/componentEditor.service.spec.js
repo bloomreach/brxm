@@ -74,7 +74,7 @@ describe('ComponentEditorService', () => {
     };
   });
 
-  describe('_onStructureChange', () => {
+  describe('responding to page structure changes', () => {
     let onStructureChange;
 
     beforeEach(() => {
@@ -90,13 +90,13 @@ describe('ComponentEditorService', () => {
       };
     });
 
-    it('should do nothing without component', () => {
+    it('should do nothing without a component', () => {
       delete ComponentEditor.component;
       onStructureChange();
       expect(PageStructureService.getComponentById).not.toHaveBeenCalled();
     });
 
-    it('should not continue with empty component', () => {
+    it('should not update when the component is not on the page', () => {
       PageStructureService.getComponentById.and.returnValue(null);
       onStructureChange();
 
@@ -104,7 +104,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container.id).toBe(1);
     });
 
-    it('should update the container', () => {
+    it('should update the container information if it has changed', () => {
       PageStructureService.getComponentById.and.returnValue({
         container: {
           isDisabled: () => false,

@@ -79,10 +79,10 @@ class ComponentEditorService {
       isInherited: component.container.isInherited(),
       id: component.container.getId(),
     };
-    const isLockHappened = this.container.isDisabled !== changedContainer.isDisabled;
+    const isLockApplied = this.container.isDisabled !== changedContainer.isDisabled;
     Object.assign(this.container, changedContainer);
 
-    if (isLockHappened) {
+    if (isLockApplied) {
       this.reopen();
     }
   }

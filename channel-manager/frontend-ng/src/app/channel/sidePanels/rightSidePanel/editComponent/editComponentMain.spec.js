@@ -117,7 +117,7 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('isSaveAllowed', () => {
-    it('returns false when the form does not exist yet', () => {
+    it('returns falsy when the form does not exist yet', () => {
       delete $ctrl.form;
       expect($ctrl.isSaveAllowed()).toBeFalsy();
     });
