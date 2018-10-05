@@ -20,7 +20,10 @@
   layout="column"
   layout-align="start"
   layout-margin
-  ng-class="{'has-focused-field': $ctrl.hasFocus}"
+  ng-class="{
+    'has-focused-field': $ctrl.hasFocus,
+    'collapsible': $ctrl.group.collapse
+  }"
 >
 
   <h5

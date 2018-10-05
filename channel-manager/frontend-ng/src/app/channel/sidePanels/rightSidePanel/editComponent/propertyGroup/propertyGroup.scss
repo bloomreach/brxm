@@ -19,7 +19,7 @@
 property-group {
   display: block;
 
-  component-fields {
+  .collapsible > component-fields {
     padding-left: $icon-size - 6px;
   }
 }
