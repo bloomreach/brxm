@@ -74,11 +74,17 @@ class ComponentEditorService {
       return;
     }
 
-    Object.assign(this.container, {
+    const changedContainer = {
       isDisabled: component.container.isDisabled(),
       isInherited: component.container.isInherited(),
       id: component.container.getId(),
-    });
+    };
+    const isLockHappened = this.container.isDisabled !== changedContainer.isDisabled;
+    Object.assign(this.container, changedContainer);
+
+    if (isLockHappened) {
+      this.reopen();
+    }
   }
 
   /**

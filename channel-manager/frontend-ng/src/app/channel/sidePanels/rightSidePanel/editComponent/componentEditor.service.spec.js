@@ -34,6 +34,10 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
+    inject((_PageStructureService_) => {
+      spyOn(_PageStructureService_, 'registerChangeListener');
+    });
+
     inject((
       _$q_,
       _$rootScope_,
@@ -68,6 +72,66 @@ describe('ComponentEditorService', () => {
       },
       page: 'page',
     };
+  });
+
+  describe('_onStructureChange', () => {
+    let onStructureChange;
+
+    beforeEach(() => {
+      spyOn(ComponentEditor, 'reopen');
+      spyOn(PageStructureService, 'getComponentById');
+      onStructureChange = PageStructureService.registerChangeListener.calls.mostRecent().args[0];
+
+      ComponentEditor.component = { id: 'some-id' };
+      ComponentEditor.container = {
+        isDisabled: false,
+        isInherited: false,
+        id: 1,
+      };
+    });
+
+    it('should do nothing without component', () => {
+      delete ComponentEditor.component;
+      onStructureChange();
+      expect(PageStructureService.getComponentById).not.toHaveBeenCalled();
+    });
+
+    it('should not continue with empty component', () => {
+      PageStructureService.getComponentById.and.returnValue(null);
+      onStructureChange();
+
+      expect(PageStructureService.getComponentById).toHaveBeenCalledWith('some-id');
+      expect(ComponentEditor.container.id).toBe(1);
+    });
+
+    it('should update the container', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => false,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      onStructureChange();
+
+      expect(ComponentEditor.container.isDisabled).toBe(false);
+      expect(ComponentEditor.container.isInherited).toBe(true);
+      expect(ComponentEditor.container.id).toBe(2);
+      expect(ComponentEditor.reopen).not.toHaveBeenCalled();
+    });
+
+    it('should reopen editor', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => true,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      onStructureChange();
+
+      expect(ComponentEditor.reopen).toHaveBeenCalled();
+    });
   });
 
   describe('opening a component editor', () => {
