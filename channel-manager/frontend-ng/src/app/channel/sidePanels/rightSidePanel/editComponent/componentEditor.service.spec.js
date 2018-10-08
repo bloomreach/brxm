@@ -24,6 +24,8 @@ describe('ComponentEditorService', () => {
   let PageStructureService;
 
   let testData;
+  const emptyValues = [undefined, null, ''];
+  const testValues = emptyValues.concat('test');
 
   function openComponentEditor(properties) {
     HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
@@ -228,74 +230,63 @@ describe('ComponentEditorService', () => {
     });
   });
 
-  describe('the default value', () => {
-    const emptyValues = [undefined, null, ''];
-    const testValues = emptyValues.concat('test');
+  describe('setDefaultIfValueIsEmpty', () => {
+    it('does not error if property does not exist', () => {
+      try {
+        ComponentEditor.setDefaultIfValueIsEmpty();
+        ComponentEditor.setDefaultIfValueIsEmpty(null);
+      } catch (e) {
+        fail();
+      }
+    });
 
-    describe('setDefaultIfValueIsEmpty', () => {
-      it('does not error if property does not exist', () => {
-        try {
-          ComponentEditor.setDefaultIfValueIsEmpty();
-          ComponentEditor.setDefaultIfValueIsEmpty(null);
-        } catch (e) {
-          fail();
-        }
+    it('sets the property value if it is empty and the default value is not empty', () => {
+      emptyValues.forEach((emptyValue) => {
+        const property = { value: emptyValue, defaultValue: 'defaultValue' };
+        ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+        expect(property.value).toBe('defaultValue');
       });
+    });
 
-      it('changes the property value if it is empty and a default value is present', () => {
-        emptyValues.forEach((emptyValue) => {
-          const property = { value: emptyValue, defaultValue: 'defaultValue' };
+    it('does not change the property value if the default value is empty', () => {
+      testValues.forEach((value) => {
+        emptyValues.forEach((defaultValue) => {
+          const property = { value, defaultValue };
           ComponentEditor.setDefaultIfValueIsEmpty(property);
 
-          expect(property.value).toBe('defaultValue');
+          expect(property.value).toBe(value);
         });
       });
+    });
 
-      it('does not change the property value if the default value is null, undefined or empty string', () => {
-        testValues.forEach((value) => {
-          emptyValues.forEach((defaultValue) => {
-            const property = { value, defaultValue };
-            ComponentEditor.setDefaultIfValueIsEmpty(property);
+    it('sets the display value for "linkpicker" fields if it is empty and default display value is not empty', () => {
+      emptyValues.forEach((emptyValue) => {
+        const property = { displayValue: emptyValue, defaultDisplayValue: 'default-display-value', type: 'linkpicker' };
+        ComponentEditor.setDefaultIfValueIsEmpty(property);
 
-            expect(property.value).toBe(value);
-          });
-        });
+        expect(property.displayValue).toBe('default-display-value');
       });
+    });
 
-      it('sets the display value for "linkpicker" fields if it is empty', () => {
+    it('does not change the display value for "linkpicker" fields if the default display value is empty', () => {
+      testValues.forEach((value) => {
         emptyValues.forEach((emptyValue) => {
           const property = {
-            value: emptyValue,
-            displayValue: emptyValue,
-            defaultValue: 'node-name',
+            displayValue: value,
+            defaultDisplayValue: emptyValue,
             type: 'linkpicker',
           };
           ComponentEditor.setDefaultIfValueIsEmpty(property);
 
-          expect(property.displayValue).toBe('node-name');
-
-          property.value = emptyValue;
-          property.displayValue = 'display-value';
-          ComponentEditor.setDefaultIfValueIsEmpty(property);
-
-          expect(property.displayValue).toBe('display-value');
+          expect(property.displayValue).toBe(value);
         });
       });
-
-      it('sets the display value for "linkpicker" fields to the last segment of a path', () => {
-        const property = {
-          value: '',
-          displayValue: '',
-          defaultValue: '/a/b/c',
-          type: 'linkpicker',
-        };
-        ComponentEditor.setDefaultIfValueIsEmpty(property);
-
-        expect(property.displayValue).toBe('c');
-      });
     });
+  });
 
-    it('tries to set the default value for each non-hidden property when opening the component editor', () => {
+  describe('handling of the default value when opening the component editor', () => {
+    it('tries to set the default value for each non-hidden property', () => {
       spyOn(ComponentEditor, 'setDefaultIfValueIsEmpty');
 
       openComponentEditor();
@@ -308,34 +299,47 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.setDefaultIfValueIsEmpty).toHaveBeenCalledTimes(2);
     });
 
-    function loadProperty(value, defaultValue, type = 'textfield') {
-      openComponentEditor([{ value, defaultValue, type }]);
+    function loadProperty(property) {
+      openComponentEditor([property]);
 
       const fields = ComponentEditor.getPropertyGroups()[0].fields;
+      const field = fields[0];
       return {
-        andExpectValueToBe: (expectedValue) => {
-          expect(fields[0].value).toBe(expectedValue);
-        },
+        andExpect: fieldName => expect(field[fieldName]),
       };
     }
 
-    it('defaults to "off" for checkbox fields', () => {
-      testValues.forEach((emptyDefaultValue) => {
-        loadProperty(null, emptyDefaultValue, 'checkbox').andExpectValueToBe('off');
+    describe('checkbox fields', () => {
+      const onValues = [true, 'true', 1, '1', 'on', 'On', 'ON'];
+      const offValues = [false, 'false', 0, '0', 'off', 'Off', 'OFF'];
+      const type = 'checkbox';
+
+      it('defaults to "off" for checkbox fields', () => {
+        testValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('value').toBe('off'));
+      });
+
+      it('normalizes value to "on" and "off"', () => {
+        onValues.forEach(value => loadProperty({ value, type }).andExpect('value').toBe('on'));
+        offValues.forEach(value => loadProperty({ value, type }).andExpect('value').toBe('off'));
+      });
+
+      it('normalizes defaultValue to "on" and "off"', () => {
+        onValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('defaultValue').toBe('on'));
+        offValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('defaultValue').toBe('off'));
       });
     });
 
-    it('normalizes value and defaultValue to "on" and "off" for checkbox fields', () => {
-      const onValues = [true, 'true', 1, '1', 'on', 'On', 'ON'];
-      onValues.forEach((onValue) => {
-        loadProperty(onValue, null, 'checkbox').andExpectValueToBe('on');
-        loadProperty(null, onValue, 'checkbox').andExpectValueToBe('on');
+    describe('linkpicker fields', () => {
+      const type = 'linkpicker';
+
+      it('sets the default display value for "linkpicker" fields to the last segment of a path if the default value is set and differs from the value', () => {
+        loadProperty({ defaultValue: 'a', type }).andExpect('defaultDisplayValue').toBe('a');
+        loadProperty({ defaultValue: '/a/b/c', type }).andExpect('defaultDisplayValue').toBe('c');
       });
 
-      const offValues = [false, 'false', 0, '0', 'off', 'Off', 'OFF'];
-      offValues.forEach((offValue) => {
-        loadProperty(offValue, null, 'checkbox').andExpectValueToBe('off');
-        loadProperty(null, offValue, 'checkbox').andExpectValueToBe('off');
+      it('does not change the default display value if default value is empty', () => {
+        emptyValues.forEach(defaultValue => loadProperty({ defaultValue, defaultDisplayValue: 'default-display-value', type })
+          .andExpect('defaultDisplayValue').toBe('default-display-value'));
       });
     });
   });
