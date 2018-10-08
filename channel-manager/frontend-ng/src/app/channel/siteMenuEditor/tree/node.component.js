@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import template from './listing.html';
+import controller from './node.controller';
 
-function listingDirective() {
-  'ngInject';
+const treeNodeComponent = {
+  require: {
+    hippoTree: '^^hippoTree',
+    uiTreeNode: '^^uiTreeNode',
+  },
+  bindings: {
+    item: '=',
+  },
+  controller,
+};
 
-  return {
-    restrict: 'A',
-    bindToController: {
-      selectedItem: '=',
-      selectedDocument: '=',
-    },
-    template,
-    controller: 'ListingCtrl',
-    controllerAs: 'listing',
-  };
-}
-
-export default listingDirective;
+export default treeNodeComponent;

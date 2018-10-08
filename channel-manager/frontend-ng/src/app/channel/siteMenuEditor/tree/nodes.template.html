@@ -13,17 +13,18 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-<div ng-click="hippoTree.selectItem(item)">
-  <div hippo-tree-template></div>
-</div>
-<ol ui-tree-nodes
-    ng-model="item.items"
-    ng-if="item.items && !collapsed">
-  <li ng-repeat="item in item.items"
+<ol
+  ui-tree-nodes
+  ng-model="$ctrl.items"
+  ng-if="$ctrl.items">
+    <li
+      ng-repeat="item in $ctrl.items"
       ui-tree-node
-      items-renderer
-      ng-if="hippoTree.displayItem(item)"
-      ng-class="{active: hippoTree.selectedItem.id === item.id}"
-      data-collapsed="item.collapsed">
-  </li>
+      ng-if="$ctrl.hippoTree.displayItem(item)"
+      ng-class="{active: $ctrl.hippoTree.selectedItem.id === item.id}">
+        <div ng-click="$ctrl.hippoTree.selectItem(item)">
+          <hippo-tree-node data-item="item"></hippo-tree-node>
+        </div>
+        <hippo-tree-nodes ng-if="!item.collapsed" data-items="item.items"></hippo-tree-nodes>
+    </li>
 </ol>

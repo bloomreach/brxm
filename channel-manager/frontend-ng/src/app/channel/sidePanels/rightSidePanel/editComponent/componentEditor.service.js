@@ -30,7 +30,8 @@ class ComponentEditorService {
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
 
-    this.kill = false;
+    this.killed = false;
+    PageStructureService.registerChangeListener(this._onStructureChange.bind(this));
   }
 
   open({ channel, component, container, page }) {
@@ -61,6 +62,29 @@ class ComponentEditorService {
   _onLoadFailure(response) {
     this._clearData();
     console.error('TODO: implement ComponentEditorService._onLoadFailure', response);
+  }
+
+  _onStructureChange() {
+    if (!this.component) {
+      return;
+    }
+
+    const component = this.PageStructureService.getComponentById(this.component.id);
+    if (!component) {
+      return;
+    }
+
+    const changedContainer = {
+      isDisabled: component.container.isDisabled(),
+      isInherited: component.container.isInherited(),
+      id: component.container.getId(),
+    };
+    const isLockApplied = this.container.isDisabled !== changedContainer.isDisabled;
+    Object.assign(this.container, changedContainer);
+
+    if (isLockApplied) {
+      this.reopen();
+    }
   }
 
   /**
@@ -217,11 +241,11 @@ class ComponentEditorService {
   }
 
   isKilled() {
-    return this.kill;
+    return this.killed;
   }
 
-  killEditor() {
-    this.kill = true;
+  kill() {
+    this.killed = true;
   }
 
   /**
@@ -283,7 +307,7 @@ class ComponentEditorService {
     delete this.channel;
     delete this.component;
     delete this.container;
-    delete this.kill;
+    delete this.killed;
     delete this.page;
     delete this.properties;
     delete this.propertyGroups;

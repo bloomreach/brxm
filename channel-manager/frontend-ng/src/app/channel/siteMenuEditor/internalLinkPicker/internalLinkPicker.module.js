@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import ListingCtrl from './listing.controller';
-import listingDirective from './listing.directive';
-import InternalLinkPickerService from './internalLinkPicker.service';
 import InternalLinkPickerCtrl from './internalLinkPicker.controller';
+import InternalLinkPickerService from './internalLinkPicker.service';
+import itemListingComponent from './itemListing.component';
 import uiTreeModule from '../tree/tree';
 
 const internalLinkPickerModule = angular
   .module('hippo-cm.channel.siteMenuEditor.internalLinkPicker', [
     uiTreeModule.name,
   ])
+  .component('itemListing', itemListingComponent)
   .controller('InternalLinkPickerCtrl', InternalLinkPickerCtrl)
-  .controller('ListingCtrl', ListingCtrl)
-  .service('InternalLinkPickerService', InternalLinkPickerService)
-  .directive('listing', listingDirective);
+  .service('InternalLinkPickerService', InternalLinkPickerService);
 
 export default internalLinkPickerModule;

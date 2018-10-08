@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-function hippoTreeTemplateDirective() {
-  'ngInject';
+import controller from './tree.controller';
+import template from './tree.template.html';
 
-  return {
-    require: '^hippoTree',
-    link: (scope, element, attrs, controller) => {
-      controller.renderTreeTemplate(scope, dom => element.replaceWith(dom));
-    },
-  };
-}
+const treeComponent = {
+  bindings: {
+    options: '=',
+    items: '=',
+    selectable: '=',
+    selectedItem: '=',
+    draggable: '=',
+  },
+  transclude: true,
+  controller,
+  controllerAs: 'hippoTree',
+  template,
+};
 
-export default hippoTreeTemplateDirective;
+export default treeComponent;

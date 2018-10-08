@@ -15,7 +15,7 @@
  */
 
 import getByPropertyFilter from './tree/getByProperty.filter';
-import internalLinkPickerModule from './internalLinkPicker/internalLinkPicker';
+import internalLinkPickerModule from './internalLinkPicker/internalLinkPicker.module';
 import scrollToIfDirective from './scrollToIf.directive';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
 import siteMenuEditorComponent from './siteMenuEditor.component';
