@@ -15,7 +15,6 @@
  */
 
 describe('PickerService', () => {
-  let $q;
   let $rootScope;
   let CmsService;
   let PickerService;
@@ -27,8 +26,7 @@ describe('PickerService', () => {
       $provide.value('CmsService', CmsService);
     });
 
-    inject((_$q_, _$rootScope_, _PickerService_) => {
-      $q = _$q_;
+    inject((_$rootScope_, _PickerService_) => {
       $rootScope = _$rootScope_;
       PickerService = _PickerService_;
     });
@@ -80,7 +78,7 @@ describe('PickerService', () => {
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
       onSuccess({ uuid: '2' });
 
-      promise.then(pickedLink => {
+      promise.then((pickedLink) => {
         expect(pickedLink).toEqual({ uuid: '2' });
         done();
       });
@@ -111,7 +109,7 @@ describe('PickerService', () => {
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
       onSuccess({ uuid: '2' });
 
-      promise.then(pickedImage => {
+      promise.then((pickedImage) => {
         expect(pickedImage).toEqual({ uuid: '2' });
         done();
       });
