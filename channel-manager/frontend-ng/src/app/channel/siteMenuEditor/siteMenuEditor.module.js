@@ -15,7 +15,7 @@
  */
 
 import getByPropertyFilter from './tree/getByProperty.filter';
-import pickerModule from './picker/picker';
+import internalLinkPickerModule from './internalLinkPicker/internalLinkPicker';
 import scrollToIfDirective from './scrollToIf.directive';
 import selectAllOnFocusDirective from './selectAllOnFocus.directive';
 import siteMenuEditorComponent from './siteMenuEditor.component';
@@ -25,7 +25,7 @@ import uiTreeModule from './tree/tree';
 const siteMenuEditorModule = angular
   .module('hippo-cm.channel.siteMenuEditor', [
     'focus-if',
-    pickerModule.name,
+    internalLinkPickerModule.name,
     uiTreeModule.name,
   ])
   .component('siteMenuEditor', siteMenuEditorComponent)

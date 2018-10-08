@@ -16,7 +16,7 @@
 
 import ListingCtrl from './listing.controller';
 import listingDirective from './listing.directive';
-import PickerService from './picker.service';
+import InternalLinkPickerService from './picker.service';
 import PickerCtrl from './picker.controller';
 import uiTreeModule from '../tree/tree';
 
@@ -26,7 +26,7 @@ const pickerModule = angular
   ])
   .controller('PickerCtrl', PickerCtrl)
   .controller('ListingCtrl', ListingCtrl)
-  .service('PickerService', PickerService)
+  .service('PickerService', InternalLinkPickerService)
   .directive('listing', listingDirective);
 
 export default pickerModule;
