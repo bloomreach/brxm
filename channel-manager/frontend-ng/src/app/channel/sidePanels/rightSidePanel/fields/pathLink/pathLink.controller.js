@@ -17,49 +17,25 @@
 import NodeLinkController from '../nodeLink/nodeLink.controller';
 
 class PathLinkController extends NodeLinkController {
-  constructor($element, $scope, $timeout, CmsService) {
+  constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
-    super($element, $scope, $timeout, CmsService);
-  }
-
-  $onInit() {
-    super.$onInit();
-
-    this.CmsService.subscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.subscribe('path-cancelled', this._onPathCancelled, this);
-  }
-
-  $onDestroy() {
-    this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.unsubscribe('path-cancelled', this._onPathCancelled, this);
+    super($element, $scope, $timeout, PickerService);
   }
 
   openLinkPicker() {
-    this.CmsService.publish('show-path-picker', this.name, this.ngModel.$modelValue, this.config.linkpicker);
+    return this.PickerService.pickPath(this.config.linkpicker, this.ngModel.$modelValue)
+      .then(({ path, displayValue }) => this._onPathPicked(path, displayValue))
+      .catch(() => this._focusSelectButton());
   }
 
-  _onPathPicked(field, path, displayValue) {
-    if (field !== this.name) {
-      return;
+  _onPathPicked(path, displayValue) {
+    if (this.linkPicked) {
+      this._focusSelectButton();
     }
-
-    this.$scope.$apply(() => {
-      if (this.linkPicked) {
-        this._focusSelectButton();
-      }
-      this.linkPicked = true;
-      this.displayName = displayValue;
-      this.ngModel.$setViewValue(path);
-    });
-  }
-
-  _onPathCancelled(field) {
-    if (field !== this.name) {
-      return;
-    }
-
-    this._focusSelectButton();
+    this.linkPicked = true;
+    this.displayName = displayValue;
+    this.ngModel.$setViewValue(path);
   }
 
   blur($event) {

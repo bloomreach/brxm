@@ -21,6 +21,7 @@ describe('DocumentLocationField', () => {
   let ChannelService;
   let CmsService;
   let FeedbackService;
+  let PickerService;
   let Step1Service;
   let component;
   let getFolderSpy;
@@ -34,8 +35,11 @@ describe('DocumentLocationField', () => {
       contentRoot: '/channel/content',
     });
 
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
     angular.mock.module(($provide) => {
       $provide.value('ChannelService', ChannelService);
+      $provide.value('PickerService', PickerService);
     });
 
     inject((
@@ -68,24 +72,6 @@ describe('DocumentLocationField', () => {
     spyOn(CmsService, 'reportUsageStatistic');
 
     component.changeLocale = () => angular.noop();
-  });
-
-  describe('$onInit', () => {
-    it('subscribes to the "path-picked" and "path-cancelled" events of the CMS', () => {
-      spyOn(CmsService, 'subscribe');
-      component.$onInit();
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-cancelled', component.onPathCancelled, component);
-    });
-  });
-
-  describe('$onDestroy', () => {
-    it('unsubscribes from the "path-picked" and "path-cancelled" events of the CMS', () => {
-      spyOn(CmsService, 'unsubscribe');
-      component.$onDestroy();
-      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-picked', component.onPathPicked, component);
-      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-cancelled', component.onPathCancelled, component);
-    });
   });
 
   describe('with root path', () => {
@@ -212,13 +198,13 @@ describe('DocumentLocationField', () => {
     });
 
     describe('openPicker', () => {
-      it('opens the picker by publishing the "show-path-picker" event', () => {
-        spyOn(CmsService, 'publish');
+      it('opens the picker', () => {
+        PickerService.pickPath.and.returnValue($q.resolve());
         const pickerConfig = {};
         component.pickerPath = 'current-location';
         component.pickerConfig = pickerConfig;
         component.openPicker();
-        expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', 'document-location-callback-id', 'current-location', pickerConfig);
+        expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, 'current-location');
       });
     });
 
@@ -227,20 +213,17 @@ describe('DocumentLocationField', () => {
         component.initialPickerPath = component.rootPath;
       });
 
-      it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+      it('uses absolute paths as-is', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('some-id', '/root/some-path');
-        expect(component.setPath).not.toHaveBeenCalled();
-
-        component.onPathPicked('document-location-callback-id', '/root/new-path');
-        expect(component.setPath).toHaveBeenCalledWith('/root/new-path');
+        component.onPathPicked('/root/path');
+        expect(component.setPath).toHaveBeenCalledWith('/root/path');
       });
 
       it('prepends relative paths with a /', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('document-location-callback-id', 'root/path');
+        component.onPathPicked('root/path');
         expect(component.setPath).toHaveBeenCalledWith('/root/path');
       });
 
@@ -248,7 +231,7 @@ describe('DocumentLocationField', () => {
         spyOn(FeedbackService, 'showError');
         spyOn(component, 'setPath');
 
-        component.onPathPicked('document-location-callback-id', '/flowers/tulip');
+        component.onPathPicked('/flowers/tulip');
         expect(component.setPath).not.toHaveBeenCalled();
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
           root: '/root',
@@ -317,20 +300,17 @@ describe('DocumentLocationField', () => {
         component.initialPickerPath = '/channel/content';
       });
 
-      it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+      it('uses absolute paths as-is', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('some-id', '/channel/content/some-path');
-        expect(component.setPath).not.toHaveBeenCalled();
-
-        component.onPathPicked('document-location-callback-id', '/channel/content/new-path');
+        component.onPathPicked('/channel/content/new-path');
         expect(component.setPath).toHaveBeenCalledWith('/channel/content/new-path');
       });
 
       it('prepends relative paths with a /', () => {
         spyOn(component, 'setPath');
 
-        component.onPathPicked('document-location-callback-id', 'channel/content/path');
+        component.onPathPicked('channel/content/path');
         expect(component.setPath).toHaveBeenCalledWith('/channel/content/path');
       });
 
@@ -338,7 +318,7 @@ describe('DocumentLocationField', () => {
         spyOn(FeedbackService, 'showError');
         spyOn(component, 'setPath');
 
-        component.onPathPicked('document-location-callback-id', '/flowers/tulip');
+        component.onPathPicked('/flowers/tulip');
         expect(component.setPath).not.toHaveBeenCalled();
         expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', {
           root: '/channel/content',
@@ -349,21 +329,17 @@ describe('DocumentLocationField', () => {
       it('it is allowed to subsequently choose a shorter path', () => {
         // the path check is done on the original picker path, not on the last selected rootpath
         spyOn(component, 'setPath');
-        component.onPathPicked('document-location-callback-id', '/channel/content/folder1/folder2');
-        component.onPathPicked('document-location-callback-id', '/channel/content/folder1');
+        component.onPathPicked('/channel/content/folder1/folder2');
+        component.onPathPicked('/channel/content/folder1');
         expect(component.setPath).toHaveBeenCalled();
       });
     });
   });
 
   describe('onPathCancelled', () => {
-    it('only accepts callback events with callbackId "document-location-callback-id"', () => {
+    it('focuses the input overlay', () => {
       spyOn(component, 'setPath');
-
-      component.onPathCancelled('some-id');
-      expect(inputOverlaySpy.focus).not.toHaveBeenCalled();
-
-      component.onPathCancelled('document-location-callback-id');
+      component.onPathCanceled();
       expect(inputOverlaySpy.focus).toHaveBeenCalled();
     });
   });

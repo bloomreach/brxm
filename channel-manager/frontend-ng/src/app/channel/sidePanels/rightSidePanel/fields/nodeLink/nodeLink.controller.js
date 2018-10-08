@@ -15,13 +15,13 @@
  */
 
 class nodeLinkController {
-  constructor($element, $scope, $timeout, CmsService) {
+  constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
     this.$element = $element;
     this.$scope = $scope;
     this.$timeout = $timeout;
-    this.CmsService = CmsService;
+    this.PickerService = PickerService;
   }
 
   $onInit() {
@@ -71,21 +71,18 @@ class nodeLinkController {
 
   openLinkPicker() {
     const uuid = this.ngModel.$modelValue;
-    this.CmsService.publish('show-link-picker', this.config.linkpicker, { uuid },
-      link => this._onLinkPicked(link),
-      () => this._focusSelectButton(),
-    );
+    return this.PickerService.pickLink(this.config.linkpicker, { uuid })
+      .then(link => this._onLinkPicked(link))
+      .catch(() => this._focusSelectButton());
   }
 
   _onLinkPicked(link) {
-    this.$scope.$apply(() => {
-      if (this.linkPicked) {
-        this._focusSelectButton();
-      }
-      this.linkPicked = true;
-      this.displayName = link.displayName;
-      this.ngModel.$setViewValue(link.uuid);
-    });
+    if (this.linkPicked) {
+      this._focusSelectButton();
+    }
+    this.linkPicked = true;
+    this.displayName = link.displayName;
+    this.ngModel.$setViewValue(link.uuid);
   }
 
   clear() {

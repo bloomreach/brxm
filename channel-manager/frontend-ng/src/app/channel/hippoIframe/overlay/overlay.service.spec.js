@@ -34,9 +34,16 @@ describe('OverlayService', () => {
   let MarkupService;
   let OverlayService;
   let PageStructureService;
+  let PickerService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
+
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
 
     inject((
       _$q_,
@@ -566,7 +573,8 @@ describe('OverlayService', () => {
 
   it('can pick a path and update the component', (done) => {
     ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    PickerService.pickPath.and.returnValue($q.resolve());
+    spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
 
@@ -574,12 +582,13 @@ describe('OverlayService', () => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
       const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
-      pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      pickPathButton.click();
       $rootScope.$digest();
 
+      expect(PickerService.pickPath).toHaveBeenCalledWith(jasmine.any(Object), undefined);
+      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, '');
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('bbbb');
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'component B',
@@ -591,7 +600,8 @@ describe('OverlayService', () => {
 
   it('can pick a path but fail to update the component', (done) => {
     ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
+    PickerService.pickPath.and.returnValue($q.resolve());
+    spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'reload');
 
@@ -599,12 +609,13 @@ describe('OverlayService', () => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
       const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
-      pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      pickPathButton.click();
       $rootScope.$digest();
 
+      expect(PickerService.pickPath).toHaveBeenCalledWith(jasmine.any(Object), undefined);
+      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('bbbb', 'hippo-default',
+        'manage-content-component-parameter', undefined, '');
       expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
         jasmine.any(Object), { componentName: 'component B' });
       expect(HippoIframeService.reload).toHaveBeenCalled();
@@ -615,8 +626,8 @@ describe('OverlayService', () => {
 
   it('can pick a path and update a specific component variant', (done) => {
     ChannelService.isEditable = () => true;
-
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
+    PickerService.pickPath.and.returnValue($q.resolve());
+    spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
     spyOn(PageStructureService, 'renderComponent');
     spyOn(FeedbackService, 'showNotification');
 
@@ -624,12 +635,13 @@ describe('OverlayService', () => {
       const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
       const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-main');
       expectNoPropagatedClicks();
-      pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      pickPathButton.click();
       $rootScope.$digest();
 
+      expect(PickerService.pickPath).toHaveBeenCalledWith(jasmine.any(Object), undefined);
+      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
+        'manage-content-component-parameter', undefined, '');
       expect(PageStructureService.renderComponent).toHaveBeenCalledWith('component-with-experiment');
       expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
         componentName: 'Component with experiment',

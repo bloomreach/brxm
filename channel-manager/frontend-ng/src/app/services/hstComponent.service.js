@@ -14,37 +14,13 @@
  * limitations under the License.
  */
 
-const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
-
 class HstComponentService {
-  constructor($q, ChannelService, CmsService, ConfigService, HstService) {
+  constructor(ChannelService, ConfigService, HstService) {
     'ngInject';
 
-    this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.HstService = HstService;
-
-    this.pathPickedHandler = angular.noop;
-
-    this.CmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === PATH_PICKER_CALLBACK_ID) {
-        this.pathPickedHandler(path);
-        this.pathPickedHandler = angular.noop;
-      }
-    });
-  }
-
-  pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, basePath) {
-    const deferred = this.$q.defer();
-    this.pathPickedHandler = (path) => {
-      this.setPathParameter(componentId, componentVariant, parameterName, path, basePath)
-        .then(() => deferred.resolve())
-        .catch(err => deferred.reject(err));
-    };
-    this.CmsService.publish('show-path-picker', PATH_PICKER_CALLBACK_ID, parameterValue, pickerConfig);
-    return deferred.promise;
   }
 
   setPathParameter(componentId, componentVariant, parameterName, parameterValue, basePath = '') {

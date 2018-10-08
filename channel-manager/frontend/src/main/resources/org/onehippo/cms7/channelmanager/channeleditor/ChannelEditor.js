@@ -216,22 +216,28 @@
       );
     },
 
-    _showPathPicker: function(field, value, pickerConfig) {
-      this.pathPickerField = field;
+    _showPathPicker: function(pickerConfig, currentPath, successCallback, cancelCallback) {
+      this.pathPickerSuccessCallback = successCallback;
+      this.pathPickerCancelCallback = cancelCallback;
+
       Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
-        value,
+        currentPath,
         pickerConfig,
         this._onPathPicked.bind(this),
-        this._onPathCancelled.bind(this)
+        this._onPathCanceled.bind(this)
       );
     },
 
     _onPathPicked: function(path, displayValue) {
-      this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
+      if (this.pathPickerSuccessCallback) {
+        this.pathPickerSuccessCallback({ path: path, displayValue: displayValue });
+      }
     },
 
-    _onPathCancelled: function() {
-      this.hostToIFrame.publish('path-cancelled', this.pathPickerField);
+    _onPathCanceled: function() {
+      if (this.pathPickerCancelCallback) {
+        this.pathPickerCancelCallback();
+      }
     },
 
     _showImagePicker: function(dialogConfig, selectedImage, successCallback, cancelCallback) {

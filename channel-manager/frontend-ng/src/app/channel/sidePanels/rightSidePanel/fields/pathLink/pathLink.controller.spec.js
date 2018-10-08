@@ -17,8 +17,9 @@
 describe('pathLinkController', () => {
   let $componentController;
   let $ctrl;
+  let $q;
   let $scope;
-  let CmsService;
+  let PickerService;
   let config;
   let ngModel;
 
@@ -27,9 +28,15 @@ describe('pathLinkController', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.fields');
 
-    inject((_$componentController_, _$rootScope_, _CmsService_) => {
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
+
+    inject((_$componentController_, _$q_, _$rootScope_) => {
       $componentController = _$componentController_;
-      CmsService = _CmsService_;
+      $q = _$q_;
       $scope = _$rootScope_.$new();
     });
 
@@ -46,7 +53,6 @@ describe('pathLinkController', () => {
     $ctrl = $componentController('pathLink', {
       $scope,
       $element,
-      CmsService,
     }, {
       config,
       displayName: 'TestDisplayName',
@@ -57,69 +63,45 @@ describe('pathLinkController', () => {
 
   describe('$onInit', () => {
     it('initializes the component', () => {
-      spyOn(CmsService, 'subscribe');
       $ctrl.$onInit();
       $scope.$apply();
 
       expect($ctrl.config).toEqual(config);
       expect($ctrl.displayName).toEqual('TestDisplayName');
       expect($ctrl.ngModel.$modelValue).toEqual('model-value');
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function), jasmine.any(Object));
-      expect(CmsService.subscribe).toHaveBeenCalledWith('path-cancelled', jasmine.any(Function), jasmine.any(Object));
-    });
-  });
-
-  describe('$onDestroy', () => {
-    it('unsubscribes the "path-picked" and "path-cancelled" event listeners', () => {
-      spyOn(CmsService, 'unsubscribe');
-
-      $ctrl.$onDestroy();
-      $scope.$apply();
-      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function), jasmine.any(Object));
-      expect(CmsService.unsubscribe).toHaveBeenCalledWith('path-cancelled', jasmine.any(Function), jasmine.any(Object));
     });
   });
 
   describe('openLinkPicker', () => {
-    it('opens the picker by publishing the "show-path-picker" event', () => {
-      spyOn(CmsService, 'publish');
+    it('picks a path', () => {
+      PickerService.pickPath.and.returnValue($q.resolve());
+
       $ctrl.openLinkPicker();
 
-      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', $ctrl.name, ngModel.$modelValue, config.linkpicker);
+      expect(PickerService.pickPath).toHaveBeenCalledWith(config.linkpicker, ngModel.$modelValue);
     });
-  });
 
-  describe('_onPathPicked', () => {
-    beforeEach(() => {
+    it('updates the view when a path has been picked', (done) => {
+      PickerService.pickPath.and.returnValue($q.resolve({ path: 'some/path', displayValue: 'path pretty name' }));
       spyOn($ctrl, '_focusSelectButton');
+
+      $ctrl.openLinkPicker().then(() => {
+        expect(ngModel.$setViewValue).toHaveBeenCalledWith('some/path');
+        expect($ctrl.displayName).toEqual('path pretty name');
+        done();
+      });
+      $scope.$digest();
     });
 
-    it('does not handle "path-picked" event if field name does not match', () => {
-      $ctrl._onPathPicked('SomeField');
-      expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
-    });
-
-    it('handles "path-picked" event', () => {
-      $ctrl._onPathPicked($ctrl.name, 'some/path', 'path pretty name');
-
-      expect(ngModel.$setViewValue).toHaveBeenCalledWith('some/path');
-      expect($ctrl.displayName).toEqual('path pretty name');
-    });
-  });
-
-  describe('_onPathCancelled', () => {
-    beforeEach(() => {
+    it('focuses the select button when picked a path has been canceled', (done) => {
+      PickerService.pickPath.and.returnValue($q.reject());
       spyOn($ctrl, '_focusSelectButton');
-    });
 
-    it('does not handle "path-cancelled" event if field name does not match', () => {
-      $ctrl._onPathCancelled('SomeField');
-      expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
-    });
-
-    it('handles "path-cancelled" event', () => {
-      $ctrl._onPathCancelled($ctrl.name);
-      expect($ctrl._focusSelectButton).toHaveBeenCalled();
+      $ctrl.openLinkPicker().finally(() => {
+        expect($ctrl._focusSelectButton).toHaveBeenCalled();
+        done();
+      });
+      $scope.$digest();
     });
   });
 

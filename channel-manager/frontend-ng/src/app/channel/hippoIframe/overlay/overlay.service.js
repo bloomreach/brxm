@@ -40,6 +40,7 @@ class OverlayService {
     HstComponentService,
     MaskService,
     PageStructureService,
+    PickerService,
   ) {
     'ngInject';
 
@@ -57,9 +58,9 @@ class OverlayService {
     this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
+    this.PickerService = PickerService;
 
     this.editMenuHandler = angular.noop;
-    this.pathPickedHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
@@ -576,31 +577,35 @@ class OverlayService {
   }
 
   _pickPath(config) {
-    const component = config.containerItem;
-    const componentId = component.getId();
-    const componentName = component.getLabel();
-    const componentVariant = component.getRenderVariant();
-    const parameterBasePath = config.parameterBasePath;
-    const parameterName = config.parameterName;
-    const parameterValue = config.parameterValue;
     const pickerConfig = config.pickerConfig;
+    const parameterValue = config.parameterValue;
 
-    this.CmsService.reportUsageStatistic('PickContentButton');
-    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
-      .then(() => {
-        this.PageStructureService.renderComponent(component.getId());
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
-      })
-      .catch((response) => {
-        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
-        const defaultErrorParams = { componentName };
-        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+    this.PickerService.pickPath(pickerConfig, parameterValue)
+      .then((path) => {
+        const component = config.containerItem;
+        const componentId = component.getId();
+        const componentName = component.getLabel();
+        const componentVariant = component.getRenderVariant();
+        const parameterBasePath = config.parameterBasePath;
+        const parameterName = config.parameterName;
 
-        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+        this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
+          .then(() => {
+            this.PageStructureService.renderComponent(componentId);
+            this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+          })
+          .catch((response) => {
+            const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+            const defaultErrorParams = { componentName };
+            const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
 
-        // probably the container got locked by another user, so reload the page to show new locked containers
-        this.HippoIframeService.reload();
+            this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+
+            // probably the container got locked by another user, so reload the page to show new locked containers
+            this.HippoIframeService.reload();
+          });
       });
+    this.CmsService.reportUsageStatistic('PickContentButton');
   }
 
   _linkButtonTransition(element) {

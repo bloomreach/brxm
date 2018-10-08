@@ -17,9 +17,10 @@
 describe('nodeLinkController', () => {
   let $componentController;
   let $ctrl;
+  let $q;
   let $scope;
   let $timeout;
-  let CmsService;
+  let PickerService;
   let config;
   let ngModel;
   let onBlur;
@@ -30,9 +31,15 @@ describe('nodeLinkController', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.fields');
 
-    inject((_$componentController_, _$rootScope_, _$timeout_, _CmsService_) => {
+    PickerService = jasmine.createSpyObj('PickerService', ['pickLink']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
+
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
       $componentController = _$componentController_;
-      CmsService = _CmsService_;
+      $q = _$q_;
       $scope = _$rootScope_.$new();
       $timeout = _$timeout_;
     });
@@ -53,7 +60,6 @@ describe('nodeLinkController', () => {
     $ctrl = $componentController('nodeLink', {
       $scope,
       $element,
-      CmsService,
     }, {
       ariaLabel: 'TestAriaLabel',
       config,
@@ -173,47 +179,57 @@ describe('nodeLinkController', () => {
   describe('openLinkPicker', () => {
     beforeEach(() => {
       init();
-      spyOn(CmsService, 'publish');
       spyOn($ctrl, '_focusSelectButton');
-      $ctrl.openLinkPicker();
     });
 
-    it('opens the picker by publishing the "show-link-picker" event', () => {
-      expect(CmsService.publish).toHaveBeenCalledWith('show-link-picker', 'link-picker-config', { uuid: 'model-value' },
-        jasmine.any(Function), jasmine.any(Function));
+    it('picks a link', (done) => {
+      PickerService.pickLink.and.returnValue($q.resolve());
+      $ctrl.openLinkPicker().then(() => {
+        expect(PickerService.pickLink).toHaveBeenCalledWith('link-picker-config', { uuid: 'model-value' });
+        done();
+      });
+      $scope.$digest();
     });
 
-    it('stores the UUID and displayName of the picked link', () => {
-      const okCallback = CmsService.publish.calls.mostRecent().args[3];
-      okCallback({
+    it('stores the UUID and displayName of the picked link', (done) => {
+      PickerService.pickLink.and.returnValue($q.resolve({
         displayName: 'new-display-name',
         uuid: 'new-uuid',
-      });
-      $scope.$apply();
+      }));
 
-      expect($ctrl.linkPicked).toBe(true);
-      expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
-      expect($ctrl.displayName).toEqual('new-display-name');
-      expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
+      $ctrl.openLinkPicker().then(() => {
+        expect($ctrl.linkPicked).toBe(true);
+        expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
+        expect($ctrl.displayName).toEqual('new-display-name');
+        expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
+        done();
+      });
+      $scope.$digest();
     });
 
-    it('sets focus on the select-button if a link was previously picked', () => {
+    it('sets focus on the select-button if a link was previously picked', (done) => {
       $ctrl.linkPicked = true;
-      const okCallback = CmsService.publish.calls.mostRecent().args[3];
-      okCallback({
+
+      PickerService.pickLink.and.returnValue($q.resolve({
         displayName: 'new-display-name',
         uuid: 'new-uuid',
-      });
-      $scope.$apply();
+      }));
 
-      expect($ctrl._focusSelectButton).toHaveBeenCalled();
+      $ctrl.openLinkPicker().then(() => {
+        expect($ctrl._focusSelectButton).toHaveBeenCalled();
+        done();
+      });
+      $scope.$digest();
     });
 
-    it('sets focus on the select button when the picker is cancelled and a link was previously picked', () => {
-      const cancelCallback = CmsService.publish.calls.mostRecent().args[4];
-      cancelCallback();
+    it('sets focus on the select button when the picker is cancelled and a link was previously picked', (done) => {
+      PickerService.pickLink.and.returnValue($q.reject());
 
-      expect($ctrl._focusSelectButton).toHaveBeenCalled();
+      $ctrl.openLinkPicker().finally(() => {
+        expect($ctrl._focusSelectButton).toHaveBeenCalled();
+        done();
+      });
+      $scope.$digest();
     });
   });
 
