@@ -52,12 +52,7 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.cmscontext.CmsContextService;
-import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,17 +108,13 @@ public class LoginPanel extends Panel {
             }
         }
 
+        userSession.setLocale(getSelectedLocale());
+
         final char[] pwdAsChars = password == null ? new char[]{} : password.toCharArray();
         userSession.login(new UserCredentials(new SimpleCredentials(username, pwdAsChars)));
 
         HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
         ConcurrentLoginFilter.validateSession(session, username, false);
-
-        userSession.setLocale(getSelectedLocale());
-
-        final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
-        final CmsSessionContext newCmsSessionContext = cmsContextService.create(userSession.getHttpSession());
-        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
 
     }
 
@@ -278,7 +269,7 @@ public class LoginPanel extends Panel {
 
             response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
             final String preventResubmitScript = String.format("if (Hippo && Hippo.PreventResubmit) { " +
-                            "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
+                    "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
             response.render(OnDomReadyHeaderItem.forScript(preventResubmitScript));
         }
 
