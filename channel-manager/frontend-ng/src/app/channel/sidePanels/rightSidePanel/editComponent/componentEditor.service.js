@@ -19,6 +19,8 @@ import multiActionDialogTemplate from '../contentEditor/multiActionDialog/multiA
 
 const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 
+const isEmpty = str => str === undefined || str === null || str === '';
+
 class ComponentEditorService {
   constructor($q, $translate, DialogService, FeedbackService, HstComponentService, PageStructureService) {
     'ngInject';
@@ -99,6 +101,17 @@ class ComponentEditorService {
     properties.forEach((property) => {
       if (property.type === 'linkpicker') {
         property.pickerConfig = this._getPickerConfig(property);
+        if (!isEmpty(property.defaultValue)) {
+          property.defaultDisplayValue = property.value === property.defaultValue
+            ? property.displayValue
+            : property.defaultValue.substring(property.defaultValue.lastIndexOf('/') + 1);
+        }
+      }
+      if (property.type === 'checkbox') {
+        if (!isEmpty(property.value)) {
+          property.value = this._booleanAsOnOff(property.value);
+        }
+        property.defaultValue = this._booleanAsOnOff(property.defaultValue);
       }
     });
 
@@ -123,6 +136,12 @@ class ComponentEditorService {
     };
   }
 
+  _booleanAsOnOff(boolean) {
+    return ['true', '1', 'on'].includes(String(boolean).toLowerCase())
+      ? 'on'
+      : 'off';
+  }
+
   _groupProperties(properties) {
     if (!properties[0]) {
       return [];
@@ -132,13 +151,9 @@ class ComponentEditorService {
     const groups = new Map();
     properties
       .filter(property => !property.hiddenInChannelManager)
-      .map((property) => {
-        if (property.value === null && property.defaultValue) {
-          property.value = property.defaultValue;
-        }
-        return property;
-      })
       .forEach((property) => {
+        this.setDefaultIfValueIsEmpty(property);
+
         if (property.name === TEMPLATE_PICKER) {
           property.groupLabel = TEMPLATE_PICKER;
         }
@@ -160,6 +175,20 @@ class ComponentEditorService {
       fields: group[1],
       label: group[0],
     }));
+  }
+
+  setDefaultIfValueIsEmpty(property) {
+    if (!property) {
+      return;
+    }
+
+    if (isEmpty(property.value) && !isEmpty(property.defaultValue)) {
+      property.value = property.defaultValue;
+    }
+
+    if (property.type === 'linkpicker' && isEmpty(property.displayValue) && !isEmpty(property.defaultDisplayValue)) {
+      property.displayValue = property.defaultDisplayValue;
+    }
   }
 
   confirmDeleteComponent() {

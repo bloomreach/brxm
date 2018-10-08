@@ -18,6 +18,7 @@ describe('pathLinkController', () => {
   let $componentController;
   let $ctrl;
   let $scope;
+  let $timeout;
   let CmsService;
   let config;
   let ngModel;
@@ -27,8 +28,9 @@ describe('pathLinkController', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.fields');
 
-    inject((_$componentController_, _$rootScope_, _CmsService_) => {
+    inject((_$componentController_, _$rootScope_, _$timeout_, _CmsService_) => {
       $componentController = _$componentController_;
+      $timeout = _$timeout_;
       CmsService = _CmsService_;
       $scope = _$rootScope_.$new();
     });
@@ -147,6 +149,7 @@ describe('pathLinkController', () => {
 
     it('should forward blur event', () => {
       $ctrl.blur('event');
+      $timeout.flush();
       expect($ctrl.onBlur).toHaveBeenCalledWith('event');
     });
 
