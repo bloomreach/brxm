@@ -27,7 +27,7 @@
     name="{{ ::componentField.name }}"
     ng-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
-    ng-disabled="::$ctrl.readOnly"
+    ng-disabled="$ctrl.readOnly"
     ng-model="componentField.value"
     ng-required="::componentField.required"
   />
@@ -37,7 +37,7 @@
       class="md-primary"
       name="{{ ::componentField.name }}"
       ng-change="$ctrl.valueChanged()"
-      ng-disabled="::$ctrl.readOnly"
+      ng-disabled="$ctrl.readOnly"
       ng-false-value="'off'"
       ng-model="componentField.value"
       ng-true-value="'on'"
@@ -46,25 +46,32 @@
     </md-checkbox>
   </div>
 
-  <input
-    ng-switch-when="numberfield"
-    class="md-primary"
-    name="{{ ::componentField.name }}"
-    ng-blur="$ctrl.blur(componentField)"
-    ng-change="$ctrl.valueChanged()"
-    ng-disabled="::$ctrl.readOnly"
-    ng-model="componentField.value"
-    ng-pattern="/^(-\d)?\d*$/"
-    ng-required="::componentField.required"
-    type="text"
-  />
+  <div ng-switch-when="numberfield">
+    <input
+      class="md-primary"
+      name="{{ ::componentField.name }}"
+      ng-blur="$ctrl.blur($event)"
+      ng-change="$ctrl.valueChanged()"
+      ng-disabled="$ctrl.readOnly"
+      ng-focus="$ctrl.form[componentField.name].$setTouched()"
+      ng-model="componentField.value"
+      ng-pattern="/^(-\d)?\d*$/"
+      ng-required="::componentField.required"
+      type="text"
+    />
+    <div ng-messages="$ctrl.form[componentField.name].$error">
+      <div ng-message="pattern">
+        {{ 'ERROR_FIELD_LONG_PATTERN' | translate }}
+      </div>
+    </div>
+  </div>
 
   <md-select
     ng-switch-when="combo"
     aria-label="{{ ::componentField.name }}"
     name="{{ ::componentField.name }}"
     ng-change="$ctrl.valueChanged()"
-    ng-disabled="::$ctrl.readOnly"
+    ng-disabled="$ctrl.readOnly"
     ng-model="componentField.value"
     ng-required="::componentField.required"
   >
@@ -79,7 +86,7 @@
   <date-field
     ng-switch-when="datefield"
     class="md-primary"
-    disabled="::$ctrl.readOnly"
+    disabled="$ctrl.readOnly"
     field-type="{ displayName: componentField.label, required: componentField.required, type: 'DATE_ONLY' }"
     name="::componentField.name"
     on-field-blur="$ctrl.blur(componentField)"
@@ -92,7 +99,7 @@
     ng-switch-when="linkpicker"
     aria-label="{{ ::componentField.label }}"
     config="::componentField.pickerConfig"
-    disabled="::$ctrl.readOnly"
+    disabled="$ctrl.readOnly"
     display-name="componentField.displayValue"
     is-required="::componentField.required"
     name="{{ ::componentField.name }}"

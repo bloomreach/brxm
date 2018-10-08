@@ -18,6 +18,9 @@ import template from './componentFields.html';
 import ComponentFieldsCtrl from './componentFields.controller';
 
 const componentFieldsComponent = {
+  require: {
+    form: '^^form',
+  },
   bindings: {
     fields: '<',
     readOnly: '<',

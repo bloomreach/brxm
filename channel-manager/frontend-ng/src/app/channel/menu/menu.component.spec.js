@@ -24,7 +24,6 @@ describe('Menu Component', () => {
     });
 
     inject((
-      _$componentController_,
       $compile,
       $rootScope,
     ) => {

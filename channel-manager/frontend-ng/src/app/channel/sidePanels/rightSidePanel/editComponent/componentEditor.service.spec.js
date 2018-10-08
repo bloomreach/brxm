@@ -36,6 +36,10 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
+    inject((_PageStructureService_) => {
+      spyOn(_PageStructureService_, 'registerChangeListener');
+    });
+
     inject((
       _$q_,
       _$rootScope_,
@@ -70,6 +74,66 @@ describe('ComponentEditorService', () => {
       },
       page: 'page',
     };
+  });
+
+  describe('responding to page structure changes', () => {
+    let onStructureChange;
+
+    beforeEach(() => {
+      spyOn(ComponentEditor, 'reopen');
+      spyOn(PageStructureService, 'getComponentById');
+      onStructureChange = PageStructureService.registerChangeListener.calls.mostRecent().args[0];
+
+      ComponentEditor.component = { id: 'some-id' };
+      ComponentEditor.container = {
+        isDisabled: false,
+        isInherited: false,
+        id: 1,
+      };
+    });
+
+    it('should do nothing without a component', () => {
+      delete ComponentEditor.component;
+      onStructureChange();
+      expect(PageStructureService.getComponentById).not.toHaveBeenCalled();
+    });
+
+    it('should not update when the component is not on the page', () => {
+      PageStructureService.getComponentById.and.returnValue(null);
+      onStructureChange();
+
+      expect(PageStructureService.getComponentById).toHaveBeenCalledWith('some-id');
+      expect(ComponentEditor.container.id).toBe(1);
+    });
+
+    it('should update the container information if it has changed', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => false,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      onStructureChange();
+
+      expect(ComponentEditor.container.isDisabled).toBe(false);
+      expect(ComponentEditor.container.isInherited).toBe(true);
+      expect(ComponentEditor.container.id).toBe(2);
+      expect(ComponentEditor.reopen).not.toHaveBeenCalled();
+    });
+
+    it('should reopen editor', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => true,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      onStructureChange();
+
+      expect(ComponentEditor.reopen).toHaveBeenCalled();
+    });
   });
 
   describe('opening a component editor', () => {
@@ -516,7 +580,7 @@ describe('ComponentEditorService', () => {
       ComponentEditor.channel = {};
       ComponentEditor.component = {};
       ComponentEditor.container = {};
-      ComponentEditor.kill = false;
+      ComponentEditor.killed = false;
       ComponentEditor.page = {};
       ComponentEditor.properties = {};
       ComponentEditor.propertyGroups = {};
@@ -527,7 +591,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.channel).toBeUndefined();
       expect(ComponentEditor.component).toBeUndefined();
       expect(ComponentEditor.container).toBeUndefined();
-      expect(ComponentEditor.kill).toBeUndefined();
+      expect(ComponentEditor.killed).toBeUndefined();
       expect(ComponentEditor.page).toBeUndefined();
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();

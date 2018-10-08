@@ -62,6 +62,7 @@ class EditComponentService {
         contextPath: channel.contextPath,
         mountId: channel.mountId,
       },
+      // TODO: move this logic to ComponentEditorService upon `relevancePresent` flag removal
       component: {
         id: componentElement.getId(),
         label: componentElement.getLabel(),
@@ -96,7 +97,7 @@ class EditComponentService {
   }
 
   killEditor() {
-    this.ComponentEditor.killEditor();
+    this.ComponentEditor.kill();
     this.stopEditing();
   }
 

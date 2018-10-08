@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import template from './nodes.template.html';
 
-property-group {
-  display: block;
+const treeNodesComponent = {
+  require: {
+    hippoTree: '^^hippoTree',
+  },
+  bindings: {
+    items: '=',
+  },
+  template,
+};
 
-  .collapsible > component-fields {
-    padding-left: $icon-size - 6px;
-  }
-}
+export default treeNodesComponent;
