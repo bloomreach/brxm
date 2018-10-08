@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.util.tester.TagTester;
@@ -39,7 +40,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WorkflowManagerPluginTest extends PluginTest {
@@ -100,17 +101,17 @@ public class WorkflowManagerPluginTest extends PluginTest {
         {
             Map<String, String> params = new HashMap<>();
             params.put("name", "plugin-test");
-            build(session, mount("/hippo:configuration/hippo:workflows", instantiate(category, params)));
+            build(mount("/hippo:configuration/hippo:workflows", instantiate(category, params)), session);
         }
 
         {
             Map<String, String> params = new HashMap<>();
             params.put("name", "versioning-test");
-            build(session, mount("/hippo:configuration/hippo:workflows", instantiate(category, params)));
+            build(mount("/hippo:configuration/hippo:workflows", instantiate(category, params)), session);
         }
 
         session.getRootNode().addNode("test");
-        build(session, mount("/test", content));
+        build(mount("/test", content), session);
         session.save();
     }
 
@@ -147,7 +148,8 @@ public class WorkflowManagerPluginTest extends PluginTest {
         config.put("workflow.version.categories", new String[]{"versioning-test"});
 
         final Node docNode = session.getNode("/test/folder/doc/doc");
-        final Version checkin = docNode.checkin();
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        final Version checkin = versionManager.checkpoint(docNode.getPath());
 
         DocumentWorkflowManagerPlugin manager = new DocumentWorkflowManagerPlugin(context, config);
         manager.setModel(new JcrNodeModel(checkin.getFrozenNode()));
@@ -161,4 +163,6 @@ public class WorkflowManagerPluginTest extends PluginTest {
         Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(descriptor);
         assertTrue(workflow instanceof TestWorkflow);
     }
+
+
 }
