@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import './picker.scss';
+import './internalLinkPicker.scss';
 
-class PickerCtrl {
-  constructor($mdDialog, $q, PickerService, locals) {
+class InternalLinkPickerCtrl {
+  constructor($mdDialog, $q, InternalLinkPickerService, locals) {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
     this.$q = $q;
-    this.PickerService = PickerService;
+    this.InternalLinkPickerService = InternalLinkPickerService;
     this.pickerTypes = locals.pickerTypes;
     this.initialLink = locals.initialLink;
 
@@ -30,7 +30,7 @@ class PickerCtrl {
       throw new Error('No types defined for picker');
     }
 
-    this.items = this.PickerService.getTree();
+    this.items = this.InternalLinkPickerService.getTree();
     this.selectedItem = null;
     this.selectedDocument = null;
 
@@ -45,17 +45,17 @@ class PickerCtrl {
     this.treeOptions = {
       displayItem: item => item.type === 'folder' || item.type === 'page',
       selectItem: (item) => {
-        this.PickerService.getData(item);
+        this.InternalLinkPickerService.getData(item);
         this.selectedDocument = item.selectable ? item : null;
       },
       toggleItem: (item) => {
-        this.PickerService.getData(item);
+        this.InternalLinkPickerService.getData(item);
       },
     };
   }
 
   _loadInitialPicker() {
-    this.PickerService.loadDataForLink(this.pickerTypes[0].id)
+    this.InternalLinkPickerService.loadDataForLink(this.pickerTypes[0].id)
       .then((pickerType) => {
         this.pickerType = this.pickerTypes.find(pt => pt.type === pickerType);
         this._navigateToRoot();
@@ -63,7 +63,7 @@ class PickerCtrl {
   }
 
   _loadSelectedPicker(pickerTypeId, link) {
-    return this.PickerService.loadDataForLink(pickerTypeId, link)
+    return this.InternalLinkPickerService.loadDataForLink(pickerTypeId, link)
       .then((pickerType) => {
         this.pickerType = this.pickerTypes.find(pt => pt.type === pickerType);
         return this._navigateToSelected(this.items);
@@ -71,7 +71,7 @@ class PickerCtrl {
   }
 
   changePickerType() {
-    this.PickerService.loadDataForLink(this.pickerType.id)
+    this.InternalLinkPickerService.loadDataForLink(this.pickerType.id)
       .then(() => {
         const root = this.items[0];
         if (this.selectedItem !== null && this.selectedItem.type !== root.type) {
@@ -120,4 +120,4 @@ class PickerCtrl {
   }
 }
 
-export default PickerCtrl;
+export default InternalLinkPickerCtrl;

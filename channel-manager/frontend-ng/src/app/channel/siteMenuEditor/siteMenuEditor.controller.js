@@ -16,7 +16,7 @@
 
 class SiteMenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
-    FeedbackService, ChannelService, PickerService, ConfigService) {
+    FeedbackService, ChannelService, InternalLinkPickerService, ConfigService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -26,7 +26,7 @@ class SiteMenuEditorCtrl {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.ChannelService = ChannelService;
-    this.PickerService = PickerService;
+    this.InternalLinkPickerService = InternalLinkPickerService;
     this.ConfigService = ConfigService;
 
     this.isSaving = {};
@@ -153,7 +153,7 @@ class SiteMenuEditorCtrl {
       targetEvent,
     };
 
-    this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
+    this.InternalLinkPickerService.show(pickerCfg).then(({ pathInfo }) => {
       this.editingItem.sitemapLink = pathInfo;
       this.editingItem.link = pathInfo;
     });

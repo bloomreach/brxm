@@ -16,17 +16,17 @@
 
 import ListingCtrl from './listing.controller';
 import listingDirective from './listing.directive';
-import InternalLinkPickerService from './picker.service';
-import PickerCtrl from './picker.controller';
+import InternalLinkPickerService from './internalLinkPicker.service';
+import InternalLinkPickerCtrl from './internalLinkPicker.controller';
 import uiTreeModule from '../tree/tree';
 
-const pickerModule = angular
-  .module('hippo-cm.channel.siteMenuEditor.picker', [
+const internalLinkPickerModule = angular
+  .module('hippo-cm.channel.siteMenuEditor.internalLinkPicker', [
     uiTreeModule.name,
   ])
-  .controller('PickerCtrl', PickerCtrl)
+  .controller('InternalLinkPickerCtrl', InternalLinkPickerCtrl)
   .controller('ListingCtrl', ListingCtrl)
-  .service('PickerService', InternalLinkPickerService)
+  .service('InternalLinkPickerService', InternalLinkPickerService)
   .directive('listing', listingDirective);
 
-export default pickerModule;
+export default internalLinkPickerModule;
