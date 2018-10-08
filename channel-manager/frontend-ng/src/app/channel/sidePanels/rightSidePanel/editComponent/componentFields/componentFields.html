@@ -49,8 +49,7 @@
     </md-checkbox>
   </div>
 
-  <!-- ng-container isn't presented in AngularJS but will be actually used in Angular -->
-  <ng-container ng-switch-when="numberfield">
+  <div ng-switch-when="numberfield">
     <input
       class="md-primary"
       name="{{ ::componentField.name }}"
@@ -68,7 +67,7 @@
         {{ 'ERROR_FIELD_LONG_PATTERN' | translate }}
       </div>
     </div>
-  </ng-container>
+  </div>
 
   <md-select
     ng-switch-when="combo"
