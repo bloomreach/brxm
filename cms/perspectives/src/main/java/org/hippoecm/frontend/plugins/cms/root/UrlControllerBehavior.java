@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -33,6 +34,7 @@ import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.StringValue;
 
 public class UrlControllerBehavior extends AbstractDefaultAjaxBehavior {
@@ -66,7 +68,10 @@ public class UrlControllerBehavior extends AbstractDefaultAjaxBehavior {
     protected void setParameter(String name, String value) {
         final AjaxRequestTarget requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
         if (requestTarget != null) {
-            final String javascript = String.format("Hippo.UrlHistory.setParameter('%s', '%s');", name, value);
+            final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
+            final String javascript = String.format("Hippo.UrlHistory.setParameter('%s', '%s');",
+                    UrlEncoder.QUERY_INSTANCE.encode(name, encoding),
+                    UrlEncoder.QUERY_INSTANCE.encode(value, encoding));
             requestTarget.appendJavaScript(javascript);
         }
     }
